@@ -1,0 +1,24 @@
+{
+  "name": "terrahub",
+  "version": "0.0.1",
+  "description": "TerraHub",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Hello Test!\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MitocGroup/terrahub.git"
+  },
+  "keywords": [
+    "terrahub",
+    "terraform",
+    "tf"
+  ],
+  "author": "Mitoc Group",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MitocGroup/terrahub/issues"
+  },
+  "homepage": "https://github.com/MitocGroup/terrahub#readme"
+}
