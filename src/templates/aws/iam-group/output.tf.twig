@@ -1,0 +1,20 @@
+# Define list of variables to be output
+output "iam_group_id" {
+  value = "${aws_iam_group.{{ name }}.id}"
+}
+
+output "iam_group_arn" {
+  value = "${aws_iam_group.{{ name }}.arn}"
+}
+
+output "iam_group_name" {
+  value = "${aws_iam_group.{{ name }}.name}"
+}
+
+output "iam_group_path" {
+  value = "${aws_iam_group.{{ name }}.path}"
+}
+
+output "iam_group_unique_id" {
+  value = "${aws_iam_group.{{ name }}.unique_id}"
+}

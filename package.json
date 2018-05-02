@@ -2,9 +2,9 @@
   "name": "terrahub",
   "version": "0.0.1",
   "description": "TerraHub",
-  "main": "bin/index.js",
-  "scripts": {
-    "test": "echo \"Hello Test!\""
+  "preferGlobal": true,
+  "bin": {
+    "terrahub": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,20 @@
   ],
   "author": "Mitoc Group",
   "license": "MIT",
+  "homepage": "https://github.com/MitocGroup/terrahub#readme",
   "bugs": {
     "url": "https://github.com/MitocGroup/terrahub/issues"
   },
-  "homepage": "https://github.com/MitocGroup/terrahub#readme"
+  "engines": {
+    "node": ">=8.0",
+    "npm": ">=5.0"
+  },
+  "dependencies": {
+    "commander": "^2.15.1",
+    "semver": "^5.5.0"
+  },
+  "devDependencies": {
+    "argparse": "^1.0.10",
+    "minimist": "^1.2.0"
+  }
 }

@@ -1,0 +1,14 @@
+resource "aws_route53_zone" "{{ name }}" {
+  provider      = "aws.default"
+  name          = "${var.route53_name}"
+  comment       = "${var.route53_comment}"
+  force_destroy = "${var.route53_force_destroy}"
+  vpc_id        = "${var.route53_vpc_id}"
+
+  tags {
+    Name        = "${var.route53_tag_name}"
+    Description = "${var.route53_tag_description}"
+    Environment = "${var.route53_tag_environment}"
+    Codename    = "TFS"
+  }
+}

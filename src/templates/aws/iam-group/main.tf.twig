@@ -1,0 +1,5 @@
+resource "aws_iam_group" "{{ name }}" {
+  provider = "aws.default"
+  name     = "${var.iam_group_name}"
+  path     = "${var.iam_group_path}"
+}

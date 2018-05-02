@@ -1,0 +1,4 @@
+resource "aws_sns_topic" "{{ name }}" {
+  provider = "aws.default"
+  name     = "${var.sns_topic_name}"
+}

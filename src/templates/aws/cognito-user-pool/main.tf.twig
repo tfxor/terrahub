@@ -1,0 +1,25 @@
+resource "aws_cognito_user_pool" "{{ name }}" {
+  provider          = "aws.default"
+  name              = "${var.cognito_user_pool_name}"
+  mfa_configuration = "${var.cognito_user_pool_mfa_configuration}"
+
+  password_policy {
+    minimum_length    = "${var.cognito_user_pool_minimum_length}"
+    require_lowercase = "${var.cognito_user_pool_require_lowercase}"
+    require_numbers   = "${var.cognito_user_pool_require_numbers}"
+    require_symbols   = "${var.cognito_user_pool_require_symbols}"
+    require_uppercase = "${var.cognito_user_pool_require_uppercase}"
+  }
+
+  admin_create_user_config {
+    allow_admin_create_user_only = "${var.cognito_user_pool_allow_admin_create_user_only}"
+    unused_account_validity_days = "${var.cognito_user_pool_unused_account_validity_days}"
+  }
+
+  tags {
+    Name        = "${var.cognito_user_pool_tag_name}"
+    Description = "${var.cognito_user_pool_tag_description}"
+    Environment = "${var.cognito_user_pool_tag_environment}"
+    Codename    = "TFS"
+  }
+}
