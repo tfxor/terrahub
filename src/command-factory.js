@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const parseArgs = require('minimist');
-
 const AbstractCommand = require('./abstract-command');
 
 class CommandFactory {
@@ -15,8 +14,8 @@ class CommandFactory {
       const Command = require(path.join(CommandFactory.commandsPath, command));
 
       return new Command(parseArgs(args));
-    } else if(['-h', '--help'].includes(command.toLowerCase())) {
-      AbstractCommand.showHelp();
+    // } else if(['-h', '--help'].includes(command.toLowerCase())) {
+    //   AbstractCommand.showHelp();
     } else {
       throw new Error(`${command} is not implemented!`);
     }
@@ -27,9 +26,9 @@ class CommandFactory {
    * @returns {*}
    */
   static listCommands() {
-    const list = fs.readdirSync(CommandFactory.commandsPath);
-
-    return list.map(fileName => path.basename(fileName, '.js'));
+    return fs
+      .readdirSync(CommandFactory.commandsPath)
+      .map(fileName => path.basename(fileName, '.js'));
   }
 
   /**

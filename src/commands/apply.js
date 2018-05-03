@@ -10,19 +10,21 @@ class ApplyCommand extends AbstractCommand {
     super(input);
 
     this._test = this.getOption('test');
-
-    console.log(this._test);
   }
 
+  /**
+   * Command configuration
+   */
   configure() {
     this
       .setName('apply')
-      .addOption('test', 't', 'My test', 123)
+      .setDescription('Run `terraform apply` across multiple terraform scripts')
+      .addOption('test', 't', 'Test option', 'test-value')
     ;
   }
 
   run() {
-
+    return Promise.resolve(this.getConfig());
   }
 }
 
