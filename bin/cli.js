@@ -11,14 +11,20 @@ if (!semver.satisfies(process.version, engines.node)) {
   process.exit(1);
 }
 
-CommandFactory.create(process.argv).run().then(res => {
-  console.log('~~~~');
-  console.log(JSON.stringify(res, null, 2));
-  console.log('~~~~');
+const command = CommandFactory.create(process.argv);
 
-  console.log('Done!');
-  process.exit(0);
-}).catch(err => {
-  console.error(err.message);
-  process.exit(1);
-});
+command
+  .validate()
+  .then(() => command.run())
+  .then(res => {
+    console.log('~~~~');
+    console.log(JSON.stringify(res, null, 2));
+    console.log('~~~~');
+
+    console.log('Done!');
+    process.exit(0);
+  })
+  .catch(err => {
+    console.error(err.message);
+    process.exit(1);
+  });

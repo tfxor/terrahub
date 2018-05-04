@@ -68,7 +68,7 @@ class AbstractCommand {
    * @param {*} defaultValue
    * @returns {AbstractCommand}
    */
-  addOption(name, shortcut, description, defaultValue = null) {
+  addOption(name, shortcut, description, defaultValue = undefined) {
     this._options[name] = { name, shortcut, description, defaultValue };
 
     return this;
@@ -85,9 +85,27 @@ class AbstractCommand {
     return this._input[option.name] || this._input[option.shortcut] || option.defaultValue;
   }
 
-  run() { throw new Error('Implement...'); }
-  configure() { throw new Error('Implement...'); }
+  /**
+   * Abstract methods
+   */
+  configure() { throw new Error('Implement configure() method...'); }
+  run() { return Promise.reject(new Error('Implement run() method...')); }
 
+  /**
+   * Validate options
+   * @returns {Promise}
+   */
+  validate() {
+    return new Promise((resolve, reject) => {
+      const required = Object.keys(this._options).filter(name => {
+        return typeof this.getOption(name) === 'undefined';
+      });
+
+      return (required.length > 0)
+        ? reject(new Error(`${required.map(x => `--${x}`).join(', ')} is/are required`))
+        : resolve();
+    });
+  }
 
   /**
    * Get list of configuration files
@@ -112,7 +130,7 @@ class AbstractCommand {
 
 
   /**
-   * @todo refactor this!
+   * @todo refactor this shit!
    */
   static showHelp() {
     const template = fs.readFileSync(path.join(__dirname, './help.tmpl'), 'utf-8');

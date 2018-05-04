@@ -7,16 +7,6 @@ const AbstractCommand = require('../abstract-command');
 
 class GraphCommand extends AbstractCommand {
   /**
-   * @param {Object} input
-   */
-  constructor(input) {
-    super(input);
-
-    this._accessor = new MemberAccessor({}, '/');
-    this._directory = path.resolve(this.getOption('directory'));
-  }
-
-  /**
    * Command configuration
    */
   configure() {
@@ -32,11 +22,14 @@ class GraphCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    this.listConfigs(this._directory).forEach(configPath => {
-      this._accessor.set(configPath, null);
+    const accessor = new MemberAccessor({}, '/');
+    const directory = path.resolve(this.getOption('directory'));
+
+    this.listConfigs(directory).forEach(configPath => {
+      accessor.set(configPath, null);
     });
 
-    console.log(treeify.asTree(this._accessor.getRaw(), false));
+    console.log(treeify.asTree(accessor.getRaw(), false));
 
     return Promise.resolve();
   }

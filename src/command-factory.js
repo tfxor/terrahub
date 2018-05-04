@@ -6,9 +6,12 @@ const parseArgs = require('minimist');
 const AbstractCommand = require('./abstract-command');
 
 class CommandFactory {
-
+  /**
+   * Command create
+   * @param {Array} argv
+   */
   static create(argv) {
-    const [,, command, ...args] = argv;
+    const [command, ...args] = argv.slice(2);
 
     if (CommandFactory.listCommands().includes(command)) {
       const Command = require(path.join(CommandFactory.commandsPath, command));
