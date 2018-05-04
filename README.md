@@ -15,3 +15,10 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
   refresh ........... run `terraform refresh` across multiple terraform scripts
   show .............. run `terraform show` across multiple terraform scripts
 ```
+
+## @todo
+
+- Improve Config loader 
+  - Insert global config under module's config
+  - Dynamically add root property for each module
+- Refactor terraform wrapper
