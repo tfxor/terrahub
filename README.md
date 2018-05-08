@@ -1,4 +1,5 @@
 # TerraHub
+
 TerraHub is a Terraform-centric devops tool that helps provision and manage large amount of cloud resources and cloud services across cloud providers. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
 
 ## Commands
@@ -18,7 +19,5 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
 
 ## @todo
 
-- Improve Config loader 
-  - Insert global config under module's config
-  - Dynamically add root property for each module
+- Decide how to implement `--include` & `--exclude` functionality (add module.name or module.id?)
 - Refactor terraform wrapper

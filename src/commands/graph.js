@@ -33,6 +33,17 @@ class GraphCommand extends AbstractCommand {
 
     return Promise.resolve();
   }
+
+  /**
+   * Get only children of some path
+   * @param {Array} paths
+   * @param {String} root
+   * @returns {Array}
+   * @private
+   */
+  _childrenOf(paths, root) {
+    return paths.filter(path => root.indexOf(path) === 0);
+  }
 }
 
 module.exports = GraphCommand;

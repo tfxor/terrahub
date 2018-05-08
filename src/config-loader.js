@@ -1,10 +1,11 @@
 'use strict';
 
 const fs = require('fs');
-const glob = require('glob');
 const path = require('path');
+const glob = require('glob');
 const yaml = require('js-yaml');
 const merge = require('lodash.merge');
+const { toBase64 } = require('./helpers/util');
 
 class ConfigLoader {
   /**
@@ -13,6 +14,7 @@ class ConfigLoader {
   constructor() {
     this._config = {};
     this._globalPath = process.cwd();
+    this._globalConfig = {};
     this._currentPath = process.cwd();
     this._currentConfig = {};
 
@@ -43,11 +45,14 @@ class ConfigLoader {
    * @private
    */
   _readGlobal() {
-    const globalPath = this._currentConfig['global'];
+    const global = this._currentConfig['global'];
 
-    if (globalPath) {
-      this._config = ConfigLoader.readConfig(globalPath);
-      this._globalPath = path.join(process.cwd(), globalPath);
+    if (global) {
+      const fullPath = path.join(process.cwd(), global);
+      this._globalPath = path.dirname(fullPath);
+      this._globalConfig = ConfigLoader.readConfig(fullPath);
+    } else {
+      this._globalConfig = this._currentConfig;
     }
   }
 
@@ -55,19 +60,17 @@ class ConfigLoader {
    * Get application root directory
    * @returns {String}
    */
-  getAppPath() {
-    return fs.lstatSync(this._globalPath).isFile()
-      ? path.dirname(this._globalPath)
-      : this._globalPath;
+  appPath() {
+    return this._globalPath;
   }
 
   /**
    * Get list of configuration files
    * @param {String} dir
-   * @returns {*}
+   * @returns {Array}
    */
   listConfigs(dir = null) {
-    const cwd = dir || this.getAppPath();
+    const cwd = dir || this.appPath();
 
     return glob.sync('**/.terrahub.*', { cwd, ignore: ConfigLoader.IGNORE_PATTERNS });
   }
@@ -77,16 +80,64 @@ class ConfigLoader {
    * @returns {Object}
    */
   getFullConfig() {
-    const configs = this.listConfigs(this.getAppPath()).map(config => path.join(this.getAppPath(), config));
-
-    configs.map(fullPath => {
-      const config = ConfigLoader.readConfig(fullPath);
-      delete config['global'];
-
-      this._config = merge(this._config, config);
-    });
+    if (!Object.keys(this._config).length) {
+      this._handleRootConfig();
+      this._handleModuleConfigs();
+    }
 
     return this._config;
+  }
+
+  /**
+   * Separate global config from module's config
+   * @private
+   */
+  _handleRootConfig() {
+    Object.keys(this._globalConfig).forEach(key => {
+      const cfg = this._globalConfig[key];
+
+      if (cfg.hasOwnProperty('root')) {
+        const hash = toBase64(cfg.root);
+
+        this._config[hash] = cfg;
+        delete this._globalConfig[key];
+      }
+    });
+
+    Object.keys(this._config).forEach(module => {
+      this._config[module] = merge({}, this._globalConfig, this._config[module]);
+    });
+  }
+
+  /**
+   * Consolidate all modules configs
+   * @private
+   */
+  _handleModuleConfigs() {
+    this
+      .listConfigs(this.appPath())
+      .filter(x => path.dirname(x) !== '.')
+      .map(configPath => {
+        const fullPath = path.join(this.appPath(), configPath);
+        const config = ConfigLoader.readConfig(fullPath);
+        const modulePath = this._modulePath(fullPath);
+
+        delete config['global'];
+        config['root'] = modulePath;
+
+        this._config[toBase64(modulePath)] = merge({}, this._globalConfig, config);
+    });
+  }
+
+  /**
+   * @param {String} fullPath
+   * @returns {*}
+   * @private
+   */
+  _modulePath(fullPath) {
+    const relativePath = fullPath.replace(this.appPath(), '.');
+
+    return path.dirname(relativePath);
   }
 
   /**
