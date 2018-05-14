@@ -16,12 +16,8 @@ const command = CommandFactory.create(process.argv);
 command
   .validate()
   .then(() => command.run())
-  .then(res => {
-    console.log('~~~~');
-    console.log(JSON.stringify(res, null, 2));
-    console.log('~~~~');
-
-    console.log('Done!');
+  .then(message => {
+    console.log(message);
     process.exit(0);
   })
   .catch(err => {

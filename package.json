@@ -26,6 +26,7 @@
     "npm": ">=5.0"
   },
   "dependencies": {
+    "download": "^7.0.0",
     "fs-extra": "^6.0.0",
     "glob": "^7.1.2",
     "js-yaml": "^3.11.0",
