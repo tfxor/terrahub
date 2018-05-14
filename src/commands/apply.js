@@ -1,5 +1,6 @@
 'use strict';
 
+const Terraform = require('../helpers/terraform');
 const AbstractCommand = require('../abstract-command');
 
 class ApplyCommand extends AbstractCommand {
@@ -10,12 +11,21 @@ class ApplyCommand extends AbstractCommand {
     this
       .setName('apply')
       .setDescription('Run `terraform apply` across multiple terraform scripts')
-      .addOption('test', 't', 'Test option')
     ;
   }
 
+  /**
+   * @returns {Promise}
+   */
   run() {
-    return Promise.resolve(this.getConfig());
+    let cfg = this.getConfig()['Li9kMS9kMy9kNA=='];
+
+    let tf = new Terraform(cfg);
+
+    return tf
+      .prepare()
+      .then(() => tf.apply())
+      .then(() => Promise.resolve('Done'));
   }
 }
 

@@ -97,15 +97,13 @@ class ConfigLoader {
       const cfg = this._globalConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
-        const hash = toBase64(cfg.root);
-
-        this._config[hash] = cfg;
+        this._config[toBase64(cfg.root)] = cfg;
         delete this._globalConfig[key];
       }
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = merge({}, this._globalConfig, this._config[module]);
+      this._config[module] = merge({ app: this.appPath() }, this._globalConfig, this._config[module]);
     });
   }
 
@@ -120,12 +118,11 @@ class ConfigLoader {
       .map(configPath => {
         const fullPath = path.join(this.appPath(), configPath);
         const config = ConfigLoader.readConfig(fullPath);
-        const modulePath = this._modulePath(fullPath);
+        const module = this._modulePath(fullPath);
 
         delete config['global'];
-        config['root'] = modulePath;
 
-        this._config[toBase64(modulePath)] = merge({}, this._globalConfig, config);
+        this._config[toBase64(module)] = merge({ app: this.appPath(), root: module }, this._globalConfig, config);
     });
   }
 
