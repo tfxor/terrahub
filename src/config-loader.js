@@ -89,6 +89,18 @@ class ConfigLoader {
   }
 
   /**
+   * @returns {Object}
+   * @private
+   */
+  _defaults() {
+    return {
+      app: this.appPath(),
+      parent: null,
+      children: []
+    }
+  }
+
+  /**
    * Separate global config from module's config
    * @private
    */
@@ -103,7 +115,7 @@ class ConfigLoader {
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = merge({ app: this.appPath() }, this._globalConfig, this._config[module]);
+      this._config[module] = merge({}, this._defaults(), this._globalConfig, this._config[module]);
     });
   }
 
@@ -112,17 +124,22 @@ class ConfigLoader {
    * @private
    */
   _handleModuleConfigs() {
+    const appPath = this.appPath();
+
     this
-      .listConfigs(this.appPath())
+      .listConfigs(appPath)
       .filter(x => path.dirname(x) !== '.')
       .map(configPath => {
-        const fullPath = path.join(this.appPath(), configPath);
+        const fullPath = path.join(appPath, configPath);
         const config = ConfigLoader.readConfig(fullPath);
-        const module = this._modulePath(fullPath);
+        const module = path.dirname(this._relativePath(fullPath));
 
         delete config['global'];
+        if (config.hasOwnProperty('parent')) {
+          config['parent'] = this._relativePath(path.join(appPath, module, config.parent));
+        }
 
-        this._config[toBase64(module)] = merge({ app: this.appPath(), root: module }, this._globalConfig, config);
+        this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._globalConfig, config);
     });
   }
 
@@ -131,10 +148,8 @@ class ConfigLoader {
    * @returns {*}
    * @private
    */
-  _modulePath(fullPath) {
-    const relativePath = fullPath.replace(this.appPath(), '.');
-
-    return path.dirname(relativePath);
+  _relativePath(fullPath) {
+    return fullPath.replace(this.appPath(), '.');
   }
 
   /**

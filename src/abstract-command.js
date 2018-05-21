@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const ConfigLoader = require('./config-loader');
+const { toBase64 } = require('./helpers/util');
 const { version, description } = require('../package');
 
 class AbstractCommand {
@@ -117,6 +118,8 @@ class AbstractCommand {
   }
 
   /**
+   * @todo --include === -i xxx,yyy,zzz
+   *       --exclude === -e xxx,yyy,zzz ???
    * Get consolidated config
    * @returns {Object}
    */
@@ -128,6 +131,26 @@ class AbstractCommand {
     return this._config;
   }
 
+  /**
+   * Get config tree
+   * @returns {Object}
+   */
+  getConfigTree() {
+    let tree = {};
+    let config = Object.assign({}, this.getConfig());
+
+    Object.keys(config).forEach(hash => {
+      let node = config[hash];
+
+      if (node.parent === null) {
+        tree[hash] = node;
+      } else {
+        config[toBase64(node.parent)].children.push(node);
+      }
+    });
+
+    return tree;
+  }
 
   /**
    * @todo refactor this shit!

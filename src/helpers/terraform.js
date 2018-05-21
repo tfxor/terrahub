@@ -6,7 +6,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const merge = require('lodash.merge');
 const semver = require('semver');
-const { spawn } = require('child_process');
+const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
 
 class Terraform {
@@ -36,6 +36,14 @@ class Terraform {
         workspace: 'default'
       }
     };
+  }
+
+  /**
+   * Terraform module name
+   * @returns {String}
+   */
+  getName() {
+    return this._config.name || this._config.root;
   }
 
   /**
@@ -132,12 +140,9 @@ class Terraform {
    */
   prepare() {
     return this._checkTerraformBinary()
-      .then(() => this.init())
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
-      .then(() => this._checkRemoteState())
-      .then(() => this.pullState())
-      .then(() => this.workspace());
+      .then(() => this._checkRemoteState());
   }
 
   /**
@@ -224,7 +229,7 @@ class Terraform {
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list']).then(result => {
-      let action = regex.test(result.toString()) ? 'select' : 'new';
+      let action = regex.test(result.stdout.toString()) ? 'select' : 'new';
       let stateDir = path.join(this.getRoot(), 'terraform.tfstate.d');
 
       if (fs.existsSync(stateDir)) {
@@ -256,7 +261,7 @@ class Terraform {
    */
   apply() {
     let args = [];
-    let options = {'-lock': false, '-auto-approve': true};
+    let options = {'-auto-approve': true};
     let planPath = this._planPath();
     let statePath = this._statePath();
     let backupState = this._statePath(`${ new Date().getTime() }.backup`);
@@ -338,7 +343,7 @@ class Terraform {
   }
 
   /**
-   * Promisify a spawn
+   * Handle a spawn
    * @param {String} command
    * @param {Array} args
    * @param {Object} options
@@ -346,27 +351,15 @@ class Terraform {
    * @returns {Promise}
    * @private
    */
-  _spawn(command, args, options, logger = console.log) {
-    return new Promise((resolve, reject) => {
-      let error, stdout = [];
-      let child = spawn(command, args, options);
+  _spawn(command, args, options, logger = console) {
+    const prefix = `[${this.getName()}]`;
+    const promise = spawn(command, args, {...options, capture: ['stdout', 'stderr']});
+    const child = promise.childProcess;
 
-      child.stdout.on('data', data => {
-        stdout.push(data);
-        logger(data.toString());
-      });
+    child.stdout.on('data', data => logger.log(prefix, data.toString()));
+    child.stderr.on('data', error => logger.error(prefix, error.toString()));
 
-      child.stderr.on('data', err => {
-        error = err;
-        logger(err.toString());
-      });
-
-      child.on('exit', code => {
-        return (code === 1)
-          ? reject(new Error(error.toString()))
-          : resolve(stdout.concat());
-      });
-    });
+    return promise;
   }
 
   /**
