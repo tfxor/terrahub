@@ -1,6 +1,8 @@
 'use strict';
 
-class WorkspaceCommand {
+const AbstractCommand = require('../abstract-command');
+
+class WorkspaceCommand extends AbstractCommand {
 
 }
 

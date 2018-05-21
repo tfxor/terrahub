@@ -198,14 +198,15 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/state/pull.html
+   * @param {String} argument
    * @returns {Promise}
    */
-  pullState() {
+  state(argument = 'pull') {
     if (!this._isRemoteState) {
       return Promise.resolve();
     }
 
-    return this.run('state', ['pull']).then(result => {
+    return this.run('state', [argument]).then(result => {
       const remoteState = this._statePath('remote');
 
       if (fs.existsSync(remoteState)) {
