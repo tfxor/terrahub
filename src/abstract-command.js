@@ -87,10 +87,18 @@ class AbstractCommand {
   }
 
   /**
-   * Abstract methods
+   * Abstract configure method
    */
-  configure() { throw new Error('Implement configure() method...'); }
-  run() { return Promise.reject(new Error('Implement run() method...')); }
+  configure() {
+    throw new Error('Implement configure() method...');
+  }
+
+  /**
+   * Abstract run method
+   */
+  run() {
+    return Promise.reject(new Error('Implement run() method...'));
+  }
 
   /**
    * Validate options
@@ -103,7 +111,7 @@ class AbstractCommand {
       });
 
       return (required.length > 0)
-        ? reject(new Error(`${required.map(x => `--${x}`).join(', ')} is/are required`))
+        ? reject(new Error(`Missing required options: ${required.map(x => `--${x}`).join(', ')}`))
         : resolve();
     });
   }
