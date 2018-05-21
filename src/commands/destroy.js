@@ -1,6 +1,6 @@
 'use strict';
 
-const Terraform = require('../helpers/terraform');
+const Distributor = require('../helpers/distributor');
 const AbstractCommand = require('../abstract-command');
 
 class DestroyCommand extends AbstractCommand {
@@ -18,12 +18,11 @@ class DestroyCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    let cfg = this.getConfig()['Li9kMS9kMy9kNA=='];
-    let tf = new Terraform(cfg);
+    const config = this.getConfigTree();
+    const distributor = new Distributor(['prepare', 'destroy'], config);
 
-    return tf
-      .prepare()
-      .then(() => tf.destroy())
+    return distributor
+      .run()
       .then(() => Promise.resolve('Done'));
   }
 }
