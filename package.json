@@ -26,6 +26,7 @@
     "npm": ">=5.0"
   },
   "dependencies": {
+    "child-process-promise": "^2.2.1",
     "download": "^7.0.0",
     "fs-extra": "^6.0.0",
     "glob": "^7.1.2",

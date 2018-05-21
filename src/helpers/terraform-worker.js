@@ -1,26 +1,66 @@
 'use strict';
 
-const cpuNum = require('os').cpus().length;
 const cluster = require('cluster');
+const Terraform = require('../helpers/terraform');
+const { promiseSeries } = require('../helpers/util');
 
-// @todo implement terraform worker
+/**
+ * Parse terraform actions
+ * @returns {Array}
+ */
+function getActions() {
+  return process.env.TERRAFORM_ACTIONS.split(',').filter(Boolean);
+}
 
-// if (cluster.isMaster) {
-//   console.log('I am master', cpuNum);
-//
-//   for (let i = 0; i < cpuNum; i++) {
-//     cluster.fork({ TEST: `worker - ${i}` });
-//   }
-//
-//   // cluster.fork();
-//   // cluster.fork();
-//   // cluster.fork();
-//
-// } else if (cluster.isWorker) {
-//   console.log('\n');
-//   console.log(`I am worker #${cluster.worker.id}`, process.env.TEST);
-//
-//   // if (process.env.TEST === 3) {
-//   process.exit(0);
-//   // }
-// }
+/**
+ * @param {Object} config
+ * @returns {*}
+ */
+function getTask(config) {
+  const terraform = new Terraform(config);
+
+  return () => {
+    return promiseSeries(getActions().map(action => terraform[action].bind(terraform)));
+  };
+}
+
+/**
+ * Runner
+ * @param {Object[]} configs
+ */
+function run(configs) {
+  promiseSeries(configs.map(config => getTask(config))).then(results => {
+    process.send({
+      id: cluster.worker.id,
+      data: results,
+      isError: false
+    });
+    process.exit(0);
+  }).catch(error => {
+    // @todo remove it
+    console.error('terraform-worker:', error);
+
+    process.send({
+      id: cluster.worker.id,
+      error: error.message || error,
+      isError: true
+    });
+    process.exit(1);
+  });
+}
+
+/**
+ * Message listener
+ */
+process.on('message', config => {
+  let queue = [];
+
+  function handle(cfg) {
+    queue.push(cfg);
+    cfg.children.forEach(child => handle(child));
+    cfg.children = [];
+  }
+
+  handle(config);
+  run(queue);
+});

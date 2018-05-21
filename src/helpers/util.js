@@ -17,9 +17,18 @@ function fromBase64(text) {
 }
 
 /**
+ * @param {Function[]} promises
+ * @returns {*}
+ */
+function promiseSeries(promises) {
+  return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toBase64,
-  fromBase64
+  fromBase64,
+  promiseSeries
 };

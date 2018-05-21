@@ -1,6 +1,6 @@
 'use strict';
 
-const Terraform = require('../helpers/terraform');
+const Distributor = require('../helpers/distributor');
 const AbstractCommand = require('../abstract-command');
 
 class InitCommand extends AbstractCommand {
@@ -18,12 +18,11 @@ class InitCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    let cfg = this.getConfig()['Li9kMS9kMy9kNA=='];
+    const config = this.getConfigTree();
+    const distributor = new Distributor(['prepare', 'init'], config);
 
-    let tf = new Terraform(cfg);
-
-    return tf
-      .prepare()
+    return distributor
+      .run()
       .then(() => Promise.resolve('Done'));
   }
 

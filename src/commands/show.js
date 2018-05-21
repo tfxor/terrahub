@@ -1,6 +1,8 @@
 'use strict';
 
-class ShowCommand {
+const AbstractCommand = require('../abstract-command');
+
+class ShowCommand extends AbstractCommand {
 
 }
 

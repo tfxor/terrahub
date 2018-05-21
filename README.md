@@ -15,9 +15,30 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
   plan .............. run `terraform plan` across multiple terraform scripts
   refresh ........... run `terraform refresh` across multiple terraform scripts
   show .............. run `terraform show` across multiple terraform scripts
+  workspace .........
+  run ...............
+  project ...........
 ```
 
 ## @todo
 
-- Decide how to implement `--include` & `--exclude` functionality (add module.name or module.id?)
-- Refactor terraform wrapper
+- Fix `stdout` issue
+- Implement pre/post hooks
+```javascript
+  terraform.prepare()
+    .then(() => Promise.resolve()) // run pre-hook
+    .then(() => terraform.apply())
+    .then(() => Promise.resolve()) // run post-hook
+    .then(() => Promise.resolve('Done'));
+```
+```yml
+# config example
+hooks:
+  plan: 
+    before: './path/file.js'
+    after: './path/file.js'
+```
+- Move terraform binary version => `~/.terrahub/terraform/0.11.7/...`
+- Add hook templates to `~/.terrahub/hooks/...`
+- Add Empty `~/.terrahub/.terrahub.(yml|yaml|json)` (for now)
+- Implement `--include === -i xxx,yyy,zzz` (use module.name)
