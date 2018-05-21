@@ -31,7 +31,7 @@ class Terraform {
         vars: {},
         varFiles: [],
         cache: false,
-        version: '0.11.0',
+        version: '0.11.7',
         resource: '.resource',
         workspace: 'default'
       }
@@ -185,7 +185,7 @@ class Terraform {
    * @private
    */
   _checkWorkspaceSupport() {
-    this._isWorkspaceSupported = semver.satisfies(this.getVersion(), '>=0.11.0');
+    this._isWorkspaceSupported = semver.satisfies(this.getVersion(), '>=0.9.0');
   }
 
   /**
