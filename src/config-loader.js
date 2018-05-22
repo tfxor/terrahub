@@ -36,10 +36,10 @@ class ConfigLoader {
   _readGlobal() {
     // @todo move to a global config?
     const globalPath = path.join(os.homedir(), '.terrahub');
-    const [fileName] = glob.sync('.terrahub.*', { cwd: globalPath });
+    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', globalPath);
 
-    if (fileName) {
-      this._globalConfig = ConfigLoader.readConfig(path.join(globalPath, fileName));
+    if (configFile) {
+      this._globalConfig = ConfigLoader.readConfig(configFile);
     } else {
       fse.outputJsonSync(path.join(globalPath, '.terrahub.json'), {});
     }
@@ -50,11 +50,11 @@ class ConfigLoader {
    * @private
    */
   _readCurrent() {
-    const [configFile] = glob.sync('.terrahub.*', { cwd: process.cwd(), ignore: ConfigLoader.IGNORE_PATTERNS });
+    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
 
     if (configFile) {
-      this._currentPath = path.join(process.cwd(), configFile);
-      this._currentConfig = ConfigLoader.readConfig(this._currentPath);
+      this._currentPath = path.dirname(configFile);
+      this._currentConfig = ConfigLoader.readConfig(configFile);
     }
   }
 
@@ -66,7 +66,7 @@ class ConfigLoader {
     const global = this._currentConfig['global'];
 
     if (global) {
-      const fullPath = path.join(process.cwd(), global);
+      const fullPath = path.join(this._currentPath, global);
       this._rootPath = path.dirname(fullPath);
       this._rootConfig = ConfigLoader.readConfig(fullPath);
     } else {
@@ -90,7 +90,7 @@ class ConfigLoader {
   listConfigs(dir = null) {
     const cwd = dir || this.appPath();
 
-    return glob.sync('**/.terrahub.*', { cwd, ignore: ConfigLoader.IGNORE_PATTERNS });
+    return this._find('**/.terrahub.+(json|yml|yaml)', cwd)
   }
 
   /**
@@ -112,6 +112,14 @@ class ConfigLoader {
     }
 
     return this._config;
+  }
+
+  /**
+   * Check if valid configs were found
+   * @returns {Boolean}
+   */
+  isConfigValid() {
+    return Object.keys(Object.assign({}, this._rootConfig, this._currentConfig)).length > 0;
   }
 
   /**
@@ -156,22 +164,33 @@ class ConfigLoader {
    */
   _handleModuleConfigs() {
     const appPath = this.appPath();
+    const configs = this.listConfigs(appPath);
 
-    this
-      .listConfigs(appPath)
-      .filter(x => path.dirname(x) !== '.')
-      .map(configPath => {
-        const fullPath = path.join(appPath, configPath);
-        const config = ConfigLoader.readConfig(fullPath);
-        const module = path.dirname(this._relativePath(fullPath));
+    // Remove root config
+    configs.shift();
 
-        delete config['global'];
-        if (config.hasOwnProperty('parent')) {
-          config['parent'] = this._relativePath(path.join(appPath, module, config.parent));
-        }
+    configs.forEach(configPath => {
+      const config = ConfigLoader.readConfig(configPath);
+      const module = path.dirname(this._relativePath(configPath));
 
-        this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._rootConfig, config);
+      delete config['global'];
+      if (config.hasOwnProperty('parent')) {
+        config['parent'] = this._relativePath(path.join(appPath, module, config.parent));
+      }
+
+      this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._rootConfig, config);
     });
+  }
+
+  /**
+   * Find files by pattern
+   * @param {String} pattern
+   * @param {String} path
+   * @returns {*}
+   * @private
+   */
+  _find(pattern, path) {
+    return glob.sync(pattern, { cwd: path, ignore: ConfigLoader.IGNORE_PATTERNS, absolute: true });
   }
 
   /**
