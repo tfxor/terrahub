@@ -17,7 +17,7 @@ class CreateCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name')
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)')
       .addOption('directory', 'd', 'Path where template should be created (default: cwd)', process.cwd())
-      .addOption('force', 'f', 'replace directory', false)
+      .addOption('force', 'f', 'Replace directory', false)
     ;
   }
 

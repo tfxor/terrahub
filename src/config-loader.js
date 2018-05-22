@@ -1,6 +1,8 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const yaml = require('js-yaml');
@@ -13,21 +15,38 @@ class ConfigLoader {
    */
   constructor() {
     this._config = {};
-    this._globalPath = process.cwd();
     this._globalConfig = {};
+    this._rootPath = process.cwd();
+    this._rootConfig = {};
     this._currentPath = process.cwd();
     this._currentConfig = {};
 
     /**
      * Init config reader
      */
-    this._readCurrent();
     this._readGlobal();
+    this._readCurrent();
+    this._readRoot();
+  }
+
+  /**
+   * Read/create global config
+   * @private
+   */
+  _readGlobal() {
+    // @todo move to a global config?
+    const globalPath = path.join(os.homedir(), '.terrahub');
+    const [fileName] = glob.sync('.terrahub.*', { cwd: globalPath });
+
+    if (fileName) {
+      this._globalConfig = ConfigLoader.readConfig(path.join(globalPath, fileName));
+    } else {
+      fse.outputJsonSync(path.join(globalPath, '.terrahub.json'), {});
+    }
   }
 
   /**
    * Read current directory config
-   * @returns {Object}
    * @private
    */
   _readCurrent() {
@@ -40,19 +59,18 @@ class ConfigLoader {
   }
 
   /**
-   * Read global config
-   * @returns {Object}
+   * Read root config
    * @private
    */
-  _readGlobal() {
+  _readRoot() {
     const global = this._currentConfig['global'];
 
     if (global) {
       const fullPath = path.join(process.cwd(), global);
-      this._globalPath = path.dirname(fullPath);
-      this._globalConfig = ConfigLoader.readConfig(fullPath);
+      this._rootPath = path.dirname(fullPath);
+      this._rootConfig = ConfigLoader.readConfig(fullPath);
     } else {
-      this._globalConfig = this._currentConfig;
+      this._rootConfig = this._currentConfig;
     }
   }
 
@@ -61,7 +79,7 @@ class ConfigLoader {
    * @returns {String}
    */
   appPath() {
-    return this._globalPath;
+    return this._rootPath;
   }
 
   /**
@@ -76,7 +94,15 @@ class ConfigLoader {
   }
 
   /**
-   * Get full centralized config
+   * Get global config
+   * @returns {Object}
+   */
+  getGlobalConfig() {
+    return this._globalConfig;
+  }
+
+  /**
+   * Get centralized application config
    * @returns {Object}
    */
   getFullConfig() {
@@ -96,7 +122,12 @@ class ConfigLoader {
     return {
       app: this.appPath(),
       parent: null,
-      children: []
+      children: [],
+      hooks: {
+        plan: {},
+        apply: {},
+        destroy: {}
+      },
     }
   }
 
@@ -105,17 +136,17 @@ class ConfigLoader {
    * @private
    */
   _handleRootConfig() {
-    Object.keys(this._globalConfig).forEach(key => {
-      const cfg = this._globalConfig[key];
+    Object.keys(this._rootConfig).forEach(key => {
+      const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
         this._config[toBase64(cfg.root)] = cfg;
-        delete this._globalConfig[key];
+        delete this._rootConfig[key];
       }
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = merge({}, this._defaults(), this._globalConfig, this._config[module]);
+      this._config[module] = merge({}, this._defaults(), this._rootConfig, this._config[module]);
     });
   }
 
@@ -139,7 +170,7 @@ class ConfigLoader {
           config['parent'] = this._relativePath(path.join(appPath, module, config.parent));
         }
 
-        this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._globalConfig, config);
+        this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._rootConfig, config);
     });
   }
 
