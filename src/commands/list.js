@@ -2,8 +2,6 @@
 
 const AbstractCommand = require('../abstract-command');
 
-class ListCommand extends AbstractCommand {
-
-}
+class ListCommand extends AbstractCommand {}
 
 module.exports = ListCommand;

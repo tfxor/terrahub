@@ -101,19 +101,27 @@ class AbstractCommand {
   }
 
   /**
-   * Validate options
+   * Command validation
    * @returns {Promise}
    */
   validate() {
-    return new Promise((resolve, reject) => {
-      const required = Object.keys(this._options).filter(name => {
-        return typeof this.getOption(name) === 'undefined';
-      });
+    if (!this._configLoader.isConfigValid()) {
+      return Promise.reject(
+        new Error('Configuration file not found, please go to project root folder, or initialize it')
+      );
+    }
 
-      return (required.length > 0)
-        ? reject(new Error(`Missing required options: ${required.map(x => `--${x}`).join(', ')}`))
-        : resolve();
+    const required = Object.keys(this._options).filter(name => {
+      return typeof this.getOption(name) === 'undefined';
     });
+
+    if (required.length > 0) {
+      return Promise.reject(
+        new Error(`Missing required options: ${required.map(x => `--${x}`).join(', ')}`)
+      );
+    }
+
+    return Promise.resolve();
   }
 
   /**
