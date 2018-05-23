@@ -14,6 +14,7 @@ class Terraform {
    * @param {Object} config
    */
   constructor(config) {
+    this.logger = console;
     this._config = merge({}, this._defaults(), config);
     this._tf = this._config.terraform;
     this._resource = false;
@@ -68,7 +69,7 @@ class Terraform {
    * @returns {String}
    */
   getBinary() {
-    return path.join(Terraform.THUB_HOME, this.getVersion(), 'terraform');
+    return path.join(Terraform.THUB_HOME, 'terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -230,7 +231,7 @@ class Terraform {
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list']).then(result => {
-      let action = regex.test(result.stdout.toString()) ? 'select' : 'new';
+      let action = regex.test(result.toString()) ? 'select' : 'new';
       let stateDir = path.join(this.getRoot(), 'terraform.tfstate.d');
 
       if (fs.existsSync(stateDir)) {
@@ -275,10 +276,12 @@ class Terraform {
       });
     } else if (fs.existsSync(planPath)) {
       if (!this._isRemoteState) {
-        options['-state-out'] = statePath;
+        Object.assign(options, this._varFilesOption(), {
+          '-state-out': statePath
+        });
       }
 
-      args.push(planPath);
+      // args.push(planPath);
     }
 
     return this.run('apply', [...args, ...this._optsToArgs(options)]);
@@ -320,7 +323,8 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    return this._spawn(this.getBinary(), [cmd, ...args, '-no-color'], {
+    console.log(`[${this.getName()}]`, this.getBinary(), cmd, '-no-color', ...args);
+    return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
       cwd: this.getRoot(),
       shell: true
@@ -348,19 +352,22 @@ class Terraform {
    * @param {String} command
    * @param {Array} args
    * @param {Object} options
-   * @param {*} logger
    * @returns {Promise}
    * @private
    */
-  _spawn(command, args, options, logger = console) {
+  _spawn(command, args, options) {
+    let stdout = [];
     const prefix = `[${this.getName()}]`;
-    const promise = spawn(command, args, {...options, capture: ['stdout', 'stderr']});
+    const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stdout.on('data', data => logger.log(prefix, data.toString()));
-    child.stderr.on('data', error => logger.error(prefix, error.toString()));
+    child.stderr.on('data', data => this.logger.log(prefix, data.toString()));
+    child.stdout.on('data', data => {
+      stdout.push(data);
+      this.logger.log(prefix, data.toString());
+    });
 
-    return promise;
+    return promise.then(() => Buffer.concat(stdout));
   }
 
   /**
@@ -378,6 +385,7 @@ class Terraform {
   }
 
   /**
+   * // @todo move to a global config?
    * @returns {String}
    */
   static get THUB_HOME() {

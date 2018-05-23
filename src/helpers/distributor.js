@@ -13,7 +13,7 @@ class Distributor {
     this._config = config;
     this._actions = actions;
     this._worker = path.join(__dirname, '../helpers/terraform-worker.js');
-    this._workerIds = [];
+    this._workersCount = 0;
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -37,8 +37,8 @@ class Distributor {
     let threadCfg = this._config[hash];
     let worker = cluster.fork({ TERRAFORM_ACTIONS: this._actions });
 
+    this._workersCount++;
     worker.send(threadCfg);
-    this._workerIds.push(worker.id);
   }
 
   /**
@@ -47,7 +47,6 @@ class Distributor {
   run() {
     let hashes = Object.keys(this._config);
     let threads = this._getThreadsCount();
-    let workerIds = [];
 
     return new Promise((resolve, reject) => {
       for (let i = 0; i < threads; i++) {
@@ -55,15 +54,13 @@ class Distributor {
       }
 
       cluster.on('message', (worker, data) => {
-        if (this._workerIds.includes(worker.id)) {
-          this._workerIds.splice(workerIds.indexOf(worker.id), 1);
-        }
+        this._workersCount--;
 
         if (data.isError) {
           return reject(this._handleError(data.error));
         }
 
-        if (this._workerIds.length === 0) {
+        if (this._workersCount === 0) {
           return resolve('Done');
         }
 
@@ -90,9 +87,7 @@ class Distributor {
       worker.kill();
     });
 
-    return (err.constructor === 'Error')
-      ? err
-      : new Error(`Worker error: ${JSON.stringify(err)}`);
+    return (err.constructor === 'Error') ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 }
 

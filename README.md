@@ -22,23 +22,7 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
 
 ## @todo
 
-- Fix `stdout` issue
-- Implement pre/post hooks
-```javascript
-  terraform.prepare()
-    .then(() => Promise.resolve()) // run pre-hook
-    .then(() => terraform.apply())
-    .then(() => Promise.resolve()) // run post-hook
-    .then(() => Promise.resolve('Done'));
-```
-```yml
-# config example
-hooks:
-  plan: 
-    before: './path/file.js'
-    after: './path/file.js'
-```
-- Move terraform binary version => `~/.terrahub/terraform/0.11.7/...`
-- Add hook templates to `~/.terrahub/hooks/...`
-- Add Empty `~/.terrahub/.terrahub.(yml|yaml|json)` (for now)
+- Add hook templates to `~/.terrahub/hooks/...` OR keep them internally?
 - Implement `--include === -i xxx,yyy,zzz` (use module.name)
+- Implement `State` class and refactor `Terraform` class
+- Add global config file (store all the constants) ???

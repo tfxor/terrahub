@@ -25,7 +25,6 @@ class InitCommand extends AbstractCommand {
       .run()
       .then(() => Promise.resolve('Done'));
   }
-
 }
 
 module.exports = InitCommand;

@@ -17,7 +17,8 @@ class Downloader {
    */
   download(version) {
     const url = this._buildSrcUrl(version);
-    const binaryDir = path.join(os.homedir(), '.terrahub', version);
+    // @todo move to a global config?
+    const binaryDir = path.join(os.homedir(), '.terrahub', 'terraform', version);
 
     return fse
       .ensureDir(binaryDir)

@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const cluster = require('cluster');
 const Terraform = require('../helpers/terraform');
 const { promiseSeries } = require('../helpers/util');
@@ -13,14 +14,45 @@ function getActions() {
 }
 
 /**
+ * Require hook module
  * @param {Object} config
- * @returns {*}
+ * @param {String} action
+ * @param {String} hook
+ * @returns {Function}
  */
-function getTask(config) {
-  const terraform = new Terraform(config);
+function requireHook(config, action, hook) {
+  try {
+    return require(path.join(config.app, config.hooks[action][hook]));
+  } catch (err) {
+    return () => Promise.resolve();
+  }
+}
 
+/**
+ * @param {Object} config
+ * @param {String} action
+ * @returns {Promise|PromiseLike}
+ */
+function getTask(config, action) {
+  const terraform = new Terraform(config);
+  const afterHook = requireHook(config, action, 'after');
+  const beforeHook = requireHook(config, action, 'before');
+
+  return beforeHook(config)
+    .then(() => terraform[action]())
+    .then(res => afterHook(config, res));
+}
+
+/**
+ * Get task with hooks (if enabled)
+ * @param {Object} config
+ * @returns {Function}
+ */
+function getTasks(config) {
   return () => {
-    return promiseSeries(getActions().map(action => terraform[action].bind(terraform)));
+    return promiseSeries(getActions().map(action => {
+      return () => getTask(config, action);
+    }));
   };
 }
 
@@ -29,15 +61,15 @@ function getTask(config) {
  * @param {Object[]} configs
  */
 function run(configs) {
-  promiseSeries(configs.map(config => getTask(config))).then(results => {
+  promiseSeries(configs.map(config => getTasks(config))).then(lastResult => {
     process.send({
       id: cluster.worker.id,
-      data: results,
+      data: lastResult,
       isError: false
     });
     process.exit(0);
   }).catch(error => {
-    // @todo remove it
+    // @todo remove it after stable release
     console.error('terraform-worker:', error);
 
     process.send({
