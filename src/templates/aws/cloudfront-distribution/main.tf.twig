@@ -1,20 +1,21 @@
 resource "random_string" "hash" {
-  length   = 16
-  special  = false
+  length  = 16
+  special = false
 }
 
 resource "aws_cloudfront_distribution" "{{ name }}" {
-  provider              = "aws.default"
+  provider = "aws.default"
+
   # top level
-  aliases               = ["${var.aliases}"]
-  cache_behavior        = ["${var.cache_behavior}"]
-  comment               = "${var.comment}"
-  custom_error_response = ["${var.custom_error_response}"]
-  default_root_object   = "${var.default_root_object}"
-  enabled               = "${var.enabled}"
-  is_ipv6_enabled       = "${var.is_ipv6_enabled}"
-  http_version          = "${var.http_version}"
-  price_class           = "${var.price_class}"
+  aliases                = ["${var.aliases}"]
+  ordered_cache_behavior = ["${var.ordered_cache_behavior}"]
+  comment                = "${var.comment}"
+  custom_error_response  = ["${var.custom_error_response}"]
+  default_root_object    = "${var.default_root_object}"
+  enabled                = "${var.enabled}"
+  is_ipv6_enabled        = "${var.is_ipv6_enabled}"
+  http_version           = "${var.http_version}"
+  price_class            = "${var.price_class}"
 
   # cache behavior
   default_cache_behavior {
@@ -61,7 +62,7 @@ resource "aws_cloudfront_distribution" "{{ name }}" {
       origin_read_timeout      = "${var.origin_read_timeout}"
     }
   }
-
+  
   # restrictions
   restrictions {
     geo_restriction {
