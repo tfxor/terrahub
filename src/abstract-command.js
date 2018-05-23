@@ -83,7 +83,9 @@ class AbstractCommand {
   getOption(name) {
     const option = this._options[name];
 
-    return this._input[option.name] || this._input[option.shortcut] || option.defaultValue;
+    return option
+      ? this._input[option.name] || this._input[option.shortcut] || option.defaultValue
+      : undefined;
   }
 
   /**
@@ -126,7 +128,7 @@ class AbstractCommand {
 
   /**
    * Get list of configuration files
-   * @param {*} dir
+   * @param {String} dir
    * @returns {String[]}
    */
   listConfigs(dir) {
@@ -142,6 +144,15 @@ class AbstractCommand {
   getConfig() {
     if (!this._config) {
       this._config = this._configLoader.getFullConfig();
+      // const include = this.getOption('include');
+      //
+      // if (include) {
+      //   Object.keys(this._config).forEach(hash => {
+      //     if (!include.includes(this._config[hash].name)) {
+      //       delete this._config[hash];
+      //     }
+      //   });
+      // }
     }
 
     return this._config;

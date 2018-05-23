@@ -268,6 +268,7 @@ class Terraform {
     let statePath = this._statePath();
     let backupState = this._statePath(`${ new Date().getTime() }.backup`);
 
+    // @todo refactor this!
     if (!this._isRemoteState && fs.existsSync(statePath)) {
       Object.assign(options, this._varFilesOption(), {
         '-state': statePath,
@@ -280,7 +281,6 @@ class Terraform {
           '-state-out': statePath
         });
       }
-
       // args.push(planPath);
     }
 
@@ -323,7 +323,8 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    console.log(`[${this.getName()}]`, this.getBinary(), cmd, '-no-color', ...args);
+    this.logger.log(`[${this.getName()}]`, 'terraform', cmd, ...args);
+
     return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
       cwd: this.getRoot(),
@@ -361,7 +362,7 @@ class Terraform {
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => this.logger.log(prefix, data.toString()));
+    child.stderr.on('data', data => this.logger.log(prefix, '!', data.toString()));
     child.stdout.on('data', data => {
       stdout.push(data);
       this.logger.log(prefix, data.toString());
@@ -385,7 +386,7 @@ class Terraform {
   }
 
   /**
-   * // @todo move to a global config?
+   * // @todo move to a global config!
    * @returns {String}
    */
   static get THUB_HOME() {
