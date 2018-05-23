@@ -276,10 +276,12 @@ class Terraform {
       });
     } else if (fs.existsSync(planPath)) {
       if (!this._isRemoteState) {
-        options['-state-out'] = statePath;
+        Object.assign(options, this._varFilesOption(), {
+          '-state-out': statePath
+        });
       }
 
-      args.push(planPath);
+      // args.push(planPath);
     }
 
     return this.run('apply', [...args, ...this._optsToArgs(options)]);
@@ -321,7 +323,8 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    return this._spawn(this.getBinary(), [cmd, ...args, '-no-color'], {
+    console.log(`[${this.getName()}]`, this.getBinary(), cmd, '-no-color', ...args);
+    return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
       cwd: this.getRoot(),
       shell: true
