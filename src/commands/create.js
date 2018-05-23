@@ -30,9 +30,11 @@ class CreateCommand extends AbstractCommand {
     const templatePath = this._getTemplatePath();
     const directory = path.resolve(this.getOption('directory'));
 
-    if (!force && fs.existsSync(directory)) {
-      return Promise.resolve();
-    }
+    // if (!force && fs.existsSync(directory)) {
+    //   console.log('err');
+    //
+    //   return Promise.resolve();
+    // }
 
     return new Promise((resolve, reject) => {
       fs.readdir(templatePath, (err, data) => {
@@ -41,7 +43,7 @@ class CreateCommand extends AbstractCommand {
     }).then(data => {
       const promises = data.map(file => {
         const twigReg = /\.twig$/;
-        const outFile = path.join(directory, file);
+        const outFile = path.join(directory, name, file);
         const srcFile = path.join(templatePath, file);
 
         return twigReg.test(srcFile)
@@ -58,7 +60,8 @@ class CreateCommand extends AbstractCommand {
    * @private
    */
   _getTemplatePath() {
-    const { provider } = this.getConfig();
+    // const { provider } = this.getConfig();
+    const provider = 'aws';
     const template = this.getOption('template');
     const mappingPath = path.join(__dirname, '../templates/mapping.json');
     const mapping = require(mappingPath)[provider];

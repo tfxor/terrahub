@@ -22,7 +22,10 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
 
 ## @todo
 
-- Add hook templates to `~/.terrahub/hooks/...` OR keep them internally?
-- Implement `--include === -i xxx,yyy,zzz` (use module.name)
+- Hardcode provider
+- Fix `--force` parameter
+- Generate template into `--name` subdirectory
+- Add hook templates to `~/.terrahub/hooks/...` OR keep them internally? KEEP INTERNALLY
+- Implement `--include === -i xxx,yyy,zzz` (use module.name) - ADD OPTION PARSER
 - Implement `State` class and refactor `Terraform` class
 - Add global config file (store all the constants) ???
