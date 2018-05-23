@@ -1,6 +1,7 @@
 # TerraHub
 
-TerraHub is a Terraform-centric devops tool that helps provision and manage large amount of cloud resources and cloud services across cloud providers. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
+TerraHub is a Terraform-centric devops tool that helps provision and manage large amount of cloud resources and cloud
+ services across cloud providers. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
 
 ## Commands
 
@@ -10,22 +11,23 @@ TerraHub is a Terraform-centric devops tool that helps provision and manage larg
   create ............ create terraform code from predefined templates
   deploy ............ deploy software from predefined deploy.yml config files
   destroy ........... run `terraform destroy` across multiple terraform scripts
+  graph ............. BTU...
   init .............. run `terraform init` across multiple terraform scripts
   list .............. list cloud accounts > regions > applications > services > resources
   plan .............. run `terraform plan` across multiple terraform scripts
+  project ........... BTU...
+  run ............... BTU...
   refresh ........... run `terraform refresh` across multiple terraform scripts
   show .............. run `terraform show` across multiple terraform scripts
-  workspace .........
-  run ...............
-  project ...........
+  workspace ......... BTU...
 ```
 
 ## @todo
 
-- Hardcode provider
+- Generate into template folder `.terrahub.yml`
+- Fix provider issue
 - Fix `--force` parameter
-- Generate template into `--name` subdirectory
-- Add hook templates to `~/.terrahub/hooks/...` OR keep them internally? KEEP INTERNALLY
+- Keep hooks internally!
 - Implement `--include === -i xxx,yyy,zzz` (use module.name) - ADD OPTION PARSER
 - Implement `State` class and refactor `Terraform` class
-- Add global config file (store all the constants) ???
+- Add global config file (store all the constants)
