@@ -268,6 +268,7 @@ class Terraform {
     let statePath = this._statePath();
     let backupState = this._statePath(`${ new Date().getTime() }.backup`);
 
+    // @todo refactor this!
     if (!this._isRemoteState && fs.existsSync(statePath)) {
       Object.assign(options, this._varFilesOption(), {
         '-state': statePath,
@@ -276,10 +277,11 @@ class Terraform {
       });
     } else if (fs.existsSync(planPath)) {
       if (!this._isRemoteState) {
-        options['-state-out'] = statePath;
+        Object.assign(options, this._varFilesOption(), {
+          '-state-out': statePath
+        });
       }
-
-      args.push(planPath);
+      // args.push(planPath);
     }
 
     return this.run('apply', [...args, ...this._optsToArgs(options)]);
@@ -321,7 +323,9 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    return this._spawn(this.getBinary(), [cmd, ...args, '-no-color'], {
+    this.logger.log(`[${this.getName()}]`, 'terraform', cmd, ...args);
+
+    return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
       cwd: this.getRoot(),
       shell: true
@@ -358,7 +362,7 @@ class Terraform {
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => this.logger.log(prefix, data.toString()));
+    child.stderr.on('data', data => this.logger.log(prefix, '!', data.toString()));
     child.stdout.on('data', data => {
       stdout.push(data);
       this.logger.log(prefix, data.toString());
@@ -382,7 +386,7 @@ class Terraform {
   }
 
   /**
-   * // @todo move to a global config?
+   * // @todo move to a global config!
    * @returns {String}
    */
   static get THUB_HOME() {

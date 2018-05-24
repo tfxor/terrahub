@@ -11,6 +11,7 @@ class InitCommand extends AbstractCommand {
     this
       .setName('init')
       .setDescription('Run `terraform init` across multiple terraform scripts')
+      // .addOption('include', 'i', 'Run only selected modules', false)
     ;
   }
 
