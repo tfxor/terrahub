@@ -7,7 +7,7 @@ Provides an API Gateway API Key.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |api_gateway_key_name|The name of the API key.|string|{{ name }}|No|
-|api_gateway_key_description|The API key description.|string|Managed by Terraform Plus|No|
+|api_gateway_key_description|The API key description.|string|Managed by Terrahub|No|
 |api_gateway_key_enabled|Specifies whether the API key can be used by callers.|boolean|true|No|
 
 

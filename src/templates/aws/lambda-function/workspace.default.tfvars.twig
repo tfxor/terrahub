@@ -11,7 +11,7 @@ region     = "us-east-1"
 #############
 lambda_function_name                  = "{{ name }}"
 lambda_iam_role                       = "{{ name }}"
-lambda_description                    = "Managed by Terraform Plus"
+lambda_description                    = "Managed by Terrahub"
 lambda_memory_size                    = 128
 lambda_runtime                        = "nodejs6.10"
 lambda_timeout                        = 3
@@ -36,7 +36,7 @@ lambda_security_group_ids = []
 # tags #
 ########
 lambda_tag_name        = "{{ name }}"
-lambda_tag_description = "Managed by Terraform Plus"
+lambda_tag_description = "Managed by Terrahub"
 lambda_tag_environment = "default"
 
 ##########
