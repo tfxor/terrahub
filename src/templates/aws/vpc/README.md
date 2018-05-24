@@ -14,7 +14,7 @@ Provides an VPC resource.
 |vpc_enable_classiclink_dns_support|A boolean flag to enable/disable ClassicLink DNS Support for the VPC. Only valid in regions and accounts that support EC2 Classic.|string|false|No|
 |vpc_assign_generated_ipv6_cidr_block|Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.|string|false|No|
 |vpc_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
-|vpc_tag_description|A description tag to assign to the resource.|string|Managed by Terraform Plus|No|
+|vpc_tag_description|A description tag to assign to the resource.|string|Managed by Terrahub|No|
 |vpc_tag_environment|A environment tag to assign to the resource.|string|default|No|
 
 ## output parameters

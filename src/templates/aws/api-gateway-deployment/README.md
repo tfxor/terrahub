@@ -10,8 +10,8 @@ Provides an API Gateway Deployment.
 |region|This id of AWS region.|string||Yes|
 |api_gateway_rest_api_id|The ID of the associated REST API.|int||Yes|
 |api_gateway_deployment_stage_name|The name of the stage.|string||Yes|
-|api_gateway_deployment_description|The description of the deployment.|string|Managed by Terraform Plus|No|
-|api_gateway_deployment_stage_description|The description of the stage.|string|Managed by Terraform Plus|No|
+|api_gateway_deployment_description|The description of the deployment.|string|Managed by Terrahub|No|
+|api_gateway_deployment_stage_description|The description of the stage.|string|Managed by Terrahub|No|
 |api_gateway_deployment_variables|A map that defines variables for the stag.|map||No|
 
 
