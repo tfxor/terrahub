@@ -9,7 +9,7 @@ Creates an Amazon CloudFront web distribution.
 |account_id|The id of AWS account.|string||Yes|
 |region|This id of AWS region.|string||Yes|
 |aliases|Extra CNAMEs (alternate domain names), if any, for this distribution.|list|[]|No|
-|cache_behavior|List of cache behaviors to implement.|list|[]|No|
+|ordered_cache_behavior|List of cache behaviors to implement.|list|[]|No|
 |comment|Any comments you want to include about the distribution.|string||No|
 |custom_error_response|One or more custom error response elements (multiples allowed).|list|[]|No|
 |default_root_object|The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL.|string|index.html|No|
