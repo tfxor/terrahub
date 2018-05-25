@@ -174,7 +174,7 @@ class Terraform {
     const statePath = path.join(this.getRoot(), '.terraform', Terraform.STATE);
 
     if (fs.existsSync(statePath)) {
-      const state = require(statePath);
+      const state = fse.readJsonSync(statePath);
       this._isRemoteState = state.hasOwnProperty('backend')
         ? state['backend'].hasOwnProperty('type')
         : false;
