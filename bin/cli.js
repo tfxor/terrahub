@@ -3,11 +3,12 @@
 'use strict';
 
 const semver = require('semver');
+const logger = require('../src/helpers/logger');
 const { engines } = require('../package');
 const CommandFactory = require('../src/command-factory');
 
 if (!semver.satisfies(process.version, engines.node)) {
-  console.log('Required Node version is %s, current %s', engines.node, process.version);
+  logger.info('Required Node version is %s, current %s', engines.node, process.version);
   process.exit(1);
 }
 
@@ -17,10 +18,10 @@ command
   .validate()
   .then(() => command.run())
   .then(message => {
-    console.log(message);
+    if (message) logger.log(message);
     process.exit(0);
   })
   .catch(err => {
-    console.error(err.message);
+    logger.error(err.message ? err.message : 'Error occurred');
     process.exit(1);
   });

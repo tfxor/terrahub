@@ -1,5 +1,8 @@
 'use strict';
 
+const fse = require('fs-extra');
+const Twig = require('twig');
+
 /**
  * @param {String} text
  * @returns {String}
@@ -25,10 +28,33 @@ function promiseSeries(promises) {
 }
 
 /**
+ * @param {String} srcFile
+ * @param {Object} vars
+ * @param {String} outFile
+ * @returns {Promise}
+ */
+function renderTwig(srcFile, vars, outFile = undefined) {
+  return new Promise((resolve, reject) => {
+    Twig.renderFile(srcFile, vars, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+
+      if (!outFile) {
+        return resolve(data);
+      }
+
+      return fse.outputFile(outFile, data, 'utf-8')
+    });
+  });
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toBase64,
   fromBase64,
+  renderTwig,
   promiseSeries
 };

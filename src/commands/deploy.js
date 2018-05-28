@@ -2,8 +2,6 @@
 
 const AbstractCommand = require('../abstract-command');
 
-class DeployCommand extends AbstractCommand {
-
-}
+class DeployCommand extends AbstractCommand {}
 
 module.exports = DeployCommand;

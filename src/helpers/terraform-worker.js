@@ -22,7 +22,12 @@ function getActions() {
  */
 function requireHook(config, action, hook) {
   try {
-    return require(path.join(config.app, config.hooks[action][hook]));
+    const hookPath = config.hooks[action][hook];
+    const fullPath = path.isAbsolute(hookPath)
+      ? hookPath
+      : path.join(config.app, config.hooks[action][hook]);
+
+    return require(fullPath);
   } catch (err) {
     return () => Promise.resolve();
   }

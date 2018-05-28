@@ -13,7 +13,7 @@ class GraphCommand extends AbstractCommand {
     this
       .setName('graph')
       .setDescription('Build terraform modules tree')
-      .addOption('directory', 'd', 'Path to start building a graph (default: cwd)', process.cwd())
+      .addOption('directory', 'd', 'Path to start building a graph (default: cwd)', String, process.cwd())
     ;
   }
 
@@ -29,7 +29,7 @@ class GraphCommand extends AbstractCommand {
       accessor.set(configPath, null);
     });
 
-    console.log(treeify.asTree(accessor.getRaw(), false));
+    this.logger.raw(treeify.asTree(accessor.getRaw(), false));
 
     return Promise.resolve();
   }

@@ -127,15 +127,22 @@ class ConfigLoader {
    * @private
    */
   _defaults() {
+    const hooks = path.join(__dirname, 'templates/hooks');
+
     return {
       app: this.appPath(),
       parent: null,
       children: [],
       hooks: {
-        plan: {},
-        apply: {},
-        destroy: {}
-      },
+        plan: {
+          before: `${hooks}/plan/before.js`,
+          after: `${hooks}/plan/after.js`
+        },
+        apply: {
+          before: `${hooks}/apply/before.js`,
+          after: `${hooks}/apply/after.js`
+        }
+      }
     }
   }
 
