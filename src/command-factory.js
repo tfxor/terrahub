@@ -8,6 +8,7 @@ class CommandFactory {
   /**
    * Command create
    * @param {Array} argv
+   * @returns {*}
    */
   static create(argv) {
     const [command, ...args] = argv.slice(2);

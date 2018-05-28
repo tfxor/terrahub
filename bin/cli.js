@@ -18,7 +18,9 @@ command
   .validate()
   .then(() => command.run())
   .then(message => {
-    if (message) logger.log(message);
+    if (message) {
+      logger.log(message);
+    }
     process.exit(0);
   })
   .catch(err => {

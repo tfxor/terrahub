@@ -30,10 +30,10 @@ function promiseSeries(promises) {
 /**
  * @param {String} srcFile
  * @param {Object} vars
- * @param {String} outFile
+ * @param {*} outFile
  * @returns {Promise}
  */
-function renderTwig(srcFile, vars, outFile = undefined) {
+function renderTwig(srcFile, vars, outFile = false) {
   return new Promise((resolve, reject) => {
     Twig.renderFile(srcFile, vars, (err, data) => {
       if (err) {
@@ -44,7 +44,7 @@ function renderTwig(srcFile, vars, outFile = undefined) {
         return resolve(data);
       }
 
-      return fse.outputFile(outFile, data, 'utf-8')
+      return fse.outputFile(outFile, data, 'utf-8');
     });
   });
 }

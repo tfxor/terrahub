@@ -1,7 +1,6 @@
 'use strict';
 
 const fse = require('fs-extra');
-const path = require('path');
 
 /**
  * @todo Implement this class in order to cleanup terraform class

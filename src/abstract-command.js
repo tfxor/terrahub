@@ -111,6 +111,7 @@ class AbstractCommand {
 
   /**
    * Abstract run method
+   * @returns {Promise}
    */
   run() {
     return Promise.reject(new Error('Implement run() method...'));

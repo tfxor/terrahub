@@ -102,7 +102,7 @@ class Terraform {
   }
 
   /**
-   * @param suffix
+   * @param {String} suffix
    * @returns {String}
    * @private
    */

@@ -92,6 +92,9 @@ function run(configs) {
 process.on('message', config => {
   let queue = [];
 
+  /**
+   * @param {Object} cfg
+   */
   function handle(cfg) {
     queue.push(cfg);
     cfg.children.forEach(child => handle(child));

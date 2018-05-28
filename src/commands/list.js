@@ -33,6 +33,11 @@ class ListCommand extends AbstractCommand {
           Values: ['2e4696b0']
         }]
       };
+
+      /**
+       * @param {String} arn
+       * @returns {{resource: string, region: string, accountId: string, name: T}}
+       */
       function parse(arn) {
         let parts = arn.split(':');
         let name = parts.pop().split('/').pop();
@@ -44,12 +49,16 @@ class ListCommand extends AbstractCommand {
       console.log('##################');
       console.log('REGION\n');
 
+      /**
+       * @param {String} token
+       * @returns {Promise}
+       */
       function getPage(token = '') {
         params.PaginationToken = token;
 
         return tagging.getResources(params).promise().then(res => {
           res.ResourceTagMappingList.map(resource => resource.ResourceARN).forEach(arn => {
-            let { accountId, resource, name } = parse(arn);
+            let { resource, name } = parse(arn);
             accessor.set(`${resource}.${name}`, null);
           });
 
@@ -80,7 +89,7 @@ class ListCommand extends AbstractCommand {
           console.log('\r')
         });
         let tmp = [];
-        tmp.push(data)
+        tmp.push(data);
         return Promise.resolve(tmp);
       }).then(ress => {
         let req = https.get('https://api-dev.terrahub.io/v1/cnci/terraform/list', (res) => {

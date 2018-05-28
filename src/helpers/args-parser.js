@@ -14,8 +14,8 @@ class ArgsParser {
 
   /**
    * Convert complex options
-   * @param type
-   * @param value
+   * @param {Boolean|Number|Array|Object} type
+   * @param {String} value
    * @returns {*}
    */
   static convert(type, value) {
