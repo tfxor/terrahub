@@ -44,10 +44,8 @@ TerraHub is a Terraform centric devops tool that helps provision and manage larg
 
 ## @todo
 
-- Generate into template folder `.terrahub.yml`
-- Fix provider issue
-- Fix `--force` parameter
-- Keep hooks internally!
+- THB_CONFIG_FORMAT (json|yml, default json)
+- Fix provider issue (project configuration block)
 - Implement `--include === -i xxx,yyy,zzz` (use module.name) - ADD OPTION PARSER
 - Implement `State` class and refactor `Terraform` class
 - Add global config file (store all the constants)

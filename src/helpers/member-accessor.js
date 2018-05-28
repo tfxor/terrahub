@@ -3,6 +3,8 @@
 class MemberAccessor {
   /**
    * Constructor
+   * @param {Object} object
+   * @param {String} separator
    */
   constructor(object, separator = '.') {
     this._object = object;

@@ -6,6 +6,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const merge = require('lodash.merge');
 const semver = require('semver');
+const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
 
@@ -14,7 +15,6 @@ class Terraform {
    * @param {Object} config
    */
   constructor(config) {
-    this.logger = console;
     this._config = merge({}, this._defaults(), config);
     this._tf = this._config.terraform;
     this._resource = false;
@@ -102,7 +102,7 @@ class Terraform {
   }
 
   /**
-   * @param suffix
+   * @param {String} suffix
    * @returns {String}
    * @private
    */
@@ -323,7 +323,7 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    this.logger.log(`[${this.getName()}]`, 'terraform', cmd, ...args);
+    logger.info(`[${this.getName()}]`, 'terraform', cmd, '-no-color', ...args);
 
     return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
@@ -362,10 +362,10 @@ class Terraform {
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => this.logger.log(prefix, '!', data.toString()));
+    child.stderr.on('data', data => logger.error(prefix, data.toString()));
     child.stdout.on('data', data => {
       stdout.push(data);
-      this.logger.log(prefix, data.toString());
+      logger.raw(prefix, data.toString());
     });
 
     return promise.then(() => Buffer.concat(stdout));

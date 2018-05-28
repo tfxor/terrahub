@@ -22,7 +22,12 @@ function getActions() {
  */
 function requireHook(config, action, hook) {
   try {
-    return require(path.join(config.app, config.hooks[action][hook]));
+    const hookPath = config.hooks[action][hook];
+    const fullPath = path.isAbsolute(hookPath)
+      ? hookPath
+      : path.join(config.app, config.hooks[action][hook]);
+
+    return require(fullPath);
   } catch (err) {
     return () => Promise.resolve();
   }
@@ -87,6 +92,9 @@ function run(configs) {
 process.on('message', config => {
   let queue = [];
 
+  /**
+   * @param {Object} cfg
+   */
   function handle(cfg) {
     queue.push(cfg);
     cfg.children.forEach(child => handle(child));

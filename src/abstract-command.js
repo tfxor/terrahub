@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const Args = require('../src/helpers/args-parser');
+const logger = require('../src/helpers/logger');
 const ConfigLoader = require('./config-loader');
 const { toBase64 } = require('./helpers/util');
 const { version, description } = require('../package');
@@ -23,6 +25,14 @@ class AbstractCommand {
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
+  }
+
+  /**
+   * @todo pass into constructor and configure verbosity
+   * @returns {Logger}
+   */
+  get logger() {
+    return logger;
   }
 
   /**
@@ -66,11 +76,12 @@ class AbstractCommand {
    * @param {String} name
    * @param {String} shortcut
    * @param {String} description
+   * @param {Object} type
    * @param {*} defaultValue
    * @returns {AbstractCommand}
    */
-  addOption(name, shortcut, description, defaultValue = undefined) {
-    this._options[name] = { name, shortcut, description, defaultValue };
+  addOption(name, shortcut, description, type = String, defaultValue = undefined) {
+    this._options[name] = { name, shortcut, description, type, defaultValue };
 
     return this;
   }
@@ -81,11 +92,14 @@ class AbstractCommand {
    * @returns {*}
    */
   getOption(name) {
-    const option = this._options[name];
+    if (!this._options.hasOwnProperty(name)) {
+      return undefined;
+    }
 
-    return option
-      ? this._input[option.name] || this._input[option.shortcut] || option.defaultValue
-      : undefined;
+    const option = this._options[name];
+    const rawValue = this._input[option.name] || this._input[option.shortcut] || option.defaultValue;
+
+    return Args.convert(option.type, rawValue);
   }
 
   /**
@@ -97,6 +111,7 @@ class AbstractCommand {
 
   /**
    * Abstract run method
+   * @returns {Promise}
    */
   run() {
     return Promise.reject(new Error('Implement run() method...'));
@@ -108,9 +123,10 @@ class AbstractCommand {
    */
   validate() {
     if (!this._configLoader.isConfigValid()) {
-      return Promise.reject(
-        new Error('Configuration file not found, please go to project root folder, or initialize it')
-      );
+      // @todo revert back when fixed config loader
+      // return Promise.reject(
+      //   new Error('Configuration file not found, please go to project root folder, or initialize it')
+      // );
     }
 
     const required = Object.keys(this._options).filter(name => {
@@ -189,7 +205,7 @@ class AbstractCommand {
       description
     ];
 
-    console.log(template, ...variables);
+    logger.raw(template, ...variables);
   }
 }
 
