@@ -16,7 +16,7 @@ Create a DynamoDB table resource.
 |dynamodb_atribute_name|The name of the attribute.|string||Yes|
 |dynamodb_atribute_type|One of: S, N, or B for (S)tring, (N)umber or (B)inary data.|string||Yes|
 |dynamodb_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|dynamodb_tag_description|The tag that will be applied to cloud resource.|string|Managed by Terraform Plus|No|
+|dynamodb_tag_description|The tag that will be applied to cloud resource.|string|Managed by Terrahub|No|
 
 
 ## output parameters

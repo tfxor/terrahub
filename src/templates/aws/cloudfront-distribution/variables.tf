@@ -20,7 +20,7 @@ variable "aliases" {
   type        = "list"
 }
 
-variable "cache_behavior" {
+variable "ordered_cache_behavior" {
   description = "List of cache behaviors to implement"
   type        = "list"
 }
