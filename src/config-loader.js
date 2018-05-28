@@ -1,12 +1,12 @@
 'use strict';
 
-const os = require('os');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const yaml = require('js-yaml');
 const merge = require('lodash.merge');
+const { config, thbPath, templates } = require('./parameters');
 const { toBase64 } = require('./helpers/util');
 
 class ConfigLoader {
@@ -17,6 +17,7 @@ class ConfigLoader {
     this._config = {};
     this._globalConfig = {};
     this._rootPath = process.cwd();
+    this._appConfig = {};
     this._rootConfig = {};
     this._currentPath = process.cwd();
     this._currentConfig = {};
@@ -34,14 +35,12 @@ class ConfigLoader {
    * @private
    */
   _readGlobal() {
-    // @todo move to a global config?
-    const globalPath = path.join(os.homedir(), '.terrahub');
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', globalPath);
+    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', config.home);
 
     if (configFile) {
       this._globalConfig = ConfigLoader.readConfig(configFile);
     } else {
-      fse.outputJsonSync(path.join(globalPath, '.terrahub.json'), {});
+      fse.outputJsonSync(thbPath(config.fileName), {});
     }
   }
 
@@ -90,7 +89,7 @@ class ConfigLoader {
   listConfigs(dir = null) {
     const cwd = dir || this.appPath();
 
-    return this._find('**/.terrahub.+(json|yml|yaml)', cwd)
+    return this._find('**/.terrahub.+(json|yml|yaml)', cwd);
   }
 
   /**
@@ -127,7 +126,7 @@ class ConfigLoader {
    * @private
    */
   _defaults() {
-    const hooks = path.join(__dirname, 'templates/hooks');
+    const hooks = templates.hooks;
 
     return {
       app: this.appPath(),

@@ -3,6 +3,7 @@
 const path = require('path');
 const { renderTwig } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
+const { templates, config } = require('../parameters');
 
 class ProjectCommand extends AbstractCommand {
   /**
@@ -22,12 +23,11 @@ class ProjectCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    const twigReg = /\.twig$/;
     const name = this.getOption('name');
     const provider = this.getOption('provider');
     const directory = path.resolve(this.getOption('directory'), name);
-    const srcFile = path.join(__dirname, '../templates/configs/project', '.terrahub.yml.twig');
-    const outFile = path.join(directory, path.basename(srcFile).replace(twigReg, ''));
+    const srcFile = path.join(templates.configs, `project/.terrahub.${config.format}.twig`);
+    const outFile = path.join(directory, `.terrahub.${config.format}`);
 
     return renderTwig(srcFile, { name, provider }, outFile).then(() => Promise.resolve('Done'));
   }

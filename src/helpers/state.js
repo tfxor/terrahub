@@ -12,6 +12,16 @@ class State {
    */
   constructor(root) {
     this._root = root;
+    this._backupPath = this._path(`${ new Date().getTime() }.backup`);
+  }
+
+  /**
+   * @param {String} suffix
+   * @returns {String}
+   * @private
+   */
+  _path(suffix = '') {
+    return [State.NAME].concat(suffix).filter(Boolean).join('.');
   }
 
   /**
@@ -36,7 +46,7 @@ class State {
    * @returns {Promise}
    */
   getState() {
-    return fse.readJson(this._path);
+    return fse.readJson(this.getPath());
   }
 
   /**
@@ -58,6 +68,13 @@ class State {
    */
   static get NAME() {
     return 'terraform.tfstate';
+  }
+
+  /**
+   * @returns {String}
+   */
+  static get DIR() {
+    return 'terraform.tfstate.d';
   }
 }
 

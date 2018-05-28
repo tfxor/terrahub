@@ -1,6 +1,5 @@
 'use strict';
 
-const os = require('os');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
@@ -9,6 +8,7 @@ const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
+const { thbPath } = require('../parameters');
 
 class Terraform {
   /**
@@ -69,7 +69,7 @@ class Terraform {
    * @returns {String}
    */
   getBinary() {
-    return path.join(Terraform.THUB_HOME, 'terraform', this.getVersion(), 'terraform');
+    return thbPath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -383,14 +383,6 @@ class Terraform {
    */
   static get STATE() {
     return 'terraform.tfstate';
-  }
-
-  /**
-   * // @todo move to a global config!
-   * @returns {String}
-   */
-  static get THUB_HOME() {
-    return path.join(os.homedir(), '.terrahub');
   }
 }
 
