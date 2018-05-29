@@ -145,7 +145,7 @@ class ConfigLoader {
    * @returns {Number}
    */
   componentsCount() {
-    return Object.keys(this._config).length;
+    return Object.keys(this.getFullConfig()).length;
   }
 
   /**

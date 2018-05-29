@@ -16,6 +16,7 @@ class Logger {
   }
 
   /**
+   * @todo accept new Error too and show message on low verbosity and stack on high verbosity
    * @param {String} message
    */
   static error(...message) {

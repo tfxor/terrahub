@@ -1,9 +1,9 @@
 'use strict';
 
 const Distributor = require('../helpers/distributor');
-const AbstractCommand = require('../abstract-command');
+const TerraformCommand = require('../terraform-command');
 
-class WorkspaceCommand extends AbstractCommand {
+class WorkspaceCommand extends TerraformCommand {
   /**
    * Command configuration
    */

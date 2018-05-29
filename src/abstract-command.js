@@ -5,7 +5,6 @@ const path = require('path');
 const Args = require('../src/helpers/args-parser');
 const logger = require('../src/helpers/logger');
 const ConfigLoader = require('./config-loader');
-const { toBase64 } = require('./helpers/util');
 const { version, description } = require('../package');
 
 class AbstractCommand {
@@ -15,12 +14,12 @@ class AbstractCommand {
   constructor(input) {
     this._name = null;
     this._input = input;
-    this._config = null;
     this._options = {};
     this._description = null;
     this._configLoader = new ConfigLoader();
 
     this.configure();
+    this.initialize();
 
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
@@ -110,6 +109,11 @@ class AbstractCommand {
   }
 
   /**
+   * Abstract initialize method (optional)
+   */
+  initialize() {}
+
+  /**
    * Abstract run method
    * @returns {Promise}
    */
@@ -145,27 +149,11 @@ class AbstractCommand {
   }
 
   /**
-   * @todo --include === -i xxx,yyy,zzz
-   *       --exclude === -e xxx,yyy,zzz?
-   *       move to terraform-command.js?
-   * Get consolidated config
+   * Get full consolidated config
    * @returns {Object}
    */
   getConfig() {
-    if (!this._config) {
-      this._config = this._configLoader.getFullConfig();
-      // const include = this.getOption('include');
-      //
-      // if (include) {
-      //   Object.keys(this._config).forEach(hash => {
-      //     if (!include.includes(this._config[hash].name)) {
-      //       delete this._config[hash];
-      //     }
-      //   });
-      // }
-    }
-
-    return this._config;
+    return this._configLoader.getFullConfig();
   }
 
   /**
@@ -173,28 +161,6 @@ class AbstractCommand {
    */
   getProjectConfig() {
     return this._configLoader.getProjectConfig();
-  }
-
-  /**
-   * Get config tree
-   * @todo specific stuff should not be here
-   * @returns {Object}
-   */
-  getConfigTree() {
-    let tree = {};
-    let config = Object.assign({}, this.getConfig());
-
-    Object.keys(config).forEach(hash => {
-      let node = config[hash];
-
-      if (node.parent === null) {
-        tree[hash] = node;
-      } else {
-        config[toBase64(node.parent)].children.push(node);
-      }
-    });
-
-    return tree;
   }
 
   /**

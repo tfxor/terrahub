@@ -1,7 +1,7 @@
 'use strict';
 
-const AbstractCommand = require('../abstract-command');
+const TerraformCommand = require('../terraform-command');
 
-class ShowCommand extends AbstractCommand {}
+class ShowCommand extends TerraformCommand {}
 
 module.exports = ShowCommand;

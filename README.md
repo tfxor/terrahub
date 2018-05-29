@@ -1,6 +1,7 @@
 # TerraHub
 
-TerraHub is a Terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
+TerraHub is a Terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud 
+services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
 
 ## Example
 
@@ -44,8 +45,9 @@ TerraHub is a Terraform centric devops tool that helps provision and manage larg
 
 ## @todo
 
-- Implement `--include === -i xxx,yyy,zzz` (use module.name) - ADD OPTION PARSER
 - Implement `State` class and refactor `Terraform` class
 
 ## @toask
 - Graph command: components dependencies VS project tree?
+- Add project name into tag block of templates?
+- Do we need `--exclude === -e xxx,yyy,zzz`?
