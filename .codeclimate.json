@@ -1,0 +1,43 @@
+{
+  "version": "2",
+  "checks": {
+    "file-lines": {
+      "config": {
+        "threshold": 500
+      }
+    },
+    "method-complexity": {
+      "config": {
+        "threshold": 10
+      }
+    },
+    "method-lines": {
+      "config": {
+        "threshold": 100
+      }
+    }
+  },
+  "engines": {
+    "duplication": {
+      "enabled": true,
+      "config": {
+        "config": ".eslintrc",
+        "languages": {
+          "javascript": {
+            "mass_threshold": 500
+          }
+        }
+      },
+      "exclude_paths": [
+        "node_modules/"
+      ]
+    },
+    "eslint": {
+      "enabled": true,
+      "channel": "eslint-2"
+    },
+    "fixme": {
+      "enabled": true
+    }
+  }
+}

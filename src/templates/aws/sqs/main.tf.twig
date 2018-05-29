@@ -1,0 +1,6 @@
+resource "aws_sqs_queue" "{{ name }}" {
+  provider                          = "aws.default"
+  name                              = "${var.sqs_queue_name}"
+  kms_master_key_id                 = "${var.sqs_queue_kms_master_key_id}"
+  kms_data_key_reuse_period_seconds = "${var.sqs_queue_kms_data_key_reuse_period_seconds}"
+}

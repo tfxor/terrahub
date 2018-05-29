@@ -1,10 +1,11 @@
 {
   "name": "terrahub",
   "version": "0.0.1",
-  "description": "TerraHub",
-  "main": "bin/index.js",
-  "scripts": {
-    "test": "echo \"Hello Test!\""
+  "description": "TerraHub is a Terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.",
+  "preferGlobal": true,
+  "bin": {
+    "terrahub": "./bin/cli.js",
+    "thb": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,25 @@
   ],
   "author": "Mitoc Group",
   "license": "MIT",
+  "homepage": "https://github.com/MitocGroup/terrahub#readme",
   "bugs": {
     "url": "https://github.com/MitocGroup/terrahub/issues"
   },
-  "homepage": "https://github.com/MitocGroup/terrahub#readme"
+  "engines": {
+    "node": ">=6.0",
+    "npm": ">=3.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.247.1",
+    "child-process-promise": "^2.2.1",
+    "download": "^7.0.0",
+    "fs-extra": "^6.0.1",
+    "glob": "^7.1.2",
+    "js-yaml": "^3.11.0",
+    "lodash.merge": "^4.6.1",
+    "minimist": "^1.2.0",
+    "semver": "^5.5.0",
+    "treeify": "^1.1.0",
+    "twig": "^1.11.0"
+  }
 }

@@ -1,0 +1,31 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id = "123456789012"
+
+region = "us-east-1"
+
+#############
+# top level #
+#############
+vpc_cidr_block = "10.0.0.0/16"
+
+vpc_instance_tenancy = "default"
+
+vpc_enable_dns_support = true
+
+vpc_enable_dns_hostnames = false
+
+vpc_enable_classiclink = false
+
+vpc_enable_classiclink_dns_support = false
+
+vpc_assign_generated_ipv6_cidr_block = false
+
+vpc_tag_name = "{{ name }}"
+
+vpc_tag_description = "Managed by Terrahub"
+
+vpc_tag_environment = "default"

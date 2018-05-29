@@ -1,0 +1,21 @@
+# Define list of variables to be output
+
+output "cognito_user_pool_name" {
+  value = "${aws_cognito_user_pool.{{ name }}.name}"
+}
+
+output "cognito_user_pool_id" {
+  value = "${aws_cognito_user_pool.{{ name }}.id}"
+}
+
+output "cognito_user_pool_arn" {
+  value = "${aws_cognito_user_pool.{{ name }}.arn}"
+}
+
+output "cognito_user_pool_creation_date" {
+  value = "${aws_cognito_user_pool.{{ name }}.creation_date}"
+}
+
+output "cognito_user_pool_last_modified_date" {
+  value = "${aws_cognito_user_pool.{{ name }}.last_modified_date}"
+}

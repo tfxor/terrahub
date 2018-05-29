@@ -1,0 +1,5 @@
+resource "aws_iam_role_policy_attachment" "{{ name }}" {
+  provider   = "aws.default"
+  role       = "${var.iam_role_name}"
+  policy_arn = "arn:aws:iam::${var.account_id}:policy/${var.policy_name}"
+}

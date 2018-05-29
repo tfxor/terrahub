@@ -1,0 +1,20 @@
+resource "aws_dynamodb_table" "{{ name }}" {
+  provider       = "aws.default"
+  name           = "${var.dynamodb_table_name}"
+  hash_key       = "${var.dynamodb_attribute_hash_key}"
+  read_capacity  = "${var.dynamodb_read_capacity}"
+  write_capacity = "${var.dynamodb_write_capacity}"
+  stream_enabled = "${var.dynamodb_stream_enabled}"
+
+  attribute {
+    name = "${var.dynamodb_attribute_hash_key}"
+    type = "${var.dynamodb_attribute_hash_type}"
+  }
+
+  tags {
+    Name        = "${var.dynamodb_tag_name}"
+    Description = "${var.dynamodb_tag_description}"
+    Environment = "${var.dynamodb_tag_environment}"
+    Codename    = "TFS"
+  }
+}

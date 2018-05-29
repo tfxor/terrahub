@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "route53_record_fqdn" {
+  value = "${aws_route53_record.{{ name }}.fqdn}"
+}
+
+output "route53_record_name" {
+  value = "${aws_route53_record.{{ name }}.name}"
+}
+
+output "route53_record_type" {
+  value = "${aws_route53_record.{{ name }}.type}"
+}
+
+output "route53_record_records" {
+  value = "${aws_route53_record.{{ name }}.records}"
+}

@@ -1,0 +1,12 @@
+# Define list of variables to be output
+output "iam_user_arn" {
+  value = "${aws_iam_user.{{ name }}.arn}"
+}
+
+output "iam_user_name" {
+  value = "${aws_iam_user.{{ name }}.name}"
+}
+
+output "iam_user_unique_id" {
+  value = "${aws_iam_user.{{ name }}.unique_id}"
+}
