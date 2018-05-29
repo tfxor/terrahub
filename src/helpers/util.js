@@ -44,7 +44,9 @@ function renderTwig(srcFile, vars, outFile = false) {
         return resolve(data);
       }
 
-      return fse.outputFile(outFile, data, 'utf-8');
+      fse.outputFile(outFile, data, { encoding: 'utf8' }, err => {
+        return err ? reject(err) : resolve();
+      });
     });
   });
 }

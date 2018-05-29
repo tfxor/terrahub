@@ -26,6 +26,7 @@ module.exports = {
   templates: {
     aws: `${templates}/aws`,
     hooks: `${templates}/hooks`,
-    configs: `${templates}/configs`
+    configs: `${templates}/configs`,
+    mapping: `${templates}/mapping.json`
   }
 };

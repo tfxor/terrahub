@@ -1,11 +1,9 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const AbstractCommand = require('../abstract-command');
-const MemberAccessor = require('../helpers/member-accessor');
-const accessor = new MemberAccessor({});
 const https = require('https');
-
+const MemberAccessor = require('../helpers/member-accessor');
+const AbstractCommand = require('../abstract-command');
 
 class ListCommand extends AbstractCommand {
   /**
@@ -14,13 +12,15 @@ class ListCommand extends AbstractCommand {
   configure() {
     this
       .setName('list')
-      .setDescription('List resources and tags from AWS and database');
+      .setDescription('List projects > cloud accounts > regions > services > resources');
   }
 
   /**
    * @returns {Promise}
    */
   run() {
+    const accessor = new MemberAccessor({});
+
     return new Promise((resolve, reject) => {
       const tagging = new AWS.ResourceGroupsTaggingAPI({
         region: 'us-east-1',
