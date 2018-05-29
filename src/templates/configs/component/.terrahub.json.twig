@@ -1,4 +1,6 @@
 {
-  "global": "{{ global }}",
+{% if parent %}
+  "parent": "{{ parent }}",
+{% endif %}
   "name": "{{ name }}"
 }

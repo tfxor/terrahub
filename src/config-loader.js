@@ -15,113 +15,20 @@ class ConfigLoader {
    */
   constructor() {
     this._config = {};
-    this._globalConfig = {};
-    this._rootPath = process.cwd();
-    this._appConfig = {};
+    this._rootPath = false;
     this._rootConfig = {};
-    this._currentPath = process.cwd();
-    this._currentConfig = {};
+    this._globalConfig = {};
+    this._projectConfig = {};
 
     /**
-     * Init config reader
+     * Init configs
      */
     this._readGlobal();
-    this._readCurrent();
     this._readRoot();
   }
 
   /**
-   * Read/create global config
-   * @private
-   */
-  _readGlobal() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', config.home);
-
-    if (configFile) {
-      this._globalConfig = ConfigLoader.readConfig(configFile);
-    } else {
-      fse.outputJsonSync(thbPath(config.fileName), {});
-    }
-  }
-
-  /**
-   * Read current directory config
-   * @private
-   */
-  _readCurrent() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
-
-    if (configFile) {
-      this._currentPath = path.dirname(configFile);
-      this._currentConfig = ConfigLoader.readConfig(configFile);
-    }
-  }
-
-  /**
-   * Read root config
-   * @private
-   */
-  _readRoot() {
-    const global = this._currentConfig['global'];
-
-    if (global) {
-      const fullPath = path.join(this._currentPath, global);
-      this._rootPath = path.dirname(fullPath);
-      this._rootConfig = ConfigLoader.readConfig(fullPath);
-    } else {
-      this._rootConfig = this._currentConfig;
-    }
-  }
-
-  /**
-   * Get application root directory
-   * @returns {String}
-   */
-  appPath() {
-    return this._rootPath;
-  }
-
-  /**
-   * Get list of configuration files
-   * @param {String} dir
-   * @returns {Array}
-   */
-  listConfigs(dir = null) {
-    const cwd = dir || this.appPath();
-
-    return this._find('**/.terrahub.+(json|yml|yaml)', cwd);
-  }
-
-  /**
-   * Get global config
-   * @returns {Object}
-   */
-  getGlobalConfig() {
-    return this._globalConfig;
-  }
-
-  /**
-   * Get centralized application config
-   * @returns {Object}
-   */
-  getFullConfig() {
-    if (!Object.keys(this._config).length) {
-      this._handleRootConfig();
-      this._handleModuleConfigs();
-    }
-
-    return this._config;
-  }
-
-  /**
-   * Check if valid configs were found
-   * @returns {Boolean}
-   */
-  isConfigValid() {
-    return Object.keys(Object.assign({}, this._rootConfig, this._currentConfig)).length > 0;
-  }
-
-  /**
+   * Component default config
    * @returns {Object}
    * @private
    */
@@ -146,7 +53,103 @@ class ConfigLoader {
   }
 
   /**
-   * Separate global config from module's config
+   * Read/create global config
+   * @private
+   */
+  _readGlobal() {
+    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', config.home);
+
+    if (configFile) {
+      this._globalConfig = ConfigLoader.readConfig(configFile);
+    } else {
+      fse.outputJsonSync(thbPath(config.fileName), {});
+    }
+  }
+
+  /**
+   * Read root config
+   * @private
+   */
+  _readRoot() {
+    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
+
+    if (configFile) {
+      this._rootPath = path.dirname(configFile);
+      this._rootConfig = ConfigLoader.readConfig(configFile);
+      this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+
+      delete this._rootConfig['project'];
+    }
+  }
+
+  /**
+   * Get application root directory
+   * @returns {String|Boolean}
+   */
+  appPath() {
+    return this._rootPath;
+  }
+
+  /**
+   * Get global config
+   * @returns {Object}
+   */
+  getGlobalConfig() {
+    return this._globalConfig;
+  }
+
+  /**
+   * Get project config
+   * @returns {Object}
+   */
+  getProjectConfig() {
+    return this._projectConfig;
+  }
+
+  /**
+   * Get centralized application config
+   * @returns {Object}
+   */
+  getFullConfig() {
+    if (!Object.keys(this._config).length) {
+      this._handleRootConfig();
+      this._handleComponentConfigs();
+    }
+
+    return this._config;
+  }
+
+  /**
+   * Get list of configuration files
+   * @param {*} dir
+   * @returns {Array}
+   */
+  listConfigs(dir = false) {
+    const searchPath = dir || this.appPath();
+
+    return searchPath
+      ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath)
+      : [];
+  }
+
+  /**
+   * Check if project is configured
+   * @returns {Boolean}
+   */
+  isProjectConfigured() {
+    return this._projectConfig.hasOwnProperty('name');
+  }
+
+  /**
+   * Count of configured components
+   * @returns {Number}
+   */
+  componentsCount() {
+    return Object.keys(this._config).length;
+  }
+
+  /**
+   * Separate root config from component's config
    * @private
    */
   _handleRootConfig() {
@@ -165,26 +168,22 @@ class ConfigLoader {
   }
 
   /**
-   * Consolidate all modules configs
+   * Consolidate all components' configs
    * @private
    */
-  _handleModuleConfigs() {
-    const appPath = this.appPath();
-    const configs = this.listConfigs(appPath);
-
+  _handleComponentConfigs() {
     // Remove root config
-    configs.shift();
+    const configs = this.listConfigs().slice(1);
 
     configs.forEach(configPath => {
       const config = ConfigLoader.readConfig(configPath);
-      const module = path.dirname(this._relativePath(configPath));
+      const componentPath = path.dirname(this._relativePath(configPath));
 
-      delete config['global'];
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = this._relativePath(path.join(appPath, module, config.parent));
+        config['parent'] = path.join(componentPath, config.parent);
       }
 
-      this._config[toBase64(module)] = merge({ root: module }, this._defaults(), this._rootConfig, config);
+      this._config[toBase64(componentPath)] = merge({root: componentPath}, this._defaults(), this._rootConfig, config);
     });
   }
 

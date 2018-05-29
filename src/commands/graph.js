@@ -12,7 +12,7 @@ class GraphCommand extends AbstractCommand {
   configure() {
     this
       .setName('graph')
-      .setDescription('Build terraform modules tree')
+      .setDescription('Show the graph of dependencies between terrahub components')
       .addOption('directory', 'd', 'Path to start building a graph (default: cwd)', String, process.cwd())
     ;
   }

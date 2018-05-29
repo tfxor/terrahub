@@ -122,13 +122,6 @@ class AbstractCommand {
    * @returns {Promise}
    */
   validate() {
-    if (!this._configLoader.isConfigValid()) {
-      // @todo revert back when fixed config loader
-      // return Promise.reject(
-      //   new Error('Configuration file not found, please go to project root folder, or initialize it')
-      // );
-    }
-
     const required = Object.keys(this._options).filter(name => {
       return typeof this.getOption(name) === 'undefined';
     });
@@ -153,7 +146,8 @@ class AbstractCommand {
 
   /**
    * @todo --include === -i xxx,yyy,zzz
-   *       --exclude === -e xxx,yyy,zzz ???
+   *       --exclude === -e xxx,yyy,zzz?
+   *       move to terraform-command.js?
    * Get consolidated config
    * @returns {Object}
    */
@@ -175,7 +169,15 @@ class AbstractCommand {
   }
 
   /**
+   * @returns {Object}
+   */
+  getProjectConfig() {
+    return this._configLoader.getProjectConfig();
+  }
+
+  /**
    * Get config tree
+   * @todo specific stuff should not be here
    * @returns {Object}
    */
   getConfigTree() {
@@ -196,14 +198,11 @@ class AbstractCommand {
   }
 
   /**
-   * @todo refactor this shit!
+   * @todo refactor this!
    */
   static showHelp() {
     const template = fs.readFileSync(path.join(__dirname, './help.tmpl'), 'utf-8');
-    const variables = [
-      version,
-      description
-    ];
+    const variables = [ version, description ];
 
     logger.raw(template, ...variables);
   }

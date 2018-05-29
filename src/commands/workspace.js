@@ -10,7 +10,7 @@ class WorkspaceCommand extends AbstractCommand {
   configure() {
     this
       .setName('workspace')
-      .setDescription('Run `terraform orkspace` across multiple terraform scripts')
+      .setDescription('Run `terraform workspace` across multiple terraform scripts')
     ;
   }
 

@@ -4,6 +4,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 const { renderTwig } = require('../helpers/util');
+const { config, templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 
 class CreateCommand extends AbstractCommand {
@@ -17,6 +18,7 @@ class CreateCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String)
       .addOption('directory', 'd', 'Path where template should be created (default: cwd)', String, process.cwd())
+      .addOption('parent', 'p', 'Configure parent component', String, '')
       .addOption('force', 'f', 'Replace directory', Boolean, false)
     ;
   }
@@ -25,9 +27,9 @@ class CreateCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    const twigReg = /\.twig$/;
     const name = this.getOption('name');
     const force = this.getOption('force');
+    const parent = this.getOption('parent');
     const templatePath = this._getTemplatePath();
     const directory = path.resolve(this.getOption('directory'), name);
 
@@ -38,6 +40,7 @@ class CreateCommand extends AbstractCommand {
 
     return Promise.all(
       fs.readdirSync(templatePath).map(file => {
+        const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
         const srcFile = path.join(templatePath, file);
 
@@ -46,11 +49,10 @@ class CreateCommand extends AbstractCommand {
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
-      const componentsPath = path.join(__dirname, '../templates/configs/component');
-      const srcFile = `${componentsPath}/.terrahub.yml.twig`;
-      const outFile = path.join(directory, path.basename(srcFile).replace(twigReg, ''));
+      const srcFile = path.join(templates.configs, `component/.terrahub.${config.format}.twig`);
+      const outFile = path.join(directory, `.terrahub.${config.format}`);
 
-      return renderTwig(srcFile, { name: name, global: '../.xxx.json' }, outFile);
+      return renderTwig(srcFile, { name: name, parent: parent }, outFile);
     }).then(() => 'Done');
   }
 
@@ -59,18 +61,15 @@ class CreateCommand extends AbstractCommand {
    * @private
    */
   _getTemplatePath() {
-    // @todo use project config block
-    // const { provider } = this.getConfig();
-    const provider = 'aws';
+    const { provider } = this.getProjectConfig();
     const template = this.getOption('template');
-    const mappingPath = path.join(__dirname, '../templates/mapping.json');
-    const mapping = require(mappingPath)[provider];
+    const mapping = require(templates.mapping)[provider];
 
     if (!Object.keys(mapping).includes(template)) {
       throw new Error(`${template} is not supported`);
     }
 
-    return path.join(path.dirname(mappingPath), mapping[template]);
+    return path.join(path.dirname(templates.mapping), mapping[template]);
   }
 }
 

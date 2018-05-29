@@ -5,21 +5,21 @@ class Logger {
    * @param {String} message
    */
   static log(...message) {
-    this._log(this.LOG, ...arguments);
+    this._log(this.LOG, ...message);
   }
 
   /**
    * @param {String} message
    */
   static info(...message) {
-    this._log(this.INFO, ...arguments);
+    this._log(this.INFO, ...message);
   }
 
   /**
    * @param {String} message
    */
   static error(...message) {
-    this._log(this.ERROR, ...arguments);
+    this._log(this.ERROR, ...message);
   }
 
   /**
@@ -27,7 +27,7 @@ class Logger {
    * @param {String} message
    */
   static raw(...message) {
-    console.log(...arguments);
+    console.log(...message);
   }
 
   /**

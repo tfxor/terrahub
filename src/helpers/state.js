@@ -12,7 +12,8 @@ class State {
    */
   constructor(root) {
     this._root = root;
-    this._backupPath = this._path(`${ new Date().getTime() }.backup`);
+    this._remote = this._path('remote');
+    this._backup = this._path(`${ new Date().getTime() }.backup`);
   }
 
   /**
@@ -53,14 +54,14 @@ class State {
    * @returns {Promise}
    */
   getBackupState() {
-    return fse.readJson(this._backupPath);
+    return fse.readJson(this._backup);
   }
 
   /**
    * @returns {Promise}
    */
   getRemoteState() {
-    return fse.readJson(this._backupPath);
+    return fse.readJson(this._remote);
   }
 
   /**
