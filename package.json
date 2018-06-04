@@ -5,7 +5,7 @@
   "preferGlobal": true,
   "bin": {
     "terrahub": "./bin/cli.js",
-    "thb": "./bin/cli.js"
+    "thub": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
