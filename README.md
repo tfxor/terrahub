@@ -45,9 +45,6 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 
 ## @todo
 
-- Implement `State` class and refactor `Terraform` class
-
-## @toask
-- Graph command: components dependencies VS project tree?
-- Add project name into tag block of templates?
-- Do we need `--exclude === -e xxx,yyy,zzz`?
+- Implement `terrahub run` functionality
+- Rewrite `terrahub graph` (use terrahub components relations)
+- Add project code generation

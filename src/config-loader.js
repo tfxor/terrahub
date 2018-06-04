@@ -180,7 +180,7 @@ class ConfigLoader {
       const componentPath = path.dirname(this._relativePath(configPath));
 
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = path.join(componentPath, config.parent);
+        config['parent'] = this._relativePath(path.resolve(componentPath, config.parent));
       }
 
       this._config[toBase64(componentPath)] = merge({root: componentPath}, this._defaults(), this._rootConfig, config);
@@ -195,7 +195,7 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, ignore: ConfigLoader.IGNORE_PATTERNS, absolute: true });
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: ConfigLoader.IGNORE_PATTERNS });
   }
 
   /**
