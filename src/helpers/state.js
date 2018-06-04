@@ -1,19 +1,17 @@
 'use strict';
 
-const fse = require('fs-extra');
+const fs = require('fs');
+const path = require('path');
 
 /**
- * @todo Implement this class in order to cleanup terraform class
  * Terraform state
  */
 class State {
   /**
-   * @param {String} root
+   * @param {String} baseDir
    */
-  constructor(root) {
-    this._root = root;
-    this._remote = this._path('remote');
-    this._backup = this._path(`${ new Date().getTime() }.backup`);
+  constructor(baseDir) {
+    this._base = baseDir;
   }
 
   /**
@@ -22,46 +20,49 @@ class State {
    * @private
    */
   _path(suffix = '') {
-    return [State.NAME].concat(suffix).filter(Boolean).join('.');
+    return path.join(
+      this.getBase(),
+      [State.NAME].concat(suffix).filter(Boolean).join('.')
+    );
   }
 
   /**
-   * @returns {string}
+   * @returns {String}
+   */
+  getBase() {
+    return this._base;
+  }
+
+  /**
+   * @param {String} workspace
+   */
+  refresh(workspace) {
+    let stateDir = path.join(this._base, State.DIR);
+
+    if (fs.existsSync(stateDir)) {
+      this._base = `${stateDir}/${workspace}`;
+    }
+  }
+
+  /**
+   * @returns {String}
    */
   getPath() {
-    return '';
+    return this._path();
   }
 
   /**
-   * @returns {string}
+   * @returns {String}
    */
   getBackupPath() {
-    return '';
+    return this._path(`${ new Date().getTime() }.backup`);
   }
 
+  /**
+   * @returns {String}
+   */
   getRemotePath() {
-    return '';
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  getState() {
-    return fse.readJson(this.getPath());
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  getBackupState() {
-    return fse.readJson(this._backup);
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  getRemoteState() {
-    return fse.readJson(this._remote);
+    return this._path('remote');
   }
 
   /**

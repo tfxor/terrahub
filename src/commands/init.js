@@ -18,9 +18,6 @@ class InitCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    console.log('include', this.getOption('include'));
-    console.log('getConfig', JSON.stringify(this.getConfig(), null, 2));
-
     const config = this.getConfigTree();
     const distributor = new Distributor(['prepare', 'init'], config);
 
