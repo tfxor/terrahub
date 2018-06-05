@@ -52,11 +52,34 @@ function renderTwig(srcFile, vars, outFile = false) {
 }
 
 /**
+ * Connect child objects to their parents
+ * @param {Object} data
+ * @returns {Object}
+ */
+function familyTree(data) {
+  const tree = {};
+  const object = Object.assign({}, data);
+
+  Object.keys(object).forEach(hash => {
+    let node = object[hash];
+
+    if (node.parent === null) {
+      tree[hash] = node;
+    } else {
+      object[toBase64(node.parent)].children.push(node);
+    }
+  });
+
+  return tree;
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toBase64,
   fromBase64,
   renderTwig,
-  promiseSeries
+  promiseSeries,
+  familyTree
 };

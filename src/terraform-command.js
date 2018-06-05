@@ -1,6 +1,6 @@
 'use strict';
 
-const { toBase64 } = require('./helpers/util');
+const { familyTree } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
 
 class TerraformCommand extends AbstractCommand {
@@ -49,20 +49,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getConfigTree() {
-    let tree = {};
-    let config = Object.assign({}, this.getConfig());
-
-    Object.keys(config).forEach(hash => {
-      let node = config[hash];
-
-      if (node.parent === null) {
-        tree[hash] = node;
-      } else {
-        config[toBase64(node.parent)].children.push(node);
-      }
-    });
-
-    return tree;
+    return familyTree(this.getConfig());
   }
 
   /**
