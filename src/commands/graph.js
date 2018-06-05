@@ -1,9 +1,8 @@
 'use strict';
 
-const path = require('path');
 const treeify = require('treeify');
-const MemberAccessor = require('../helpers/member-accessor');
 const AbstractCommand = require('../abstract-command');
+const { linkChildren } = require('../helpers/util');
 
 class GraphCommand extends AbstractCommand {
   /**
@@ -13,7 +12,6 @@ class GraphCommand extends AbstractCommand {
     this
       .setName('graph')
       .setDescription('Show the graph of dependencies between terrahub components')
-      .addOption('directory', 'd', 'Path to start building a graph (default: cwd)', String, process.cwd())
     ;
   }
 
@@ -22,27 +20,39 @@ class GraphCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    const accessor = new MemberAccessor({}, '/');
-    const directory = path.resolve(this.getOption('directory'));
+    const { name } = this.getProjectConfig();
+    const treeConfig = linkChildren(this.getConfig());
+    const configList = Object.keys(treeConfig).map(hash => treeConfig[hash]);
+    const tree = this._format(configList);
 
-    this.listConfigs(directory).forEach(configPath => {
-      accessor.set(configPath, null);
-    });
+    if (name) {
+      this.logger.raw(name);
 
-    this.logger.raw(treeify.asTree(accessor.getRaw(), false));
+      treeify.asLines(tree, false, line => {
+        this.logger.raw(` ${line}`);
+      });
 
-    return Promise.resolve();
+      this.logger.info('Paths are relative to the project root');
+    }
+
+    return Promise.resolve('Done');
   }
 
   /**
-   * Get only children of some path
-   * @param {Array} paths
-   * @param {String} root
-   * @returns {Array}
+   * @param {Array} configs
+   * @returns {Object}
    * @private
    */
-  _childrenOf(paths, root) {
-    return paths.filter(path => root.indexOf(path) === 0);
+  _format(configs) {
+    const result = {};
+
+    configs.forEach(item => {
+      const key = `${item.name} [${item.root}]`;
+
+      result[key] = item.children.length === 0 ? null : this._format(item.children);
+    });
+
+    return result;
   }
 }
 

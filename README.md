@@ -45,6 +45,4 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 
 ## @todo
 
-- Implement `terrahub run` functionality
-- Rewrite `terrahub graph` (use terrahub components relations)
 - Add project code generation
