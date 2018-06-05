@@ -4,8 +4,8 @@ const os = require('os');
 const path = require('path');
 
 const templates = path.join(__dirname, './templates');
-const configFormat = process.env.THB_CONFIG_FORMAT || 'yml';
-const terrahubToken = process.env.THB_TOKEN || false;
+const configFormat = process.env.THUB_CONFIG_FORMAT || 'yml';
+const terrahubToken = process.env.THUB_ACCESS_TOKEN || false;
 
 /**
  * Get terrahub home paths
