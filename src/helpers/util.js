@@ -56,7 +56,7 @@ function renderTwig(srcFile, vars, outFile = false) {
  * @param {Object} data
  * @returns {Object}
  */
-function linkChildren(data) {
+function familyTree(data) {
   const tree = {};
   const object = Object.assign({}, data);
 
@@ -81,5 +81,5 @@ module.exports = {
   fromBase64,
   renderTwig,
   promiseSeries,
-  linkChildren
+  familyTree
 };

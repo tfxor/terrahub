@@ -4,7 +4,8 @@ const os = require('os');
 const path = require('path');
 
 const templates = path.join(__dirname, './templates');
-const configFormat = process.env.THB_CONFIG_FORMAT || 'json';
+const configFormat = process.env.THB_CONFIG_FORMAT || 'yml';
+const terrahubToken = process.env.THB_TOKEN || false;
 
 /**
  * Get terrahub home paths
@@ -20,6 +21,7 @@ module.exports = {
   thbPath: _terrahubPath,
   config: {
     home: _terrahubPath(),
+    token: terrahubToken,
     format: configFormat,
     fileName: `.terrahub.${configFormat}`,
   },

@@ -46,3 +46,4 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 ## @todo
 
 - Add project code generation
+- Implement reading configs w/ order ENV var > glob config > default version

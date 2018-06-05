@@ -1,6 +1,6 @@
 'use strict';
 
-const { linkChildren } = require('./helpers/util');
+const { familyTree } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
 
 class TerraformCommand extends AbstractCommand {
@@ -49,7 +49,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getConfigTree() {
-    return linkChildren(Object.assign({}, this.getConfig()));
+    return familyTree(this.getConfig());
   }
 
   /**

@@ -1,8 +1,8 @@
 'use strict';
 
 const treeify = require('treeify');
+const { familyTree } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { linkChildren } = require('../helpers/util');
 
 class GraphCommand extends AbstractCommand {
   /**
@@ -21,7 +21,7 @@ class GraphCommand extends AbstractCommand {
    */
   run() {
     const { name } = this.getProjectConfig();
-    const treeConfig = linkChildren(this.getConfig());
+    const treeConfig = familyTree(this.getConfig());
     const configList = Object.keys(treeConfig).map(hash => treeConfig[hash]);
     const tree = this._format(configList);
 
