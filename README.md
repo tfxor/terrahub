@@ -49,6 +49,7 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 
 ## @toAsk
 
+- Implement `terraform refresh`?
 - Project code length? alpha-numerical?
 - Smth like Google project ID?
 - Order: ENV var > glob config > default version?
