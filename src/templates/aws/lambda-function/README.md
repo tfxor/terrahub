@@ -24,7 +24,7 @@ Create a Lambda Function resource.
 |lambda_security_group_ids|A list of security group IDs associated with the Lambda function.|list|[]|No|
 |lambda_environment_variables|A map that defines environment variables for the Lambda function.|map|{}|No|
 |lambda_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|lambda_tag_description|The tag that will be applied to cloud resource.|string|Managed by Terrahub|No|
+|lambda_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
 
 
 ## output parameters

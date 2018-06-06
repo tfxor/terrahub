@@ -13,7 +13,7 @@ Provides an VPC subnet resource.
 |subnet_assign_ipv6_address_on_creation|Specify true to indicate that network interfaces created in the specified subnet should be assigned an IPv6 address.|boolean|false|No|
 |subnet_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
 |subnet_tag_environment|A environment tag to assign to the resource.|string|default|No|
-|subnet_tag_description|A description tag to assign to the resource.|string|Managed by Terrahub|No|
+|subnet_tag_description|A description tag to assign to the resource.|string|Managed by TerraHub|No|
 
 ## output parameters
 
