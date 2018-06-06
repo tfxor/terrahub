@@ -45,9 +45,11 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 
 ## @todo
 
-- Add project code generation
-- Implement reading configs w/ order ENV var > glob config > default version
+- Implement reading global configs
 
-# @toAsk
+## @toAsk
 
+- Project code length? alpha-numerical?
+- Smth like Google project ID?
+- Order: ENV var > glob config > default version?
 - Should we move `recink-cnci` component into terrahub (where)?

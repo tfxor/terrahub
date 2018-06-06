@@ -7,7 +7,7 @@ const glob = require('glob');
 const yaml = require('js-yaml');
 const merge = require('lodash.merge');
 const { config, thbPath, templates } = require('./parameters');
-const { toBase64 } = require('./helpers/util');
+const { toMd5 } = require('./helpers/util');
 
 class ConfigLoader {
   /**
@@ -157,7 +157,7 @@ class ConfigLoader {
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
-        this._config[toBase64(cfg.root)] = cfg;
+        this._config[toMd5(cfg.root)] = cfg;
         delete this._rootConfig[key];
       }
     });
@@ -183,7 +183,7 @@ class ConfigLoader {
         config['parent'] = this._relativePath(path.resolve(componentPath, config.parent));
       }
 
-      this._config[toBase64(componentPath)] = merge({root: componentPath}, this._defaults(), this._rootConfig, config);
+      this._config[toMd5(componentPath)] = merge({root: componentPath}, this._defaults(), this._rootConfig, config);
     });
   }
 
