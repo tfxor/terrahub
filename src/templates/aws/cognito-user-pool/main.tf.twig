@@ -1,5 +1,4 @@
 resource "aws_cognito_user_pool" "{{ name }}" {
-  provider          = "aws.default"
   name              = "${var.cognito_user_pool_name}"
   mfa_configuration = "${var.cognito_user_pool_mfa_configuration}"
 

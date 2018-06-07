@@ -1,5 +1,4 @@
 resource "aws_subnet" "{{ name }}" {
-  provider                        = "aws.default"
   vpc_id                          = "${var.subnet_aws_vpc_id}"
   cidr_block                      = "${var.subnet_cidr_block}"
   availability_zone               = "${var.subnet_availability_zone}"

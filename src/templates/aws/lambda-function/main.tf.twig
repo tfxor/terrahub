@@ -1,5 +1,4 @@
 resource "aws_lambda_function" "{{ name }}" {
-  provider                       = "aws.default"
   function_name                  = "${var.lambda_function_name}"
   handler                        = "${var.lambda_handler}"
   runtime                        = "${var.lambda_runtime}"

@@ -1,5 +1,4 @@
 resource "aws_dynamodb_table" "{{ name }}" {
-  provider       = "aws.default"
   name           = "${var.dynamodb_table_name}"
   hash_key       = "${var.dynamodb_attribute_hash_key}"
   read_capacity  = "${var.dynamodb_read_capacity}"

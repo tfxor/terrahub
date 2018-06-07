@@ -1,5 +1,4 @@
 resource "aws_iam_role" "{{ name }}" {
-  provider              = "aws.default"
   name                  = "${var.iam_role_name}"
   description           = "${var.iam_role_description}"
   path                  = "${var.iam_role_path}"

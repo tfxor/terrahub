@@ -4,8 +4,6 @@ resource "random_string" "hash" {
 }
 
 resource "aws_cloudfront_distribution" "{{ name }}" {
-  provider = "aws.default"
-
   # top level
   aliases                = ["${var.aliases}"]
   ordered_cache_behavior = ["${var.ordered_cache_behavior}"]

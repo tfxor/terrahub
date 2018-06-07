@@ -1,5 +1,4 @@
 resource "aws_route53_zone" "{{ name }}" {
-  provider      = "aws.default"
   name          = "${var.route53_name}"
   comment       = "${var.route53_comment}"
   force_destroy = "${var.route53_force_destroy}"
