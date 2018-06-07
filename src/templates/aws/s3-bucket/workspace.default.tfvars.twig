@@ -32,9 +32,12 @@ s3_bucket_versioning_mfa_delete = false
 ########
 # tags #
 ########
-s3_bucket_tag_name        = "{{ name }}"
-s3_bucket_tag_description = "Managed by TerraHub"
-s3_bucket_tag_environment = "default"
+default_tags = {
+    "Name"        = "{{ name }}"
+    "Description" = "Managed by TerraHub"
+    "Environment" = "default"
+    "Codename"    = "THUB"
+  }
 
 ##########
 # custom #
