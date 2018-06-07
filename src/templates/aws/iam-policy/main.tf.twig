@@ -1,5 +1,4 @@
 resource "aws_iam_policy" "{{ name }}" {
-  provider    = "aws.default"
   name        = "${var.iam_policy_name}"
   description = "${var.iam_policy_description}"
   path        = "${var.iam_policy_path}"

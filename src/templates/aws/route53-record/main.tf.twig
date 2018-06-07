@@ -1,5 +1,4 @@
 resource "aws_route53_record" "{{ name }}" {
-  provider        = "aws.default"
   zone_id         = "${var.route53_record_zone_id}"
   name            = "${var.route53_record_name}"
   type            = "${var.route53_record_type}"

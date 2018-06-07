@@ -1,5 +1,4 @@
 resource "aws_kinesis_stream" "{{ name }}" {
-  provider         = "aws.default"
   name             = "${var.kinesis_stream_name}"
   shard_count      = "${var.kinesis_stream_shard_count}"
   retention_period = "${var.kinesis_stream_retention_period}"

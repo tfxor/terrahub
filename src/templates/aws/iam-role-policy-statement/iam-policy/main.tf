@@ -1,9 +1,5 @@
 module "statements" {
   source = "./statements"
-
-  providers = {
-    aws = "aws.default"
-  }
 }
 
 resource "aws_iam_policy" "iam_policy" {
