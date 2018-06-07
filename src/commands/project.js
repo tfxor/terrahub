@@ -65,7 +65,7 @@ class ProjectCommand extends AbstractCommand {
    * @private
    */
   _code(name, provider) {
-    return toMd5(name + provider).slice(0, 12);
+    return toMd5(name + provider).slice(0, 8);
   }
 }
 

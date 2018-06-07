@@ -38,19 +38,11 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
   plan .............. run `terraform plan` across multiple terraform scripts
   project ........... create or update project that manages multiple terraform scripts
   run ............... run automated workflow terraform init > workspace > plan > apply
-  refresh ........... run `terraform refresh` across multiple terraform scripts
+  refresh ........... run `terraform refresh` across multiple terraform scripts (postpone)
   show .............. run `terraform show` across multiple terraform scripts
   workspace ......... run `terraform workspace` across multiple terraform scripts
 ```
 
 ## @todo
 
-- Implement reading global configs
-
-## @toAsk
-
-- Implement `terraform refresh`?
-- Project code length? alpha-numerical?
-- Smth like Google project ID?
-- Order: ENV var > glob config > default version?
-- Should we move `recink-cnci` component into terrahub (where)?
+- Move `recink-cnci` functionality to terrahub

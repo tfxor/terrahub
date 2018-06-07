@@ -1,12 +1,11 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const yaml = require('js-yaml');
 const merge = require('lodash.merge');
-const { config, thbPath, templates } = require('./parameters');
+const { templates } = require('./parameters');
 const { toMd5 } = require('./helpers/util');
 
 class ConfigLoader {
@@ -17,13 +16,11 @@ class ConfigLoader {
     this._config = {};
     this._rootPath = false;
     this._rootConfig = {};
-    this._globalConfig = {};
     this._projectConfig = {};
 
     /**
-     * Init configs
+     * Initialisation
      */
-    this._readGlobal();
     this._readRoot();
   }
 
@@ -53,20 +50,6 @@ class ConfigLoader {
   }
 
   /**
-   * Read/create global config
-   * @private
-   */
-  _readGlobal() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', config.home);
-
-    if (configFile) {
-      this._globalConfig = ConfigLoader.readConfig(configFile);
-    } else {
-      fse.outputJsonSync(thbPath(config.fileName), {});
-    }
-  }
-
-  /**
    * Read root config
    * @private
    */
@@ -88,14 +71,6 @@ class ConfigLoader {
    */
   appPath() {
     return this._rootPath;
-  }
-
-  /**
-   * Get global config
-   * @returns {Object}
-   */
-  getGlobalConfig() {
-    return this._globalConfig;
   }
 
   /**
