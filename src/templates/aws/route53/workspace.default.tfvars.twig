@@ -17,8 +17,9 @@ route53_comment = "Managed by TerraHub"
 
 route53_force_destroy = "false"
 
-route53_tag_environment = "default"
-
-route53_tag_name = "{{ name }}"
-
-route53_tag_description = "Managed by TerraHub"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}

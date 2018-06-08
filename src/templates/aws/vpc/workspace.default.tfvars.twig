@@ -24,8 +24,9 @@ vpc_enable_classiclink_dns_support = false
 
 vpc_assign_generated_ipv6_cidr_block = false
 
-vpc_tag_name = "{{ name }}"
-
-vpc_tag_description = "Managed by TerraHub"
-
-vpc_tag_environment = "default"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}

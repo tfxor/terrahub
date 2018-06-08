@@ -18,14 +18,8 @@ variable "cloudwatch_log_group_name" {
   description = "The name of the log group."
 }
 
-variable "cloudwatch_log_group_tag_name" {
-  description = "A name tag to assign to the resource."
-}
-
-variable "cloudwatch_log_group_tag_description" {
-  description = "A description tag to assign to the resource."
-}
-
-variable "cloudwatch_log_group_tag_environment" {
-  description = "A environment tag to assign to the resource."
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

@@ -77,10 +77,5 @@ resource "aws_cloudfront_distribution" "{{ name }}" {
     cloudfront_default_certificate = "${var.cloudfront_default_certificate}"
   }
 
-  tags {
-    Name        = "${var.cloudfront_tag_name}"
-    Description = "${var.cloudfront_tag_description}"
-    Environment = "${var.cloudfront_tag_environment}"
-    Codename    = "THUB"
-  }
+  tags = "${var.default_tags}"
 }

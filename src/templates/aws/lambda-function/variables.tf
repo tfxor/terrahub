@@ -89,17 +89,8 @@ variable "lambda_security_group_ids" {
 ########
 # tags #
 ########
-variable "lambda_tag_name" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "lambda_tag_description" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "lambda_tag_environment" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

@@ -72,9 +72,12 @@ cloudfront_default_certificate = "true"
 ########
 # tags #
 ########
-cloudfront_tag_name        = "{{ name }}"
-cloudfront_tag_description = "Managed by TerraHub"
-cloudfront_tag_environment = "default"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}
 
 ##########
 # custom #
