@@ -34,14 +34,8 @@ variable "kinesis_stream_encryption_type" {
   description = "The encryption type to use. The only acceptable values are NONE or KMS."
 }
 
-variable "kinesis_stream_tag_name" {
-  description = "A name tag to assign to the resource."
-}
-
-variable "kinesis_stream_tag_description" {
-  description = "A description tag to assign to the resource."
-}
-
-variable "kinesis_stream_tag_environment" {
-  description = "A environment tag to assign to the resource."
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

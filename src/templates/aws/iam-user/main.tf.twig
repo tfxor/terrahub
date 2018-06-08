@@ -1,5 +1,4 @@
 resource "aws_iam_user" "{{ name }}" {
-  provider      = "aws.default"
   name          = "${var.iam_user_name}"
   path          = "${var.iam_user_path}"
   force_destroy = "${var.iam_user_force_destroy}"

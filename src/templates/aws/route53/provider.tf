@@ -1,5 +1,4 @@
 provider "aws" {
-  alias   = "default"
   version = "~> 1.0"
   region  = "${var.region}"
 

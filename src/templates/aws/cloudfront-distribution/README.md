@@ -48,7 +48,7 @@ Creates an Amazon CloudFront web distribution.
 |minimum_protocol_version|The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.|string|TLSv1|No|
 |cloudfront_default_certificate|true if you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution.|string|false|No|
 |cloudfront_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|cloudfront_tag_description|The tag that will be applied to cloud resource.|string|Managed by Terrahub|No|
+|cloudfront_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
 
 
 ## output parameters

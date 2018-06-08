@@ -23,8 +23,9 @@ kinesis_stream_shard_level_metrics = [
   "OutgoingBytes",
 ]
 
-kinesis_stream_tag_name = "{{ name }}"
-
-kinesis_stream_tag_description = "Managed by Terrahub"
-
-kinesis_stream_tag_environment = "default"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}

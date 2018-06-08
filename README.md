@@ -38,16 +38,11 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
   plan .............. run `terraform plan` across multiple terraform scripts
   project ........... create or update project that manages multiple terraform scripts
   run ............... run automated workflow terraform init > workspace > plan > apply
-  refresh ........... run `terraform refresh` across multiple terraform scripts
+  refresh ........... run `terraform refresh` across multiple terraform scripts (postpone)
   show .............. run `terraform show` across multiple terraform scripts
   workspace ......... run `terraform workspace` across multiple terraform scripts
 ```
 
 ## @todo
 
-- Implement `State` class and refactor `Terraform` class
-
-## @toask
-- Graph command: components dependencies VS project tree?
-- Add project name into tag block of templates?
-- Do we need `--exclude === -e xxx,yyy,zzz`?
+- Move `recink-cnci` functionality to terrahub

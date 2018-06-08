@@ -228,17 +228,8 @@ variable "cloudfront_default_certificate" {
 ########
 # tags #
 ########
-variable "cloudfront_tag_name" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "cloudfront_tag_description" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "cloudfront_tag_environment" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

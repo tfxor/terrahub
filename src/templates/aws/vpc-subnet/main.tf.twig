@@ -1,15 +1,9 @@
 resource "aws_subnet" "{{ name }}" {
-  provider                        = "aws.default"
   vpc_id                          = "${var.subnet_aws_vpc_id}"
   cidr_block                      = "${var.subnet_cidr_block}"
   availability_zone               = "${var.subnet_availability_zone}"
   map_public_ip_on_launch         = "${var.subnet_map_public_ip_on_launch}"
   assign_ipv6_address_on_creation = "${var.subnet_assign_ipv6_address_on_creation}"
 
-  tags {
-    Name        = "${var.subnet_tag_name}"
-    Description = "${var.subnet_tag_description}"
-    Environment = "${var.subnet_tag_environment}"
-    Codename    = "TFS"
-  }
+  tags = "${var.default_tags}"
 }

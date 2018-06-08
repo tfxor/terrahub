@@ -28,8 +28,9 @@ cognito_user_pool_allow_admin_create_user_only = "false"
 
 cognito_user_pool_unused_account_validity_days = "7"
 
-cognito_user_pool_tag_name = "{{ name }}"
-
-cognito_user_pool_tag_description = "Managed by Terrahub"
-
-cognito_user_pool_tag_environment = "default"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}

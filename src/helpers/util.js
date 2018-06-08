@@ -2,6 +2,15 @@
 
 const fse = require('fs-extra');
 const Twig = require('twig');
+const { createHash } = require('crypto');
+
+/**
+ * @param {String} text
+ * @returns {*}
+ */
+function toMd5(text) {
+  return createHash('md5').update(text).digest('hex');
+}
 
 /**
  * @param {String} text
@@ -52,11 +61,35 @@ function renderTwig(srcFile, vars, outFile = false) {
 }
 
 /**
+ * Connect child objects to their parents
+ * @param {Object} data
+ * @returns {Object}
+ */
+function familyTree(data) {
+  const tree = {};
+  const object = Object.assign({}, data);
+
+  Object.keys(object).forEach(hash => {
+    let node = object[hash];
+
+    if (node.parent === null) {
+      tree[hash] = node;
+    } else {
+      object[toMd5(node.parent)].children.push(node);
+    }
+  });
+
+  return tree;
+}
+
+/**
  * Public methods
  */
 module.exports = {
+  toMd5,
   toBase64,
   fromBase64,
   renderTwig,
-  promiseSeries
+  promiseSeries,
+  familyTree
 };

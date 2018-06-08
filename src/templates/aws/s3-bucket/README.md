@@ -20,7 +20,7 @@ Creates a S3 bucket resource.
 |s3_bucket_versioning_enabled|Enable versioning. Once you version-enable a bucket, it can never return to an unversioned state. You can, however, suspend versioning on that bucket.|string|false|No|
 |s3_bucket_versioning_mfa_delete|Enable MFA delete for either Change the versioning state of your bucket or Permanently delete an object version.|string|false|No|
 |s3_bucket_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|Yes|
-|s3_bucket_tag_description|The tag that will be applied to cloud resource.|string|Managed by Terrahub|No|
+|s3_bucket_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
 
 
 ## output parameters

@@ -1,5 +1,4 @@
 resource "aws_s3_bucket" "{{ name }}" {
-  provider      = "aws.default"
   bucket        = "${var.s3_bucket_name}"
   acl           = "${var.s3_bucket_acl}"
   region        = "${var.s3_bucket_region}"
@@ -18,10 +17,5 @@ resource "aws_s3_bucket" "{{ name }}" {
     mfa_delete = "${var.s3_bucket_versioning_mfa_delete}"
   }
 
-  tags {
-    Name        = "${var.s3_bucket_tag_name}"
-    Description = "${var.s3_bucket_tag_description}"
-    Environment = "${var.s3_bucket_tag_environment}"
-    Codename    = "TFS"
-  }
+  tags = "${var.default_tags}"
 }

@@ -12,7 +12,7 @@ Provides a Kinesis Stream resource. Amazon Kinesis is a managed service that sca
 |kinesis_stream_shard_level_metrics|A list of shard-level CloudWatch metrics which can be enabled for the stream. See Monitoring with CloudWatch for more. Note that the value ALL should not be used; instead you should provide an explicit list of metrics you wish to enable.|array|"IncomingBytes", "OutgoingBytes"|No|
 |kinesis_stream_encryption_type|The encryption type to use. The only acceptable values are NONE or KMS.|string|NONE|No|
 |kinesis_stream_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
-|kinesis_stream_tag_description|A description tag to assign to the resource.|string|Managed by Terrahub|No|
+|kinesis_stream_tag_description|A description tag to assign to the resource.|string|Managed by TerraHub|No|
 |kinesis_stream_tag_environment|A environment tag to assign to the resource.|string|default|No|
 
 

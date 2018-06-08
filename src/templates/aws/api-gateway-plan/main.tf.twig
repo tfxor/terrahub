@@ -1,5 +1,4 @@
 resource "aws_api_gateway_usage_plan" "{{ name }}" {
-  provider     = "aws.default"
   name         = "my-usage-plan"
   description  = "${var.gateway_usage_plan_description}"
   product_code = "${var.gateway_usage_plan_product_code}"

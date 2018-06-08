@@ -1,10 +1,5 @@
 resource "aws_cloudwatch_log_group" "{{ name }}" {
   name = "${var.cloudwatch_log_group_name}"
 
-  tags {
-    Name        = "${var.cloudwatch_log_group_tag_name}"
-    Description = "${var.cloudwatch_log_group_tag_description}"
-    Environment = "${var.cloudwatch_log_group_tag_environment}"
-    Codename    = "TFS"
-  }
+  tags = "${var.default_tags}"
 }

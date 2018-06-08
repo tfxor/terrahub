@@ -4,8 +4,6 @@ resource "random_string" "hash" {
 }
 
 resource "aws_cloudfront_distribution" "{{ name }}" {
-  provider = "aws.default"
-
   # top level
   aliases                = ["${var.aliases}"]
   ordered_cache_behavior = ["${var.ordered_cache_behavior}"]
@@ -79,10 +77,5 @@ resource "aws_cloudfront_distribution" "{{ name }}" {
     cloudfront_default_certificate = "${var.cloudfront_default_certificate}"
   }
 
-  tags {
-    Name        = "${var.cloudfront_tag_name}"
-    Description = "${var.cloudfront_tag_description}"
-    Environment = "${var.cloudfront_tag_environment}"
-    Codename    = "TFS"
-  }
+  tags = "${var.default_tags}"
 }

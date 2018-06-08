@@ -16,7 +16,7 @@ Provides a Cognito User Pool resource.
 |cognito_user_pool_allow_admin_create_user_only|Set to True if only the administrator is allowed to create user profiles. Set to False if users can sign themselves up via an app.|boolean|false|No|
 |cognito_user_pool_unused_account_validity_days|The user account expiration limit, in days, after which the account is no longer usable.|string|7|No|
 |cognito_user_pool_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
-|cognito_user_pool_tag_description|A description tag to assign to the resource.|string|Managed by Terrahub|No|
+|cognito_user_pool_tag_description|A description tag to assign to the resource.|string|Managed by TerraHub|No|
 |cognito_user_pool_tag_environment|A environment tag to assign to the resource.|string|default|No|
 
 

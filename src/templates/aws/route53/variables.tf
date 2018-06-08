@@ -25,18 +25,15 @@ variable "route53_force_destroy" {
   description = "Whether to destroy all records (possibly managed outside of Terraform) in the zone when destroying the zone."
 }
 
-variable "route53_tag_environment" {
-  description = "A environment tag to assign to the resource."
-}
-
-variable "route53_tag_name" {
-  description = "A name tag to assign to the resource."
-}
-
-variable "route53_tag_description" {
-  description = "A description tag to assign to the resource."
-}
-
 variable "route53_vpc_id" {
   description = "The VPC to associate with a private hosted zone. Specifying vpc_id will create a private hosted zone. Conflicts with delegation_set_id as delegation sets can only be used for public zones."
+}
+
+########
+# tags #
+########
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

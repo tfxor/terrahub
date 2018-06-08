@@ -1,5 +1,4 @@
 resource "aws_cloudwatch_event_rule" "{{ name }}" {
-  provider      = "aws.default"
   name          = "${var.cloudwatch_event_rule_name}"
   description   = "${var.cloudwatch_event_rule_description}"
   is_enabled    = "${var.cloudwatch_event_rule_is_enabled}"
