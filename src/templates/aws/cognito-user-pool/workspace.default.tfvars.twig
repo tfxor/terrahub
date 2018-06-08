@@ -4,33 +4,28 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
 #############
-cognito_user_pool_name = "{{ name }}"
-
-cognito_user_pool_mfa_configuration = "OFF"
-
-cognito_user_pool_minimum_length = "8"
-
-cognito_user_pool_require_lowercase = "true"
-
-cognito_user_pool_require_numbers = "true"
-
-cognito_user_pool_require_symbols = "true"
-
-cognito_user_pool_require_uppercase = "true"
-
+cognito_user_pool_name                         = "{{ name }}"
+cognito_user_pool_mfa_configuration            = "OFF"
+cognito_user_pool_minimum_length               = "8"
+cognito_user_pool_require_lowercase            = "true"
+cognito_user_pool_require_numbers              = "true"
+cognito_user_pool_require_symbols              = "true"
+cognito_user_pool_require_uppercase            = "true"
 cognito_user_pool_allow_admin_create_user_only = "false"
-
 cognito_user_pool_unused_account_validity_days = "7"
 
 default_tags = {
-  "Name"        = "{{ name }}"
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
   "Description" = "Managed by TerraHub"
-  "Environment" = "default"
-  "Codename"    = "THUB"
 }
+
+##########
+# custom #
+##########

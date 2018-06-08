@@ -4,8 +4,7 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
@@ -13,8 +12,12 @@ region = "us-east-1"
 cloudwatch_log_group_name = "{{ name }}"
 
 default_tags = {
-  "Name"        = "{{ name }}"
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
   "Description" = "Managed by TerraHub"
-  "Environment" = "default"
-  "Codename"    = "THUB"
 }
+
+##########
+# custom #
+##########
