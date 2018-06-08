@@ -38,12 +38,16 @@ class ConfigLoader {
       children: [],
       hooks: {
         plan: {
-          before: `${hooks}/plan/before.js`,
-          after: `${hooks}/plan/after.js`
+          before: path.join(hooks, 'plan', 'before.js'),
+          after: path.join(hooks, 'plan', 'after.js')
         },
         apply: {
-          before: `${hooks}/apply/before.js`,
-          after: `${hooks}/apply/after.js`
+          before: path.join(hooks, 'apply', 'before.js'),
+          after: path.join(hooks, 'apply', 'after.js')
+        },
+        destroy: {
+          before: path.join(hooks, 'destroy', 'before.js'),
+          after: path.join(hooks, 'destroy', 'after.js')
         }
       }
     }
