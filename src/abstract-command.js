@@ -167,7 +167,7 @@ class AbstractCommand {
    * @todo refactor this!
    */
   static showHelp() {
-    const template = fs.readFileSync(path.join(__dirname, './templates/help.tmpl'), 'utf-8');
+    const template = fs.readFileSync(path.join(__dirname, 'templates', 'help.tmpl'), 'utf-8');
     const variables = [ version, description ];
 
     logger.raw(template, ...variables);
