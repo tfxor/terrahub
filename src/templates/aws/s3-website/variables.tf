@@ -86,17 +86,8 @@ variable "s3_bucket_website_error_document" {
 ########
 # tags #
 ########
-variable "s3_bucket_tag_name" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "s3_bucket_tag_description" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "s3_bucket_tag_environment" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

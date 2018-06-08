@@ -21,10 +21,5 @@ resource "aws_lambda_function" "{{ name }}" {
   #  variables = "${var.lambda_environment_variables}"
   #}
 
-  tags {
-    Name        = "${var.lambda_tag_name}"
-    Description = "${var.lambda_tag_description}"
-    Environment = "${var.lambda_tag_environment}"
-    Codename    = "THUB"
-  }
+  tags = "${var.default_tags}"
 }

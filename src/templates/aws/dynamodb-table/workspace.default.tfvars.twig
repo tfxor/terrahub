@@ -19,9 +19,12 @@ dynamodb_stream_enabled      = false
 ########
 # tags #
 ########
-dynamodb_tag_name        = "{{ name }}"
-dynamodb_tag_description = "Managed by TerraHub"
-dynamodb_tag_environment = "default"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}
 
 ##########
 # custom #

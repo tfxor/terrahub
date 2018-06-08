@@ -47,17 +47,8 @@ variable "dynamodb_attribute_hash_type" {
 ########
 # tags #
 ########
-variable "dynamodb_tag_name" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "dynamodb_tag_description" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
-}
-
-variable "dynamodb_tag_environment" {
-  description = "The tag that will be applied to cloud resource."
-  type        = "string"
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

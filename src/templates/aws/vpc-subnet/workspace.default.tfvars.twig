@@ -19,8 +19,9 @@ subnet_map_public_ip_on_launch = "false"
 
 subnet_assign_ipv6_address_on_creation = "false"
 
-subnet_tag_environment = "default"
-
-subnet_tag_name = "{{ name }}"
-
-subnet_tag_description = "Managed by TerraHub"
+default_tags = {
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
+  "Environment" = "default"
+  "Codename"    = "THUB"
+}

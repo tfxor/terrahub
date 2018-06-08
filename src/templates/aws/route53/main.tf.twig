@@ -4,10 +4,5 @@ resource "aws_route53_zone" "{{ name }}" {
   force_destroy = "${var.route53_force_destroy}"
   vpc_id        = "${var.route53_vpc_id}"
 
-  tags {
-    Name        = "${var.route53_tag_name}"
-    Description = "${var.route53_tag_description}"
-    Environment = "${var.route53_tag_environment}"
-    Codename    = "THUB"
-  }
+  tags = "${var.default_tags}"
 }
