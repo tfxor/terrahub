@@ -33,7 +33,7 @@ class ProjectCommand extends AbstractCommand {
       }
 
       const directory = path.resolve(this.getOption('directory'), name);
-      const srcFile = path.join(templates.configs, `project/.terrahub.${config.format}.twig`);
+      const srcFile = path.join(templates.configs, 'project', `.terrahub.${config.format}.twig`);
       const outFile = path.join(directory, `.terrahub.${config.format}`);
 
       return renderTwig(srcFile, { name, provider, code }, outFile).then(() => {

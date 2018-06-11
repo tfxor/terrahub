@@ -4,28 +4,27 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
 #############
-kinesis_stream_name = "{{ name }}"
-
-kinesis_stream_shard_count = 1
-
-kinesis_stream_retention_period = 48
-
-kinesis_stream_encryption_type = "NONE"
-
+kinesis_stream_name                = "{{ name }}"
+kinesis_stream_shard_count         = 1
+kinesis_stream_retention_period    = 48
+kinesis_stream_encryption_type     = "NONE"
 kinesis_stream_shard_level_metrics = [
   "IncomingBytes",
   "OutgoingBytes",
 ]
 
 default_tags = {
-  "Name"        = "{{ name }}"
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
   "Description" = "Managed by TerraHub"
-  "Environment" = "default"
-  "Codename"    = "THUB"
 }
+
+##########
+# custom #
+##########

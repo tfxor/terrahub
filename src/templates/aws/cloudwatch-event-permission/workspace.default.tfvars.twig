@@ -4,13 +4,14 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
 #############
-
 cloudwatch_event_permission_statement_id = "account_access"
+cloudwatch_event_permission_action       = "events:PutEvents"
 
-cloudwatch_event_permission_action = "events:PutEvents"
+##########
+# custom #
+##########
