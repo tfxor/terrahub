@@ -15,6 +15,7 @@
     "cf": "aws/cloudfront-distribution",
     "cloudfront": "aws/cloudfront-distribution",
     "cloudfront-distribution": "aws/cloudfront-distribution",
+    "cloudwatch": "aws/cloudwatch-log-group",
     "cognito": "aws/cognito-user-pool",
     "cognito-user-pool": "aws/cognito-user-pool",
     "ddb": "aws/dynamodb-table",
