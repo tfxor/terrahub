@@ -18,6 +18,7 @@
     "cloudwatch": "aws/cloudwatch-log-group",
     "cognito": "aws/cognito-user-pool",
     "cognito-user-pool": "aws/cognito-user-pool",
+    "cognito-identity-pool": "aws/cognito-identity-pool",
     "ddb": "aws/dynamodb-table",
     "dynamo": "aws/dynamodb-table",
     "dynamodb": "aws/dynamodb-table",
