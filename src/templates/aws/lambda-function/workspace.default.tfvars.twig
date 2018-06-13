@@ -35,9 +35,12 @@ lambda_security_group_ids = []
 ########
 # tags #
 ########
-lambda_tag_name        = "{{ name }}"
-lambda_tag_description = "Managed by TerraHub"
-lambda_tag_environment = "default"
+default_tags = {
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
+  "Description" = "Managed by TerraHub"
+}
 
 ##########
 # custom #

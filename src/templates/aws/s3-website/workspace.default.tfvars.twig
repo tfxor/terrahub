@@ -38,9 +38,12 @@ s3_bucket_website_error_document = "/404.html"
 ########
 # tags #
 ########
-s3_bucket_tag_name        = "{{ name }}"
-s3_bucket_tag_description = "Managed by TerraHub"
-s3_bucket_tag_environment = "default"
+default_tags = {
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
+  "Description" = "Managed by TerraHub"
+}
 
 ##########
 # custom #

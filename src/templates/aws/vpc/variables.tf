@@ -43,14 +43,8 @@ variable "vpc_assign_generated_ipv6_cidr_block" {
   description = "Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block. Default is false."
 }
 
-variable "vpc_tag_name" {
-  description = "A name tag to assign to the resource."
-}
-
-variable "vpc_tag_description" {
-  description = "A description tag to assign to the resource."
-}
-
-variable "vpc_tag_environment" {
-  description = "A environment tag to assign to the resource."
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

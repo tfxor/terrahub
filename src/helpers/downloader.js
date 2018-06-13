@@ -4,7 +4,7 @@ const os = require('os');
 const fse = require('fs-extra');
 const url = require('url');
 const download = require('download');
-const { thbPath } = require('../parameters');
+const { defaultConfig } = require('../parameters');
 
 /**
  * Terraform binaries downloader
@@ -17,7 +17,7 @@ class Downloader {
    */
   download(version) {
     const url = this._buildSrcUrl(version);
-    const binaryDir = thbPath('terraform', version);
+    const binaryDir = defaultConfig('terraform', version);
 
     return fse
       .ensureDir(binaryDir)

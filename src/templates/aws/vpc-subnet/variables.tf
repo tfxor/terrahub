@@ -34,14 +34,8 @@ variable "subnet_assign_ipv6_address_on_creation" {
   description = "Specify true to indicate that network interfaces created in the specified subnet should be assigned an IPv6 address. Default is false"
 }
 
-variable "subnet_tag_environment" {
-  description = "A environment tag to assign to the resource."
-}
-
-variable "subnet_tag_name" {
-  description = "A name tag to assign to the resource."
-}
-
-variable "subnet_tag_description" {
-  description = "A description tag to assign to the resource."
+variable "default_tags" {
+  type        = "map"
+  description = "Default tags"
+  default     = {}
 }

@@ -1,5 +1,4 @@
 resource "aws_cloudwatch_log_metric_filter" "{{ name }}" {
-  provider       = "aws.default"
   name           = "${var.cw_log_metric_filter_name}"
   pattern        = "${var.cw_log_metric_filter_pattern}"
   log_group_name = "${var.cw_log_metric_filter_log_group_name}"

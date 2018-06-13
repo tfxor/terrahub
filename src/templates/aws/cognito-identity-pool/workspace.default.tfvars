@@ -4,14 +4,14 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
 #############
-sqs_queue_name = "{{ name }}"
+identity_pool_name               = "{{ name }}"
+allow_unauthenticated_identities = false
 
-sqs_queue_kms_master_key_id = "alias/aws/sqs"
-
-sqs_queue_kms_data_key_reuse_period_seconds = 300
+##########
+# custom #
+##########

@@ -4,7 +4,7 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { toMd5 } = require('../helpers/util');
-const { thbPath } = require('../parameters');
+const { defaultConfig } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 
 class ListCommand extends AbstractCommand {
@@ -80,7 +80,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _cachePath(region, filter) {
-    return thbPath('cache', 'list', `${toMd5(region + filter)}.json`);
+    return defaultConfig('cache', 'list', `${toMd5(region + filter)}.json`);
   }
 
   /**

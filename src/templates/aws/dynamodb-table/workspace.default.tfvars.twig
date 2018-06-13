@@ -11,7 +11,7 @@ region     = "us-east-1"
 #############
 dynamodb_table_name          = "{{ name }}"
 dynamodb_attribute_hash_key  = "Id"
-dynamodb_attribute_hash_type = "N"
+dynamodb_attribute_hash_type = "S"
 dynamodb_read_capacity       = 1
 dynamodb_write_capacity      = 1
 dynamodb_stream_enabled      = false
@@ -19,9 +19,12 @@ dynamodb_stream_enabled      = false
 ########
 # tags #
 ########
-dynamodb_tag_name        = "{{ name }}"
-dynamodb_tag_description = "Managed by TerraHub"
-dynamodb_tag_environment = "default"
+default_tags = {
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
+  "Description" = "Managed by TerraHub"
+}
 
 ##########
 # custom #

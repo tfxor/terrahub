@@ -1,5 +1,4 @@
 resource "aws_kinesis_stream" "{{ name }}" {
-  provider         = "aws.default"
   name             = "${var.kinesis_stream_name}"
   shard_count      = "${var.kinesis_stream_shard_count}"
   retention_period = "${var.kinesis_stream_retention_period}"
@@ -7,10 +6,5 @@ resource "aws_kinesis_stream" "{{ name }}" {
 
   shard_level_metrics = "${var.kinesis_stream_shard_level_metrics}"
 
-  tags {
-    Name        = "${var.kinesis_stream_tag_name}"
-    Description = "${var.kinesis_stream_tag_description}"
-    Environment = "${var.kinesis_stream_tag_environment}"
-    Codename    = "THUB"
-  }
+  tags = "${var.default_tags}"
 }

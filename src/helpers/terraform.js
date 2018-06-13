@@ -10,7 +10,7 @@ const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
-const { thbPath } = require('../parameters');
+const { defaultConfig } = require('../parameters');
 
 class Terraform {
   /**
@@ -72,7 +72,7 @@ class Terraform {
    * @returns {String}
    */
   getBinary() {
-    return thbPath('terraform', this.getVersion(), 'terraform');
+    return defaultConfig('terraform', this.getVersion(), 'terraform');
   }
 
   /**

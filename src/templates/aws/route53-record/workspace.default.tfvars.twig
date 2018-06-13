@@ -4,18 +4,17 @@
 # provider #
 ############
 account_id = "123456789012"
-
-region = "us-east-1"
+region     = "us-east-1"
 
 #############
 # top level #
 #############
-route53_record_name = "www"
-
-route53_record_type = "CNAME"
-
-route53_record_ttl = "300"
-
+route53_record_name            = "www"
+route53_record_type            = "CNAME"
+route53_record_ttl             = "300"
 route53_record_allow_overwrite = "true"
+route53_record_records         = ["www.terrahub.io"]
 
-route53_record_records = ["dev.example.com"]
+##########
+# custom #
+##########

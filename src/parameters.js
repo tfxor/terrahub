@@ -16,14 +16,14 @@ function _terrahubPath(...suffix) {
 }
 
 const cfgPath = _terrahubPath('.terrahub.json');
-const templates = path.join(__dirname, './templates');
+const templates = path.join(__dirname, 'templates');
 
 /**
  * Ensure if global config exists
  * @note it's always .json
  */
 if (!fse.existsSync(cfgPath)) {
-  fse.copySync(`${templates}/configs/.terrahub.json`, cfgPath);
+  fse.copySync(path.join(templates, 'configs', '.terrahub.json'), cfgPath);
 }
 
 const def = { format: 'yml', token: 'false', env: 'prod' };
@@ -35,7 +35,7 @@ const env = {
 const cfg = merge(def, fse.readJsonSync(cfgPath, { throws: false }), env);
 
 module.exports = {
-  thbPath: _terrahubPath,
+  defaultConfig: _terrahubPath,
   config: {
     env: cfg.env,
     home: _terrahubPath(),
@@ -44,9 +44,11 @@ module.exports = {
     fileName: `.terrahub.${cfg.format}`
   },
   templates: {
-    aws: `${templates}/aws`,
-    hooks: `${templates}/hooks`,
-    configs: `${templates}/configs`,
-    mapping: `${templates}/mapping.json`
+    aws: path.join(templates, 'aws'),
+    azurerm: path.join(templates, 'azurerm'),
+    gcp: path.join(templates, 'gcp'),
+    configs: path.join(templates, 'configs'),
+    hooks: path.join(templates, 'hooks'),
+    mapping: path.join(templates, 'mapping.json')
   }
 };
