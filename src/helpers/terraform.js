@@ -264,7 +264,7 @@ class Terraform {
       Object.assign(options, this._varFilesOption(), params);
     }
 
-    return this.run('apply', [...args, ...this._optsToArgs(options)]);
+    return this.run('apply', [...args, ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
   }
 
   /**
@@ -283,11 +283,10 @@ class Terraform {
       });
     }
 
-    return this.run('destroy', ['-force', ...this._optsToArgs(options)]);
+    return this.run('destroy', ['-force', ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
   }
 
   /**
-   * @todo move to Plan class?
    * https://www.terraform.io/docs/commands/show.html
    * @param {String} planOrStatePath
    * @returns {Promise}

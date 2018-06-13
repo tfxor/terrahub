@@ -26,13 +26,18 @@ if (!fse.existsSync(cfgPath)) {
   fse.copySync(`${templates}/configs/.terrahub.json`, cfgPath);
 }
 
-const def = { format: 'yml', token: 'false' };
-const env = { format: process.env.THUB_CONFIG_FORMAT, token: process.env.THUB_ACCESS_TOKEN };
+const def = { format: 'yml', token: 'false', env: 'prod' };
+const env = {
+  env: process.env.THUB_ENV ,
+  token: process.env.THUB_ACCESS_TOKEN,
+  format: process.env.THUB_CONFIG_FORMAT
+};
 const cfg = merge(def, fse.readJsonSync(cfgPath, { throws: false }), env);
 
 module.exports = {
   thbPath: _terrahubPath,
   config: {
+    env: cfg.env,
     home: _terrahubPath(),
     token: cfg.token,
     format: cfg.format,

@@ -1,5 +1,7 @@
 'use strict';
 
+const Args = require('../src/helpers/args-parser');
+const merge = require('lodash.merge');
 const { familyTree } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
 
@@ -9,7 +11,9 @@ class TerraformCommand extends AbstractCommand {
    * (post configure action)
    */
   initialize() {
-    this.addOption('include', 'i', 'Components to work with', Array, '');
+    this.addOption('include', 'i', 'Components to work with', Array, []);
+    this.addOption('var', 'v', 'Set of variables', Array, []);
+    this.addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
   }
 
   /**
@@ -26,12 +30,33 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * Get extended via CLI configs
+   * @returns {Object}
+   */
+  getExtendedConfig() {
+    const result = {};
+    const config = super.getConfig();
+    const cliParams = {
+      terraform: {
+        vars: this.getVars(),
+        varFiles: this.getVarFiles()
+      }
+    };
+
+    Object.keys(config).forEach(hash => {
+      result[hash] = merge(config[hash], cliParams);
+    });
+
+    return result;
+  }
+
+  /**
    * Get filtered config
    * @returns {Object}
    */
   getConfig() {
-    const config = super.getConfig();
-    const include = this.getOption('include');
+    const config = this.getExtendedConfig();
+    const include = this.getIncludes();
 
     if (include.length > 0) {
       Object.keys(config).forEach(hash => {
@@ -42,6 +67,33 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return config;
+  }
+
+  /**
+   * @returns {Array}
+   */
+  getIncludes() {
+    return this.getOption('include');
+  }
+
+  /**
+   * @returns {Array}
+   */
+  getVarFiles() {
+    return this.getOption('var-file');
+  }
+
+  /**
+   * @returns {Object}
+   */
+  getVars() {
+    let result = {};
+
+    this.getOption('var').map(item => {
+      Object.assign(result, Args.toObject(item));
+    });
+
+    return result;
   }
 
   /**

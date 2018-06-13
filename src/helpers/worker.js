@@ -1,8 +1,7 @@
 'use strict';
 
-const path = require('path');
 const cluster = require('cluster');
-const Terraform = require('../helpers/terraform');
+const Terrahub = require('../helpers/terrahub');
 const { promiseSeries } = require('../helpers/util');
 
 /**
@@ -14,49 +13,16 @@ function getActions() {
 }
 
 /**
- * Require hook module
- * @param {Object} config
- * @param {String} action
- * @param {String} hook
- * @returns {Function}
- */
-function requireHook(config, action, hook) {
-  try {
-    const hookPath = config.hooks[action][hook];
-    const fullPath = path.isAbsolute(hookPath)
-      ? hookPath
-      : path.join(config.app, config.hooks[action][hook]);
-
-    return require(fullPath);
-  } catch (err) {
-    return () => Promise.resolve();
-  }
-}
-
-/**
- * @param {Object} config
- * @param {String} action
- * @returns {Promise|PromiseLike}
- */
-function getTask(config, action) {
-  const terraform = new Terraform(config);
-  const afterHook = requireHook(config, action, 'after');
-  const beforeHook = requireHook(config, action, 'before');
-
-  return beforeHook(config)
-    .then(() => terraform[action]())
-    .then(res => afterHook(config, res));
-}
-
-/**
  * Get task with hooks (if enabled)
  * @param {Object} config
  * @returns {Function}
  */
 function getTasks(config) {
+  const terrahub = new Terrahub(config);
+
   return () => {
     return promiseSeries(getActions().map(action => {
-      return () => getTask(config, action);
+      return () => terrahub.getTask(action);
     }));
   };
 }
@@ -74,9 +40,6 @@ function run(configs) {
     });
     process.exit(0);
   }).catch(error => {
-    // @todo remove it after stable release
-    console.error('terraform-worker:', error);
-
     process.send({
       id: cluster.worker.id,
       error: error.message || error,
