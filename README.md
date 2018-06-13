@@ -97,5 +97,7 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Fix `project create` behavior
+- Consolidate `terrahub list`
+- Investigate `\n` on live output
+- Fix `terrahub create` behavior
 - Remove `MemberAccessor` (move `_handle` as standalone function into utils.js)

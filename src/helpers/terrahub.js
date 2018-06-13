@@ -110,8 +110,9 @@ class Terrahub {
    */
   _getKey() {
     const keySpace = config.env === 'prod' ? 'public' : `public-${config.env}`;
+    const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
 
-    return `${Terrahub.METADATA_DOMAIN}/${keySpace}/${this._timestamp}/${this._componentHash}-${this._action}.txt`;
+    return `${Terrahub.METADATA_DOMAIN}/${keySpace}/${this._timestamp}/${keyName}`;
   }
 
   /**

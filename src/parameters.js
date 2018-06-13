@@ -28,7 +28,7 @@ if (!fse.existsSync(cfgPath)) {
 
 const def = { format: 'yml', token: 'false', env: 'prod' };
 const env = {
-  env: process.env.THUB_ENV ,
+  env: process.env.THUB_ENV,
   token: process.env.THUB_ACCESS_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
