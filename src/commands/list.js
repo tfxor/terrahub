@@ -57,12 +57,21 @@ class ListCommand extends AbstractCommand {
         return cached ? Promise.resolve(cached) : this._getFromApi();
       })
       .then(data => {
+        /**
+         * @param {Array} allowed
+         * @param {String} item
+         * @returns {Boolean}
+         */
+        function isAllowed(allowed, item) {
+          return (allowed.length === 0 || allowed.includes(item));
+        }
+
         data.forEach(item => {
           if (
-            (projects.length === 0 || projects.includes(item.project))
-            && (accounts.length === 0 || accounts.includes(item.accountId))
-            && (regions.length === 0 || regions.includes(item.region))
-            && (services.length === 0 || services.includes(item.service))
+            isAllowed(projects, item.project)
+            && isAllowed(accounts, item.accountId)
+            && isAllowed(regions, item.region)
+            && isAllowed(services, item.service)
           ) {
             this.hash.set([item.project, item.accountId, item.region, item.service, item.resource].join(':'), null);
           }
@@ -78,7 +87,12 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.raw('');
-        this.logger.info('In free version not all resources can be found');
+        this.logger.info('Only cloud resources that support tagging api are listed above');
+        this.logger.info(
+          'Please visit https://www.terrahub.io and register to see ALL cloud resources,',
+          'even the one that don\'t support tagging api.'
+        );
+
         return Promise.resolve();
       })
       .then(() => Promise.resolve('Done'));
@@ -128,7 +142,7 @@ class ListCommand extends AbstractCommand {
       .then(data => {
         const cachePath = this._cachePath();
 
-        return fse.writeJson(cachePath, data).then(() => {
+        return fse.outputJson(cachePath, data).then(() => {
           return data;
         });
       });
@@ -200,6 +214,7 @@ class ListCommand extends AbstractCommand {
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
+    // @todo switch to ThubEnv
     let project = result.hasOwnProperty('DeepEnvironmentId') ? result['DeepEnvironmentId'] : '-';
 
     return Object.assign(result, {

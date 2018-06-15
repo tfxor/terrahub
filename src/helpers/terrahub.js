@@ -49,7 +49,7 @@ class Terrahub {
     this._action = action;
 
     if (!['init', 'workspace', 'plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve();
+      return this._terraform[action]();
     }
 
     return this._getTask();
