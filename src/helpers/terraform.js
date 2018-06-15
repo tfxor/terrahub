@@ -344,7 +344,10 @@ class Terraform {
     child.stderr.on('data', data => logger.error(prefix, data.toString()));
     child.stdout.on('data', data => {
       stdout.push(data);
-      logger.raw(prefix, data.toString());
+
+      // @todo improve logger class
+      process.stdout.write(prefix);
+      process.stdout.write(data.toString());
     });
 
     return promise.then(() => Buffer.concat(stdout));
