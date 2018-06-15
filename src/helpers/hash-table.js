@@ -1,22 +1,22 @@
 'use strict';
 
-class MemberAccessor {
+class HashTable {
   /**
    * Constructor
    * @param {Object} object
    * @param {String} separator
    */
-  constructor(object, separator = '.') {
-    this._object = object;
+  constructor(object = {}, separator = '.') {
+    this._table = object;
     this._separator = separator;
   }
 
   /**
-   * Get raw object
+   * Get raw data
    * @return {Object}
    */
   getRaw() {
-    return this._object;
+    return this._table;
   }
 
   /**
@@ -69,7 +69,7 @@ class MemberAccessor {
    * @return {Array}
    * @private
    */
-  _handle(path, object = this._object) {
+  _handle(path, object = this._table) {
     let crumbs = path.constructor === Array ? path : path.split(this._separator);
     let property = crumbs[0];
 
@@ -85,4 +85,4 @@ class MemberAccessor {
   }
 }
 
-module.exports = MemberAccessor;
+module.exports = HashTable;

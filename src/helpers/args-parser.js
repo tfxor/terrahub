@@ -65,9 +65,10 @@ class ArgsParser {
    * @returns {Array}
    */
   static toArray(value, separator = ',') {
-    let json = this.tryJson(value);
+    const str = value.toString();
+    const json = this.tryJson(str);
 
-    return json ? json : value.split(separator).filter(x => !/^\s*$/.test(x)).map(x => ArgsParser.trim(x));
+    return json ? json : str.split(separator).filter(x => !/^\s*$/.test(x)).map(x => ArgsParser.trim(x));
   }
 
   /**
@@ -97,7 +98,7 @@ class ArgsParser {
    */
   static tryJson(string) {
     try {
-      return JSON.parse(string);
+      return isNaN(parseInt(string)) ? JSON.parse(string) : false;
     } catch (e) {
       return false;
     }

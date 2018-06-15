@@ -45,10 +45,10 @@ module.exports = {
   },
   templates: {
     aws: path.join(templates, 'aws'),
-    azurerm: path.join(templates, 'azurerm'),
     gcp: path.join(templates, 'gcp'),
-    configs: path.join(templates, 'configs'),
     hooks: path.join(templates, 'hooks'),
+    azurerm: path.join(templates, 'azurerm'),
+    configs: path.join(templates, 'configs'),
     mapping: path.join(templates, 'mapping.json')
   }
 };

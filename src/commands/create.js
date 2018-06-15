@@ -34,7 +34,7 @@ class CreateCommand extends AbstractCommand {
     const directory = path.resolve(this.getOption('directory'), name);
 
     if (!force && fs.existsSync(directory)) {
-      this.logger.info(`Component ${name} already exists`);
+      this.logger.info(`Component '${name}' already exists`);
       return Promise.resolve();
     }
 
