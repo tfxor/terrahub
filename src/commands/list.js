@@ -17,10 +17,10 @@ class ListCommand extends AbstractCommand {
       .setName('list')
       .setDescription('List projects > cloud accounts > regions > services > resources')
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
-      .addOption('projects', 'p', 'Projects', Array, [])
-      .addOption('accounts', 'a', 'Accounts', Array, [])
-      .addOption('regions', 'r', 'Regions', Array, [])
-      .addOption('services', 's', 'Services', Array, [])
+      .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
+      .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
+      .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
+      .addOption('services', 's', 'Services (comma separated values)', Array, [])
     ;
   }
 
@@ -87,10 +87,10 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.raw('');
-        this.logger.info('Only cloud resources that support tagging api are listed above');
+        this.logger.info('above list includes ONLY cloud resources that support tagging api.');
         this.logger.info(
-          'Please visit https://www.terrahub.io and register to see ALL cloud resources,',
-          'even the one that don\'t support tagging api.'
+          'please visit https://www.terrahub.io and register to see ALL cloud resources,',
+          'even the ones that are NOT supported by tagging api.'
         );
 
         return Promise.resolve();
