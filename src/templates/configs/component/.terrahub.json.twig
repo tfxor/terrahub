@@ -2,10 +2,5 @@
 {% if parent %}
   "parent": "{{ parent }}",
 {% endif %}
-  "name": "{{ name }}",
-  "terraform": {
-    "varFiles": [
-      "workspace.default.tfvars"
-    ]
-  }
+  "name": "{{ name }}"
 }
