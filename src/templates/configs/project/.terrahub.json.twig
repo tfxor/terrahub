@@ -3,5 +3,22 @@
     "name": "{{ name }}",
     "code": "{{ code }}",
     "provider": "{{ provider }}"
+  },
+  "terraform": {
+    "varFiles": [
+      "default.tfvars"
+    ],
+    "workspace": {
+      "dev": {
+        "varFiles": [
+          "workspace/dev.tfvars"
+        ]
+      },
+      "prod": {
+        "varFiles": [
+          "workspace/prod.tfvars"
+        ]
+      }
+    }
   }
 }
