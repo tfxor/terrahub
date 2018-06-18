@@ -15,26 +15,23 @@
       "config": {
         "threshold": 100
       }
+    },
+    "method-count": {
+      "config": {
+        "threshold": 30
+      }
+    },
+    "similar-code": {
+      "enabled": false
     }
   },
   "engines": {
-    "duplication": {
-      "enabled": false,
-      "config": {
-        "config": ".eslintrc",
-        "languages": {
-          "javascript": {
-            "mass_threshold": 500
-          }
-        }
-      },
-      "exclude_paths": [
-        "node_modules/"
-      ]
-    },
     "eslint": {
       "enabled": true,
-      "channel": "eslint-2"
+      "channel": "eslint-2",
+      "config": {
+        "config": ".eslintrc.json"
+      }
     },
     "fixme": {
       "enabled": true
