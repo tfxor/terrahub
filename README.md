@@ -6,20 +6,20 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 ## Commands
 
 ```
-  apply ............. run `terraform apply` across multiple terraform scripts
-  build ............. build software from predefined build.yml config files (work in progress)
-  create ............ create terraform code from predefined templates
-  deploy ............ deploy software from predefined deploy.yml config files (work in progress)
-  destroy ........... run `terraform destroy` across multiple terraform scripts
-  graph ............. show the graph of dependencies between terrahub components
-  init .............. run `terraform init` across multiple terraform scripts
-  list .............. list projects > cloud accounts > regions > services > resources
-  plan .............. run `terraform plan` across multiple terraform scripts
-  project ........... create or update project that manages multiple terraform scripts
-  run ............... run automated workflow terraform init > workspace > plan > apply
-  refresh ........... run `terraform refresh` across multiple terraform scripts (work in progress)
-  show .............. run `terraform show` across multiple terraform scripts (work in progress)
-  workspace ......... run `terraform workspace` across multiple terraform scripts
+apply ............. run `terraform apply` across multiple terraform scripts
+build ............. build software from predefined build.yml config files (work in progress)
+create ............ create terraform code from predefined templates
+deploy ............ deploy software from predefined deploy.yml config files (work in progress)
+destroy ........... run `terraform destroy` across multiple terraform scripts
+graph ............. show the graph of dependencies between terrahub components
+init .............. run `terraform init` across multiple terraform scripts
+list .............. list projects > cloud accounts > regions > services > resources
+plan .............. run `terraform plan` across multiple terraform scripts
+project ........... create or update project that manages multiple terraform scripts
+run ............... run automated workflow terraform init > workspace > plan > apply
+refresh ........... run `terraform refresh` across multiple terraform scripts (work in progress)
+show .............. run `terraform show` across multiple terraform scripts (work in progress)
+workspace ......... run `terraform workspace` across multiple terraform scripts
 ```
 
 ## Hooks
