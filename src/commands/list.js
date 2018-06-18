@@ -80,6 +80,8 @@ class ListCommand extends AbstractCommand {
         return Promise.resolve();
       })
       .then(() => {
+        this.logger.raw('Projects (Managed by TerraHub)');
+
         if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
           this._showSummary();
         } else {
@@ -88,7 +90,7 @@ class ListCommand extends AbstractCommand {
 
         this.logger.raw('');
         this.logger.info('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.info(
+        this.logger.raw('   ',
           'Please visit https://www.terrahub.io and register to see ALL cloud resources,',
           'even the ones that are NOT supported by tagging api.'
         );
@@ -103,8 +105,6 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _showSummary() {
-    this.logger.raw('Projects detected');
-
     Object.keys(this.hash.getRaw()).forEach((project, i) => {
       this.logger.raw(` ${i + 1}. ${project}`);
     });
@@ -117,16 +117,16 @@ class ListCommand extends AbstractCommand {
    */
   _showTree(data, level = 0) {
     let offset = ' '.repeat(level);
-    let titles = ['Project', 'Account', 'Region', 'Service'];
+    let titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
 
-    Object.keys(data).forEach((key, i) => {
+    Object.keys(data).forEach((key, value) => {
       if (data[key] !== null) {
         const keys = Object.keys(data[key]);
 
-        this.logger.raw(`${offset}${titles[level]} ${key} [${keys.length} elements]`);
+        this.logger.raw(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
         this._showTree(data[key], level + 1);
       } else {
-        this.logger.raw(`${offset}${i + 1}. ${key}`);
+        this.logger.raw(`${offset} ${key} (${titles[level]} ${value + 1} of X)`);
       }
     });
   }
