@@ -80,7 +80,7 @@ class ListCommand extends AbstractCommand {
         return Promise.resolve();
       })
       .then(() => {
-        this.logger.raw('Projects (Managed by TerraHub)');
+        this.logger.raw('Projects');
 
         if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
           this._showSummary();
@@ -256,7 +256,7 @@ class ListCommand extends AbstractCommand {
    * @constructor
    */
   static get TTL() {
-    return 3000000;
+    return 600000;
   }
 }
 

@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
+const glob = require('glob');
 const { renderTwig } = require('../helpers/util');
 const { config, templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
@@ -33,13 +33,13 @@ class CreateCommand extends AbstractCommand {
     const templatePath = this._getTemplatePath();
     const directory = path.resolve(this.getOption('directory'), name);
 
-    if (!force && fs.existsSync(directory)) {
+    if (!force && fse.existsSync(directory)) {
       this.logger.info(`Component '${name}' already exists`);
       return Promise.resolve();
     }
 
     return Promise.all(
-      fs.readdirSync(templatePath).map(file => {
+      glob.sync('**', { cwd: templatePath, nodir: true, dot: true }).map(file => {
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
         const srcFile = path.join(templatePath, file);

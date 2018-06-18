@@ -76,10 +76,10 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Consolidate `terrahub list`
-- Investigate `\n` on live output
-- Fix `terrahub create` behavior
-- Remove `MemberAccessor` (move `_handle` as standalone function into utils.js)
+- Implement `terrahub workspace`
+- Implement `terrahub list` (paid version)
+- Implement `terrahub --help`
+- Investigate logger package
 
 ## Example
 
