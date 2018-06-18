@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const AbstractCommand = require('../abstract-command');
 const { templates, config } = require('../parameters');
@@ -25,6 +26,7 @@ class ProjectCommand extends AbstractCommand {
   run() {
     const name = this.getOption('name');
     const provider = this.getOption('provider');
+    const directory = path.resolve(this.getOption('directory'));
     const code = this._code(name, provider);
 
     return this._isCodeValid(code).then(valid => {
@@ -32,12 +34,16 @@ class ProjectCommand extends AbstractCommand {
         throw new Error('Project code has collisions');
       }
 
-      const directory = path.resolve(this.getOption('directory'), name);
       const srcFile = path.join(templates.configs, 'project', `.terrahub.${config.format}.twig`);
       const outFile = path.join(directory, `.terrahub.${config.format}`);
 
+      if (fs.existsSync(outFile)) {
+        this.logger.info(`Project already configured`);
+        return Promise.resolve();
+      }
+
       return renderTwig(srcFile, { name, provider, code }, outFile).then(() => {
-        return Promise.resolve(`Project successfully initialized (cd ${directory})`);
+        return Promise.resolve('Project successfully initialized');
       });
     });
   }

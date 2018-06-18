@@ -2,6 +2,7 @@
 
 const fse = require('fs-extra');
 const Twig = require('twig');
+const request = require('request');
 const { createHash } = require('crypto');
 
 /**
@@ -34,6 +35,24 @@ function fromBase64(text) {
  */
 function promiseSeries(promises) {
   return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
+}
+
+/**
+ * Promisify request
+ * @param {Object} options
+ * @returns {Promise}
+ * @private
+ */
+function promiseRequest(options) {
+  return new Promise((resolve, reject) => {
+    request(options, (error, response, body) => {
+      if (error) {
+        return reject(error);
+      }
+
+      return resolve(body);
+    });
+  });
 }
 
 /**
@@ -91,5 +110,6 @@ module.exports = {
   fromBase64,
   renderTwig,
   promiseSeries,
+  promiseRequest,
   familyTree
 };

@@ -12,7 +12,7 @@ class Distributor {
   constructor(actions, config) {
     this._config = config;
     this._actions = actions;
-    this._worker = path.join(__dirname, '../helpers/terraform-worker.js');
+    this._worker = path.join(__dirname, '../helpers/worker.js');
     this._workersCount = 0;
 
     cluster.setupMaster({ exec: this._worker });

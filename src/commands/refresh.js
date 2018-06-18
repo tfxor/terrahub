@@ -1,8 +1,8 @@
 'use strict';
 
-const AbstractCommand = require('../abstract-command');
+const TerraformCommand = require('../terraform-command');
 
-class RefreshCommand extends AbstractCommand {
+class RefreshCommand extends TerraformCommand {
   /**
    * Command configuration
    */
@@ -20,9 +20,12 @@ class RefreshCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    console.log(this.getOption('object'));
-    console.log(this.getOption('array'));
-    console.log(this.getOption('force'));
+    console.log('object', this.getOption('object'));
+    console.log('array', this.getOption('array'));
+    console.log('force', this.getOption('force'));
+
+    console.log('var', this.getVars());
+    console.log('var-file', this.getVarFiles());
 
     return Promise.resolve('Done');
   }

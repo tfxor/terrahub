@@ -3,6 +3,84 @@
 TerraHub is a Terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud 
 services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.
 
+## Commands
+
+```
+apply ............. run `terraform apply` across multiple terraform scripts
+build ............. build software from predefined build.yml config files (work in progress)
+create ............ create terraform code from predefined templates
+deploy ............ deploy software from predefined deploy.yml config files (work in progress)
+destroy ........... run `terraform destroy` across multiple terraform scripts
+graph ............. show the graph of dependencies between terrahub components
+init .............. run `terraform init` across multiple terraform scripts
+list .............. list projects > cloud accounts > regions > services > resources
+plan .............. run `terraform plan` across multiple terraform scripts
+project ........... create or update project that manages multiple terraform scripts
+run ............... run automated workflow terraform init > workspace > plan > apply
+refresh ........... run `terraform refresh` across multiple terraform scripts (work in progress)
+show .............. run `terraform show` across multiple terraform scripts (work in progress)
+workspace ......... run `terraform workspace` across multiple terraform scripts
+```
+
+## Hooks
+
+In order to provide you the best experience we have implemented hooks functionality for following actions: 
+
+* `terraform init` 
+* `terraform workspace` 
+* `terraform plan`
+* `terraform apply`
+* `terraform destroy` 
+
+All the hooks should return a Promise and look like: 
+
+* before hook:
+
+```javascript
+/**
+ * @param {Object} moduleConfig
+ * @returns {Promise}
+ */
+function hook(moduleConfig) {
+  return Promise.resolve();
+}
+
+module.exports = hook;
+```
+
+* after hook:
+
+````javascript
+/**
+ * @param {Object} moduleConfig
+ * @param {Buffer} cmdResult
+ * @returns {Promise}
+ */
+function hook(moduleConfig, cmdResult) {
+  return Promise.resolve();
+}
+
+module.exports = hook;
+````
+
+Configuration example for plan (`.terrahub.json`):
+
+```text
+"hooks": {
+    "plan": {
+        "before": "./hooks/plan/before.js",
+        "after": "./hooks/plan/after.js"
+    }
+}
+```
+
+## @todo
+
+- Consolidate `terrahub list`
+- Investigate `\n` on live output
+- Fix `terrahub create` behavior
+- Remove `MemberAccessor` (move `_handle` as standalone function into utils.js)
+
 ## Example
 
 1. terrahub project -n HelloWorld -d ~/hello-world && cd ~/hello-world/
@@ -23,26 +101,3 @@ services across multiple cloud accounts. For example: Serverless on Amazon AWS, 
 16. terrahub plan
 17. terrahub apply
 18. terrahub list
-
-## Commands
-
-```
-  apply ............. run `terraform apply` across multiple terraform scripts
-  build ............. build software from predefined build.yml config files
-  create ............ create terraform code from predefined templates
-  deploy ............ deploy software from predefined deploy.yml config files
-  destroy ........... run `terraform destroy` across multiple terraform scripts
-  graph ............. show the graph of dependencies between terrahub components
-  init .............. run `terraform init` across multiple terraform scripts
-  list .............. list projects > cloud accounts > regions > services > resources
-  plan .............. run `terraform plan` across multiple terraform scripts
-  project ........... create or update project that manages multiple terraform scripts
-  run ............... run automated workflow terraform init > workspace > plan > apply
-  refresh ........... run `terraform refresh` across multiple terraform scripts (postpone)
-  show .............. run `terraform show` across multiple terraform scripts
-  workspace ......... run `terraform workspace` across multiple terraform scripts
-```
-
-## @todo
-
-- Move `recink-cnci` functionality to terrahub
