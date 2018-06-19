@@ -1,0 +1,5 @@
+# Define list of variables to be output
+
+output "cloudwatch_log_stream_arn" {
+  value = "${aws_cloudwatch_log_stream.{{ name }}.arn}"
+}

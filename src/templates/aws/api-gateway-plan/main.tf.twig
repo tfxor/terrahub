@@ -1,0 +1,21 @@
+resource "aws_api_gateway_usage_plan" "{{ name }}" {
+  name         = "${var.api_gateway_usage_plan_name}"
+  description  = "${var.api_gateway_usage_plan_description}"
+  product_code = "${var.api_gateway_usage_plan_product_code}"
+
+  api_stages {
+    api_id = "${var.api_gateway_usage_plan_api_id}"
+    stage  = "${var.api_gateway_usage_plan_stage}"
+  }
+
+  quota_settings {
+    limit  = "${var.api_gateway_usage_plan_limit}"
+    offset = "${var.api_gateway_usage_plan_offset}"
+    period = "${var.api_gateway_usage_plan_period}"
+  }
+
+  throttle_settings {
+    burst_limit = "${var.api_gateway_usage_plan_burst_limit}"
+    rate_limit  = "${var.api_gateway_usage_plan_rate_limit}"
+  }
+}
