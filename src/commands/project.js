@@ -42,7 +42,7 @@ class ProjectCommand extends AbstractCommand {
       const outFile = path.join(directory, `.terrahub.${config.format}`);
 
       if (fs.existsSync(outFile)) {
-        this.logger.info(`Project already configured`);
+        this.logger.warn(`Project already configured`);
         return Promise.resolve();
       }
 

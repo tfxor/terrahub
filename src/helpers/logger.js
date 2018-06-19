@@ -1,78 +1,72 @@
 'use strict';
 
+const logger = require('js-logger');
+
 class Logger {
   /**
+   * Constructor
+   */
+  constructor() {
+    const level = (process.env.DEBUG || logger.INFO.name).toUpperCase();
+
+    logger.useDefaults({
+      defaultLevel: logger[ level ],
+      formatter: (messages, context) => {}
+    });
+
+    this._logger = logger;
+  }
+
+  /**
+   * Raw line output (without auto \n)
    * @param {String} message
    */
-  static log(...message) {
-    this._log(this.LOG, ...message);
+  raw(message) {
+    process.stdout.write(message);
   }
 
   /**
    * @param {String} message
    */
-  static info(...message) {
-    this._log(this.INFO, ...message);
+  debug(message) {
+    this._logger.debug(message);
   }
 
   /**
-   * @todo accept new Error too and show message on low verbosity and stack on high verbosity
    * @param {String} message
    */
-  static error(...message) {
-    this._log(this.ERROR, ...message);
+  log(message) {
+    this._logger.info(message);
   }
 
   /**
-   * Raw output
    * @param {String} message
    */
-  static raw(...message) {
-    console.log(...message);
+  info(message) {
+    this._logger.info('✅', message);
   }
 
   /**
-   * @param {String} type
    * @param {String} message
-   * @private
    */
-  static _log(type, ...message) {
-    switch (type) {
-      case this.LOG:
-        this.raw('✅ ', ...message);
-        break;
-      case this.INFO:
-        this.raw('💡 ', ...message);
-        break;
-      case this.ERROR:
-        this.raw('❌ ', ...message);
-        break;
+  warn(message) {
+    this._logger.warn('💡', message);
+  }
+
+  /**
+   * @param {String} message
+   */
+  error(message) {
+    if (message instanceof Error) {
+      const { name } = this._logger.getLevel();
+
+      message = (name === logger.DEBUG.name)
+        ? message.stack
+        : message.message;
     }
-  }
 
-  /**
-   * @returns {String}
-   * @constructor
-   */
-  static get LOG() {
-    return 'log';
-  }
-
-  /**
-   * @returns {String}
-   * @constructor
-   */
-  static get INFO() {
-    return 'info';
-  }
-
-  /**
-   * @returns {String}
-   * @constructor
-   */
-  static get ERROR() {
-    return 'error';
+    this._logger.error('❌', message);
   }
 }
 
-module.exports = Logger;
+module.exports = new Logger();

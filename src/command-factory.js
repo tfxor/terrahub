@@ -8,15 +8,16 @@ class CommandFactory {
   /**
    * Command create
    * @param {Array} argv
+   * @param {Logger|*} logger
    * @returns {*}
    */
-  static create(argv) {
+  static create(argv, logger = console) {
     const [command, ...args] = argv.slice(2);
 
     try {
       const Command = require(path.join(CommandFactory.commandsPath, command));
 
-      return new Command(Args.parse(args));
+      return new Command(Args.parse(args), logger);
     } catch (err) {
       throw err;
     }

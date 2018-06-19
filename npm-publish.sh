@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "@todo move this to ./bin directory"
+
 function fail () {
   echo >&2 "[FAILED] $1!"
   exit 1
