@@ -122,6 +122,8 @@ class Terraform {
    * @returns {Promise}
    */
   prepare() {
+    logger.debug(JSON.stringify(this._config, null, 2));
+
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
@@ -302,7 +304,7 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    logger.info(`[${this.getName()}]`, 'terraform', cmd, '-no-color', ...args);
+    logger.warn(`[${this.getName()}] terraform ${cmd} -no-color ${args.join(' ')}`);
 
     return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
       env: Object.assign({}, process.env, this.getVars()),
@@ -337,20 +339,25 @@ class Terraform {
    */
   _spawn(command, args, options) {
     let stdout = [];
-    const prefix = `[${this.getName()}]`;
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => logger.error(prefix, data.toString()));
+    child.stderr.on('data', data => logger.error(this._out(data)));
     child.stdout.on('data', data => {
       stdout.push(data);
-
-      // @todo improve logger class
-      process.stdout.write(prefix);
-      process.stdout.write(data.toString());
+      logger.raw(this._out(data));
     });
 
     return promise.then(() => Buffer.concat(stdout));
+  }
+
+  /**
+   * @param {Buffer} data
+   * @returns {string}
+   * @private
+   */
+  _out(data) {
+    return `[${this.getName()}] ${data.toString()}`;
   }
 }
 
