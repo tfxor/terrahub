@@ -39,12 +39,13 @@ class TerraformCommand extends AbstractCommand {
     const cliParams = {
       terraform: {
         vars: this.getVars(),
-        varFiles: this.getVarFiles()
+        varFiles: []
       }
     };
 
     Object.keys(config).forEach(hash => {
       result[hash] = merge(config[hash], cliParams);
+      result[hash].terraform.varFiles.push(...this.getVarFiles());
     });
 
     return result;
