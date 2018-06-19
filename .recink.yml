@@ -8,6 +8,7 @@ $:
     '$.cnci.ci.options.buildNumber': 'eval'
   cnci:
     token: 'process.env.token'
+    env: 'dev'
     ci:
       provider: jenkins
       options:
