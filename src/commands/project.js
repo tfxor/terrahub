@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const AbstractCommand = require('../abstract-command');
 const { templates, config } = require('../parameters');
-const { renderTwig, toMd5 } = require('../helpers/util');
+const { renderTwig, toMd5, isAwsNameValid } = require('../helpers/util');
 
 class ProjectCommand extends AbstractCommand {
   /**
@@ -28,6 +28,10 @@ class ProjectCommand extends AbstractCommand {
     const provider = this.getOption('provider');
     const directory = path.resolve(this.getOption('directory'));
     const code = this._code(name, provider);
+
+    if (!isAwsNameValid(name)) {
+      throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
+    }
 
     return this._isCodeValid(code).then(valid => {
       if (!valid) {

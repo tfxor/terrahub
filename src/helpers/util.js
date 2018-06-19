@@ -102,14 +102,23 @@ function familyTree(data) {
 }
 
 /**
+ * @param {String} name
+ * @returns {Boolean}
+ */
+function isAwsNameValid(name) {
+  return /^([a-zA-Z0-9-_]*)$/.test(name);
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toMd5,
   toBase64,
   fromBase64,
+  familyTree,
   renderTwig,
   promiseSeries,
   promiseRequest,
-  familyTree
+  isAwsNameValid
 };
