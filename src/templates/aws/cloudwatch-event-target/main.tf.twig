@@ -1,0 +1,5 @@
+resource "aws_cloudwatch_event_target" "{{ name }}" {
+  rule      = "${var.cloudwatch_event_target_rule}"
+  target_id = "${var.cloudwatch_event_target_target_id}"
+  arn       = "${var.cloudwatch_event_target_arn}"
+}

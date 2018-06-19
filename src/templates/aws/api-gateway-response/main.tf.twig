@@ -1,0 +1,7 @@
+resource "aws_api_gateway_gateway_response" "{{ name }}" {
+  rest_api_id         = "${var.api_gateway_response_rest_api_id}"
+  response_type       = "${var.api_gateway_response_response_type}"
+  status_code         = "${var.api_gateway_response_status_code}"
+  response_parameters = "${var.api_gateway_response_parameters}"
+  response_templates  = "${var.api_gateway_response_templates}"
+}

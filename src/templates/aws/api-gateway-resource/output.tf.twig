@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "api_gateway_resource_id" {
+  value = "${aws_api_gateway_resource.{{ name }}.id}"
+}
+
+output "api_gateway_resource_path" {
+  value = "${aws_api_gateway_resource.{{ name }}.path}"
+}

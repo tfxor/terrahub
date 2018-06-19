@@ -6,11 +6,6 @@ $:
     '$.cnci.ci.options.token': 'eval'
     '$.cnci.ci.options.jobName': 'eval'
     '$.cnci.ci.options.buildNumber': 'eval'
-  emit:
-    pattern:
-      - /.+\.js$/i
-    ignore:
-      - /^(.*\/)?node_modules(\/?$)?/i
   cnci:
     token: 'process.env.token'
     ci:

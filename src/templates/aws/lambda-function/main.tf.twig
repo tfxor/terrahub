@@ -1,0 +1,25 @@
+resource "aws_lambda_function" "{{ name }}" {
+  function_name                  = "${var.lambda_function_name}"
+  handler                        = "${var.lambda_handler}"
+  runtime                        = "${var.lambda_runtime}"
+  role                           = "arn:aws:iam::${var.account_id}:role/${var.lambda_iam_role}"
+  description                    = "${var.lambda_description}"
+  memory_size                    = "${var.lambda_memory_size}"
+  timeout                        = "${var.lambda_timeout}"
+  reserved_concurrent_executions = "${var.lambda_reserved_concurrent_executions}"
+  publish                        = "${var.lambda_publish}"
+
+  s3_bucket                      = "${var.lambda_s3_bucket}"
+  s3_key                         = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
+
+  vpc_config {
+    subnet_ids         = "${var.lambda_subnet_ids}"
+    security_group_ids = "${var.lambda_security_group_ids}"
+  }
+
+  #environment {
+  #  variables = "${var.lambda_environment_variables}"
+  #}
+
+  tags = "${var.default_tags}"
+}

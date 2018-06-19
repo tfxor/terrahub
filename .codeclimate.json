@@ -1,0 +1,40 @@
+{
+  "version": "2",
+  "checks": {
+    "file-lines": {
+      "config": {
+        "threshold": 500
+      }
+    },
+    "method-complexity": {
+      "config": {
+        "threshold": 10
+      }
+    },
+    "method-lines": {
+      "config": {
+        "threshold": 100
+      }
+    },
+    "method-count": {
+      "config": {
+        "threshold": 30
+      }
+    },
+    "similar-code": {
+      "enabled": false
+    }
+  },
+  "engines": {
+    "eslint": {
+      "enabled": true,
+      "channel": "eslint-2",
+      "config": {
+        "config": ".eslintrc.json"
+      }
+    },
+    "fixme": {
+      "enabled": true
+    }
+  }
+}

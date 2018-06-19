@@ -1,0 +1,7 @@
+resource "aws_api_gateway_method_response" "{{ name }}" {
+  rest_api_id     = "${var.api_gateway_method_rest_api_id}"
+  resource_id     = "${var.api_gateway_method_resource_id}"
+  http_method     = "${var.api_gateway_method_http_method}"
+  status_code     = "${var.api_gateway_method_status_code}"
+  response_models = "${var.api_gateway_method_response_models}"
+}

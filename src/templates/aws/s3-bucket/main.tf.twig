@@ -1,0 +1,21 @@
+resource "aws_s3_bucket" "{{ name }}" {
+  bucket        = "${var.s3_bucket_name}"
+  acl           = "${var.s3_bucket_acl}"
+  region        = "${var.s3_bucket_region}"
+  force_destroy = "${var.s3_bucket_force_destroy}"
+
+  cors_rule {
+    allowed_headers = "${var.s3_bucket_cors_rule_allowed_headers}"
+    allowed_methods = "${var.s3_bucket_cors_rule_allowed_methods}"
+    allowed_origins = "${var.s3_bucket_cors_rule_allowed_origins}"
+    expose_headers  = "${var.s3_bucket_cors_rule_expose_headers}"
+    max_age_seconds = "${var.s3_bucket_cors_rule_max_age_seconds}"
+  }
+
+  versioning {
+    enabled    = "${var.s3_bucket_versioning_enabled}"
+    mfa_delete = "${var.s3_bucket_versioning_mfa_delete}"
+  }
+
+  tags = "${var.default_tags}"
+}

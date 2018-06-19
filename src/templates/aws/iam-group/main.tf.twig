@@ -1,0 +1,4 @@
+resource "aws_iam_group" "{{ name }}" {
+  name     = "${var.iam_group_name}"
+  path     = "${var.iam_group_path}"
+}

@@ -1,0 +1,29 @@
+# Define list of variables to be output
+
+output "api_gateway_usage_plan_id" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.id}"
+}
+
+output "api_gateway_usage_plan_name" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.name}"
+}
+
+output "api_gateway_usage_plan_description" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.description}"
+}
+
+output "api_gateway_usage_plan_api_stages" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.api_stages}"
+}
+
+output "api_gateway_usage_plan_quota_settings" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.quota_settings}"
+}
+
+output "api_gateway_usage_plan_throttle_settings" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.throttle_settings}"
+}
+
+output "api_gateway_usage_plan_product_code" {
+  value = "${aws_api_gateway_usage_plan.{{ name }}.product_code}"
+}

@@ -1,0 +1,8 @@
+# Define list of variables to be output
+output "sns_topic_arn" {
+  value = "${aws_sns_topic.{{ name }}.arn}"
+}
+
+output "sns_topic_name" {
+  value = "${aws_sns_topic.{{ name }}.name}"
+}

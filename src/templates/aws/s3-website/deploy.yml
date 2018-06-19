@@ -1,0 +1,4 @@
+aws:
+  s3:
+    - key: ''
+      path: 'src/'

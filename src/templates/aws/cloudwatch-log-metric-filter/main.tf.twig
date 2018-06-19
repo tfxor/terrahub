@@ -1,0 +1,11 @@
+resource "aws_cloudwatch_log_metric_filter" "{{ name }}" {
+  name           = "${var.cw_log_metric_filter_name}"
+  pattern        = "${var.cw_log_metric_filter_pattern}"
+  log_group_name = "${var.cw_log_metric_filter_log_group_name}"
+
+  metric_transformation {
+    name      = "${var.cw_log_metric_transformation_name}"
+    namespace = "${var.cw_log_metric_transformation_namespace}"
+    value     = "${var.cw_log_metric_transformation_value}"
+  }
+}
