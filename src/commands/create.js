@@ -4,8 +4,8 @@ const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const { renderTwig } = require('../helpers/util');
-const { config, templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const { config, templates } = require('../parameters');
 
 class CreateCommand extends AbstractCommand {
   /**
@@ -30,11 +30,12 @@ class CreateCommand extends AbstractCommand {
     const name = this.getOption('name');
     const force = this.getOption('force');
     const parent = this.getOption('parent');
+    const { code } = this.getProjectConfig();
     const templatePath = this._getTemplatePath();
     const directory = path.resolve(this.getOption('directory'), name);
 
     if (!force && fse.existsSync(directory)) {
-      this.logger.info(`Component '${name}' already exists`);
+      this.logger.warn(`Component '${name}' already exists`);
       return Promise.resolve();
     }
 
@@ -45,7 +46,7 @@ class CreateCommand extends AbstractCommand {
         const srcFile = path.join(templatePath, file);
 
         return twigReg.test(srcFile)
-          ? renderTwig(srcFile, { name: name }, outFile.replace(twigReg, ''))
+          ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {

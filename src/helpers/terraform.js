@@ -84,22 +84,17 @@ class Terraform {
 
   /**
    * @returns {Object}
+   * @private
    */
-  getVars() {
-    const vars = {};
+  _vars() {
+    let result = [];
+    let vars = this._tf.vars;
 
-    Object.keys(this._tf.vars).forEach(name => {
-      vars[`TF_VAR_${ name }`] = this._tf.vars[name];
+    Object.keys(vars).forEach(name => {
+      result.push(`-var ${name}=${vars[name]}`);
     });
 
-    return vars;
-  }
-
-  /**
-   * @returns {Array}
-   */
-  getVarFiles() {
-    return this._tf.varFiles;
+    return result;
   }
 
   /**
@@ -107,14 +102,14 @@ class Terraform {
    * @returns {Object}
    * @private
    */
-  _varFilesOption() {
-    let options = {};
+  _varFiles() {
+    let result = [];
 
-    this.getVarFiles().forEach(fileName => {
-      options['-var-file'] = path.join(this.getRoot(), fileName);
+    this._tf.varFiles.forEach(fileName => {
+      result.push(`-var-file=${path.join(this.getRoot(), fileName)}`);
     });
 
-    return options;
+    return result;
   }
 
   /**
@@ -122,6 +117,8 @@ class Terraform {
    * @returns {Promise}
    */
   prepare() {
+    logger.debug(JSON.stringify(this._config, null, 2));
+
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
@@ -229,13 +226,13 @@ class Terraform {
    */
   plan() {
     let statePath = this._state.getPath();
-    let options = Object.assign({'-out': this._plan.getPath()}, this._varFilesOption());
+    let options = { '-out': this._plan.getPath() };
 
     if (!this._isRemoteState && fs.existsSync(statePath)) {
       options['-state'] = statePath;
     }
 
-    return this.run('plan', this._optsToArgs(options));
+    return this.run('plan', [].concat(this._varFiles(), this._vars(), this._optsToArgs(options)));
   }
 
   /**
@@ -243,14 +240,11 @@ class Terraform {
    * @returns {Promise}
    */
   apply() {
-    let args = [];
-    let options = {'-auto-approve': true};
+    let params = {};
     let planPath = this._plan.getPath();
     let statePath = this._state.getPath();
 
     if (!this._isRemoteState) {
-      let params = {};
-
       if (fs.existsSync(statePath)) {
         params = {
           '-state': statePath,
@@ -260,11 +254,13 @@ class Terraform {
       } else if (fs.existsSync(planPath)) {
         params = { '-state-out': statePath };
       }
-
-      Object.assign(options, this._varFilesOption(), params);
     }
 
-    return this.run('apply', [...args, ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
+    let options = Object.assign({ '-auto-approve': true }, params);
+
+    return this
+      .run('apply', [].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .then(() => fse.readFile(statePath));
   }
 
   /**
@@ -272,7 +268,7 @@ class Terraform {
    * @returns {Promise}
    */
   destroy() {
-    let options = this._varFilesOption();
+    let options = {};
     let statePath = this._state.getPath();
 
     if (!this._isRemoteState && fs.existsSync(statePath)) {
@@ -283,7 +279,9 @@ class Terraform {
       });
     }
 
-    return this.run('destroy', ['-force', ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
+    return this
+      .run('destroy', ['-force'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .then(() => fse.readFile(statePath));
   }
 
   /**
@@ -302,11 +300,11 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    logger.info(`[${this.getName()}]`, 'terraform', cmd, '-no-color', ...args);
+    logger.warn(`[${this.getName()}] terraform ${cmd} -no-color ${args.join(' ')}`);
 
     return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
-      env: Object.assign({}, process.env, this.getVars()),
       cwd: this.getRoot(),
+      env: process.env,
       shell: true
     });
   }
@@ -337,20 +335,25 @@ class Terraform {
    */
   _spawn(command, args, options) {
     let stdout = [];
-    const prefix = `[${this.getName()}]`;
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => logger.error(prefix, data.toString()));
+    child.stderr.on('data', data => logger.error(this._out(data)));
     child.stdout.on('data', data => {
       stdout.push(data);
-
-      // @todo improve logger class
-      process.stdout.write(prefix);
-      process.stdout.write(data.toString());
+      logger.raw(this._out(data));
     });
 
     return promise.then(() => Buffer.concat(stdout));
+  }
+
+  /**
+   * @param {Buffer} data
+   * @returns {string}
+   * @private
+   */
+  _out(data) {
+    return `[${this.getName()}] ${data.toString()}`;
   }
 }
 

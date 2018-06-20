@@ -1,17 +1,15 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const Args = require('../src/helpers/args-parser');
-const logger = require('../src/helpers/logger');
 const ConfigLoader = require('./config-loader');
-const { version, description } = require('../package');
 
 class AbstractCommand {
   /**
    * @param {Object} input
+   * @param {Logger} logger
    */
-  constructor(input) {
+  constructor(input, logger) {
+    this.logger = logger;
     this._name = null;
     this._input = input;
     this._options = {};
@@ -24,14 +22,6 @@ class AbstractCommand {
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
-  }
-
-  /**
-   * @todo pass into constructor and configure verbosity
-   * @returns {Logger}
-   */
-  get logger() {
-    return logger;
   }
 
   /**
@@ -161,16 +151,6 @@ class AbstractCommand {
    */
   getProjectConfig() {
     return this._configLoader.getProjectConfig();
-  }
-
-  /**
-   * @todo refactor this!
-   */
-  static showHelp() {
-    const template = fs.readFileSync(path.join(__dirname, 'templates', 'help.tmpl'), 'utf-8');
-    const variables = [ version, description ];
-
-    logger.raw(template, ...variables);
   }
 }
 

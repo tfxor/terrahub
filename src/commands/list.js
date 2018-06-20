@@ -80,7 +80,7 @@ class ListCommand extends AbstractCommand {
         return Promise.resolve();
       })
       .then(() => {
-        this.logger.raw('Projects');
+        this.logger.log('Projects');
 
         if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
           this._showSummary();
@@ -88,10 +88,9 @@ class ListCommand extends AbstractCommand {
           this._showTree(this.hash.getRaw());
         }
 
-        this.logger.raw('');
-        this.logger.info('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.raw('   ',
-          'Please visit https://www.terrahub.io and register to see ALL cloud resources,',
+        this.logger.log('');
+        this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
+        this.logger.log('   Please visit https://www.terrahub.io and register to see ALL cloud resources,' +
           'even the ones that are NOT supported by tagging api.'
         );
 
@@ -106,7 +105,7 @@ class ListCommand extends AbstractCommand {
    */
   _showSummary() {
     Object.keys(this.hash.getRaw()).forEach((project, i) => {
-      this.logger.raw(` ${i + 1}. ${project}`);
+      this.logger.log(` ${i + 1}. ${project}`);
     });
   }
 
@@ -119,14 +118,14 @@ class ListCommand extends AbstractCommand {
     let offset = ' '.repeat(level);
     let titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
 
-    Object.keys(data).forEach((key, value) => {
+    Object.keys(data).forEach((key, index) => {
       if (data[key] !== null) {
         const keys = Object.keys(data[key]);
 
-        this.logger.raw(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
+        this.logger.log(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
         this._showTree(data[key], level + 1);
       } else {
-        this.logger.raw(`${offset} ${key} (${titles[level]} ${value + 1} of X)`);
+        this.logger.log(`${offset} ${key} (${titles[level]} ${index + 1} of X)`);
       }
     });
   }
