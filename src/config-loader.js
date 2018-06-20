@@ -136,7 +136,11 @@ class ConfigLoader {
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
-        this._config[toMd5(cfg.root)] = cfg;
+        const root = this._relativePath(path.join(this.appPath(), cfg.root));
+
+        cfg.root = root;
+        this._config[toMd5(root)] = cfg;
+
         delete this._rootConfig[key];
       }
     });

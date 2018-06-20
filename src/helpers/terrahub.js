@@ -24,6 +24,10 @@ class Terrahub {
    * @private
    */
   _on(event, err = null) {
+    if (!config.token) {
+      return Promise.resolve();
+    }
+
     const data = {
       Hash: this._componentHash,
       Name: this._config.name,
@@ -96,7 +100,7 @@ class Terrahub {
    * @private
    */
   _upload(buffer) {
-    if (!buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
       return Promise.resolve();
     }
 

@@ -173,7 +173,7 @@ class Terraform {
    * @returns {Promise}
    */
   init() {
-    return this.run('init', ['.']);
+    return this.run('init', ['-no-color', '.']);
   }
 
   /**
@@ -186,7 +186,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return this.run('state', [argument]).then(result => {
+    return this.run('state', ['-no-color', argument]).then(result => {
       const remoteState = this._state.getRemotePath();
 
       if (fs.existsSync(remoteState)) {
@@ -232,7 +232,7 @@ class Terraform {
       options['-state'] = statePath;
     }
 
-    return this.run('plan', [].concat(this._varFiles(), this._vars(), this._optsToArgs(options)));
+    return this.run('plan', ['-no-color'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)));
   }
 
   /**
@@ -259,7 +259,7 @@ class Terraform {
     let options = Object.assign({ '-auto-approve': true }, params);
 
     return this
-      .run('apply', [].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .run('apply', ['-no-color'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
       .then(() => fse.readFile(statePath));
   }
 
@@ -280,7 +280,7 @@ class Terraform {
     }
 
     return this
-      .run('destroy', ['-force'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .run('destroy', ['-no-color', '-force'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
       .then(() => fse.readFile(statePath));
   }
 
@@ -290,7 +290,7 @@ class Terraform {
    * @returns {Promise}
    */
   show(planOrStatePath) {
-    return this.run('show', [planOrStatePath]);
+    return this.run('show', ['-no-color', planOrStatePath]);
   }
 
   /**
@@ -300,9 +300,9 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    logger.warn(`[${this.getName()}] terraform ${cmd} -no-color ${args.join(' ')}`);
+    logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
 
-    return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
+    return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
       env: process.env,
       shell: true
