@@ -210,9 +210,6 @@ class Terraform {
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list']).then(result => {
-
-      console.log('result@@@@', result.toString());
-
       this._plan.refresh(workspace);
       this._state.refresh(workspace);
 
