@@ -1,9 +1,8 @@
 'use strict';
 
 const Args = require('../src/helpers/args-parser');
-const merge = require('lodash.merge');
-const { familyTree } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
+const { familyTree, extend } = require('./helpers/util');
 
 class TerraformCommand extends AbstractCommand {
   /**
@@ -43,13 +42,12 @@ class TerraformCommand extends AbstractCommand {
     const cliParams = {
       terraform: {
         var: this.getVar(),
-        varFile: []
+        varFile: this.getVarFile()
       }
     };
 
     Object.keys(config).forEach(hash => {
-      result[hash] = merge(config[hash], cliParams);
-      result[hash].terraform.varFile.push(...this.getVarFile());
+      result[hash] = extend(config[hash], [cliParams]);
     });
 
     return result;

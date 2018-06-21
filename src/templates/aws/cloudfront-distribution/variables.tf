@@ -14,7 +14,6 @@ variable "region" {
 #############
 # top level #
 #############
-
 variable "aliases" {
   description = "Extra CNAMEs (alternate domain names), if any, for this distribution."
   type        = "list"

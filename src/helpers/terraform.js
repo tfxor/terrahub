@@ -3,21 +3,21 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
 const Plan = require('./plan');
 const State = require('./state');
 const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
-const { defaultConfig } = require('../parameters');
+const { extend } = require('../helpers/util');
+const { homePath } = require('../parameters');
 
 class Terraform {
   /**
    * @param {Object} config
    */
   constructor(config) {
-    this._config = merge({}, this._defaults(), config);
+    this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._isRemoteState = false;
     this._isWorkspaceSupported = false;
@@ -72,7 +72,7 @@ class Terraform {
    * @returns {String}
    */
   getBinary() {
-    return defaultConfig('terraform', this.getVersion(), 'terraform');
+    return homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -89,10 +89,10 @@ class Terraform {
    */
   _var() {
     let result = [];
-    let var = this._tf.var;
+    let vars = this._tf.var;
 
     // @todo: check use case when 'var' is not array
-    Object.keys(var).forEach(name => {
+    Object.keys(vars).forEach(name => {
       result.push(`-var ${name}=${vars[name]}`);
     });
 
