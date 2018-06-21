@@ -1,0 +1,28 @@
+# Define list of variables to be used in main.tf
+
+################
+# backend data #
+################
+variable "backend_region" {
+  description = "Map of s3 buckets for each region where terraform.tfstate is stored"
+  type        = "string"
+  default     = "us-east-1"
+}
+
+variable "backend_bucket" {
+  description = "Map of s3 buckets for each region where terraform.tfstate is stored"
+  type        = "string"
+  default     = "data-lake-terrahub-us-east-1"
+}
+
+variable "backend_key" {
+  description = "Map of s3 buckets for each region where terraform.tfstate is stored"
+  type        = "string"
+  default     = "terraform.tfstate"
+}
+
+variable "backend_encrypt" {
+  description = "Map of s3 buckets for each region where terraform.tfstate is stored"
+  type        = "string"
+  default     = "false"
+}
