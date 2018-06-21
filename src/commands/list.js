@@ -16,7 +16,7 @@ class ListCommand extends AbstractCommand {
     this
       .setName('list')
       .setDescription('List projects > cloud accounts > regions > services > resources')
-      .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
+      .addOption('api-region', 'w', 'Resources in region', String, 'us-east-1')
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])

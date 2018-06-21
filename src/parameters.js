@@ -3,7 +3,7 @@
 const os = require('os');
 const fse = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
+const { extend } = require('./helpers/util');
 
 /**
  * Get terrahub home paths
@@ -32,7 +32,7 @@ const env = {
   token: process.env.THUB_ACCESS_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
-const cfg = merge(def, fse.readJsonSync(cfgPath, { throws: false }), env);
+const cfg = extend(def, fse.readJsonSync(cfgPath, { throws: false }), env);
 
 module.exports = {
   defaultConfig: _terrahubPath,

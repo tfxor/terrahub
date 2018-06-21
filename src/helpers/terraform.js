@@ -3,13 +3,13 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
 const Plan = require('./plan');
 const State = require('./state');
 const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
+const { extend } = require('../helpers/util');
 const { defaultConfig } = require('../parameters');
 
 class Terraform {
@@ -17,7 +17,7 @@ class Terraform {
    * @param {Object} config
    */
   constructor(config) {
-    this._config = merge({}, this._defaults(), config);
+    this._config = extend({}, this._defaults(), config);
     this._tf = this._config.terraform;
     this._isRemoteState = false;
     this._isWorkspaceSupported = false;
