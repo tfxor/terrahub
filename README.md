@@ -79,6 +79,7 @@ Configuration example for plan (`.terrahub.json`):
 - Implement `terrahub workspace`
 - Implement `terrahub list` (paid version)
 - Implement `terrahub --help`
+- Invent something new for testing instead of THUB_ENV
 
 ## Example
 

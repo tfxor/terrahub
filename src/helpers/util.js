@@ -3,6 +3,7 @@
 const fse = require('fs-extra');
 const Twig = require('twig');
 const request = require('request');
+const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
 
 /**
@@ -110,10 +111,34 @@ function isAwsNameValid(name) {
 }
 
 /**
+ * @param {*} objValue
+ * @param {*} srcValue
+ * @return {*}
+ * @private
+ */
+function _customizer(objValue, srcValue) {
+  if (Array.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
+/**
+ * Recursively merges object properties
+ * @param {Object} object
+ * @param {Object[]} sources
+ * @param {Function} customizer
+ * @returns {Object}
+ */
+function extend(object, sources, customizer = _customizer) {
+  return mergeWith(object, ...sources, customizer);
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toMd5,
+  extend,
   toBase64,
   fromBase64,
   familyTree,
