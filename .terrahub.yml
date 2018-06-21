@@ -1,7 +1,7 @@
 project:
-  name: '{{ name }}'
-  code: '{{ code }}'
-  provider: '{{ provider }}'
+  name: 'TerraHub_CLI'
+  code: '59d5adf8'
+  provider: 'aws'
 
 terraform:
   varFile:

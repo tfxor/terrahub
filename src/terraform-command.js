@@ -38,14 +38,14 @@ class TerraformCommand extends AbstractCommand {
     const config = super.getConfig();
     const cliParams = {
       terraform: {
-        vars: this.getVars(),
-        varFiles: []
+        var: this.getVar(),
+        varFile: []
       }
     };
 
     Object.keys(config).forEach(hash => {
       result[hash] = merge(config[hash], cliParams);
-      result[hash].terraform.varFiles.push(...this.getVarFiles());
+      result[hash].terraform.varFile.push(...this.getVarFile());
     });
 
     return result;
@@ -80,14 +80,14 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @returns {Array}
    */
-  getVarFiles() {
+  getVarFile() {
     return this.getOption('var-file');
   }
 
   /**
    * @returns {Object}
    */
-  getVars() {
+  getVar() {
     let result = {};
 
     this.getOption('var').map(item => {

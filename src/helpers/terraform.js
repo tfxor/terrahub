@@ -32,8 +32,8 @@ class Terraform {
   _defaults() {
     return {
       terraform: {
-        vars: {},
-        varFiles: [],
+        var: {},
+        varFile: [],
         cache: false,
         version: '0.11.7',
         resource: '.resource',
@@ -83,14 +83,15 @@ class Terraform {
   }
 
   /**
+   * Reformat var config as object
    * @returns {Object}
    * @private
    */
-  _vars() {
+  _var() {
     let result = [];
-    let vars = this._tf.vars;
+    let var = this._tf.var;
 
-    Object.keys(vars).forEach(name => {
+    Object.keys(var).forEach(name => {
       result.push(`-var ${name}=${vars[name]}`);
     });
 
@@ -98,14 +99,14 @@ class Terraform {
   }
 
   /**
-   * Reformat var-files as object
+   * Reformat var-file config as object
    * @returns {Object}
    * @private
    */
-  _varFiles() {
+  _varFile() {
     let result = [];
 
-    this._tf.varFiles.forEach(fileName => {
+    this._tf.varFile.forEach(fileName => {
       result.push(`-var-file=${path.join(this.getRoot(), fileName)}`);
     });
 
@@ -232,7 +233,7 @@ class Terraform {
       options['-state'] = statePath;
     }
 
-    return this.run('plan', ['-no-color'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)));
+    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)));
   }
 
   /**
@@ -259,7 +260,7 @@ class Terraform {
     let options = Object.assign({ '-auto-approve': true }, params);
 
     return this
-      .run('apply', ['-no-color'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(() => fse.readFile(statePath));
   }
 
@@ -280,7 +281,7 @@ class Terraform {
     }
 
     return this
-      .run('destroy', ['-no-color', '-force'].concat(this._varFiles(), this._vars(), this._optsToArgs(options)))
+      .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(() => fse.readFile(statePath));
   }
 

@@ -24,8 +24,8 @@ class RefreshCommand extends TerraformCommand {
     console.log('array', this.getOption('array'));
     console.log('force', this.getOption('force'));
 
-    console.log('var', this.getVars());
-    console.log('var-file', this.getVarFiles());
+    console.log('var', this.getVar());
+    console.log('var-file', this.getVarFile());
 
     return Promise.resolve('Done');
   }
