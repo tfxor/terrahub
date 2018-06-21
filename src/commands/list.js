@@ -7,6 +7,7 @@ const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
 const { defaultConfig } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const treeify = require('treeify');
 
 class ListCommand extends AbstractCommand {
   /**
@@ -90,7 +91,8 @@ class ListCommand extends AbstractCommand {
         if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
           this._showSummary();
         } else {
-          this._showTree(this.hash.getRaw());
+          const tree = this._format(this.hash.getRaw());
+          this._showTree(tree);
         }
 
         this.logger.log('');
@@ -115,24 +117,35 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} data
-   * @param {Number} level
+   * @param {Object} tree
    * @private
    */
-  _showTree(data, level = 0) {
-    let offset = ' '.repeat(level);
-    let titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+  _showTree(tree) {
+    treeify.asLines(tree, false, line => {
+      this.logger.log(` ${line}`);
+    });
+  }
 
-    Object.keys(data).forEach((key, index) => {
+  /**
+   * @param {Object} data
+   * @param {Number} level
+   * @returns {Object}
+   * @private
+   */
+  _format(data, level = 0) {
+    let result = {};
+    const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+    const keys = Object.keys(data);
+
+    keys.forEach((key, index) => {
       if (data[key] !== null) {
-        const keys = Object.keys(data[key]);
-
-        this.logger.log(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
-        this._showTree(data[key], level + 1);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1);
       } else {
-        this.logger.log(`${offset} ${key} (${titles[level]} ${index + 1} of X)`);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;
       }
     });
+
+    return result;
   }
 
   /**

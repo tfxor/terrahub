@@ -21,7 +21,7 @@ class CommandFactory {
     } catch (err) {
       const Command = require(path.join(CommandFactory.commandsPath, 'default'));
 
-      return new Command(Args.parse(argv));
+      return new Command(Args.parse(argv), logger);
     }
   }
 
