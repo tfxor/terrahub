@@ -5,7 +5,7 @@ const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
-const { defaultConfig } = require('../parameters');
+const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 
 class ListCommand extends AbstractCommand {
@@ -173,7 +173,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _cachePath() {
-    return defaultConfig('cache', 'list', `${toMd5(this.accountId + this.region)}.json`);
+    return homePath('cache', 'list', `${toMd5(this.accountId + this.region)}.json`);
   }
 
   /**

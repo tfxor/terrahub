@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const Args = require('./helpers/args-parser');
+const { commandsPath } = require('./parameters');
 
 class CommandFactory {
   /**
@@ -15,7 +16,7 @@ class CommandFactory {
     const [command, ...args] = argv.slice(2);
 
     try {
-      const Command = require(path.join(CommandFactory.commandsPath, command));
+      const Command = require(path.join(commandsPath, command));
 
       return new Command(Args.parse(args), logger);
     } catch (err) {
@@ -29,16 +30,8 @@ class CommandFactory {
    */
   static listCommands() {
     return fs
-      .readdirSync(CommandFactory.commandsPath)
+      .readdirSync(commandsPath)
       .map(fileName => path.basename(fileName, '.js'));
-  }
-
-  /**
-   * Directory with command classes
-   * @returns {*}
-   */
-  static get commandsPath() {
-    return path.join(__dirname, 'commands');
   }
 }
 

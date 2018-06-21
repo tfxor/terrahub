@@ -125,6 +125,7 @@ class Terrahub {
    * @private
    */
   _getEndpoint() {
+    // @todo invent something new for testing instead of config.env
     const subDomain = config.env === 'prod' ? 'api' : `api-${config.env}`;
 
     return `https://${subDomain}.terrahub.io/v1/cnci/realtime/create`;

@@ -26,22 +26,26 @@ if (!fse.existsSync(cfgPath)) {
   fse.copySync(path.join(templates, 'configs', '.terrahub.json'), cfgPath);
 }
 
-const def = { format: 'yml', token: 'false', env: 'prod' };
+const def = { format: 'yml', token: false, env: 'prod' };
 const env = {
   env: process.env.THUB_ENV,
   token: process.env.THUB_ACCESS_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
-const cfg = extend(def, fse.readJsonSync(cfgPath, { throws: false }), env);
+
+const cfg = extend(def, [fse.readJsonSync(cfgPath, { throws: false }), env]);
+const isProd = cfg.env === 'prod';
 
 module.exports = {
-  defaultConfig: _terrahubPath,
+  homePath: _terrahubPath,
+  commandsPath: path.join(__dirname, 'commands'),
   config: {
     env: cfg.env,
     home: _terrahubPath(),
     token: cfg.token,
     format: cfg.format,
-    fileName: `.terrahub.${cfg.format}`
+    isProd: isProd,
+    fileName: isProd ? `.terrahub.${cfg.format}` : `.terrahub.${cfg.env}.${cfg.format}`
   },
   templates: {
     aws: path.join(templates, 'aws'),

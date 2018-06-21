@@ -5,20 +5,7 @@
     "provider": "{{ provider }}"
   },
   "terraform": {
-    "varFiles": [
-      "default.tfvars"
-    ],
-    "workspace": {
-      "dev": {
-        "varFiles": [
-          "workspace/dev.tfvars"
-        ]
-      },
-      "prod": {
-        "varFiles": [
-          "workspace/prod.tfvars"
-        ]
-      }
-    }
+    "varFile": "default.tfvars",
+    "workspace": "default"
   }
 }

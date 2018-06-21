@@ -111,17 +111,26 @@ function isAwsNameValid(name) {
 }
 
 /**
+ * @param {*} objValue
+ * @param {*} srcValue
+ * @return {*}
+ * @private
+ */
+function _customizer(objValue, srcValue) {
+  if (Array.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
+/**
  * Recursively merges object properties
  * @param {Object} object
- * @param {Object} sources
+ * @param {Object[]} sources
+ * @param {Function} customizer
  * @returns {Object}
  */
-function extend(object, ...sources) {
-  return mergeWith(object, ...sources, (objValue, srcValue) => {
-    if (Array.isArray(objValue)) {
-      return objValue.concat(srcValue);
-    }
-  });
+function extend(object, sources, customizer = _customizer) {
+  return mergeWith(object, ...sources, customizer);
 }
 
 /**

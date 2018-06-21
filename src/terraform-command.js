@@ -1,8 +1,8 @@
 'use strict';
 
 const Args = require('../src/helpers/args-parser');
-const { familyTree, extend } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
+const { familyTree, extend } = require('./helpers/util');
 
 class TerraformCommand extends AbstractCommand {
   /**
@@ -37,13 +37,13 @@ class TerraformCommand extends AbstractCommand {
     const config = super.getConfig();
     const cliParams = {
       terraform: {
-        vars: this.getVars(),
-        varFiles: this.getVarFiles()
+        var: this.getVar(),
+        varFile: this.getVarFile()
       }
     };
 
     Object.keys(config).forEach(hash => {
-      result[hash] = extend(config[hash], cliParams);
+      result[hash] = extend(config[hash], [cliParams]);
     });
 
     return result;
@@ -78,14 +78,14 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @returns {Array}
    */
-  getVarFiles() {
+  getVarFile() {
     return this.getOption('var-file');
   }
 
   /**
    * @returns {Object}
    */
-  getVars() {
+  getVar() {
     let result = {};
 
     this.getOption('var').map(item => {
