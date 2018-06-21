@@ -10,7 +10,7 @@ class HelpCommand extends AbstractCommand {
    * Command configuration
    */
   static get name() {
-    return 'default';
+    return 'help';
   }
 
   static get description() {
@@ -31,11 +31,11 @@ class HelpCommand extends AbstractCommand {
     const version = this.getOption('version');
 
     if (help) {
-      this.showHelp()
+      this.showHelp();
     } else if (version) {
-      this.showVersion()
+      this.showVersion();
     } else {
-      this.logger.error('Command unrecognised');
+      this.logger.error('Command missing or NOT supported yet');
     }
 
     return Promise.resolve();
@@ -55,11 +55,12 @@ class HelpCommand extends AbstractCommand {
     const Commands = [];
     commandNamesList.forEach((commandName) => {
       const Command = require(path.join(HelpCommand.commandsPath, commandName));
-      if (Command.name && Command.name !== 'default') {
+      if (Command.name && Command.name !== 'help') {
         Commands.push(Command);
       }
     });
 
+    // @todo: move this code block into template file
     let helpOptions = '';
     Commands.forEach((Command) => {
       helpOptions += `\t${Command.name}\t\t${Command.description}\n`;

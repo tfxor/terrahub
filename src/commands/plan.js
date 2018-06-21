@@ -12,7 +12,7 @@ class PlanCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run `terraform plan` across multiple terraform scripts';
+    return 'run `terraform plan` across multiple terraform scripts';
   }
 
   /**

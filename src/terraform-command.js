@@ -14,8 +14,8 @@ class TerraformCommand extends AbstractCommand {
 
     list
       .addOption('include', 'i', 'Components to work with', Array, [])
-      .addOption('var', 'v', 'Set of variables', Array, [])
-      .addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
+      .addOption('var', 'r', 'Set of variables', Array, [])
+      .addOption('var-file', 'l', 'Set of variables defined in files', Array, []);
 
     return list;
   }

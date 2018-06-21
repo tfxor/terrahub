@@ -13,7 +13,7 @@ class GraphCommand extends AbstractCommand {
   }
 
   static get description() {
-    return 'Show the graph of dependencies between terrahub components';
+    return 'show the graph of dependencies between terrahub components';
   }
 
   /**

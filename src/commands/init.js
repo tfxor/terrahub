@@ -12,7 +12,7 @@ class InitCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run `terraform init` across multiple terraform scripts';
+    return 'run `terraform init` across multiple terraform scripts';
   }
 
   /**

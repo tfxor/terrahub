@@ -11,7 +11,7 @@ class RefreshCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Refresh command';
+    return 'run `terraform refresh` across multiple terraform scripts';
   }
 
   static get options() {

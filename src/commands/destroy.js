@@ -12,7 +12,7 @@ class DestroyCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run `terraform destroy` across multiple terraform scripts';
+    return 'run `terraform destroy` across multiple terraform scripts';
   }
 
   /**

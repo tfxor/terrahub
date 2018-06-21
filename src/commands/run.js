@@ -12,7 +12,7 @@ class RunCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run automated workflow terraform init > workspace > plan > apply > destroy';
+    return 'run automated workflow terraform init > workspace > plan > apply > destroy';
   }
 
   static get options() {

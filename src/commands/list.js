@@ -18,11 +18,13 @@ class ListCommand extends AbstractCommand {
   }
 
   static get description() {
-    return 'List projects > cloud accounts > regions > services > resources';
+    return 'list projects > cloud accounts > regions > services > resources';
   }
 
   static get options() {
     return super.options
+      // @todo: figure out why api-region and regions are not used together
+      // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
@@ -88,12 +90,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
-          this._showSummary();
-        } else {
-          const tree = this._format(this.hash.getRaw());
-          this._showTree(tree);
-        }
+        this._showTree(this._format(this.hash.getRaw()));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -104,16 +101,6 @@ class ListCommand extends AbstractCommand {
         return Promise.resolve();
       })
       .then(() => Promise.resolve('Done'));
-  }
-
-  /**
-   * Show overall information
-   * @private
-   */
-  _showSummary() {
-    Object.keys(this.hash.getRaw()).forEach((project, i) => {
-      this.logger.log(` ${i + 1}. ${project}`);
-    });
   }
 
   /**

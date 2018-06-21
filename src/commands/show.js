@@ -3,8 +3,15 @@
 const TerraformCommand = require('../terraform-command');
 
 class ShowCommand extends TerraformCommand {
+  /**
+   * Command configuration
+   */
   static get name() {
-    return null;
+    return 'show';
+  }
+
+  static get description() {
+    return 'run `terraform show` across multiple terraform scripts';
   }
 }
 

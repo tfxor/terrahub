@@ -40,7 +40,7 @@ class AbstractCommand {
    * @returns {Object}
    */
   static get options() {
-    return {};
+    return {}
   }
 
   /**

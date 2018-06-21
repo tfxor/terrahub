@@ -12,7 +12,7 @@ class WorkspaceCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run `terraform workspace` across multiple terraform scripts';
+    return 'run `terraform workspace` across multiple terraform scripts';
   }
 
   /**

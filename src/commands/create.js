@@ -16,7 +16,7 @@ class CreateCommand extends AbstractCommand {
   }
 
   static get description() {
-    return 'Create terraform code from predefined templates';
+    return 'create terraform code from predefined templates';
   }
 
   static get options() {

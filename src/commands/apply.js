@@ -12,7 +12,7 @@ class ApplyCommand extends TerraformCommand {
   }
 
   static get description() {
-    return 'Run `terraform apply` across multiple terraform scripts';
+    return 'run `terraform apply` across multiple terraform scripts';
   }
 
   /**
