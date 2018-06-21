@@ -19,7 +19,7 @@ class CommandFactory {
 
       return new Command(Args.parse(args), logger);
     } catch (err) {
-      const Command = require(path.join(CommandFactory.commandsPath, 'default'));
+      const Command = require(path.join(CommandFactory.commandsPath, 'help'));
 
       return new Command(Args.parse(argv), logger);
     }
