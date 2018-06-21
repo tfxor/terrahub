@@ -49,6 +49,7 @@ module.exports = {
     hooks: path.join(templates, 'hooks'),
     azurerm: path.join(templates, 'azurerm'),
     configs: path.join(templates, 'configs'),
-    mapping: path.join(templates, 'mapping.json')
+    mapping: path.join(templates, 'mapping.json'),
+    help: path.join(templates, 'help.tmpl')
   }
 };

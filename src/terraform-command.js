@@ -7,13 +7,17 @@ const AbstractCommand = require('./abstract-command');
 
 class TerraformCommand extends AbstractCommand {
   /**
-   * Command initialization
-   * (post configure action)
+   * Command configuration
    */
-  initialize() {
-    this.addOption('include', 'i', 'Components to work with', Array, []);
-    this.addOption('var', 'v', 'Set of variables', Array, []);
-    this.addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
+  static get options() {
+    let list = super.options;
+
+    list
+      .addOption('include', 'i', 'Components to work with', Array, [])
+      .addOption('var', 'v', 'Set of variables', Array, [])
+      .addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
+
+    return list;
   }
 
   /**

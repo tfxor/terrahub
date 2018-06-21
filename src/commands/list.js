@@ -12,16 +12,21 @@ class ListCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('list')
-      .setDescription('List projects > cloud accounts > regions > services > resources')
+  static get name() {
+    return 'list';
+  }
+
+  static get description() {
+    return 'List projects > cloud accounts > regions > services > resources';
+  }
+
+  static get options() {
+    return super.options
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
-      .addOption('services', 's', 'Services (comma separated values)', Array, [])
-    ;
+      .addOption('services', 's', 'Services (comma separated values)', Array, []);
   }
 
   /**
