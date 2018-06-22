@@ -34,7 +34,7 @@ class Terraform {
       terraform: {
         var: {},
         varFile: [],
-        cache: false,
+        backend: {},
         version: '0.11.7',
         resource: '.resource',
         workspace: 'default'
@@ -83,25 +83,43 @@ class Terraform {
   }
 
   /**
-   * Reformat var config as object
-   * @returns {Object}
+   * @param {Object} object
+   * @param {String} option
+   * @return {Array}
    * @private
    */
-  _var() {
+  _objToOpt(object, option) {
     let result = [];
-    let vars = this._tf.var;
 
     // @todo: check use case when 'var' is not array
-    Object.keys(vars).forEach(name => {
-      result.push(`-var ${name}=${vars[name]}`);
+    Object.keys(object).forEach(name => {
+      result.push(`-${option} ${name}=${object[name]}`);
     });
 
     return result;
   }
 
   /**
-   * Reformat var-file config as object
-   * @returns {Object}
+   * Prepare -var
+   * @returns {Array}
+   * @private
+   */
+  _var() {
+    return this._objToOpt(this._tf.var, 'var');
+  }
+
+  /**
+   * Prepare -backend-config
+   * @return {Array}
+   * @private
+   */
+  _backend() {
+    return this._objToOpt(this._tf.backend, 'backend-config');
+  }
+
+  /**
+   * Prepare -var-file
+   * @returns {Array}
    * @private
    */
   _varFile() {
@@ -176,7 +194,7 @@ class Terraform {
    * @returns {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', '.']);
+    return this.run('init', ['-no-color', ...this._backend(), '.']);
   }
 
   /**

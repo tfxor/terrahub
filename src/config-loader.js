@@ -165,24 +165,7 @@ class ConfigLoader {
         config['parent'] = this._relativePath(path.resolve(componentPath, config.parent));
       }
 
-      const sources = [this._defaults(), this._rootConfig, config];
-
-      // @note varFile can be String or Array
-      const transform = obj => {
-        if (obj && obj.hasOwnProperty('varFile') && !Array.isArray(obj.varFile)) {
-          obj.varFile = [obj.varFile];
-        }
-      };
-      const transformer = (objValue, srcValue) => {
-        transform(objValue);
-        transform(srcValue);
-
-        if (Array.isArray(objValue)) {
-          return objValue.concat(srcValue);
-        }
-      };
-
-      this._config[toMd5(componentPath)] = extend({root: componentPath}, sources, transformer);
+      this._config[toMd5(componentPath)] = extend({root: componentPath}, [this._defaults(), this._rootConfig, config]);
     });
   }
 
