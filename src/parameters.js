@@ -26,8 +26,9 @@ if (!fse.existsSync(cfgPath)) {
   fse.copySync(path.join(templates, 'configs', '.terrahub.json'), cfgPath);
 }
 
-const def = { format: 'yml', token: false, env: 'prod' };
+const def = { format: 'yml', token: false, env: 'prod', api: 'api' };
 const env = {
+  api: process.env.THUB_API,
   env: process.env.THUB_ENV,
   token: process.env.THUB_ACCESS_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
@@ -40,6 +41,7 @@ module.exports = {
   homePath: _terrahubPath,
   commandsPath: path.join(__dirname, 'commands'),
   config: {
+    api: cfg.api,
     env: cfg.env,
     home: _terrahubPath(),
     token: cfg.token,
