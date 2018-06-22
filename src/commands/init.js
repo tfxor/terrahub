@@ -7,11 +7,12 @@ class InitCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('init')
-      .setDescription('Run `terraform init` across multiple terraform scripts')
-    ;
+  static get name() {
+    return 'init';
+  }
+
+  static get description() {
+    return 'run `terraform init` across multiple terraform scripts';
   }
 
   /**

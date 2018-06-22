@@ -6,14 +6,19 @@ class RefreshCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('refresh')
-      .setDescription('Refresh command')
+  static get name() {
+    return 'refresh';
+  }
+
+  static get description() {
+    return 'run `terraform refresh` across multiple terraform scripts';
+  }
+
+  static get options() {
+    return super.options
       .addOption('array', 'a', 'Some array', Array, [])
       .addOption('object', 'o', 'Some object', Object, {})
-      .addOption('force', 'f', 'Replace directory', Boolean, false)
-    ;
+      .addOption('force', 'f', 'Replace directory', Boolean, false);
   }
 
   /**

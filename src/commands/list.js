@@ -7,21 +7,29 @@ const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const treeify = require('treeify');
 
 class ListCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('list')
-      .setDescription('List projects > cloud accounts > regions > services > resources')
-      .addOption('api-region', 'w', 'Resources in region', String, 'us-east-1')
+  static get name() {
+    return 'list';
+  }
+
+  static get description() {
+    return 'list projects > cloud accounts > regions > services > resources';
+  }
+
+  static get options() {
+    return super.options
+      // @todo: figure out why api-region and regions are not used together
+      // @todo: figure out why api-region and accounts both use 'a' as shortcut
+      .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
-      .addOption('services', 's', 'Services (comma separated values)', Array, [])
-    ;
+      .addOption('services', 's', 'Services (comma separated values)', Array, []);
   }
 
   /**
@@ -82,11 +90,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
-          this._showSummary();
-        } else {
-          this._showTree(this.hash.getRaw());
-        }
+        this._showTree(this._format(this.hash.getRaw()));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -100,34 +104,35 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * Show overall information
+   * @param {Object} tree
    * @private
    */
-  _showSummary() {
-    Object.keys(this.hash.getRaw()).forEach((project, i) => {
-      this.logger.log(` ${i + 1}. ${project}`);
+  _showTree(tree) {
+    treeify.asLines(tree, false, line => {
+      this.logger.log(` ${line}`);
     });
   }
 
   /**
    * @param {Object} data
    * @param {Number} level
+   * @returns {Object}
    * @private
    */
-  _showTree(data, level = 0) {
-    let offset = ' '.repeat(level);
-    let titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+  _format(data, level = 0) {
+    let result = {};
+    const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+    const keys = Object.keys(data);
 
-    Object.keys(data).forEach((key, index) => {
+    keys.forEach((key, index) => {
       if (data[key] !== null) {
-        const keys = Object.keys(data[key]);
-
-        this.logger.log(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
-        this._showTree(data[key], level + 1);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1);
       } else {
-        this.logger.log(`${offset} ${key} (${titles[level]} ${index + 1} of X)`);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;
       }
     });
+
+    return result;
   }
 
   /**

@@ -10,14 +10,19 @@ class ProjectCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('project')
-      .setDescription('Create or update project that manages multiple terraform scripts')
+  static get name() {
+    return 'project';
+  }
+
+  static get description() {
+    return 'create or update project that manages multiple terraform scripts';
+  }
+
+  static get options() {
+    return super.options
       .addOption('name', 'n', 'Project name', String)
-      .addOption('provider', 'p', 'Project provider', String, 'aws')
-      .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
-    ;
+      .addOption('provider', 'p', 'Cloud provider', String, 'aws')
+      .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd());
   }
 
   /**

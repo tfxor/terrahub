@@ -7,11 +7,12 @@ class ApplyCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  configure() {
-    this
-      .setName('apply')
-      .setDescription('Run `terraform apply` across multiple terraform scripts')
-    ;
+  static get name() {
+    return 'apply';
+  }
+
+  static get description() {
+    return 'run `terraform apply` across multiple terraform scripts';
   }
 
   /**
