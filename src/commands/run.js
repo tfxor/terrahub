@@ -7,19 +7,13 @@ class RunCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'run';
-  }
-
-  static get description() {
-    return 'run automated workflow terraform init > workspace > plan > apply > destroy';
-  }
-
-  static get options() {
-    return super.options
+  configure() {
+    this
+      .setName('run')
+      .setDescription('run automated workflow terraform init > workspace > plan > apply > destroy')
       .addOption('plan', 'p', 'Run plan', Boolean, true)
       .addOption('apply', 'a', 'Run apply', Boolean, false)
-      .addOption('destroy', 'd', 'Run destroy', Boolean, false);
+      .addOption('destroy', 'd', 'Run destroy', Boolean, false)
   }
 
   /**

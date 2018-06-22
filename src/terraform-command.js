@@ -6,17 +6,13 @@ const { familyTree, extend } = require('./helpers/util');
 
 class TerraformCommand extends AbstractCommand {
   /**
-   * Command configuration
+   * Command initialization
+   * (post configure action)
    */
-  static get options() {
-    let list = super.options;
-
-    list
-      .addOption('include', 'i', 'Components to work with', Array, [])
-      .addOption('var', 'r', 'Set of variables', Array, [])
-      .addOption('var-file', 'l', 'Set of variables defined in files', Array, []);
-
-    return list;
+  initialize() {
+    this.addOption('include', 'i', 'Components to work with', Array, []);
+    this.addOption('var', 'v', 'Set of variables', Array, []);
+    this.addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
   }
 
   /**

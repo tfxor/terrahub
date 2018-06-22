@@ -8,12 +8,11 @@ class GraphCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'graph';
-  }
-
-  static get description() {
-    return 'show the graph of dependencies between terrahub components';
+  configure() {
+    this
+      .setName('graph')
+      .setDescription('show the graph of dependencies between terrahub components')
+    ;
   }
 
   /**

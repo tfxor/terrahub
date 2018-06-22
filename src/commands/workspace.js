@@ -7,12 +7,10 @@ class WorkspaceCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'workspace';
-  }
-
-  static get description() {
-    return 'run `terraform workspace` across multiple terraform scripts';
+  configure() {
+    this
+      .setName('workspace')
+      .setDescription('run `terraform workspace` across multiple terraform scripts')
   }
 
   /**

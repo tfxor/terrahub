@@ -6,13 +6,11 @@ class ShowCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'show';
-  }
-
-  static get description() {
-    return 'run `terraform show` across multiple terraform scripts';
-  }
+  // configure() {
+  //   this
+  //     .setName('show')
+  //     .setDescription('run `terraform show` across multiple terraform scripts')
+  // }
 }
 
 module.exports = ShowCommand;

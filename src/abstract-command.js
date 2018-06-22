@@ -10,25 +10,55 @@ class AbstractCommand {
    */
   constructor(input, logger) {
     this.logger = logger;
+    this._name = null;
     this._input = input;
+    this._options = {};
+    this._description = null;
     this._configLoader = new ConfigLoader();
 
+    this.configure();
     this.initialize();
 
-    if (!this.constructor.name) {
+    if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
   }
 
   /**
-   * @returns {String}
+   * Configure command name
+   * @param {String} name
+   * @returns {AbstractCommand}
    */
-  static get name() {}
+  setName(name) {
+    this._name = name;
+
+    return this;
+  }
 
   /**
    * @returns {String}
    */
-  static get description() {}
+  getName() {
+    return this._name;
+  }
+
+  /**
+   * Configure command description
+   * @param {String} description
+   * @returns {AbstractCommand}
+   */
+  setDescription(description) {
+    this._description = description;
+
+    return this;
+  }
+
+  /**
+   * @returns {String}
+   */
+  getDescription() {
+    return this._description;
+  }
 
   /**
    * Configure command option
@@ -37,10 +67,12 @@ class AbstractCommand {
    * @param {String} description
    * @param {Object} type
    * @param {*} defaultValue
-   * @returns {Object}
+   * @returns {AbstractCommand}
    */
-  static get options() {
-    return {}
+  addOption(name, shortcut, description, type = String, defaultValue = undefined) {
+    this._options[name] = { name, shortcut, description, type, defaultValue };
+
+    return this;
   }
 
   /**
@@ -49,14 +81,21 @@ class AbstractCommand {
    * @returns {*}
    */
   getOption(name) {
-    if (!this.constructor.options.hasOwnProperty(name)) {
+    if (!this._options.hasOwnProperty(name)) {
       return undefined;
     }
 
-    const option = this.constructor.options[name];
+    const option = this._options[name];
     const rawValue = this._input[option.name] || this._input[option.shortcut] || option.defaultValue;
 
     return Args.convert(option.type, rawValue);
+  }
+
+  /**
+   * Abstract configure method
+   */
+  configure() {
+    throw new Error('Implement configure() method...');
   }
 
   /**
@@ -77,7 +116,7 @@ class AbstractCommand {
    * @returns {Promise}
    */
   validate() {
-    const required = Object.keys(this.constructor.options).filter(name => {
+    const required = Object.keys(this._options).filter(name => {
       return typeof this.getOption(name) === 'undefined';
     });
 
@@ -114,10 +153,5 @@ class AbstractCommand {
     return this._configLoader.getProjectConfig();
   }
 }
-
-Object.prototype.addOption = function (name, shortcut, description, type, defaultValue = undefined) {
-  this[name] = {name, shortcut, description, type, defaultValue};
-  return this;
-};
 
 module.exports = AbstractCommand;

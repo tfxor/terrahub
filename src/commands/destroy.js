@@ -7,12 +7,11 @@ class DestroyCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'destroy';
-  }
-
-  static get description() {
-    return 'run `terraform destroy` across multiple terraform scripts';
+  configure() {
+    this
+      .setName('destroy')
+      .setDescription('run `terraform destroy` across multiple terraform scripts')
+    ;
   }
 
   /**

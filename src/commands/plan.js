@@ -7,12 +7,11 @@ class PlanCommand extends TerraformCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'plan';
-  }
-
-  static get description() {
-    return 'run `terraform plan` across multiple terraform scripts';
+  configure() {
+    this
+      .setName('plan')
+      .setDescription('run `terraform plan` across multiple terraform scripts')
+    ;
   }
 
   /**

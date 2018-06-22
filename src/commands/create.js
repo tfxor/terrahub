@@ -11,21 +11,15 @@ class CreateCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'create';
-  }
-
-  static get description() {
-    return 'create terraform code from predefined templates';
-  }
-
-  static get options() {
-    return super.options
+  configure() {
+    this
+      .setName('create')
+      .setDescription('Create terraform code from predefined templates')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String)
       .addOption('directory', 'd', 'Path where template should be created (default: cwd)', String, process.cwd())
       .addOption('parent', 'p', 'Parent component path', String, '')
-      .addOption('force', 'f', 'Replace directory', Boolean, false);
+      .addOption('force', 'f', 'Replace directory', Boolean, false)
   }
 
   /**

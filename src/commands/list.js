@@ -13,16 +13,10 @@ class ListCommand extends AbstractCommand {
   /**
    * Command configuration
    */
-  static get name() {
-    return 'list';
-  }
-
-  static get description() {
-    return 'list projects > cloud accounts > regions > services > resources';
-  }
-
-  static get options() {
-    return super.options
+  configure() {
+    this
+      .setName('list')
+      .setDescription('list projects > cloud accounts > regions > services > resources')
       // @todo: figure out why api-region and regions are not used together
       // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')

@@ -20,9 +20,8 @@ class CommandFactory {
 
       return new Command(Args.parse(args), logger);
     } catch (err) {
-      const Command = require(path.join(CommandFactory.commandsPath, 'help'));
-
-      return new Command(Args.parse(argv), logger);
+      // @todo:Implement no command behavior
+      throw err;
     }
   }
 
