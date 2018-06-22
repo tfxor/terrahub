@@ -2,6 +2,7 @@
 
 const Args = require('../src/helpers/args-parser');
 const ConfigLoader = require('./config-loader');
+const os = require('os');
 
 class AbstractCommand {
   /**
@@ -18,6 +19,8 @@ class AbstractCommand {
 
     this.configure();
     this.initialize();
+
+    this.addOption('help', 'h', 'show command description and available options', Boolean, false);
 
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
@@ -70,7 +73,7 @@ class AbstractCommand {
    * @returns {AbstractCommand}
    */
   addOption(name, shortcut, description, type = String, defaultValue = undefined) {
-    this._options[name] = { name, shortcut, description, type, defaultValue };
+    this._options[name] = {name, shortcut, description, type, defaultValue};
 
     return this;
   }
@@ -101,7 +104,8 @@ class AbstractCommand {
   /**
    * Abstract initialize method (optional)
    */
-  initialize() {}
+  initialize() {
+  }
 
   /**
    * Abstract run method
@@ -151,6 +155,51 @@ class AbstractCommand {
    */
   getProjectConfig() {
     return this._configLoader.getProjectConfig();
+  }
+
+  /**
+   * Check Help Flag
+   */
+  checkHelp() {
+    if (this.getDescription() && this.getOption('help') === true) {
+      this.showHelp();
+      return Promise.reject('help casted')
+    } else {
+      return Promise.resolve()
+    }
+  }
+
+  /**
+   * Show command description and options
+   */
+  showHelp() {
+    let helpString;
+    if (this.getName().length < 8) {
+      helpString = `\t${this.getName()}\t\t${this.getDescription()}`;
+    } else {
+      helpString = `\t${this.getName()}\t${this.getDescription()}`;
+    }
+
+    if (this._options.length === 0) {
+      this.logger.log(helpString);
+      return
+    }
+
+    helpString +=  os.EOL + '\tOptions:';
+
+    Object.values(this._options).forEach((option) => {
+      if (option.name.length < 6){
+        helpString += os.EOL + `\t--${option.name}\t\t-${option.shortcut}\t${option.description}`;
+      } else {
+        helpString += os.EOL + `\t--${option.name}\t-${option.shortcut}\t${option.description}`;
+      }
+
+      if (option.defaultValue === undefined) {
+        helpString += `*`;
+      }
+    });
+
+    this.logger.log(helpString);
   }
 }
 

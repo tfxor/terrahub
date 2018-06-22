@@ -24,6 +24,3 @@ package-lock.json
 
 # Downloads
 bin/terraform.*
-
-# JSON Helper
-src/help.json

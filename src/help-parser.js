@@ -2,8 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const parameters = require('./parameters');
-const HelpCommand = require("./help");
 const { commandsPath } = require("./parameters");
 const { helpJSON } = require('./parameters');
 
@@ -52,7 +50,7 @@ commands.forEach((command) => {
 
   value.options.forEach((option) => {
     if (option.defaultValue === process.cwd()) {
-      option.defaultValue = '?????';
+      delete option.defaultValue;
     }
   });
 

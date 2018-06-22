@@ -1,0 +1,369 @@
+[
+  {
+    "name": "apply",
+    "description": "run `terraform apply` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "create",
+    "description": "Create terraform code from predefined templates",
+    "options": [
+      {
+        "name": "name",
+        "shortcut": "n",
+        "description": "Uniquely identifiable cloud resource name"
+      },
+      {
+        "name": "template",
+        "shortcut": "t",
+        "description": "Template name (e.g. cloudfront, dynamodb, lambda, s3)"
+      },
+      {
+        "name": "directory",
+        "shortcut": "d",
+        "description": "Path where template should be created (default: cwd)"
+      },
+      {
+        "name": "parent",
+        "shortcut": "p",
+        "description": "Parent component path",
+        "defaultValue": ""
+      },
+      {
+        "name": "force",
+        "shortcut": "f",
+        "description": "Replace directory",
+        "defaultValue": false
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "destroy",
+    "description": "run `terraform destroy` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "graph",
+    "description": "show the graph of dependencies between terrahub components",
+    "options": [
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "init",
+    "description": "run `terraform init` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "list",
+    "description": "list projects > cloud accounts > regions > services > resources",
+    "options": [
+      {
+        "name": "api-region",
+        "shortcut": "a",
+        "description": "Resources in region",
+        "defaultValue": "us-east-1"
+      },
+      {
+        "name": "projects",
+        "shortcut": "p",
+        "description": "Projects (comma separated values)",
+        "defaultValue": []
+      },
+      {
+        "name": "accounts",
+        "shortcut": "a",
+        "description": "Accounts (comma separated values)",
+        "defaultValue": []
+      },
+      {
+        "name": "regions",
+        "shortcut": "r",
+        "description": "Regions (comma separated values)",
+        "defaultValue": []
+      },
+      {
+        "name": "services",
+        "shortcut": "s",
+        "description": "Services (comma separated values)",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "plan",
+    "description": "run `terraform plan` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "project",
+    "description": "create or update project that manages multiple terraform scripts",
+    "options": [
+      {
+        "name": "name",
+        "shortcut": "n",
+        "description": "Project name"
+      },
+      {
+        "name": "provider",
+        "shortcut": "p",
+        "description": "Cloud provider",
+        "defaultValue": "aws"
+      },
+      {
+        "name": "directory",
+        "shortcut": "d",
+        "description": "Path where project should be created (default: cwd)"
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "refresh",
+    "description": "run `terraform refresh` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "array",
+        "shortcut": "a",
+        "description": "Some array",
+        "defaultValue": []
+      },
+      {
+        "name": "object",
+        "shortcut": "o",
+        "description": "Some object",
+        "defaultValue": {}
+      },
+      {
+        "name": "force",
+        "shortcut": "f",
+        "description": "Replace directory",
+        "defaultValue": false
+      },
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "run",
+    "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
+    "options": [
+      {
+        "name": "plan",
+        "shortcut": "p",
+        "description": "Run plan",
+        "defaultValue": true
+      },
+      {
+        "name": "apply",
+        "shortcut": "a",
+        "description": "Run apply",
+        "defaultValue": false
+      },
+      {
+        "name": "destroy",
+        "shortcut": "d",
+        "description": "Run destroy",
+        "defaultValue": false
+      },
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "name": "workspace",
+    "description": "run `terraform workspace` across multiple terraform scripts",
+    "options": [
+      {
+        "name": "include",
+        "shortcut": "i",
+        "description": "Components to work with",
+        "defaultValue": []
+      },
+      {
+        "name": "var",
+        "shortcut": "v",
+        "description": "Set of variables",
+        "defaultValue": []
+      },
+      {
+        "name": "var-file",
+        "shortcut": "f",
+        "description": "Set of files with predefined variables",
+        "defaultValue": []
+      },
+      {
+        "name": "help",
+        "shortcut": "h",
+        "description": "show command description and available options",
+        "defaultValue": false
+      }
+    ]
+  }
+]

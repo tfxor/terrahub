@@ -15,7 +15,9 @@ if (!semver.satisfies(process.version, engines.node)) {
 const command = CommandFactory.create(process.argv, logger);
 
 command
-  .validate()
+  .checkHelp()
+  .then(() => command.validate(),
+    () => process.exit(0))
   .then(() => command.run())
   .then(message => {
     if (message) {

@@ -1,10 +1,9 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
 const parameters = require('./parameters');
 const AbstractCommand = require('./abstract-command');
-const { commandsPath } = require('./parameters');
+const os = require("os");
 const { helpJSON } = require('./parameters');
 
 class HelpCommand extends AbstractCommand {
@@ -44,25 +43,19 @@ class HelpCommand extends AbstractCommand {
     const help = JSON.parse(fs.readFileSync(helpJSON));
 
     // @todo: move this code block into template file
-    let helpOptions = '';
+    let helpString = '';
     help.forEach((command) => {
       if (command.name.length < 8) {
-        helpOptions += `\t${command.name}\t\t${command.description}\n`;
+        helpString += os.EOL + `\t${command.name}\t\t${command.description}`;
       } else {
-        helpOptions += `\t${command.name}\t${command.description}\n`;
+        helpString += os.EOL + `\t${command.name}\t${command.description}`;
       }
     });
 
     const template = fs.readFileSync(parameters.templates.help, 'utf-8');
     const appInfo = JSON.parse(fs.readFileSync('./package.json'));
 
-    console.log(template, appInfo.version, appInfo.description, helpOptions.slice(0, -1));
-  }
-
-  listCommands() {
-    return fs
-      .readdirSync(commandsPath)
-      .map(fileName => path.basename(fileName, '.js'))
+    console.log(template, appInfo.version, appInfo.description, helpString.substring(1));
   }
 }
 
