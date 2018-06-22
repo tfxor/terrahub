@@ -20,8 +20,9 @@ class CommandFactory {
 
       return new Command(Args.parse(args), logger);
     } catch (err) {
-      // @todo:Implement no command behavior
-      throw err;
+      const Help = require('./help');
+
+      return new Help(Args.parse(argv), logger);
     }
   }
 
