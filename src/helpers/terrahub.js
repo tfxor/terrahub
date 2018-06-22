@@ -113,10 +113,10 @@ class Terrahub {
    * @private
    */
   _getKey() {
-    const keySpace = config.env === 'prod' ? 'public' : `public-${config.env}`;
+    const dir = config.api.replace('api', 'public');
     const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
 
-    return `${Terrahub.METADATA_DOMAIN}/${keySpace}/${this._timestamp}/${keyName}`;
+    return `${Terrahub.METADATA_DOMAIN}/${dir}/${this._timestamp}/${keyName}`;
   }
 
   /**
@@ -125,10 +125,7 @@ class Terrahub {
    * @private
    */
   _getEndpoint() {
-    // @todo invent something new for testing instead of config.env
-    const subDomain = config.env === 'prod' ? 'api' : `api-${config.env}`;
-
-    return `https://${subDomain}.terrahub.io/v1/cnci/realtime/create`;
+    return `https://${config.api}.terrahub.io/v1/cnci/realtime/create`;
   }
 
   /**
