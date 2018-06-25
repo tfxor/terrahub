@@ -50,7 +50,7 @@ module.exports = hook;
 
 * after hook:
 
-````javascript
+```javascript
 /**
  * @param {Object} moduleConfig
  * @param {Buffer} cmdResult
@@ -61,7 +61,7 @@ function hook(moduleConfig, cmdResult) {
 }
 
 module.exports = hook;
-````
+```
 
 Configuration example for plan (`.terrahub.json`):
 
@@ -76,12 +76,14 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Implement `terrahub workspace`
-- Implement `terrahub list` (paid version)
-- Implement `terrahub --help`
-- Invent something new for testing instead of THUB_ENV
+- Implement `terrahub list` (paid version, blocked by API endpoint development)
+  - Loop across all regions
+  - Use new tree view
+  - Consolidate paid & free versions
+- Implement `terrahub --help` (@Max is working)
 
-## Example
+<details>
+<summary>Simple example</summary>
 
 1. terrahub project -n HelloWorld -d ~/hello-world && cd ~/hello-world/
 2. terrahub create -t iam -n DeepProdHelloWorldLambdaExec1234abcd
@@ -101,3 +103,5 @@ Configuration example for plan (`.terrahub.json`):
 16. terrahub plan
 17. terrahub apply
 18. terrahub list
+
+</details>
