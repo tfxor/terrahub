@@ -77,11 +77,13 @@ Configuration example for plan (`.terrahub.json`):
 ## @todo
 
 - Implement `terrahub list` (paid version, blocked by API endpoint development)
-- Implement `terrahub --help`
-
+  - Loop across all regions
+  - Use new tree view
+  - Consolidate paid & free versions
+- Implement `terrahub --help` (@Max is working)
 
 <details>
-<summary>Example:</summary>
+<summary>Simple example</summary>
 
 1. terrahub project -n HelloWorld -d ~/hello-world && cd ~/hello-world/
 2. terrahub create -t iam -n DeepProdHelloWorldLambdaExec1234abcd
