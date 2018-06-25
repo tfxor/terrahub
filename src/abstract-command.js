@@ -164,9 +164,22 @@ class AbstractCommand {
     if (this.getDescription() && this.getOption('help') === true) {
       this.showHelp();
       return Promise.reject('help casted')
-    } else {
-      return Promise.resolve()
     }
+
+    let flags = Object.keys(this._input).slice(1);
+    const options = Object.values(this._options);
+
+    let option;
+    for (option of options) {
+      flags = flags.filter(flag => flag !== option.name && flag !== option.shortcut)
+    }
+
+    if (flags.length > 0) {
+      this.showHelp();
+      return Promise.reject('invalid flag(-s)')
+    }
+
+    return Promise.resolve()
   }
 
   /**
@@ -180,15 +193,10 @@ class AbstractCommand {
       helpString = `\t${this.getName()}\t${this.getDescription()}`;
     }
 
-    if (this._options.length === 0) {
-      this.logger.log(helpString);
-      return
-    }
-
-    helpString +=  os.EOL + '\tOptions:';
+    helpString += os.EOL + '\tOptions:';
 
     Object.values(this._options).forEach((option) => {
-      if (option.name.length < 6){
+      if (option.name.length < 6) {
         helpString += os.EOL + `\t--${option.name}\t\t-${option.shortcut}\t${option.description}`;
       } else {
         helpString += os.EOL + `\t--${option.name}\t-${option.shortcut}\t${option.description}`;

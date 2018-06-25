@@ -123,7 +123,7 @@ class ListCommand extends AbstractCommand {
 
     keys.forEach((key, index) => {
       if (data[key] !== null && level + 1 !== depth) {
-        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1, depth);
       } else {
         result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;
       }
