@@ -49,7 +49,7 @@ class ConfigLoader {
           after: path.join(hooks, 'destroy', 'after.js')
         }
       }
-    }
+    };
   }
 
   /**
@@ -105,9 +105,7 @@ class ConfigLoader {
   listConfigs(dir = false) {
     const searchPath = dir || this.appPath();
 
-    return searchPath
-      ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath)
-      : [];
+    return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
   }
 
   /**
@@ -139,7 +137,6 @@ class ConfigLoader {
 
         cfg.root = root;
         this._config[toMd5(root)] = cfg;
-
         delete this._rootConfig[key];
       }
     });
@@ -198,6 +195,7 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), config.fileName);
+    const forceWorkspace = { terraform: { workspace: config.env }}; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;
@@ -205,7 +203,7 @@ class ConfigLoader {
     };
 
     return (fs.existsSync(envPath) && !config.isProd)
-      ? extend(cfg, [ConfigLoader.readConfig(envPath)], overwrite)
+      ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
   }
 
