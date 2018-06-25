@@ -86,7 +86,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        this._showTree(this._format(this.hash.getRaw(), 0, 5));
+        this._showTree(this._format(this.hash.getRaw(), 0, depth));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -116,7 +116,7 @@ class ListCommand extends AbstractCommand {
    * @returns {Object}
    * @private
    */
-  _format(data, level = 0, depth) {
+  _format(data, level = 0, depth = 5) {
     let result = {};
     const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
     const keys = Object.keys(data);
