@@ -86,7 +86,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        this._showTree(this._format(this.hash.getRaw(), depth));
+        this._showTree(this._format(this.hash.getRaw(), 0, 5));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
