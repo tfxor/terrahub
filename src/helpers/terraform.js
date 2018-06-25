@@ -83,29 +83,20 @@ class Terraform {
   }
 
   /**
-   * @param {Object} object
-   * @param {String} option
-   * @return {Array}
-   * @private
-   */
-  _objToOpt(object, option) {
-    let result = [];
-
-    // @todo: check use case when 'var' is not array
-    Object.keys(object).forEach(name => {
-      result.push(`-${option} ${name}=${object[name]}`);
-    });
-
-    return result;
-  }
-
-  /**
    * Prepare -var
    * @returns {Array}
    * @private
    */
   _var() {
-    return this._objToOpt(this._tf.var, 'var');
+    let result = [];
+    let object = this._tf.var;
+
+    // @todo: check use case when 'var' is not array
+    Object.keys(object).forEach(name => {
+      result.push(`-var ${name}=${object[name]}`);
+    });
+
+    return result;
   }
 
   /**
@@ -114,7 +105,14 @@ class Terraform {
    * @private
    */
   _backend() {
-    return this._objToOpt(this._tf.backend, 'backend-config');
+    let result = [];
+    let object = this._tf.backend;
+
+    Object.keys(object).forEach(name => {
+      result.push(`-backend-config="${name}=${object[name]}"`);
+    });
+
+    return result;
   }
 
   /**

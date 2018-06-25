@@ -40,6 +40,7 @@ function promiseSeries(promises) {
 
 /**
  * Promisify request
+ * @todo switch to requestify library which has less dependencies
  * @param {Object} options
  * @returns {Promise}
  * @private

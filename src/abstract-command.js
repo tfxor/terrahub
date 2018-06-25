@@ -135,10 +135,10 @@ class AbstractCommand {
 
   /**
    * Get list of configuration files
-   * @param {String} dir
+   * @param {String|Boolean} dir
    * @returns {String[]}
    */
-  listConfigs(dir) {
+  listConfigs(dir = false) {
     return this._configLoader.listConfigs(dir);
   }
 

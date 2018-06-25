@@ -88,6 +88,8 @@ class TerraformCommand extends AbstractCommand {
   getVar() {
     let result = {};
 
+    console.log('@@#@##@#@#', this.getOption('var'));
+
     this.getOption('var').map(item => {
       Object.assign(result, Args.toObject(item));
     });
