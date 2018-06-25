@@ -34,6 +34,7 @@ class HelpCommand extends AbstractCommand {
   }
 
   showVersion() {
+    // @todo: move this into abstract and don't reference as `./`
     const appInfo = JSON.parse(fs.readFileSync('./package.json'));
 
     console.log(`v${appInfo.version}`);
@@ -53,6 +54,7 @@ class HelpCommand extends AbstractCommand {
     });
 
     const template = fs.readFileSync(parameters.templates.help, 'utf-8');
+    // @todo: move this into abstract and don't reference as `./`
     const appInfo = JSON.parse(fs.readFileSync('./package.json'));
 
     console.log(template, appInfo.version, appInfo.description, helpString.substring(1));
