@@ -40,7 +40,7 @@ function inject_build_date() {
   sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
 }
 
-function fail () {
+function fail() {
   echo >&2 "[FAILED] $1!"
   exit 1
 }
