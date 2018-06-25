@@ -23,7 +23,8 @@ class ListCommand extends AbstractCommand {
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
-      .addOption('services', 's', 'Services (comma separated values)', Array, []);
+      .addOption('services', 's', 'Services (comma separated values)', Array, [])
+      .addOption('depth', 'd', 'Listing depth', Number, 5)
   }
 
   /**
@@ -44,6 +45,7 @@ class ListCommand extends AbstractCommand {
     const projects = this.getOption('projects');
     const accounts = this.getOption('accounts');
     const services = this.getOption('services');
+    const depth = this.getOption('depth');
 
     return this._getCredentials()
       .then(credentials => {
@@ -84,7 +86,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        this._showTree(this._format(this.hash.getRaw()));
+        this._showTree(this._format(this.hash.getRaw(), depth));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -110,16 +112,17 @@ class ListCommand extends AbstractCommand {
   /**
    * @param {Object} data
    * @param {Number} level
+   * @param {Number} depth
    * @returns {Object}
    * @private
    */
-  _format(data, level = 0) {
+  _format(data, level = 0, depth) {
     let result = {};
     const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
     const keys = Object.keys(data);
 
     keys.forEach((key, index) => {
-      if (data[key] !== null) {
+      if (data[key] !== null && level + 1 !== depth) {
         result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1);
       } else {
         result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;

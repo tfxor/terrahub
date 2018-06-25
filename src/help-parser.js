@@ -50,7 +50,7 @@ commands.forEach((command) => {
 
   value.options.forEach((option) => {
     if (option.defaultValue === process.cwd()) {
-      delete option.defaultValue;
+      option.defaultValue = 'Terrahub directory';
     }
   });
 
