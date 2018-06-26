@@ -9,7 +9,8 @@ class BuildCommand extends AbstractCommand {
   configure() {
     this
       .setName('build')
-  //     .setDescription('build software from predefined build.yml config files')
+    // .setDescription('build software from predefined build.yml config files')
+    ;
   }
 }
 

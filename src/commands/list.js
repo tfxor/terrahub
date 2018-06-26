@@ -25,6 +25,7 @@ class ListCommand extends AbstractCommand {
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
       .addOption('services', 's', 'Services (comma separated values)', Array, [])
       .addOption('depth', 'd', 'Listing depth', Number, 0)
+    ;
   }
 
   /**

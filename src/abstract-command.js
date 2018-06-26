@@ -172,14 +172,14 @@ class AbstractCommand {
     Object.keys(this._options).forEach(key => {
       const option = this._options[key];
 
-      flags = flags.filter(flag => flag !== option.name && flag !== option.shortcut)
+      flags = flags.filter(flag => flag !== option.name && flag !== option.shortcut);
     });
 
     if (flags.length > 0) {
       return this.showHelp();
     }
 
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   /**
@@ -211,11 +211,12 @@ class AbstractCommand {
       version: version,
       buildDate: buildDate,
       commandName: this.getName(),
+      commandDescription: this.getDescription(),
       options: options
     }).then(result => {
       console.log(result);
 
-      return Promise.reject(true)
+      return Promise.reject(true);
     });
   }
 }

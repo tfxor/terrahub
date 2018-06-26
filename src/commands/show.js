@@ -10,6 +10,7 @@ class ShowCommand extends TerraformCommand {
     this
       .setName('show')
   //     .setDescription('run `terraform show` across multiple terraform scripts')
+    ;
   }
 }
 

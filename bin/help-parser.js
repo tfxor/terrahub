@@ -57,7 +57,7 @@ commands.forEach((command) => {
     }
   });
 
-  json.push(value)
+  json.push(value);
 });
 
 fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, undefined, 2));
