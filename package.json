@@ -41,6 +41,5 @@
     "semver": "^5.5.0",
     "treeify": "^1.1.0",
     "twig": "^1.11.0"
-  },
-  "buildDate": "Tue, 26 Jun 2018 09:59:41 GMT"
+  }
 }
