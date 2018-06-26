@@ -65,7 +65,7 @@ class WorkspaceCommand extends TerraformCommand {
     });
 
     return new Promise(resolve => {
-      rl.question('Are you sure?\n', answer => {
+      rl.question('Are you sure (Y/N)? ', answer => {
         if (!['y', 'yes'].includes(answer.toLowerCase())) {
           return resolve('Canceled');
         }
