@@ -3,8 +3,7 @@
 const fs = require('fs');
 const parameters = require('./parameters');
 const AbstractCommand = require('./abstract-command');
-const os = require('os');
-const path = require('path');
+const { renderTwig } = require('./helpers/util');
 
 class HelpCommand extends AbstractCommand {
   /**
@@ -25,39 +24,38 @@ class HelpCommand extends AbstractCommand {
     const version = this.getOption('version');
 
     if (version) {
-      this.showVersion();
-    } else {
-      this.showHelp();
+      return this.showVersion();
     }
 
-    return Promise.resolve();
+    return this.showHelp();
   }
 
   showVersion() {
-    // @todo: move this into abstract and don't reference as `./`
-    const appInfo = JSON.parse(fs.readFileSync('./package.json'));
+    const appInfo = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
 
-    console.log(`v${appInfo.version}`);
+    return Promise.resolve(`v${appInfo.version}`);
   }
 
   showHelp() {
-    const help = JSON.parse(fs.readFileSync(parameters.helpJSON));
+    const commands = JSON.parse(fs.readFileSync(parameters.templates.helpMetadata, 'utf8'));
+    const { version, description, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
 
-    // @todo: move this code block into template file
-    let helpString = '';
-    help.forEach((command) => {
-      if (command.name.length < 8) {
-        helpString += os.EOL + `\t${command.name}\t\t${command.description}`;
+    commands.forEach((command) => {
+      if (command.name.length < 6) {
+        command.name += '\t\t';
       } else {
-        helpString += os.EOL + `\t${command.name}\t${command.description}`;
+        command.name += '\t';
       }
     });
 
-    const template = fs.readFileSync(parameters.templates.help, 'utf-8');
-    // @todo: move this into abstract and don't reference as `./`
-    const appInfo = JSON.parse(fs.readFileSync('./package.json'));
-
-    console.log(template, appInfo.version, appInfo.description, helpString.substring(1));
+    return renderTwig(parameters.templates.terrahubHelp, {
+      version: version,
+      buildDate: buildDate,
+      description: description,
+      commands: commands
+    }).then(result => {
+      console.log(result);
+    });
   }
 }
 

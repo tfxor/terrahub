@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const parameters = require('../parameters');
+const parameters = require('../src/parameters');
 
 /**
  * @return {Array}

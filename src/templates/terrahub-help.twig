@@ -1,15 +1,11 @@
-Usage: terrahub <command> [options]
+Usage: terrahub [command] [options]
 
-terrahub@{{ version }} (built: {{ buildTime }})
+terrahub@{{ version }} (built: {{ buildDate }})
 {{ description }}
 
 Commands:
 {% for command in commands %}
-{% if command.name.length < 6 %}
-  command.name\t\t
-{% elseif %}
-  command.name\t
-{% endif %}
+  {{ command.name }}{{ command.description }}
 {% endfor %}
 
 Options:

@@ -31,7 +31,7 @@
   },
   {
     "name": "create",
-    "description": "Create terraform code from predefined templates",
+    "description": "create terraform code from predefined templates",
     "options": [
       {
         "name": "name",
@@ -46,7 +46,8 @@
       {
         "name": "directory",
         "shortcut": "d",
-        "description": "Path where template should be created (default: cwd)"
+        "description": "Path where template should be created (default: cwd)",
+        "defaultValue": "Terrahub directory"
       },
       {
         "name": "parent",
@@ -175,6 +176,12 @@
         "defaultValue": []
       },
       {
+        "name": "depth",
+        "shortcut": "d",
+        "description": "Listing depth",
+        "defaultValue": 0
+      },
+      {
         "name": "help",
         "shortcut": "h",
         "description": "show command description and available options",
@@ -230,7 +237,8 @@
       {
         "name": "directory",
         "shortcut": "d",
-        "description": "Path where project should be created (default: cwd)"
+        "description": "Path where project should be created (default: cwd)",
+        "defaultValue": "Terrahub directory"
       },
       {
         "name": "help",
@@ -340,6 +348,18 @@
     "name": "workspace",
     "description": "run `terraform workspace` across multiple terraform scripts",
     "options": [
+      {
+        "name": "env",
+        "shortcut": "e",
+        "description": "Workspace to create",
+        "defaultValue": ""
+      },
+      {
+        "name": "delete",
+        "shortcut": "d",
+        "description": "Flag to delete --env configs",
+        "defaultValue": false
+      },
       {
         "name": "include",
         "shortcut": "i",

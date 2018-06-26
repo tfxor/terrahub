@@ -2,7 +2,9 @@
 
 const Args = require('../src/helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const os = require('os');
+const parameters = require('./parameters');
+const fs = require('fs');
+const { renderTwig } = require('./helpers/util');
 
 class AbstractCommand {
   /**
@@ -73,7 +75,7 @@ class AbstractCommand {
    * @returns {AbstractCommand}
    */
   addOption(name, shortcut, description, type = String, defaultValue = undefined) {
-    this._options[name] = {name, shortcut, description, type, defaultValue};
+    this._options[name] = { name, shortcut, description, type, defaultValue };
 
     return this;
   }
@@ -104,8 +106,7 @@ class AbstractCommand {
   /**
    * Abstract initialize method (optional)
    */
-  initialize() {
-  }
+  initialize() {}
 
   /**
    * Abstract run method
@@ -159,24 +160,23 @@ class AbstractCommand {
 
   /**
    * Check Help Flag
+   * @returns {Promise}
    */
   checkHelp() {
-    if (this.getDescription() && this.getOption('help') === true) {
-      this.showHelp();
-      return Promise.reject('help casted')
+    if (this.getDescription() && this.getOption('help')) {
+      return this.showHelp();
     }
 
     let flags = Object.keys(this._input).slice(1);
-    const options = Object.values(this._options);
 
-    let option;
-    for (option of options) {
+    Object.keys(this._options).forEach(key => {
+      const option = this._options[key];
+
       flags = flags.filter(flag => flag !== option.name && flag !== option.shortcut)
-    }
+    });
 
     if (flags.length > 0) {
-      this.showHelp();
-      return Promise.reject('invalid flag(-s)')
+      return this.showHelp();
     }
 
     return Promise.resolve()
@@ -186,28 +186,37 @@ class AbstractCommand {
    * Show command description and options
    */
   showHelp() {
-    let helpString;
-    if (this.getName().length < 8) {
-      helpString = `\t${this.getName()}\t\t${this.getDescription()}`;
-    } else {
-      helpString = `\t${this.getName()}\t${this.getDescription()}`;
-    }
+    let options = [];
+    Object.keys(this._options).forEach(key => {
+      let option = this._options[key];
 
-    helpString += os.EOL + '\tOptions:';
-
-    Object.values(this._options).forEach((option) => {
-      if (option.name.length < 6) {
-        helpString += os.EOL + `\t--${option.name}\t\t-${option.shortcut}\t${option.description}`;
+      if (option.name.length < 4) {
+        option.name += '\t\t';
       } else {
-        helpString += os.EOL + `\t--${option.name}\t-${option.shortcut}\t${option.description}`;
+        option.name += '\t';
       }
+
+      option.shortcut += '\t';
 
       if (option.defaultValue === undefined) {
-        helpString += `*`;
+        option.description += '*';
       }
+
+      options.push(option);
     });
 
-    this.logger.log(helpString);
+    const { version, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
+
+    return renderTwig(parameters.templates.commandHelp, {
+      version: version,
+      buildDate: buildDate,
+      commandName: this.getName(),
+      options: options
+    }).then(result => {
+      console.log(result);
+
+      return Promise.reject(true)
+    });
   }
 }
 

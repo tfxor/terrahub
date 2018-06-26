@@ -91,7 +91,6 @@ class Terraform {
     let result = [];
     let object = this._tf.var;
 
-    // @todo: check use case when 'var' is not array
     Object.keys(object).forEach(name => {
       result.push(`-var ${name}=${object[name]}`);
     });
@@ -123,7 +122,6 @@ class Terraform {
   _varFile() {
     let result = [];
 
-    // @todo: check use case when 'varFile' is not array
     this._tf.varFile.forEach(fileName => {
       result.push(`-var-file=${path.join(this.getRoot(), fileName)}`);
     });

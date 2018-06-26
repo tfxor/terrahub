@@ -1,0 +1,9 @@
+Usage: terrahub %s [options]
+
+terrahub@{{ version }} (built: {{ buildDate }})
+terrahub {{ commandName }}
+
+Options:
+{% for option in options %}
+  --{{ option.name }}-{{ option.shortcut }}{{ option.description }}
+{% endfor %}
