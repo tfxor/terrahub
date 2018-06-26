@@ -9,11 +9,10 @@ class RefreshCommand extends TerraformCommand {
   configure() {
     this
       .setName('refresh')
-      .setDescription('Refresh command')
+      .setDescription('run `terraform refresh` across multiple terraform scripts')
       .addOption('array', 'a', 'Some array', Array, [])
       .addOption('object', 'o', 'Some object', Object, {})
       .addOption('force', 'f', 'Replace directory', Boolean, false)
-    ;
   }
 
   /**

@@ -40,6 +40,7 @@ const isProd = cfg.env === 'prod';
 module.exports = {
   homePath: _terrahubPath,
   commandsPath: path.join(__dirname, 'commands'),
+  packageJson: path.join(__dirname, '..', 'package.json'),
   config: {
     api: cfg.api,
     env: cfg.env,
@@ -55,6 +56,9 @@ module.exports = {
     hooks: path.join(templates, 'hooks'),
     azurerm: path.join(templates, 'azurerm'),
     configs: path.join(templates, 'configs'),
-    mapping: path.join(templates, 'mapping.json')
+    mapping: path.join(templates, 'mapping.json'),
+    terrahubHelp: path.join(templates, 'terrahub-help.twig'),
+    commandHelp: path.join(templates, 'command-help.twig'),
+    helpMetadata: path.join(__dirname, 'templates', 'help.json')
   }
 };

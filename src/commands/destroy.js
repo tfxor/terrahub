@@ -10,7 +10,7 @@ class DestroyCommand extends TerraformCommand {
   configure() {
     this
       .setName('destroy')
-      .setDescription('Run `terraform destroy` across multiple terraform scripts')
+      .setDescription('run `terraform destroy` across multiple terraform scripts')
     ;
   }
 

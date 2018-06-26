@@ -14,7 +14,7 @@ class CreateCommand extends AbstractCommand {
   configure() {
     this
       .setName('create')
-      .setDescription('Create terraform code from predefined templates')
+      .setDescription('create terraform code from predefined templates')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String)
       .addOption('directory', 'd', 'Path where template should be created (default: cwd)', String, process.cwd())

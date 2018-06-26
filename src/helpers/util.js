@@ -64,6 +64,7 @@ function promiseRequest(options) {
  * @returns {Promise}
  */
 function renderTwig(srcFile, vars, outFile = false) {
+  // @todo: improve with file existing check
   return new Promise((resolve, reject) => {
     Twig.renderFile(srcFile, vars, (err, data) => {
       if (err) {
