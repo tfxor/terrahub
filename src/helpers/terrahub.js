@@ -125,7 +125,7 @@ class Terrahub {
    * @private
    */
   _getEndpoint() {
-    return `https://${config.api}.terrahub.io/v1/cnci/realtime/create`;
+    return `https://${config.api}.terrahub.io/v1/thub/realtime/create`;
   }
 
   /**
