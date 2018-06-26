@@ -2,28 +2,23 @@
 
 const fs = require('fs');
 const path = require('path');
-// @todo: check if works correctly
-const { commandsPath } = require("../parameters");
-const { helpJSON } = require('../parameters');
+const parameters = require('../parameters');
 
 /**
  * @return {Array}
- * */
+ */
 function getCommandsNameList() {
-  return fs
-    .readdirSync(commandsPath)
-    .map(fileName => path.basename(fileName, '.js'));
-
+  return fs.readdirSync(parameters.commandsPath).map(fileName => path.basename(fileName, '.js'));
 }
 
 /**
  * @param {Array} list
  * @return {Array}
- * */
+ */
 function getCommandsInstanceList(list) {
   const commands = [];
   list.forEach((commandName) => {
-    const Command = require(path.join(commandsPath, commandName));
+    const Command = require(path.join(parameters.commandsPath, commandName));
 
     const command = new Command(0);
     if (command.getDescription()) {
@@ -35,18 +30,25 @@ function getCommandsInstanceList(list) {
 }
 
 /**
- * Main
- * */
+ * Writes commands' description in help.json
+ */
 const commandsNameList = getCommandsNameList();
 const commands = getCommandsInstanceList(commandsNameList);
 
 const json = [];
 
 commands.forEach((command) => {
+  let options = [];
+  Object.keys(command._options).forEach(key => {
+    const option = command._options[key];
+
+    options.push(option);
+  });
+
   let value = {
     name: command.getName(),
     description: command.getDescription(),
-    options: Object.values(command._options)
+    options
   };
 
   value.options.forEach((option) => {
@@ -58,4 +60,4 @@ commands.forEach((command) => {
   json.push(value)
 });
 
-fs.writeFileSync(helpJSON, JSON.stringify(json, undefined, 2));
+fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, undefined, 2));

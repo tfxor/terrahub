@@ -1,0 +1,19 @@
+Usage: terrahub <command> [options]
+
+terrahub@{{ version }} (built: {{ buildTime }})
+{{ description }}
+
+Commands:
+{% for command in commands %}
+{% if command.name.length < 6 %}
+  command.name\t\t
+{% elseif %}
+  command.name\t
+{% endif %}
+{% endfor %}
+
+Options:
+  --help      -h    Show help
+  --version   -v    Show version
+
+Use "terrahub [command] --help" for more information about [command]
