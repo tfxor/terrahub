@@ -3,8 +3,8 @@
 const fs = require('fs');
 const parameters = require('./parameters');
 const AbstractCommand = require('./abstract-command');
-const os = require("os");
-const { helpJSON } = require('./parameters');
+const os = require('os');
+const path = require('path');
 
 class HelpCommand extends AbstractCommand {
   /**
@@ -34,13 +34,14 @@ class HelpCommand extends AbstractCommand {
   }
 
   showVersion() {
-    const appInfo = JSON.parse(fs.readFileSync('./package.json'));
+    // @todo: fix package.json
+    const appInfo = JSON.parse(fs.readFileSync(path.join(parameters.homePath, '/package.json')));
 
     console.log(`v${appInfo.version}`);
   }
 
   showHelp() {
-    const help = JSON.parse(fs.readFileSync(helpJSON));
+    const help = JSON.parse(fs.readFileSync(parameters.helpJSON));
 
     // @todo: move this code block into template file
     let helpString = '';
@@ -53,7 +54,8 @@ class HelpCommand extends AbstractCommand {
     });
 
     const template = fs.readFileSync(parameters.templates.help, 'utf-8');
-    const appInfo = JSON.parse(fs.readFileSync('./package.json'));
+    // @todo: fix package.json
+    const appInfo = JSON.parse(fs.readFileSync(path.join(parameters.homePath(), '/package.json')));
 
     console.log(template, appInfo.version, appInfo.description, helpString.substring(1));
   }

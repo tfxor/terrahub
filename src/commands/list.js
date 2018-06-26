@@ -24,7 +24,7 @@ class ListCommand extends AbstractCommand {
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
       .addOption('services', 's', 'Services (comma separated values)', Array, [])
-      .addOption('depth', 'd', 'Listing depth', Number, 5)
+      .addOption('depth', 'd', 'Listing depth', Number, 0)
   }
 
   /**
@@ -104,6 +104,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _showTree(tree) {
+    // no resources if tree is empty
     treeify.asLines(tree, false, line => {
       this.logger.log(` ${line}`);
     });
@@ -116,13 +117,13 @@ class ListCommand extends AbstractCommand {
    * @returns {Object}
    * @private
    */
-  _format(data, level = 0, depth = 5) {
+  _format(data, level = 0, depth = 0) {
     let result = {};
     const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
     const keys = Object.keys(data);
 
     keys.forEach((key, index) => {
-      if (data[key] !== null && level + 1 !== depth) {
+      if (data[key] !== null && level !== depth) {
         result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1, depth);
       } else {
         result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;

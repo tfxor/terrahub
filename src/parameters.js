@@ -40,7 +40,7 @@ const isProd = cfg.env === 'prod';
 module.exports = {
   homePath: _terrahubPath,
   commandsPath: path.join(__dirname, 'commands'),
-  helpJSON: path.join(__dirname, 'help.json'),
+  helpJSON: path.join(__dirname, 'templates', 'help.json'),
   config: {
     api: cfg.api,
     env: cfg.env,

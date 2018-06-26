@@ -2,8 +2,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const { commandsPath } = require("./parameters");
-const { helpJSON } = require('./parameters');
+// @todo: check if works correctly
+const { commandsPath } = require("../parameters");
+const { helpJSON } = require('../parameters');
 
 /**
  * @return {Array}
