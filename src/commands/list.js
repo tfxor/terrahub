@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
@@ -8,7 +9,6 @@ const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const treeify = require('treeify');
-const os = require("os");
 
 class ListCommand extends AbstractCommand {
   /**
