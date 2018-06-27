@@ -202,7 +202,7 @@ class AbstractCommand {
       options.push(option);
     });
 
-    const { version, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
+    const { version, buildDate } = JSON.parse(fs.readFileSync(parameters.templates.helpMetadata, 'utf8'));
 
     return renderTwig(parameters.templates.helpCommand, {
       version: version,

@@ -5,6 +5,7 @@ const Twig = require('twig');
 const request = require('request');
 const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
+const fs = require('fs');
 
 /**
  * @param {String} text
@@ -65,7 +66,7 @@ function promiseRequest(options) {
  */
 function renderTwig(srcFile, vars, outFile = false) {
   return new Promise((resolve, reject) => {
-    if (!fs.exists(srcFile)) {
+    if (!fs.existsSync(srcFile)) {
       return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
     }
 

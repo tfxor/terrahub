@@ -1,14 +1,24 @@
-const { packageJson } = require('../src/parameters');
+const parameters = require('../src/parameters');
+const HelpParser = require("../src/helpers/HelpParser");
 const fs = require('fs');
 
 /**
- * Saves build date in package.json
+ * Saves application information and commands' description in metadata.json
  */
 
 const date = new Date();
 
-const packageContent = JSON.parse(fs.readFileSync(packageJson));
+const packageContent = require(parameters.packageJson);
 
-packageContent.buildDate = date.toUTCString();
+const commandsNameList = HelpParser.getCommandsNameList();
+const commands = HelpParser.getCommandsInstanceList(commandsNameList);
 
-fs.writeFileSync(packageJson, JSON.stringify(packageContent, undefined, 2));
+const json = {
+  name: packageContent.name,
+  version: packageContent.version,
+  description: packageContent.description,
+  buildDate: date.toUTCString(),
+  commands: HelpParser.getCommandsDescription(commands)
+};
+
+fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, undefined, 2));
