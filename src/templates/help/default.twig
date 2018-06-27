@@ -5,11 +5,11 @@ terrahub@{{ version }} (built: {{ buildDate }})
 
 Commands:
 {% for command in commands %}
-  {{ command.name }}{{ command.description }}
+  {{ command.name }} {{ command.separator }} {{ command.description }}
 {% endfor %}
 
 Options:
-  --help      -h    Show help
-  --version   -v    Show version
+  --help, -h		Show list of available commands
+  --version, -v		Show current version of the tool
 
 Use "terrahub [command] --help" for more information about [command]

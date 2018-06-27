@@ -39,10 +39,7 @@ class HelpCommand extends AbstractCommand {
     const { version, description, buildDate, commands } = require(parameters.templates.helpMetadata);
 
     commands.forEach((command) => {
-      command.name += '\t';
-      if (command.name.length < 6) {
-        command.name += '\t';
-      }
+      command.separator = '.'.repeat(20 - command.name.length);
     });
 
     return renderTwig(parameters.templates.helpDefault, {

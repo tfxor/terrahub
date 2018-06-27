@@ -11,9 +11,10 @@ class RunCommand extends TerraformCommand {
     this
       .setName('run')
       .setDescription('run automated workflow terraform init > workspace > plan > apply > destroy')
-      .addOption('plan', 'p', 'Run plan', Boolean, true)
-      .addOption('apply', 'a', 'Run apply', Boolean, false)
-      .addOption('destroy', 'd', 'Run destroy', Boolean, false)
+      .addOption('plan', 'p', 'Enable plan command as part of automated workflow', Boolean, true)
+      .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
+      .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
+      .addOption('auto-approve', 'u', 'Auto approve terraform execution', Boolean, true)
     ;
   }
 

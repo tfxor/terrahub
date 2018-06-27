@@ -253,60 +253,6 @@
       ]
     },
     {
-      "name": "refresh",
-      "description": "run `terraform refresh` across multiple terraform scripts",
-      "options": [
-        {
-          "name": "array",
-          "shortcut": "a",
-          "description": "Some array",
-          "defaultValue": []
-        },
-        {
-          "name": "object",
-          "shortcut": "o",
-          "description": "Some object",
-          "defaultValue": {}
-        },
-        {
-          "name": "force",
-          "shortcut": "f",
-          "description": "Replace directory",
-          "defaultValue": false
-        },
-        {
-          "name": "include",
-          "shortcut": "i",
-          "description": "List of components to include",
-          "defaultValue": []
-        },
-        {
-          "name": "exclude",
-          "shortcut": "x",
-          "description": "List of components to exclude",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Set of variables",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Set of files with predefined variables",
-          "defaultValue": []
-        },
-        {
-          "name": "auto-approve",
-          "shortcut": "u",
-          "description": "Auto approve",
-          "defaultValue": true
-        }
-      ]
-    },
-    {
       "name": "run",
       "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
       "options": [
