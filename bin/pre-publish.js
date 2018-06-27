@@ -18,6 +18,7 @@ const json = {
   name: packageContent.name,
   version: packageContent.version,
   description: packageContent.description,
+  buildDate: packageContent.buildDate,
   commands: HelpParser.getCommandsDescription(commands)
 };
 
