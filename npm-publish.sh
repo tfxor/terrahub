@@ -37,7 +37,7 @@ function require_clean_work_tree() {
 }
 
 function inject_build_date() {
-  sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
+  sed -e "s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
 }
 
 function fail() {
