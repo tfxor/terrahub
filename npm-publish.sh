@@ -48,6 +48,7 @@ function fail() {
 validate_input "$@"
 require_clean_work_tree
 inject_build_date "`date`" > "./src/templates/help/metadata.json.tmp" && mv "./src/templates/help/metadata.json.tmp" "./src/templates/help/metadata.json"
+(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Publish terrahub help metadata"))
 rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
 npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"
