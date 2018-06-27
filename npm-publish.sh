@@ -36,10 +36,6 @@ function require_clean_work_tree() {
   fi
 }
 
-function inject_build_date() {
-  sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
-}
-
 function fail() {
   echo >&2 "[FAILED] $1!"
   exit 1
@@ -47,7 +43,6 @@ function fail() {
 
 validate_input "$@"
 require_clean_work_tree
-inject_build_date "`date`" > "./package.json.tmp" && mv "./package.json.tmp" "./package.json"
 rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
 npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"

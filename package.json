@@ -7,6 +7,9 @@
     "terrahub": "./bin/cli.js",
     "thub": "./bin/cli.js"
   },
+  "scripts": {
+    "prepublish": "node ./bin/pre-publish.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MitocGroup/terrahub.git"

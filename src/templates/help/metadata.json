@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "TerraHub is a terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.",
-  "buildDate": "Wed, 27 Jun 2018 09:22:22 GMT",
+  "buildDate": "Wed, 27 Jun 2018 17:12:45 GMT",
   "commands": [
     {
       "name": "apply",
@@ -11,7 +11,7 @@
         {
           "name": "auto-approve",
           "shortcut": "u",
-          "description": "Auto approve",
+          "description": "Auto approve terraform execution",
           "defaultValue": true
         },
         {
@@ -29,13 +29,13 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
         }
       ]
@@ -81,7 +81,7 @@
         {
           "name": "auto-approve",
           "shortcut": "u",
-          "description": "Auto approve",
+          "description": "Auto approve terraform execution",
           "defaultValue": true
         },
         {
@@ -99,13 +99,13 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
         }
       ]
@@ -134,20 +134,14 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "auto-approve",
-          "shortcut": "u",
-          "description": "Auto approve",
-          "defaultValue": true
         }
       ]
     },
@@ -212,20 +206,14 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "auto-approve",
-          "shortcut": "u",
-          "description": "Auto approve",
-          "defaultValue": true
         }
       ]
     },
@@ -259,20 +247,26 @@
         {
           "name": "plan",
           "shortcut": "p",
-          "description": "Run plan",
+          "description": "Enable plan command as part of automated workflow",
           "defaultValue": true
         },
         {
           "name": "apply",
           "shortcut": "a",
-          "description": "Run apply",
+          "description": "Enable apply command as part of automated workflow",
           "defaultValue": false
         },
         {
           "name": "destroy",
           "shortcut": "d",
-          "description": "Run destroy",
+          "description": "Enable destroy command as part of automated workflow",
           "defaultValue": false
+        },
+        {
+          "name": "auto-approve",
+          "shortcut": "u",
+          "description": "Auto approve terraform execution",
+          "defaultValue": true
         },
         {
           "name": "include",
@@ -289,20 +283,14 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "auto-approve",
-          "shortcut": "u",
-          "description": "Auto approve",
-          "defaultValue": true
         }
       ]
     },
@@ -337,20 +325,14 @@
         {
           "name": "var",
           "shortcut": "r",
-          "description": "Set of variables",
+          "description": "Variable(s) to be used by terraform",
           "defaultValue": []
         },
         {
           "name": "var-file",
           "shortcut": "l",
-          "description": "Set of files with predefined variables",
+          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "auto-approve",
-          "shortcut": "u",
-          "description": "Auto approve",
-          "defaultValue": true
         }
       ]
     }
