@@ -1,9 +1,8 @@
 'use strict';
 
 const Args = require('../src/helpers/args-parser');
-const merge = require('lodash.merge');
-const { familyTree } = require('./helpers/util');
 const AbstractCommand = require('./abstract-command');
+const { familyTree, extend } = require('./helpers/util');
 
 class TerraformCommand extends AbstractCommand {
   /**
@@ -11,9 +10,12 @@ class TerraformCommand extends AbstractCommand {
    * (post configure action)
    */
   initialize() {
-    this.addOption('include', 'i', 'Components to work with', Array, []);
-    this.addOption('var', 'v', 'Set of variables', Array, []);
-    this.addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
+    this
+      .addOption('include', 'i', 'List of components to include', Array, [])
+      .addOption('exclude', 'x', 'List of components to exclude', Array, [])
+      .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
+      .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+    ;
   }
 
   /**
@@ -22,9 +24,9 @@ class TerraformCommand extends AbstractCommand {
   validate() {
     return super.validate().then(() => {
       if (!this._isProjectReady()) {
-        this.logger.info('Configuration file not found, please go to project root folder, or initialize it');
+        this.logger.warn('Configuration file not found, please go to project root folder, or initialize it');
       } else if (this._areComponentsReady()) {
-        this.logger.info('No configured components found, please create from template or configure existing');
+        this.logger.warn('No configured components found, please create from template or configure existing');
       }
     });
   }
@@ -38,13 +40,13 @@ class TerraformCommand extends AbstractCommand {
     const config = super.getConfig();
     const cliParams = {
       terraform: {
-        vars: this.getVars(),
-        varFiles: this.getVarFiles()
+        var: this.getVar(),
+        varFile: this.getVarFile()
       }
     };
 
     Object.keys(config).forEach(hash => {
-      result[hash] = merge(config[hash], cliParams);
+      result[hash] = extend(config[hash], [cliParams]);
     });
 
     return result;
@@ -79,14 +81,14 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @returns {Array}
    */
-  getVarFiles() {
+  getVarFile() {
     return this.getOption('var-file');
   }
 
   /**
    * @returns {Object}
    */
-  getVars() {
+  getVar() {
     let result = {};
 
     this.getOption('var').map(item => {

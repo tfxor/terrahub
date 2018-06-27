@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-function fail () {
-  echo >&2 "[FAILED] $1!"
-  exit 1
+echo "@todo move this to ./bin directory"
+
+function validate_input() {
+  if [ -z "$1" ]
+  then
+    fail "Please provide a valid semver function (https://github.com/npm/node-semver#functions)"
+  fi
 }
 
-function require_clean_work_tree () {
+function require_clean_work_tree() {
   # Update the index
   git update-index -q --ignore-submodules --refresh
   err=0
@@ -32,15 +36,18 @@ function require_clean_work_tree () {
   fi
 }
 
-function validate_input () {
-  if [ -z "$1" ]
-  then
-    fail "Please provide a valid semver function (https://github.com/npm/node-semver#functions)"
-  fi
+function inject_build_date() {
+  sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
+}
+
+function fail() {
+  echo >&2 "[FAILED] $1!"
+  exit 1
 }
 
 validate_input "$@"
 require_clean_work_tree
+inject_build_date "`date`" > "./package.json.tmp" && mv "./package.json.tmp" "./package.json"
 rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
 npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"

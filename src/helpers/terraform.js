@@ -3,21 +3,21 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
 const Plan = require('./plan');
 const State = require('./state');
 const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
 const Downloader = require('./downloader');
-const { defaultConfig } = require('../parameters');
+const { extend } = require('../helpers/util');
+const { homePath } = require('../parameters');
 
 class Terraform {
   /**
    * @param {Object} config
    */
   constructor(config) {
-    this._config = merge({}, this._defaults(), config);
+    this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._isRemoteState = false;
     this._isWorkspaceSupported = false;
@@ -32,9 +32,9 @@ class Terraform {
   _defaults() {
     return {
       terraform: {
-        vars: {},
-        varFiles: [],
-        cache: false,
+        var: {},
+        varFile: [],
+        backend: {},
         version: '0.11.7',
         resource: '.resource',
         workspace: 'default'
@@ -72,7 +72,7 @@ class Terraform {
    * @returns {String}
    */
   getBinary() {
-    return defaultConfig('terraform', this.getVersion(), 'terraform');
+    return homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -83,38 +83,51 @@ class Terraform {
   }
 
   /**
-   * @returns {Object}
-   */
-  getVars() {
-    const vars = {};
-
-    Object.keys(this._tf.vars).forEach(name => {
-      vars[`TF_VAR_${ name }`] = this._tf.vars[name];
-    });
-
-    return vars;
-  }
-
-  /**
+   * Prepare -var
    * @returns {Array}
-   */
-  getVarFiles() {
-    return this._tf.varFiles;
-  }
-
-  /**
-   * Reformat var-files as object
-   * @returns {Object}
    * @private
    */
-  _varFilesOption() {
-    let options = {};
+  _var() {
+    let result = [];
+    let object = this._tf.var;
 
-    this.getVarFiles().forEach(fileName => {
-      options['-var-file'] = path.join(this.getRoot(), fileName);
+    Object.keys(object).forEach(name => {
+      // @todo: escape ${object[name]} for double quotes
+      result.push(`-var="${name}=${object[name]}"`);
     });
 
-    return options;
+    return result;
+  }
+
+  /**
+   * Prepare -backend-config
+   * @return {Array}
+   * @private
+   */
+  _backend() {
+    let result = [];
+    let object = this._tf.backend;
+
+    Object.keys(object).forEach(name => {
+      result.push(`-backend-config="${name}=${object[name]}"`);
+    });
+
+    return result;
+  }
+
+  /**
+   * Prepare -var-file
+   * @returns {Array}
+   * @private
+   */
+  _varFile() {
+    let result = [];
+
+    this._tf.varFile.forEach(fileName => {
+      result.push(`-var-file=${path.join(this.getRoot(), fileName)}`);
+    });
+
+    return result;
   }
 
   /**
@@ -122,6 +135,8 @@ class Terraform {
    * @returns {Promise}
    */
   prepare() {
+    logger.debug(JSON.stringify(this._config, null, 2));
+
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
@@ -176,7 +191,7 @@ class Terraform {
    * @returns {Promise}
    */
   init() {
-    return this.run('init', ['.']);
+    return this.run('init', ['-no-color', ...this._backend(), '.']);
   }
 
   /**
@@ -189,7 +204,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return this.run('state', [argument]).then(result => {
+    return this.run('state', ['-no-color', argument]).then(result => {
       const remoteState = this._state.getRemotePath();
 
       if (fs.existsSync(remoteState)) {
@@ -229,13 +244,13 @@ class Terraform {
    */
   plan() {
     let statePath = this._state.getPath();
-    let options = Object.assign({'-out': this._plan.getPath()}, this._varFilesOption());
+    let options = { '-out': this._plan.getPath() };
 
     if (!this._isRemoteState && fs.existsSync(statePath)) {
       options['-state'] = statePath;
     }
 
-    return this.run('plan', this._optsToArgs(options));
+    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)));
   }
 
   /**
@@ -243,14 +258,11 @@ class Terraform {
    * @returns {Promise}
    */
   apply() {
-    let args = [];
-    let options = {'-auto-approve': true};
+    let params = {};
     let planPath = this._plan.getPath();
     let statePath = this._state.getPath();
 
     if (!this._isRemoteState) {
-      let params = {};
-
       if (fs.existsSync(statePath)) {
         params = {
           '-state': statePath,
@@ -260,11 +272,13 @@ class Terraform {
       } else if (fs.existsSync(planPath)) {
         params = { '-state-out': statePath };
       }
-
-      Object.assign(options, this._varFilesOption(), params);
     }
 
-    return this.run('apply', [...args, ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
+    let options = Object.assign({ '-auto-approve': true }, params);
+
+    return this
+      .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
+      .then(() => fse.readFile(statePath));
   }
 
   /**
@@ -272,7 +286,7 @@ class Terraform {
    * @returns {Promise}
    */
   destroy() {
-    let options = this._varFilesOption();
+    let options = {};
     let statePath = this._state.getPath();
 
     if (!this._isRemoteState && fs.existsSync(statePath)) {
@@ -283,7 +297,9 @@ class Terraform {
       });
     }
 
-    return this.run('destroy', ['-force', ...this._optsToArgs(options)]).then(() => fse.readFile(statePath));
+    return this
+      .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
+      .then(() => fse.readFile(statePath));
   }
 
   /**
@@ -292,7 +308,7 @@ class Terraform {
    * @returns {Promise}
    */
   show(planOrStatePath) {
-    return this.run('show', [planOrStatePath]);
+    return this.run('show', ['-no-color', planOrStatePath]);
   }
 
   /**
@@ -302,11 +318,11 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    logger.info(`[${this.getName()}]`, 'terraform', cmd, '-no-color', ...args);
+    logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
 
-    return this._spawn(this.getBinary(), [cmd, '-no-color', ...args], {
-      env: Object.assign({}, process.env, this.getVars()),
+    return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
+      env: process.env,
       shell: true
     });
   }
@@ -337,20 +353,25 @@ class Terraform {
    */
   _spawn(command, args, options) {
     let stdout = [];
-    const prefix = `[${this.getName()}]`;
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
-    child.stderr.on('data', data => logger.error(prefix, data.toString()));
+    child.stderr.on('data', data => logger.error(this._out(data)));
     child.stdout.on('data', data => {
       stdout.push(data);
-
-      // @todo improve logger class
-      process.stdout.write(prefix);
-      process.stdout.write(data.toString());
+      logger.raw(this._out(data));
     });
 
     return promise.then(() => Buffer.concat(stdout));
+  }
+
+  /**
+   * @param {Buffer} data
+   * @returns {string}
+   * @private
+   */
+  _out(data) {
+    return `[${this.getName()}] ${data.toString()}`;
   }
 }
 

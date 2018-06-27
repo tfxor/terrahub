@@ -1,17 +1,18 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const Args = require('../src/helpers/args-parser');
-const logger = require('../src/helpers/logger');
 const ConfigLoader = require('./config-loader');
-const { version, description } = require('../package');
+const parameters = require('./parameters');
+const fs = require('fs');
+const { renderTwig } = require('./helpers/util');
 
 class AbstractCommand {
   /**
    * @param {Object} input
+   * @param {Logger} logger
    */
-  constructor(input) {
+  constructor(input, logger) {
+    this.logger = logger;
     this._name = null;
     this._input = input;
     this._options = {};
@@ -24,14 +25,6 @@ class AbstractCommand {
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
-  }
-
-  /**
-   * @todo pass into constructor and configure verbosity
-   * @returns {Logger}
-   */
-  get logger() {
-    return logger;
   }
 
   /**
@@ -141,10 +134,10 @@ class AbstractCommand {
 
   /**
    * Get list of configuration files
-   * @param {String} dir
+   * @param {String|Boolean} dir
    * @returns {String[]}
    */
-  listConfigs(dir) {
+  listConfigs(dir = false) {
     return this._configLoader.listConfigs(dir);
   }
 
@@ -164,13 +157,62 @@ class AbstractCommand {
   }
 
   /**
-   * @todo refactor this!
+   * Check Help Flag
+   * @returns {Promise}
    */
-  static showHelp() {
-    const template = fs.readFileSync(path.join(__dirname, 'templates', 'help.tmpl'), 'utf-8');
-    const variables = [ version, description ];
+  checkHelp() {
+    if (this.getDescription() && this.getOption('help')) {
+      return this.showHelp();
+    }
 
-    logger.raw(template, ...variables);
+    let flags = Object.keys(this._input).slice(1);
+
+    Object.keys(this._options).forEach(key => {
+      const option = this._options[key];
+
+      flags = flags.filter(flag => flag !== option.name && flag !== option.shortcut);
+    });
+
+    if (flags.length > 0) {
+      return this.showHelp();
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * Show command description and options
+   */
+  showHelp() {
+    let options = [];
+    Object.keys(this._options).forEach(key => {
+      let option = this._options[key];
+
+      option.separator = '\t';
+      if (option.name.length < 7) {
+        option.separator += '\t';
+      }
+
+      if (option.defaultValue === undefined) {
+        option.description += ' [required]';
+      }
+
+      options.push(option);
+    });
+
+    const { version, buildDate } = JSON.parse(fs.readFileSync(parameters.templates.helpMetadata, 'utf8'));
+
+    return renderTwig(parameters.templates.helpCommand, {
+      version: version,
+      buildDate: buildDate,
+      commandName: this.getName(),
+      commandDescription: this.getDescription(),
+      options: options
+    }).then(result => {
+      console.log(result);
+
+      return Promise.reject(true);
+    });
   }
 }
 

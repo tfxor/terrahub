@@ -11,7 +11,7 @@ class GraphCommand extends AbstractCommand {
   configure() {
     this
       .setName('graph')
-      .setDescription('Show the graph of dependencies between terrahub components')
+      .setDescription('show the graph of dependencies between terrahub components')
     ;
   }
 
@@ -26,13 +26,13 @@ class GraphCommand extends AbstractCommand {
     const tree = this._format(configList);
 
     if (name) {
-      this.logger.raw(name);
+      this.logger.log(name);
 
       treeify.asLines(tree, false, line => {
-        this.logger.raw(` ${line}`);
+        this.logger.log(` ${line}`);
       });
 
-      this.logger.info('Paths are relative to the project root');
+      this.logger.warn('Paths are relative to the project root');
     }
 
     return Promise.resolve('Done');

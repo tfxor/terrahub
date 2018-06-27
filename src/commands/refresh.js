@@ -9,11 +9,7 @@ class RefreshCommand extends TerraformCommand {
   configure() {
     this
       .setName('refresh')
-      .setDescription('Refresh command')
-      .addOption('array', 'a', 'Some array', Array, [])
-      .addOption('object', 'o', 'Some object', Object, {})
-      .addOption('force', 'f', 'Replace directory', Boolean, false)
-    ;
+      // .setDescription('run `terraform refresh` across multiple terraform scripts')
   }
 
   /**
@@ -24,8 +20,8 @@ class RefreshCommand extends TerraformCommand {
     console.log('array', this.getOption('array'));
     console.log('force', this.getOption('force'));
 
-    console.log('var', this.getVars());
-    console.log('var-file', this.getVarFiles());
+    console.log('var', this.getVar());
+    console.log('var-file', this.getVarFile());
 
     return Promise.resolve('Done');
   }
