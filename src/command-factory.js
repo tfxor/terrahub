@@ -3,22 +3,26 @@
 const fs = require('fs');
 const path = require('path');
 const Args = require('./helpers/args-parser');
+const { commandsPath } = require('./parameters');
 
 class CommandFactory {
   /**
    * Command create
    * @param {Array} argv
+   * @param {Logger|*} logger
    * @returns {*}
    */
-  static create(argv) {
+  static create(argv, logger = console) {
     const [command, ...args] = argv.slice(2);
 
     try {
-      const Command = require(path.join(CommandFactory.commandsPath, command));
+      const Command = require(path.join(commandsPath, command));
 
-      return new Command(Args.parse(args));
+      return new Command(Args.parse(args), logger);
     } catch (err) {
-      throw err;
+      const HelpCommand = require('./help-command');
+
+      return new HelpCommand(Args.parse(argv), logger);
     }
   }
 
@@ -27,17 +31,10 @@ class CommandFactory {
    * @returns {*}
    */
   static listCommands() {
+    // @todo: is this used anywhere?
     return fs
-      .readdirSync(CommandFactory.commandsPath)
+      .readdirSync(commandsPath)
       .map(fileName => path.basename(fileName, '.js'));
-  }
-
-  /**
-   * Directory with command classes
-   * @returns {*}
-   */
-  static get commandsPath() {
-    return path.join(__dirname, 'commands');
   }
 }
 

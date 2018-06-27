@@ -8,22 +8,24 @@ const { engines } = require('../package');
 const CommandFactory = require('../src/command-factory');
 
 if (!semver.satisfies(process.version, engines.node)) {
-  logger.info('Required Node version is %s, current %s', engines.node, process.version);
+  logger.warn(`Required Node version is ${engines.node}, current ${process.version}`);
   process.exit(1);
 }
 
-const command = CommandFactory.create(process.argv);
+const command = CommandFactory.create(process.argv, logger);
 
 command
-  .validate()
+  .checkHelp()
+  .then(() => command.validate(),
+    () => process.exit(0))
   .then(() => command.run())
   .then(message => {
     if (message) {
-      logger.log(message);
+      logger.info(message);
     }
     process.exit(0);
   })
   .catch(err => {
-    logger.error(err.message ? err.message : 'Error occurred');
+    logger.error(err || 'Error occurred');
     process.exit(1);
   });

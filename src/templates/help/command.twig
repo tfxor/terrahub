@@ -1,0 +1,11 @@
+Usage: terrahub {{ commandName }} [options]
+
+terrahub@{{ version }} (built: {{ buildDate }})
+this command will {{ commandDescription }}
+{% if options %}
+
+Options:
+{% for option in options %}
+  --{{ option.name }}, -{{ option.shortcut }} {{ option.separator }} {{ option.description }}
+{% endfor %}
+{% endif %}

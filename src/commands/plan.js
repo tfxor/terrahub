@@ -10,7 +10,7 @@ class PlanCommand extends TerraformCommand {
   configure() {
     this
       .setName('plan')
-      .setDescription('Run `terraform plan` across multiple terraform scripts')
+      .setDescription('run `terraform plan` across multiple terraform scripts')
     ;
   }
 
