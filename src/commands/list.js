@@ -8,6 +8,7 @@ const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const treeify = require('treeify');
+const os = require("os");
 
 class ListCommand extends AbstractCommand {
   /**
@@ -17,7 +18,6 @@ class ListCommand extends AbstractCommand {
     this
       .setName('list')
       .setDescription('list projects > cloud accounts > regions > services > resources')
-      // @todo: figure out why api-region and regions are not used together
       // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
       .addOption('depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0)
@@ -74,8 +74,7 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.log('Compiling the list of cloud resources. ' +
-          'Below output is consolidated across projects, accounts, regions and services.');
-        this.logger.log('');
+          'Below output is consolidated across projects, accounts, regions and services.' + os.EOL);
 
         data.forEach(item => {
           if (

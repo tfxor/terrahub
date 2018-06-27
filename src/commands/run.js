@@ -14,7 +14,6 @@ class RunCommand extends TerraformCommand {
       .addOption('plan', 'p', 'Run plan', Boolean, true)
       .addOption('apply', 'a', 'Run apply', Boolean, false)
       .addOption('destroy', 'd', 'Run destroy', Boolean, false)
-      .addOption('auto-approve', 'u', 'Auto approve', Boolean, true)
     ;
   }
 

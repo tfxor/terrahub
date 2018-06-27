@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const parameters = require('./parameters');
 const AbstractCommand = require('./abstract-command');
 const { renderTwig } = require('./helpers/util');
@@ -31,14 +30,13 @@ class HelpCommand extends AbstractCommand {
   }
 
   showVersion() {
-    const appInfo = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
+    const { version } = require(parameters.templates.helpMetadata);
 
-    return Promise.resolve(`v${appInfo.version}`);
+    return Promise.resolve(`v${version}`);
   }
 
   showHelp() {
-    const commands = JSON.parse(fs.readFileSync(parameters.templates.helpMetadata, 'utf8'));
-    const { version, description, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
+    const { version, description, buildDate, commands } = require(parameters.templates.helpMetadata);
 
     commands.forEach((command) => {
       command.name += '\t';
