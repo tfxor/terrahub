@@ -20,9 +20,9 @@ class CommandFactory {
 
       return new Command(Args.parse(args), logger);
     } catch (err) {
-      const Help = require('./help');
+      const HelpCommand = require('./help-command');
 
-      return new Help(Args.parse(argv), logger);
+      return new HelpCommand(Args.parse(argv), logger);
     }
   }
 
@@ -31,6 +31,7 @@ class CommandFactory {
    * @returns {*}
    */
   static listCommands() {
+    // @todo: is this used anywhere?
     return fs
       .readdirSync(commandsPath)
       .map(fileName => path.basename(fileName, '.js'));

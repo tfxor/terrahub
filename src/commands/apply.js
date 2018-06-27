@@ -11,6 +11,7 @@ class ApplyCommand extends TerraformCommand {
     this
       .setName('apply')
       .setDescription('run `terraform apply` across multiple terraform scripts')
+      .addOption('auto-approve', 'u', 'Auto approve', Boolean, true)
     ;
   }
 

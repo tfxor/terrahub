@@ -20,11 +20,11 @@ class ListCommand extends AbstractCommand {
       // @todo: figure out why api-region and regions are not used together
       // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
+      .addOption('depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0)
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
       .addOption('services', 's', 'Services (comma separated values)', Array, [])
-      .addOption('depth', 'd', 'Listing depth', Number, 0)
     ;
   }
 
@@ -42,11 +42,13 @@ class ListCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
+    const depth = this.getOption('depth');
     const regions = this.getOption('regions');
     const projects = this.getOption('projects');
     const accounts = this.getOption('accounts');
     const services = this.getOption('services');
-    const depth = this.getOption('depth');
+
+    this.logger.warn('Querying cloud accounts, regions and services. It might take a while...');
 
     return this._getCredentials()
       .then(credentials => {
@@ -70,6 +72,10 @@ class ListCommand extends AbstractCommand {
         function isAllowed(allowed, item) {
           return (allowed.length === 0 || allowed.includes(item));
         }
+
+        this.logger.log('Compiling the list of cloud resources. ' +
+          'Below output is consolidated across projects, accounts, regions and services.');
+        this.logger.log('');
 
         data.forEach(item => {
           if (

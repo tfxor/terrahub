@@ -14,7 +14,7 @@ class HelpCommand extends AbstractCommand {
       .setName('help')
       .setDescription('options available without a command entered')
       .addOption('help', 'h', 'Show list of available commands', Boolean, false)
-      .addOption('version', 'v', 'Show current version of the application', Boolean, false);
+      .addOption('version', 'v', 'Show current version of the tool', Boolean, false);
   }
 
   /**
@@ -41,14 +41,13 @@ class HelpCommand extends AbstractCommand {
     const { version, description, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
 
     commands.forEach((command) => {
+      command.name += '\t';
       if (command.name.length < 6) {
-        command.name += '\t\t';
-      } else {
         command.name += '\t';
       }
     });
 
-    return renderTwig(parameters.templates.terrahubHelp, {
+    return renderTwig(parameters.templates.helpDefault, {
       version: version,
       buildDate: buildDate,
       description: description,

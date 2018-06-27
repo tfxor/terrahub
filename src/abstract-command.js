@@ -22,8 +22,6 @@ class AbstractCommand {
     this.configure();
     this.initialize();
 
-    this.addOption('help', 'h', 'show command description and available options', Boolean, false);
-
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
@@ -190,9 +188,8 @@ class AbstractCommand {
     Object.keys(this._options).forEach(key => {
       let option = this._options[key];
 
+      option.name += '\t';
       if (option.name.length < 4) {
-        option.name += '\t\t';
-      } else {
         option.name += '\t';
       }
 
@@ -207,7 +204,7 @@ class AbstractCommand {
 
     const { version, buildDate } = JSON.parse(fs.readFileSync(parameters.packageJson, 'utf8'));
 
-    return renderTwig(parameters.templates.commandHelp, {
+    return renderTwig(parameters.templates.helpCommand, {
       version: version,
       buildDate: buildDate,
       commandName: this.getName(),

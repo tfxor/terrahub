@@ -10,9 +10,10 @@ class TerraformCommand extends AbstractCommand {
    * (post configure action)
    */
   initialize() {
-    this.addOption('include', 'i', 'Components to work with', Array, []);
-    this.addOption('var', 'v', 'Set of variables', Array, []);
-    this.addOption('var-file', 'f', 'Set of files with predefined variables', Array, []);
+    this.addOption('include', 'i', 'List of components to include', Array, []);
+    this.addOption('exclude', 'x', 'List of components to exclude', Array, []);
+    this.addOption('var', 'r', 'Set of variables', Array, []);
+    this.addOption('var-file', 'l', 'Set of files with predefined variables', Array, []);
   }
 
   /**

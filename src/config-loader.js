@@ -202,7 +202,7 @@ class ConfigLoader {
       }
     };
 
-    return (fs.existsSync(envPath) && !config.isProd)
+    return (fs.existsSync(envPath) && !config.isDefault)
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
   }
