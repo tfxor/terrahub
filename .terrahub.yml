@@ -6,10 +6,3 @@ project:
 terraform:
   varFile:
     - 'default.tfvars'
-  workspace:
-    dev:
-      varFile:
-        - 'workspace/dev.tfvars'
-    prod:
-      varFile:
-        - 'workspace/prod.tfvars'
