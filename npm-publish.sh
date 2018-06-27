@@ -37,7 +37,7 @@ function require_clean_work_tree() {
 }
 
 function inject_build_date() {
-    sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" ./src/templates/help/metadata.json
+  sed -e "s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" ./src/templates/help/metadata.json
 }
 
 function fail() {
@@ -48,13 +48,13 @@ function fail() {
 validate_input "$@"
 require_clean_work_tree
 inject_build_date "`date`" > "./src/templates/help/metadata.json.tmp" && mv "./src/templates/help/metadata.json.tmp" "./src/templates/help/metadata.json"
-#rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
-#npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
+rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
+npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"
 #(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Generate terrahub API docs"))
-#npm version "$1"                                                                                                || fail "Updating $1 version of terrahub package"
-#npm publish                                                                                                     || fail "Publishing terrahub package on npmjs.com"
-#(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Publish terrahub package on npmjs.com"))
-#git push && git push --tags
+npm version "$1"                                                                                                || fail "Updating $1 version of terrahub package"
+npm publish                                                                                                     || fail "Publishing terrahub package on npmjs.com"
+(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Publish terrahub package on npmjs.com"))
+git push && git push --tags
 
 echo '[OK] Done.'
