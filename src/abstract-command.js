@@ -188,15 +188,13 @@ class AbstractCommand {
     Object.keys(this._options).forEach(key => {
       let option = this._options[key];
 
-      option.name += '\t';
-      if (option.name.length < 4) {
-        option.name += '\t';
+      option.separator = '\t';
+      if (option.name.length < 7) {
+        option.separator += '\t';
       }
 
-      option.shortcut += '\t';
-
       if (option.defaultValue === undefined) {
-        option.description += '*';
+        option.description += ' [required]';
       }
 
       options.push(option);

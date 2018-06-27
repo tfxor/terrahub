@@ -13,9 +13,8 @@ class TerraformCommand extends AbstractCommand {
     this
       .addOption('include', 'i', 'List of components to include', Array, [])
       .addOption('exclude', 'x', 'List of components to exclude', Array, [])
-      .addOption('var', 'r', 'Set of variables', Array, [])
-      .addOption('var-file', 'l', 'Set of files with predefined variables', Array, [])
-      .addOption('auto-approve', 'u', 'Auto approve', Boolean, true)
+      .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
+      .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
     ;
   }
 
