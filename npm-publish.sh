@@ -49,7 +49,7 @@ validate_input "$@"
 require_clean_work_tree
 inject_build_date "`date`" > "./package.json.tmp" && mv "./package.json.tmp" "./package.json"
 node ./bin/pre-publish.js
-(git diff-files --quiet --ignore-submodules -- || (git add src/ && git commit -a -m "Publish terrahub help metadata"))
+(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Publish terrahub help metadata"))
 rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
 npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"
