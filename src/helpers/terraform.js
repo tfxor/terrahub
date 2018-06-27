@@ -92,7 +92,8 @@ class Terraform {
     let object = this._tf.var;
 
     Object.keys(object).forEach(name => {
-      result.push(`-var ${name}=${object[name]}`);
+      // @todo: escape ${object[name]} for double quotes
+      result.push(`-var="${name}=${object[name]}"`);
     });
 
     return result;
