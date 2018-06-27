@@ -13,9 +13,9 @@ class ProjectCommand extends AbstractCommand {
   configure() {
     this
       .setName('project')
-      .setDescription('Create or update project that manages multiple terraform scripts')
+      .setDescription('create or update project that manages multiple terraform scripts')
       .addOption('name', 'n', 'Project name', String)
-      .addOption('provider', 'p', 'Project provider', String, 'aws')
+      .addOption('provider', 'p', 'Cloud provider', String, 'aws')
       .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
     ;
   }

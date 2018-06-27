@@ -4,9 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const yaml = require('js-yaml');
-const merge = require('lodash.merge');
-const { templates } = require('./parameters');
-const { toMd5 } = require('./helpers/util');
+const { toMd5, extend } = require('./helpers/util');
+const { templates, config } = require('./parameters');
 
 class ConfigLoader {
   /**
@@ -50,7 +49,7 @@ class ConfigLoader {
           after: path.join(hooks, 'destroy', 'after.js')
         }
       }
-    }
+    };
   }
 
   /**
@@ -62,7 +61,7 @@ class ConfigLoader {
 
     if (configFile) {
       this._rootPath = path.dirname(configFile);
-      this._rootConfig = ConfigLoader.readConfig(configFile);
+      this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
 
       delete this._rootConfig['project'];
@@ -106,9 +105,7 @@ class ConfigLoader {
   listConfigs(dir = false) {
     const searchPath = dir || this.appPath();
 
-    return searchPath
-      ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath)
-      : [];
+    return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
   }
 
   /**
@@ -136,13 +133,16 @@ class ConfigLoader {
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
-        this._config[toMd5(cfg.root)] = cfg;
+        const root = this._relativePath(path.join(this.appPath(), cfg.root));
+
+        cfg.root = root;
+        this._config[toMd5(root)] = cfg;
         delete this._rootConfig[key];
       }
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = merge({}, this._defaults(), this._rootConfig, this._config[module]);
+      this._config[module] = extend({}, [this._defaults(), this._rootConfig, this._config[module]]);
     });
   }
 
@@ -155,14 +155,14 @@ class ConfigLoader {
     const configs = this.listConfigs().slice(1);
 
     configs.forEach(configPath => {
-      const config = ConfigLoader.readConfig(configPath);
+      const config = this._getConfig(configPath);
       const componentPath = path.dirname(this._relativePath(configPath));
 
       if (config.hasOwnProperty('parent')) {
         config['parent'] = this._relativePath(path.resolve(componentPath, config.parent));
       }
 
-      this._config[toMd5(componentPath)] = merge({root: componentPath}, this._defaults(), this._rootConfig, config);
+      this._config[toMd5(componentPath)] = extend({root: componentPath}, [this._defaults(), this._rootConfig, config]);
     });
   }
 
@@ -184,6 +184,27 @@ class ConfigLoader {
    */
   _relativePath(fullPath) {
     return fullPath.replace(this.appPath(), '.');
+  }
+
+  /**
+   * Get environment specific config
+   * @param {String} cfgPath
+   * @return {*}
+   * @private
+   */
+  _getConfig(cfgPath) {
+    const cfg = ConfigLoader.readConfig(cfgPath);
+    const envPath = path.join(path.dirname(cfgPath), config.fileName);
+    const forceWorkspace = { terraform: { workspace: config.env }}; // Just remove to revert
+    const overwrite = (objValue, srcValue) => {
+      if (Array.isArray(objValue)) {
+        return srcValue;
+      }
+    };
+
+    return (fs.existsSync(envPath) && !config.isDefault)
+      ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
+      : cfg;
   }
 
   /**

@@ -11,7 +11,7 @@ class GraphCommand extends AbstractCommand {
   configure() {
     this
       .setName('graph')
-      .setDescription('Show the graph of dependencies between terrahub components')
+      .setDescription('show the graph of dependencies between terrahub components')
     ;
   }
 

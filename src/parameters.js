@@ -3,19 +3,19 @@
 const os = require('os');
 const fse = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
+const { extend } = require('./helpers/util');
 
 /**
- * Get terrahub home paths
+ * Get home path
  * @param {String} suffix
  * @returns {*}
  * @private
  */
-function _terrahubPath(...suffix) {
+function _homePath(...suffix) {
   return path.join(os.homedir(), '.terrahub', ...suffix);
 }
 
-const cfgPath = _terrahubPath('.terrahub.json');
+const cfgPath = _homePath('.terrahub.json');
 const templates = path.join(__dirname, 'templates');
 
 /**
@@ -26,29 +26,44 @@ if (!fse.existsSync(cfgPath)) {
   fse.copySync(path.join(templates, 'configs', '.terrahub.json'), cfgPath);
 }
 
-const def = { format: 'yml', token: 'false', env: 'prod' };
+const def = {
+  format: 'yml',
+  token: false,
+  env: 'default',
+  api: 'api'
+};
 const env = {
+  api: process.env.THUB_API,
   env: process.env.THUB_ENV,
   token: process.env.THUB_ACCESS_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
-const cfg = merge(def, fse.readJsonSync(cfgPath, { throws: false }), env);
+
+const cfg = extend(def, [fse.readJsonSync(cfgPath, { throws: false }), env]);
+const isDefault = cfg.env === 'default';
 
 module.exports = {
-  defaultConfig: _terrahubPath,
+  homePath: _homePath,
+  commandsPath: path.join(__dirname, 'commands'),
+  packageJson: path.join(__dirname, '..', 'package.json'),
   config: {
+    api: cfg.api,
     env: cfg.env,
-    home: _terrahubPath(),
+    home: _homePath(),
     token: cfg.token,
     format: cfg.format,
-    fileName: `.terrahub.${cfg.format}`
+    isDefault: isDefault,
+    fileName: isDefault ? `.terrahub.${cfg.format}` : `.terrahub.${cfg.env}.${cfg.format}`
   },
   templates: {
     aws: path.join(templates, 'aws'),
-    gcp: path.join(templates, 'gcp'),
-    hooks: path.join(templates, 'hooks'),
     azurerm: path.join(templates, 'azurerm'),
+    gcp: path.join(templates, 'gcp'),
     configs: path.join(templates, 'configs'),
-    mapping: path.join(templates, 'mapping.json')
+    hooks: path.join(templates, 'hooks'),
+    mapping: path.join(templates, 'mapping.json'),
+    helpMetadata: path.join(templates, 'help', 'metadata.json'),
+    helpDefault: path.join(templates, 'help', 'default.twig'),
+    helpCommand: path.join(templates, 'help', 'command.twig')
   }
 };

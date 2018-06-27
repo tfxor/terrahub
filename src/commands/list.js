@@ -5,8 +5,10 @@ const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
-const { defaultConfig } = require('../parameters');
+const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const treeify = require('treeify');
+const os = require("os");
 
 class ListCommand extends AbstractCommand {
   /**
@@ -15,8 +17,10 @@ class ListCommand extends AbstractCommand {
   configure() {
     this
       .setName('list')
-      .setDescription('List projects > cloud accounts > regions > services > resources')
+      .setDescription('list projects > cloud accounts > regions > services > resources')
+      // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
+      .addOption('depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0)
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
@@ -38,10 +42,13 @@ class ListCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
+    const depth = this.getOption('depth');
     const regions = this.getOption('regions');
     const projects = this.getOption('projects');
     const accounts = this.getOption('accounts');
     const services = this.getOption('services');
+
+    this.logger.warn('Querying cloud accounts, regions and services. It might take a while...');
 
     return this._getCredentials()
       .then(credentials => {
@@ -66,6 +73,9 @@ class ListCommand extends AbstractCommand {
           return (allowed.length === 0 || allowed.includes(item));
         }
 
+        this.logger.log('Compiling the list of cloud resources. ' +
+          'Below output is consolidated across projects, accounts, regions and services.' + os.EOL);
+
         data.forEach(item => {
           if (
             isAllowed(projects, item.project)
@@ -82,11 +92,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         this.logger.log('Projects');
 
-        if (projects.length === 0 && accounts.length === 0 && regions.length === 0 && services.length === 0) {
-          this._showSummary();
-        } else {
-          this._showTree(this.hash.getRaw());
-        }
+        this._showTree(this._format(this.hash.getRaw(), 0, depth));
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -100,34 +106,37 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * Show overall information
+   * @param {Object} tree
    * @private
    */
-  _showSummary() {
-    Object.keys(this.hash.getRaw()).forEach((project, i) => {
-      this.logger.log(` ${i + 1}. ${project}`);
+  _showTree(tree) {
+    // no resources if tree is empty
+    treeify.asLines(tree, false, line => {
+      this.logger.log(` ${line}`);
     });
   }
 
   /**
    * @param {Object} data
    * @param {Number} level
+   * @param {Number} depth
+   * @returns {Object}
    * @private
    */
-  _showTree(data, level = 0) {
-    let offset = ' '.repeat(level);
-    let titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+  _format(data, level = 0, depth = 0) {
+    let result = {};
+    const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
+    const keys = Object.keys(data);
 
-    Object.keys(data).forEach((key, index) => {
-      if (data[key] !== null) {
-        const keys = Object.keys(data[key]);
-
-        this.logger.log(`${offset} ${key} (${titles[level]} ${keys.length} of X)`);
-        this._showTree(data[key], level + 1);
+    keys.forEach((key, index) => {
+      if (data[key] !== null && level !== depth) {
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = this._format(data[key], level + 1, depth);
       } else {
-        this.logger.log(`${offset} ${key} (${titles[level]} ${index + 1} of X)`);
+        result[`${key} (${titles[level]} ${index + 1} of ${keys.length})`] = null;
       }
     });
+
+    return result;
   }
 
   /**
@@ -173,7 +182,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _cachePath() {
-    return defaultConfig('cache', 'list', `${toMd5(this.accountId + this.region)}.json`);
+    return homePath('cache', 'list', `${toMd5(this.accountId + this.region)}.json`);
   }
 
   /**

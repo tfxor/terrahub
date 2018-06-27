@@ -1,0 +1,22 @@
+# Define list of variables to be used in main.tf
+
+############
+# provider #
+############
+variable "provider_account_id" {
+  description = "Allowed AWS account ID, to prevent you from mistakenly using an incorrect one (and potentially end up destroying a live environment)."
+  type        = "string"
+  default     = "{{ provider_account_id }}"
+}
+
+variable "provider_region" {
+  description = "This is the AWS region."
+  type        = "string"
+  default     = "{{ provider_region }}"
+}
+
+variable "cross_account_role" {
+  description = "AWS IAM role to allow account_id store data into s3://data-lake-terrahub-us-east-1"
+  type        = "string"
+  default     = "{{ cross_account_role }}"
+}

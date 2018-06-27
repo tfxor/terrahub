@@ -3,7 +3,9 @@
 const fse = require('fs-extra');
 const Twig = require('twig');
 const request = require('request');
+const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
+const fs = require('fs');
 
 /**
  * @param {String} text
@@ -39,6 +41,7 @@ function promiseSeries(promises) {
 
 /**
  * Promisify request
+ * @todo switch to requestify library which has less dependencies
  * @param {Object} options
  * @returns {Promise}
  * @private
@@ -63,6 +66,10 @@ function promiseRequest(options) {
  */
 function renderTwig(srcFile, vars, outFile = false) {
   return new Promise((resolve, reject) => {
+    if (!fs.existsSync(srcFile)) {
+      return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
+    }
+
     Twig.renderFile(srcFile, vars, (err, data) => {
       if (err) {
         return reject(err);
@@ -110,10 +117,34 @@ function isAwsNameValid(name) {
 }
 
 /**
+ * @param {*} objValue
+ * @param {*} srcValue
+ * @return {*}
+ * @private
+ */
+function _customizer(objValue, srcValue) {
+  if (Array.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
+/**
+ * Recursively merges object properties
+ * @param {Object} object
+ * @param {Object[]} sources
+ * @param {Function} customizer
+ * @returns {Object}
+ */
+function extend(object, sources, customizer = _customizer) {
+  return mergeWith(object, ...sources, customizer);
+}
+
+/**
  * Public methods
  */
 module.exports = {
   toMd5,
+  extend,
   toBase64,
   fromBase64,
   familyTree,
