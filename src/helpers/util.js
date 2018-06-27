@@ -64,8 +64,11 @@ function promiseRequest(options) {
  * @returns {Promise}
  */
 function renderTwig(srcFile, vars, outFile = false) {
-  // @todo: improve with file existing check
   return new Promise((resolve, reject) => {
+    if (!fs.exists(srcFile)) {
+      return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
+    }
+
     Twig.renderFile(srcFile, vars, (err, data) => {
       if (err) {
         return reject(err);
