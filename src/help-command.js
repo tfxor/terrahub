@@ -1,8 +1,8 @@
 'use strict';
 
 const parameters = require('./parameters');
-const AbstractCommand = require('./abstract-command');
 const { renderTwig } = require('./helpers/util');
+const AbstractCommand = require('./abstract-command');
 
 class HelpCommand extends AbstractCommand {
   /**
@@ -22,19 +22,21 @@ class HelpCommand extends AbstractCommand {
   run() {
     const version = this.getOption('version');
 
-    if (version) {
-      return this.showVersion();
-    }
-
-    return this.showHelp();
+    return version ? this.showVersion() : this.showHelp();
   }
 
+  /**
+   * @return {Promise}
+   */
   showVersion() {
     const { version } = require(parameters.templates.helpMetadata);
 
     return Promise.resolve(`v${version}`);
   }
 
+  /**
+   * @return {Promise}
+   */
   showHelp() {
     const { version, description, buildDate, commands } = require(parameters.templates.helpMetadata);
 
@@ -48,7 +50,7 @@ class HelpCommand extends AbstractCommand {
       description: description,
       commands: commands
     }).then(result => {
-      console.log(result);
+      this.logger.log(result);
     });
   }
 }
