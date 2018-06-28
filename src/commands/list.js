@@ -74,7 +74,7 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.log('Compiling the list of cloud resources. ' +
-          'Below output is consolidated across projects, accounts, regions and services.' + os.EOL);
+          'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
 
         data.forEach(item => {
           if (
@@ -97,7 +97,7 @@ class ListCommand extends AbstractCommand {
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
         this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources, ' +
-          'even the ones that are NOT supported by tagging api.'
+          'including the ones NOT supported by tagging api.'
         );
 
         return Promise.resolve();
