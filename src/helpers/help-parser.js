@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const parameters = require('../parameters');
+const { commandsPath } = require('../parameters');
 
 class HelpParser {
   /**
@@ -10,7 +10,7 @@ class HelpParser {
    * @returns {Array}
    */
   static getCommandsNameList() {
-    return fs.readdirSync(parameters.commandsPath).map(fileName => path.basename(fileName, '.js'));
+    return fs.readdirSync(commandsPath).map(fileName => path.basename(fileName, '.js'));
   }
 
   /**
@@ -21,7 +21,7 @@ class HelpParser {
   static getCommandsInstanceList(list) {
     const commands = [];
     list.forEach((commandName) => {
-      const Command = require(path.join(parameters.commandsPath, commandName));
+      const Command = require(path.join(commandsPath, commandName));
 
       const command = new Command(0);
       if (command.getDescription()) {
@@ -38,10 +38,11 @@ class HelpParser {
    * @returns {Array}
    */
   static getCommandsDescription(commands) {
-    const result = [];
+    let result = [];
 
     commands.forEach((command) => {
-      const options = [];
+      let options = [];
+
       Object.keys(command._options).forEach(key => {
         let option = command._options[key];
 

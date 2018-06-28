@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const Args = require('./helpers/args-parser');
 const { commandsPath } = require('./parameters');
@@ -24,17 +23,6 @@ class CommandFactory {
 
       return new HelpCommand(Args.parse(argv), logger);
     }
-  }
-
-  /**
-   * Get list of available commands
-   * @returns {*}
-   */
-  static listCommands() {
-    // @todo: is this used anywhere?
-    return fs
-      .readdirSync(commandsPath)
-      .map(fileName => path.basename(fileName, '.js'));
   }
 }
 
