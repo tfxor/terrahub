@@ -26,13 +26,13 @@ class GraphCommand extends AbstractCommand {
     const tree = this._format(configList);
 
     if (name) {
-      this.logger.log(name);
+      this.logger.log(`Project: ${name}`);
 
       treeify.asLines(tree, false, line => {
         this.logger.log(` ${line}`);
       });
 
-      this.logger.warn('Paths are relative to the project root');
+      this.logger.warn(`Above paths are relative to project's root`);
     }
 
     return Promise.resolve('Done');
@@ -47,7 +47,7 @@ class GraphCommand extends AbstractCommand {
     const result = {};
 
     configs.forEach(item => {
-      const key = `${item.name} [${item.root}]`;
+      const key = `${item.name} [path: ${item.root}]`;
 
       result[key] = item.children.length === 0 ? null : this._format(item.children);
     });
