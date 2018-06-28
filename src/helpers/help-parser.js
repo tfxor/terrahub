@@ -1,16 +1,16 @@
 'use strict';
 
-const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 const { commandsPath } = require('../parameters');
 
 class HelpParser {
   /**
-   * @description Returns array of names of all commands in the project
-   * @returns {Array}
+   * Get list of available commands
+   * @returns {*}
    */
   static getCommandsNameList() {
-    return fs.readdirSync(commandsPath).map(fileName => path.basename(fileName, '.js'));
+    return glob.sync('*.js', { cwd: commandsPath }).map(fileName => path.basename(fileName, '.js'));
   }
 
   /**
@@ -18,7 +18,7 @@ class HelpParser {
    * @param {Array} list
    * @returns {Array}
    */
-  static getCommandsInstanceList(list) {
+  static getCommandsInstanceList(list = this.getCommandsNameList()) {
     const commands = [];
     list.forEach((commandName) => {
       const Command = require(path.join(commandsPath, commandName));
