@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const parameters = require('../src/parameters');
-const HelpParser = require('../src/helpers/HelpParser');
+const HelpParser = require('../src/helpers/help-parser');
 
 /**
  * Saves application information and commands' description in metadata.json
@@ -22,4 +22,4 @@ const json = {
   commands: HelpParser.getCommandsDescription(commands)
 };
 
-fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, undefined, 2));
+fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, null, 2));

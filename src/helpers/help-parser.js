@@ -52,13 +52,11 @@ class HelpParser {
         options.push(option);
       });
 
-      const value = {
+      result.push({
         name: command.getName(),
         description: command.getDescription(),
         options
-      };
-
-      result.push(value);
+      });
     });
 
     return result;
