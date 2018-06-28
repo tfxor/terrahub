@@ -3,16 +3,14 @@
 'use strict';
 
 const fs = require('fs');
-const parameters = require('../src/parameters');
 const HelpParser = require('../src/helpers/help-parser');
+const { templates, packageJson } = require('../src/parameters');
 
 /**
  * Saves application information and commands' description in metadata.json
  */
-const packageContent = require(parameters.packageJson);
-
-const commandsNameList = HelpParser.getCommandsNameList();
-const commands = HelpParser.getCommandsInstanceList(commandsNameList);
+const packageContent = require(packageJson);
+const commands = HelpParser.getCommandsInstanceList();
 
 const json = {
   name: packageContent.name,
@@ -22,4 +20,4 @@ const json = {
   commands: HelpParser.getCommandsDescription(commands)
 };
 
-fs.writeFileSync(parameters.templates.helpMetadata, JSON.stringify(json, null, 2));
+fs.writeFileSync(templates.helpMetadata, JSON.stringify(json, null, 2));

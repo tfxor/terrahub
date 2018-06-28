@@ -12,12 +12,10 @@ if (!semver.satisfies(process.version, engines.node)) {
   process.exit(1);
 }
 
-const command = CommandFactory.create(process.argv, logger);
+const command = CommandFactory.create(logger);
 
 command
-  .checkHelp()
-  .then(() => command.validate(),
-    () => process.exit(0))
+  .validate()
   .then(() => command.run())
   .then(message => {
     if (message) {
