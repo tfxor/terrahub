@@ -4,11 +4,11 @@ const os = require('os');
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const treeify = require('treeify');
 const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
-const treeify = require('treeify');
 
 class ListCommand extends AbstractCommand {
   /**
