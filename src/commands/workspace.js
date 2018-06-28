@@ -16,8 +16,8 @@ class WorkspaceCommand extends TerraformCommand {
     this
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terraform scripts')
-      .addOption('env', 'e', 'Workspace to create', String, '')
-      .addOption('delete', 'd', 'Flag to delete --env configs', Boolean, false)
+      .addOption('env', 'e', 'Workspace environment to be created or updated', String, '')
+      .addOption('delete', 'd', 'Delete workspace environment (paired with --env)', Boolean, false)
     ;
   }
 

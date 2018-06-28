@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
@@ -8,7 +9,6 @@ const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const treeify = require('treeify');
-const os = require("os");
 
 class ListCommand extends AbstractCommand {
   /**
@@ -96,7 +96,7 @@ class ListCommand extends AbstractCommand {
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('   Please visit https://www.terrahub.io and register to see ALL cloud resources,' +
+        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources, ' +
           'even the ones that are NOT supported by tagging api.'
         );
 
