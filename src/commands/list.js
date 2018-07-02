@@ -223,8 +223,7 @@ class ListCommand extends AbstractCommand {
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
-    // @todo switch to ThubEnv
-    let project = result.hasOwnProperty('DeepEnvironmentId') ? result['DeepEnvironmentId'] : '-';
+    let project = result.hasOwnProperty('ThubCode') ? result['ThubCode'] : '-';
 
     return Object.assign(result, {
       service: service,
