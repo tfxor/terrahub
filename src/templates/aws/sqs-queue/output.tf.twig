@@ -1,12 +1,12 @@
 # Define list of variables to be output
-output "sqs_queue_id" {
+output "id" {
   value = "${aws_sqs_queue.{{ name }}.id}"
 }
 
-output "sqs_queue_arn" {
+output "arn" {
   value = "${aws_sqs_queue.{{ name }}.arn}"
 }
 
-output "sqs_queue_name" {
+output "name" {
   value = "${aws_sqs_queue.{{ name }}.name}"
 }

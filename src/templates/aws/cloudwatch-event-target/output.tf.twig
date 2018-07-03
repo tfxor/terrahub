@@ -1,9 +1,9 @@
 # Define list of variables to be output
 
-output "cloudwatch_event_target_rule" {
+output "rule" {
   value = "${aws_cloudwatch_event_target.{{ name }}.rule}"
 }
 
-output "cloudwatch_event_target_arn" {
+output "arn" {
   value = "${aws_cloudwatch_event_target.{{ name }}.arn}"
 }
