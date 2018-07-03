@@ -6,5 +6,5 @@ resource "aws_kinesis_stream" "{{ name }}" {
 
   shard_level_metrics = "${var.kinesis_stream_shard_level_metrics}"
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

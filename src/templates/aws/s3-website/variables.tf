@@ -86,6 +86,12 @@ variable "s3_bucket_website_error_document" {
 ########
 # tags #
 ########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

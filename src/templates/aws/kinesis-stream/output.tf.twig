@@ -1,16 +1,16 @@
 # Define list of variables to be output
-output "kinesis_stream_id" {
+output "id" {
   value = "${aws_kinesis_stream.{{ name }}.id}"
 }
 
-output "kinesis_stream_name" {
+output "name" {
   value = "${aws_kinesis_stream.{{ name }}.name}"
 }
 
-output "kinesis_stream_shard_count" {
+output "shard_count" {
   value = "${aws_kinesis_stream.{{ name }}.shard_count}"
 }
 
-output "kinesis_stream_arn" {
+output "arn" {
   value = "${aws_kinesis_stream.{{ name }}.arn}"
 }

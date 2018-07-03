@@ -1,5 +1,5 @@
 # Define list of variables to be output
 
-output "cloudwatch_log_group_arn" {
+output "arn" {
   value = "${aws_cloudwatch_log_group.{{ name }}.arn}"
 }

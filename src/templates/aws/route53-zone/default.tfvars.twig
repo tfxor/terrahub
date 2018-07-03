@@ -13,6 +13,10 @@ route53_name          = "terrahub.io"
 route53_comment       = "Managed by TerraHub"
 route53_force_destroy = "false"
 
+########
+# tags #
+########
+custom_tags  = {}
 default_tags = {
   "ThubName"    = "{{ name }}"
   "ThubCode"    = "{{ code }}"

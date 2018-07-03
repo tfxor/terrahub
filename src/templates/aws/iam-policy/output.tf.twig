@@ -1,21 +1,21 @@
 # Define list of variables to be output
 
-output "aws_iam_policy_id" {
+output "id" {
   value = "${aws_iam_policy.{{ name }}.id}"
 }
 
-output "aws_iam_policy_arn" {
+output "arn" {
   value = "${aws_iam_policy.{{ name }}.arn}"
 }
 
-output "aws_iam_policy_name" {
+output "name" {
   value = "${aws_iam_policy.{{ name }}.name}"
 }
 
-output "aws_iam_policy_path" {
+output "path" {
   value = "${aws_iam_policy.{{ name }}.path}"
 }
 
-output "aws_iam_policy_policy" {
+output "policy" {
   value = "${aws_iam_policy.{{ name }}.policy}"
 }
