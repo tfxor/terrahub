@@ -51,7 +51,7 @@ class CreateCommand extends AbstractCommand {
       })
     ).then(() => {
       const srcFile = path.join(templates.configs, 'component', `.terrahub.${config.format}.twig`);
-      const outFile = path.join(directory, `.terrahub.${config.format}`);
+      const outFile = path.join(directory, config.fileName);
 
       return renderTwig(srcFile, { name: name, parent: parent }, outFile);
     }).then(() => 'Done');
