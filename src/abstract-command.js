@@ -163,6 +163,14 @@ class AbstractCommand {
   getProjectConfig() {
     return this._configLoader.getProjectConfig();
   }
+
+  /**
+   * @param {String} fullPath
+   * @returns {String}
+   */
+  relativePath(fullPath) {
+    return this._configLoader.relativePath(fullPath);
+  }
 }
 
 module.exports = AbstractCommand;

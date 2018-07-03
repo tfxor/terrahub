@@ -79,8 +79,9 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
+- Improve `terrahub component` move from global to local config
+- Terrahub workspace
 - Implement `terrahub list` (paid version, blocked by API endpoint development)
   - Loop across all regions
   - Use new tree view
   - Consolidate paid & free versions
-- Implement `terrahub --help` (@Max is working)
