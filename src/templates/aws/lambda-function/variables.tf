@@ -89,6 +89,12 @@ variable "lambda_security_group_ids" {
 ########
 # tags #
 ########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

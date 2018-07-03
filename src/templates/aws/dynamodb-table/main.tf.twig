@@ -10,5 +10,5 @@ resource "aws_dynamodb_table" "{{ name }}" {
     type = "${var.dynamodb_attribute_hash_type}"
   }
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

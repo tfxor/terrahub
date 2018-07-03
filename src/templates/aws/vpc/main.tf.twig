@@ -7,5 +7,5 @@ resource "aws_vpc" "{{ name }}" {
   enable_classiclink_dns_support   = "${var.vpc_enable_classiclink_dns_support}"
   assign_generated_ipv6_cidr_block = "${var.vpc_assign_generated_ipv6_cidr_block}"
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

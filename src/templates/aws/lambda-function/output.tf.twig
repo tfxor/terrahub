@@ -1,21 +1,21 @@
 # Define list of variables to be output
 
-output "lambda_arn" {
+output "arn" {
   value = "${aws_lambda_function.{{ name }}.arn}"
 }
 
-output "lambda_qualified_arn" {
+output "qualified_arn" {
   value = "${aws_lambda_function.{{ name }}.qualified_arn}"
 }
 
-output "lambda_invoke_arn" {
+output "invoke_arn" {
   value = "${aws_lambda_function.{{ name }}.invoke_arn}"
 }
 
-output "lambda_version" {
+output "version" {
   value = "${aws_lambda_function.{{ name }}.version}"
 }
 
-output "lambda_last_modified" {
+output "last_modified" {
   value = "${aws_lambda_function.{{ name }}.last_modified}"
 }

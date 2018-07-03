@@ -5,5 +5,5 @@ resource "aws_subnet" "{{ name }}" {
   map_public_ip_on_launch         = "${var.subnet_map_public_ip_on_launch}"
   assign_ipv6_address_on_creation = "${var.subnet_assign_ipv6_address_on_creation}"
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

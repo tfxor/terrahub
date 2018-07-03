@@ -21,5 +21,5 @@ resource "aws_lambda_function" "{{ name }}" {
   #  variables = "${var.lambda_environment_variables}"
   #}
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }
