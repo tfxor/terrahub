@@ -19,10 +19,10 @@ init .............. run `terraform init` across multiple terraform scripts
 list .............. list projects > cloud accounts > regions > services > resources
 plan .............. run `terraform plan` across multiple terraform scripts
 project ........... create or update project that manages multiple terraform scripts
-run ............... run automated workflow terraform init > workspace > plan > apply
+run ............... run automated workflow terraform init > workspace select > plan > apply
 refresh ........... run `terraform refresh` across multiple terraform scripts
 show .............. run `terraform show` across multiple terraform scripts
-workspace ......... run `terraform workspace` across multiple terraform scripts
+workspace ......... run `terraform workspace select|delete` across multiple terraform scripts
 ```
 
 ## Hooks
@@ -30,7 +30,7 @@ workspace ......... run `terraform workspace` across multiple terraform scripts
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
 
 * `terraform init` 
-* `terraform workspace` 
+* `terraform workspace select` 
 * `terraform plan`
 * `terraform apply`
 * `terraform destroy` 
@@ -79,8 +79,7 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Improve `terrahub component` move from global to local config
-- Terrahub workspace
+- Implement unique `RequiestId` per terraform script
 - Implement `terrahub list` (paid version, blocked by API endpoint development)
   - Loop across all regions
   - Use new tree view

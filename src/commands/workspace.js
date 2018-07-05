@@ -3,11 +3,12 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const ReadLine = require('readline');
-const { config } = require('../parameters');
-// const HashTable = require('../helpers/hash-table');
+const HashTable = require('../helpers/hash-table');
 const Distributor = require('../helpers/distributor');
+const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
+const { config, templates } = require('../parameters');
+const { renderTwig, yesNoQuestion } = require('../helpers/util');
 
 class WorkspaceCommand extends TerraformCommand {
   /**
@@ -17,7 +18,6 @@ class WorkspaceCommand extends TerraformCommand {
     this
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terraform scripts')
-      .addOption('env', 'e', 'Workspace environment to be created or updated', String, '')
       .addOption('delete', 'd', 'Delete workspace environment (paired with --env)', Boolean, false)
     ;
   }
@@ -26,54 +26,72 @@ class WorkspaceCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const env = this.getOption('env');
-    const kill = this.getOption('delete');
-    const configs = this.listConfigs();
+    let files = [];
+    let promises = [];
+    let tree = this.getConfigTree();
+    let kill = this.getOption('delete');
+    let { name, code } = this.getProjectConfig();
 
-    if (!env) {
-      const config = this.getConfigTree();
-      const distributor = new Distributor(['prepare', 'workspace'], config);
-
-      return distributor
-        .run()
-        .then(() => Promise.resolve('Done'));
+    if (config.isDefault) {
+      return this._workspace('workspaceSelect', tree).then(() => 'Done');
     }
 
-    let promises = [];
-    configs.forEach(configPath => {
+    this.listConfigs().forEach(configPath => {
       const dir = path.dirname(configPath);
-      const envConfig = path.join(dir, `.terrahub.${env}.${config.format}`);
+      const envConfig = path.join(dir, config.fileName);
+      const tfvarsName = `workspace/${config.env}.tfvars`;
+      const tfvarsPath = path.join(dir, tfvarsName);
 
       if (!fs.existsSync(envConfig) && !kill) {
-        promises.push(fse.copy(configPath, envConfig));
+        const creating = new HashTable({});
+        const existing = new HashTable(ConfigLoader.readConfig(configPath));
+        const template = path.join(templates.workspace, 'default.tfvars.twig');
+
+        existing.transform('varFile', (key, value) => {
+          value.push(tfvarsName);
+          creating.set(key, value);
+        });
+
+        ConfigLoader.writeConfig(creating.getRaw(), envConfig);
+
+        promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
       }
 
       if (fs.existsSync(envConfig) && kill) {
-        promises.push(fse.unlink(envConfig));
+        files.push(envConfig, tfvarsPath);
       }
     });
 
     if (!kill) {
       return Promise
         .all(promises)
-        .then(() => Promise.resolve(`${env} environment created`));
+        // @todo discuss this behaviour (it's useless for first run)
+        .then(() => this._workspace('workspaceSelect', tree))
+        .then(() => Promise.resolve(`${config.env} environment created`));
     }
 
-    const rl = ReadLine.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      historySize: 0
-    });
+    return yesNoQuestion('Are you sure (Y/N)? ').then(confirmed => {
+      if (!confirmed) {
+        return Promise.resolve('Canceled');
+      }
 
-    return new Promise(resolve => {
-      rl.question('Are you sure (Y/N)? ', answer => {
-        if (!['y', 'yes'].includes(answer.toLowerCase())) {
-          return resolve('Canceled');
-        }
-
-        Promise.all(promises).then(() => resolve(`${env} environment deleted`));
-      });
+      return Promise
+        .all(files.map(file => fse.unlink(file)))
+        .then(() => this._workspace('workspaceDelete', tree))
+        .then(() => Promise.resolve(`${config.env} environment deleted`));
     });
+  }
+
+  /**
+   * @param {String} action
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _workspace(action, config) {
+    const distributor = new Distributor(['prepare', action], config);
+
+    return distributor.run();
   }
 }
 
