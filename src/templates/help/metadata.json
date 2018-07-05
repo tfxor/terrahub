@@ -1,7 +1,7 @@
 {
   "name": "terrahub",
   "version": "0.0.10",
-  "description": "TerraHub is a terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft Azure.",
+  "description": "TerraHub is a terraform centric devops tool that helps provision and manage large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, Kubernetes on Google Cloud or VMs on Microsoft Azure.",
   "buildDate": "Wed Jun 27 14:23:41 EDT 2018",
   "commands": [
     {
@@ -244,12 +244,6 @@
       "name": "run",
       "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
       "options": [
-        {
-          "name": "plan",
-          "shortcut": "p",
-          "description": "Enable plan command as part of automated workflow",
-          "defaultValue": true
-        },
         {
           "name": "apply",
           "shortcut": "a",

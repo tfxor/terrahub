@@ -49,6 +49,15 @@ variable "cognito_user_pool_unused_account_validity_days" {
   description = "The user account expiration limit, in days, after which the account is no longer usable."
 }
 
+########
+# tags #
+########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

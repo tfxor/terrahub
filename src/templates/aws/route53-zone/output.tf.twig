@@ -1,13 +1,13 @@
 # Define list of variables to be output
 
-output "route53_name" {
+output "name" {
   value = "${aws_route53_zone.{{ name }}.name}"
 }
 
-output "route53_zone_id" {
+output "zone_id" {
   value = "${aws_route53_zone.{{ name }}.zone_id}"
 }
 
-output "route53_name_servers" {
+output "name_servers" {
   value = "${aws_route53_zone.{{ name }}.name_servers}"
 }

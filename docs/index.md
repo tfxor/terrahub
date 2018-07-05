@@ -2,14 +2,15 @@
 
 TerraHub is a terraform centric devops tool that helps provision and manage
 large amount of cloud resources and cloud services across multiple cloud
-accounts. For example: Serverless on Amazon AWS, Google Cloud or Microsoft
-Azure.
+accounts. For example: Serverless on Amazon AWS, Kubernetes on Google Cloud
+or VMs on Microsoft Azure.
 
 ## Commands
 
 ```
 apply ............. run `terraform apply` across multiple terraform scripts
 build ............. build software from predefined build.yml config files
+component ......... include existing terraform folder into current project
 create ............ create terraform code from predefined templates
 deploy ............ deploy software from predefined deploy.yml config files
 destroy ........... run `terraform destroy` across multiple terraform scripts

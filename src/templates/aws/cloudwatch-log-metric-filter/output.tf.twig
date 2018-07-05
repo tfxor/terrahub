@@ -1,9 +1,9 @@
 # Define list of variables to be output
 
-output "cloudwatch_log_metric_filter_id" {
+output "id" {
   value = "${aws_cloudwatch_log_metric_filter.{{ name }}.id}"
 }
 
-output "cloudwatch_log_metric_filter_metric_transformation" {
+output "metric_transformation" {
   value = "${aws_cloudwatch_log_metric_filter.{{ name }}.metric_transformation}"
 }

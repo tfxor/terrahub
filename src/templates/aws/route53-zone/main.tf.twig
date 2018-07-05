@@ -4,5 +4,5 @@ resource "aws_route53_zone" "{{ name }}" {
   force_destroy = "${var.route53_force_destroy}"
   vpc_id        = "${var.route53_vpc_id}"
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

@@ -17,7 +17,7 @@ class CreateCommand extends AbstractCommand {
       .setDescription('create terraform code from predefined templates')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String)
-      .addOption('directory', 'd', 'Path where template should be created (default: cwd)', String, process.cwd())
+      .addOption('directory', 'd', 'Path where template should be created (default: .terrahub)', String, '.terrahub')
       .addOption('parent', 'p', 'Parent component path', String, '')
       .addOption('force', 'f', 'Replace directory', Boolean, false)
     ;
@@ -51,7 +51,7 @@ class CreateCommand extends AbstractCommand {
       })
     ).then(() => {
       const srcFile = path.join(templates.configs, 'component', `.terrahub.${config.format}.twig`);
-      const outFile = path.join(directory, `.terrahub.${config.format}`);
+      const outFile = path.join(directory, config.fileName);
 
       return renderTwig(srcFile, { name: name, parent: parent }, outFile);
     }).then(() => 'Done');

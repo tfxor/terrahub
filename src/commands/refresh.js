@@ -1,5 +1,6 @@
 'use strict';
 
+const { config } = require('../parameters');
 const TerraformCommand = require('../terraform-command');
 
 class RefreshCommand extends TerraformCommand {
@@ -22,6 +23,7 @@ class RefreshCommand extends TerraformCommand {
 
     console.log('var', this.getVar());
     console.log('var-file', this.getVarFile());
+    console.log('config.env', config.env);
 
     return Promise.resolve('Done');
   }

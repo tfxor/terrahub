@@ -5,6 +5,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const ReadLine = require('readline');
 const { config } = require('../parameters');
+// const HashTable = require('../helpers/hash-table');
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 

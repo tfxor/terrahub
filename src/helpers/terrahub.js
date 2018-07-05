@@ -170,6 +170,7 @@ class Terrahub {
    * @private
    */
   _awsMetadata() {
+    // @todo add `thub-code`
     return {
       'x-amz-acl': 'bucket-owner-full-control',
       'x-amz-meta-thub-token': config.token,
