@@ -23,7 +23,7 @@ class RunCommand extends TerraformCommand {
   run() {
     const config = this.getConfigTree();
     const actions = ['plan', 'apply', 'destroy'].filter(action => this.getOption(action));
-    const distributor = new Distributor(['prepare', 'init', 'workspace', ...actions], config);
+    const distributor = new Distributor(['prepare', 'init', 'workspaceSelect', ...actions], config);
 
     return distributor
       .run()

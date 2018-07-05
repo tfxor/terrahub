@@ -1,12 +1,19 @@
 'use strict';
 
+const fs = require('fs');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const Twig = require('twig');
 const request = require('request');
+const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
-const fs = require('fs');
+
+const rl = ReadLine.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  historySize: 0
+});
 
 /**
  * @param {String} text
@@ -107,7 +114,12 @@ function familyTree(data) {
     if (node.parent === null) {
       tree[hash] = node;
     } else {
-      object[toMd5(node.parent)].children.push(node);
+      let key = toMd5(node.parent);
+      if (!object.hasOwnProperty(key)) {
+        throw new Error(`Can not find parent '${node.parent}'`);
+      }
+
+      object[key].children.push(node);
     }
   });
 
@@ -146,6 +158,22 @@ function extend(object, sources, customizer = _customizer) {
 }
 
 /**
+ * @param {String} question
+ * @return {Promise<Boolean>}
+ */
+function yesNoQuestion(question) {
+  return new Promise(resolve => {
+    rl.question(question, answer => {
+      if (!['y', 'yes'].includes(answer.toLowerCase())) {
+        return resolve(false);
+      }
+
+      return resolve(true);
+    });
+  });
+}
+
+/**
  * Public methods
  */
 module.exports = {
@@ -156,6 +184,7 @@ module.exports = {
   familyTree,
   renderTwig,
   promiseSeries,
+  yesNoQuestion,
   promiseRequest,
   isAwsNameValid
 };

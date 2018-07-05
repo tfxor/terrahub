@@ -23,11 +23,15 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(() => {
+      let errorMessage = '';
+
       if (!this._isProjectReady()) {
-        this.logger.warn('Configuration file not found, please go to project root folder, or initialize it');
+        errorMessage = 'Configuration file not found, please go to project root folder, or initialize it';
       } else if (this._areComponentsReady()) {
-        this.logger.warn('No configured components found, please create from template or configure existing');
+        errorMessage = 'No configured components found, please create from template or configure existing';
       }
+
+      return (errorMessage) ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
     });
   }
 
