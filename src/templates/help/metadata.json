@@ -245,12 +245,6 @@
       "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
       "options": [
         {
-          "name": "plan",
-          "shortcut": "p",
-          "description": "Enable plan command as part of automated workflow",
-          "defaultValue": true
-        },
-        {
           "name": "apply",
           "shortcut": "a",
           "description": "Enable apply command as part of automated workflow",
