@@ -2,7 +2,7 @@
   "name": "terrahub",
   "version": "0.0.10",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "Wed Jun 27 14:23:41 EDT 2018",
+  "buildDate": "Mon Jul  9 12:45:38 EDT 2018",
   "commands": [
     {
       "name": "apply",
@@ -10,7 +10,7 @@
       "options": [
         {
           "name": "auto-approve",
-          "shortcut": "u",
+          "shortcut": "y",
           "description": "Auto approve terraform execution",
           "defaultValue": true
         },
@@ -37,6 +37,53 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "component",
+      "description": "include existing terraform folder into current project",
+      "options": [
+        {
+          "name": "name",
+          "shortcut": "n",
+          "description": "Component name"
+        },
+        {
+          "name": "parent",
+          "shortcut": "p",
+          "description": "Parent component path",
+          "defaultValue": ""
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path to existing component (default: cwd)",
+          "defaultValue": "Terrahub directory"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -57,8 +104,8 @@
         {
           "name": "directory",
           "shortcut": "d",
-          "description": "Path where template should be created (default: cwd)",
-          "defaultValue": "Terrahub directory"
+          "description": "Path where template should be created (default: .terrahub)",
+          "defaultValue": ".terrahub"
         },
         {
           "name": "parent",
@@ -71,6 +118,18 @@
           "shortcut": "f",
           "description": "Replace directory",
           "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -80,7 +139,7 @@
       "options": [
         {
           "name": "auto-approve",
-          "shortcut": "u",
+          "shortcut": "y",
           "description": "Auto approve terraform execution",
           "defaultValue": true
         },
@@ -107,13 +166,38 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
     {
       "name": "graph",
       "description": "show the graph of dependencies between terrahub components",
-      "options": []
+      "options": [
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
     },
     {
       "name": "init",
@@ -142,6 +226,18 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -149,12 +245,6 @@
       "name": "list",
       "description": "list projects > cloud accounts > regions > services > resources",
       "options": [
-        {
-          "name": "api-region",
-          "shortcut": "a",
-          "description": "Resources in region",
-          "defaultValue": "us-east-1"
-        },
         {
           "name": "depth",
           "shortcut": "d",
@@ -184,6 +274,18 @@
           "shortcut": "s",
           "description": "Services (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -214,6 +316,18 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -237,6 +351,18 @@
           "shortcut": "d",
           "description": "Path where project should be created (default: cwd)",
           "defaultValue": "Terrahub directory"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -258,7 +384,7 @@
         },
         {
           "name": "auto-approve",
-          "shortcut": "u",
+          "shortcut": "y",
           "description": "Auto approve terraform execution",
           "defaultValue": true
         },
@@ -285,6 +411,18 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     },
@@ -293,15 +431,9 @@
       "description": "run `terraform workspace` across multiple terraform scripts",
       "options": [
         {
-          "name": "env",
-          "shortcut": "e",
-          "description": "Workspace to create",
-          "defaultValue": ""
-        },
-        {
           "name": "delete",
           "shortcut": "d",
-          "description": "Flag to delete --env configs",
+          "description": "Delete workspace environment (paired with --env)",
           "defaultValue": false
         },
         {
@@ -327,6 +459,18 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
         }
       ]
     }
