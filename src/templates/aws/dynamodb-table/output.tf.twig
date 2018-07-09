@@ -1,17 +1,17 @@
 # Define list of variables to be output
 
-output "dynamodb_table_arn" {
+output "arn" {
   value = "${aws_dynamodb_table.{{ name }}.arn}"
 }
 
-output "dynamodb_table_id" {
+output "id" {
   value = "${aws_dynamodb_table.{{ name }}.id}"
 }
 
-output "dynamodb_table_stream_arn" {
+output "stream_arn" {
   value = "${aws_dynamodb_table.{{ name }}.stream_arn}"
 }
 
-output "dynamodb_table_stream_label" {
+output "stream_label" {
   value = "${aws_dynamodb_table.{{ name }}.stream_label}"
 }

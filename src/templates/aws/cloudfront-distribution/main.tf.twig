@@ -77,5 +77,5 @@ resource "aws_cloudfront_distribution" "{{ name }}" {
     cloudfront_default_certificate = "${var.cloudfront_default_certificate}"
   }
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

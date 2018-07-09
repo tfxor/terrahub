@@ -1,5 +1,13 @@
 # Define list of variables to be output
 
-output "api_gateway_stage_name" {
-  value = "${aws_api_gateway_stage.{{ name }}.stage_name}"
+output "id" {
+  value = "${aws_api_gateway_stage.{{ name }}.id}"
+}
+
+output "invoke_url" {
+  value = "${aws_api_gateway_stage.{{ name }}.invoke_url}"
+}
+
+output "execution_arn" {
+  value = "${aws_api_gateway_stage.{{ name }}.execution_arn}"
 }

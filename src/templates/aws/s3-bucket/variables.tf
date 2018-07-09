@@ -75,6 +75,12 @@ variable "s3_bucket_versioning_mfa_delete" {
 ########
 # tags #
 ########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

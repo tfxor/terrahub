@@ -17,5 +17,5 @@ resource "aws_s3_bucket" "{{ name }}" {
     mfa_delete = "${var.s3_bucket_versioning_mfa_delete}"
   }
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

@@ -63,6 +63,45 @@ class HashTable {
   }
 
   /**
+   * Find all provided keys and apply transform function
+   * @param {String} key
+   * @param {Function} cb
+   */
+  transform(key, cb) {
+    let keys = this._findKeys(key);
+
+    keys.forEach(key => {
+      cb(key, this.get(key));
+    });
+  }
+
+  /**
+   * Find all keys
+   * @param {String} key
+   * @param {Object} object
+   * @param {Array} crumbs
+   * @param {Array} results
+   * @return {Array}
+   * @private
+   */
+  _findKeys(key, object = this._table, crumbs = [], results = []) {
+    const property = [...crumbs, key].join(this._separator);
+
+    if (this.has(property)) {
+      results.push(property);
+    }
+
+    Object.keys(object).forEach(prop => {
+      let value = object[prop];
+      if (value && value.constructor === Object) {
+        this._findKeys(key, value, crumbs.concat(prop), results);
+      }
+    });
+
+    return results;
+  }
+
+  /**
    * Handle multilevel object
    * @param {String|Array} path
    * @param {Object} object

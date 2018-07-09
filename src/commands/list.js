@@ -1,14 +1,14 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const treeify = require('treeify');
 const { toMd5 } = require('../helpers/util');
 const HashTable = require('../helpers/hash-table');
 const { homePath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
-const treeify = require('treeify');
-const os = require("os");
 
 class ListCommand extends AbstractCommand {
   /**
@@ -18,9 +18,10 @@ class ListCommand extends AbstractCommand {
     this
       .setName('list')
       .setDescription('list projects > cloud accounts > regions > services > resources')
-      // @todo: figure out why api-region and accounts both use 'a' as shortcut
       .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
-      .addOption('depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0)
+      .addOption(
+        'depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0
+      )
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
@@ -74,7 +75,7 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.log('Compiling the list of cloud resources. ' +
-          'Below output is consolidated across projects, accounts, regions and services.' + os.EOL);
+          'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
 
         data.forEach(item => {
           if (
@@ -96,8 +97,8 @@ class ListCommand extends AbstractCommand {
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('   Please visit https://www.terrahub.io and register to see ALL cloud resources,' +
-          'even the ones that are NOT supported by tagging api.'
+        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources, ' +
+          'including the ones NOT supported by tagging api.'
         );
 
         return Promise.resolve();
@@ -222,8 +223,7 @@ class ListCommand extends AbstractCommand {
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
-    // @todo switch to ThubEnv
-    let project = result.hasOwnProperty('DeepEnvironmentId') ? result['DeepEnvironmentId'] : '-';
+    let project = result.hasOwnProperty('ThubCode') ? result['ThubCode'] : '-';
 
     return Object.assign(result, {
       service: service,

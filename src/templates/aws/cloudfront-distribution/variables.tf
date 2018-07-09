@@ -232,3 +232,9 @@ variable "default_tags" {
   description = "Default tags"
   default     = {}
 }
+
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}

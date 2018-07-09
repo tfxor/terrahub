@@ -32,6 +32,12 @@ variable "route53_vpc_id" {
 ########
 # tags #
 ########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

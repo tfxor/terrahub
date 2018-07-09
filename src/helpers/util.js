@@ -1,6 +1,7 @@
 'use strict';
 
 const fse = require('fs-extra');
+const yaml = require('js-yaml');
 const Twig = require('twig');
 const request = require('request');
 const mergeWith = require('lodash.mergewith');
@@ -13,22 +14,6 @@ const fs = require('fs');
  */
 function toMd5(text) {
   return createHash('md5').update(text).digest('hex');
-}
-
-/**
- * @param {String} text
- * @returns {String}
- */
-function toBase64(text) {
-  return Buffer.from(text).toString('base64');
-}
-
-/**
- * @param {String} text
- * @returns {String}
- */
-function fromBase64(text) {
-  return Buffer.from(text, 'base64').toString('utf8');
 }
 
 /**
@@ -56,6 +41,27 @@ function promiseRequest(options) {
       return resolve(body);
     });
   });
+}
+
+/**
+ * Convert yaml to json
+ * @param {String} srcFile
+ * @returns {Object}
+ */
+function yamlToJson(srcFile) {
+  return yaml.safeLoad(fs.readFileSync(srcFile));
+}
+
+/**
+ * Convert json to yaml
+ * @param {Object} json
+ * @param {String|*} outFile
+ * @returns {*}
+ */
+function jsonToYaml(json, outFile = false) {
+  const data = yaml.safeDump(json, {});
+
+  return outFile ? fse.outputFileSync(outFile, data) : data;
 }
 
 /**
@@ -119,7 +125,7 @@ function isAwsNameValid(name) {
 /**
  * @param {*} objValue
  * @param {*} srcValue
- * @return {*}
+ * @returns {*}
  * @private
  */
 function _customizer(objValue, srcValue) {
@@ -145,8 +151,8 @@ function extend(object, sources, customizer = _customizer) {
 module.exports = {
   toMd5,
   extend,
-  toBase64,
-  fromBase64,
+  yamlToJson,
+  jsonToYaml,
   familyTree,
   renderTwig,
   promiseSeries,

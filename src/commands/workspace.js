@@ -5,6 +5,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const ReadLine = require('readline');
 const { config } = require('../parameters');
+// const HashTable = require('../helpers/hash-table');
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 
@@ -16,8 +17,8 @@ class WorkspaceCommand extends TerraformCommand {
     this
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terraform scripts')
-      .addOption('env', 'e', 'Workspace to create', String, '')
-      .addOption('delete', 'd', 'Flag to delete --env configs', Boolean, false)
+      .addOption('env', 'e', 'Workspace environment to be created or updated', String, '')
+      .addOption('delete', 'd', 'Delete workspace environment (paired with --env)', Boolean, false)
     ;
   }
 

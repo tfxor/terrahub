@@ -1,17 +1,17 @@
 # Define list of variables to be output
 
-output "subnet_id" {
+output "id" {
   value = "${aws_subnet.{{ name }}.id}"
 }
 
-output "subnet_availability_zone" {
+output "availability_zone" {
   value = "${aws_subnet.{{ name }}.availability_zone}"
 }
 
-output "subnet_cidr_block" {
+output "cidr_block" {
   value = "${aws_subnet.{{ name }}.cidr_block}"
 }
 
-output "subnet_vpc_id" {
+output "vpc_id" {
   value = "${aws_subnet.{{ name }}.vpc_id}"
 }
