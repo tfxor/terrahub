@@ -171,6 +171,14 @@ class AbstractCommand {
   relativePath(fullPath) {
     return this._configLoader.relativePath(fullPath);
   }
+
+  /**
+   * Reload config loader
+   * @deprecated
+   */
+  reloadConfig() {
+    this._configLoader = new ConfigLoader();
+  }
 }
 
 module.exports = AbstractCommand;

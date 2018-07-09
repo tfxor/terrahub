@@ -3,7 +3,7 @@
 const path = require('path');
 const Terraform = require('../helpers/terraform');
 const { config } = require('../parameters');
-const { toMd5, promiseRequest } = require('../helpers/util');
+const { toMd5, promiseRequest, uuid } = require('../helpers/util');
 
 class Terrahub {
   /**
@@ -12,6 +12,7 @@ class Terrahub {
   constructor(cfg) {
     this._action = '';
     this._config = cfg;
+    this._runId = uuid();
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = toMd5(this._config.root);
@@ -34,6 +35,7 @@ class Terrahub {
       Status: event,
       Action: this._action,
       IsError: false,
+      ThubToken: config.token // required for API
     };
 
     if (err) {
@@ -170,11 +172,11 @@ class Terrahub {
    * @private
    */
   _awsMetadata() {
-    // @todo add `thub-code`
     return {
       'x-amz-acl': 'bucket-owner-full-control',
+      'x-amz-meta-thub-code': this._config.code,
       'x-amz-meta-thub-token': config.token,
-      'x-amz-meta-request-id': toMd5(this._timestamp),
+      'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action
     }
   }

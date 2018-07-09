@@ -25,6 +25,36 @@ show .............. run `terraform show` across multiple terraform scripts
 workspace ......... run `terraform workspace select|delete` across multiple terraform scripts
 ```
 
+## Structure
+
+You can use whatever structure you want, but we recommend you follow this one: 
+
+```text
+your-project
+├─ .terrahub
+│  ├─ s3
+│  │  ├── .terrahub.yml
+│  │  ├── README.md
+│  │  ├── default.tfvars
+│  │  ├── main.tf
+│  │  ├── output.tf
+│  │  ├── provider.tf
+│  │  └── variables.tf
+│  ├─ cloudfront
+│  │  ├── .terrahub.yml
+│  │  ├── README.md
+│  │  ├── default.tfvars
+│  │  ├── main.tf
+│  │  ├── output.tf
+│  │  ├── provider.tf
+│  │  └── variables.tf
+├─ .terrahub.yml
+├─ src
+└─ ...
+```
+
+> One exception: **No terraform scripts in root of your project!**
+
 ## Hooks
 
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
@@ -79,8 +109,4 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Implement unique `RequiestId` per terraform script
-- Implement `terrahub list` (paid version, blocked by API endpoint development)
-  - Loop across all regions
-  - Use new tree view
-  - Consolidate paid & free versions
+TBU...

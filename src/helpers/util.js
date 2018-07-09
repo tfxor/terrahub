@@ -24,6 +24,14 @@ function toMd5(text) {
 }
 
 /**
+ * Get timestamp based uuid
+ * @return {*}
+ */
+function uuid() {
+  return toMd5(Date.now().toString());
+}
+
+/**
  * @param {Function[]} promises
  * @returns {*}
  */
@@ -177,6 +185,7 @@ function yesNoQuestion(question) {
  * Public methods
  */
 module.exports = {
+  uuid,
   toMd5,
   extend,
   yamlToJson,

@@ -88,7 +88,6 @@ module.exports = {
     azurerm: path.join(templates, 'azurerm'),
     gcp: path.join(templates, 'gcp'),
     configs: path.join(templates, 'configs'),
-    hooks: path.join(templates, 'hooks'),
     mapping: path.join(templates, 'mapping.json'),
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),
