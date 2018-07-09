@@ -3,7 +3,7 @@
 const path = require('path');
 const Terraform = require('../helpers/terraform');
 const { config } = require('../parameters');
-const { toMd5, promiseRequest, uuid } = require('../helpers/util');
+const { toMd5, promiseRequest } = require('../helpers/util');
 
 class Terrahub {
   /**
@@ -12,7 +12,7 @@ class Terrahub {
   constructor(cfg) {
     this._action = '';
     this._config = cfg;
-    this._runId = uuid();
+    this._runId = process.env.THUB_RUN_ID;
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = toMd5(this._config.root);
@@ -34,12 +34,10 @@ class Terrahub {
       Name: this._config.name,
       Status: event,
       Action: this._action,
-      IsError: false,
       ThubToken: config.token // required for API
     };
 
     if (err) {
-      data.IsError = true;
       data['Error'] = err.message || err;
     }
 
