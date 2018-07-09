@@ -40,7 +40,11 @@ class ComponentCommand extends AbstractCommand {
     }
 
     let outFile = path.join(directory, config.fileName);
-    let component = { name: name, parent: parent };
+    let component = { name };
+
+    if (parent) {
+      component['parent'] = parent;
+    }
 
     if (fs.existsSync(outFile)) {
       throw new Error('Can not create because terraform component already exists');

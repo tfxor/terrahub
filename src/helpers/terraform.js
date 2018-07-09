@@ -19,10 +19,10 @@ class Terraform {
   constructor(config) {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
+    this._plan = new Plan(this._config);
+    this._state = new State(this._config);
     this._isRemoteState = false;
     this._isWorkspaceSupported = false;
-    this._plan = new Plan(this.getResource());
-    this._state = new State(this.getResource());
   }
 
   /**
@@ -196,15 +196,14 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/state/pull.html
-   * @param {String} argument
    * @returns {Promise}
    */
-  state(argument = 'pull') {
+  statePull() {
     if (!this._isRemoteState) {
       return Promise.resolve();
     }
 
-    return this.run('state', ['-no-color', argument]).then(result => {
+    return this.run('state', ['-no-color', 'pull']).then(result => {
       const remoteState = this._state.getRemotePath();
 
       if (fs.existsSync(remoteState)) {
@@ -216,10 +215,10 @@ class Terraform {
   }
 
   /**
-   * https://www.terraform.io/docs/state/workspaces.html
+   * https://www.terraform.io/docs/commands/workspace/select.html
    * @returns {Promise}
    */
-  workspace() {
+  workspaceSelect() {
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }
@@ -228,14 +227,25 @@ class Terraform {
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list']).then(result => {
-      this._plan.refresh(workspace);
-      this._state.refresh(workspace);
-
       return this.run('workspace', [
         regex.test(result.toString()) ? 'select' : 'new',
         workspace
       ]);
     });
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/workspace/delete.html
+   * @returns {Promise}
+   */
+  workspaceDelete() {
+    if (!this._isWorkspaceSupported) {
+      return Promise.resolve();
+    }
+
+    return this
+      .run('workspace', ['select', 'default'])
+      .then(() => this.run('workspace', ['delete', this._tf.workspace]));
   }
 
   /**

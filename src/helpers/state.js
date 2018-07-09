@@ -3,15 +3,17 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Terraform state
- */
 class State {
   /**
-   * @param {String} baseDir
+   * @param {Object} config
    */
-  constructor(baseDir) {
-    this._base = baseDir;
+  constructor(config) {
+    const root = path.join(config.app, config.root);
+    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
+
+    this._base = fs.existsSync(workspaceDir)
+      ? workspaceDir
+      : path.join(root, config.terraform.resource);
   }
 
   /**
@@ -20,28 +22,7 @@ class State {
    * @private
    */
   _path(suffix = '') {
-    return path.join(
-      this.getBase(),
-      [State.NAME].concat(suffix).filter(Boolean).join('.')
-    );
-  }
-
-  /**
-   * @returns {String}
-   */
-  getBase() {
-    return this._base;
-  }
-
-  /**
-   * @param {String} workspace
-   */
-  refresh(workspace) {
-    let stateDir = path.join(this._base, State.DIR);
-
-    if (fs.existsSync(stateDir)) {
-      this._base = `${stateDir}/${workspace}`;
-    }
+    return path.join(this._base, [State.NAME].concat(suffix).filter(Boolean).join('.'));
   }
 
   /**
@@ -55,7 +36,7 @@ class State {
    * @returns {String}
    */
   getBackupPath() {
-    return this._path(`${ new Date().getTime() }.backup`);
+    return this._path(`${ Date.now() }.backup`);
   }
 
   /**
