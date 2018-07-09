@@ -3,6 +3,7 @@
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
+const { uuid } = require('../helpers/util');
 
 class Distributor {
   /**
@@ -12,6 +13,7 @@ class Distributor {
   constructor(actions, config) {
     this._config = config;
     this._actions = actions;
+    this._runId = uuid();
     this._worker = path.join(__dirname, '../helpers/worker.js');
     this._workersCount = 0;
 
@@ -35,7 +37,7 @@ class Distributor {
    */
   _createWorker(hash) {
     let threadCfg = this._config[hash];
-    let worker = cluster.fork({ TERRAFORM_ACTIONS: this._actions });
+    let worker = cluster.fork({ TERRAFORM_ACTIONS: this._actions, THUB_RUN_ID: this._runId });
 
     this._workersCount++;
     worker.send(threadCfg);

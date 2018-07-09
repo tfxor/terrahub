@@ -1,8 +1,0 @@
-provider "aws" {
-  alias  = "backend"
-  region = "{{ provider_region }}"
-  assume_role {
-    role_arn     = "arn:aws:iam::${var.provider_account_id}:role/${var.cross_account_role}"
-    session_name = "session-${var.provider_account_id}"
-  }
-}

@@ -4,49 +4,24 @@ const fs = require('fs');
 const path = require('path');
 const State = require('./state');
 
-/**
- * Terraform plan
- */
 class Plan {
   /**
-   * @param {String} baseDir
+   * @param {Object} config
    */
-  constructor(baseDir) {
-    this._base = baseDir;
-  }
+  constructor(config) {
+    const root = path.join(config.app, config.root);
+    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
 
-  /**
-   * @returns {String}
-   * @private
-   */
-  _path() {
-    return path.join(this.getBase(), Plan.NAME);
-  }
-
-  /**
-   * @todo investigate if we need this in Plan
-   * @param {String} workspace
-   */
-  refresh(workspace) {
-    let stateDir = path.join(this._base, State.DIR);
-
-    if (fs.existsSync(stateDir)) {
-      this._base = `${stateDir}/${workspace}`;
-    }
-  }
-
-  /**
-   * @returns {String}
-   */
-  getBase() {
-    return this._base;
+    this._base = fs.existsSync(workspaceDir)
+      ? workspaceDir
+      : path.join(root, config.terraform.resource);
   }
 
   /**
    * @returns {String}
    */
   getPath() {
-    return this._path();
+    return path.join(this._base, Plan.NAME);
   }
 
   /**

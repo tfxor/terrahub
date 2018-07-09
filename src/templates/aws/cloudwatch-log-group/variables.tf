@@ -18,8 +18,17 @@ variable "cloudwatch_log_group_name" {
   description = "The name of the log group."
 }
 
+########
+# tags #
+########
 variable "default_tags" {
   type        = "map"
   description = "Default tags"
+  default     = {}
+}
+
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
   default     = {}
 }

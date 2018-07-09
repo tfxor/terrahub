@@ -15,5 +15,5 @@ resource "aws_cognito_user_pool" "{{ name }}" {
     unused_account_validity_days = "${var.cognito_user_pool_unused_account_validity_days}"
   }
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

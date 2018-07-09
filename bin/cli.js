@@ -2,22 +2,44 @@
 
 'use strict';
 
+const path = require('path');
 const semver = require('semver');
 const logger = require('../src/helpers/logger');
+const HelpParser = require('../src/helpers/help-parser');
 const { engines } = require('../package');
-const CommandFactory = require('../src/command-factory');
+const HelpCommand = require('../src/commands/.help');
+const { commandsPath, config, args } = require('../src/parameters');
 
+/**
+ * Validate node version
+ */
 if (!semver.satisfies(process.version, engines.node)) {
   logger.warn(`Required Node version is ${engines.node}, current ${process.version}`);
   process.exit(1);
 }
 
-const command = CommandFactory.create(process.argv, logger);
+/**
+ * Command create
+ * @param {logger|*} logger
+ * @returns {*}
+ */
+function commandCreate(logger = console) {
+  const command = args._.shift();
+  delete args._;
+
+  if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp) {
+    args.command = command;
+    return new HelpCommand(args, logger);
+  }
+
+  const Command = require(path.join(commandsPath, command));
+  return new Command(args, logger);
+}
+
+const command = commandCreate(logger);
 
 command
-  .checkHelp()
-  .then(() => command.validate(),
-    () => process.exit(0))
+  .validate()
   .then(() => command.run())
   .then(message => {
     if (message) {

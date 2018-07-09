@@ -1,14 +1,15 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
-const { toMd5 } = require('../helpers/util');
-const HashTable = require('../helpers/hash-table');
-const { homePath } = require('../parameters');
-const AbstractCommand = require('../abstract-command');
+const path = require('path');
 const treeify = require('treeify');
-const os = require("os");
+const HashTable = require('../helpers/hash-table');
+const AbstractCommand = require('../abstract-command');
+const { promiseRequest, toMd5 } = require('../helpers/util');
+const { homePath, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
   /**
@@ -18,9 +19,9 @@ class ListCommand extends AbstractCommand {
     this
       .setName('list')
       .setDescription('list projects > cloud accounts > regions > services > resources')
-      // @todo: figure out why api-region and accounts both use 'a' as shortcut
-      .addOption('api-region', 'a', 'Resources in region', String, 'us-east-1')
-      .addOption('depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0)
+      .addOption(
+        'depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0
+      )
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
@@ -33,7 +34,6 @@ class ListCommand extends AbstractCommand {
    */
   initialize() {
     this.hash = new HashTable({}, ':');
-    this.region = this.getOption('api-region');
     this.accountId = '';
     this.credentials = null;
   }
@@ -54,14 +54,12 @@ class ListCommand extends AbstractCommand {
       .then(credentials => {
         const sts = new AWS.STS({ credentials });
 
-        return sts.getCallerIdentity().promise().then(res => {
-          this.accountId = res.Account;
-          return this._cachePath();
-        });
+        return sts.getCallerIdentity().promise();
       })
-      .then(cachePath => this._getCached(cachePath))
-      .then(cached => {
-        return cached ? Promise.resolve(cached) : this._getFromApi();
+      .then(identity => {
+        this.accountId = identity.Account;
+
+        return this._fetchResources();
       })
       .then(data => {
         /**
@@ -74,7 +72,7 @@ class ListCommand extends AbstractCommand {
         }
 
         this.logger.log('Compiling the list of cloud resources. ' +
-          'Below output is consolidated across projects, accounts, regions and services.' + os.EOL);
+          'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
 
         data.forEach(item => {
           if (
@@ -96,8 +94,8 @@ class ListCommand extends AbstractCommand {
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('   Please visit https://www.terrahub.io and register to see ALL cloud resources,' +
-          'even the ones that are NOT supported by tagging api.'
+        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources, ' +
+          'including the ones NOT supported by tagging api.'
         );
 
         return Promise.resolve();
@@ -140,15 +138,27 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
+   * Get list from AWS tagging api
    * @returns {Promise}
    * @private
    */
-  _getFromApi() {
+  _getFromAws() {
     return this._getCredentials()
-      .then(credentials => new AWS.ResourceGroupsTaggingAPI({ region: this.region, credentials }))
-      .then(taggingApi => this._getResources(taggingApi))
+      .then(credentials => {
+        return Promise.all(
+          this._getRegions().map(region => new AWS.ResourceGroupsTaggingAPI({ region, credentials }))
+        );
+      })
+      .then(taggingApis => {
+        return Promise.all(taggingApis.map(taggingApi => this._getResources(taggingApi))).then(data => {
+          let result = [];
+          data.forEach(item => result.push(...item));
+
+          return result;
+        });
+      })
       .then(data => {
-        const cachePath = this._cachePath();
+        const cachePath = this._cachePath(this.accountId);
 
         return fse.outputJson(cachePath, data).then(() => {
           return data;
@@ -157,20 +167,72 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
+   * Get list from terrahub API
+   * @return {Promise|*}
+   * @private
+   */
+  _getFromApi() {
+    if (!config.token) {
+      return Promise.resolve([]);
+    }
+
+    return promiseRequest({ uri: this._getEndpoint(), method: 'GET', json: true }).then(res => {
+      if (res.errorMessage) {
+        const { errorMessage } = JSON.parse(res.errorMessage);
+        this.logger.error(errorMessage);
+
+        return Promise.resolve([]);
+      }
+
+      return res;
+    }).then(data => {
+      const cachePath = this._cachePath(config.token);
+
+      return fse.outputJson(cachePath, data).then(() => {
+        return data;
+      });
+    });
+  }
+
+  /**
+   * Get API endpoint
+   * @returns {String}
+   * @private
+   */
+  _getEndpoint() {
+    return `https://${config.api}.terrahub.io/v1/thub/terraform/sortingRetrieve?DataType=1&ThubToken=${config.token}`;
+  }
+
+  /**
+   * Fetch all resources (cache + tagging API + terrahub API)
+   * @return {Promise}
+   * @private
+   */
+  _fetchResources() {
+    return Promise.all(
+      [this.accountId, config.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
+    ).then(([free, paid]) => {
+      return Promise.all([
+        free ? free : this._getFromAws(),
+        paid ? paid : this._getFromApi()
+      ]).then(([free, paid]) => [...free, ...paid]);
+    });
+  }
+
+  /**
    * Get cached results
    * @param {String} cachePath
    * @returns {Promise}
    * @private
    */
-  _getCached(cachePath) {
+  _tryCache(cachePath) {
     if (!fs.existsSync(cachePath)) {
       return Promise.resolve();
     }
 
-    const now = new Date();
     const { birthtimeMs } = fs.statSync(cachePath);
 
-    if (parseInt(birthtimeMs) + ListCommand.TTL > now.getTime()) {
+    if (parseInt(birthtimeMs) + ListCommand.TTL > Date.now()) {
       return fse.readJSON(cachePath);
     }
 
@@ -178,11 +240,12 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
+   * @param {String} salt
    * @returns {String}
    * @private
    */
-  _cachePath() {
-    return homePath('cache', 'list', `${toMd5(this.accountId + this.region)}.json`);
+  _cachePath(salt) {
+    return homePath('cache', 'list', `${toMd5('resources' + salt)}.json`);
   }
 
   /**
@@ -195,7 +258,11 @@ class ListCommand extends AbstractCommand {
    */
   _getResources(taggingApi, params = {}, data = []) {
     return taggingApi.getResources(params).promise().then(res => {
-      res.ResourceTagMappingList.forEach(res => {data.push(this._parseResource(res))});
+      const activeRegion = taggingApi.config.region;
+
+      res.ResourceTagMappingList.forEach(res => {
+        data.push(this._parseResource(res, activeRegion))
+      });
 
       if (!res.PaginationToken) {
         return Promise.resolve(data);
@@ -207,31 +274,26 @@ class ListCommand extends AbstractCommand {
 
   /**
    * @param {Object} resArn
+   * @param {String} fallbackRegion
    * @returns {Object}
    * @private
    */
-  _parseResource(resArn) {
-    const result = {};
+  _parseResource(resArn, fallbackRegion) {
     const arn = resArn.ResourceARN;
     const tags = resArn.Tags;
-
-    tags.forEach(item => {
-      result[item.Key] = item.Value
-    });
 
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
-    // @todo switch to ThubEnv
-    let project = result.hasOwnProperty('DeepEnvironmentId') ? result['DeepEnvironmentId'] : '-';
+    let thubCode = tags.find(item => item.Key === 'ThubCode');
 
-    return Object.assign(result, {
+    return {
       service: service,
-      region: region || this.region,
+      region: region || fallbackRegion,
       accountId: accountId || this.accountId,
       resource: resource,
-      project: project
-    });
+      project: thubCode && thubCode.Value || '-'
+    };
   }
 
   /**
@@ -256,6 +318,19 @@ class ListCommand extends AbstractCommand {
     }
 
     return Promise.resolve(this.credentials);
+  }
+
+  /**
+   * Get list of AWS regions
+   * @return {Array}
+   * @private
+   */
+  _getRegions() {
+    const list = fse.readJsonSync(path.join(templates.aws, 'regions.json'), { throws: false }) || [];
+
+    return list
+      .filter(region => region.public === true)
+      .map(region => region.code);
   }
 
   /**

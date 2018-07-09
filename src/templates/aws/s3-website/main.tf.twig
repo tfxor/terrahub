@@ -23,5 +23,5 @@ resource "aws_s3_bucket" "{{ name }}" {
     error_document = "${var.s3_bucket_website_error_document}"
   }
 
-  tags = "${var.default_tags}"
+  tags = "${merge(var.default_tags, var.custom_tags)}"
 }

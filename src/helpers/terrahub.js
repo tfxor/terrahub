@@ -12,6 +12,7 @@ class Terrahub {
   constructor(cfg) {
     this._action = '';
     this._config = cfg;
+    this._runId = process.env.THUB_RUN_ID;
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = toMd5(this._config.root);
@@ -33,11 +34,10 @@ class Terrahub {
       Name: this._config.name,
       Status: event,
       Action: this._action,
-      IsError: false,
+      ThubToken: config.token // required for API
     };
 
     if (err) {
-      data.IsError = true;
       data['Error'] = err.message || err;
     }
 
@@ -52,7 +52,7 @@ class Terrahub {
   getTask(action) {
     this._action = action;
 
-    if (!['init', 'workspace', 'plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
       return this._terraform[action]();
     }
 
@@ -172,8 +172,9 @@ class Terrahub {
   _awsMetadata() {
     return {
       'x-amz-acl': 'bucket-owner-full-control',
+      'x-amz-meta-thub-code': this._config.code,
       'x-amz-meta-thub-token': config.token,
-      'x-amz-meta-request-id': toMd5(this._timestamp),
+      'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action
     }
   }

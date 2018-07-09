@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "@todo move this to ./bin directory"
-
 function validate_input() {
   if [ -z "$1" ]
   then
@@ -37,7 +35,7 @@ function require_clean_work_tree() {
 }
 
 function inject_build_date() {
-  sed -e "4s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
+  sed -e "s/\"buildDate\": \".*\",/\"buildDate\": \"$1\",/" package.json
 }
 
 function fail() {
@@ -48,6 +46,8 @@ function fail() {
 validate_input "$@"
 require_clean_work_tree
 inject_build_date "`date`" > "./package.json.tmp" && mv "./package.json.tmp" "./package.json"
+node ./bin/pre-publish.js
+(git diff-files --quiet --ignore-submodules -- || (git add . && git commit -a -m "Publish terrahub help metadata"))
 rm -rf node_modules                                                                                             || fail "Cleaning up terrahub node_modules"
 npm install --no-shrinkwrap --no-peer                                                                           || fail "Installing terrahub dependencies"
 #npm run docs                                                                                                    || fail "Generate terrahub API documentation"

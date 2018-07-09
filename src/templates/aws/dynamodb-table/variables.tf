@@ -47,6 +47,12 @@ variable "dynamodb_attribute_hash_type" {
 ########
 # tags #
 ########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

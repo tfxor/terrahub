@@ -1,11 +1,11 @@
 'use strict';
 
 const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const yaml = require('js-yaml');
-const { toMd5, extend } = require('./helpers/util');
-const { templates, config } = require('./parameters');
+const { config } = require('./parameters');
+const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
 class ConfigLoader {
   /**
@@ -29,26 +29,12 @@ class ConfigLoader {
    * @private
    */
   _defaults() {
-    const hooks = templates.hooks;
-
     return {
       app: this.appPath(),
+      code: this.appCode(),
       parent: null,
       children: [],
-      hooks: {
-        plan: {
-          before: path.join(hooks, 'plan', 'before.js'),
-          after: path.join(hooks, 'plan', 'after.js')
-        },
-        apply: {
-          before: path.join(hooks, 'apply', 'before.js'),
-          after: path.join(hooks, 'apply', 'after.js')
-        },
-        destroy: {
-          before: path.join(hooks, 'destroy', 'before.js'),
-          after: path.join(hooks, 'destroy', 'after.js')
-        }
-      }
+      hooks: {}
     };
   }
 
@@ -66,6 +52,14 @@ class ConfigLoader {
 
       delete this._rootConfig['project'];
     }
+  }
+
+  /**
+   * Get application code
+   * @return {String|*}
+   */
+  appCode() {
+    return this._projectConfig['code'];
   }
 
   /**
@@ -133,10 +127,10 @@ class ConfigLoader {
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
-        const root = this._relativePath(path.join(this.appPath(), cfg.root));
+        const root = this.relativePath(path.join(this.appPath(), cfg.root));
 
         cfg.root = root;
-        this._config[toMd5(root)] = cfg;
+        this._config[this.getComponentHash(root)] = cfg;
         delete this._rootConfig[key];
       }
     });
@@ -156,14 +150,24 @@ class ConfigLoader {
 
     configs.forEach(configPath => {
       const config = this._getConfig(configPath);
-      const componentPath = path.dirname(this._relativePath(configPath));
+      const componentPath = path.dirname(this.relativePath(configPath));
+      const componentHash = this.getComponentHash(componentPath);
 
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = this._relativePath(path.resolve(componentPath, config.parent));
+        config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
       }
 
-      this._config[toMd5(componentPath)] = extend({root: componentPath}, [this._defaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
+  }
+
+  /**
+   * Build component hash
+   * @param {String} fullPath
+   * @returns {String}
+   */
+  getComponentHash(fullPath) {
+    return toMd5(this.relativePath(fullPath));
   }
 
   /**
@@ -180,16 +184,15 @@ class ConfigLoader {
   /**
    * @param {String} fullPath
    * @returns {*}
-   * @private
    */
-  _relativePath(fullPath) {
+  relativePath(fullPath) {
     return fullPath.replace(this.appPath(), '.');
   }
 
   /**
    * Get environment specific config
    * @param {String} cfgPath
-   * @return {*}
+   * @returns {*}
    * @private
    */
   _getConfig(cfgPath) {
@@ -210,7 +213,6 @@ class ConfigLoader {
   /**
    * @param {String} cfgPath
    * @returns {Object}
-   * @private
    */
   static readConfig(cfgPath) {
     const type = path.extname(cfgPath);
@@ -218,11 +220,31 @@ class ConfigLoader {
     switch (type) {
       case '.yml':
       case '.yaml':
-        return yaml.safeLoad(fs.readFileSync(cfgPath));
+        return yamlToJson(cfgPath);
       case '.json':
         return require(cfgPath);
       default:
         throw new Error(`${type} config is not supported!`);
+    }
+  }
+
+  /**
+   * Write only allowed config
+   * @param {Object} json
+   * @param {String} outFile
+   * @returns {Object}
+   */
+  static writeConfig(json, outFile) {
+    const format = config.format;
+
+    switch (format) {
+      case 'yml':
+      case 'yaml':
+        return jsonToYaml(json, outFile);
+      case 'json':
+        return fse.outputJsonSync(outFile, json, { spaces: 2 });
+      default:
+        throw new Error(`.${format} config is not supported!`);
     }
   }
 

@@ -1,11 +1,19 @@
 'use strict';
 
+const fs = require('fs');
 const fse = require('fs-extra');
+const yaml = require('js-yaml');
 const Twig = require('twig');
 const request = require('request');
+const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
-const fs = require('fs');
+
+const rl = ReadLine.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  historySize: 0
+});
 
 /**
  * @param {String} text
@@ -16,19 +24,11 @@ function toMd5(text) {
 }
 
 /**
- * @param {String} text
- * @returns {String}
+ * Get timestamp based uuid
+ * @return {*}
  */
-function toBase64(text) {
-  return Buffer.from(text).toString('base64');
-}
-
-/**
- * @param {String} text
- * @returns {String}
- */
-function fromBase64(text) {
-  return Buffer.from(text, 'base64').toString('utf8');
+function uuid() {
+  return toMd5(Date.now().toString());
 }
 
 /**
@@ -56,6 +56,27 @@ function promiseRequest(options) {
       return resolve(body);
     });
   });
+}
+
+/**
+ * Convert yaml to json
+ * @param {String} srcFile
+ * @returns {Object}
+ */
+function yamlToJson(srcFile) {
+  return yaml.safeLoad(fs.readFileSync(srcFile));
+}
+
+/**
+ * Convert json to yaml
+ * @param {Object} json
+ * @param {String|*} outFile
+ * @returns {*}
+ */
+function jsonToYaml(json, outFile = false) {
+  const data = yaml.safeDump(json, {});
+
+  return outFile ? fse.outputFileSync(outFile, data) : data;
 }
 
 /**
@@ -101,7 +122,12 @@ function familyTree(data) {
     if (node.parent === null) {
       tree[hash] = node;
     } else {
-      object[toMd5(node.parent)].children.push(node);
+      let key = toMd5(node.parent);
+      if (!object.hasOwnProperty(key)) {
+        throw new Error(`Can not find parent '${node.parent}'`);
+      }
+
+      object[key].children.push(node);
     }
   });
 
@@ -119,7 +145,7 @@ function isAwsNameValid(name) {
 /**
  * @param {*} objValue
  * @param {*} srcValue
- * @return {*}
+ * @returns {*}
  * @private
  */
 function _customizer(objValue, srcValue) {
@@ -140,16 +166,34 @@ function extend(object, sources, customizer = _customizer) {
 }
 
 /**
+ * @param {String} question
+ * @return {Promise<Boolean>}
+ */
+function yesNoQuestion(question) {
+  return new Promise(resolve => {
+    rl.question(question, answer => {
+      if (!['y', 'yes'].includes(answer.toLowerCase())) {
+        return resolve(false);
+      }
+
+      return resolve(true);
+    });
+  });
+}
+
+/**
  * Public methods
  */
 module.exports = {
+  uuid,
   toMd5,
   extend,
-  toBase64,
-  fromBase64,
+  yamlToJson,
+  jsonToYaml,
   familyTree,
   renderTwig,
   promiseSeries,
+  yesNoQuestion,
   promiseRequest,
   isAwsNameValid
 };

@@ -34,6 +34,15 @@ variable "kinesis_stream_encryption_type" {
   description = "The encryption type to use. The only acceptable values are NONE or KMS."
 }
 
+########
+# tags #
+########
+variable "custom_tags" {
+  type        = "map"
+  description = "Custom tags"
+  default     = {}
+}
+
 variable "default_tags" {
   type        = "map"
   description = "Default tags"

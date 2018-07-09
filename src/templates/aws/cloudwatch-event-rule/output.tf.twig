@@ -1,5 +1,5 @@
 # Define list of variables to be output
 
-output "cloudwatch_event_permission_arn" {
+output "arn" {
   value = "${aws_cloudwatch_event_rule.{{ name }}.arn}"
 }
