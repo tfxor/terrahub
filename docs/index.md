@@ -1,9 +1,9 @@
 # TerraHub
 
-TerraHub is a terraform centric devops tool that helps provision and manage
-large amount of cloud resources and cloud services across multiple cloud
-accounts. For example: Serverless on Amazon AWS, Kubernetes on Google Cloud
-or VMs on Microsoft Azure.
+TerraHub is a terraform centric devops tool that simplifies provisioning
+and management of large amount of cloud resources and cloud services
+across multiple cloud accounts. For example: Serverless on Amazon AWS,
+or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 ## Commands
 
@@ -19,8 +19,8 @@ init .............. run `terraform init` across multiple terraform scripts
 list .............. list projects > cloud accounts > regions > services > resources
 plan .............. run `terraform plan` across multiple terraform scripts
 project ........... create or update project that manages multiple terraform scripts
-run ............... run automated workflow terraform init > workspaceSelect > plan > apply
+run ............... run automated workflow terraform init > workspace > plan > apply
 refresh ........... run `terraform refresh` across multiple terraform scripts
 show .............. run `terraform show` across multiple terraform scripts
-workspace ......... run `terraform workspace select|delete` across multiple terraform scripts
+workspace ......... run `terraform workspace` across multiple terraform scripts
 ```

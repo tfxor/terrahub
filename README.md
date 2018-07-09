@@ -1,9 +1,8 @@
 # TerraHub
 
-TerraHub is a terraform centric devops tool that helps provision and manage
-large amount of cloud resources and cloud services across multiple cloud
-accounts. For example: Serverless on Amazon AWS, Kubernetes on Google Cloud
-or VMs on Microsoft Azure.
+TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud 
+resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes 
+on Google Cloud, or VMs on Microsoft Azure.
 
 ## Commands
 
@@ -19,7 +18,7 @@ init .............. run `terraform init` across multiple terraform scripts
 list .............. list projects > cloud accounts > regions > services > resources
 plan .............. run `terraform plan` across multiple terraform scripts
 project ........... create or update project that manages multiple terraform scripts
-run ............... run automated workflow terraform init > workspace select > plan > apply
+run ............... run automated workflow terraform init > workspace > plan > apply
 refresh ........... run `terraform refresh` across multiple terraform scripts
 show .............. run `terraform show` across multiple terraform scripts
 workspace ......... run `terraform workspace select|delete` across multiple terraform scripts
@@ -59,11 +58,11 @@ your-project
 
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
 
-* `terraform init` 
-* `terraform workspace select` 
+* `terraform init`
+* `terraform workspace`
 * `terraform plan`
 * `terraform apply`
-* `terraform destroy` 
+* `terraform destroy`
 
 All the hooks should return a Promise and look like: 
 
@@ -109,4 +108,6 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-TBU...
+- Get rid of `request` npm module 
+- Implement `--exclude` option for terraform commands
+- Rewrite & move publish.sh to `bin/publish.js`

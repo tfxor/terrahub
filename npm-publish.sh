@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "!!! @todo move this to ./bin directory"
-
 function validate_input() {
   if [ -z "$1" ]
   then

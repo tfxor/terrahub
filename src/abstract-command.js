@@ -173,7 +173,7 @@ class AbstractCommand {
   }
 
   /**
-   * Reload config loader
+   * Reload config-loader
    * @deprecated
    */
   reloadConfig() {
