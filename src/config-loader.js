@@ -4,7 +4,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const { templates, config } = require('./parameters');
+const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
 class ConfigLoader {
@@ -29,26 +29,12 @@ class ConfigLoader {
    * @private
    */
   _defaults() {
-    const hooks = templates.hooks;
-
     return {
       app: this.appPath(),
+      code: this.appCode(),
       parent: null,
       children: [],
-      hooks: {
-        plan: {
-          before: path.join(hooks, 'plan', 'before.js'),
-          after: path.join(hooks, 'plan', 'after.js')
-        },
-        apply: {
-          before: path.join(hooks, 'apply', 'before.js'),
-          after: path.join(hooks, 'apply', 'after.js')
-        },
-        destroy: {
-          before: path.join(hooks, 'destroy', 'before.js'),
-          after: path.join(hooks, 'destroy', 'after.js')
-        }
-      }
+      hooks: {}
     };
   }
 
@@ -66,6 +52,14 @@ class ConfigLoader {
 
       delete this._rootConfig['project'];
     }
+  }
+
+  /**
+   * Get application code
+   * @return {String|*}
+   */
+  appCode() {
+    return this._projectConfig['code'];
   }
 
   /**
@@ -163,7 +157,7 @@ class ConfigLoader {
         config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
       }
 
-      this._config[componentHash] = extend({root: componentPath}, [this._defaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
   }
 

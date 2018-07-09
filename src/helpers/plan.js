@@ -4,19 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const State = require('./state');
 
-/**
- * Terraform plan
- */
 class Plan {
   /**
    * @param {Object} config
    */
   constructor(config) {
     const root = path.join(config.app, config.root);
-    const stateDir = path.join(root, State.DIR);
+    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
 
-    this._base = fs.existsSync(stateDir)
-      ? path.join(stateDir, config.terraform.workspace)
+    this._base = fs.existsSync(workspaceDir)
+      ? workspaceDir
       : path.join(root, config.terraform.resource);
   }
 

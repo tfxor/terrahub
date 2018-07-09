@@ -28,7 +28,7 @@
     "npm": ">=3.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.247.1",
+    "aws-sdk": "^2.269.1",
     "child-process-promise": "^2.2.1",
     "download": "^7.0.0",
     "fs-extra": "^6.0.1",
@@ -40,6 +40,6 @@
     "request": "^2.87.0",
     "semver": "^5.5.0",
     "treeify": "^1.1.0",
-    "twig": "^1.11.0"
+    "twig": "^1.12.0"
   }
 }

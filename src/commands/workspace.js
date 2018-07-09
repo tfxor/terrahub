@@ -26,17 +26,17 @@ class WorkspaceCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    let files = [];
     let promises = [];
-    let tree = this.getConfigTree();
+    let filesToRemove = [];
     let kill = this.getOption('delete');
+    let configs = this.listConfigs();
     let { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
-      return this._workspace('workspaceSelect', tree).then(() => 'Done');
+      return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');
     }
 
-    this.listConfigs().forEach(configPath => {
+    configs.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
       const envConfig = path.join(dir, config.fileName);
       const tfvarsName = `workspace/${config.env}.tfvars`;
@@ -54,20 +54,27 @@ class WorkspaceCommand extends TerraformCommand {
 
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
-        promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
+        if (i !== 0) { // Skip root path
+          promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
+        }
       }
 
       if (fs.existsSync(envConfig) && kill) {
-        files.push(envConfig, tfvarsPath);
+        filesToRemove.push(envConfig, tfvarsPath);
       }
     });
 
+    this.reloadConfig();
+    let tree = this.getConfigTree();
+
     if (!kill) {
+      let isUpdate = promises.length !== (configs.length - 1);
+      let message = `Terrahub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
+
       return Promise
         .all(promises)
-        // @todo discuss this behaviour (it's useless for first run)
         .then(() => this._workspace('workspaceSelect', tree))
-        .then(() => Promise.resolve(`${config.env} environment created`));
+        .then(() => Promise.resolve(message));
     }
 
     return yesNoQuestion('Are you sure (Y/N)? ').then(confirmed => {
@@ -75,10 +82,16 @@ class WorkspaceCommand extends TerraformCommand {
         return Promise.resolve('Canceled');
       }
 
+      filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
+
+      if (!filesToRemove.length) {
+        return Promise.resolve('Nothing to remove');
+      }
+
       return Promise
-        .all(files.map(file => fse.unlink(file)))
+        .all(filesToRemove.map(file => fse.unlink(file)))
         .then(() => this._workspace('workspaceDelete', tree))
-        .then(() => Promise.resolve(`${config.env} environment deleted`));
+        .then(() => Promise.resolve(`Terrahub environment '${config.env}' was deleted`));
     });
   }
 

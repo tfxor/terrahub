@@ -23,12 +23,14 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(() => {
-      let errorMessage = "";
+      let errorMessage = '';
 
       if (!this._isProjectReady()) {
-        errorMessage = "Configuration file not found. Either re-run the same command in project's root or initialize new project with `terrahub project`";
+        errorMessage = 'Configuration file not found. '
+          + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
       } else if (this._areComponentsReady()) {
-        errorMessage = "Components are not defined. Please create new component with `terrahub create` or include existing one with `terrahub component`";
+        errorMessage = 'Components are not defined. '
+          + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
       }
 
       return (errorMessage) ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
