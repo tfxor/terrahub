@@ -30,11 +30,14 @@ class Terrahub {
     }
 
     const data = {
-      Hash: this._componentHash,
-      Name: this._config.name,
-      Status: event,
+      ThubToken: config.token, // required for API
       Action: this._action,
-      ThubToken: config.token // required for API
+      ProjectHash: this._config.code,
+      ProjectName: this._config.appName,
+      TerraformRunId: this._runId,
+      TerraformHash: this._componentHash,
+      TerraformName: this._config.name,
+      Status: event
     };
 
     if (err) {
