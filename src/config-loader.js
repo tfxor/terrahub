@@ -32,6 +32,7 @@ class ConfigLoader {
     return {
       app: this.appPath(),
       code: this.appCode(),
+      appName: this.appName(),
       parent: null,
       children: [],
       hooks: {}
@@ -60,6 +61,14 @@ class ConfigLoader {
    */
   appCode() {
     return this._projectConfig['code'];
+  }
+
+  /**
+   * Get application name
+   * @return {String}
+   */
+  appName() {
+    return this._projectConfig['name'];
   }
 
   /**
