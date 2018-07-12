@@ -176,6 +176,7 @@ class Terrahub {
     return {
       'x-amz-acl': 'bucket-owner-full-control',
       'x-amz-meta-thub-code': this._config.code,
+      'x-amz-meta-thub-project-name': this._config.appName,
       'x-amz-meta-thub-token': config.token,
       'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action
