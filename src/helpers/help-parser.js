@@ -2,7 +2,7 @@
 
 const glob = require('glob');
 const path = require('path');
-const { commandsPath } = require('../parameters');
+const { commandsPath, templates } = require('../parameters');
 
 class HelpParser {
   /**
@@ -61,6 +61,25 @@ class HelpParser {
     });
 
     return result;
+  }
+
+  /**
+   * @param {String} command
+   * @param {Array} args
+   * @return {Boolean}
+   */
+  static hasInvalidOptions(command, args) {
+    const metadata = require(templates.helpMetadata);
+    const commandData = metadata.commands.find(it => it.name === command);
+
+    let arg;
+    for (arg in args) {
+      if (typeof commandData.options.find(it => it.name === arg || it.shortcut === arg) === 'undefined') {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
