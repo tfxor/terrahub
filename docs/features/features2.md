@@ -40,3 +40,5 @@ $ terrahub apply --auto-approve
 
 ✅ Done
 ```
+
+Back to [all features](../features.md)

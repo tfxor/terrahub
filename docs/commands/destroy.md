@@ -1,7 +1,5 @@
 # terrahub destroy
 
-## Help Message
-
 ```
 Usage: terrahub destroy [options]
 
@@ -17,3 +15,5 @@ Options:
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands
 ```
+
+Back to [all commands](../commands.md)

@@ -1,7 +1,5 @@
 # terrahub workspace
 
-## Help Message
-
 ```
 Usage: terrahub workspace [options]
 
@@ -17,3 +15,5 @@ Options:
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands
 ```
+
+Back to [all commands](../commands.md)

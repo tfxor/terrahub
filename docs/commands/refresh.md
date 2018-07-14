@@ -1,7 +1,5 @@
 # terrahub refresh
 
-## Help Message
-
 ```
 Usage: terrahub refresh [options]
 
@@ -12,3 +10,5 @@ Options:
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands
 ```
+
+Back to [all commands](../commands.md)

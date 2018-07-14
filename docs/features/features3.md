@@ -26,3 +26,5 @@ persisted to local or remote state storage.
 [s3-bucket] Destroy complete! Resources: 0 destroyed.
 ✅ Done
 ```
+
+Back to [all features](../features.md)
