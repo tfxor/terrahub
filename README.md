@@ -1,30 +1,32 @@
 # TerraHub
 
-TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud 
-resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes 
-on Google Cloud, or VMs on Microsoft Azure.
+TerraHub is a terraform centric devops tool that simplifies provisioning
+and management of large amount of cloud resources and cloud services
+across multiple cloud accounts. For example: Serverless on Amazon AWS,
+or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
-## Commands
 
-```
-apply ............. run `terraform apply` across multiple terraform scripts
-build ............. build software from predefined build.yml config files
-component ......... include existing terraform folder into current project
-create ............ create terraform code from predefined templates
-deploy ............ deploy software from predefined deploy.yml config files
-destroy ........... run `terraform destroy` across multiple terraform scripts
-graph ............. show the graph of dependencies between terrahub components
-init .............. run `terraform init` across multiple terraform scripts
-list .............. list projects > cloud accounts > regions > services > resources
-plan .............. run `terraform plan` across multiple terraform scripts
-project ........... create or update project that manages multiple terraform scripts
-run ............... run automated workflow terraform init > workspace > plan > apply
-refresh ........... run `terraform refresh` across multiple terraform scripts
-show .............. run `terraform show` across multiple terraform scripts
-workspace ......... run `terraform workspace select|delete` across multiple terraform scripts
-```
+## [Commands](docs/commands.md)
 
-## Structure
+| Command | Description | Status |
+| :---:   | :---        | :---:  |
+| [apply](commands/apply.md) | run `terraform apply` across multiple terraform scripts | :heavy_check_mark: |
+| [build](commands/build.md) | build software from predefined build.yml config files | :x: |
+| [component](commands/component.md) | include existing terraform folder into current project | :heavy_check_mark: |
+| [create](commands/create.md) | create terraform code from predefined templates | :heavy_check_mark: |
+| [destroy](commands/destroy.md) | run `terraform destroy` across multiple terraform scripts | :heavy_check_mark: |
+| [graph](commands/graph.md) | show the graph of dependencies between terrahub components | :heavy_check_mark: |
+| [init](commands/init.md) | run `terraform init` across multiple terraform scripts | :heavy_check_mark: |
+| [list](commands/list.md) | list projects > cloud accounts > regions > services > resources | :heavy_check_mark: |
+| [plan](commands/plan.md) | run `terraform plan` across multiple terraform scripts | :heavy_check_mark: |
+| [project](commands/project.md) | create or update project that manages multiple terraform scripts | :heavy_check_mark: |
+| [run](commands/run.md) | run automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
+| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terraform scripts | :x: |
+| [show](commands/show.md) | run `terraform show` across multiple terraform scripts | :x: |
+| [workspace](commands/workspace.md) | run `terraform workspace` across multiple terraform scripts | :heavy_check_mark: |
+
+
+## [Structure](docs/structure.md)
 
 You can use whatever structure you want, but we recommend you follow this one: 
 
@@ -54,7 +56,8 @@ your-project
 
 > One exception: **No terraform scripts in root of your project!**
 
-## Hooks
+
+## [Hooks](docs/hooks.md)
 
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
 
@@ -105,6 +108,7 @@ Configuration example for plan (`.terrahub.json`):
     }
 }
 ```
+
 
 ## @todo
 

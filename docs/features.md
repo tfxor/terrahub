@@ -1,40 +1,6 @@
-# TerraHub
+# Features
 
-TerraHub is a terraform centric devops tool that simplifies provisioning
-and management of large amount of cloud resources and cloud services
-across multiple cloud accounts. For example: Serverless on Amazon AWS,
-or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
-
-
-## [Commands](docs/commands.md)
-
-| Command | Description | Status |
-| :---:   | :---        | :---:  |
-| [apply](commands/apply.md) | run `terraform apply` across multiple terraform scripts | :heavy_check_mark: |
-| [build](commands/build.md) | build software from predefined build.yml config files | :x: |
-| [component](commands/component.md) | include existing terraform folder into current project | :heavy_check_mark: |
-| [create](commands/create.md) | create terraform code from predefined templates | :heavy_check_mark: |
-| [destroy](commands/destroy.md) | run `terraform destroy` across multiple terraform scripts | :heavy_check_mark: |
-| [graph](commands/graph.md) | show the graph of dependencies between terrahub components | :heavy_check_mark: |
-| [init](commands/init.md) | run `terraform init` across multiple terraform scripts | :heavy_check_mark: |
-| [list](commands/list.md) | list projects > cloud accounts > regions > services > resources | :heavy_check_mark: |
-| [plan](commands/plan.md) | run `terraform plan` across multiple terraform scripts | :heavy_check_mark: |
-| [project](commands/project.md) | create or update project that manages multiple terraform scripts | :heavy_check_mark: |
-| [run](commands/run.md) | run automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terraform scripts | :x: |
-| [show](commands/show.md) | run `terraform show` across multiple terraform scripts | :x: |
-| [workspace](commands/workspace.md) | run `terraform workspace` across multiple terraform scripts | :heavy_check_mark: |
-
-
-## [Features](docs/features.md)
-
-1. [Make it easier and faster to create reusable terraform code]()
-2. [Simplify and distribute the way terraform code is executed]()
-3. [Accelerate and automate the testing of terraform commands]()
-4. [Integrate and manage any existing terraform code]()
-5. [Centralize cloud resources management through realtime dashboards]()
-
-### 1. Make it easier and faster to create reusable terraform code
+## 1. Make it easier and faster to create reusable terraform code
 ```
 $ mkdir ./thub-demo && cd ./thub-demo
 
@@ -76,7 +42,7 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 -rw-r--r--  1 eugene  staff  2318 Apr 07 16:38 variables.tf
 ```
 
-### 2. Simplify and distribute the way terraform code is executed
+## 2. Simplify and distribute the way terraform code is executed
 ```
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .
@@ -117,7 +83,7 @@ $ terrahub apply --auto-approve
 ✅ Done
 ```
 
-### 3. Accelerate and automate the testing of terraform commands
+## 3. Accelerate and automate the testing of terraform commands
 ```
 $ terrahub run --apply --destroy --auto-approve
 💡 [s3-bucket] terraform init -no-color .
@@ -144,7 +110,7 @@ persisted to local or remote state storage.
 ✅ Done
 ```
 
-### 4. Integrate and manage any existing terraform code
+## 4. Integrate and manage any existing terraform code
 ```
 $ cd ./security-terraform
 
@@ -199,7 +165,7 @@ lrwxr-xr-x  1 eugene  staff    22 Apr 07 21:31 provider.vars.tf -> ../../provide
 -rw-r--r--  1 eugene  staff    30 Apr 07 21:27 variables.tf
 ```
 
-### 5. Centralize cloud resources management through realtime dashboards
+## 5. Centralize cloud resources management through realtime dashboards
 ```
 $ terrahub list --depth 4
 💡 Querying cloud accounts, regions and services. It might take a while...
