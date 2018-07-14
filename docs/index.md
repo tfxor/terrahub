@@ -28,11 +28,11 @@ or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 ## [Features](docs/features.md)
 
-1. [Make it easier and faster to create reusable terraform code]()
-2. [Simplify and distribute the way terraform code is executed]()
-3. [Accelerate and automate the testing of terraform commands]()
-4. [Integrate and manage any existing terraform code]()
-5. [Centralize cloud resources management through realtime dashboards]()
+1. [Make it easier and faster to create reusable terraform code](#1-make-it-easier-and-faster-to-create-reusable-terraform-code)
+2. [Simplify and distribute the way terraform code is executed](#2-simplify-and-distribute-the-way-terraform-code-is-executed)
+3. [Accelerate and automate the testing of terraform commands](#3-accelerate-and-automate-the-testing-of-terraform-commands)
+4. [Integrate and manage any existing terraform code](#4-integrate-and-manage-any-existing-terraform-code)
+5. [Centralize cloud resources management through realtime dashboards](#5-centralize-cloud-resources-management-through-realtime-dashboards)
 
 ### 1. Make it easier and faster to create reusable terraform code
 ```

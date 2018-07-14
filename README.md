@@ -6,24 +6,33 @@ across multiple cloud accounts. For example: Serverless on Amazon AWS,
 or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 
+## [Features](docs/features.md)
+
+1. [Make it easier and faster to create reusable terraform code](docs/features.md#1-make-it-easier-and-faster-to-create-reusable-terraform-code)
+2. [Simplify and distribute the way terraform code is executed](docs/features.md#2-simplify-and-distribute-the-way-terraform-code-is-executed)
+3. [Accelerate and automate the testing of terraform commands](docs/features.md#3-accelerate-and-automate-the-testing-of-terraform-commands)
+4. [Integrate and manage any existing terraform code](docs/features.md#4-integrate-and-manage-any-existing-terraform-code)
+5. [Centralize cloud resources management through realtime dashboards](docs/features.md#5-centralize-cloud-resources-management-through-realtime-dashboards)
+
+
 ## [Commands](docs/commands.md)
 
 | Command | Description | Status |
 | :---:   | :---        | :---:  |
-| [apply](commands/apply.md) | run `terraform apply` across multiple terraform scripts | :heavy_check_mark: |
-| [build](commands/build.md) | build software from predefined build.yml config files | :x: |
-| [component](commands/component.md) | include existing terraform folder into current project | :heavy_check_mark: |
-| [create](commands/create.md) | create terraform code from predefined templates | :heavy_check_mark: |
-| [destroy](commands/destroy.md) | run `terraform destroy` across multiple terraform scripts | :heavy_check_mark: |
-| [graph](commands/graph.md) | show the graph of dependencies between terrahub components | :heavy_check_mark: |
-| [init](commands/init.md) | run `terraform init` across multiple terraform scripts | :heavy_check_mark: |
-| [list](commands/list.md) | list projects > cloud accounts > regions > services > resources | :heavy_check_mark: |
-| [plan](commands/plan.md) | run `terraform plan` across multiple terraform scripts | :heavy_check_mark: |
-| [project](commands/project.md) | create or update project that manages multiple terraform scripts | :heavy_check_mark: |
-| [run](commands/run.md) | run automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terraform scripts | :x: |
-| [show](commands/show.md) | run `terraform show` across multiple terraform scripts | :x: |
-| [workspace](commands/workspace.md) | run `terraform workspace` across multiple terraform scripts | :heavy_check_mark: |
+| [apply](docs/commands/apply.md) | run `terraform apply` across multiple terraform scripts | :heavy_check_mark: |
+| [build](docs/commands/build.md) | build software from predefined build.yml config files | :x: |
+| [component](docs/commands/component.md) | include existing terraform folder into current project | :heavy_check_mark: |
+| [create](docs/commands/create.md) | create terraform code from predefined templates | :heavy_check_mark: |
+| [destroy](docs/commands/destroy.md) | run `terraform destroy` across multiple terraform scripts | :heavy_check_mark: |
+| [graph](docs/commands/graph.md) | show the graph of dependencies between terrahub components | :heavy_check_mark: |
+| [init](docs/commands/init.md) | run `terraform init` across multiple terraform scripts | :heavy_check_mark: |
+| [list](docs/commands/list.md) | list projects > cloud accounts > regions > services > resources | :heavy_check_mark: |
+| [plan](docs/commands/plan.md) | run `terraform plan` across multiple terraform scripts | :heavy_check_mark: |
+| [project](docs/commands/project.md) | create or update project that manages multiple terraform scripts | :heavy_check_mark: |
+| [run](docs/commands/run.md) | run automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
+| [refresh](docs/commands/refresh.md) | run `terraform refresh` across multiple terraform scripts | :x: |
+| [show](docs/commands/show.md) | run `terraform show` across multiple terraform scripts | :x: |
+| [workspace](docs/commands/workspace.md) | run `terraform workspace` across multiple terraform scripts | :heavy_check_mark: |
 
 
 ## [Structure](docs/structure.md)
