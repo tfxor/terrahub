@@ -68,3 +68,7 @@ Compiling the list of cloud resources. Use --depth, -d option to view details ab
 ```
 
 More details [here](features/features5.md)
+
+
+## Return
+Back to [readme](readme.md)
