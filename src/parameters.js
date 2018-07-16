@@ -92,7 +92,6 @@ module.exports = {
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),
     helpDefault: path.join(templates, 'help', 'default.twig'),
-    helpCommand: path.join(templates, 'help', 'command.twig'),
-    invalidOptions: path.join(templates, 'help', 'invalid-options.twig')
+    helpCommand: path.join(templates, 'help', 'command.twig')
   }
 };
