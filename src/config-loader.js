@@ -94,7 +94,7 @@ class ConfigLoader {
   getFullConfig() {
     if (!Object.keys(this._config).length) {
       this._handleRootConfig();
-      this._handleComponentConfigs();
+      this._handleComponentConfig();
     }
 
     return this._config;
@@ -105,7 +105,7 @@ class ConfigLoader {
    * @param {*} dir
    * @returns {Array}
    */
-  listConfigs(dir = false) {
+  listConfig(dir = false) {
     const searchPath = dir || this.appPath();
 
     return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
@@ -150,14 +150,14 @@ class ConfigLoader {
   }
 
   /**
-   * Consolidate all components' configs
+   * Consolidate all components' config
    * @private
    */
-  _handleComponentConfigs() {
+  _handleComponentConfig() {
     // Remove root config
-    const configs = this.listConfigs().slice(1);
+    const config = this.listConfig().slice(1);
 
-    configs.forEach(configPath => {
+    config.forEach(configPath => {
       const config = this._getConfig(configPath);
       const componentPath = path.dirname(this.relativePath(configPath));
       const componentHash = this.getComponentHash(componentPath);

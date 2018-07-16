@@ -38,7 +38,7 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get extended via CLI configs
+   * Get extended config via CLI
    * @returns {Object}
    */
   getExtendedConfig() {

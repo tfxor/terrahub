@@ -50,7 +50,7 @@ class CreateCommand extends AbstractCommand {
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
-      const srcFile = path.join(templates.configs, 'component', `.terrahub.${config.format}.twig`);
+      const srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
       const outFile = path.join(directory, config.fileName);
 
       return renderTwig(srcFile, { name: name, parent: parent }, outFile);

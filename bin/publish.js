@@ -92,7 +92,7 @@ function updateJsonFiles() {
     name: packageContent.name,
     version: packageContent.version,
     description: packageContent.description,
-    buildDate: (new Date).toUTCString(),
+    buildDate: (new Date).toISOString(),
     commands: HelpParser.getCommandsDescriptionList(commands)
   };
 
@@ -152,11 +152,12 @@ gitDiff()
   .then(installNodeModules)
   .then(npmVersion)
   .then(updateJsonFiles)
-  //.then(npmPublish)
-  //.then(gitCommit)
-  //.then(gitPush)
+  .then(npmPublish)
+  .then(gitCommit)
+  .then(gitPush)
   .then(() => {
     Logger.info('Done');
+    process.exit(0);
   })
   .catch(err => {
     Logger.error(err);
