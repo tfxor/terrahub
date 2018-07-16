@@ -138,11 +138,11 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * Get list from AWS tagging api
+   * Get Resources from AWS Tagging API
    * @returns {Promise}
    * @private
    */
-  _getFromAws() {
+  _getResourcesFromAwsApi() {
     return this._getCredentials()
       .then(credentials => {
         return Promise.all(
@@ -167,11 +167,11 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * Get list from terrahub API
+   * Get Resources from TerraHub API
    * @return {Promise|*}
    * @private
    */
-  _getFromApi() {
+  _getResourcesFromThubApi() {
     if (!config.token) {
       return Promise.resolve([]);
     }
@@ -195,16 +195,16 @@ class ListCommand extends AbstractCommand {
   }
 
   /**
-   * Get API endpoint
+   * Get TerraHub API endpoint
    * @returns {String}
    * @private
    */
   _getEndpoint() {
-    return `https://${config.api}.terrahub.io/v1/thub/terraform/sortingRetrieve?DataType=1&ThubToken=${config.token}`;
+    return `https://${config.api}.terrahub.io/v1/thub/listing/retrieve?DataType=1&ThubToken=${config.token}`;
   }
 
   /**
-   * Fetch all resources (cache + tagging API + terrahub API)
+   * Fetch all resources (Cache + AWS Tagging API + TerraHub API)
    * @return {Promise}
    * @private
    */
@@ -213,8 +213,8 @@ class ListCommand extends AbstractCommand {
       [this.accountId, config.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
     ).then(([free, paid]) => {
       return Promise.all([
-        free ? free : this._getFromAws(),
-        paid ? paid : this._getFromApi()
+        free ? free : this._getResourcesFromAwsApi(),
+        paid ? paid : this._getResourcesFromThubApi()
       ]).then(([free, paid]) => [...free, ...paid]);
     });
   }
