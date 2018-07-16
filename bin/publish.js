@@ -33,6 +33,7 @@ switch (action) {
  * @return {Promise}
  */
 function gitDiff() {
+  Logger.info('Running git diff');
   return exec('git diff').then(result => {
     if (result.stdout) {
       throw new Error('You have unstaged changes, please, commit them before publishing');
@@ -46,6 +47,7 @@ function gitDiff() {
  * @return {Promise}
  */
 function deleteNodeModules() {
+  Logger.info('Deleting node_modules');
   return fs.remove('./node_modules').catch(result => {
     Logger.warn('[Warning] cleaning up node_modules failed - ', result);
   });
@@ -55,6 +57,7 @@ function deleteNodeModules() {
  * @return {Promise}
  */
 function installNodeModules() {
+  Logger.info('Running npm install');
   return exec('npm install --no-shrinkwrap --no-peer').then(result => {
     if (result.error) {
       throw new Error('[Failed] installing terrahub dependencies');
@@ -68,6 +71,7 @@ function installNodeModules() {
  * @return {Promise}
  */
 function npmVersion() {
+  Logger.info('Running npm version');
   return exec(`npm version ${action}`).then(result => {
     if (result.error) {
       throw new Error(`[Failed] updating ${action} version of terrahub package`);
@@ -81,6 +85,7 @@ function npmVersion() {
  * Updates metadata.json and package.json
  */
 function updateJsonFiles() {
+  Logger.info('Updating json files');
   const commands = HelpParser.getCommandsInstanceList();
 
   const json = {
@@ -100,6 +105,7 @@ function updateJsonFiles() {
  * return {Promise}
  */
 function npmPublish() {
+  Logger.info('Running npm publish');
   return exec('npm publish').then(result => {
     if (result.error) {
       throw new Error(result.error);
@@ -113,6 +119,7 @@ function npmPublish() {
  * @return {Promise}
  */
 function gitCommit() {
+  Logger.info('Running git commit');
   return exec('git add . && git commit -a -m "Publish terrahub help metadata"').then(result => {
     if (result.error) {
       throw new Error('[Failed] to commit');
@@ -126,9 +133,10 @@ function gitCommit() {
  * @return {Promise}
  */
 function gitPush() {
+  Logger.info('Running git push');
   return exec('git push').then(result => {
     if (result.error) {
-      throw result.error;
+      throw new Error(result.error);
     }
 
     return Promise.resolve();
@@ -148,7 +156,7 @@ gitDiff()
   //.then(gitCommit)
   //.then(gitPush)
   .then(() => {
-    Logger.info('[Ok] Done');
+    Logger.info('Done');
   })
   .catch(err => {
     Logger.error(err);
