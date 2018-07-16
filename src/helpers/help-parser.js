@@ -65,7 +65,7 @@ class HelpParser {
 
   /**
    * @param {String} command
-   * @param {Array} args
+   * @param {Object} args
    * @return {Boolean}
    */
   static hasInvalidOptions(command, args) {

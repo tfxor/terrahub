@@ -56,8 +56,15 @@ class Help extends AbstractCommand {
 
     if (commandName) {
       template = templates.helpCommand;
-      let command = allCommands.find(item => {
-        return item.name === commandName;
+      const invalidOptionsTemplate = templates.invalidOptions;
+      let command = allCommands.find(item => item.name === commandName);
+
+      const invalidOptions = this.getInvalidOptions(command);
+
+      renderTwig(invalidOptionsTemplate, {
+        options: invalidOptions
+      }).then(result => {
+        this.logger.log(result);
       });
 
       variables.commandName = commandName;
@@ -76,6 +83,18 @@ class Help extends AbstractCommand {
     return renderTwig(template, variables).then(result => {
       this.logger.log(result);
     });
+  }
+
+  /**
+   * @param {Object} command
+   * @return {Array}
+   */
+  getInvalidOptions(command) {
+    const args = Object.assign({}, this._input);
+    delete args.command;
+
+    return Object.keys(args).filter(arg =>
+      typeof command.options.find(it => it.name === arg || it.shortcut === arg) === 'undefined');
   }
 }
 
