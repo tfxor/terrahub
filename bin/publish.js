@@ -7,7 +7,6 @@ const { exec } = require('child-process-promise');
 const Logger = require('./../src/helpers/logger');
 const HelpParser = require('../src/helpers/help-parser');
 const { templates, packageJson } = require('../src/parameters');
-const packageContent = require(packageJson);
 
 /**
  * Argument validation
@@ -30,7 +29,7 @@ switch (action) {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function gitDiff() {
   Logger.info('Running git diff');
@@ -44,7 +43,7 @@ function gitDiff() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function deleteNodeModules() {
   Logger.info('Deleting node_modules');
@@ -54,7 +53,7 @@ function deleteNodeModules() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function installNodeModules() {
   Logger.info('Running npm install');
@@ -68,7 +67,7 @@ function installNodeModules() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function npmVersion() {
   Logger.info('Running npm version');
@@ -83,9 +82,11 @@ function npmVersion() {
 
 /**
  * Updates metadata.json and package.json
+ * @returns {Promise}
  */
 function updateJsonFiles() {
   Logger.info('Updating json files');
+  const packageContent = require(packageJson);
   const commands = HelpParser.getCommandsInstanceList();
 
   const json = {
@@ -102,7 +103,7 @@ function updateJsonFiles() {
 }
 
 /**
- * return {Promise}
+ * @returns {Promise}
  */
 function npmPublish() {
   Logger.info('Running npm publish');
@@ -116,7 +117,7 @@ function npmPublish() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function gitCommit() {
   Logger.info('Running git commit');
@@ -130,7 +131,7 @@ function gitCommit() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function gitPush() {
   Logger.info('Running git push');
