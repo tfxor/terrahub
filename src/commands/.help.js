@@ -61,7 +61,7 @@ class Help extends AbstractCommand {
       const invalids = this.getInvalidOptions(command);
 
       if (invalids.length > 0) {
-        this.logger.log(`The following options are not valid: --${ invalids.join(', --') }`);
+        this.logger.error(`The following options are not valid: --${ invalids.join(', --') }`);
       }
 
       variables.commandName = commandName;

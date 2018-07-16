@@ -92,7 +92,7 @@ class Terrahub {
       .then(() => this._terraform[this._action]())
       .then(buf => this._upload(buf))
       .then(res => this._hook('after')(this._config, res))
-      .then(() => this._on('end'))
+      .then(() => this._on('success'))
       .catch(err => this._on('error', err))
     ;
   }
