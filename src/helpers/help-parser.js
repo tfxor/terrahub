@@ -65,7 +65,7 @@ class HelpParser {
 
   /**
    * @param {String} command
-   * @param {Array} args
+   * @param {Object} args
    * @return {Boolean}
    */
   static hasInvalidOptions(command, args) {
@@ -74,7 +74,7 @@ class HelpParser {
 
     let arg;
     for (arg in args) {
-      if (typeof commandData.options.find(it => it.name === arg || it.shortcut === arg) === 'undefined') {
+      if (!commandData.options.find(it => it.name === arg || it.shortcut === arg)) {
         return true;
       }
     }
