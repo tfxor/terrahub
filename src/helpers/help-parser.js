@@ -37,7 +37,7 @@ class HelpParser {
    * @param {Array} commands
    * @returns {Array}
    */
-  static getCommandsDescription(commands) {
+  static getCommandsDescriptionList(commands) {
     let result = [];
 
     commands.forEach((command) => {

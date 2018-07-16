@@ -10,6 +10,26 @@ const { templates, packageJson } = require('../src/parameters');
 const packageContent = require(packageJson);
 
 /**
+ * Argument validation
+ */
+if (process.argv.slice(2).length !== 1) {
+  Logger.error('Please, enter only one argument');
+  process.exit(1);
+}
+
+const action = process.argv[2];
+
+switch (action) {
+  case 'patch': break;
+  case 'minor': break;
+  case 'major': break;
+  case 'premajor': break;
+  default:
+    Logger.error('Please, enter a valid argument');
+    process.exit(1);
+}
+
+/**
  * @return {Promise}
  */
 function checkDiff() {
@@ -48,9 +68,9 @@ function installNodeModules() {
  * @return {Promise}
  */
 function npmVersion() {
-  return exec(`npm version ${version}`).then(result => {
+  return exec(`npm version ${action}`).then(result => {
     if (result.error) {
-      throw new Error(`[Failed] updating ${version} version of terrahub package`);
+      throw new Error(`[Failed] updating ${action} version of terrahub package`);
     }
 
     return Promise.resolve();
@@ -67,8 +87,8 @@ function updateHelpMetadata() {
     name: packageContent.name,
     version: packageContent.version,
     description: packageContent.description,
-    buildDate: packageContent.buildDate,
-    commands: HelpParser.getCommandsDescription(commands)
+    buildDate: (new Date).toUTCString(),
+    commands: HelpParser.getCommandsDescriptionList(commands)
   };
 
   fs.writeJsonSync(templates.helpMetadata, json);
@@ -119,8 +139,6 @@ function gitPush() {
  * Saves application information and commands' description in metadata.json
  * Sets the new version of the application
  */
-const logger = new Logger();
-
 checkDiff()
   .then(deleteNodeModules)
   .then(installNodeModules)
@@ -130,8 +148,8 @@ checkDiff()
   .then(commitChanges)
   .then(gitPush)
   .then(() => {
-    logger.info('[Ok] Done');
+    Logger.info('[Ok] Done');
   })
   .catch(err => {
-    logger.error(err);
+    Logger.error(err);
   });
