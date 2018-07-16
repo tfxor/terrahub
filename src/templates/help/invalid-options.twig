@@ -1,5 +1,4 @@
 {% if options.length > 1 %}
 The following options are not valid:{% for option in options %} --{{ option }}{% endfor %}
 {% else %}
-The following option is not valid: --{{ options[0] }}
-{% endif %}
+The following option is not valid: --{{ options[0] }}{% endif %}
