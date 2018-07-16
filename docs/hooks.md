@@ -49,3 +49,7 @@ Configuration example for plan (`.terrahub.json`):
     }
 }
 ```
+
+
+## Return
+Back to [readme](readme.md)

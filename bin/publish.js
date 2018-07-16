@@ -32,7 +32,7 @@ switch (action) {
 /**
  * @return {Promise}
  */
-function checkDiff() {
+function gitDiff() {
   return exec('git diff').then(result => {
     if (result.stdout) {
       throw new Error('You have unstaged changes, please, commit them before publishing');
@@ -46,8 +46,8 @@ function checkDiff() {
  * @return {Promise}
  */
 function deleteNodeModules() {
-  return fs.remove('./node_modules').catch(() => {
-    throw new Error('[Failed] cleaning up terrahub node_modules');
+  return fs.remove('./node_modules').catch(result => {
+    Logger.warn('[Warning] cleaning up node_modules failed - ', result);
   });
 }
 
@@ -57,7 +57,7 @@ function deleteNodeModules() {
 function installNodeModules() {
   return exec('npm install --no-shrinkwrap --no-peer').then(result => {
     if (result.error) {
-      throw '[Failed] installing terrahub dependencies';
+      throw new Error('[Failed] installing terrahub dependencies');
     }
 
     return Promise.resolve();
@@ -78,9 +78,9 @@ function npmVersion() {
 }
 
 /**
- * Updates help metadata and package.json with new version
+ * Updates metadata.json and package.json
  */
-function updateHelpMetadata() {
+function updateJsonFiles() {
   const commands = HelpParser.getCommandsInstanceList();
 
   const json = {
@@ -102,7 +102,7 @@ function updateHelpMetadata() {
 function npmPublish() {
   return exec('npm publish').then(result => {
     if (result.error) {
-      throw result.error;
+      throw new Error(result.error);
     }
 
     return Promise.resolve();
@@ -112,7 +112,7 @@ function npmPublish() {
 /**
  * @return {Promise}
  */
-function commitChanges() {
+function gitCommit() {
   return exec('git add . && git commit -a -m "Publish terrahub help metadata"').then(result => {
     if (result.error) {
       throw new Error('[Failed] to commit');
@@ -139,17 +139,18 @@ function gitPush() {
  * Saves application information and commands' description in metadata.json
  * Sets the new version of the application
  */
-checkDiff()
+gitDiff()
   .then(deleteNodeModules)
   .then(installNodeModules)
   .then(npmVersion)
-  .then(updateHelpMetadata)
-  .then(npmPublish)
-  .then(commitChanges)
-  .then(gitPush)
+  .then(updateJsonFiles)
+  //.then(npmPublish)
+  //.then(gitCommit)
+  //.then(gitPush)
   .then(() => {
     Logger.info('[Ok] Done');
   })
   .catch(err => {
     Logger.error(err);
+    process.exit(1);
   });
