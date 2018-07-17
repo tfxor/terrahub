@@ -6,6 +6,8 @@ Provides an VPC resource.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |vpc_cidr_block|The CIDR block for the VPC.|string|10.0.0.0/16|No|
 |vpc_instance_tenancy|A tenancy option for instances launched into the VPC|string|default|No|
 |vpc_enable_dns_support|A boolean flag to enable/disable DNS support in the VPC.|string|true|No|
@@ -13,9 +15,8 @@ Provides an VPC resource.
 |vpc_enable_classiclink|A boolean flag to enable/disable ClassicLink for the VPC. Only valid in regions and accounts that support EC2 Classic. See the ClassicLink documentation for more information.|string|false|No|
 |vpc_enable_classiclink_dns_support|A boolean flag to enable/disable ClassicLink DNS Support for the VPC. Only valid in regions and accounts that support EC2 Classic.|string|false|No|
 |vpc_assign_generated_ipv6_cidr_block|Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.|string|false|No|
-|vpc_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
-|vpc_tag_description|A description tag to assign to the resource.|string|Managed by TerraHub|No|
-|vpc_tag_environment|A environment tag to assign to the resource.|string|default|No|
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 ## output parameters
 

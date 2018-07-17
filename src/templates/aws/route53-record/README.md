@@ -6,6 +6,8 @@ Provides a Route53 record resource.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |route53_record_zone_id|The ID of the hosted zone to contain this record.|string||Yes|
 |route53_record_name|The name of the record.|string|www|No|
 |route53_record_type|The record type. Valid values are A, AAAA, CAA, CNAME, MX, NAPTR, NS, PTR, SOA, SPF, SRV and TXT.|string|CNAME|No|
@@ -17,7 +19,7 @@ Provides a Route53 record resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|route53_record_fqdn|This is the name of the hosted zone.|string|
-|route53_record_name|The name of the record.|string|
-|route53_record_type|The record type. Valid values are A, AAAA, CAA, CNAME, MX, NAPTR, NS, PTR, SOA, SPF, SRV and TXT.|string|
-|route53_record_records|A string list of records. To specify a single record value longer than 255 characters such as a TXT record for DKIM.|array|
+|fqdn|This is the name of the hosted zone.|string|
+|name|The name of the record.|string|
+|type|The record type. Valid values are A, AAAA, CAA, CNAME, MX, NAPTR, NS, PTR, SOA, SPF, SRV and TXT.|string|
+|records|A string list of records. To specify a single record value longer than 255 characters such as a TXT record for DKIM.|array|

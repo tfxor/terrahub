@@ -27,7 +27,8 @@ function commandCreate(logger = console) {
   const command = args._.shift();
   delete args._;
 
-  if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp) {
+  if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp
+    || HelpParser.hasInvalidOptions(command, args)) {
     args.command = command;
     return new HelpCommand(args, logger);
   }

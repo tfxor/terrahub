@@ -30,11 +30,14 @@ class Terrahub {
     }
 
     const data = {
-      Hash: this._componentHash,
-      Name: this._config.name,
-      Status: event,
+      ThubToken: config.token, // required for API
       Action: this._action,
-      ThubToken: config.token // required for API
+      ProjectHash: this._config.code,
+      ProjectName: this._config.appName,
+      TerraformRunId: this._runId,
+      TerraformHash: this._componentHash,
+      TerraformName: this._config.name,
+      Status: event
     };
 
     if (err) {
@@ -89,7 +92,7 @@ class Terrahub {
       .then(() => this._terraform[this._action]())
       .then(buf => this._upload(buf))
       .then(res => this._hook('after')(this._config, res))
-      .then(() => this._on('end'))
+      .then(() => this._on('success'))
       .catch(err => this._on('error', err))
     ;
   }
@@ -173,6 +176,7 @@ class Terrahub {
     return {
       'x-amz-acl': 'bucket-owner-full-control',
       'x-amz-meta-thub-code': this._config.code,
+      'x-amz-meta-thub-name': this._config.appName,
       'x-amz-meta-thub-token': config.token,
       'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action

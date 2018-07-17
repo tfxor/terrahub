@@ -49,7 +49,7 @@ const args = Args.parse(process.argv.slice(2));
  * @note it's always .json
  */
 if (!fse.existsSync(cfgPath)) {
-  fse.copySync(path.join(templates, 'configs', '.terrahub.json'), cfgPath);
+  fse.copySync(path.join(templates, 'config', '.terrahub.json'), cfgPath);
 }
 
 const def = {
@@ -87,7 +87,7 @@ module.exports = {
     aws: path.join(templates, 'aws'),
     azurerm: path.join(templates, 'azurerm'),
     gcp: path.join(templates, 'gcp'),
-    configs: path.join(templates, 'configs'),
+    config: path.join(templates, 'config'),
     mapping: path.join(templates, 'mapping.json'),
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),
