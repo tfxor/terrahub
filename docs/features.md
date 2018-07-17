@@ -51,7 +51,7 @@ $ cd ./security-terraform
 $ terrahub project -n "Security_Terraform"
 ✅ Project successfully initialized
 
-$ terrahub component -n "iam" -d iam/
+$ terrahub component -n "iam-idp" -d iam-idp/
 ✅ Done
 ```
 

@@ -39,14 +39,14 @@ class GraphCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Array} configs
+   * @param {Array} config
    * @returns {Object}
    * @private
    */
-  _format(configs) {
+  _format(config) {
     const result = {};
 
-    configs.forEach(item => {
+    config.forEach(item => {
       const key = `${item.name} [path: ${item.root}]`;
 
       result[key] = item.children.length === 0 ? null : this._format(item.children);

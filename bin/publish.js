@@ -7,7 +7,6 @@ const { exec } = require('child-process-promise');
 const Logger = require('./../src/helpers/logger');
 const HelpParser = require('../src/helpers/help-parser');
 const { templates, packageJson } = require('../src/parameters');
-const packageContent = require(packageJson);
 
 /**
  * Argument validation
@@ -30,9 +29,10 @@ switch (action) {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
-function checkDiff() {
+function gitDiff() {
+  Logger.info('Running git diff');
   return exec('git diff').then(result => {
     if (result.stdout) {
       throw new Error('You have unstaged changes, please, commit them before publishing');
@@ -43,21 +43,23 @@ function checkDiff() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function deleteNodeModules() {
-  return fs.remove('./node_modules').catch(() => {
-    throw new Error('[Failed] cleaning up terrahub node_modules');
+  Logger.info('Deleting node_modules');
+  return fs.remove('./node_modules').catch(result => {
+    Logger.warn('[Warning] cleaning up node_modules failed - ', result);
   });
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function installNodeModules() {
+  Logger.info('Running npm install');
   return exec('npm install --no-shrinkwrap --no-peer').then(result => {
     if (result.error) {
-      throw '[Failed] installing terrahub dependencies';
+      throw new Error('[Failed] installing terrahub dependencies');
     }
 
     return Promise.resolve();
@@ -65,9 +67,10 @@ function installNodeModules() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function npmVersion() {
+  Logger.info('Running npm version');
   return exec(`npm version ${action}`).then(result => {
     if (result.error) {
       throw new Error(`[Failed] updating ${action} version of terrahub package`);
@@ -78,16 +81,19 @@ function npmVersion() {
 }
 
 /**
- * Updates help metadata and package.json with new version
+ * Updates metadata.json and package.json
+ * @returns {Promise}
  */
-function updateHelpMetadata() {
+function updateJsonFiles() {
+  Logger.info('Updating json files');
+  const packageContent = require(packageJson);
   const commands = HelpParser.getCommandsInstanceList();
 
   const json = {
     name: packageContent.name,
     version: packageContent.version,
     description: packageContent.description,
-    buildDate: (new Date).toUTCString(),
+    buildDate: (new Date).toISOString(),
     commands: HelpParser.getCommandsDescriptionList(commands)
   };
 
@@ -97,12 +103,13 @@ function updateHelpMetadata() {
 }
 
 /**
- * return {Promise}
+ * @returns {Promise}
  */
 function npmPublish() {
+  Logger.info('Running npm publish');
   return exec('npm publish').then(result => {
     if (result.error) {
-      throw result.error;
+      throw new Error(result.error);
     }
 
     return Promise.resolve();
@@ -110,9 +117,10 @@ function npmPublish() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
-function commitChanges() {
+function gitCommit() {
+  Logger.info('Running git commit');
   return exec('git add . && git commit -a -m "Publish terrahub help metadata"').then(result => {
     if (result.error) {
       throw new Error('[Failed] to commit');
@@ -123,12 +131,13 @@ function commitChanges() {
 }
 
 /**
- * @return {Promise}
+ * @returns {Promise}
  */
 function gitPush() {
+  Logger.info('Running git push');
   return exec('git push').then(result => {
     if (result.error) {
-      throw result.error;
+      throw new Error(result.error);
     }
 
     return Promise.resolve();
@@ -139,17 +148,19 @@ function gitPush() {
  * Saves application information and commands' description in metadata.json
  * Sets the new version of the application
  */
-checkDiff()
+gitDiff()
   .then(deleteNodeModules)
   .then(installNodeModules)
   .then(npmVersion)
-  .then(updateHelpMetadata)
+  .then(updateJsonFiles)
   .then(npmPublish)
-  .then(commitChanges)
+  .then(gitCommit)
   .then(gitPush)
   .then(() => {
-    Logger.info('[Ok] Done');
+    Logger.info('Done');
+    process.exit(0);
   })
   .catch(err => {
     Logger.error(err);
+    process.exit(1);
   });

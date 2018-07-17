@@ -3,7 +3,7 @@
 ```
 Usage: terrahub list [options]
 
-terrahub@0.0.1 (built: Mon Apr 7 12:00:00 EDT 2018)
+terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
 this command will list projects > cloud accounts > regions > services > resources
 
 Options:
