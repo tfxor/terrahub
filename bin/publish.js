@@ -97,7 +97,7 @@ function updateJsonFiles() {
     commands: HelpParser.getCommandsDescriptionList(commands)
   };
 
-  fs.writeJsonSync(templates.helpMetadata, json);
+  fs.writeJsonSync(templates.helpMetadata, json, { spaces: 2 });
 
   return Promise.resolve();
 }

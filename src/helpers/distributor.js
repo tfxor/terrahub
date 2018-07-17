@@ -47,7 +47,7 @@ class Distributor {
    * @returns {Promise}
    */
   run() {
-    let hashes = Object.keys(this._config);
+    const hashes = Object.keys(this._config);
     let threads = this._getThreadsCount();
 
     return new Promise((resolve, reject) => {
