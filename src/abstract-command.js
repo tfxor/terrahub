@@ -145,8 +145,8 @@ class AbstractCommand {
    * @param {String|Boolean} dir
    * @returns {String[]}
    */
-  listConfigs(dir = false) {
-    return this._configLoader.listConfigs(dir);
+  listConfig(dir = false) {
+    return this._configLoader.listConfig(dir);
   }
 
   /**

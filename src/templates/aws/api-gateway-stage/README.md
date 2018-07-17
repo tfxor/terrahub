@@ -7,7 +7,7 @@ Provides an API Gateway Stage.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |api_gateway_stage_name|The name of the stage.|string||Yes|
 |aws_api_gateway_rest_api_id|The ID of the associated REST API.|string||Yes|
 |aws_api_gateway_deployment_id|The ID of the deployment that the stage points to.|string||Yes|

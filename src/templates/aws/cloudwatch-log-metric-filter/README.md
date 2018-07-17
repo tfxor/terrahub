@@ -6,6 +6,8 @@ Provides a CloudWatch Log Metric Filter resource.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |cw_log_metric_filter_name|A name for the metric filter.|string|{{ name }}|No|
 |cw_log_metric_filter_pattern|A valid CloudWatch Logs filter pattern for extracting metric data out of ingested log events.|string||No|
 |cw_log_metric_filter_log_group_name|The name of the log group to associate the metric filter with.|string||Yes|
