@@ -7,7 +7,7 @@ Provides an API Gateway Deployment.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |api_gateway_rest_api_id|The ID of the associated REST API.|int||Yes|
 |api_gateway_deployment_stage_name|The name of the stage.|string||Yes|
 |api_gateway_deployment_description|The description of the deployment.|string|Managed by TerraHub|No|

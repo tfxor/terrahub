@@ -7,7 +7,7 @@ Creates an Amazon CloudFront web distribution.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |aliases|Extra CNAMEs (alternate domain names), if any, for this distribution.|list|[]|No|
 |ordered_cache_behavior|List of cache behaviors to implement.|list|[]|No|
 |comment|Any comments you want to include about the distribution.|string||No|
@@ -46,9 +46,9 @@ Creates an Amazon CloudFront web distribution.
 |acm_certificate_arn|Existing ACM Certificate ARN.|string||No|
 |ssl_support_method|Specifies how you want CloudFront to serve HTTPS requests.|string|sni-only|No|
 |minimum_protocol_version|The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.|string|TLSv1|No|
-|cloudfront_default_certificate|true if you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution.|string|false|No|
-|cloudfront_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|cloudfront_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
+|cloudfront_default_certificate|true if you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution.|string|false|No|\
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 
 ## output parameters

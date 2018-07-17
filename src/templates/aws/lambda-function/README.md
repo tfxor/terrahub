@@ -7,7 +7,7 @@ Create a Lambda Function resource.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |lambda_function_name|A unique name for your Lambda Function.|string||Yes|
 |lambda_handler|The function entrypoint in your code.|string||Yes|
 |lambda_runtime|See Runtimes for valid values.|string|nodejs6.10|No|
@@ -23,8 +23,8 @@ Create a Lambda Function resource.
 |lambda_subnet_ids|A list of subnet IDs associated with the Lambda function.|list|[]|No|
 |lambda_security_group_ids|A list of security group IDs associated with the Lambda function.|list|[]|No|
 |lambda_environment_variables|A map that defines environment variables for the Lambda function.|map|{}|No|
-|lambda_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|lambda_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 
 ## output parameters
