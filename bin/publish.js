@@ -160,7 +160,7 @@ gitDiff()
     Logger.info('Done');
     process.exit(0);
   })
-  .catch(err => {
-    Logger.error(err);
+  .catch(error => {
+    Logger.error(error.message);
     process.exit(1);
   });
