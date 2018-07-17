@@ -29,10 +29,10 @@ function getTasks(config) {
 
 /**
  * Runner
- * @param {Object[]} configs
+ * @param {Object[]} config
  */
-function run(configs) {
-  promiseSeries(configs.map(config => getTasks(config))).then(lastResult => {
+function run(config) {
+  promiseSeries(config.map(config => getTasks(config))).then(lastResult => {
     process.send({
       id: cluster.worker.id,
       data: lastResult,
