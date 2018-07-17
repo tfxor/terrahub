@@ -6,6 +6,8 @@ Provides an API Gateway Usage Plan.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |gateway_usage_plan_description|The description of a usage plan.|string|Managed by TerraHub|No|
 |gateway_usage_plan_product_code|The AWS Markeplace product identifier to associate with the usage plan as a SaaS product on AWS Marketplace.|string|MYCODE|No|
 |gateway_usage_plan_api_id|API Id of the associated API stage in a usage plan.|string||Yes|

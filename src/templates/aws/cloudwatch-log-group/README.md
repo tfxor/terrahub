@@ -6,10 +6,11 @@ Provides a CloudWatch Log Group resource.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |cloudwatch_log_group_name|The name of the log group.|string|{{ name }}|No|
-|cloudwatch_log_group_tag_name|A name tag to assign to the resource.|string|{{ name }}|No|
-|cloudwatch_log_group_tag_description|A description tag to assign to the resource.|string|Managed by TerraHub|No|
-|cloudwatch_log_group_tag_environment|A environment tag to assign to the resource.|string|default|No|
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 ## output parameters
 

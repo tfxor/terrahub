@@ -7,7 +7,7 @@ Creates a S3 bucket resource.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |s3_bucket_name|The name of the bucket.|string||Yes|
 |s3_bucket_acl|The canned ACL to apply.|string|private|No|
 |s3_bucket_region|The AWS region this bucket should reside in.|string||Yes|
@@ -21,8 +21,8 @@ Creates a S3 bucket resource.
 |s3_bucket_versioning_mfa_delete|Enable MFA delete for either Change the versioning state of your bucket or Permanently delete an object version.|string|false|No|
 |s3_bucket_website_index_document|Amazon S3 returns this index document when requests are made to the root domain or any of the subfolders.|string||Yes|
 |s3_bucket_website_error_document|An absolute path to the document to return in case of a 4XX error.|string||Yes|
-|s3_bucket_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|s3_bucket_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 
 ## output parameters
