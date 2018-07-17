@@ -47,8 +47,8 @@ function gitDiff() {
  */
 function deleteNodeModules() {
   Logger.info('Deleting node_modules');
-  return fs.remove('./node_modules').catch(result => {
-    Logger.warn('[Warning] cleaning up node_modules failed - ', result);
+  return fs.remove('./node_modules').catch(error => {
+    Logger.warn(`[Warning] cleaning up node_modules failed - ${error}`);
   });
 }
 
@@ -81,7 +81,7 @@ function npmVersion() {
 }
 
 /**
- * Updates metadata.json and package.json
+ * Update metadata.json and package.json
  * @returns {Promise}
  */
 function updateJsonFiles() {
@@ -145,8 +145,8 @@ function gitPush() {
 }
 
 /**
- * Saves application information and commands' description in metadata.json
- * Sets the new version of the application
+ * Save application information and commands' description in metadata.json
+ * Set the new version of the application
  */
 gitDiff()
   .then(deleteNodeModules)
