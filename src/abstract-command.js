@@ -28,6 +28,7 @@ class AbstractCommand {
 
   /**
    * Globally available options
+   * @private
    */
   _addDefaultOptions() {
     this
@@ -104,6 +105,7 @@ class AbstractCommand {
 
   /**
    * Abstract configure method
+   * @abstract
    */
   configure() {
     throw new Error('Implement configure() method...');
@@ -116,6 +118,7 @@ class AbstractCommand {
 
   /**
    * Abstract run method
+   * @abstract
    * @returns {Promise}
    */
   run() {
@@ -124,6 +127,7 @@ class AbstractCommand {
 
   /**
    * Command validation
+   * @private
    * @returns {Promise}
    */
   validate() {

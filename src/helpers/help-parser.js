@@ -55,16 +55,10 @@ class HelpParser {
    */
   static hasInvalidOptions(command, args) {
     const metadata = require(templates.helpMetadata);
-    const commandData = metadata.commands.find(it => it.name === command);
+    const options = metadata.commands.find(it => it.name === command).options;
 
-    let arg;
-    for (arg in args) {
-      if (!commandData.options.find(it => it.name === arg || it.shortcut === arg)) {
-        return true;
-      }
-    }
-
-    return false;
+    return !Object.keys(args).every(arg =>
+      options.find(it => it.name === arg || it.shortcut === arg));
   }
 }
 
