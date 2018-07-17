@@ -34,7 +34,7 @@ switch (action) {
 function gitDiff() {
   Logger.info('Running git diff');
   return exec('git diff').then(result => {
-    if (result.stdout) {
+    if (result.stdout || result.error) {
       throw new Error('You have unstaged changes, please, commit them before publishing');
     }
 
@@ -109,7 +109,7 @@ function npmPublish() {
   Logger.info('Running npm publish');
   return exec('npm publish').then(result => {
     if (result.error) {
-      throw new Error(result.error);
+      throw result.error;
     }
 
     return Promise.resolve();
@@ -137,7 +137,7 @@ function gitPush() {
   Logger.info('Running git push');
   return exec('git push').then(result => {
     if (result.error) {
-      throw new Error(result.error);
+      throw result.error;
     }
 
     return Promise.resolve();
