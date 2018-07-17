@@ -6,6 +6,8 @@ Provides an API Gateway API Key.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |api_gateway_key_name|The name of the API key.|string|{{ name }}|No|
 |api_gateway_key_description|The API key description.|string|Managed by TerraHub|No|
 |api_gateway_key_enabled|Specifies whether the API key can be used by callers.|boolean|true|No|

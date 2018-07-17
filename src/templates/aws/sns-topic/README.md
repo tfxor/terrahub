@@ -6,6 +6,8 @@ Provides an SNS topic resource.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |sns_topic_name|The friendly name for the SNS topic.|string|{{ name }}|No|
 
 ## output parameters

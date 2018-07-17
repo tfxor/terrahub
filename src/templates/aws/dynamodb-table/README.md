@@ -7,7 +7,7 @@ Create a DynamoDB table resource.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string||Yes|
-|region|This id of AWS region.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
 |dynamodb_table_name|The name of the table, this needs to be unique within a region.|string||Yes|
 |dynamodb_read_capacity|The number of read units for this table.|int||Yes|
 |dynamodb_write_capacity|The number of write units for this table.|int||Yes|
@@ -15,8 +15,8 @@ Create a DynamoDB table resource.
 |dynamodb_stream_enabled|Indicates whether Streams are to be enabled (true) or disabled (false).|bool|false|No|
 |dynamodb_atribute_name|The name of the attribute.|string||Yes|
 |dynamodb_atribute_type|One of: S, N, or B for (S)tring, (N)umber or (B)inary data.|string||Yes|
-|dynamodb_tag_name|The tag that will be applied to cloud resource.|string|{{ name }}|No|
-|dynamodb_tag_description|The tag that will be applied to cloud resource.|string|Managed by TerraHub|No|
+|custom_tags|Custom tags.|map||No|
+|default_tags|Default tags.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 
 ## output parameters
