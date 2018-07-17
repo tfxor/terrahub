@@ -48,7 +48,7 @@ function gitDiff() {
 function deleteNodeModules() {
   Logger.info('Deleting node_modules');
   return fs.remove('./node_modules').catch(error => {
-    Logger.warn(`[Warning] cleaning up node_modules failed - ${error}`);
+    Logger.warn(`[Warning] cleaning up node_modules failed - ${error.message}`);
   });
 }
 
@@ -73,7 +73,7 @@ function npmVersion() {
   Logger.info('Running npm version');
   return exec(`npm version ${action}`).then(result => {
     if (result.error) {
-      throw new Error(`[Failed] updating ${action} version of terrahub package`);
+      throw new Error(`[Failed] updating version of terrahub package with ${action}`);
     }
 
     return Promise.resolve();
@@ -161,6 +161,6 @@ gitDiff()
     process.exit(0);
   })
   .catch(error => {
-    Logger.error(error.message);
+    Logger.error(error);
     process.exit(1);
   });
