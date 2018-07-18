@@ -1,0 +1,34 @@
+resource "random_string" "hash" {
+  length  = 6
+  special = false
+}
+
+resource "aws_lb_target_group" "{{ name }}" {
+  name        = "${var.lb_target_group_name}"
+  name_prefix = "${random_string.hash.result}"
+  port        = "${var.lb_target_group_port}"
+  protocol    = "${var.lb_target_group_protocol}"
+  vpc_id      = "${var.lb_target_group_vpc_id}"
+
+  deregistration_delay = "${var.lb_target_group_deregistration_delay}"
+  slow_start           = "${var.lb_target_group_slow_start}"
+  proxy_protocol_v2    = "${var.lb_target_group_proxy_protocol_v2}"
+
+  stickiness {
+  	type            = "${var.lb_target_group_type}"
+  	cookie_duration = "${var.lb_target_group_cookie_duration}"
+  	enabled         = "${var.lb_target_group_enabled}"
+  }
+
+  health_check {
+  	interval            = "${var.lb_target_group_health_check_interval}"
+    path                = "${var.lb_target_group_health_check_path}"
+  	port                = "${var.lb_target_group_health_check_port}"
+  	protocol            = "${var.lb_target_group_health_check_protocol}"
+  	timeout             = "${var.lb_target_group_health_check_timeout}"
+  	healthy_threshold   = "${var.lb_target_group_healthy_threshold}"
+  	unhealthy_threshold = "${var.lb_target_group_unhealthy_threshold}"
+  }
+
+  tags                   = "${merge(var.default_tags, var.custom_tags)}"
+}
