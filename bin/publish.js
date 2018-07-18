@@ -34,7 +34,7 @@ switch (action) {
 function gitDiff() {
   Logger.info('Running git diff');
   return exec('git diff').then(result => {
-    if (result.stdout) {
+    if (result.stdout || result.error) {
       throw new Error('You have unstaged changes, please, commit them before publishing');
     }
 
@@ -47,8 +47,8 @@ function gitDiff() {
  */
 function deleteNodeModules() {
   Logger.info('Deleting node_modules');
-  return fs.remove('./node_modules').catch(result => {
-    Logger.warn('[Warning] cleaning up node_modules failed - ', result);
+  return fs.remove('./node_modules').catch(error => {
+    Logger.warn(`[Warning] cleaning up node_modules failed - ${error}`);
   });
 }
 
@@ -81,7 +81,7 @@ function npmVersion() {
 }
 
 /**
- * Updates metadata.json and package.json
+ * Update metadata.json and package.json
  * @returns {Promise}
  */
 function updateJsonFiles() {
@@ -109,7 +109,7 @@ function npmPublish() {
   Logger.info('Running npm publish');
   return exec('npm publish').then(result => {
     if (result.error) {
-      throw new Error(result.error);
+      throw result.error;
     }
 
     return Promise.resolve();
@@ -137,7 +137,7 @@ function gitPush() {
   Logger.info('Running git push');
   return exec('git push').then(result => {
     if (result.error) {
-      throw new Error(result.error);
+      throw result.error;
     }
 
     return Promise.resolve();
@@ -145,8 +145,8 @@ function gitPush() {
 }
 
 /**
- * Saves application information and commands' description in metadata.json
- * Sets the new version of the application
+ * Save application information and commands' description in metadata.json
+ * Set the new version of the application
  */
 gitDiff()
   .then(deleteNodeModules)
@@ -160,7 +160,7 @@ gitDiff()
     Logger.info('Done');
     process.exit(0);
   })
-  .catch(err => {
-    Logger.error(err);
+  .catch(error => {
+    Logger.error(error.message);
     process.exit(1);
   });
