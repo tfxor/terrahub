@@ -54,7 +54,7 @@ class Logger {
   }
 
   /**
-   * @param {String} message
+   * @param {String|Error} message
    */
   error(message) {
     if (message instanceof Error) {
