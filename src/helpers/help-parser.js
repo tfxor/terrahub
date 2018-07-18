@@ -57,8 +57,7 @@ class HelpParser {
     const metadata = require(templates.helpMetadata);
     const options = metadata.commands.find(it => it.name === command).options;
 
-    return !Object.keys(args).every(arg =>
-      options.find(it => it.name === arg || it.shortcut === arg));
+    return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
   }
 }
 

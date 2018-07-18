@@ -1,15 +1,11 @@
 'use strict';
 
-const yaml = require('js-yaml');
-const fs = require('fs');
-
-const config = yaml.safeLoad(fs.readFileSync('build.yml', 'utf8'));
-
-const util = require('util');
+const util = require('../helpers/util');
 const { exec } = require('child-process-promise');
-const AbstractCommand = require('../abstract-command');
+const path = require('path');
+const TerraformCommand = require('../terraform-command');
 
-class BuildCommand extends AbstractCommand {
+class BuildCommand extends TerraformCommand {
   /**
    * Command configuration
    */
@@ -24,77 +20,83 @@ class BuildCommand extends AbstractCommand {
    * @return {Promise}
    */
   run() {
+    const config = this.getConfig();
+
+    return util.promiseSeries(Object.keys(config).map(hash => () => this.executeComponentBuild(config[hash])));
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   */
+  executeComponentBuild(config) {
+    const buildConfig = util.yamlToJson(path.join(config.root, 'build.yml'));
+
+    if (buildConfig.env) {
+      this
+        .setProcessEnv(buildConfig.env.variables)
+        .setProcessEnv(buildConfig.env["parameter-store"])
+      ;
+    }
+
     const commandsList = [];
 
-    // declare env
-    if (config.env && config.env.variables) {
-      Object.keys(config.env.variables).forEach((env_key) => {
-        process.env[env_key] = config.env.variables[env_key];
-
-        exec('echo ${' + env_key + '}', { env: { env_key: config.env.variables[env_key] } }).then(result => {
-          if (result.error) {
-            throw result.error;
-          }
-        });
-      });
+    if (buildConfig.phases) {
+      this
+        .pushCommandsAndFinally(commandsList, buildConfig.phases.install)
+        .pushCommandsAndFinally(commandsList, buildConfig.phases.pre_build)
+        .pushCommandsAndFinally(commandsList, buildConfig.phases.build)
+        .pushCommandsAndFinally(commandsList, buildConfig.phases.post_build)
+      ;
     }
 
-    // declare parameter-store
-    if (config.env && config.env["parameter-store"]) {
-      Object.keys(config.env["parameter-store"]).forEach(function (env_key) {
-        process.env[env_key] = config.env["parameter-store"][env_key];
-
-        exec('echo ${' + env_key + '}', { env: { env_key: config.env["parameter-store"][env_key] } }).then(result => {
-          if (result.error) {
-            throw result.error;
-          }
-        });
-      });
-    }
-
-    // phases
-    if (config.phases) {
-      // phases install
-      this.pushCommandsAndFinally(commandsList, config.phases.install);
-
-      // phases pre_build
-      this.pushCommandsAndFinally(commandsList, config.phases.pre_build);
-
-      // phases build
-      this.pushCommandsAndFinally(commandsList, config.phases.build);
-
-      // phases post_build
-      this.pushCommandsAndFinally(commandsList, config.phases.post_build);
-    }
-
-    // artifacts
-    if (config.artifacts) {
-      // files
-      if (config.artifacts.files) {
-        const files = config.artifacts.files;
+    if (buildConfig.artifacts) {
+      if (buildConfig.artifacts.files) {
+        const files = buildConfig.artifacts.files;
       }
 
-      // discard-paths
-      if (config.artifacts["discard-paths"]) {
-        const discard_paths = config.artifacts["discard-paths"];
+      if (buildConfig.artifacts["discard-paths"]) {
+        const discardPaths = buildConfig.artifacts["discard-paths"];
       }
     }
 
-    // cache
-    if (config.cache && config.cache.paths) {
-      const cache_paths = config.cache.paths;
+    if (buildConfig.cache && buildConfig.cache.paths) {
+      const cachePaths = buildConfig.cache.paths;
     }
 
-    return this.executeBash(commandsList);
+    return util.promiseSeries(commandsList.map(it => () => exec(it))).then(() => Promise.resolve());
+  }
+
+  /**
+   * @param {Object} source
+   * @return {BuildCommand}
+   */
+  setProcessEnv(source) {
+    if (!source) {
+      return this;
+    }
+
+    Object.keys(source).forEach(function (envKey) {
+      process.env[envKey] = source[envKey];
+
+      exec('echo ${' + envKey + '}', { env: { env_key: source[envKey] } }).then(result => {
+        if (result.error) {
+          this.logger.error(result.error);
+        }
+      });
+    });
+
+    return this;
   }
 
   /**
    * @param {Array} destination
    * @param {Object} source
+   * @return {BuildCommand}
    */
   pushCommandsAndFinally(destination, source) {
     if (!source) {
-      return;
+      return this;
     }
 
     if (source.commands) {
@@ -104,23 +106,8 @@ class BuildCommand extends AbstractCommand {
     if (source.finally) {
       source.finally.forEach(it => destination.push(it));
     }
-  }
 
-  /**
-   * @param {Array<String>} commands
-   * @param {Number} index
-   * @return {Promise}
-   */
-  executeBash(commands, index = 0) {
-    return exec(commands[index]).then(result => {
-      if (result.error) {
-        throw result.error;
-      }
-
-      if (index + 1 < commands.length) {
-        return this.executeBash(commands, index + 1);
-      }
-    });
+    return this;
   }
 }
 
