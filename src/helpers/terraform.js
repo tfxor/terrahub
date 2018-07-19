@@ -21,7 +21,6 @@ class Terraform {
     this._tf = this._config.terraform;
     this._plan = new Plan(this._config);
     this._state = new State(this._config);
-    this._isRemoteState = false;
     this._isWorkspaceSupported = false;
   }
 
@@ -140,7 +139,7 @@ class Terraform {
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
-      .then(() => this._checkRemoteState());
+    ;
   }
 
   /**
@@ -164,21 +163,6 @@ class Terraform {
   }
 
   /**
-   * Check if remote state configured
-   * @private
-   */
-  _checkRemoteState() {
-    const statePath = path.join(this.getRoot(), '.terraform', State.NAME);
-
-    if (fs.existsSync(statePath)) {
-      const state = fse.readJsonSync(statePath);
-      this._isRemoteState = state.hasOwnProperty('backend')
-        ? state['backend'].hasOwnProperty('type')
-        : false;
-    }
-  }
-
-  /**
    * Check if workspaces supported
    * @private
    */
@@ -187,11 +171,24 @@ class Terraform {
   }
 
   /**
+   * Re-init State & Plan paths
+   * @note required after workspace & remote state
+   * @return {Promise}
+   * @private
+   */
+  _reInitPaths() {
+    this._plan.init();
+    this._state.init();
+
+    return Promise.resolve();
+  }
+
+  /**
    * https://www.terraform.io/docs/commands/init.html
    * @returns {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', ...this._backend(), '.']);
+    return this.run('init', ['-no-color', ...this._backend(), '.']).then(() => this._reInitPaths());
   }
 
   /**
@@ -199,12 +196,12 @@ class Terraform {
    * @returns {Promise}
    */
   statePull() {
-    if (!this._isRemoteState) {
+    if (!this._state.isRemote()) {
       return Promise.resolve();
     }
 
     return this.run('state', ['-no-color', 'pull']).then(result => {
-      const remoteState = this._state.getRemotePath();
+      const remoteState = this._state.getRemoteBackupPath();
 
       if (fs.existsSync(remoteState)) {
         fse.moveSync(remoteState, this._state.getBackupPath());
@@ -212,6 +209,14 @@ class Terraform {
 
       return fse.writeJson(remoteState, JSON.parse(result.toString()));
     });
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/output.html
+   * @returns {Promise}
+   */
+  output() {
+    return this.run('output', ['-json']);
   }
 
   /**
@@ -226,12 +231,10 @@ class Terraform {
     const workspace = this._tf.workspace;
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
-    return this.run('workspace', ['list']).then(result => {
-      return this.run('workspace', [
-        regex.test(result.toString()) ? 'select' : 'new',
-        workspace
-      ]);
-    });
+    return this.run('workspace', ['list'])
+      .then(result => this.run('workspace', [ regex.test(result.toString()) ? 'select' : 'new', workspace ]))
+      .then(() => this._reInitPaths())
+    ;
   }
 
   /**
@@ -256,7 +259,7 @@ class Terraform {
     let statePath = this._state.getPath();
     let options = { '-out': this._plan.getPath() };
 
-    if (!this._isRemoteState && fs.existsSync(statePath)) {
+    if (!this._state.isRemote() && fs.existsSync(statePath)) {
       options['-state'] = statePath;
     }
 
@@ -272,7 +275,7 @@ class Terraform {
     let planPath = this._plan.getPath();
     let statePath = this._state.getPath();
 
-    if (!this._isRemoteState) {
+    if (!this._state.isRemote()) {
       if (fs.existsSync(statePath)) {
         params = {
           '-state': statePath,
@@ -285,10 +288,11 @@ class Terraform {
     }
 
     let options = Object.assign({ '-auto-approve': true }, params);
+    let stateToRead = this._state.isRemote() ? this._state.getRemotePath() : statePath;
 
     return this
       .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
-      .then(() => fse.readFile(statePath));
+      .then(() => fse.readFile(stateToRead));
   }
 
   /**
@@ -299,7 +303,7 @@ class Terraform {
     let options = {};
     let statePath = this._state.getPath();
 
-    if (!this._isRemoteState && fs.existsSync(statePath)) {
+    if (!this._state.isRemote() && fs.existsSync(statePath)) {
       Object.assign(options, {
         '-state': statePath,
         '-backup': this._state.getBackupPath(),

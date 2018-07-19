@@ -44,7 +44,13 @@ class Terrahub {
       data['Error'] = err.message || err;
     }
 
-    return this._apiCall(this._getEndpoint(), data);
+    return this._apiCall(this._getEndpoint(), data).then(() => {
+      if (data.hasOwnProperty('Error')) {
+        throw new Error(data.Error);
+      }
+
+      return Promise.resolve();
+    });
   }
 
   /**
@@ -55,7 +61,7 @@ class Terrahub {
   getTask(action) {
     this._action = action;
 
-    if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
       return this._terraform[action]();
     }
 
@@ -104,7 +110,7 @@ class Terrahub {
    */
   _upload(buffer) {
     if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve();
+      return Promise.resolve(buffer);
     }
 
     return this._putObject(this._getKey(), buffer).then(() => Promise.resolve(buffer));

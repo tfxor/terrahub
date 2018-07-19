@@ -94,7 +94,7 @@ class ListCommand extends AbstractCommand {
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources');
+        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources.');
 
         return Promise.resolve();
       })

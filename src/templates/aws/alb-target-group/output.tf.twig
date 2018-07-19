@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_lb_target_group.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_lb_target_group.{{ name }}.arn}"
+}
+
+output "arn_suffix" {
+  value = "${aws_lb_target_group.{{ name }}.arn_suffix}"
+}
+
+output "name" {
+  value = "${aws_lb_target_group.{{ name }}.name}"
+}

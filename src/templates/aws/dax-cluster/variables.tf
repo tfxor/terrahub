@@ -18,8 +18,8 @@ variable "dax_cluster_id" {
   description = "Group identifier. DAX converts this name to lowercase."
 }
 
-variable "dax_cluster_iam_role_arn" {
-  description = "A valid Amazon Resource Name (ARN) that identifies an IAM role. At runtime, DAX will assume this role and use the role's permissions to access DynamoDB on your behalf."
+variable "dax_cluster_iam_role_name" {
+  description = "A valid Amazon Resource Name (NAME) that identifies an IAM role. At runtime, DAX will assume this role and use the role's permissions to access DynamoDB on your behalf."
 }
 
 variable "dax_cluster_node_type" {
@@ -42,8 +42,8 @@ variable "dax_cluster_description" {
   description = "Description for the cluster."
 }
 
-variable "dax_cluster_notification_topic_arn" {
-  description = "An Amazon Resource Name (ARN) of an SNS topic to send DAX notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic."
+variable "dax_cluster_notification_topic_name" {
+  description = "An Amazon Resource Name (NAME) of an SNS topic to send DAX notifications to."
 }
 
 variable "dax_cluster_maintenance_window" {

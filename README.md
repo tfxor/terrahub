@@ -74,6 +74,7 @@ In order to provide you the best experience we have implemented hooks functional
 * `terraform workspace`
 * `terraform plan`
 * `terraform apply`
+* `terraform output`
 * `terraform destroy`
 
 All the hooks should return a Promise and look like: 
@@ -118,8 +119,7 @@ Configuration example for plan (`.terrahub.json`):
 }
 ```
 
-
 ## @todo
 
-- Get rid of `request` npm module 
+- Get rid of `request` & `download` npm modules
 - Implement `--exclude` option for terraform commands
