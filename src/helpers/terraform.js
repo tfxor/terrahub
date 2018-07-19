@@ -200,7 +200,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return this.run('state', ['-no-color', 'pull']).then(result => {
+    return this.run('state', ['pull', '-no-color']).then(result => {
       const pullStatePath = this._state.getPullPath();
       const pullStateContent = JSON.parse(result.toString());
 
