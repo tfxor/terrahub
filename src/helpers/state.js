@@ -12,13 +12,11 @@ class State extends Metadata {
   init() {
     this.reBase();
     this._isRemote = false;
-    const remoteStatePath = path.join(this._root, '.terraform', State.NAME);
+    const remoteStatePath = this._getRemotePath();
 
     if (fse.existsSync(remoteStatePath)) {
       const state = fse.readJsonSync(remoteStatePath);
-      this._isRemote = state.hasOwnProperty('backend')
-        ? state['backend'].hasOwnProperty('type')
-        : false;
+      this._isRemote = state.hasOwnProperty('backend') ? state['backend'].hasOwnProperty('type') : false;
     }
   }
 
@@ -40,14 +38,15 @@ class State extends Metadata {
   /**
    * @returns {String}
    */
-  getRemoteBackupPath() {
-    return path.join(this._base, `${State.NAME}.remote`);
+  getPullPath() {
+    return path.join(this._base, `${State.NAME}.pull`);
   }
 
   /**
    * @returns {String}
+   * @private
    */
-  getRemotePath() {
+  _getRemotePath() {
     return path.join(this._root, '.terraform', State.NAME);
   }
 
