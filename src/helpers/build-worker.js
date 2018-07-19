@@ -1,15 +1,22 @@
 'use strict';
 
-const cluster = require('cluster');
 const { promiseSeries } = require('../helpers/util');
 const { exec } = require('child-process-promise');
+const { setMessageListener } = require('./worker-help');
+
+
+function getTasks(queue) {
+  return queue.map(config =>
+    () => getComponentBuildPromise(config)
+  );
+}
 
 /**
  * @param {Object} config
- * @return {Function}
+ * @return {Promise}
  */
-function getComponentBuildTask(config) {
-  return () => new Promise(resolve => {
+function getComponentBuildPromise(config) {
+  return new Promise(resolve => {
     const buildConfig = config.build;
 
     if (buildConfig.env) {
@@ -81,43 +88,4 @@ function pushCommandsAndFinally(destination, source) {
   }
 }
 
-/**
- * Runner
- * @param {Object[]} queue
- */
-function run(queue) {
-  promiseSeries(queue.map(config => getComponentBuildTask(config))).then(lastResult => {
-    process.send({
-      id: cluster.worker.id,
-      data: lastResult,
-      isError: false
-    });
-    process.exit(0);
-  }).catch(error => {
-    process.send({
-      id: cluster.worker.id,
-      error: error.message || error,
-      isError: true
-    });
-    process.exit(1);
-  });
-}
-
-/**
- * Message listener
- */
-process.on('message', config => {
-  let queue = [];
-
-  /**
-   * @param {Object} cfg
-   */
-  function handle(cfg) {
-    queue.push(cfg);
-    cfg.children.forEach(child => handle(child));
-    cfg.children = [];
-  }
-
-  handle(config);
-  run(queue);
-});
+setMessageListener(getTasks);
