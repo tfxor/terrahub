@@ -1,34 +1,20 @@
 'use strict';
 
-const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
+const Metadata = require('./metadata');
 
-class State {
-  /**
-   * @param {Object} config
-   */
-  constructor(config) {
-    this._cfg = config;
-    this._root = path.join(this._cfg.app, this._cfg.root);
-
-    this.init();
-  }
-
+class State extends Metadata {
   /**
    * Init
    * @desc check if state is remote and if workspace dir exists
    */
   init() {
-    const workspaceDir = path.join(this._root, State.DIR, this._cfg.terraform.workspace);
+    this.reBase();
+    this._isRemote = false;
     const remoteStatePath = path.join(this._root, '.terraform', State.NAME);
 
-    this._isRemote = false;
-    this._base = fs.existsSync(workspaceDir)
-      ? workspaceDir
-      : path.join(this._root, this._cfg.terraform.resource);
-
-    if (fs.existsSync(remoteStatePath)) {
+    if (fse.existsSync(remoteStatePath)) {
       const state = fse.readJsonSync(remoteStatePath);
       this._isRemote = state.hasOwnProperty('backend')
         ? state['backend'].hasOwnProperty('type')
@@ -42,13 +28,6 @@ class State {
    */
   isRemote() {
     return this._isRemote;
-  }
-
-  /**
-   * @returns {String}
-   */
-  getPath() {
-    return path.join(this._base, State.NAME);
   }
 
   /**
@@ -77,13 +56,6 @@ class State {
    */
   static get NAME() {
     return 'terraform.tfstate';
-  }
-
-  /**
-   * @returns {String}
-   */
-  static get DIR() {
-    return 'terraform.tfstate.d';
   }
 }
 
