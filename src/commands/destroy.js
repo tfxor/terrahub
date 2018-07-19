@@ -20,7 +20,7 @@ class DestroyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(config, 'terraform-worker.js', this.buildEnv('prepare', 'destroy'));
+    const distributor = new Distributor(config, { env: this.buildEnv('prepare', 'destroy') });
 
     return distributor
       .run()

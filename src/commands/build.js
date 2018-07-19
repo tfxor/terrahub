@@ -19,7 +19,7 @@ class BuildCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(config, 'build-worker.js');
+    const distributor = new Distributor(config, { worker: 'build-worker.js' });
 
     return distributor
       .run()

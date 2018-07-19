@@ -7,13 +7,13 @@ const cluster = require('cluster');
 class Distributor {
   /**
    * @param {Object} config
-   * @param {String} workerName
+   * @param {String} worker
    * @param {Object} env
    */
-  constructor(config, workerName, env = {}) {
+  constructor(config, { worker = 'terraform-worker.js', env = {} }) {
     this._env = env;
     this._config = config;
-    this._worker = path.join(__dirname, workerName);
+    this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
 
     cluster.setupMaster({ exec: this._worker });
