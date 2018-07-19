@@ -19,17 +19,10 @@ class HelpParser {
    * @returns {Array}
    */
   static getCommandsInstanceList(list = this.getCommandsNameList()) {
-    const commands = [];
-    list.forEach((commandName) => {
+    return list.map(commandName => {
       const Command = require(path.join(commandsPath, commandName));
-
-      const command = new Command(0);
-      if (command.getDescription()) {
-        commands.push(command);
-      }
+      return new Command(0);
     });
-
-    return commands;
   }
 
   /**
@@ -38,29 +31,21 @@ class HelpParser {
    * @returns {Array}
    */
   static getCommandsDescriptionList(commands) {
-    let result = [];
-
-    commands.forEach((command) => {
-      let options = [];
-
-      Object.keys(command._options).forEach(key => {
+    return commands.map(command => {
+      const options = Object.keys(command._options).map(key => {
         let option = command._options[key];
 
         if (option.defaultValue === process.cwd()) {
-          option.defaultValue = 'Terrahub directory';
+          option.defaultValue = 'Project directory';
         }
-
-        options.push(option);
       });
 
-      result.push({
+      return {
         name: command.getName(),
         description: command.getDescription(),
-        options
-      });
+        options: options
+      };
     });
-
-    return result;
   }
 
   /**
@@ -70,16 +55,9 @@ class HelpParser {
    */
   static hasInvalidOptions(command, args) {
     const metadata = require(templates.helpMetadata);
-    const commandData = metadata.commands.find(it => it.name === command);
+    const options = metadata.commands.find(it => it.name === command).options;
 
-    let arg;
-    for (arg in args) {
-      if (!commandData.options.find(it => it.name === arg || it.shortcut === arg)) {
-        return true;
-      }
-    }
-
-    return false;
+    return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
   }
 }
 

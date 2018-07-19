@@ -9,7 +9,7 @@ class DeployCommand extends AbstractCommand {
   configure() {
     this
       .setName('deploy')
-    // .setDescription('deploy software from predefined deploy.yml config files')
+      .setDescription('deploy software from predefined deploy.yml config files [Not Implemented Yet]')
     ;
   }
 }

@@ -35,7 +35,8 @@ class ConfigLoader {
       appName: this.appName(),
       parent: null,
       children: [],
-      hooks: {}
+      hooks: {},
+      build: {}
     };
   }
 

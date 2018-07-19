@@ -5,6 +5,9 @@ const { config, homePath } = require('./parameters');
 const ConfigLoader = require('./config-loader');
 const fse = require('fs-extra');
 
+/**
+ * @abstract
+ */
 class AbstractCommand {
   /**
    * @param {Object} input
@@ -29,6 +32,7 @@ class AbstractCommand {
 
   /**
    * Globally available options
+   * @private
    */
   _addDefaultOptions() {
     this
@@ -105,6 +109,7 @@ class AbstractCommand {
 
   /**
    * Abstract configure method
+   * @abstract
    */
   configure() {
     throw new Error('Implement configure() method...');
@@ -117,6 +122,7 @@ class AbstractCommand {
 
   /**
    * Abstract run method
+   * @abstract
    * @returns {Promise}
    */
   run() {
