@@ -1,8 +1,9 @@
 'use strict';
 
 const Args = require('../src/helpers/args-parser');
-const { config } = require('./parameters');
+const { config, homePath } = require('./parameters');
 const ConfigLoader = require('./config-loader');
+const fse = require('fs-extra');
 
 class AbstractCommand {
   /**
@@ -127,6 +128,12 @@ class AbstractCommand {
    * @returns {Promise}
    */
   validate() {
+    try {
+      fse.readJsonSync(homePath('.terrahub.json'));
+    } catch (error) {
+      this.logger.error('Global .terrahub.json config is invalid JSON. Please review it and fix it.');
+    }
+
     const required = Object.keys(this._options).filter(name => {
       return typeof this.getOption(name) === 'undefined';
     });

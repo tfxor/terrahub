@@ -1,49 +1,54 @@
 'use strict';
 
-const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
+const Metadata = require('./metadata');
 
-class State {
+class State extends Metadata {
   /**
-   * @param {Object} config
+   * Init
+   * @desc check if state is remote and if workspace dir exists
    */
-  constructor(config) {
-    const root = path.join(config.app, config.root);
-    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
+  init() {
+    this.reBase();
+    this._isRemote = false;
+    const remoteStatePath = path.join(this._root, '.terraform', State.NAME);
 
-    this._base = fs.existsSync(workspaceDir)
-      ? workspaceDir
-      : path.join(root, config.terraform.resource);
+    if (fse.existsSync(remoteStatePath)) {
+      const state = fse.readJsonSync(remoteStatePath);
+      this._isRemote = state.hasOwnProperty('backend')
+        ? state['backend'].hasOwnProperty('type')
+        : false;
+    }
   }
 
   /**
-   * @param {String} suffix
-   * @returns {String}
-   * @private
+   * Check if remote state configured
+   * @returns {Boolean}
    */
-  _path(suffix = '') {
-    return path.join(this._base, [State.NAME].concat(suffix).filter(Boolean).join('.'));
-  }
-
-  /**
-   * @returns {String}
-   */
-  getPath() {
-    return this._path();
+  isRemote() {
+    return this._isRemote;
   }
 
   /**
    * @returns {String}
    */
   getBackupPath() {
-    return this._path(`${ Date.now() }.backup`);
+    return path.join(this._base, `${ State.NAME }.${ Date.now() }.backup`);
+  }
+
+  /**
+   * @returns {String}
+   */
+  getRemoteBackupPath() {
+    return path.join(this._base, `${State.NAME}.remote`);
   }
 
   /**
    * @returns {String}
    */
   getRemotePath() {
-    return this._path('remote');
+    return path.join(this._root, '.terraform', State.NAME);
   }
 
   /**
@@ -51,13 +56,6 @@ class State {
    */
   static get NAME() {
     return 'terraform.tfstate';
-  }
-
-  /**
-   * @returns {String}
-   */
-  static get DIR() {
-    return 'terraform.tfstate.d';
   }
 }
 
