@@ -54,8 +54,6 @@ class HelpParser {
    * @return {Boolean}
    */
   static hasInvalidOptions(command, args) {
-    return false;
-
     const metadata = require(templates.helpMetadata);
     const options = metadata.commands.find(it => it.name === command).options;
 

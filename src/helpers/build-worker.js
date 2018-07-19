@@ -1,9 +1,8 @@
 'use strict';
 
 const cluster = require('cluster');
-const { promiseSeries, yamlToJson } = require('../helpers/util');
+const { promiseSeries } = require('../helpers/util');
 const { exec } = require('child-process-promise');
-const path = require('path');
 
 /**
  * @param {Object} config
@@ -11,7 +10,7 @@ const path = require('path');
  */
 function getComponentBuildTask(config) {
   return () => new Promise(resolve => {
-    const buildConfig = yamlToJson(path.join(config.root, 'build.yml'));
+    const buildConfig = config.build;
 
     if (buildConfig.env) {
       setProcessEnv(buildConfig.env.variables);
