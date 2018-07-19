@@ -19,7 +19,7 @@ class InitCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(['prepare', 'init'], config);
+    const distributor = new Distributor(config, 'terraform-worker.js', this.buildEnv('prepare', 'init'));
 
     return distributor
       .run()

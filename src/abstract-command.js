@@ -4,6 +4,9 @@ const Args = require('../src/helpers/args-parser');
 const { config } = require('./parameters');
 const ConfigLoader = require('./config-loader');
 
+/**
+ * @abstract
+ */
 class AbstractCommand {
   /**
    * @param {Object} input
@@ -127,7 +130,6 @@ class AbstractCommand {
 
   /**
    * Command validation
-   * @private
    * @returns {Promise}
    */
   validate() {

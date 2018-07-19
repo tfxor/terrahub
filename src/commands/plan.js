@@ -19,7 +19,7 @@ class PlanCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(['prepare', 'plan'], config);
+    const distributor = new Distributor(config, 'terraform-worker.js', this.buildEnv('prepare', 'plan'));
 
     return distributor
       .run()

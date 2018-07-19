@@ -29,14 +29,14 @@ class WorkspaceCommand extends TerraformCommand {
     let promises = [];
     let filesToRemove = [];
     let kill = this.getOption('delete');
-    let config = this.listConfig();
+    let configs = this.listConfig();
     let { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
       return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');
     }
 
-    config.forEach((configPath, i) => {
+    configs.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
       const envConfig = path.join(dir, config.fileName);
       const tfvarsName = `workspace/${config.env}.tfvars`;
@@ -68,7 +68,7 @@ class WorkspaceCommand extends TerraformCommand {
     let tree = this.getConfigTree();
 
     if (!kill) {
-      let isUpdate = promises.length !== (config.length - 1);
+      let isUpdate = promises.length !== (configs.length - 1);
       let message = `Terrahub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
 
       return Promise
@@ -102,7 +102,7 @@ class WorkspaceCommand extends TerraformCommand {
    * @private
    */
   _workspace(action, config) {
-    const distributor = new Distributor(['prepare', action], config);
+    const distributor = new Distributor(config, 'terraform-worker.js', this.buildEnv('prepare', action));
 
     return distributor.run();
   }

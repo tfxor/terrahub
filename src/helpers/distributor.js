@@ -3,18 +3,17 @@
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
-const { uuid } = require('../helpers/util');
 
 class Distributor {
   /**
-   * @param {Array} actions
    * @param {Object} config
+   * @param {String} workerName
+   * @param {Object} env
    */
-  constructor(actions, config) {
+  constructor(config, workerName, env = {}) {
+    this._env = env;
     this._config = config;
-    this._actions = actions;
-    this._runId = uuid();
-    this._worker = path.join(__dirname, '../helpers/worker.js');
+    this._worker = path.join(__dirname, workerName);
     this._workersCount = 0;
 
     cluster.setupMaster({ exec: this._worker });
@@ -37,7 +36,7 @@ class Distributor {
    */
   _createWorker(hash) {
     let threadCfg = this._config[hash];
-    let worker = cluster.fork({ TERRAFORM_ACTIONS: this._actions, THUB_RUN_ID: this._runId });
+    let worker = cluster.fork(this._env);
 
     this._workersCount++;
     worker.send(threadCfg);
