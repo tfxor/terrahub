@@ -121,5 +121,7 @@ Configuration example for plan (`.terrahub.json`):
 
 ## @todo
 
-- Get rid of `request` npm module 
+- Refactor remote state use cases
+- THUB_ACCESS_TOKEN overriding issue
+- Get rid of `request` & `download` npm modules
 - Implement `--exclude` option for terraform commands

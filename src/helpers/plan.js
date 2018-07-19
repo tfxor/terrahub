@@ -9,12 +9,22 @@ class Plan {
    * @param {Object} config
    */
   constructor(config) {
-    const root = path.join(config.app, config.root);
-    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
+    this._cfg = config;
+    this._root = path.join(this._cfg.app, this._cfg.root);
+
+    this.init();
+  }
+
+  /**
+   * Init
+   * @desc check if workspace dir exists
+   */
+  init() {
+    const workspaceDir = path.join(this._root, State.DIR, this._cfg.terraform.workspace);
 
     this._base = fs.existsSync(workspaceDir)
       ? workspaceDir
-      : path.join(root, config.terraform.resource);
+      : path.join(this._root, this._cfg.terraform.resource);
   }
 
   /**
