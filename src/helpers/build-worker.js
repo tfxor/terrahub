@@ -41,13 +41,7 @@ function getComponentBuildTask(config) {
       const cachePaths = buildConfig.cache.paths;
     }
 
-    if (config.name === 'prayforthewicked') {
-      setTimeout(() => {
-        resolve(promiseSeries(commandsList.map(it => () => exec(it))));
-      }, 5000);
-    } else {
-      resolve(promiseSeries(commandsList.map(it => () => exec(it))));
-    }
+    resolve(promiseSeries(commandsList.map(it => () => exec(it))));
   });
 }
 
