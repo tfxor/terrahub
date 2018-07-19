@@ -14,25 +14,25 @@ function getActions() {
 
 /**
  * Get task with hooks (if enabled)
- * @param {Object} config
- * @returns {Function}
+ * @param {Object[]} configs
+ * @return {Function[]}
  */
-function getTasks(config) {
-  const terrahub = new Terrahub(config);
+function getTasks(configs) {
+  const terrahubList = configs.map(config => new Terrahub(config));
 
-  return () => {
-    return promiseSeries(getActions().map(action => {
-      return () => terrahub.getTask(action);
-    }));
-  };
+  return getActions().map(action =>
+    () => promiseSeries(terrahubList.map(terrahub =>
+      () => terrahub.getTask(action)
+    ))
+  );
 }
 
 /**
  * Runner
- * @param {Object[]} config
+ * @param {Object[]} configs
  */
-function run(config) {
-  promiseSeries(config.map(config => getTasks(config))).then(lastResult => {
+function run(configs) {
+  promiseSeries(getTasks(configs)).then(lastResult => {
     process.send({
       id: cluster.worker.id,
       data: lastResult,
