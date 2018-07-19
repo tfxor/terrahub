@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_ami.{{ name }}.id}"
+}
+
+output "root_snapshot_id" {
+  value = "${aws_ami.{{ name }}.root_snapshot_id}"
+}
