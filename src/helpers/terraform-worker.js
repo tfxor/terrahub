@@ -6,7 +6,7 @@ const { promiseSeries } = require('../helpers/util');
 
 /**
  * Parse terraform actions
- * @returns {Array}
+ * @return {Array}
  */
 function getActions() {
   return process.env.TERRAFORM_ACTIONS.split(',').filter(Boolean);
