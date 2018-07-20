@@ -5,6 +5,9 @@ const { config, homePath } = require('./parameters');
 const ConfigLoader = require('./config-loader');
 const fse = require('fs-extra');
 
+/**
+ * @abstract
+ */
 class AbstractCommand {
   /**
    * @param {Object} input
@@ -29,6 +32,7 @@ class AbstractCommand {
 
   /**
    * Globally available options
+   * @private
    */
   _addDefaultOptions() {
     this
@@ -105,6 +109,7 @@ class AbstractCommand {
 
   /**
    * Abstract configure method
+   * @abstract
    */
   configure() {
     throw new Error('Implement configure() method...');
@@ -117,6 +122,7 @@ class AbstractCommand {
 
   /**
    * Abstract run method
+   * @abstract
    * @returns {Promise}
    */
   run() {
@@ -131,7 +137,9 @@ class AbstractCommand {
     try {
       fse.readJsonSync(homePath('.terrahub.json'));
     } catch (error) {
-      this.logger.error('Global .terrahub.json config is invalid JSON. Please review it and fix it.');
+      this.logger.error(
+        'Global `.terrahub.json` config is invalid. Please make sure file\'s content is parsing JSON lint.'
+      );
     }
 
     const required = Object.keys(this._options).filter(name => {

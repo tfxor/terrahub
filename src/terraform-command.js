@@ -2,8 +2,11 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { familyTree, extend } = require('./helpers/util');
+const { familyTree, extend, uuid } = require('./helpers/util');
 
+/**
+ * @abstract
+ */
 class TerraformCommand extends AbstractCommand {
   /**
    * Command initialization
@@ -110,6 +113,17 @@ class TerraformCommand extends AbstractCommand {
    */
   getConfigTree() {
     return familyTree(this.getConfig());
+  }
+
+  /**
+   * @param {String} actions
+   * @return {Object}
+   */
+  buildEnv(...actions) {
+    return {
+      TERRAFORM_ACTIONS: actions,
+      THUB_RUN_ID: uuid()
+    }
   }
 
   /**

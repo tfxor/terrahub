@@ -200,14 +200,15 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return this.run('state', ['-no-color', 'pull']).then(result => {
-      const remoteState = this._state.getRemoteBackupPath();
+    return this.run('state', ['pull', '-no-color']).then(result => {
+      const pullStatePath = this._state.getPullPath();
+      const pullStateContent = JSON.parse(result.toString());
 
-      if (fs.existsSync(remoteState)) {
-        fse.moveSync(remoteState, this._state.getBackupPath());
+      if (fs.existsSync(pullStatePath)) {
+        fse.moveSync(pullStatePath, this._state.getBackupPath());
       }
 
-      return fse.writeJson(remoteState, JSON.parse(result.toString()));
+      return fse.writeJson(pullStatePath, pullStateContent);
     });
   }
 
@@ -288,11 +289,23 @@ class Terraform {
     }
 
     let options = Object.assign({ '-auto-approve': true }, params);
-    let stateToRead = this._state.isRemote() ? this._state.getRemotePath() : statePath;
 
     return this
       .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
-      .then(() => fse.readFile(stateToRead));
+      .then(() => this._getStateContent());
+  }
+
+  /**
+   * Get state content whether is remote or local
+   * @returns {Promise}
+   * @private
+   */
+  _getStateContent() {
+    if (this._state.isRemote()) {
+      return this.statePull().then(() => fse.readFile(this._state.getPullPath()));
+    }
+
+    return fse.readFile(this._state.getPath());
   }
 
   /**
@@ -313,7 +326,7 @@ class Terraform {
 
     return this
       .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
-      .then(() => fse.readFile(statePath));
+      .then(() => this._getStateContent());
   }
 
   /**
@@ -381,7 +394,7 @@ class Terraform {
 
   /**
    * @param {Buffer} data
-   * @returns {string}
+   * @returns {String}
    * @private
    */
   _out(data) {
