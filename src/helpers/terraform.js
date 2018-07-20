@@ -21,6 +21,7 @@ class Terraform {
     this._tf = this._config.terraform;
     this._plan = new Plan(this._config);
     this._state = new State(this._config);
+    this._showLogs = true;
     this._isWorkspaceSupported = false;
   }
 
@@ -200,7 +201,10 @@ class Terraform {
       return Promise.resolve();
     }
 
+    this._showLogs = false;
+
     return this.run('state', ['pull', '-no-color']).then(result => {
+      this._showLogs = true;
       const pullStatePath = this._state.getPullPath();
       const pullStateContent = JSON.parse(result.toString());
 
@@ -217,7 +221,13 @@ class Terraform {
    * @returns {Promise}
    */
   output() {
-    return this.run('output', ['-json']);
+    const options = {};
+
+    if (fs.existsSync(this._state.getPath())) {
+      options['-state'] = this._state.getPath();
+    }
+
+    return this.run('output', ['-json'].concat(this._optsToArgs(options)));
   }
 
   /**
@@ -386,7 +396,9 @@ class Terraform {
     child.stderr.on('data', data => logger.error(this._out(data)));
     child.stdout.on('data', data => {
       stdout.push(data);
-      logger.raw(this._out(data));
+      if (this._showLogs) {
+        logger.raw(this._out(data));
+      }
     });
 
     return promise.then(() => Buffer.concat(stdout));
