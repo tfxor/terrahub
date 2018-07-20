@@ -1,0 +1,31 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id = "588360414558"
+region     = "us-west-2"
+env        = "prod"
+
+#############
+# top level #
+#############
+security_group_name        = "{{ name }}"
+security_group_name_prefix = "steam-"
+security_group_description = "{{ name }} - Managed by TerraHub"
+security_group_vpc_name    = "share"
+
+########
+# tags #
+########
+custom_tags  = {}
+default_tags = {
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "8df5513d"
+  "ThubEnv"     = "default"
+  "Description" = "Managed by TerraHub"
+}
+
+##########
+# custom #
+##########

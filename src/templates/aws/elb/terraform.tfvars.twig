@@ -1,0 +1,47 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id   = "588360414558"
+region       = "us-west-2"
+
+#############
+# top level #
+#############
+elb_name        = "{{ name }}"
+elb_name_prefix = "steam-"
+elb_internal    = true
+
+elb_cross_zone_load_balancing   = true
+elb_idle_timeout                = 400
+elb_connection_draining         = true
+elb_connection_draining_timeout = 400
+
+############
+# listener #
+############
+elb_instance_port     = 
+elb_instance_protocol = "TCP"
+elb_lb_port           =
+elb_lb_protocol       = "TCP"
+
+################
+# health_check #
+################ 
+elb_healthy_threshold   = 2
+elb_unhealthy_threshold = 5
+elb_timeout             = 3
+elb_target              = "TCP"
+elb_interval            = 30
+
+########
+# tags #
+########
+custom_tags  = {}
+default_tags = {
+  "ThubName"    = "{{ name }}"
+  "ThubCode"    = "{{ code }}"
+  "ThubEnv"     = "default"
+  "Description" = "Managed by TerraHub"
+}

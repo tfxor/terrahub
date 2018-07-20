@@ -1,0 +1,33 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_elb.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_elb.{{ name }}.arn}"
+}
+
+output "name" {
+  value = "${aws_elb.{{ name }}.name}"
+}
+
+output "dns_name" {
+  value = "${aws_elb.{{ name }}.dns_name}"
+}
+
+output "instances" {
+  value = "${aws_elb.{{ name }}.instances}"
+}
+
+output "source_security_group" {
+  value = "${aws_elb.{{ name }}.source_security_group}"
+}
+
+output "source_security_group_id" {
+  value = "${aws_elb.{{ name }}.source_security_group_id}"
+}
+
+output "zone_id" {
+  value = "${aws_elb.{{ name }}.zone_id}"
+}

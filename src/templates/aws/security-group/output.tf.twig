@@ -1,0 +1,33 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_security_group.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_security_group.{{ name }}.arn}"
+}
+
+output "vpc_id" {
+  value = "${aws_security_group.{{ name }}.vpc_id}"
+}
+
+output "owner_id" {
+  value = "${aws_security_group.{{ name }}.owner_id}"
+}
+
+output "name" {
+  value = "${aws_security_group.{{ name }}.name}"
+}
+
+output "description" {
+  value = "${aws_security_group.{{ name }}.description}"
+}
+
+output "ingress" {
+  value = "${aws_security_group.{{ name }}.ingress}"
+}
+
+output "egress" {
+  value = "${aws_security_group.{{ name }}.egress}"
+}

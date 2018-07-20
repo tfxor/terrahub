@@ -1,0 +1,11 @@
+terraform {
+  required_version = ">= 0.11.0"
+
+  backend "s3" {
+    bucket         = "prod-shared-services-vpc-terraform-state"
+    key            = "shared_services_vpc/infra/steam/{{ name }}/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform_locks"
+    encrypt        = true
+  }
+}

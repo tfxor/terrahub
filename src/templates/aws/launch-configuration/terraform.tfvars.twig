@@ -1,0 +1,24 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id   = "588360414558"
+region       = "us-west-2"
+env          = "prod"
+cloud_domain = "prod-shared.com"
+prod_phase   = "prod"
+stack        = "steam"
+
+#############
+# top level #
+#############
+launch_configuration_name          = "{{ name }}"
+launch_configuration_name_prefix   = "steam-"
+
+##########
+# custom #
+##########
+launch_configuration_image_id      = ""
+launch_configuration_instance_type = ""
+launch_configuration_key_name      = ""
