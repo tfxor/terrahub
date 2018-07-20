@@ -38,6 +38,8 @@ class HelpParser {
         if (option.defaultValue === process.cwd()) {
           option.defaultValue = 'Project directory';
         }
+        
+        return option;
       });
 
       return {
