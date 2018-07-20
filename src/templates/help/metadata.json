@@ -1,197 +1,663 @@
 {
   "name": "terrahub",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-20T18:08:00.903Z",
+  "buildDate": "2018-07-20T19:15:39.787Z",
   "commands": [
     {
       "name": "apply",
       "description": "run `terraform apply` across multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": true
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "build",
       "description": "build software from predefined build.yml config files",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "component",
       "description": "include existing terraform folder into current project",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "name",
+          "shortcut": "n",
+          "description": "Component name"
+        },
+        {
+          "name": "parent",
+          "shortcut": "p",
+          "description": "Parent component path",
+          "defaultValue": ""
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path to existing component (default: cwd)",
+          "defaultValue": "Project directory"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "create",
       "description": "create terraform code from predefined templates",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "name",
+          "shortcut": "n",
+          "description": "Uniquely identifiable cloud resource name"
+        },
+        {
+          "name": "template",
+          "shortcut": "t",
+          "description": "Template name (e.g. cloudfront, dynamodb, lambda, s3)"
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path where template should be created (default: .terrahub)",
+          "defaultValue": ".terrahub"
+        },
+        {
+          "name": "parent",
+          "shortcut": "p",
+          "description": "Parent component path",
+          "defaultValue": ""
+        },
+        {
+          "name": "force",
+          "shortcut": "f",
+          "description": "Replace directory",
+          "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "deploy",
       "description": "deploy software from predefined deploy.yml config files [Not Implemented Yet]",
       "options": [
-        null,
-        null
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "destroy",
       "description": "run `terraform destroy` across multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": true
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "graph",
       "description": "show the graph of dependencies between terrahub components",
       "options": [
-        null,
-        null
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "init",
       "description": "run `terraform init` across multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "list",
       "description": "list projects > cloud accounts > regions > services > resources",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "depth",
+          "shortcut": "d",
+          "description": "Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)",
+          "defaultValue": 0
+        },
+        {
+          "name": "projects",
+          "shortcut": "p",
+          "description": "Projects (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "accounts",
+          "shortcut": "a",
+          "description": "Accounts (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "regions",
+          "shortcut": "r",
+          "description": "Regions (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "services",
+          "shortcut": "s",
+          "description": "Services (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "output",
       "description": "run `terraform output` across multiple terraform components",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "plan",
       "description": "run `terraform plan` across multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "project",
       "description": "create or update project that manages multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "name",
+          "shortcut": "n",
+          "description": "Project name"
+        },
+        {
+          "name": "provider",
+          "shortcut": "p",
+          "description": "Cloud provider",
+          "defaultValue": "aws"
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path where project should be created (default: cwd)",
+          "defaultValue": "Project directory"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "refresh",
       "description": "run `terraform refresh` across multiple terraform scripts [Not Implemented Yet]",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "run",
       "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "apply",
+          "shortcut": "a",
+          "description": "Enable apply command as part of automated workflow",
+          "defaultValue": false
+        },
+        {
+          "name": "destroy",
+          "shortcut": "d",
+          "description": "Enable destroy command as part of automated workflow",
+          "defaultValue": false
+        },
+        {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": true
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "show",
       "description": "run `terraform show` across multiple terraform scripts [Not Implemented Yet]",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     },
     {
       "name": "workspace",
       "description": "run `terraform workspace` across multiple terraform scripts",
       "options": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "name": "delete",
+          "shortcut": "d",
+          "description": "Delete workspace environment (paired with --env)",
+          "defaultValue": false
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
       ]
     }
   ]
