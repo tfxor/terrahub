@@ -11,6 +11,10 @@ variable "region" {
   description = "This is the AWS region."
 }
 
+variable "env" {
+  description = "The name of environment."
+}
+
 #############
 # top level #
 #############
@@ -26,8 +30,8 @@ variable "security_group_description" {
   description = "The security group description."
 }
 
-variable "security_group_vpc_id" {
-  description = "The VPC ID."
+variable "security_group_vpc_name" {
+  description = "The VPC NAME."
 }
 
 ########
