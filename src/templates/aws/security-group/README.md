@@ -8,6 +8,7 @@ Provides a security group resource.
 |------|-------------|:----:|:-----:|:-----:|
 |account_id|The id of AWS account.|string|588360414558|Yes|
 |region|This is the AWS region.|string|us-west-2|Yes|
+|env|The name of environment.|string|prod|No|
 |security_group_name|The name of the security group.|string|{{ name }}|No|
 |security_group_name_prefix|Creates a unique name beginning with the specified prefix. Conflicts with name.|string|{{ code }}|No|
 |security_group_description|The security group description.|string|{{ name }} - Managed by TerraHub|No|

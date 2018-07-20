@@ -42,6 +42,7 @@
     "sg":"aws/security-group",
     "lc":"aws/launch-configuration",
     "elb":"aws/elb",
+    "asg":"aws/autoscaling-group",
     "kinesis": "aws/kinesis-stream",
     "kinesis-stream": "aws/kinesis-stream",
     "route53": "aws/route53-zone",

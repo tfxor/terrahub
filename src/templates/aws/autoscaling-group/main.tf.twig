@@ -1,0 +1,19 @@
+resource "aws_autoscaling_group" "{{ name }}" {
+  name                      = "${var.autoscaling_group_name}"
+  name_prefix               = "${var.autoscaling_group_name_prefix}"
+  max_size                  = "${var.autoscaling_group_max_size}"
+  min_size                  = "${var.autoscaling_group_min_size}"
+  health_check_grace_period = "${var.autoscaling_group_health_check_grace_period}"
+  health_check_type         = "${var.autoscaling_group_health_check_type}"
+  desired_capacity          = "${var.autoscaling_group_desired_capacity}"
+  force_delete              = "${var.autoscaling_group_force_delete}"
+  launch_configuration      = "${data.terraform_remote_state.lc.name}"
+  vpc_zone_identifier       = ["${data.aws_subnet.subnet_internal_0.availability_zone}", "${data.aws_subnet.subnet_internal_1.availability_zone}"]
+  load_balancers            = ["${data.terraform_remote_state.elb.name}"]
+
+  timeouts {
+    delete = "${var.autoscaling_group_timeouts_delete}"
+  }
+
+  tags = ["${concat(var.default_tags, var.custom_tags)}"]
+}

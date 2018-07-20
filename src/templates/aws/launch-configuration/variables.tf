@@ -27,6 +27,10 @@ variable "stack" {
   description = "The stack."
 }
 
+variable "security_group_vpc_name" {
+  description = "The VPC NAME."
+}
+
 #############
 # top level #
 #############

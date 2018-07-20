@@ -9,6 +9,7 @@ Provides a resource to create a new launch configuration, used for autoscaling g
 |account_id|The id of AWS account.|string|588360414558|Yes|
 |region|This is the AWS region.|string|us-west-2|Yes|
 |env|The name of environment.|string|prod|No|
+|security_group_vpc_name|The VPC NAME.|string|share|No|
 |cloud_domain|The name of cloud domain.|string|prod-shared.com|No|
 |prod_phase|The prod phase.|string|prod|No|
 |stack|The stack.|string|steam|No|
