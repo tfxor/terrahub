@@ -217,7 +217,13 @@ class Terraform {
    * @returns {Promise}
    */
   output() {
-    return this.run('output', ['-json']);
+    const options = {};
+
+    if (fs.existsSync(this._state.getPath())) {
+      options['-state'] = this._state.getPath();
+    }
+
+    return this.run('output', ['-json'].concat(this._optsToArgs(options)));
   }
 
   /**
