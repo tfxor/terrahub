@@ -79,8 +79,12 @@ class ComponentCommand extends AbstractCommand {
     let rawConfig = ConfigLoader.readConfig(cfgPath);
 
     Object.keys(rawConfig).forEach(key => {
-      if (rawConfig[key].root === componentRoot) {
-        name = key;
+      if ('root' in rawConfig[key]) {
+        rawConfig[key].root = rawConfig[key].root.replace(/\/$/, '');
+
+        if (rawConfig[key].root === componentRoot) {
+          name = key;
+        }
       }
     });
 
