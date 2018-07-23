@@ -4,7 +4,7 @@
 Usage: terrahub project [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will create or update project that manages multiple terraform scripts
+this command will create or update project that manages terraform configuration
 
 Options:
   --name, -n 		 Project name

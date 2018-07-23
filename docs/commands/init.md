@@ -4,7 +4,7 @@
 Usage: terrahub init [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will run `terraform init` across multiple terraform scripts
+this command will run `terraform init` across multiple terrahub components
 
 Options:
   --include, -i 	 List of components to include

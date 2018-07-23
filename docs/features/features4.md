@@ -1,6 +1,6 @@
 # Feature #4
 
-## Integrate and manage any existing terraform code
+## Integrate and manage any existing terraform configuration
 ```
 $ cd ./security-terraform
 

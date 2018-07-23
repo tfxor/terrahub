@@ -10,7 +10,7 @@ class DestroyCommand extends TerraformCommand {
   configure() {
     this
       .setName('destroy')
-      .setDescription('run `terraform destroy` across multiple terraform scripts')
+      .setDescription('run `terraform destroy` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, true)
     ;
   }

@@ -4,7 +4,7 @@
 Usage: terrahub create [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will create terraform code from predefined templates
+this command will create terrahub component with terraform configuration from templates
 
 Options:
   --name, -n 		 Uniquely identifiable cloud resource name

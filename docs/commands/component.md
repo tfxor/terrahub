@@ -4,7 +4,7 @@
 Usage: terrahub component [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will include existing terraform folder into current project
+this command will include existing terraform configuration into current terrahub project
 
 Options:
   --name, -n 		 Component name

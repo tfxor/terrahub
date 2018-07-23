@@ -4,7 +4,7 @@
 Usage: terrahub build [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will [to be updated]
+this command will build code used by terraform configuration (e.g. AWS Lambda, Google Functions)
 
 Options:
   --env, -e 		 Workspace environment

@@ -4,7 +4,7 @@
 Usage: terrahub destroy [options]
 
 terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
-this command will run `terraform destroy` across multiple terraform scripts
+this command will run `terraform destroy` across multiple terrahub components
 
 Options:
   --auto-approve, -y 	 Auto approve terraform execution
