@@ -28,9 +28,14 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(() => {
       let errorMessage = '';
 
-      if (!this._isProjectReady()) {
+      const missingProjectData = this._getProjectDataMissing();
+
+      if (missingProjectData === 'config') {
         errorMessage = 'Configuration file not found. '
           + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
+      } else if (missingProjectData) {
+        errorMessage = `Configuration file doesn\'t contain required field: project ${missingProjectData}. `
+          + `Please add project ${missingProjectData} field with the corresponding value'`;
       } else if (this._areComponentsReady()) {
         errorMessage = 'Components are not defined. '
           + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
@@ -123,15 +128,7 @@ class TerraformCommand extends AbstractCommand {
     return {
       TERRAFORM_ACTIONS: actions,
       THUB_RUN_ID: uuid()
-    }
-  }
-
-  /**
-   * @returns {Boolean}
-   * @private
-   */
-  _isProjectReady() {
-    return this._configLoader.isProjectConfigured();
+    };
   }
 
   /**
@@ -140,6 +137,14 @@ class TerraformCommand extends AbstractCommand {
    */
   _areComponentsReady() {
     return (this._configLoader.componentsCount() === 0);
+  }
+
+  /**
+   * @return {String|null}
+   * @private
+   */
+  _getProjectDataMissing() {
+    return this._configLoader.getProjectDataMissing();
   }
 }
 

@@ -113,11 +113,23 @@ class ConfigLoader {
   }
 
   /**
-   * Check if project is configured
-   * @returns {Boolean}
+   * Returns what required project data is missing
+   * @return {String|null}
    */
-  isProjectConfigured() {
-    return this._projectConfig.hasOwnProperty('name');
+  getProjectDataMissing() {
+    if (!this._projectConfig.hasOwnProperty('root')) {
+      return 'config';
+    }
+
+    if (!this._projectConfig.hasOwnProperty('name')) {
+      return 'name';
+    }
+
+    if (!this._projectConfig.hasOwnProperty('code')) {
+      return 'code';
+    }
+
+    return null;
   }
 
   /**
