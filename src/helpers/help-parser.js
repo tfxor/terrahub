@@ -2,7 +2,8 @@
 
 const glob = require('glob');
 const path = require('path');
-const { commandsPath, templates } = require('../parameters');
+const { commandsPath, templates, packageJson } = require('../parameters');
+const fs = require('fs-extra');
 
 class HelpParser {
   /**
@@ -17,8 +18,9 @@ class HelpParser {
    * @description Returns array of instances of all commands in the project
    * @param {Array} list
    * @returns {Array}
+   * @private
    */
-  static getCommandsInstanceList(list = this.getCommandsNameList()) {
+  static getCommandsInstances(list = this.getCommandsNameList()) {
     return list.map(commandName => {
       const Command = require(path.join(commandsPath, commandName));
       return new Command(0);
@@ -29,8 +31,9 @@ class HelpParser {
    * @description Returns array of objects with command's name, description and available options
    * @param {Array} commands
    * @returns {Array}
+   * @private
    */
-  static getCommandsDescriptionList(commands) {
+  static getCommandsDescription(commands) {
     return commands.map(command => {
       const options = Object.keys(command._options).map(key => {
         let option = command._options[key];
@@ -48,6 +51,25 @@ class HelpParser {
         options: options
       };
     });
+  }
+
+  /**
+   * Updates metadata with new helper info
+   */
+  static updateMetadata() {
+    const packageContent = require(packageJson);
+    const commands = HelpParser.getCommandsInstances();
+    const commandsDescription = HelpParser.getCommandsDescription(commands);
+
+    const json = {
+      name: packageContent.name,
+      version: packageContent.version,
+      description: packageContent.description,
+      buildDate: (new Date).toISOString(),
+      commands: commandsDescription
+    };
+
+    fs.writeJsonSync(templates.helpMetadata, json, { spaces: 2 });
   }
 
   /**
