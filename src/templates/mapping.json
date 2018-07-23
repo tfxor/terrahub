@@ -48,5 +48,12 @@
     "vpc-subnet": "aws/vpc-subnet"
   },
   "azurerm": {},
-  "google": {}
+  "google": {
+    "project_metadata": "gcp/project_metadata",
+    "project_metadata_item": "gcp/project_metadata_item",
+    "compute_health_check": "gcp/compute_health_check",
+    "compute_network": "gcp/compute_network",
+    "compute_subnetwork": "gcp/compute_subnetwork",
+    "compute_instance_template": "gcp/compute_instance_template"
+  }
 }

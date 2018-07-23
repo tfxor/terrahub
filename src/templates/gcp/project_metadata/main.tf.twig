@@ -1,0 +1,9 @@
+resource "google_compute_project_metadata" "{{ name }}" {
+  project = "${var.project_id}"
+
+  metadata {
+    Name     = "${var.name}"
+    AccOwner = "${var.owner}"
+    Org      = "${var.org}"
+  }
+}

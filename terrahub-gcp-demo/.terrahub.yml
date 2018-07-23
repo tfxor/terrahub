@@ -1,0 +1,8 @@
+project:
+  name: 'terrahub-gcp-demo'
+  code: '22ecb039'
+  provider: 'google'
+
+terraform:
+  varFile:
+    - 'default.tfvars'

@@ -1,0 +1,7 @@
+name: 'project_metadata'
+
+terraform:
+  var:
+    name: 'terrahub-demo'
+    owner: 'vsitnic@gmail.com'
+    org: 'MITOCGROUP'
