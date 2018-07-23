@@ -92,8 +92,7 @@ class Terraform {
     let object = this._tf.var;
 
     Object.keys(object).forEach(name => {
-      // @todo: escape ${object[name]} for double quotes
-      result.push(`-var="${name}=${object[name]}"`);
+      result.push(`-var='${name}=${object[name]}'`);
     });
 
     return result;
@@ -109,7 +108,7 @@ class Terraform {
     let object = this._tf.backend;
 
     Object.keys(object).forEach(name => {
-      result.push(`-backend-config="${name}=${object[name]}"`);
+      result.push(`-backend-config='${name}=${object[name]}'`);
     });
 
     return result;
@@ -124,7 +123,7 @@ class Terraform {
     let result = [];
 
     this._tf.varFile.forEach(fileName => {
-      result.push(`-var-file=${path.join(this.getRoot(), fileName)}`);
+      result.push(`-var-file='${path.join(this.getRoot(), fileName)}'`);
     });
 
     return result;
