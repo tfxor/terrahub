@@ -34,6 +34,8 @@ class TerraformCommand extends AbstractCommand {
       } else if (this._areComponentsReady()) {
         errorMessage = 'Components are not defined. '
           + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
+      } else if (!this._includedComponentsExist()) {
+        errorMessage = 'Some of components were not found';
       }
 
       return (errorMessage) ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
@@ -140,6 +142,18 @@ class TerraformCommand extends AbstractCommand {
    */
   _areComponentsReady() {
     return (this._configLoader.componentsCount() === 0);
+  }
+
+  /**
+   * @returns {Boolean}
+   * @private
+   */
+  _includedComponentsExist() {
+    const cfg = this.getExtendedConfig();
+    const names = Object.keys(cfg).map(hash => cfg[hash].name);
+    const existing = this.getIncludes().filter(includeName => names.includes(includeName));
+
+    return existing.length === this.getIncludes().length;
   }
 }
 
