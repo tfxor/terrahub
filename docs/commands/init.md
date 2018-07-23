@@ -3,7 +3,7 @@
 ```
 Usage: terrahub init [options]
 
-terrahub@0.0.1 (built: Mon Apr 2 12:00:00 EDT 2018)
+terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
 this command will run `terraform init` across multiple terrahub components
 
 Options:
