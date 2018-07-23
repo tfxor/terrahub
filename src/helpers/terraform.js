@@ -188,7 +188,9 @@ class Terraform {
    * @returns {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', ...this._backend(), '.']).then(() => this._reInitPaths());
+    return this
+      .run('init', ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+      .then(() => this._reInitPaths());
   }
 
   /**
@@ -267,7 +269,7 @@ class Terraform {
    */
   plan() {
     let statePath = this._state.getPath();
-    let options = { '-out': this._plan.getPath() };
+    let options = { '-out': this._plan.getPath(), '-input': false };
 
     if (!this._state.isRemote() && fs.existsSync(statePath)) {
       options['-state'] = statePath;
@@ -297,7 +299,7 @@ class Terraform {
       }
     }
 
-    let options = Object.assign({ '-auto-approve': true }, params);
+    let options = Object.assign({ '-auto-approve': true, '-input': false }, params);
 
     return this
       .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
