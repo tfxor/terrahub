@@ -1,10 +1,10 @@
-# terrahub show
+# terrahub output
 
 ```
-Usage: terrahub show [options]
+Usage: terrahub output [options]
 
 terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
-this command will run `terraform show` across multiple terrahub components
+this command will run `terraform output` across multiple terrahub components
 
 Options:
   --env, -e 		 Workspace environment
