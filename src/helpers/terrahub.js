@@ -42,11 +42,11 @@ class Terrahub {
       data['Error'] = error.message;
     }
 
-    if (!config.token) {
-      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
-    }
+    let actionPromise = !config.token
+      ? Promise.resolve()
+      : this._apiCall(this._getEndpoint(), data);
 
-    return this._apiCall(this._getEndpoint(), data).then(() => {
+    return actionPromise.then(() => {
       return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
     });
   }

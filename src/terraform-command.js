@@ -38,7 +38,7 @@ class TerraformCommand extends AbstractCommand {
         errorMessage = 'Some of components were not found';
       }
 
-      return (errorMessage) ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
+      return errorMessage ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
     });
   }
 
