@@ -65,7 +65,7 @@ class Terraform {
    * @returns {String}
    */
   getRoot() {
-    return path.join(this._config.app, this._config.root);
+    return path.join(this._config.project.root, this._config.root);
   }
 
   /**

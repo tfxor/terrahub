@@ -10,9 +10,10 @@ class Terrahub {
    * @param {Object} cfg
    */
   constructor(cfg) {
+    this._runId = process.env.THUB_RUN_ID;
     this._action = '';
     this._config = cfg;
-    this._runId = process.env.THUB_RUN_ID;
+    this._project = cfg.project;
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = toMd5(this._config.root);
@@ -29,8 +30,9 @@ class Terrahub {
     let data = {
       ThubToken: config.token, // required for API
       Action: this._action,
-      ProjectHash: this._config.code,
-      ProjectName: this._config.appName,
+      ProjectHash: this._project.code,
+      ProjectName: this._project.name,
+      ProjectProvider: this._project.provider,
       TerraformRunId: this._runId,
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
@@ -77,7 +79,7 @@ class Terrahub {
       const hookPath = this._config.hooks[this._action][hook];
       const fullPath = path.isAbsolute(hookPath)
         ? hookPath
-        : path.join(this._config.app, hookPath);
+        : path.join(this._project.root, hookPath);
 
       return require(fullPath);
     } catch (err) {
@@ -179,8 +181,8 @@ class Terrahub {
   _awsMetadata() {
     return {
       'x-amz-acl': 'bucket-owner-full-control',
-      'x-amz-meta-thub-code': this._config.code,
-      'x-amz-meta-thub-name': this._config.appName,
+      'x-amz-meta-thub-code': this._project.code,
+      'x-amz-meta-thub-name': this._project.name,
       'x-amz-meta-thub-token': config.token,
       'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action

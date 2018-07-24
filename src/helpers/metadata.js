@@ -10,7 +10,7 @@ class Metadata {
   constructor(config) {
     this._cfg = config;
     this._base = false;
-    this._root = path.join(this._cfg.app, this._cfg.root);
+    this._root = path.join(this._cfg.project.root, this._cfg.root);
 
     this.init();
   }
