@@ -14,7 +14,7 @@ function getComponentBuildTask(config) {
 
     let env = null;
     if (buildConfig.env) {
-      env = buildProcessEnv(buildConfig.env.variables, buildConfig.env["parameter-store"]);
+      env = buildProcessEnv(buildConfig.env.variables, buildConfig.env['parameter-store']);
     }
 
     const commandsList = [];
