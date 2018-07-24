@@ -25,11 +25,8 @@ class Terrahub {
    * @private
    */
   _on(event, err = null) {
-    if (!config.token) {
-      return Promise.resolve();
-    }
-
-    const data = {
+    let error = null;
+    let data = {
       ThubToken: config.token, // required for API
       Action: this._action,
       ProjectHash: this._config.code,
@@ -41,15 +38,16 @@ class Terrahub {
     };
 
     if (err) {
-      data['Error'] = err.message || err;
+      error = new Error(err.message || err);
+      data['Error'] = error.message;
+    }
+
+    if (!config.token) {
+      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
     }
 
     return this._apiCall(this._getEndpoint(), data).then(() => {
-      if (data.hasOwnProperty('Error')) {
-        throw new Error(data.Error);
-      }
-
-      return Promise.resolve();
+      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
     });
   }
 
