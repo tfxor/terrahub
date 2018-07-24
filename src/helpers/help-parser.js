@@ -1,9 +1,9 @@
 'use strict';
 
+const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const { commandsPath, templates, packageJson } = require('../parameters');
-const fs = require('fs-extra');
 
 class HelpParser {
   /**
@@ -41,7 +41,7 @@ class HelpParser {
         if (option.defaultValue === process.cwd()) {
           option.defaultValue = 'Project directory';
         }
-        
+
         return option;
       });
 

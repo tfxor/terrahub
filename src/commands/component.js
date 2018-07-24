@@ -35,6 +35,10 @@ class ComponentCommand extends AbstractCommand {
       throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
     }
 
+    if (directory === process.cwd()) {
+      throw new Error(`Do not configure components in project's root`);
+    }
+
     if (!fse.pathExistsSync(directory)) {
       throw new Error('Can not create because path is invalid');
     }
@@ -67,20 +71,24 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _findExistingComponent() {
-    let cfgPath = path.resolve(process.cwd(), config.fileName);
+    let cfgPath = path.resolve(process.cwd(), `.terrahub.${config.format}`);
     let directory = path.resolve(this.getOption('directory'));
     let componentRoot = this.relativePath(directory);
 
     if (!fs.existsSync(cfgPath)) {
-      throw new Error('Project config not found');
+      throw new Error(`Project's root config not found`);
     }
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);
 
     Object.keys(rawConfig).forEach(key => {
-      if (rawConfig[key].root === componentRoot) {
-        name = key;
+      if ('root' in rawConfig[key]) {
+        rawConfig[key].root = rawConfig[key].root.replace(/\/$/, '');
+
+        if (rawConfig[key].root === componentRoot) {
+          name = key;
+        }
       }
     });
 
