@@ -12,73 +12,54 @@ function getComponentBuildTask(config) {
   return () => new Promise(resolve => {
     const buildConfig = config.build;
 
+    let env = null;
     if (buildConfig.env) {
-      setProcessEnv(buildConfig.env.variables);
-      setProcessEnv(buildConfig.env["parameter-store"]);
+      env = buildProcessEnv(buildConfig.env.variables, buildConfig.env["parameter-store"]);
     }
 
     const commandsList = [];
 
     if (buildConfig.phases) {
-      pushCommandsAndFinally(commandsList, buildConfig.phases.install);
-      pushCommandsAndFinally(commandsList, buildConfig.phases.pre_build);
-      pushCommandsAndFinally(commandsList, buildConfig.phases.build);
-      pushCommandsAndFinally(commandsList, buildConfig.phases.post_build);
+      pushCommandsAndFinally(
+        commandsList,
+        buildConfig.phases.install,
+        buildConfig.phases.pre_build,
+        buildConfig.phases.build,
+        buildConfig.phases.post_build
+      );
     }
 
-    if (buildConfig.artifacts) {
-      if (buildConfig.artifacts.files) {
-        const files = buildConfig.artifacts.files;
-      }
-
-      if (buildConfig.artifacts["discard-paths"]) {
-        const discardPaths = buildConfig.artifacts["discard-paths"];
-      }
-    }
-
-    if (buildConfig.cache && buildConfig.cache.paths) {
-      const cachePaths = buildConfig.cache.paths;
-    }
-
-    resolve(promiseSeries(commandsList.map(it => () => exec(it))));
+    resolve(promiseSeries(commandsList.map(it => () => exec(it, { env: env }))));
   });
 }
 
 /**
- * @param {Object} source
+ * @param {Object} sources
  */
-function setProcessEnv(source) {
-  if (!source) {
-    return;
-  }
+function buildProcessEnv(...sources) {
+  const env = {};
 
-  Object.keys(source).forEach(function (envKey) {
-    process.env[envKey] = source[envKey];
-
-    exec('echo ${' + envKey + '}', { env: { env_key: source[envKey] } }).then(result => {
-      if (result.error) {
-        this.logger.error(result.error);
-      }
-    });
+  sources.forEach(source => {
+    Object.assign(env, source);
   });
+
+  return env;
 }
 
 /**
  * @param {Array} destination
- * @param {Object} source
+ * @param {Object} sources
  */
-function pushCommandsAndFinally(destination, source) {
-  if (!source) {
-    return;
-  }
+function pushCommandsAndFinally(destination, ...sources) {
+  sources.forEach(source => {
+    if (source.commands) {
+      source.commands.forEach(it => destination.push(it));
+    }
 
-  if (source.commands) {
-    source.commands.forEach(it => destination.push(it));
-  }
-
-  if (source.finally) {
-    source.finally.forEach(it => destination.push(it));
-  }
+    if (source.finally) {
+      source.finally.forEach(it => destination.push(it));
+    }
+  });
 }
 
 /**
