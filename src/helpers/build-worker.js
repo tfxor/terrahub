@@ -62,7 +62,9 @@ function getComponentBuildTask(config) {
       );
     }
 
-    resolve(promiseSeries(commandsList.map(it => () => exec(it, { env: env }))));
+    promiseSeries(commandsList.map(it => () => exec(it, { env: env }))).then(() => {
+      resolve();
+    });
   });
 }
 
