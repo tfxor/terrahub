@@ -5,6 +5,39 @@ const { promiseSeries } = require('../helpers/util');
 const { exec } = require('child-process-promise');
 
 /**
+ * @param {Object} sources
+ */
+function buildProcessEnv(...sources) {
+  const env = {};
+
+  sources.forEach(source => {
+    if (source) {
+      Object.assign(env, source);
+    }
+  });
+
+  return env;
+}
+
+/**
+ * @param {Array} destination
+ * @param {Object} sources
+ */
+function pushCommandsAndFinally(destination, ...sources) {
+  sources.forEach(source => {
+    if (source) {
+      if (source.commands) {
+        source.commands.forEach(it => destination.push(it));
+      }
+
+      if (source.finally) {
+        source.finally.forEach(it => destination.push(it));
+      }
+    }
+  });
+}
+
+/**
  * @param {Object} config
  * @return {Function}
  */
@@ -30,35 +63,6 @@ function getComponentBuildTask(config) {
     }
 
     resolve(promiseSeries(commandsList.map(it => () => exec(it, { env: env }))));
-  });
-}
-
-/**
- * @param {Object} sources
- */
-function buildProcessEnv(...sources) {
-  const env = {};
-
-  sources.forEach(source => {
-    Object.assign(env, source);
-  });
-
-  return env;
-}
-
-/**
- * @param {Array} destination
- * @param {Object} sources
- */
-function pushCommandsAndFinally(destination, ...sources) {
-  sources.forEach(source => {
-    if (source.commands) {
-      source.commands.forEach(it => destination.push(it));
-    }
-
-    if (source.finally) {
-      source.finally.forEach(it => destination.push(it));
-    }
   });
 }
 
