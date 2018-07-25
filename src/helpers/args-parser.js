@@ -15,12 +15,16 @@ class ArgsParser {
   /**
    * Convert complex options
    * @param {Boolean|Number|Array|Object} type
-   * @param {String} value
+   * @param {String|Boolean} value
    * @returns {*}
    */
   static convert(type, value) {
     if (value === undefined || value.constructor === type) {
       return value;
+    }
+
+    if (type === String && value.constructor === Boolean) {
+      return undefined;
     }
 
     let result = value;

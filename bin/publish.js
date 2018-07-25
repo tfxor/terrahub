@@ -3,10 +3,9 @@
 'use strict';
 
 const fs = require('fs-extra');
-const { exec } = require('child-process-promise');
 const logger = require('./../src/helpers/logger');
+const { exec } = require('child-process-promise');
 const HelpParser = require('../src/helpers/help-parser');
-const { templates, packageJson } = require('../src/parameters');
 
 /**
  * Argument validation
@@ -86,20 +85,9 @@ function npmVersion() {
  */
 function updateJsonFiles() {
   logger.info('Updating json files');
-  const packageContent = require(packageJson);
-  const commands = HelpParser.getCommandsInstanceList();
+  HelpParser.updateMetadata();
 
-  const json = {
-    name: packageContent.name,
-    version: packageContent.version,
-    description: packageContent.description,
-    buildDate: (new Date).toISOString(),
-    commands: HelpParser.getCommandsDescriptionList(commands)
-  };
-
-  fs.writeJsonSync(templates.helpMetadata, json, { spaces: 2 });
-
-  return Promise.resolve();
+  return Promise.resolve('Done');
 }
 
 /**

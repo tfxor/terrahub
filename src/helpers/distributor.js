@@ -88,7 +88,7 @@ class Distributor {
       worker.kill();
     });
 
-    return (err.constructor === 'Error') ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+    return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 }
 

@@ -10,7 +10,8 @@ class RefreshCommand extends TerraformCommand {
   configure() {
     this
       .setName('refresh')
-      .setDescription( 'run `terraform refresh` across multiple terraform scripts [Not Implemented Yet]')
+      .setDescription('run `terraform refresh` across multiple terrahub components [Not Implemented Yet]')
+    ;
   }
 
   /**

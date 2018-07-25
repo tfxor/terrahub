@@ -10,7 +10,7 @@ class ApplyCommand extends TerraformCommand {
   configure() {
     this
       .setName('apply')
-      .setDescription('run `terraform apply` across multiple terraform scripts')
+      .setDescription('run `terraform apply` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, true)
     ;
   }

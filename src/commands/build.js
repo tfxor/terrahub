@@ -10,7 +10,7 @@ class BuildCommand extends TerraformCommand {
   configure() {
     this
       .setName('build')
-      .setDescription('build software from predefined build.yml config files')
+      .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
     ;
   }
 
