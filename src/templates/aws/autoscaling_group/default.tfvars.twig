@@ -3,25 +3,31 @@
 ############
 # provider #
 ############
-account_id = "123456789012"
-region     = "us-east-1"
+account_id                 = "123456789012"
+region                     = "us-east-1"
 
 #############
 # top level #
 #############
-autoscaling_group_name     = "{{ name }}"
-autoscaling_group_max_size = 5
-autoscaling_group_min_size = 2
+autoscaling_group_name                      = "{{ name }}"
+autoscaling_group_max_size                  = 2
+autoscaling_group_min_size                  = 2
 autoscaling_group_health_check_grace_period = 300
-autoscaling_group_health_check_type = "ELB"
-autoscaling_group_desired_capacity = 4
-autoscaling_group_force_delete = true
-autoscaling_group_timeouts_delete = "15m"
+autoscaling_group_health_check_type         = "ELB"
+autoscaling_group_desired_capacity          = 2
+autoscaling_group_force_delete              = true
+autoscaling_group_timeouts_delete           = "15m"
 
 ########
 # tags #
 ########
-custom_tags  = []
+custom_tags  = [
+  {
+      key                 = "telemetry"
+      value               = "true"
+      propagate_at_launch = true
+    }
+]
 default_tags = [
     {
       key                 = "ThubName"

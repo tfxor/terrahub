@@ -42,8 +42,8 @@ variable "autoscaling_group_force_delete" {
   description = "Allows deleting the autoscaling group without waiting for all instances in the pool to terminate."
 }
 
-variable "autoscaling_group_placement_group" {
-  description = "The name of the placement group into which you'll launch your instances, if any."
+variable "autoscaling_group_timeouts_delete" {
+  description = "Used for destroying ASG."
 }
 
 variable "autoscaling_group_launch_configuration" {
@@ -55,8 +55,9 @@ variable "autoscaling_group_vpc_zone_identifier" {
   description = "A list of subnet IDs to launch resources in."
 }
 
-variable "autoscaling_group_timeouts_delete" {
-  description = "Used for destroying ASG."
+variable "autoscaling_group_load_balancers" {
+  type        = "list"
+  description = "A list of elastic load balancer names to add to the autoscaling group names. Only valid for classic load balancers. For ALBs, use target_group_arns instead."
 }
 
 ########
