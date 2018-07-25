@@ -32,8 +32,8 @@ class TerraformCommand extends AbstractCommand {
         errorMessage = 'Configuration file not found. '
           + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
       } else if (this._areComponentsReady()) {
-        errorMessage = 'Components are not defined. '
-          + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
+        errorMessage = 'No components defined in configuration file. '
+          + 'Please create new component or include existing one with `terrahub component`';
       } else if (!this._includedComponentsExist()) {
         errorMessage = 'Some of components were not found';
       }

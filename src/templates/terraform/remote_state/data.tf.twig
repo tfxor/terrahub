@@ -1,7 +1,18 @@
-# Define list of variables to be used in main.tf
-
 ################
 # backend data #
+################
+data "terraform_remote_state" "{{ name }}" {
+  backend = "s3"
+  config {
+    region  = "${var.backend_region}"
+    bucket  = "${var.backend_bucket}"
+    key     = "${var.backend_key}"
+    encrypt = "${var.backend_encrypt}"
+  }
+}
+
+################
+# backend vars #
 ################
 variable "backend_region" {
   description = "AWS region where terraform.tfstate is stored"
