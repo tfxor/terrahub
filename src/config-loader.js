@@ -51,6 +51,10 @@ class ConfigLoader {
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
 
       delete this._rootConfig['project'];
+    } else {
+      this._rootPath = false;
+      this._rootConfig = {};
+      this._projectConfig = {};
     }
   }
 
@@ -92,14 +96,6 @@ class ConfigLoader {
     const searchPath = dir || this.appPath();
 
     return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
-  }
-
-  /**
-   * Check if project is configured
-   * @returns {Boolean}
-   */
-  isProjectConfigured() {
-    return this._projectConfig.hasOwnProperty('name');
   }
 
   /**
@@ -179,6 +175,26 @@ class ConfigLoader {
    */
   relativePath(fullPath) {
     return fullPath.replace(this.appPath(), '.');
+  }
+
+  /**
+   * @param {String} key
+   * @param {String} value
+   */
+  addToGlobalConfig(key, value) {
+    const cfgPath = path.join(this._rootPath, config.defaultFileName);
+    const cfg = ConfigLoader.readConfig(cfgPath);
+
+    cfg.project[key] = value;
+
+    ConfigLoader.writeConfig(cfg, cfgPath);
+  }
+
+  /**
+   * Updates root cofnig
+   */
+  updateRootConfig() {
+    this._readRoot();
   }
 
   /**

@@ -71,7 +71,7 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _findExistingComponent() {
-    let cfgPath = path.resolve(process.cwd(), `.terrahub.${config.format}`);
+    let cfgPath = path.resolve(process.cwd(), config.defaultFileName);
     let directory = path.resolve(this.getOption('directory'));
     let componentRoot = this.relativePath(directory);
 
