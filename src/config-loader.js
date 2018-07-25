@@ -51,6 +51,10 @@ class ConfigLoader {
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
 
       delete this._rootConfig['project'];
+    } else {
+      this._rootPath = false;
+      this._rootConfig = {};
+      this._projectConfig = {};
     }
   }
 
@@ -92,26 +96,6 @@ class ConfigLoader {
     const searchPath = dir || this.appPath();
 
     return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
-  }
-
-  /**
-   * Returns what required project data is missing
-   * @return {String|null}
-   */
-  getProjectDataMissing() {
-    if (!this._projectConfig.hasOwnProperty('root')) {
-      return 'config';
-    }
-
-    if (!this._projectConfig.hasOwnProperty('name')) {
-      return 'name';
-    }
-
-    if (!this._projectConfig.hasOwnProperty('code')) {
-      return 'code';
-    }
-
-    return null;
   }
 
   /**
@@ -191,6 +175,26 @@ class ConfigLoader {
    */
   relativePath(fullPath) {
     return fullPath.replace(this.appPath(), '.');
+  }
+
+  /**
+   * @param {String} key
+   * @param {String} value
+   */
+  addToGlobalConfig(key, value) {
+    const cfgPath = path.join(this._rootPath, config.defaultFileName);
+    const cfg = ConfigLoader.readConfig(cfgPath);
+
+    cfg.project[key] = value;
+
+    ConfigLoader.writeConfig(cfg, cfgPath);
+  }
+
+  /**
+   * Updates root cofnig
+   */
+  updateRootConfig() {
+    this._readRoot();
   }
 
   /**

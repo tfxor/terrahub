@@ -2,7 +2,7 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { familyTree, extend, uuid } = require('./helpers/util');
+const { familyTree, extend, uuid, askQuestion, toMd5 } = require('./helpers/util');
 
 /**
  * @abstract
@@ -28,14 +28,29 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(() => {
       let errorMessage = '';
 
-      const missingProjectData = this._getProjectDataMissing();
+      const projectConfig = this._configLoader.getProjectConfig();
+
+      const missingProjectData = this._getProjectDataMissing(projectConfig);
 
       if (missingProjectData === 'config') {
         errorMessage = 'Configuration file not found. '
           + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
       } else if (missingProjectData) {
-        errorMessage = `Configuration file doesn\'t contain required field: project ${missingProjectData}. `
-          + `Please add project ${missingProjectData} field with the corresponding value'`;
+        return askQuestion(`Global config is missing project ${missingProjectData}. `
+          + `Please provide value (e.g. ${missingProjectData === 'code' ?
+            this._code(projectConfig.name, projectConfig.provider) : 'thub-demo'}): `
+        ).then(answer => {
+
+          try {
+            this._configLoader.addToGlobalConfig(missingProjectData, answer);
+          } catch (error) {
+          }
+
+          this._configLoader.updateRootConfig();
+
+          return this.validate();
+        });
+
       } else if (this._areComponentsReady()) {
         errorMessage = 'Components are not defined. '
           + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
@@ -134,19 +149,42 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * Return name of the required field missing in project data
+   * @return {String|null}
+   * @private
+   */
+  _getProjectDataMissing(projectConfig) {
+    if (!projectConfig.hasOwnProperty('root')) {
+      return 'config';
+    }
+
+    if (!projectConfig.hasOwnProperty('name')) {
+      return 'name';
+    }
+
+    if (!projectConfig.hasOwnProperty('code')) {
+      return 'code';
+    }
+
+    return null;
+  }
+
+  /**
+   * @param {String} name
+   * @param {String} provider
+   * @return {String}
+   * @private
+   */
+  _code(name, provider) {
+    return toMd5(name + provider).slice(0, 8);
+  }
+
+  /**
    * @returns {Boolean}
    * @private
    */
   _areComponentsReady() {
     return (this._configLoader.componentsCount() === 0);
-  }
-
-  /**
-   * @return {String|null}
-   * @private
-   */
-  _getProjectDataMissing() {
-    return this._configLoader.getProjectDataMissing();
   }
 
   /**
