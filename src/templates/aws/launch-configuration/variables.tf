@@ -11,35 +11,11 @@ variable "region" {
   description = "This is the AWS region."
 }
 
-variable "env" {
-  description = "The name of environment."
-}
-
-variable "cloud_domain" {
-  description = "The name of cloud domain."
-}
-
-variable "prod_phase" {
-  description = "The prod phase."
-}
-
-variable "stack" {
-  description = "The stack."
-}
-
-variable "security_group_vpc_name" {
-  description = "The VPC NAME."
-}
-
 #############
 # top level #
 #############
 variable "launch_configuration_name" {
   description = "The name of the launch configuration. If you leave this blank, Terraform will auto-generate a unique name."
-}
-
-variable "launch_configuration_name_prefix" {
-  description = "Creates a unique name beginning with the specified prefix. Conflicts with name."
 }
 
 variable "launch_configuration_image_id" {
@@ -48,6 +24,15 @@ variable "launch_configuration_image_id" {
 
 variable "launch_configuration_instance_type" {
   description = "The size of instance to launch."
+}
+
+variable "launch_configuration_iam_instance_profile" {
+  description = "The IAM instance profile to associate with launched instances."
+}
+
+variable "launch_configuration_security_groups" {
+  type        = "list"
+  description = "A list of associated security group IDS."
 }
 
 variable "launch_configuration_key_name" {

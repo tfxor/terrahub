@@ -1,9 +1,8 @@
 resource "aws_elb" "{{ name }}" {
   name            = "${var.elb_name}"
-  name_prefix     = "${var.elb_name_prefix}"
   internal        = "${var.elb_internal}"
-  subnets         = ["${data.aws_subnet.subnet_internal_0.id}","${data.aws_subnet.subnet_internal_1.id}"]
-  security_groups = ["${data.terraform_remote_state.sg.id}"]
+  subnets         = ["${var.elb_subnets}"]
+  security_groups = ["${var.elb_security_groups}"]
 
   listener {
     instance_port     = "${var.elb_instance_port}"

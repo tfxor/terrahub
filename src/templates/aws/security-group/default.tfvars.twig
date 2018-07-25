@@ -3,17 +3,14 @@
 ############
 # provider #
 ############
-account_id = "588360414558"
-region     = "us-west-2"
-env        = "prod"
+account_id                 = "123456789012"
+region                     = "us-east-1"
 
 #############
 # top level #
 #############
 security_group_name        = "{{ name }}"
-security_group_name_prefix = "steam-"
 security_group_description = "{{ name }} - Managed by TerraHub"
-security_group_vpc_name    = "share"
 
 ########
 # tags #
@@ -21,7 +18,7 @@ security_group_vpc_name    = "share"
 custom_tags  = {}
 default_tags = {
   "ThubName"    = "{{ name }}"
-  "ThubCode"    = "8df5513d"
+  "ThubCode"    = "{{ code }}"
   "ThubEnv"     = "default"
   "Description" = "Managed by TerraHub"
 }

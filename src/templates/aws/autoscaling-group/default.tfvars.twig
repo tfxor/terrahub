@@ -5,19 +5,16 @@
 ############
 account_id                 = "123456789012"
 region                     = "us-east-1"
-env                        = "prod"
-security_group_vpc_name    = "share"
 
 #############
 # top level #
 #############
 autoscaling_group_name                      = "{{ name }}"
-autoscaling_group_name_prefix               = "steam-"
 autoscaling_group_max_size                  = 2
 autoscaling_group_min_size                  = 2
 autoscaling_group_health_check_grace_period = 300
 autoscaling_group_health_check_type         = "ELB"
-autoscaling_group_desired_capacity          = 4
+autoscaling_group_desired_capacity          = 2
 autoscaling_group_force_delete              = true
 autoscaling_group_timeouts_delete           = "15m"
 
@@ -26,38 +23,8 @@ autoscaling_group_timeouts_delete           = "15m"
 ########
 custom_tags  = [
   {
-      key                 = "tr:appFamil"
-      value               = "steam"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "tr:appName"
-      value               = "steam"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "tr:appidentifier"
-      value               = "app"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "ca:owner"
-      value               = "sanjay.lahurikar@Clarivate.com"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "tr:environment-type"
-      value               = "prod"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "ca:tier"
-      value               = "steam"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "tr:Role"
-      value               = "ec2"
+      key                 = "telemetry"
+      value               = "true"
       propagate_at_launch = true
     }
 ]

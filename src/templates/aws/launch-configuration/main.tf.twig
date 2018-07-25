@@ -1,10 +1,9 @@
 resource "aws_launch_configuration" "{{ name }}" {
   name                        = "${var.launch_configuration_name}-${var.region}"
-  name_prefix                 = "${var.launch_configuration_name_prefix}"
   image_id                    = "${var.launch_configuration_image_id}"
   instance_type               = "${var.launch_configuration_instance_type}"
-  iam_instance_profile        = "${data.terraform_remote_state.iam.name}"
-  security_groups             = ["${data.aws_security_group.security_group_vpc.id}","${data.terraform_remote_state.sg.id}"]
+  iam_instance_profile        = "${var.launch_configuration_iam_instance_profile}"
+  security_groups             = ["${var.launch_configuration_security_groups}"]
   key_name                    = "${var.launch_configuration_key_name}"
   user_data                   = "${data.template_file.user_data.rendered}"
 }

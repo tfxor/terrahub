@@ -3,16 +3,13 @@
 ############
 # provider #
 ############
-account_id                 = "588360414558"
-region                     = "us-west-2"
-env                        = "prod"
-security_group_vpc_name    = "share"
+account_id                 = "123456789012"
+region                     = "us-east-1"
 
 #############
 # top level #
 #############
 elb_name        = "{{ name }}"
-elb_name_prefix = "steam-"
 elb_internal    = true
 
 elb_cross_zone_load_balancing   = true
@@ -23,9 +20,9 @@ elb_connection_draining_timeout = 400
 ############
 # listener #
 ############
-elb_instance_port     = 
+elb_instance_port     = 80
 elb_instance_protocol = "TCP"
-elb_lb_port           =
+elb_lb_port           = 80
 elb_lb_protocol       = "TCP"
 
 ################

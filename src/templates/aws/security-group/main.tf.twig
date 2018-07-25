@@ -1,8 +1,7 @@
 resource "aws_security_group" "{{ name }}" {
   name        = "${var.security_group_name}"
-  name_prefix = "${var.security_group_name_prefix}"
   description = "${var.security_group_description}"
-  vpc_id      = "${data.aws_vpc.selected.id}"
+  vpc_id      = "${var.security_group_vpc_id}"
 
   tags = "${merge(var.default_tags, var.custom_tags)}"
 }

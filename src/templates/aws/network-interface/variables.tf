@@ -14,16 +14,13 @@ variable "region" {
 #############
 # top level #
 #############
-variable "security_group_name" {
-  description = "The name of the security group."
+variable "network_interface_subnet_id" {
+  description = "Subnet ID the ENI is in."
 }
 
-variable "security_group_description" {
-  description = "The security group description."
-}
-
-variable "security_group_vpc_id" {
-  description = "The VPC ID."
+variable "network_interface_security_groups" {
+  type        = "list"
+  description = "List of security groups attached to the ENI."
 }
 
 ########
