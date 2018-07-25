@@ -2,7 +2,7 @@
   "name": "terrahub",
   "version": "0.0.16",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-23T19:50:39.864Z",
+  "buildDate": "2018-07-25T15:57:50.675Z",
   "commands": [
     {
       "name": "apply",
@@ -96,7 +96,7 @@
     },
     {
       "name": "component",
-      "description": "include existing terraform configuration into current terrahub project",
+      "description": "create new or include existing terraform configuration into current terrahub project",
       "options": [
         {
           "name": "name",
@@ -285,7 +285,7 @@
     },
     {
       "name": "list",
-      "description": "list projects > cloud accounts > regions > services > resources",
+      "description": "list cloud resources by projects > accounts > regions > services > resources",
       "options": [
         {
           "name": "depth",
@@ -333,7 +333,7 @@
     },
     {
       "name": "output",
-      "description": "run `terraform output` across multiple terraform components",
+      "description": "run `terraform output` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -494,7 +494,7 @@
     },
     {
       "name": "run",
-      "description": "run automated workflow terraform init > workspace > plan > apply > destroy",
+      "description": "execute automated workflow terraform init > workspace > plan > apply > destroy",
       "options": [
         {
           "name": "apply",

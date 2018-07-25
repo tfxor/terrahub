@@ -14,6 +14,7 @@
     "aws_ami_launch_permission": "aws/amilaunch_permission",
     "aws_api_gateway_deployment": "aws/api_gateway_deployment",
     "aws_api_gateway_integration": "aws/api_gateway_integration",
+    "aws_api_gateway_integration_response": "aws/api_gateway_integration_response",
     "aws_api_gateway_key": "aws/api_gateway_key",
     "aws_api_gateway_method": "aws/api_gateway_method",
     "aws_api_gateway_method_response": "aws/api_gateway_method_response",

@@ -19,21 +19,23 @@ or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 | Command | Description | Status |
 | :---:   | :---        | :---:  |
-| [apply](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
-| [build](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
-| [component](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/component.md) | include existing terraform configuration into current terrahub project | :heavy_check_mark: |
-| [create](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/create.md) | create terrahub component with terraform configuration from terrahub templates | :heavy_check_mark: |
-| [destroy](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/destroy.md) | run `terraform destroy` across multiple terrahub components | :heavy_check_mark: |
+|| **terrahub management** ||
+| [project](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/project.md) | create or update project that manages terraform configuration | :heavy_check_mark: |
+| [component](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
 | [graph](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/graph.md) | show the graph of dependencies between terrahub components | :heavy_check_mark: |
+|| **terraform execution** ||
+| [apply](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
+| [destroy](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/destroy.md) | run `terraform destroy` across multiple terrahub components | :heavy_check_mark: |
 | [init](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
-| [list](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/list.md) | list projects > cloud accounts > regions > services > resources | :heavy_check_mark: |
 | [output](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
-| [project](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/project.md) | create or update project that manages terraform configuration | :heavy_check_mark: |
-| [run](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/run.md) | run automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
 | [refresh](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :x: |
 | [show](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
+|| **cloud automation** ||
+| [build](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
+| [run](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/run.md) | execute automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
+| [list](https://github.com/MitocGroup/terrahub/blob/master/docs/commands/list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
 
 
 ## [Structure](https://github.com/MitocGroup/terrahub/blob/master/docs/structure.md)
