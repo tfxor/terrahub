@@ -1,6 +1,6 @@
 # Feature #2
 
-## Simplify and distribute the way terraform code is executed
+## Simplify and distribute the way terraform configuration is executed
 ```
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .

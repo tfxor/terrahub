@@ -1,6 +1,6 @@
 # Feature #1
 
-## Make it easier and faster to create reusable terraform code
+## Make it easier and faster to create reusable terraform configuration
 ```
 $ mkdir ./thub-demo && cd ./thub-demo
 

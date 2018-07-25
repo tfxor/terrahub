@@ -9,7 +9,7 @@ class ShowCommand extends TerraformCommand {
   configure() {
     this
       .setName('show')
-      .setDescription('run `terraform show` across multiple terraform scripts [Not Implemented Yet]')
+      .setDescription('run `terraform show` across multiple terrahub components [Not Implemented Yet]')
     ;
   }
 }

@@ -2,11 +2,11 @@
   "name": "terrahub",
   "version": "0.0.16",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-20T19:15:39.787Z",
+  "buildDate": "2018-07-23T19:50:39.864Z",
   "commands": [
     {
       "name": "apply",
-      "description": "run `terraform apply` across multiple terraform scripts",
+      "description": "run `terraform apply` across multiple terrahub components",
       "options": [
         {
           "name": "auto-approve",
@@ -54,7 +54,7 @@
     },
     {
       "name": "build",
-      "description": "build software from predefined build.yml config files",
+      "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
       "options": [
         {
           "name": "include",
@@ -96,7 +96,7 @@
     },
     {
       "name": "component",
-      "description": "include existing terraform folder into current project",
+      "description": "include existing terraform configuration into current terrahub project",
       "options": [
         {
           "name": "name",
@@ -131,7 +131,7 @@
     },
     {
       "name": "create",
-      "description": "create terraform code from predefined templates",
+      "description": "create terrahub component with terraform configuration from terrahub templates",
       "options": [
         {
           "name": "name",
@@ -176,26 +176,8 @@
       ]
     },
     {
-      "name": "deploy",
-      "description": "deploy software from predefined deploy.yml config files [Not Implemented Yet]",
-      "options": [
-        {
-          "name": "env",
-          "shortcut": "e",
-          "description": "Workspace environment",
-          "defaultValue": "default"
-        },
-        {
-          "name": "help",
-          "shortcut": "h",
-          "description": "Show list of available commands",
-          "defaultValue": false
-        }
-      ]
-    },
-    {
       "name": "destroy",
-      "description": "run `terraform destroy` across multiple terraform scripts",
+      "description": "run `terraform destroy` across multiple terrahub components",
       "options": [
         {
           "name": "auto-approve",
@@ -261,7 +243,7 @@
     },
     {
       "name": "init",
-      "description": "run `terraform init` across multiple terraform scripts",
+      "description": "run `terraform init` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -393,7 +375,7 @@
     },
     {
       "name": "plan",
-      "description": "run `terraform plan` across multiple terraform scripts",
+      "description": "run `terraform plan` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -435,7 +417,7 @@
     },
     {
       "name": "project",
-      "description": "create or update project that manages multiple terraform scripts",
+      "description": "create or update project that manages terraform configuration",
       "options": [
         {
           "name": "name",
@@ -470,7 +452,7 @@
     },
     {
       "name": "refresh",
-      "description": "run `terraform refresh` across multiple terraform scripts [Not Implemented Yet]",
+      "description": "run `terraform refresh` across multiple terrahub components [Not Implemented Yet]",
       "options": [
         {
           "name": "include",
@@ -572,7 +554,7 @@
     },
     {
       "name": "show",
-      "description": "run `terraform show` across multiple terraform scripts [Not Implemented Yet]",
+      "description": "run `terraform show` across multiple terrahub components [Not Implemented Yet]",
       "options": [
         {
           "name": "include",
@@ -614,7 +596,7 @@
     },
     {
       "name": "workspace",
-      "description": "run `terraform workspace` across multiple terraform scripts",
+      "description": "run `terraform workspace` across multiple terrahub components",
       "options": [
         {
           "name": "delete",
