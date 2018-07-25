@@ -1,8 +1,21 @@
+## global config
 project:
   name: '{{ name }}'
   code: '{{ code }}'
   provider: '{{ provider }}'
 
+## terraform config
 terraform:
   varFile:
     - 'default.tfvars'
+#   var:
+#     region: us-east-1
+#     account_id: 123456789012
+#   backend:
+#     region: us-east-1
+#     bucket: data-lake-terrahub-us-east-1
+#     key: path/to/terraform.tfstate
+#     workspace_key_prefix: prefix/for/key/above/when/using/workspace
+#     dynamodb_table: tfstate_lock # MUST USE LockID as primary key
+#     encrypt: false
+#   version: 0.11.7
