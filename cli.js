@@ -1,1 +1,0 @@
-./terrahub/bin/cli.js
