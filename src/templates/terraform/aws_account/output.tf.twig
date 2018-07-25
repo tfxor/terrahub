@@ -1,0 +1,11 @@
+output "account_id" {
+  value = "${data.aws_caller_identity.{{ name }}.account_id}"
+}
+
+output "account_arn" {
+  value = "${data.aws_caller_identity.{{ name }}.arn}"
+}
+
+output "user_id" {
+  value = "${data.aws_caller_identity.{{ name }}.user_id}"
+}
