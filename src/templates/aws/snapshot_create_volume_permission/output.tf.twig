@@ -1,0 +1,5 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_snapshot_create_volume_permission.{{ name }}.id}"
+}
