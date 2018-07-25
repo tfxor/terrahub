@@ -1,0 +1,26 @@
+resource "aws_instance" "{{ name }}" {
+  ami                     = "${var.instance_ami}"
+  instance_type           = "${var.instance_instance_type}"
+  key_name                = "${var.instance_key_name}"
+  iam_instance_profile    = "${var.instance_iam_instance_profile}"
+
+  vpc_security_group_ids = ["${var.instance_vpc_security_group_ids}"]
+  subnet_id              = "${var.instance_subnet_id}"
+
+  associate_public_ip_address = "${var.instance_associate_public_ip_address}"
+
+  ebs_block_device{
+      device_name           = "${var.instance_ebs_device_name}"
+      volume_type           = "${var.instance_ebs_volume_type}"
+      volume_size           = "${var.instance_ebs_volume_size}"
+      delete_on_termination = "${var.instance_ebs_delete_on_termination}"
+      encrypted             = "${var.instance_ebs_encrypted}"
+  }
+
+  ebs_optimized           = "${var.instance_ebs_optimized}"
+  disable_api_termination = "${var.instance_disable_api_termination}"
+  user_data               = "${data.template_file.user_data.rendered}"
+  monitoring              = "${var.instance_monitoring}"
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}
