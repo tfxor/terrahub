@@ -13,12 +13,12 @@ Provides an AutoScaling Group resource.
 |autoscaling_group_min_size|The minimum size of the auto scale group.|number|2|No|
 |autoscaling_group_health_check_grace_period|Time (in seconds) after instance comes into service before checking health.|number|300|No|
 |autoscaling_group_health_check_type|Controls how health checking is done.|string|ELB|No|
-|autoscaling_group_desired_capacity|The number of Amazon EC2 instances that should be running in the group.|number|4|No|
+|autoscaling_group_desired_capacity|The number of Amazon EC2 instances that should be running in the group.|number|2|No|
 |autoscaling_group_force_delete|Allows deleting the autoscaling group without waiting for all instances in the pool to terminate.|boolean|true|No|
-|autoscaling_group_placement_group|The name of the placement group into which you'll launch your instances, if any.|string||Yes|
+|autoscaling_group_timeouts_delete|Used for destroying ASG.|string|15m|No|
 |autoscaling_group_launch_configuration|The name of the launch configuration to use.|string||Yes|
 |autoscaling_group_vpc_zone_identifier|A list of subnet IDs to launch resources in.|list||Yes|
-|autoscaling_group_timeouts_delete|Used for destroying ASG.|string|15m|No|
+|autoscaling_group_load_balancers|A list of elastic load balancer names to add to the autoscaling group names. Only valid for classic load balancers. For ALBs, use target_group_arns instead.|list||Yes|
 |custom_tags|Custom tags.|list||No|
 |default_tags|Default tags.|list|[{key = "ThubName" value= "{{ name }}" propagate_at_launch = true},{key = "ThubCode" value = "{{ code }}" propagate_at_launch = true}, {key = "ThubEnv" value = "default" propagate_at_launch = true},{ key = "Description" value = "Managed by TerraHub" propagate_at_launch = true}]|No|
 

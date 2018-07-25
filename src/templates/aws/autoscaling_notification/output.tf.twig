@@ -1,0 +1,13 @@
+# Define list of variables to be output
+
+output "group_names" {
+  value = "${aws_autoscaling_notification.{{ name }}.group_names}"
+}
+
+output "notifications" {
+  value = "${aws_autoscaling_notification.{{ name }}.notifications}"
+}
+
+output "topic_arn" {
+  value = "${aws_autoscaling_notification.{{ name }}.topic_arn}"
+}

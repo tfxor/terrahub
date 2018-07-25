@@ -1,20 +1,14 @@
-resource "random_string" "hash" {
-  length  = 16
-  special = false
-}
-
 resource "aws_autoscaling_group" "{{ name }}" {
   name                      = "${var.autoscaling_group_name}"
-  name_prefix               = "${random_string.hash.result}"
   max_size                  = "${var.autoscaling_group_max_size}"
   min_size                  = "${var.autoscaling_group_min_size}"
   health_check_grace_period = "${var.autoscaling_group_health_check_grace_period}"
   health_check_type         = "${var.autoscaling_group_health_check_type}"
   desired_capacity          = "${var.autoscaling_group_desired_capacity}"
   force_delete              = "${var.autoscaling_group_force_delete}"
-  placement_group           = "${var.autoscaling_group_placement_group}"
   launch_configuration      = "${var.autoscaling_group_launch_configuration}"
   vpc_zone_identifier       = ["${var.autoscaling_group_vpc_zone_identifier}"]
+  load_balancers            = ["${var.autoscaling_group_load_balancers}"]
 
   timeouts {
     delete = "${var.autoscaling_group_timeouts_delete}"
