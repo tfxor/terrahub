@@ -90,9 +90,6 @@ class Help extends AbstractCommand {
       });
     }
 
-    // console.log(JSON.stringify(variables.categories, null, 2));
-
-    // return Promise.resolve();
     return renderTwig(template, variables).then(result => {
       this.logger.log(result);
     });
