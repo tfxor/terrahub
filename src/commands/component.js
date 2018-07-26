@@ -1,12 +1,12 @@
 'use strict';
 
-const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const { config } = require('../parameters');
+const glob = require('glob');
 const ConfigLoader = require('../config-loader');
+const { config, templates } = require('../parameters');
+const { renderTwig, isAwsNameValid, extend } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { isAwsNameValid, extend } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -16,9 +16,11 @@ class ComponentCommand extends AbstractCommand {
     this
       .setName('component')
       .setDescription('create new or include existing terraform configuration into current terrahub project')
-      .addOption('name', 'n', 'Component name', String)
+      .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
+      .addOption('template', 't', 'Template name (e.g. aws_s3_bucket, aws_lambda_function)', String, '')
+      .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
       .addOption('parent', 'p', 'Parent component path', String, '')
-      .addOption('directory', 'd', 'Path to existing component (default: cwd)', String, process.cwd())
+      .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
     ;
   }
 
@@ -26,32 +28,44 @@ class ComponentCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    const name = this.getOption('name');
-    const parent = this.getOption('parent');
-    const directory = path.resolve(this.getOption('directory'));
-    const existing = this._findExistingComponent();
+    this._name = this.getOption('name');
+    this._template = this.getOption('template');
+    this._directory = this.getOption('directory');
+    this._parent = this.getOption('parent');
+    this._force = this.getOption('force');
 
-    if (!isAwsNameValid(name)) {
+    if (!isAwsNameValid(this._name)) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    if (directory === process.cwd()) {
-      throw new Error(`Configuring components in project's root is NOT allowed.`);
-    }
+    return this._template ? this._createNewComponent() : this._addExistingComponent();
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _addExistingComponent() {
+    const directory = path.resolve(this._directory);
+
+    const existing = this._findExistingComponent();
 
     if (!fse.pathExistsSync(directory)) {
-      throw new Error(`Cannot create '${directory}' because path is invalid.`);
+      throw new Error(`Couldn\'t create '${directory}' because path is invalid.`);
     }
 
     let outFile = path.join(directory, config.fileName);
-    let component = { name };
+    let component = { name: this._name };
 
-    if (parent) {
-      component['parent'] = parent;
+    if (this._parent) {
+      component['parent'] = this._parent;
     }
 
-    if (fs.existsSync(outFile)) {
-      throw new Error(`Couldn't create terrahub component because it already exists.`);
+    if (fse.pathExistsSync(outFile)) {
+      const config = ConfigLoader.readConfig(outFile);
+
+      throw new Error(config.project ? 'Configuring components in project\'s root is NOT allowed.'
+        : 'Couldn\'t create because terraform component already exists');
     }
 
     if (existing.name) {
@@ -67,15 +81,46 @@ class ComponentCommand extends AbstractCommand {
   }
 
   /**
+   * @return {Promise}
+   * @private
+   */
+  _createNewComponent() {
+    const { code } = this.getProjectConfig();
+    const directory = path.resolve(this._directory, this._name);
+    const templatePath = this._getTemplatePath();
+
+    if (!this._force && fse.pathExistsSync(directory)) {
+      this.logger.warn(`Component '${this._name}' already exists`);
+      return Promise.resolve();
+    }
+
+    return Promise.all(
+      glob.sync('**', { cwd: templatePath, nodir: true, dot: true }).map(file => {
+        const twigReg = /\.twig$/;
+        const outFile = path.join(directory, file);
+        const srcFile = path.join(templatePath, file);
+
+        return twigReg.test(srcFile)
+          ? renderTwig(srcFile, { name: this._name, code: code }, outFile.replace(twigReg, ''))
+          : fse.copy(srcFile, outFile);
+      })
+    ).then(() => {
+      const srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
+      const outFile = path.join(directory, config.defaultFileName);
+
+      return renderTwig(srcFile, { name: this._name, parent: this._parent }, outFile);
+    }).then(() => 'Done');
+  }
+
+  /**
    * @returns {Object}
    * @private
    */
   _findExistingComponent() {
     let cfgPath = path.resolve(process.cwd(), config.defaultFileName);
-    let directory = path.resolve(this.getOption('directory'));
-    let componentRoot = this.relativePath(directory);
+    let componentRoot = this.relativePath(this._directory);
 
-    if (!fs.existsSync(cfgPath)) {
+    if (!fse.pathExistsSync(cfgPath)) {
       throw new Error(`Project's root config not found`);
     }
 
@@ -93,6 +138,22 @@ class ComponentCommand extends AbstractCommand {
     });
 
     return { name: name, path: cfgPath, config: rawConfig };
+  }
+
+  /**
+   * @returns {String}
+   * @private
+   */
+  _getTemplatePath() {
+    const { provider } = this.getProjectConfig();
+
+    const mapping = require(templates.mapping)[provider];
+
+    if (!Object.keys(mapping).includes(this._template)) {
+      throw new Error(`${this._template} is not supported`);
+    }
+
+    return path.join(path.dirname(templates.mapping), mapping[this._template]);
   }
 }
 
