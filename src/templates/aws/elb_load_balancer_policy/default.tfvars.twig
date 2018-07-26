@@ -1,0 +1,20 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id = "123456789012"
+region     = "us-east-1"
+
+#############
+# top level #
+#############
+lb_policy_type_name = "SSLNegotiationPolicyType"
+lb_policy_attribute = {
+    name  = "Protocol-TLSv1.2"
+    value = "true"
+  }
+
+##########
+# custom #
+##########

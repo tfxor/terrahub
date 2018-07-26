@@ -1,0 +1,6 @@
+resource "aws_lb_cookie_stickiness_policy" "{{ name }}" {
+  name                     = "${var.lb_cookie_stickiness_policy_name}"
+  load_balancer            = "${var.lb_cookie_stickiness_policy_load_balancer}"
+  lb_port                  = "${var.lb_cookie_stickiness_policy_lb_port}"
+  cookie_expiration_period = "${var.lb_cookie_expiration_period}"
+}

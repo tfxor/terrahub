@@ -1,0 +1,6 @@
+resource "aws_load_balancer_backend_server_policy" "{{ name }}" {
+  load_balancer_name = "${var.load_balancer_backend_server_policy_load_balancer_name}"
+  instance_port      = "${var.load_balancer_backend_server_policy_instance_port}"
+
+  policy_names = ["${var.load_balancer_backend_server_policy_names}"]
+}

@@ -1,0 +1,4 @@
+resource "aws_spot_datafeed_subscription" "{{ name }}" {
+  bucket = "${var.spot_datafeed_subscription_bucket}"
+  prefix = "${var.spot_datafeed_subscription_prefix}"
+}

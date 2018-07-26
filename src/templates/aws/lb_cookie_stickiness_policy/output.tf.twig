@@ -1,0 +1,21 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_lb_cookie_stickiness_policy.{{ name }}.id}"
+}
+
+output "name" {
+  value = "${aws_lb_cookie_stickiness_policy.{{ name }}.name}"
+}
+
+output "load_balancer" {
+  value = "${aws_lb_cookie_stickiness_policy.{{ name }}.load_balancer}"
+}
+
+output "lb_port" {
+  value = "${aws_lb_cookie_stickiness_policy.{{ name }}.lb_port}"
+}
+
+output "cookie_expiration_period" {
+  value = "${aws_lb_cookie_stickiness_policy.{{ name }}.cookie_expiration_period}"
+}
