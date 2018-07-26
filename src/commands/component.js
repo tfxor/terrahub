@@ -17,7 +17,7 @@ class ComponentCommand extends AbstractCommand {
       .setName('component')
       .setDescription('create new or include existing terraform configuration into current terrahub project')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
-      .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String, '')
+      .addOption('template', 't', 'Template name (e.g. aws_s3_bucket, aws_lambda_function)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
       .addOption('parent', 'p', 'Parent component path', String, '')
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
