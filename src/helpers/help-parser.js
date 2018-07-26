@@ -1,8 +1,9 @@
 'use strict';
 
+const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
-const { commandsPath, templates } = require('../parameters');
+const { commandsPath, templates, packageJson } = require('../parameters');
 
 class HelpParser {
   /**
@@ -17,50 +18,58 @@ class HelpParser {
    * @description Returns array of instances of all commands in the project
    * @param {Array} list
    * @returns {Array}
+   * @private
    */
-  static getCommandsInstanceList(list = this.getCommandsNameList()) {
-    const commands = [];
-    list.forEach((commandName) => {
+  static getCommandsInstances(list = this.getCommandsNameList()) {
+    return list.map(commandName => {
       const Command = require(path.join(commandsPath, commandName));
-
-      const command = new Command(0);
-      if (command.getDescription()) {
-        commands.push(command);
-      }
+      return new Command(0);
     });
-
-    return commands;
   }
 
   /**
    * @description Returns array of objects with command's name, description and available options
    * @param {Array} commands
    * @returns {Array}
+   * @private
    */
-  static getCommandsDescriptionList(commands) {
-    let result = [];
-
-    commands.forEach((command) => {
-      let options = [];
-
-      Object.keys(command._options).forEach(key => {
+  static getCommandsDescription(commands) {
+    return commands.map(command => {
+      const options = Object.keys(command._options).map(key => {
         let option = command._options[key];
 
         if (option.defaultValue === process.cwd()) {
-          option.defaultValue = 'Terrahub directory';
+          option.defaultValue = 'Project directory';
         }
 
-        options.push(option);
+        return option;
       });
 
-      result.push({
+      return {
         name: command.getName(),
         description: command.getDescription(),
-        options
-      });
+        options: options
+      };
     });
+  }
 
-    return result;
+  /**
+   * Updates metadata with new helper info
+   */
+  static updateMetadata() {
+    const packageContent = require(packageJson);
+    const commands = HelpParser.getCommandsInstances();
+    const commandsDescription = HelpParser.getCommandsDescription(commands);
+
+    const json = {
+      name: packageContent.name,
+      version: packageContent.version,
+      description: packageContent.description,
+      buildDate: (new Date).toISOString(),
+      commands: commandsDescription
+    };
+
+    fs.writeJsonSync(templates.helpMetadata, json, { spaces: 2 });
   }
 
   /**
@@ -70,16 +79,9 @@ class HelpParser {
    */
   static hasInvalidOptions(command, args) {
     const metadata = require(templates.helpMetadata);
-    const commandData = metadata.commands.find(it => it.name === command);
+    const options = metadata.commands.find(it => it.name === command).options;
 
-    let arg;
-    for (arg in args) {
-      if (!commandData.options.find(it => it.name === arg || it.shortcut === arg)) {
-        return true;
-      }
-    }
-
-    return false;
+    return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
   }
 }
 

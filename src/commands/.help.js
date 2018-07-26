@@ -71,6 +71,11 @@ class Help extends AbstractCommand {
         return option;
       });
     } else {
+      const command = this.getOption('command');
+      if (command) {
+        this.logger.error(`The following command is not valid: ${command}`);
+      }
+
       variables.commands = allCommands.map(command => {
         command.separator = '.'.repeat(20 - command.name.length);
         return command;

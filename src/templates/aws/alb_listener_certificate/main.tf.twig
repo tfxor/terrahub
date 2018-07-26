@@ -1,0 +1,4 @@
+resource "aws_lb_listener_certificate" "{{ name }}" {
+  listener_arn    = "${var.lb_listener_certificate_listener_arn}"
+  certificate_arn = "arn:aws:iam::${var.account_id}:server-certificate/${var.lb_listener_certificate_certificate_name}"
+}

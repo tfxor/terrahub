@@ -2,8 +2,11 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { familyTree, extend } = require('./helpers/util');
+const { familyTree, extend, uuid, askQuestion, toMd5 } = require('./helpers/util');
 
+/**
+ * @abstract
+ */
 class TerraformCommand extends AbstractCommand {
   /**
    * Command initialization
@@ -25,15 +28,37 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(() => {
       let errorMessage = '';
 
-      if (!this._isProjectReady()) {
+      const projectConfig = this._configLoader.getProjectConfig();
+
+      const missingProjectData = this._getProjectDataMissing(projectConfig);
+
+      if (missingProjectData === 'config') {
         errorMessage = 'Configuration file not found. '
           + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
+      } else if (missingProjectData) {
+        return askQuestion(`Global config is missing project ${missingProjectData}. `
+          + `Please provide value (e.g. ${missingProjectData === 'code' ?
+            this._code(projectConfig.name, projectConfig.provider) : 'thub-demo'}): `
+        ).then(answer => {
+
+          try {
+            this._configLoader.addToGlobalConfig(missingProjectData, answer);
+          } catch (error) {
+          }
+
+          this._configLoader.updateRootConfig();
+
+          return this.validate();
+        });
+
       } else if (this._areComponentsReady()) {
-        errorMessage = 'Components are not defined. '
-          + 'Please create new component with `terrahub create` or include existing one with `terrahub component`';
+        errorMessage = 'No components defined in configuration file. '
+          + 'Please create new component or include existing one with `terrahub component`';
+      } else if (!this._includedComponentsExist()) {
+        errorMessage = 'Some of components were not found';
       }
 
-      return (errorMessage) ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
+      return errorMessage ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
     });
   }
 
@@ -113,11 +138,45 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @returns {Boolean}
+   * @param {String} actions
+   * @return {Object}
+   */
+  buildEnv(...actions) {
+    return {
+      TERRAFORM_ACTIONS: actions,
+      THUB_RUN_ID: uuid()
+    };
+  }
+
+  /**
+   * Return name of the required field missing in project data
+   * @return {String|null}
    * @private
    */
-  _isProjectReady() {
-    return this._configLoader.isProjectConfigured();
+  _getProjectDataMissing(projectConfig) {
+    if (!projectConfig.hasOwnProperty('root')) {
+      return 'config';
+    }
+
+    if (!projectConfig.hasOwnProperty('name')) {
+      return 'name';
+    }
+
+    if (!projectConfig.hasOwnProperty('code')) {
+      return 'code';
+    }
+
+    return null;
+  }
+
+  /**
+   * @param {String} name
+   * @param {String} provider
+   * @return {String}
+   * @private
+   */
+  _code(name, provider) {
+    return toMd5(name + provider).slice(0, 8);
   }
 
   /**
@@ -126,6 +185,18 @@ class TerraformCommand extends AbstractCommand {
    */
   _areComponentsReady() {
     return (this._configLoader.componentsCount() === 0);
+  }
+
+  /**
+   * @returns {Boolean}
+   * @private
+   */
+  _includedComponentsExist() {
+    const cfg = this.getExtendedConfig();
+    const names = Object.keys(cfg).map(hash => cfg[hash].name);
+    const existing = this.getIncludes().filter(includeName => names.includes(includeName));
+
+    return existing.length === this.getIncludes().length;
   }
 }
 

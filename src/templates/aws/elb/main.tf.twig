@@ -1,0 +1,28 @@
+resource "aws_elb" "{{ name }}" {
+  name            = "${var.elb_name}"
+  internal        = "${var.elb_internal}"
+  subnets         = ["${var.elb_subnets}"]
+  security_groups = ["${var.elb_security_groups}"]
+
+  listener {
+    instance_port     = "${var.elb_instance_port}"
+    instance_protocol = "${var.elb_instance_protocol}"
+    lb_port           = "${var.elb_lb_port}"
+    lb_protocol       = "${var.elb_lb_protocol}"
+  }
+
+  health_check {
+    healthy_threshold   = "${var.elb_healthy_threshold}"
+    unhealthy_threshold = "${var.elb_unhealthy_threshold}"
+    timeout             = "${var.elb_timeout}"
+    target              = "${var.elb_target}:${var.elb_instance_port}"
+    interval            = "${var.elb_interval}"
+  }
+
+  cross_zone_load_balancing   = "${var.elb_cross_zone_load_balancing}"
+  idle_timeout                = "${var.elb_idle_timeout}"
+  connection_draining         = "${var.elb_connection_draining}"
+  connection_draining_timeout = "${var.elb_connection_draining_timeout}"
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

@@ -182,6 +182,18 @@ function yesNoQuestion(question) {
 }
 
 /**
+ * @param {String} question
+ * @return {Promise}
+ */
+function askQuestion(question) {
+  return new Promise(resolve => {
+    rl.question(question, answer => {
+      resolve(answer);
+    });
+  });
+}
+
+/**
  * Public methods
  */
 module.exports = {
@@ -194,6 +206,7 @@ module.exports = {
   renderTwig,
   promiseSeries,
   yesNoQuestion,
+  askQuestion,
   promiseRequest,
   isAwsNameValid
 };

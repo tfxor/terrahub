@@ -1,0 +1,56 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id                 = "123456789012"
+region                     = "us-east-1"
+
+#############
+# top level #
+#############
+autoscaling_group_name                      = "{{ name }}"
+autoscaling_group_max_size                  = 2
+autoscaling_group_min_size                  = 2
+autoscaling_group_health_check_grace_period = 300
+autoscaling_group_health_check_type         = "ELB"
+autoscaling_group_desired_capacity          = 2
+autoscaling_group_force_delete              = true
+autoscaling_group_timeouts_delete           = "15m"
+
+########
+# tags #
+########
+custom_tags  = [
+  {
+      key                 = "telemetry"
+      value               = "true"
+      propagate_at_launch = true
+    }
+]
+default_tags = [
+    {
+      key                 = "ThubName"
+      value               = "{{ name }}"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "ThubCode"
+      value               = "{{ code }}"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "ThubEnv"
+      value               = "default"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Description"
+      value               = "Managed by TerraHub"
+      propagate_at_launch = true
+    }
+  ]
+
+##########
+# custom #
+##########

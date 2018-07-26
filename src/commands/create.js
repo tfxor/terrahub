@@ -14,7 +14,7 @@ class CreateCommand extends AbstractCommand {
   configure() {
     this
       .setName('create')
-      .setDescription('create terraform code from predefined templates')
+      .setDescription('create terrahub component with terraform configuration from terrahub templates')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. cloudfront, dynamodb, lambda, s3)', String)
       .addOption('directory', 'd', 'Path where template should be created (default: .terrahub)', String, '.terrahub')
@@ -51,7 +51,7 @@ class CreateCommand extends AbstractCommand {
       })
     ).then(() => {
       const srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
-      const outFile = path.join(directory, config.fileName);
+      const outFile = path.join(directory, config.defaultFileName);
 
       return renderTwig(srcFile, { name: name, parent: parent }, outFile);
     }).then(() => 'Done');

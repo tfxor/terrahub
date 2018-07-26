@@ -1,7 +1,7 @@
 # Features
 
 
-## [1. Make it easier and faster to create reusable terraform code](features/features1.md)
+## [1. Make it easier and faster to create reusable terraform configuration](features/features1.md)
 ```
 $ mkdir ./thub-demo && cd ./thub-demo
 
@@ -12,7 +12,7 @@ $ terrahub project -n "thub-demo"
 More details [here](features/features1.md)
 
 
-## [2. Simplify and distribute the way terraform code is executed](features/features2.md)
+## [2. Simplify and distribute the way terraform configuration is executed](features/features2.md)
 ```
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .
@@ -44,7 +44,7 @@ $ terrahub run --apply --destroy --auto-approve
 More details [here](features/features3.md)
 
 
-## [4. Integrate and manage any existing terraform code](features/features4.md)
+## [4. Integrate and manage any existing terraform configuration](features/features4.md)
 ```
 $ cd ./security-terraform
 
