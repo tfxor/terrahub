@@ -46,8 +46,16 @@ class ComponentCommand extends AbstractCommand {
 
     const existing = this._findExistingComponent();
 
+    if (!isAwsNameValid(name)) {
+      throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
+    }
+
+    if (directory === process.cwd()) {
+      throw new Error(`Configuring components in project's root is NOT allowed.`);
+    }
+
     if (!fse.pathExistsSync(directory)) {
-      throw new Error('Can not create because path is invalid');
+      throw new Error(`Cannot create '${directory}' because path is invalid.`);
     }
 
     let outFile = path.join(directory, config.fileName);
