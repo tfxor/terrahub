@@ -2,7 +2,7 @@
   "name": "terrahub",
   "version": "0.0.16",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-23T19:50:39.864Z",
+  "buildDate": "2018-07-26T14:25:40.347Z",
   "commands": [
     {
       "name": "apply",
@@ -101,7 +101,19 @@
         {
           "name": "name",
           "shortcut": "n",
-          "description": "Component name"
+          "description": "Uniquely identifiable cloud resource name"
+        },
+        {
+          "name": "template",
+          "shortcut": "t",
+          "description": "Template name (e.g. cloudfront, dynamodb, lambda, s3)",
+          "defaultValue": ""
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path to the component (default: cwd)",
+          "defaultValue": "Current working directory"
         },
         {
           "name": "parent",
@@ -110,10 +122,10 @@
           "defaultValue": ""
         },
         {
-          "name": "directory",
-          "shortcut": "d",
-          "description": "Path to existing component (default: cwd)",
-          "defaultValue": "Project directory"
+          "name": "force",
+          "shortcut": "f",
+          "description": "Replace directory. Works only with template option",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -287,7 +299,7 @@
     },
     {
       "name": "output",
-      "description": "run `terraform output` across multiple terraform components",
+      "description": "run `terraform output` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -388,7 +400,7 @@
           "name": "directory",
           "shortcut": "d",
           "description": "Path where project should be created (default: cwd)",
-          "defaultValue": "Project directory"
+          "defaultValue": "Current working directory"
         },
         {
           "name": "env",

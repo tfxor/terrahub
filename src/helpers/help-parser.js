@@ -39,7 +39,7 @@ class HelpParser {
         let option = command._options[key];
 
         if (option.defaultValue === process.cwd()) {
-          option.defaultValue = 'Project directory';
+          option.defaultValue = 'Current working directory';
         }
 
         return option;
