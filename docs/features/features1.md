@@ -1,6 +1,6 @@
 # Feature #1
 
-## Make it easier and faster to create reusable terraform code
+## Make it easier and faster to create reusable terraform configuration
 ```
 $ mkdir ./thub-demo && cd ./thub-demo
 
@@ -13,7 +13,7 @@ drwxr-xr-x   4 eugene  staff   136 Apr 07 16:38 .
 drwxr-xr-x  83 eugene  staff  2822 Apr 07 16:37 ..
 -rw-r--r--   1 eugene  staff   112 Apr 07 16:37 .terrahub.yml
 
-$ terrahub create -n "s3-bucket" -t s3
+$ terrahub component -n "s3-bucket" -t "aws_s3_bucket"
 ✅ Done
 
 $ ls -alR

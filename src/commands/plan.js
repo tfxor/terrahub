@@ -10,7 +10,7 @@ class PlanCommand extends TerraformCommand {
   configure() {
     this
       .setName('plan')
-      .setDescription('run `terraform plan` across multiple terraform scripts')
+      .setDescription('run `terraform plan` across multiple terrahub components')
     ;
   }
 
@@ -19,7 +19,7 @@ class PlanCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(['prepare', 'plan'], config);
+    const distributor = new Distributor(config, { env: this.buildEnv('prepare', 'plan') });
 
     return distributor
       .run()

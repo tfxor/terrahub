@@ -15,7 +15,7 @@ class ComponentCommand extends AbstractCommand {
   configure() {
     this
       .setName('component')
-      .setDescription('include existing terraform folder into current project')
+      .setDescription('create new or include existing terraform configuration into current terrahub project')
       .addOption('name', 'n', 'Component name', String)
       .addOption('parent', 'p', 'Parent component path', String, '')
       .addOption('directory', 'd', 'Path to existing component (default: cwd)', String, process.cwd())
@@ -32,11 +32,15 @@ class ComponentCommand extends AbstractCommand {
     const existing = this._findExistingComponent();
 
     if (!isAwsNameValid(name)) {
-      throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
+      throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
+    }
+
+    if (directory === process.cwd()) {
+      throw new Error(`Configuring components in project's root is NOT allowed.`);
     }
 
     if (!fse.pathExistsSync(directory)) {
-      throw new Error('Can not create because path is invalid');
+      throw new Error(`Cannot create '${directory}' because path is invalid.`);
     }
 
     let outFile = path.join(directory, config.fileName);
@@ -47,7 +51,7 @@ class ComponentCommand extends AbstractCommand {
     }
 
     if (fs.existsSync(outFile)) {
-      throw new Error('Can not create because terraform component already exists');
+      throw new Error(`Couldn't create terrahub component because it already exists.`);
     }
 
     if (existing.name) {
@@ -67,20 +71,24 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _findExistingComponent() {
-    let cfgPath = path.resolve(process.cwd(), config.fileName);
+    let cfgPath = path.resolve(process.cwd(), config.defaultFileName);
     let directory = path.resolve(this.getOption('directory'));
     let componentRoot = this.relativePath(directory);
 
     if (!fs.existsSync(cfgPath)) {
-      throw new Error('Project config not found');
+      throw new Error(`Project's root config not found`);
     }
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);
 
     Object.keys(rawConfig).forEach(key => {
-      if (rawConfig[key].root === componentRoot) {
-        name = key;
+      if ('root' in rawConfig[key]) {
+        rawConfig[key].root = rawConfig[key].root.replace(/\/$/, '');
+
+        if (rawConfig[key].root === componentRoot) {
+          name = key;
+        }
       }
     });
 

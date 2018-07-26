@@ -1,0 +1,5 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_lb_target_group_attachment.{{ name }}.id}"
+}

@@ -10,9 +10,10 @@ class Terrahub {
    * @param {Object} cfg
    */
   constructor(cfg) {
+    this._runId = process.env.THUB_RUN_ID;
     this._action = '';
     this._config = cfg;
-    this._runId = process.env.THUB_RUN_ID;
+    this._project = cfg.project;
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = toMd5(this._config.root);
@@ -25,15 +26,13 @@ class Terrahub {
    * @private
    */
   _on(event, err = null) {
-    if (!config.token) {
-      return Promise.resolve();
-    }
-
-    const data = {
+    let error = null;
+    let data = {
       ThubToken: config.token, // required for API
       Action: this._action,
-      ProjectHash: this._config.code,
-      ProjectName: this._config.appName,
+      ProjectHash: this._project.code,
+      ProjectName: this._project.name,
+      ProjectProvider: this._project.provider,
       TerraformRunId: this._runId,
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
@@ -41,10 +40,17 @@ class Terrahub {
     };
 
     if (err) {
-      data['Error'] = err.message || err;
+      error = new Error(err.message || err);
+      data['Error'] = error.message;
     }
 
-    return this._apiCall(this._getEndpoint(), data);
+    let actionPromise = !config.token
+      ? Promise.resolve()
+      : this._apiCall(this._getEndpoint(), data);
+
+    return actionPromise.then(() => {
+      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
+    });
   }
 
   /**
@@ -55,7 +61,7 @@ class Terrahub {
   getTask(action) {
     this._action = action;
 
-    if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
       return this._terraform[action]();
     }
 
@@ -73,7 +79,7 @@ class Terrahub {
       const hookPath = this._config.hooks[this._action][hook];
       const fullPath = path.isAbsolute(hookPath)
         ? hookPath
-        : path.join(this._config.app, hookPath);
+        : path.join(this._project.root, hookPath);
 
       return require(fullPath);
     } catch (err) {
@@ -104,7 +110,7 @@ class Terrahub {
    */
   _upload(buffer) {
     if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve();
+      return Promise.resolve(buffer);
     }
 
     return this._putObject(this._getKey(), buffer).then(() => Promise.resolve(buffer));
@@ -175,8 +181,8 @@ class Terrahub {
   _awsMetadata() {
     return {
       'x-amz-acl': 'bucket-owner-full-control',
-      'x-amz-meta-thub-code': this._config.code,
-      'x-amz-meta-thub-name': this._config.appName,
+      'x-amz-meta-thub-code': this._project.code,
+      'x-amz-meta-thub-name': this._project.name,
       'x-amz-meta-thub-token': config.token,
       'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action

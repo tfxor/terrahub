@@ -1,0 +1,15 @@
+resource "aws_ami" "{{ name }}" {
+    name = "${var.ami_name}"
+    description = "${var.ami_description}"
+    root_device_name = "${var.ami_root_device_name}"
+    virtualization_type = "${var.ami_virtualization_type}"
+    architecture = "${var.ami_architecture}"
+
+    ebs_block_device {
+        device_name = "${var.ami_device_name}"
+        delete_on_termination = "${var.ami_delete_on_termination}"
+        encrypted = "${var.ami_encrypted}"
+        volume_size = "${var.ami_volume_size}"
+        volume_type = "${var.ami_volume_type}"
+    }
+}
