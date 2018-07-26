@@ -34,6 +34,10 @@ class ComponentCommand extends AbstractCommand {
     this._parent = this.getOption('parent');
     this._force = this.getOption('force');
 
+    if (!isAwsNameValid(this._name)) {
+      throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
+    }
+
     return this._template ? this._createNewComponent() : this._addExistingComponent();
   }
 
@@ -46,16 +50,8 @@ class ComponentCommand extends AbstractCommand {
 
     const existing = this._findExistingComponent();
 
-    if (!isAwsNameValid(name)) {
-      throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
-    }
-
-    if (directory === process.cwd()) {
-      throw new Error(`Configuring components in project's root is NOT allowed.`);
-    }
-
     if (!fse.pathExistsSync(directory)) {
-      throw new Error(`Cannot create '${directory}' because path is invalid.`);
+      throw new Error(`Couldn\'t create '${directory}' because path is invalid.`);
     }
 
     let outFile = path.join(directory, config.fileName);
@@ -68,8 +64,8 @@ class ComponentCommand extends AbstractCommand {
     if (fse.pathExistsSync(outFile)) {
       const config = ConfigLoader.readConfig(outFile);
 
-      throw new Error(config.project ? 'Can not create terraform component in project root folder'
-        : 'Can not create because terraform component already exists');
+      throw new Error(config.project ? 'Configuring components in project\'s root is NOT allowed.'
+        : 'Couldn\'t create because terraform component already exists');
     }
 
     if (existing.name) {
@@ -89,10 +85,6 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _createNewComponent() {
-    if (!isAwsNameValid(this._name)) {
-      throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
-    }
-
     const { code } = this.getProjectConfig();
     const directory = path.resolve(this._directory, this._name);
     const templatePath = this._getTemplatePath();
