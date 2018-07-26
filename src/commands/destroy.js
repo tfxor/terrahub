@@ -10,7 +10,7 @@ class DestroyCommand extends TerraformCommand {
   configure() {
     this
       .setName('destroy')
-      .setDescription('run `terraform destroy` across multiple terraform scripts')
+      .setDescription('run `terraform destroy` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, true)
     ;
   }
@@ -20,7 +20,7 @@ class DestroyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(['prepare', 'destroy'], config);
+    const distributor = new Distributor(config, { env: this.buildEnv('prepare', 'destroy') });
 
     return distributor
       .run()

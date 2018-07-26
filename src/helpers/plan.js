@@ -1,27 +1,14 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const State = require('./state');
+const Metadata = require('./metadata');
 
-class Plan {
+class Plan extends Metadata {
   /**
-   * @param {Object} config
+   * Init
+   * @desc check if workspace dir exists
    */
-  constructor(config) {
-    const root = path.join(config.app, config.root);
-    const workspaceDir = path.join(root, State.DIR, config.terraform.workspace);
-
-    this._base = fs.existsSync(workspaceDir)
-      ? workspaceDir
-      : path.join(root, config.terraform.resource);
-  }
-
-  /**
-   * @returns {String}
-   */
-  getPath() {
-    return path.join(this._base, Plan.NAME);
+  init() {
+    this.reBase();
   }
 
   /**

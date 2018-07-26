@@ -18,7 +18,7 @@ class ListCommand extends AbstractCommand {
   configure() {
     this
       .setName('list')
-      .setDescription('list projects > cloud accounts > regions > services > resources')
+      .setDescription('list cloud resources by projects > accounts > regions > services > resources')
       .addOption(
         'depth', 'd', 'Listing depth (0 - projects, 1 - accounts, 2 - regions, 3 - services, 4 - resources)', Number, 0
       )
@@ -94,7 +94,7 @@ class ListCommand extends AbstractCommand {
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources');
+        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources.');
 
         return Promise.resolve();
       })

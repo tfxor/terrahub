@@ -13,7 +13,7 @@ class ProjectCommand extends AbstractCommand {
   configure() {
     this
       .setName('project')
-      .setDescription('create or update project that manages multiple terraform scripts')
+      .setDescription('create or update project that manages terraform configuration')
       .addOption('name', 'n', 'Project name', String)
       .addOption('provider', 'p', 'Cloud provider', String, 'aws')
       .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
@@ -39,7 +39,7 @@ class ProjectCommand extends AbstractCommand {
       }
 
       const srcFile = path.join(templates.config, 'project', `.terrahub.${config.format}.twig`);
-      const outFile = path.join(directory, config.fileName);
+      const outFile = path.join(directory, config.defaultFileName);
 
       if (fs.existsSync(outFile)) {
         this.logger.warn(`Project already configured`);

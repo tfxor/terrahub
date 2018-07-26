@@ -1,0 +1,4 @@
+resource "aws_ami_launch_permission" "{{ name }}" {
+  image_id   = "${var.ami_launch_permission_image_id}"
+  account_id = "${var.ami_launch_permission_account_id}"
+}

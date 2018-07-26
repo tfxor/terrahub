@@ -1,0 +1,8 @@
+resource "aws_autoscaling_policy" "{{ name }}" {
+  name                   = "${var.autoscaling_policy_name}"
+  autoscaling_group_name = "${var.autoscaling_policy_autoscaling_group_name}"
+  adjustment_type        = "${var.autoscaling_policy_adjustment_type}"
+  policy_type            = "${var.autoscaling_policy_policy_type}"
+  cooldown               = "${var.autoscaling_policy_cooldown}"
+  scaling_adjustment     = "${var.autoscaling_policy_scaling_adjustment}"
+}
