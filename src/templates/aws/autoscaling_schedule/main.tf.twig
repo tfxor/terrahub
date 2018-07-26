@@ -1,0 +1,9 @@
+resource "aws_autoscaling_schedule" "{{ name }}" {
+  autoscaling_group_name = "${var.autoscaling_schedule_asg_name}"
+  scheduled_action_name  = "${var.autoscaling_schedule_name}"
+  start_time             = "${var.autoscaling_schedule_start_time}"
+  end_time               = "${var.autoscaling_schedule_end_time}"
+  min_size               = "${var.autoscaling_schedule_min_size}"
+  max_size               = "${var.autoscaling_schedule_max_size}"
+  desired_capacity       = "${var.autoscaling_schedule_desired_capacity}"
+}

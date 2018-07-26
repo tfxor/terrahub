@@ -1,0 +1,5 @@
+resource "aws_eip" "{{ name }}" {
+  vpc      = "${var.eip_vpc}"
+  instance = "${var.eip_instance_id}"
+  tags     = "${merge(var.default_tags, var.custom_tags)}"
+}

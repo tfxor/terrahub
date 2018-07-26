@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_ebs_volume.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_ebs_volume.{{ name }}.arn}"
+}
