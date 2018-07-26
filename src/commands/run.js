@@ -14,6 +14,7 @@ class RunCommand extends TerraformCommand {
       .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, true)
+      .setCategory('cloud automation')
     ;
   }
 

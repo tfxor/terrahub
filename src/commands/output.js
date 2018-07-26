@@ -12,6 +12,7 @@ class OutputCommand extends TerraformCommand {
     this
       .setName('output')
       .setDescription('run `terraform output` across multiple terrahub components')
+      .setCategory('terraform execution')
     ;
   }
 

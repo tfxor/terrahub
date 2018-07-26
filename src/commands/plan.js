@@ -11,6 +11,7 @@ class PlanCommand extends TerraformCommand {
     this
       .setName('plan')
       .setDescription('run `terraform plan` across multiple terrahub components')
+      .setCategory('terraform execution')
     ;
   }
 

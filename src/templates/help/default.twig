@@ -4,10 +4,13 @@ terrahub@{{ version }} (built: {{ buildDate }})
 {{ description }}
 
 Commands:
+{% for category, commands in categories %}
+  # {{ category }}
 {% for command in commands %}
   {{ command.name }} {{ command.separator }} {{ command.description }}
 {% endfor %}
 
+{% endfor %}
 Options:
   --help, -h            Show list of available commands
   --version, -v         Show current version of the tool

@@ -7,17 +7,17 @@ const { commandsPath, templates, packageJson } = require('../parameters');
 
 class HelpParser {
   /**
-   * Get list of available commands
-   * @returns {*}
+   * @description Return list of available commands
+   * @return {String[]}
    */
   static getCommandsNameList() {
     return glob.sync('*.js', { cwd: commandsPath }).map(fileName => path.basename(fileName, '.js'));
   }
 
   /**
-   * @description Returns array of instances of all commands in the project
+   * @description Return array of instances of all commands in the project
    * @param {Array} list
-   * @returns {Array}
+   * @return {Array}
    * @private
    */
   static getCommandsInstances(list = this.getCommandsNameList()) {
@@ -28,9 +28,9 @@ class HelpParser {
   }
 
   /**
-   * @description Returns array of objects with command's name, description and available options
-   * @param {Array} commands
-   * @returns {Array}
+   * @description Return array of objects with command's name, description, available options and category
+   * @param {AbstractCommand[]} commands
+   * @return {Object[]}
    * @private
    */
   static getCommandsDescription(commands) {
@@ -48,13 +48,14 @@ class HelpParser {
       return {
         name: command.getName(),
         description: command.getDescription(),
-        options: options
+        options: options,
+        category: command.getCategory()
       };
     });
   }
 
   /**
-   * Updates metadata with new helper info
+   * @description Updates metadata with new helper info
    */
   static updateMetadata() {
     const packageContent = require(packageJson);
@@ -73,6 +74,7 @@ class HelpParser {
   }
 
   /**
+   * @description Determines whether all the options are valid for the command
    * @param {String} command
    * @param {Object} args
    * @return {Boolean}

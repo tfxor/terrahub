@@ -17,6 +17,7 @@ class ProjectCommand extends AbstractCommand {
       .addOption('name', 'n', 'Project name', String)
       .addOption('provider', 'p', 'Cloud provider', String, 'aws')
       .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
+      .setCategory('terrahub management')
     ;
   }
 
