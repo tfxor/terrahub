@@ -11,6 +11,7 @@ class BuildCommand extends TerraformCommand {
     this
       .setName('build')
       .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
+      .setCategory('cloud automation')
     ;
   }
 

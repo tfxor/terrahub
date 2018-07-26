@@ -26,6 +26,7 @@ class ListCommand extends AbstractCommand {
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
       .addOption('services', 's', 'Services (comma separated values)', Array, [])
+      .setCategory('cloud automation')
     ;
   }
 

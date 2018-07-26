@@ -14,7 +14,8 @@ class Help extends AbstractCommand {
       .setName('help')
       .setDescription('options available without a command entered')
       .addOption('command', 'c', 'Show command related help', String, '')
-      .addOption('version', 'v', 'Show current version of the tool', Boolean, false);
+      .addOption('version', 'v', 'Show current version of the tool', Boolean, false)
+    ;
 
     this.metadata = require(templates.helpMetadata);
   }
@@ -76,9 +77,16 @@ class Help extends AbstractCommand {
         this.logger.error(`The following command is not valid: ${command}`);
       }
 
-      variables.commands = allCommands.map(command => {
+      variables.categories = {};
+
+      allCommands.forEach(command => {
+        if (!variables.categories.hasOwnProperty(command.category)) {
+          variables.categories[command.category] = [];
+        }
+
         command.separator = '.'.repeat(20 - command.name.length);
-        return command;
+
+        variables.categories[command.category].push(command);
       });
     }
 
@@ -88,8 +96,9 @@ class Help extends AbstractCommand {
   }
 
   /**
+   * @description Return array of invalid options for the provided command
    * @param {Object} command
-   * @return {Array}
+   * @return {String[]}
    */
   getInvalidOptions(command) {
     const args = Object.assign({}, this._input);

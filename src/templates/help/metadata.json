@@ -2,7 +2,7 @@
   "name": "terrahub",
   "version": "0.0.16",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-25T15:57:50.675Z",
+  "buildDate": "2018-07-26T08:26:02.873Z",
   "commands": [
     {
       "name": "apply",
@@ -50,7 +50,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "build",
@@ -92,7 +93,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "cloud automation"
     },
     {
       "name": "component",
@@ -127,7 +129,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terrahub management"
     },
     {
       "name": "create",
@@ -173,7 +176,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terrahub management"
     },
     {
       "name": "destroy",
@@ -221,7 +225,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "graph",
@@ -239,7 +244,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terrahub management"
     },
     {
       "name": "init",
@@ -281,7 +287,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "list",
@@ -329,7 +336,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "cloud automation"
     },
     {
       "name": "output",
@@ -371,7 +379,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "plan",
@@ -413,7 +422,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "project",
@@ -448,7 +458,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terrahub management"
     },
     {
       "name": "refresh",
@@ -490,7 +501,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "run",
@@ -550,7 +562,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "cloud automation"
     },
     {
       "name": "show",
@@ -592,7 +605,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     },
     {
       "name": "workspace",
@@ -640,7 +654,8 @@
           "description": "Show list of available commands",
           "defaultValue": false
         }
-      ]
+      ],
+      "category": "terraform execution"
     }
   ]
 }

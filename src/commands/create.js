@@ -20,6 +20,7 @@ class CreateCommand extends AbstractCommand {
       .addOption('directory', 'd', 'Path where template should be created (default: .terrahub)', String, '.terrahub')
       .addOption('parent', 'p', 'Parent component path', String, '')
       .addOption('force', 'f', 'Replace directory', Boolean, false)
+      .setCategory('terrahub management')
     ;
   }
 

@@ -19,6 +19,7 @@ class AbstractCommand {
     this._input = input;
     this._options = {};
     this._description = null;
+    this._category = null;
     this._configLoader = new ConfigLoader();
 
     this.configure();
@@ -106,6 +107,25 @@ class AbstractCommand {
 
     return Args.convert(option.type, rawValue);
   }
+
+  /**
+   * Configure command category
+   * @param {String} category
+   * @return {AbstractCommand}
+   */
+  setCategory(category) {
+    this._category = category;
+
+    return this;
+  }
+
+  /**
+   * @return {String}
+   */
+  getCategory() {
+    return this._category;
+  }
+
 
   /**
    * Abstract configure method

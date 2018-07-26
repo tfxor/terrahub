@@ -11,6 +11,7 @@ class InitCommand extends TerraformCommand {
     this
       .setName('init')
       .setDescription('run `terraform init` across multiple terrahub components')
+      .setCategory('terraform execution')
     ;
   }
 

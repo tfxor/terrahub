@@ -19,6 +19,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Component name', String)
       .addOption('parent', 'p', 'Parent component path', String, '')
       .addOption('directory', 'd', 'Path to existing component (default: cwd)', String, process.cwd())
+      .setCategory('terrahub management')
     ;
   }
 
