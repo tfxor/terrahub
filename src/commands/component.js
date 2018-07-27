@@ -33,6 +33,7 @@ class ComponentCommand extends AbstractCommand {
     this._directory = this.getOption('directory');
     this._parent = this.getOption('parent');
     this._force = this.getOption('force');
+    this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
 
     if (!isAwsNameValid(this._name)) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
@@ -54,7 +55,7 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Couldn\'t create '${directory}' because path is invalid.`);
     }
 
-    let outFile = path.join(directory, config.fileName);
+    let outFile = path.join(directory, config.defaultFileName);
     let componentData = { component: { name: this._name } };
 
     if (this._parent) {
@@ -69,10 +70,9 @@ class ComponentCommand extends AbstractCommand {
     }
 
     if (existing.name) {
-      componentData = extend(existing.config[existing.name], [componentData]);
+      componentData.component = extend(existing.config[existing.name], [componentData.component]);
       delete existing.config[existing.name];
 
-      // @todo: renderTwig?
       ConfigLoader.writeConfig(existing.config, existing.path);
     }
 
@@ -106,10 +106,9 @@ class ComponentCommand extends AbstractCommand {
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
-      const srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
       const outFile = path.join(directory, config.defaultFileName);
 
-      return renderTwig(srcFile, { name: this._name, parent: this._parent }, outFile);
+      return renderTwig(this._srcFile, { name: this._name, parent: this._parent }, outFile);
     }).then(() => 'Done');
   }
 
@@ -132,7 +131,7 @@ class ComponentCommand extends AbstractCommand {
       if ('root' in rawConfig[key]) {
         rawConfig[key].root = rawConfig[key].root.replace(/\/$/, '');
 
-        if (rawConfig[key].root === componentRoot) {
+        if (path.resolve(rawConfig[key].root) === path.resolve(componentRoot)) {
           name = key;
         }
       }
