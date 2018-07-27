@@ -4,7 +4,6 @@ terrahub@{{ version }} (built: {{ buildDate }})
 {{ description }}
 
 Commands:
-
   # terrahub management
 {% for command in terrahubManagement %}
   {{ command.name }} {{ command.separator }} {{ command.description }}
