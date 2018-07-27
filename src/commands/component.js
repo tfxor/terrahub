@@ -55,10 +55,10 @@ class ComponentCommand extends AbstractCommand {
     }
 
     let outFile = path.join(directory, config.fileName);
-    let component = { name: this._name };
+    let componentData = { component: { name: this._name } };
 
     if (this._parent) {
-      component['parent'] = this._parent;
+      componentData.component['parent'] = this._parent;
     }
 
     if (fse.pathExistsSync(outFile)) {
@@ -69,13 +69,14 @@ class ComponentCommand extends AbstractCommand {
     }
 
     if (existing.name) {
-      component = extend(existing.config[existing.name], [component]);
+      componentData = extend(existing.config[existing.name], [componentData]);
       delete existing.config[existing.name];
 
+      // @todo: renderTwig?
       ConfigLoader.writeConfig(existing.config, existing.path);
     }
 
-    ConfigLoader.writeConfig(component, outFile);
+    ConfigLoader.writeConfig(componentData, outFile);
 
     return Promise.resolve('Done');
   }

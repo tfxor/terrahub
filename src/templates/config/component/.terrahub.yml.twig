@@ -1,7 +1,8 @@
-name: '{{ name }}'
-{% if parent %}
-parent: '{{ parent }}'
-{% endif %}
+component:
+  name: '{{ name }}'
+  {% if parent %}
+  parent: '{{ parent }}'
+  {% endif %}
 
 # ## local config
 # component:
