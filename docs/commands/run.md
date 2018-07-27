@@ -4,7 +4,7 @@
 Usage: terrahub run [options]
 
 terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
-this command will run automated workflow terraform init > workspace > plan > apply > destroy
+this command will execute automated workflow terraform init > workspace > plan > apply > destroy
 
 Options:
   --apply, -a 		 Enable apply command as part of automated workflow
