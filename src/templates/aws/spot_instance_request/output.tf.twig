@@ -1,0 +1,33 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_spot_instance_request.{{ name }}.id}"
+}
+
+output "spot_bid_status" {
+  value = "${aws_spot_instance_request.{{ name }}.spot_bid_status}"
+}
+
+output "spot_request_state" {
+  value = "${aws_spot_instance_request.{{ name }}.spot_request_state}"
+}
+
+output "spot_instance_id" {
+  value = "${aws_spot_instance_request.{{ name }}.spot_instance_id}"
+}
+
+output "public_dns" {
+  value = "${aws_spot_instance_request.{{ name }}.public_dns}"
+}
+
+output "public_ip" {
+  value = "${aws_spot_instance_request.{{ name }}.public_ip}"
+}
+
+output "private_dns" {
+  value = "${aws_spot_instance_request.{{ name }}.private_dns}"
+}
+
+output "private_ip" {
+  value = "${aws_spot_instance_request.{{ name }}.private_ip}"
+}

@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "eni_id" {
+  value = "${aws_spot_fleet_request.{{ name }}.id}"
+}
+
+output "spot_request_state" {
+  value = "${aws_spot_fleet_request.{{ name }}.spot_request_state}"
+}
