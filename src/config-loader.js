@@ -14,7 +14,7 @@ class ConfigLoader {
   constructor() {
     this._config = {};
     this._rootPath = false;
-    this._rootConfig = {};
+    this._globalConfig = {};
     this._projectConfig = {};
 
     /**
@@ -39,7 +39,7 @@ class ConfigLoader {
   }
 
   /**
-   * Read root config
+   * Read global config
    * @private
    */
   _readRoot() {
@@ -47,13 +47,13 @@ class ConfigLoader {
 
     if (configFile) {
       this._rootPath = path.dirname(configFile);
-      this._rootConfig = this._getConfig(configFile);
-      this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+      this._globalConfig = this._getConfig(configFile);
+      this._projectConfig = Object.assign({ root: this._rootPath }, this._globalConfig['project']);
 
-      delete this._rootConfig['project'];
+      delete this._globalConfig['project'];
     } else {
       this._rootPath = false;
-      this._rootConfig = {};
+      this._globalConfig = {};
       this._projectConfig = {};
     }
   }
@@ -80,7 +80,7 @@ class ConfigLoader {
    */
   getFullConfig() {
     if (!Object.keys(this._config).length) {
-      this._handleRootConfig();
+      this._handleGlobalConfig();
       this._handleComponentConfig();
     }
 
@@ -107,24 +107,24 @@ class ConfigLoader {
   }
 
   /**
-   * Separate root config from component's config
+   * Separate global config from component's config
    * @private
    */
-  _handleRootConfig() {
-    Object.keys(this._rootConfig).forEach(key => {
-      const cfg = this._rootConfig[key];
+  _handleGlobalConfig() {
+    Object.keys(this._globalConfig).forEach(key => {
+      const cfg = this._globalConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
         const root = this.relativePath(path.join(this.appPath(), cfg.root));
 
         cfg.root = root;
         this._config[this.getComponentHash(root)] = cfg;
-        delete this._rootConfig[key];
+        delete this._globalConfig[key];
       }
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = extend({}, [this._defaults(), this._rootConfig, this._config[module]]);
+      this._config[module] = extend({}, [this._defaults(), this._globalConfig, this._config[module]]);
     });
   }
 
@@ -133,7 +133,7 @@ class ConfigLoader {
    * @private
    */
   _handleComponentConfig() {
-    // Remove root config
+    // Remove global config
     const config = this.listConfig().slice(1);
 
     config.forEach(configPath => {
@@ -149,7 +149,7 @@ class ConfigLoader {
         config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
       }
 
-      this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._globalConfig, config]);
     });
   }
 
@@ -197,7 +197,7 @@ class ConfigLoader {
   /**
    * Updates root cofnig
    */
-  updateRootConfig() {
+  updateGlobalConfig() {
     this._readRoot();
   }
 
