@@ -46,7 +46,7 @@ class TerraformCommand extends AbstractCommand {
           } catch (error) {
           }
 
-          this._configLoader.updateGlobalConfig();
+          this._configLoader.updateRootConfig();
 
           return this.validate();
         });

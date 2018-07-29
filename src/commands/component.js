@@ -122,7 +122,7 @@ class ComponentCommand extends AbstractCommand {
     let componentRoot = this.relativePath(this._directory);
 
     if (!fse.pathExistsSync(cfgPath)) {
-      throw new Error(`Project's global config not found`);
+      throw new Error(`Project's config not found`);
     }
 
     let name = '';
