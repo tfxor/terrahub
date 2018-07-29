@@ -137,8 +137,8 @@ class AbstractCommand {
     try {
       fse.readJsonSync(homePath('.terrahub.json'));
     } catch (error) {
-      this.logger.error(
-        'Global `.terrahub.json` config is invalid. Please make sure file\'s content is parsing JSON lint.'
+      this.logger.error('Global `.terrahub.json` config is invalid. ' +
+        `Please make sure file's content is parsing JSON lint successfully.`
       );
     }
 

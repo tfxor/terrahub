@@ -195,7 +195,7 @@ class ConfigLoader {
   }
 
   /**
-   * Updates root cofnig
+   * Updates root config
    */
   updateRootConfig() {
     this._readRoot();
