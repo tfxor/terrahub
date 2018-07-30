@@ -1,5 +1,7 @@
 {
   "aws": {
+    "aws_acm_certificate": "aws/acm_certificate",
+    "aws_acm_certificate_validation": "aws/acm_certificate_validation",
     "aws_alb": "aws/alb",
     "aws_alb_listener_certificate": "aws/alb_listener_certificate",
     "aws_alb_listener": "aws/alb_listener",
@@ -51,6 +53,8 @@
     "aws_dynamodb_table": "aws/dynamodb_table",
     "aws_ebs_snapshot": "aws/ebs_snapshot",
     "aws_ebs_volume": "aws/ebs_volume",
+    "aws_efs_file_system": "aws/efs_file_system",
+    "aws_efs_mount_target": "aws/efs_mount_target",
     "aws_eip": "aws/eip",
     "aws_eip_association": "aws/eip_association",
     "aws_eip_association_network_interface": "aws/eip_association_network_interface",
