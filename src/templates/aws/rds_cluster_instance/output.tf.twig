@@ -1,0 +1,73 @@
+# Define list of variables to be output
+
+output "arn" {
+  value = "${aws_rds_cluster_instance.{{ name }}.arn}"
+}
+
+output "cluster_identifier" {
+  value = "${aws_rds_cluster_instance.{{ name }}.cluster_identifier}"
+}
+
+output "identifier" {
+  value = "${aws_rds_cluster_instance.{{ name }}.identifier}"
+}
+
+output "id" {
+  value = "${aws_rds_cluster_instance.{{ name }}.id}"
+}
+
+output "writer" {
+  value = "${aws_rds_cluster_instance.{{ name }}.writer}"
+}
+
+output "allocated_storage" {
+  value = "${aws_rds_cluster_instance.{{ name }}.allocated_storage}"
+}
+
+output "availability_zone" {
+  value = "${aws_rds_cluster_instance.{{ name }}.availability_zone}"
+}
+
+output "endpoint" {
+  value = "${aws_rds_cluster_instance.{{ name }}.endpoint}"
+}
+
+output "engine" {
+  value = "${aws_rds_cluster_instance.{{ name }}.engine}"
+}
+
+output "engine_version" {
+  value = "${aws_rds_cluster_instance.{{ name }}.engine_version}"
+}
+
+output "database_name" {
+  value = "${aws_rds_cluster_instance.{{ name }}.database_name}"
+}
+
+output "port" {
+  value = "${aws_rds_cluster_instance.{{ name }}.port}"
+}
+
+output "status" {
+  value = "${aws_rds_cluster_instance.{{ name }}.status}"
+}
+
+output "storage_encrypted" {
+  value = "${aws_rds_cluster_instance.{{ name }}.storage_encrypted}"
+}
+
+output "kms_key_id" {
+  value = "${aws_rds_cluster_instance.{{ name }}.kms_key_id}"
+}
+
+output "dbi_resource_id" {
+  value = "${aws_rds_cluster_instance.{{ name }}.dbi_resource_id}"
+}
+
+output "performance_insights_enabled" {
+  value = "${aws_rds_cluster_instance.{{ name }}.performance_insights_enabled}"
+}
+
+output "performance_insights_kms_key_id" {
+  value = "${aws_rds_cluster_instance.{{ name }}.performance_insights_kms_key_id}"
+}
