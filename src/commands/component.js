@@ -52,7 +52,7 @@ class ComponentCommand extends AbstractCommand {
     const existing = this._findExistingComponent();
 
     if (!fse.pathExistsSync(directory)) {
-      throw new Error(`Couldn\'t create '${directory}' because path is invalid.`);
+      throw new Error(`Couldn't create '${directory}' because path is invalid.`);
     }
 
     let outFile = path.join(directory, config.defaultFileName);
@@ -65,8 +65,9 @@ class ComponentCommand extends AbstractCommand {
     if (fse.pathExistsSync(outFile)) {
       const config = ConfigLoader.readConfig(outFile);
 
-      throw new Error(config.project ? 'Configuring components in project\'s root is NOT allowed.'
-        : 'Couldn\'t create because terraform component already exists');
+      throw new Error(config.project
+        ? `Configuring components in project's root is NOT allowed.`
+        : `Couldn't create config because terraform component already exists.`);
     }
 
     if (existing.name) {
@@ -121,7 +122,7 @@ class ComponentCommand extends AbstractCommand {
     let componentRoot = this.relativePath(this._directory);
 
     if (!fse.pathExistsSync(cfgPath)) {
-      throw new Error(`Project's root config not found`);
+      throw new Error(`Project's config not found`);
     }
 
     let name = '';

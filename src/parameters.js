@@ -61,7 +61,7 @@ const def = {
 const env = {
   env: _getEnv(args),
   api: process.env.THUB_API,
-  token: process.env.THUB_ACCESS_TOKEN,
+  token: process.env.THUB_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
 

@@ -34,11 +34,11 @@ class TerraformCommand extends AbstractCommand {
 
       if (missingProjectData === 'config') {
         errorMessage = 'Configuration file not found. '
-          + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`';
+          + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`.';
       } else if (missingProjectData) {
         return askQuestion(`Global config is missing project ${missingProjectData}. `
           + `Please provide value (e.g. ${missingProjectData === 'code' ?
-            this._code(projectConfig.name, projectConfig.provider) : 'thub-demo'}): `
+            this._code(projectConfig.name, projectConfig.provider) : 'terrahub-demo'}): `
         ).then(answer => {
 
           try {
