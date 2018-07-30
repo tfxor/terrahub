@@ -1,0 +1,13 @@
+resource "aws_rds_cluster_parameter_group" "{{ name }}" {
+  name        = "${var.rds_cluster_parameter_group_name}"
+  family      = "${var.rds_cluster_parameter_group_family}"
+  description = "${var.rds_cluster_parameter_group_description}"
+
+  parameter {
+    name         = "${var.rds_cluster_parameter_group_parameter_name}"
+    value        = "${var.rds_cluster_parameter_group_parameter_value}"
+    apply_method = "${var.rds_cluster_parameter_group_parameter_apply_method}"
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

@@ -1,0 +1,19 @@
+resource "aws_rds_cluster_instance" "{{ name }}" {
+  count                        = "${var.rds_cluster_instance_count}"
+  engine                       = "${var.rds_cluster_instance_engine}"
+  identifier                   = "${var.rds_cluster_instance_identifier}-${count.index}"
+  cluster_identifier           = "${var.rds_cluster_instance_cluster_identifier}"
+  instance_class               = "${var.rds_cluster_instance_instance_class}"
+  publicly_accessible          = "${var.rds_cluster_instance_publicly_accessible}"
+  db_subnet_group_name         = "${var.rds_cluster_instance_db_subnet_group_name}"
+  apply_immediately            = "${var.rds_cluster_instance_apply_immediately}"
+  monitoring_interval          = "${var.rds_cluster_instance_monitoring_interval}"
+  promotion_tier               = "${var.rds_cluster_instance_promotion_tier}"
+  availability_zone            = "${var.rds_cluster_instance_availability_zone}"
+  preferred_backup_window      = "${var.rds_cluster_instance_preferred_backup_window}"
+  preferred_maintenance_window = "${var.rds_cluster_instance_preferred_maintenance_window}"
+  auto_minor_version_upgrade   = "${var.rds_cluster_instance_auto_minor_version_upgrade}"
+
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}
