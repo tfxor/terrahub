@@ -10,11 +10,11 @@ drwxr-xr-x   7 eugene  staff    238 Apr 07 18:22 .
 drwxr-xr-x  84 eugene  staff   2856 Apr 07 18:21 ..
 -rw-r--r--@  1 eugene  staff  15896 Apr 04 12:47 LICENSE
 -rw-r--r--   1 eugene  staff     20 Apr 04 14:20 README.md
-drwxr-xr-x   9 eugene  staff    306 Apr 07 18:24 iam-idp
+drwxr-xr-x   9 eugene  staff    306 Apr 07 18:24 iam_idp
 -rw-r--r--   1 eugene  staff   3997 Apr 07 11:15 provider.def.tf
 -rw-r--r--   1 eugene  staff   2895 Apr 07 10:06 provider.vars.tf
 
-./iam-idp:
+./iam_idp:
 total 32
 drwxr-xr-x   9 eugene  staff   306 Apr 07 18:24 .
 drwxr-xr-x   7 eugene  staff   238 Apr 07 18:22 ..
@@ -28,7 +28,7 @@ lrwxr-xr-x   1 eugene  staff    22 Apr 07 21:31 provider.vars.tf -> ../../provid
 $ terrahub project -n "Security_Terraform"
 ✅ Project successfully initialized
 
-$ terrahub component -n "iam-idp" -d iam-idp/
+$ terrahub component -n "iam_idp" -d iam_idp/
 ✅ Done
 
 $ ls -alR
@@ -38,11 +38,11 @@ drwxr-xr-x  84 eugene  staff   2856 Apr 07 18:21 ..
 -rw-r--r--   1 eugene  staff    121 Apr 07 18:29 .terrahub.yml
 -rw-r--r--@  1 eugene  staff  15896 Apr 04 12:47 LICENSE
 -rw-r--r--   1 eugene  staff     20 Apr 04 14:20 README.md
-drwxr-xr-x   9 eugene  staff    306 Apr 07 18:30 iam-idp
+drwxr-xr-x   9 eugene  staff    306 Apr 07 18:30 iam_idp
 -rw-r--r--   1 eugene  staff   3997 Apr 07 11:15 provider.def.tf
 -rw-r--r--   1 eugene  staff   2895 Apr 07 10:06 provider.vars.tf
 
-./iam-idp:
+./iam_idp:
 total 40
 drwxr-xr-x  9 eugene  staff   306 Apr 07 18:30 .
 drwxr-xr-x  8 eugene  staff   272 Apr 07 18:29 ..
