@@ -1,9 +1,14 @@
 # TerraHub
 
+## Serverless Hub for Terraform
+
 TerraHub is a terraform centric devops tool that simplifies provisioning
 and management of large amount of cloud resources and cloud services
 across multiple cloud accounts. For example: Serverless on Amazon AWS,
 or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
+
+
+![TerraHub CLI and Console in Action](images/terrahub-in-action.gif "TerraHub CLI and Console in Action")
 
 
 ## [Features](features.md)

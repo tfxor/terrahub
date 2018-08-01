@@ -70,5 +70,21 @@ Compiling the list of cloud resources. Use --depth, -d option to view details ab
 More details [here](features/features5.md)
 
 
+## [6. Streamline integration and deployment with built-in CI and CD processes](features/features6.md)
+```
+TBU
+```
+
+More details [here](features/features6.md)
+
+
+## [7. NO NEED to expose your private network to outside world at all](features/features7.md)
+```
+TBU
+```
+
+More details [here](features/features7.md)
+
+
 ## Return
 Back to [readme](readme.md)
