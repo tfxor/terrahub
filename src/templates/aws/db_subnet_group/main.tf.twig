@@ -1,0 +1,7 @@
+resource "aws_db_subnet_group" "{{ name }}" {
+  name        = "${var.db_subnet_group_name}"
+  description = "${var.db_subnet_group_description}"
+  subnet_ids  = ["${var.db_subnet_group_subnet_ids}"]
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

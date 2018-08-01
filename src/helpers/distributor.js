@@ -58,11 +58,15 @@ class Distributor {
         this._workersCount--;
 
         if (data.isError) {
-          return reject(this._handleError(data.error));
+          this._error = this._handleError(data.error);
         }
 
         if (this._workersCount === 0) {
-          return resolve('Done');
+          if (this._error) {
+            return reject(this._error);
+          } else {
+            return resolve('Done');
+          }
         }
 
         if (hashes.length > 0) {
@@ -71,7 +75,21 @@ class Distributor {
       });
 
       cluster.on('error', err => {
-        return reject(this._handleError(err));
+        this._workersCount--;
+
+        this._error = this._handleError(err);
+
+        if (this._workersCount === 0) {
+          reject(this._error);
+        }
+      });
+
+      cluster.on('exit', () => {
+        this._workersCount--;
+
+        if (this._workersCount === 0) {
+          reject(this._error);
+        }
       });
     });
   }

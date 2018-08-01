@@ -1,0 +1,13 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_efs_file_system.{{ name }}.id}"
+}
+
+output "kms_key_id" {
+  value = "${aws_efs_file_system.{{ name }}.kms_key_id}"
+}
+
+output "dns_name" {
+  value = "${aws_efs_file_system.{{ name }}.dns_name}"
+}

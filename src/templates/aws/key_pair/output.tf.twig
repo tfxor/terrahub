@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "key_name" {
+  value = "${aws_key_pair.{{ name }}.key_name}"
+}
+
+output "fingerprint" {
+  value = "${aws_key_pair.{{ name }}.fingerprint}"
+}

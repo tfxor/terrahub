@@ -1,0 +1,4 @@
+resource "aws_placement_group" "{{ name }}" {
+  name     = "${var.placement_group_name}"
+  strategy = "${var.placement_group_strategy}"
+}

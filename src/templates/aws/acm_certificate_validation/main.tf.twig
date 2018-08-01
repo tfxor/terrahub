@@ -1,0 +1,4 @@
+resource "aws_acm_certificate_validation" "{{ name }}" {
+  certificate_arn         = "${var.acm_certificate_validation_arn}"
+  validation_record_fqdns = ["${var.acm_certificate_validation_record_fqdns}"]
+}

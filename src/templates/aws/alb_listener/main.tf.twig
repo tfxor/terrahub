@@ -1,0 +1,10 @@
+resource "aws_lb_listener" "{{ name }}" {
+  load_balancer_arn = "${var.lb_listener_load_balancer_arn}"
+  port              = "${var.lb_listener_port}"
+  protocol          = "${var.lb_listener_protocol}"
+
+  default_action {
+    target_group_arn = "${var.lb_listener_target_group_arn}"
+    type             = "${var.lb_listener_type}"
+  }
+}

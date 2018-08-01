@@ -137,9 +137,13 @@ class ConfigLoader {
     const config = this.listConfig().slice(1);
 
     config.forEach(configPath => {
-      const config = this._getConfig(configPath);
+      let config = this._getConfig(configPath);
       const componentPath = path.dirname(this.relativePath(configPath));
       const componentHash = this.getComponentHash(componentPath);
+
+      // Delete in case of delete
+      config = Object.assign(config, config.component);
+      delete config.component;
 
       if (config.hasOwnProperty('parent')) {
         config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
@@ -191,7 +195,7 @@ class ConfigLoader {
   }
 
   /**
-   * Updates root cofnig
+   * Updates root config
    */
   updateRootConfig() {
     this._readRoot();

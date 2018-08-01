@@ -7,8 +7,12 @@ terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
 this command will build code used by terraform configuration (e.g. AWS Lambda, Google Functions)
 
 Options:
-  --env, -e 		 Workspace environment
-  --help, -h 		 Show list of available commands
+  --include, -i    List of components to include
+  --exclude, -x    List of components to exclude
+  --var, -r      Variable(s) to be used by terraform
+  --var-file, -l   Variable file(s) to be used by terraform
+  --env, -e      Workspace environment
+  --help, -h     Show list of available commands
 ```
 
 To use terrahub build command you need to add your code in component terrahub configuration file. You can use the following template:
