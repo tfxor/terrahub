@@ -84,8 +84,8 @@ class Distributor {
         }
       });
 
-      cluster.on('exit', (worker, code, signal) => {
-        if (!signal) {
+      cluster.on('exit', (worker, code) => {
+        if (code) {
           return;
         }
 
