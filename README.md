@@ -6,6 +6,9 @@ across multiple cloud accounts. For example: Serverless on Amazon AWS,
 or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 
+![TerraHub CLI and Console in Action](docs/images/terrahub-in-action.gif "TerraHub CLI and Console in Action")
+
+
 ## [Features](https://github.com/MitocGroup/terrahub/blob/master/docs/features.md)
 
 1. [Make it easier and faster to create reusable terraform configuration](https://github.com/MitocGroup/terrahub/blob/master/docs/features/features1.md)
