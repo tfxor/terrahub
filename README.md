@@ -8,7 +8,7 @@ across multiple cloud accounts. For example: Serverless on Amazon AWS,
 or Kubernetes on Google Cloud, or VMs on Microsoft Azure.
 
 
-![TerraHub CLI and Console in Action](docs/images/terrahub-in-action.gif "TerraHub CLI and Console in Action")
+![TerraHub CLI and TerraHub Console in Action](docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
 
 ## [Features](https://github.com/MitocGroup/terrahub/blob/master/docs/features.md)
