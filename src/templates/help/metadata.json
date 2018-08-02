@@ -57,6 +57,18 @@
       "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
       "options": [
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the commands without console output",
+          "defaultValue": false
+        },
+        {
+          "name": "json",
+          "shortcut": "j",
+          "description": "Output only build result in json format",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include",
