@@ -1,0 +1,56 @@
+resource "aws_launch_template" "{{ name }}" {
+  name                                 = "${var.launch_template_name}"
+  disable_api_termination              = "${var.launch_template_api_termination}"
+  ebs_optimized                        = "${var.launch_template_ebs_optimized}"
+  image_id                             = "${var.launch_template_image_id}"
+  instance_initiated_shutdown_behavior = "${var.launch_template_shutdown_behavior}"
+  instance_type                        = "${var.launch_template_instance_type}"
+  kernel_id                            = "${var.launch_template_kernel_id}"
+  key_name                             = "${var.launch_template_key_name}"
+  ram_disk_id                          = "${var.launch_template_ram_disk_id}"
+  vpc_security_group_ids               = ["${var.launch_template_vpc_security_group_ids}"]
+  
+  block_device_mappings {
+    device_name = "${var.launch_template_ebs_device_name}"
+    ebs {
+      delete_on_termination = "${var.launch_template_ebs_delete_on_termination}"
+      encrypted             = "${var.launch_template_ebs_encrypted}"
+      volume_size           = "${var.launch_template_ebs_volume_size}"
+      volume_type           = "${var.launch_template_ebs_volume_type}"
+    }
+  }
+
+  credit_specification {
+    cpu_credits = "${var.launch_template_cpu_credits}"
+  }
+
+  elastic_gpu_specifications {
+    type = "${var.launch_template_elastic_gpu_type}"
+  }
+
+  iam_instance_profile {
+    name = "${var.launch_template_iam_name}"
+  }
+
+  instance_market_options {
+    market_type = "${var.launch_template_market_type}"
+  }
+
+  monitoring {
+    enabled = "${var.launch_template_monitoring_enabled}"
+  }
+
+  network_interfaces {
+    associate_public_ip_address = "${var.launch_template_ni_associate_public_ip_address}"
+    subnet_id                   = "${var.launch_template_ni_subnet_id}"
+  }
+
+  placement {
+    availability_zone = "${var.launch_template_availability_zone}"
+  }
+
+  tag_specifications {
+    resource_type = "${var.launch_template_resource_type}"
+    tags = "${merge(var.default_tags, var.custom_tags)}"
+  }
+}

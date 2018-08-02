@@ -1,0 +1,33 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_acm_certificate.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_acm_certificate.{{ name }}.arn}"
+}
+
+output "domain_validation_options" {
+  value = "${aws_acm_certificate.{{ name }}.domain_validation_options}"
+}
+
+output "validation_emails" {
+  value = "${aws_acm_certificate.{{ name }}.validation_emails}"
+}
+
+output "domain_name" {
+  value = "${aws_acm_certificate.{{ name }}.domain_name}"
+}
+
+output "resource_record_name" {
+  value = "${aws_acm_certificate.{{ name }}.resource_record_name}"
+}
+
+output "resource_record_type" {
+  value = "${aws_acm_certificate.{{ name }}.resource_record_type}"
+}
+
+output "resource_record_value" {
+  value = "${aws_acm_certificate.{{ name }}.resource_record_value}"
+}

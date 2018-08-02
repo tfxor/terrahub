@@ -4,7 +4,18 @@ terrahub@{{ version }} (built: {{ buildDate }})
 {{ description }}
 
 Commands:
-{% for command in commands %}
+  # terrahub management
+{% for command in terrahubManagement %}
+  {{ command.name }} {{ command.separator }} {{ command.description }}
+{% endfor %}
+
+  # terraform execution
+{% for command in terraformExecution %}
+  {{ command.name }} {{ command.separator }} {{ command.description }}
+{% endfor %}
+
+  # cloud automation
+{% for command in cloudAutomation %}
   {{ command.name }} {{ command.separator }} {{ command.description }}
 {% endfor %}
 

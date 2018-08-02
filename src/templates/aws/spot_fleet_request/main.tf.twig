@@ -1,0 +1,24 @@
+resource "aws_spot_fleet_request" "{{ name }}" {
+  iam_fleet_role                  = "arn:aws:iam::${var.account_id}:role/${var.spot_fleet_request_role_name}"
+  replace_unhealthy_instances     = "${var.spot_fleet_request_replace_unhealthy_instances}"
+  spot_price                      = "${var.spot_fleet_request_spot_price}"
+  allocation_strategy             = "${var.spot_fleet_request_allocation_strategy}"
+  target_capacity                 = "${var.spot_fleet_request_target_capacity}"
+  valid_from                      = "${var.spot_fleet_request_valid_from}"
+  valid_until                     = "${var.spot_fleet_request_valid_until}"
+  wait_for_fulfillment            = "${var.spot_fleet_request_wait_for_fulfillment}"
+  fleet_type                      = "${var.spot_fleet_request_fleet_type}"
+  instance_interruption_behaviour = "${var.spot_fleet_request_instance_interruption_behaviour}"
+
+  launch_specification {
+    instance_type             = "${var.spot_fleet_request_ls_instance_type}"
+    ami                       = "${var.spot_fleet_request_ls_ami}"
+    spot_price                = "${var.spot_fleet_request_ls_spot_price}"
+    iam_instance_profile_arn  = "${var.spot_fleet_request_ls_iam_instance_profile_arn}"
+    availability_zone         = "${var.spot_fleet_request_ls_availability_zone}"
+    weighted_capacity         = "${var.spot_fleet_request_ls_weighted_capacity}"
+    placement_tenancy         = "${var.spot_fleet_request_ls_placement_tenancy}"
+
+    tags = "${merge(var.default_tags, var.custom_tags)}"
+  }
+}
