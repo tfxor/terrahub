@@ -13,7 +13,7 @@ class ProjectCommand extends AbstractCommand {
   configure() {
     this
       .setName('project')
-      .setDescription('create or update project that manages terraform configuration')
+      .setDescription('create new or define existing folder as project that manages terraform configuration')
       .addOption('name', 'n', 'Project name', String)
       .addOption('provider', 'p', 'Cloud provider', String, 'aws')
       .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())

@@ -203,7 +203,7 @@
     },
     {
       "name": "graph",
-      "description": "show the graph of dependencies between terrahub components",
+      "description": "show dependencies graph for terraform configuration mapped as terrahub components",
       "options": [
         {
           "name": "env",
@@ -395,7 +395,7 @@
     },
     {
       "name": "project",
-      "description": "create or update project that manages terraform configuration",
+      "description": "create new or define existing folder as project that manages terraform configuration",
       "options": [
         {
           "name": "name",
