@@ -84,7 +84,11 @@ class Distributor {
         }
       });
 
-      cluster.on('exit', () => {
+      cluster.on('exit', (worker, code) => {
+        if (code) {
+          return;
+        }
+
         this._workersCount--;
 
         if (this._workersCount === 0) {
