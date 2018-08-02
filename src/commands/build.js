@@ -11,6 +11,8 @@ class BuildCommand extends TerraformCommand {
     this
       .setName('build')
       .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
+      .addOption('silent', 's', 'Runs the commands without console output', Boolean, false)
+      .addOption('json', 'j', 'Output only build result in json format', Boolean, false)
     ;
   }
 
@@ -19,7 +21,13 @@ class BuildCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(config, { worker: 'build-worker.js' });
+    const distributor = new Distributor(config, {
+      worker: 'build-worker.js',
+      env: {
+        silent: this.getOption('silent'),
+        json: this.getOption('json')
+      }
+    });
 
     return distributor
       .run()
