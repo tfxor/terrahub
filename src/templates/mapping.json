@@ -55,6 +55,7 @@
     "aws_default_route_table": "aws/default_route_table",
     "aws_default_security_group": "aws/default_security_group",
     "aws_default_subnet": "aws/default_subnet",
+    "aws_default_vpc": "aws/default_vpc",
     "aws_dynamodb_table": "aws/dynamodb_table",
     "aws_ebs_snapshot": "aws/ebs_snapshot",
     "aws_ebs_volume": "aws/ebs_volume",
