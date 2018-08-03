@@ -1,7 +1,7 @@
 {
   "name": "terrahub",
   "version": "0.0.17",
-  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
+  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
   "buildDate": "2018-07-27T13:30:16.098Z",
   "commands": [
     {
@@ -56,6 +56,18 @@
       "name": "build",
       "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
       "options": [
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the commands without console output",
+          "defaultValue": false
+        },
+        {
+          "name": "output",
+          "shortcut": "o",
+          "description": "Log only result in one of the specified formats: json",
+          "defaultValue": ""
+        },
         {
           "name": "include",
           "shortcut": "i",
@@ -191,7 +203,7 @@
     },
     {
       "name": "graph",
-      "description": "show the graph of dependencies between terrahub components",
+      "description": "show dependencies graph for terraform configuration mapped as terrahub components",
       "options": [
         {
           "name": "env",
@@ -383,7 +395,7 @@
     },
     {
       "name": "project",
-      "description": "create or update project that manages terraform configuration",
+      "description": "create new or define existing folder as project that manages terraform configuration",
       "options": [
         {
           "name": "name",
