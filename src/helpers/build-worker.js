@@ -89,22 +89,35 @@ function getComponentBuildTask(config) {
         return promise.then(() => Buffer.concat(stdout));
       })
     ).then(() => {
-      switch (process.env.output) {
-        case 'json': {
-          console.log(JSON.stringify({ message: `Build successfully finished for [${name}].` }, null, 2));
-          break;
-        }
-      }
+      printOutput(`Build successfully finished for [${name}].`, true);
 
       resolve();
     }).catch(err => {
-      if (process.env.json === 'true') {
-        console.log(JSON.stringify({ message: `Build failed for [${name}].` }, null, 2));
-      }
+      printOutput(`Build failed for [${name}].`, false);
 
       reject(err);
     });
   });
+}
+
+/**
+ * @param {String} message
+ * @param {Boolean} isSuccess
+ */
+function printOutput(message, isSuccess) {
+  switch (process.env.output) {
+    case 'json': {
+      logger.log(JSON.stringify({ message: message }, null, 2));
+      break;
+    }
+    case 'text': {
+      if (isSuccess) {
+        logger.info(message);
+      } else {
+        logger.error(message);
+      }
+    }
+  }
 }
 
 /**
