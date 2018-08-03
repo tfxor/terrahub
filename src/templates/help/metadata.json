@@ -63,10 +63,10 @@
           "defaultValue": false
         },
         {
-          "name": "json",
-          "shortcut": "j",
-          "description": "Output only build result in json format",
-          "defaultValue": false
+          "name": "output",
+          "shortcut": "o",
+          "description": "Log only result in one of the specified formats: json",
+          "defaultValue": ""
         },
         {
           "name": "include",
