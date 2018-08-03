@@ -7,9 +7,9 @@ const fse = require('fs-extra');
 const path = require('path');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
+const { toMd5 } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { promiseRequest, toMd5 } = require('../helpers/util');
-const { homePath, config, templates } = require('../parameters');
+const { fetch, homePath, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
   /**
@@ -174,31 +174,26 @@ class ListCommand extends AbstractCommand {
       return Promise.resolve([]);
     }
 
-    return promiseRequest({ uri: this._getEndpoint(), method: 'GET', json: true }).then(res => {
-      if (res.errorMessage) {
-        const { errorMessage } = JSON.parse(res.errorMessage);
-        this.logger.error(errorMessage);
+    return fetch.get(`thub/listing/retrieve?DataType=1&ThubToken=${config.token}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.errorMessage) {
+          const { errorMessage } = JSON.parse(json.errorMessage);
+          this.logger.error(errorMessage);
 
-        return Promise.resolve([]);
-      }
+          return Promise.resolve([]);
+        }
 
-      return res;
-    }).then(data => {
-      const cachePath = this._cachePath(config.token);
+        return json;
+      })
+      .then(data => {
+        const cachePath = this._cachePath(config.token);
 
-      return fse.outputJson(cachePath, data).then(() => {
-        return data;
-      });
-    });
-  }
-
-  /**
-   * Get TerraHub API endpoint
-   * @returns {String}
-   * @private
-   */
-  _getEndpoint() {
-    return `https://${config.api}.terrahub.io/v1/thub/listing/retrieve?DataType=1&ThubToken=${config.token}`;
+        return fse.outputJson(cachePath, data).then(() => {
+          return data;
+        });
+      })
+    ;
   }
 
   /**
