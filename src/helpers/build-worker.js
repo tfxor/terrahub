@@ -2,21 +2,19 @@
 
 const cluster = require('cluster');
 const { promiseSeries } = require('../helpers/util');
-const { exec } = require('child-process-promise');
+const { spawn } = require('child-process-promise');
+const logger = require('./logger');
 
 /**
+ * @param {Object} env
  * @param {Object} sources
  */
-function buildProcessEnv(...sources) {
-  const env = {};
-
+function extendProcessEnv(env, ...sources) {
   sources.forEach(source => {
     if (source) {
       Object.assign(env, source);
     }
   });
-
-  return env;
 }
 
 /**
@@ -42,12 +40,13 @@ function pushCommandsAndFinally(destination, ...sources) {
  * @return {Function}
  */
 function getComponentBuildTask(config) {
-  return () => new Promise(resolve => {
+  return () => new Promise((resolve, reject) => {
     const buildConfig = config.build;
+    const name = config.name;
 
-    let env = null;
+    const env = Object.assign({}, process.env);
     if (buildConfig.env) {
-      env = buildProcessEnv(buildConfig.env.variables, buildConfig.env['parameter-store']);
+      extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
     }
 
     const commandsList = [];
@@ -62,10 +61,72 @@ function getComponentBuildTask(config) {
       );
     }
 
-    promiseSeries(commandsList.map(it => () => exec(it, { env: env }))).then(() => {
+    promiseSeries(commandsList.map(it => () => {
+        const [command, ...args] = it.split(' ');
+        const stdout = [];
+
+        const promise = spawn(command, args, {
+          cwd: process.cwd(),
+          env: env,
+          shell: true,
+        });
+        const child = promise.childProcess;
+
+        child.stdout.on('data', data => {
+          stdout.push(data);
+
+          if (!process.env.output && process.env.silent === 'false') {
+            logger.raw(out(name, data));
+          }
+        });
+
+        child.stderr.on('data', data => {
+          if (!process.env.output && process.env.silent === 'false') {
+            logger.error(out(name, data));
+          }
+        });
+
+        return promise.then(() => Buffer.concat(stdout));
+      })
+    ).then(() => {
+      printOutput(`Build successfully finished for [${name}].`, true);
+
       resolve();
+    }).catch(err => {
+      printOutput(`Build failed for [${name}].`, false);
+
+      reject(err);
     });
   });
+}
+
+/**
+ * @param {String} message
+ * @param {Boolean} isSuccess
+ */
+function printOutput(message, isSuccess) {
+  switch (process.env.output) {
+    case 'json': {
+      logger.log(JSON.stringify({ message: message }));
+      break;
+    }
+    case 'text': {
+      if (isSuccess) {
+        logger.info(message);
+      } else {
+        logger.error(message);
+      }
+    }
+  }
+}
+
+/**
+ * @param {String} name
+ * @param {Buffer} data
+ * @return {string}
+ */
+function out(name, data) {
+  return `[${name}] ${data.toString()}`;
 }
 
 /**
