@@ -75,13 +75,13 @@ function getComponentBuildTask(config) {
         child.stdout.on('data', data => {
           stdout.push(data);
 
-          if (process.env.json === 'false' && process.env.silent === 'false') {
+          if (!process.env.output && process.env.silent === 'false') {
             logger.raw(out(name, data));
           }
         });
 
         child.stderr.on('data', data => {
-          if (process.env.json === 'false' && process.env.silent === 'false') {
+          if (!process.env.output && process.env.silent === 'false') {
             logger.error(out(name, data));
           }
         });
@@ -89,8 +89,11 @@ function getComponentBuildTask(config) {
         return promise.then(() => Buffer.concat(stdout));
       })
     ).then(() => {
-      if (process.env.json === 'true') {
-        console.log(JSON.stringify({ message: 'Build successfully finished.' }, null, 2));
+      switch (process.env.output) {
+        case 'json': {
+          console.log(JSON.stringify({ message: 'Build successfully finished.' }, null, 2));
+          break;
+        }
       }
 
       resolve();
