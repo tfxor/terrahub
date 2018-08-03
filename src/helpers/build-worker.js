@@ -40,7 +40,7 @@ function pushCommandsAndFinally(destination, ...sources) {
  * @return {Function}
  */
 function getComponentBuildTask(config) {
-  return () => new Promise(resolve => {
+  return () => new Promise((resolve, reject) => {
     const buildConfig = config.build;
     const name = config.name;
 
@@ -90,10 +90,16 @@ function getComponentBuildTask(config) {
       })
     ).then(() => {
       if (process.env.json === 'true') {
-        console.log(JSON.stringify({ message: 'Build successfully finished.' }, null, 2));
+        console.log(JSON.stringify({ message: `Build successfully finished for [${name}].` }, null, 2));
       }
 
       resolve();
+    }).catch(err => {
+      if (process.env.json === 'true') {
+        console.log(JSON.stringify({ message: `Build failed for [${name}].` }, null, 2));
+      }
+
+      reject(err);
     });
   });
 }
