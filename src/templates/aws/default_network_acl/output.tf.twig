@@ -1,0 +1,21 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_default_network_acl.{{ name }}.id}"
+}
+
+output "vpc_id" {
+  value = "${aws_default_network_acl.{{ name }}.vpc_id}"
+}
+
+output "ingress" {
+  value = "${aws_default_network_acl.{{ name }}.ingress}"
+}
+
+output "egress" {
+  value = "${aws_default_network_acl.{{ name }}.egress}"
+}
+
+output "subnet_ids" {
+  value = "${aws_default_network_acl.{{ name }}.subnet_ids}"
+}
