@@ -38,7 +38,7 @@ class BuildCommand extends TerraformCommand {
 
     return distributor
       .run()
-      .then(() => Promise.resolve('Done'));
+      .then(() => Promise.resolve(!['json'].includes(output) ? 'Done' : ''));
   }
 }
 
