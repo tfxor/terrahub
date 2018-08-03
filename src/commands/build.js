@@ -12,7 +12,7 @@ class BuildCommand extends TerraformCommand {
       .setName('build')
       .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
       .addOption('silent', 's', 'Runs the commands without console output', Boolean, false)
-      .addOption('output', 'o', 'Log only the command result in one of the following formats: json', String, '')
+      .addOption('output', 'o', 'Log only the command result in one of the following formats: json, text', String, '')
     ;
   }
 
@@ -23,7 +23,7 @@ class BuildCommand extends TerraformCommand {
     const output = this.getOption('output');
     const silent = this.getOption('silent');
 
-    if (output && !['json'].includes(output)) {
+    if (output && !['json', 'text'].includes(output)) {
       return Promise.reject(new Error(`The '${output}' output format is not supported for this command.`));
     }
 
