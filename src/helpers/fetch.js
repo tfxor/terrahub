@@ -49,7 +49,7 @@ class Fetch {
    * @return {Promise}
    */
   put(url, opts = {}) {
-    return this.post(url, Object.assign({ method: 'PUT' }, opts));
+    return this.post(url, merge(opts, { method: 'PUT' }));
   }
 
   /**
