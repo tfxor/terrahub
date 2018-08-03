@@ -107,7 +107,7 @@ function getComponentBuildTask(config) {
 function printOutput(message, isSuccess) {
   switch (process.env.output) {
     case 'json': {
-      logger.log(JSON.stringify({ message: message }, null, 2));
+      logger.log(JSON.stringify({ message: message }));
       break;
     }
     case 'text': {
