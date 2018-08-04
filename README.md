@@ -24,7 +24,7 @@ or VMs on Microsoft Azure.
 
 ## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
 
-TerraHub CLI is built using nodejs and published using npm. Quick steps to get started:
+TerraHub CLI is built using [nodejs](https://nodejs.org) and published using [npm](https://www.npmjs.com). Quick steps to get started:
 ```shell
 $ node -v
 v6.10.0
