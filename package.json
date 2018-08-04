@@ -14,9 +14,20 @@
   "keywords": [
     "terrahub",
     "terraform",
-    "tf"
+    "tf",
+    "devops",
+    "automation",
+    "containers",
+    "serverless",
+    "continuous-integration",
+    "continuous-delivery",
+    "continuous-deployment"
   ],
-  "author": "Mitoc Group",
+  "author": {
+    "name" : "TerraHub Corp",
+    "email" : "hello@terrahub.io",
+    "url" : "https://www.terrahub.io"
+  },
   "license": "MPL-2.0",
   "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
   "bugs": {
