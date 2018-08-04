@@ -1,0 +1,8 @@
+name: 'demo-subnet-10-3'
+
+terraform:
+  var:
+    subnet_name: 'terrahub-demo-subnetwork-10-3'
+    subnet_cidr: '10.3.0.0/16'
+    subnet_secondary_range_name: 'terrahub-demo-range-10-3'
+    subnet_secondary_range_cidr: '192.168.3.0/24'

@@ -1,0 +1,12 @@
+name: 'compute_health_check_https'
+
+terraform:
+  var:
+    region: 'us-central1'
+    name: 'autohealing-health-check-https'
+    check_interval_sec: 5
+    timeout_sec: 5
+    healthy_threshold: 2
+    unhealthy_threshold: 10
+    request_path: '/'
+    port: 443

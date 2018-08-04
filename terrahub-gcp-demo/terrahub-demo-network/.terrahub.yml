@@ -1,0 +1,10 @@
+name: 'terrahub-demo-network'
+
+terraform:
+  var:
+    project: 'terrahub-demo'
+    project_id: 'terrahub-demo-210811'
+    region: 'us-central1'
+    name: 'terrahub-demo-network'
+    auto_create_subnetworks: 'false'
+    description: 'Terrahub demo network'

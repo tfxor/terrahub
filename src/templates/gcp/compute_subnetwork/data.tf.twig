@@ -1,0 +1,8 @@
+
+data "terraform_remote_state" "network" {
+  backend = "local"
+
+  config {
+    path = "${path.module}/../${var.network}/.resource/terraform.tfstate"
+  }
+}

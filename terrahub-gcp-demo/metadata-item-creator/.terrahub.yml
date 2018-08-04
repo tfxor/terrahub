@@ -1,0 +1,6 @@
+name: 'metadata-item-creator'
+
+terraform:
+  var:
+    keyname: creator
+    keyvalue: vsitnic@gmail.com

@@ -1,0 +1,15 @@
+name: 'instance_template_debian'
+
+terraform:
+  var:
+    name: 'instance-template-debian'
+    description: 'This template is used for TrraHUB demo.'
+    instance_description: 'TerraHUB demo'
+    machine_type: 'n1-standard-1'
+    can_ip_forward: 'false'
+    disk_source_image: 'debian-cloud/debian-8'
+    disk_auto_delete: 'true'
+    disk_boot: 'true'
+    network_interface_network: 'default'
+
+
