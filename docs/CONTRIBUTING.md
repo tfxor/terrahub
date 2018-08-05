@@ -1,18 +1,18 @@
 # Contributing
 
-Thanks for checking out the contibuting guide! We're excited to hear and learn from you. Your experiences will benefit others who read and use these guides.
+Thanks for checking out this contibuting guide! We're excited to hear and learn from you. Your experiences will benefit others who read and use these guides.
 
 We've put together the following guidelines to help you figure out where you can best be helpful.
 
 ## Table of Contents
 
-0. [Types of contributions we're looking for](#types-of-contributions-were-looking-for)
-0. [Ground rules & expectations](#ground-rules--expectations)
-0. [How to contribute](#how-to-contribute)
-0. [Style guide](#style-guide)
-0. [Setting up your environment](#setting-up-your-environment)
-0. [Contribution review process](#contribution-review-process)
-0. [Community](#community)
+1. [Types of contributions we're looking for](#types-of-contributions-were-looking-for)
+1. [Ground rules & expectations](#ground-rules--expectations)
+1. [How to contribute](#how-to-contribute)
+1. [Style guide](#style-guide)
+1. [Setting up your environment](#setting-up-your-environment)
+1. [Contribution review process](#contribution-review-process)
+1. [Community](#community)
 
 ## Types of contributions we're looking for
 There are many ways you can directly contribute to the guides (in descending order of need):
@@ -52,6 +52,9 @@ Once you have that set up, run:
     node ./bin/cli.js --help
 
 ... and you are good to go on your local machine!
+
+## Contribution review process
+To submit a contribution for review, issue a pull request with comments introducing your contribution. The comment should include a brief overview, responses to checklist questions, and pointers to related information. The entire submittal should ideally be self contained so any additional documentation should be in the pull request as well. Maintaining team will handle the review request, comment on each question and reply to the pull request.
 
 ## Community
 Discussions about this project take place on this repository's [Issues](https://github.com/TerraHubCorp/terrahub/issues) and [Pull Requests](https://github.com/TerraHubCorp/terrahub/pulls) sections. Anybody is welcome to join these conversations.
