@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "lt_id" {
+  value = "${aws_launch_template.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_launch_template.{{ name }}.arn}"
+}
+
+output "default_version" {
+  value = "${aws_launch_template.{{ name }}.default_version}"
+}
+
+output "latest_version" {
+  value = "${aws_launch_template.{{ name }}.latest_version}"
+}

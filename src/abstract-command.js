@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const Args = require('../src/helpers/args-parser');
 const { config, homePath } = require('./parameters');
 const ConfigLoader = require('./config-loader');
@@ -137,9 +138,21 @@ class AbstractCommand {
     try {
       fse.readJsonSync(homePath('.terrahub.json'));
     } catch (error) {
-      this.logger.error(
-        'Global `.terrahub.json` config is invalid. Please make sure file\'s content is parsing JSON lint.'
+      this.logger.error('Global `.terrahub.json` config is invalid. ' +
+        `Please make sure file's content is parsing JSON lint successfully.`
       );
+    }
+
+    const rootPaths = this._configLoader.getRootPaths();
+    if (rootPaths.length > 1) {
+      let errorMsg = 'Multiple root configs identified in this project:' + os.EOL;
+
+      rootPaths.forEach((cfgPath, index) => {
+        errorMsg += `  ${index + 1}. ${cfgPath}` + os.EOL;
+      });
+      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+      return Promise.reject(new Error(errorMsg));
     }
 
     const required = Object.keys(this._options).filter(name => {

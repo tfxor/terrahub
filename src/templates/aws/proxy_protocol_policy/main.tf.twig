@@ -1,0 +1,4 @@
+resource "aws_proxy_protocol_policy" "{{ name }}" {
+  load_balancer  = "${var.proxy_protocol_policy_load_balancer}"
+  instance_ports = ["${var.proxy_protocol_policy_instance_ports}"]
+}

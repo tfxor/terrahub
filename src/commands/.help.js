@@ -14,7 +14,8 @@ class Help extends AbstractCommand {
       .setName('help')
       .setDescription('options available without a command entered')
       .addOption('command', 'c', 'Show command related help', String, '')
-      .addOption('version', 'v', 'Show current version of the tool', Boolean, false);
+      .addOption('version', 'v', 'Show current version of the tool', Boolean, false)
+    ;
 
     this.metadata = require(templates.helpMetadata);
   }
@@ -76,9 +77,20 @@ class Help extends AbstractCommand {
         this.logger.error(`The following command is not valid: ${command}`);
       }
 
-      variables.commands = allCommands.map(command => {
+      variables.terraformExecution = [];
+      variables.terrahubManagement = [];
+      variables.cloudAutomation = [];
+
+      allCommands.forEach(command => {
         command.separator = '.'.repeat(20 - command.name.length);
-        return command;
+
+        if (['build', 'list', 'run'].includes(command.name)) {
+          variables.cloudAutomation.push(command);
+        } else if (['project', 'component', 'graph', 'create'].includes(command.name)) {
+          variables.terrahubManagement.push(command);
+        } else {
+          variables.terraformExecution.push(command);
+        }
       });
     }
 
@@ -88,8 +100,9 @@ class Help extends AbstractCommand {
   }
 
   /**
+   * @desc Return array of invalid options for the provided command
    * @param {Object} command
-   * @return {Array}
+   * @return {String[]}
    */
   getInvalidOptions(command) {
     const args = Object.assign({}, this._input);

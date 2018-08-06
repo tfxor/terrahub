@@ -16,6 +16,7 @@ class ConfigLoader {
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
+    this._otherRootPaths = [];
 
     /**
      * Initialisation
@@ -43,7 +44,7 @@ class ConfigLoader {
    * @private
    */
   _readRoot() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
+    const configFile = this._findRootConfig(process.cwd());
 
     if (configFile) {
       this._rootPath = path.dirname(configFile);
@@ -56,6 +57,33 @@ class ConfigLoader {
       this._rootConfig = {};
       this._projectConfig = {};
     }
+  }
+
+  /**
+   * @param {String} dirPath
+   * @return {String|Boolean}
+   * @private
+   */
+  _findRootConfig(dirPath) {
+    const cfgPath = path.join(dirPath, config.defaultFileName);
+    let cfgFile;
+    try {
+      cfgFile = this._getConfig(cfgPath);
+    } catch (error) {
+      cfgFile = {};
+    }
+
+    if (cfgFile.hasOwnProperty('project')) {
+      return cfgPath;
+    }
+
+    const lower = path.resolve(dirPath, '..');
+
+    if (lower !== dirPath) {
+      return this._findRootConfig(lower);
+    }
+
+    return false;
   }
 
   /**
@@ -107,6 +135,14 @@ class ConfigLoader {
   }
 
   /**
+   * Get all root paths found in the project directory
+   * @return {String[]}
+   */
+  getRootPaths() {
+    return this._otherRootPaths.concat([this._rootPath]);
+  }
+
+  /**
    * Separate root config from component's config
    * @private
    */
@@ -134,15 +170,23 @@ class ConfigLoader {
    */
   _handleComponentConfig() {
     // Remove root config
-    const config = this.listConfig().slice(1);
+    const componentConfigs = this.listConfig().slice(1);
 
-    config.forEach(configPath => {
-      const config = this._getConfig(configPath);
+    componentConfigs.forEach(configPath => {
+      let config = this._getConfig(configPath);
       const componentPath = path.dirname(this.relativePath(configPath));
       const componentHash = this.getComponentHash(componentPath);
 
+      if (config.hasOwnProperty('project')) {
+        this._otherRootPaths.push(configPath);
+      }
+
+      // Delete in case of delete
+      config = Object.assign(config, config.component);
+      delete config.component;
+
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
+        config['parent'] = this.relativePath(path.resolve(this._rootPath, componentPath, config.parent));
       }
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
@@ -191,7 +235,7 @@ class ConfigLoader {
   }
 
   /**
-   * Updates root cofnig
+   * Updates root config
    */
   updateRootConfig() {
     this._readRoot();

@@ -1,0 +1,7 @@
+resource "aws_customer_gateway" "{{ name }}" {
+  bgp_asn    = "${var.customer_gateway_bgp_asn}"
+  ip_address = "${var.customer_gateway_ip_address}"
+  type       = "${var.customer_gateway_type}"
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

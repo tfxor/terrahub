@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.16",
-  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-07-25T15:57:50.675Z",
+  "version": "0.0.18",
+  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
+  "buildDate": "2018-08-06T13:13:10.946Z",
   "commands": [
     {
       "name": "apply",
@@ -57,6 +57,18 @@
       "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
       "options": [
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the commands without console output",
+          "defaultValue": false
+        },
+        {
+          "name": "output",
+          "shortcut": "o",
+          "description": "Log only the command result in one of the following formats: json, text",
+          "defaultValue": ""
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include",
@@ -101,53 +113,19 @@
         {
           "name": "name",
           "shortcut": "n",
-          "description": "Component name"
-        },
-        {
-          "name": "parent",
-          "shortcut": "p",
-          "description": "Parent component path",
-          "defaultValue": ""
-        },
-        {
-          "name": "directory",
-          "shortcut": "d",
-          "description": "Path to existing component (default: cwd)",
-          "defaultValue": "Project directory"
-        },
-        {
-          "name": "env",
-          "shortcut": "e",
-          "description": "Workspace environment",
-          "defaultValue": "default"
-        },
-        {
-          "name": "help",
-          "shortcut": "h",
-          "description": "Show list of available commands",
-          "defaultValue": false
-        }
-      ]
-    },
-    {
-      "name": "create",
-      "description": "create terrahub component with terraform configuration from terrahub templates",
-      "options": [
-        {
-          "name": "name",
-          "shortcut": "n",
           "description": "Uniquely identifiable cloud resource name"
         },
         {
           "name": "template",
           "shortcut": "t",
-          "description": "Template name (e.g. cloudfront, dynamodb, lambda, s3)"
+          "description": "Template name (e.g. aws_lambda_function, google_cloudfunctions_function)",
+          "defaultValue": ""
         },
         {
           "name": "directory",
           "shortcut": "d",
-          "description": "Path where template should be created (default: .terrahub)",
-          "defaultValue": ".terrahub"
+          "description": "Path to the component (default: cwd)",
+          "defaultValue": "Current working directory"
         },
         {
           "name": "parent",
@@ -158,7 +136,7 @@
         {
           "name": "force",
           "shortcut": "f",
-          "description": "Replace directory",
+          "description": "Replace directory. Works only with template option",
           "defaultValue": false
         },
         {
@@ -225,7 +203,7 @@
     },
     {
       "name": "graph",
-      "description": "show the graph of dependencies between terrahub components",
+      "description": "show dependencies graph for terraform configuration mapped as terrahub components",
       "options": [
         {
           "name": "env",
@@ -417,7 +395,7 @@
     },
     {
       "name": "project",
-      "description": "create or update project that manages terraform configuration",
+      "description": "create new or define existing folder as project that manages terraform configuration",
       "options": [
         {
           "name": "name",
@@ -434,7 +412,7 @@
           "name": "directory",
           "shortcut": "d",
           "description": "Path where project should be created (default: cwd)",
-          "defaultValue": "Project directory"
+          "defaultValue": "Current working directory"
         },
         {
           "name": "env",

@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_db_option_group.{{ name }}.id}"
+}
+
+output "arn" {
+  value = "${aws_db_option_group.{{ name }}.arn}"
+}

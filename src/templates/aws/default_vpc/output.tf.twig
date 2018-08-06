@@ -1,0 +1,57 @@
+# Define list of variables to be output
+
+output "arn" {
+  value = "${aws_default_vpc.{{ name }}.arn}"
+}
+
+output "id" {
+  value = "${aws_default_vpc.{{ name }}.id}"
+}
+
+output "cidr_block" {
+  value = "${aws_default_vpc.{{ name }}.cidr_block}"
+}
+
+output "instance_tenancy" {
+  value = "${aws_default_vpc.{{ name }}.instance_tenancy}"
+}
+
+output "enable_dns_support" {
+  value = "${aws_default_vpc.{{ name }}.enable_dns_support}"
+}
+
+output "enable_dns_hostnames" {
+  value = "${aws_default_vpc.{{ name }}.enable_dns_hostnames}"
+}
+
+output "enable_classiclink" {
+  value = "${aws_default_vpc.{{ name }}.enable_classiclink}"
+}
+
+output "assign_generated_ipv6_cidr_block" {
+  value = "${aws_default_vpc.{{ name }}.assign_generated_ipv6_cidr_block}"
+}
+
+output "main_route_table_id" {
+  value = "${aws_default_vpc.{{ name }}.main_route_table_id}"
+}
+
+output "default_network_acl_id" {
+  value = "${aws_default_vpc.{{ name }}.default_network_acl_id}"
+}
+
+output "default_security_group_id" {
+  value = "${aws_default_vpc.{{ name }}.default_security_group_id}"
+}
+
+output "default_route_table_id" {
+  value = "${aws_default_vpc.{{ name }}.default_route_table_id}"
+}
+
+output "ipv6_association_id" {
+  value = "${aws_default_vpc.{{ name }}.ipv6_association_id}"
+}
+
+output "ipv6_cidr_block" {
+  value = "${aws_default_vpc.{{ name }}.ipv6_cidr_block}"
+}

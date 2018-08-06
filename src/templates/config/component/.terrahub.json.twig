@@ -1,6 +1,8 @@
 {
-{% if parent %}
-  "parent": "{{ parent }}",
-{% endif %}
-  "name": "{{ name }}"
+  "component": {
+    {% if parent %}
+    "parent": "{{ parent }}",
+    {% endif %}
+    "name": "{{ name }}"
+  }
 }

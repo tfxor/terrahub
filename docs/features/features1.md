@@ -2,7 +2,7 @@
 
 ## Make it easier and faster to create reusable terraform configuration
 ```
-$ mkdir ./thub-demo && cd ./thub-demo
+$ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
 ✅ Project successfully initialized
@@ -20,16 +20,10 @@ $ ls -alR
 total 8
 drwxr-xr-x   4 eugene  staff   136 Apr 07 16:38 .
 drwxr-xr-x  83 eugene  staff  2822 Apr 07 16:37 ..
-drwxr-xr-x   3 eugene  staff   102 Apr 07 16:38 .terrahub
 -rw-r--r--   1 eugene  staff   112 Apr 07 16:37 .terrahub.yml
+drwxr-xr-x   9 eugene  staff   306 Apr 07 16:38 s3-bucket
 
-./.terrahub:
-total 0
-drwxr-xr-x  3 eugene  staff  102 Apr 07 16:38 .
-drwxr-xr-x  4 eugene  staff  136 Apr 07 16:38 ..
-drwxr-xr-x  9 eugene  staff  306 Apr 07 16:38 s3-bucket
-
-./.terrahub/s3-bucket:
+./s3-bucket:
 total 56
 drwxr-xr-x  9 eugene  staff   306 Apr 07 16:38 .
 drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..

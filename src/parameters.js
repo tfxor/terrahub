@@ -4,6 +4,7 @@ const os = require('os');
 const fse = require('fs-extra');
 const path = require('path');
 const Args = require('../src/helpers/args-parser');
+const Fetch = require('../src/helpers/fetch');
 const { extend } = require('./helpers/util');
 
 /**
@@ -61,15 +62,17 @@ const def = {
 const env = {
   env: _getEnv(args),
   api: process.env.THUB_API,
-  token: process.env.THUB_ACCESS_TOKEN,
+  token: process.env.THUB_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
 
 const cfg = extend(def, [fse.readJsonSync(cfgPath, { throws: false }), env]);
+const apiBase = `https://${cfg.api}.terrahub.io/v1/`;
 const isDefault = cfg.env === 'default';
 
 module.exports = {
   args: args,
+  fetch: new Fetch(apiBase, cfg.token),
   homePath: _homePath,
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),

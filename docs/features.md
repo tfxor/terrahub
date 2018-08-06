@@ -3,7 +3,7 @@
 
 ## [1. Make it easier and faster to create reusable terraform configuration](features/features1.md)
 ```
-$ mkdir ./thub-demo && cd ./thub-demo
+$ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
 ✅ Project successfully initialized
@@ -46,12 +46,12 @@ More details [here](features/features3.md)
 
 ## [4. Integrate and manage any existing terraform configuration](features/features4.md)
 ```
-$ cd ./security-terraform
+$ cd ./security-terraform/
 
 $ terrahub project -n "Security_Terraform"
 ✅ Project successfully initialized
 
-$ terrahub component -n "iam-idp" -d iam-idp/
+$ terrahub component -n "iam-idp" -d ./iam-idp/
 ✅ Done
 ```
 
@@ -68,6 +68,22 @@ Compiling the list of cloud resources. Use --depth, -d option to view details ab
 ```
 
 More details [here](features/features5.md)
+
+
+## [6. Streamline integration and deployment with built-in CI and CD processes](features/features6.md)
+```
+TBU
+```
+
+More details [here](features/features6.md)
+
+
+## [7. NO NEED to expose your private network to outside world at all](features/features7.md)
+```
+TBU
+```
+
+More details [here](features/features7.md)
 
 
 ## Return

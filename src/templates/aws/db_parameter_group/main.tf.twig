@@ -1,0 +1,13 @@
+resource "aws_db_parameter_group" "{{ name }}" {
+  name        = "${var.db_parameter_group_name}"
+  family      = "${var.db_parameter_group_family}"
+  description = "${var.db_parameter_group_description}"
+
+  parameter {
+    name         = "${var.db_parameter_group_parameter_name}"
+    value        = "${var.db_parameter_group_parameter_value}"
+    apply_method = "${var.db_parameter_group_parameter_apply_method}"
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

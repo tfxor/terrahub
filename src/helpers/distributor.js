@@ -55,23 +55,25 @@ class Distributor {
       }
 
       cluster.on('message', (worker, data) => {
-        this._workersCount--;
-
         if (data.isError) {
-          return reject(this._handleError(data.error));
+          this._error = this._handleError(data.error);
         }
+      });
 
-        if (this._workersCount === 0) {
-          return resolve('Done');
-        }
+      cluster.on('exit', () => {
+        this._workersCount--;
 
         if (hashes.length > 0) {
           this._createWorker(hashes.shift());
         }
-      });
 
-      cluster.on('error', err => {
-        return reject(this._handleError(err));
+        if (this._workersCount === 0) {
+          if (this._error) {
+            reject(this._error);
+          } else {
+            resolve('Done');
+          }
+        }
       });
     });
   }

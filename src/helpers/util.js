@@ -4,7 +4,6 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const Twig = require('twig');
-const request = require('request');
 const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { createHash } = require('crypto');
@@ -37,25 +36,6 @@ function uuid() {
  */
 function promiseSeries(promises) {
   return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
-}
-
-/**
- * Promisify request
- * @todo switch to requestify library which has less dependencies
- * @param {Object} options
- * @returns {Promise}
- * @private
- */
-function promiseRequest(options) {
-  return new Promise((resolve, reject) => {
-    request(options, (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-
-      return resolve(body);
-    });
-  });
 }
 
 /**
@@ -207,6 +187,5 @@ module.exports = {
   promiseSeries,
   yesNoQuestion,
   askQuestion,
-  promiseRequest,
   isAwsNameValid
 };
