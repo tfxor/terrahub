@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
   "preferGlobal": true,
   "bin": {
@@ -24,9 +24,9 @@
     "continuous-deployment"
   ],
   "author": {
-    "name" : "TerraHub Corp",
-    "email" : "hello@terrahub.io",
-    "url" : "https://www.terrahub.io"
+    "name": "TerraHub Corp",
+    "email": "hello@terrahub.io",
+    "url": "https://www.terrahub.io"
   },
   "license": "MPL-2.0",
   "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
