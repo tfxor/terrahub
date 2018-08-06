@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_eip.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_eip.{{ name }}.id}"
+}
+
 output "private_ip" {
   value = "${aws_eip.{{ name }}.private_ip}"
 }

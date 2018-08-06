@@ -17,5 +17,6 @@ Create an API Gateway Resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|api_gateway_resource_id|The resource's identifier.|int|
-|api_gateway_resource_path|The complete path for this API resource, including all parent paths.|string|
+|id|The resource's identifier.|int|
+|thub_id|The resource's identifier.|int|
+|path|The complete path for this API resource, including all parent paths.|string|

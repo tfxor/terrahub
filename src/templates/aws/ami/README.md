@@ -26,4 +26,5 @@ If you just want to share an existing AMI with another AWS account, it's better 
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the created AMI.|string|
+|thub_id|The ID of the created AMI.|string|
 |root_snapshot_id|The Snapshot ID for the root volume (for EBS-backed AMIs).|string|

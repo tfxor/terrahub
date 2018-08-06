@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_customer_gateway.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_customer_gateway.{{ name }}.id}"
+}
+
 output "bgp_asn" {
   value = "${aws_customer_gateway.{{ name }}.bgp_asn}"
 }

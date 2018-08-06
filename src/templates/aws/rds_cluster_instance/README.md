@@ -37,6 +37,7 @@ For more information on Amazon Aurora, see Aurora on Amazon RDS in the Amazon RD
 |cluster_identifier|The RDS Cluster Identifier|string|
 |identifier|The Instance identifier|string|
 |id|The Instance identifier|string|
+|thub_id|The Instance identifier|string|
 |writer|Boolean indicating if this instance is writable. False indicates this instance is a read replica.|string|
 |allocated_storage|The amount of allocated storage|string|
 |availability_zone|The availability zone of the instance|string|

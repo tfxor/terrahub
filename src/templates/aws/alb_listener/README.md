@@ -19,4 +19,5 @@ Provides a Load Balancer Listener resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ARN of the listener (matches arn).|string|
+|thub_id|The ARN of the listener (matches arn).|string|
 |arn|The ARN of the listener (matches id).|string|

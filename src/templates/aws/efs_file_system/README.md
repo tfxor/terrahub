@@ -19,5 +19,6 @@ Provides an Elastic File System (EFS) resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID that identifies the file system (e.g. fs-ccfc0d65).|string|
+|thub_id|The ID that identifies the file system (e.g. fs-ccfc0d65).|string|
 |kms_key_id|The ARN for the KMS encryption key.|string|
 |dns_name|The DNS name for the filesystem per documented convention.|string|

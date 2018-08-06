@@ -20,4 +20,5 @@ Provides a resource to create a new launch configuration, used for autoscaling g
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the launch configuration.|string|
+|thub_id|The ID of the launch configuration.|string|
 |name|The name of the launch configuration.|string|

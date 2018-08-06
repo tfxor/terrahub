@@ -17,5 +17,6 @@ Attaches a load balancer policy to an ELB Listener.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the policy.|string|
+|thub_id|The ID of the policy.|string|
 |load_balancer_name|The load balancer on which the policy is defined.|string|
 |load_balancer_port|The load balancer listener port the policies are applied to.|list|

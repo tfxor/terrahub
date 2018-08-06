@@ -16,6 +16,6 @@ Provides a CloudWatch Event Target resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_event_target_arn|The Amazon Resource Name (ARN) associated of the target.|string|
-|cloudwatch_event_target_rule|The name of the rule you want to add targets to.|string|
+|arn|The Amazon Resource Name (ARN) associated of the target.|string|
+|rule|The name of the rule you want to add targets to.|string|
 

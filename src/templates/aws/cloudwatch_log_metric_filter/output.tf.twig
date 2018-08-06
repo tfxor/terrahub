@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_cloudwatch_log_metric_filter.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_cloudwatch_log_metric_filter.{{ name }}.id}"
+}
+
 output "metric_transformation" {
   value = "${aws_cloudwatch_log_metric_filter.{{ name }}.metric_transformation}"
 }

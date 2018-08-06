@@ -33,6 +33,7 @@ Provides an Elastic Load Balancer resource, also known as a "Classic Load Balanc
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the ELB.|string|
+|thub_id|The name of the ELB.|string|
 |arn|The ARN of the ELB.|string|
 |name|The name of the ELB.|string|
 |dns_name|The DNS name of the ELB.|string|

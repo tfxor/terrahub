@@ -29,4 +29,5 @@ Provides an RDS DB option group resource. Documentation of the available options
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db option group name.|string|
+|thub_id|The db option group name.|string|
 |arn|The ARN of the db option group.|string|

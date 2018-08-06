@@ -19,8 +19,9 @@ Create an IAM policy.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|aws_iam_policy_id|The policy's ID.|int|
-|aws_iam_policy_arn|The ARN assigned by AWS to this policy.|string|
-|aws_iam_policy_name|The name of the policy.|int|
-|aws_iam_policy_path|The path of the policy.|int|
-|aws_iam_policy_policy|The policy of the policy.|int|
+|id|The policy's ID.|int|
+|thub_id|The policy's ID.|int|
+|arn|The ARN assigned by AWS to this policy.|string|
+|name|The name of the policy.|int|
+|path|The path of the policy.|int|
+|policy|The policy of the policy.|int|

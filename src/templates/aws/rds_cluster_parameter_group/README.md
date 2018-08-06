@@ -22,4 +22,5 @@ Provides an RDS DB cluster parameter group resource. Documentation of the availa
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db cluster parameter group name.|string|
+|thub_id|The db cluster parameter group name.|string|
 |arn|The ARN of the db cluster parameter group.|string|

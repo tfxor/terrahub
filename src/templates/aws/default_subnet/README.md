@@ -19,6 +19,7 @@ The aws_default_subnet behaves differently from normal resources, in that Terraf
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the subnet|string|
+|thub_id|The ID of the subnet|string|
 |availability_zone|The AZ for the subnet.|string|
 |cidr_block|The CIDR block for the subnet.|string|
 |vpc_id|The VPC ID.|string|

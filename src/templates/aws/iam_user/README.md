@@ -16,6 +16,6 @@ Provides an IAM user.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|iam_user_arn|The ARN assigned by AWS for this user.|string|
-|iam_user_name|The user's name.|string|
-|iam_user_unique_id|The unique ID assigned by AWS.|string|
+|arn|The ARN assigned by AWS for this user.|string|
+|name|The user's name.|string|
+|unique_id|The unique ID assigned by AWS.|string|

@@ -19,5 +19,6 @@ Provides a CloudWatch Log Metric Filter resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_log_metric_filter_id|The name of the metric filter.|string|
-|cloudwatch_log_metric_filter_metric_transformation|A block defining collection of information needed to define how metric data gets emitted.|object|
+|id|The name of the metric filter.|string|
+|thub_id|The name of the metric filter.|string|
+|metric_transformation|A block defining collection of information needed to define how metric data gets emitted.|object|

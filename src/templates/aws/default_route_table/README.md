@@ -37,3 +37,4 @@ NOTE on Route Tables and Routes: Terraform currently provides both a standalone 
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the routing table|string|
+|thub_id|The ID of the routing table|string|

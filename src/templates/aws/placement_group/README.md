@@ -16,3 +16,4 @@ Provides an EC2 placement group. Read more about placement groups in AWS Docs.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the placement group.|string|
+|thub_id|The name of the placement group.|string|

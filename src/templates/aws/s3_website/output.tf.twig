@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_s3_bucket.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_s3_bucket.{{ name }}.id}"
+}
+
 output "arn" {
   value = "${aws_s3_bucket.{{ name }}.arn}"
 }

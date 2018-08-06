@@ -22,15 +22,16 @@ Provides an VPC resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|vpc_id|The ID of the VPC.|string|
-|vpc_cidr_block|The CIDR block of the VPC.|string|
-|vpc_instance_tenancy|Tenancy of instances spin up within VPC.|string|
-|vpc_enable_dns_support|Whether or not the VPC has DNS support.|boolean|
-|vpc_enable_dns_hostnames|Whether or not the VPC has DNS hostname support.|boolean|
-|vpc_enable_classiclink|Whether or not the VPC has Classiclink enabled.|boolean|
-|vpc_main_route_table_id|The ID of the main route table associated with this VPC. Note that you can change a VPC's main route table by using an aws_main_route_table_association..|string|
-|vpc_default_network_acl_id|The ID of the network ACL created by default on VPC creation.|string|
-|vpc_default_security_group_id|The ID of the security group created by default on VPC creation.|string|
-|vpc_default_route_table_id|The ID of the route table created by default on VPC creation.|string|
-|vpc_ipv6_association_id|The association ID for the IPv6 CIDR block.|string|
-|vpc_ipv6_cidr_block|The IPv6 CIDR block.|string|
+|id|The ID of the VPC.|string|
+|thub_id|The ID of the VPC.|string|
+|cidr_block|The CIDR block of the VPC.|string|
+|instance_tenancy|Tenancy of instances spin up within VPC.|string|
+|enable_dns_support|Whether or not the VPC has DNS support.|boolean|
+|enable_dns_hostnames|Whether or not the VPC has DNS hostname support.|boolean|
+|enable_classiclink|Whether or not the VPC has Classiclink enabled.|boolean|
+|main_route_table_id|The ID of the main route table associated with this VPC. Note that you can change a VPC's main route table by using an aws_main_route_table_association..|string|
+|default_network_acl_id|The ID of the network ACL created by default on VPC creation.|string|
+|default_security_group_id|The ID of the security group created by default on VPC creation.|string|
+|default_route_table_id|The ID of the route table created by default on VPC creation.|string|
+|ipv6_association_id|The association ID for the IPv6 CIDR block.|string|
+|ipv6_cidr_block|The IPv6 CIDR block.|string|

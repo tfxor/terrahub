@@ -19,4 +19,5 @@ Provides an RDS security group resource. This is only for DB instances in the EC
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db security group ID.|string|
+|thub_id|The db security group ID.|string|
 |arn|The arn of the DB security group.|string|
