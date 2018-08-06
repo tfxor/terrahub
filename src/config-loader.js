@@ -1,6 +1,5 @@
 'use strict';
 
-const os = require('os');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
@@ -17,6 +16,7 @@ class ConfigLoader {
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
+    this._otherRootPaths = [];
 
     /**
      * Initialisation
@@ -135,6 +135,14 @@ class ConfigLoader {
   }
 
   /**
+   * Get all root paths found in the project directory
+   * @return {String[]}
+   */
+  getRootPaths() {
+    return this._otherRootPaths.concat([this._rootPath]);
+  }
+
+  /**
    * Separate root config from component's config
    * @private
    */
@@ -162,8 +170,7 @@ class ConfigLoader {
    */
   _handleComponentConfig() {
     // Remove root config
-    const [ rootConfig, ...componentConfigs ] = this.listConfig();
-    const invalidComponents = [ rootConfig ];
+    const componentConfigs = this.listConfig().slice(1);
 
     componentConfigs.forEach(configPath => {
       let config = this._getConfig(configPath);
@@ -171,7 +178,7 @@ class ConfigLoader {
       const componentHash = this.getComponentHash(componentPath);
 
       if (config.hasOwnProperty('project')) {
-        invalidComponents.push(configPath);
+        this._otherRootPaths.push(configPath);
       }
 
       // Delete in case of delete
@@ -184,17 +191,6 @@ class ConfigLoader {
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
-
-    if (invalidComponents.length > 1) {
-      let errorMsg = 'Multiple root configs identified in this project:' + os.EOL;
-
-      invalidComponents.forEach((cfgPath, index) => {
-        errorMsg += `  ${index + 1}. ${cfgPath}` + os.EOL;
-      });
-      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
-
-      throw new Error(errorMsg);
-    }
   }
 
   /**
