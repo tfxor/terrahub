@@ -3,7 +3,7 @@
 
 ## [1. Make it easier and faster to create reusable terraform configuration](features/features1.md)
 ```
-$ mkdir ./thub-demo && cd ./thub-demo
+$ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
 ✅ Project successfully initialized
@@ -46,12 +46,12 @@ More details [here](features/features3.md)
 
 ## [4. Integrate and manage any existing terraform configuration](features/features4.md)
 ```
-$ cd ./security-terraform
+$ cd ./security-terraform/
 
 $ terrahub project -n "Security_Terraform"
 ✅ Project successfully initialized
 
-$ terrahub component -n "iam-idp" -d iam-idp/
+$ terrahub component -n "iam-idp" -d ./iam-idp/
 ✅ Done
 ```
 

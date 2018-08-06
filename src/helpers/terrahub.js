@@ -2,8 +2,8 @@
 
 const path = require('path');
 const Terraform = require('../helpers/terraform');
-const { config } = require('../parameters');
-const { toMd5, promiseRequest } = require('../helpers/util');
+const { toMd5 } = require('../helpers/util');
+const { config, fetch } = require('../parameters');
 
 class Terrahub {
   /**
@@ -28,7 +28,7 @@ class Terrahub {
   _on(event, err = null) {
     let error = null;
     let data = {
-      ThubToken: config.token, // required for API
+      ThubToken: config.token, // @todo remove after migration
       Action: this._action,
       ProjectHash: this._project.code,
       ProjectName: this._project.name,
@@ -46,7 +46,7 @@ class Terrahub {
 
     let actionPromise = !config.token
       ? Promise.resolve()
-      : this._apiCall(this._getEndpoint(), data);
+      : fetch.post('thub/realtime/create', { body: JSON.stringify(data) });
 
     return actionPromise.then(() => {
       return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
@@ -129,33 +129,6 @@ class Terrahub {
   }
 
   /**
-   * Get API endpoint
-   * @returns {String}
-   * @private
-   */
-  _getEndpoint() {
-    return `https://${config.api}.terrahub.io/v1/thub/realtime/create`;
-  }
-
-  /**
-   * Call api endpoint
-   * @param {String} url
-   * @param {Object} body
-   * @returns {Promise}
-   * @private
-   */
-  _apiCall(url, body) {
-    const options = {
-      uri: url,
-      method: 'POST',
-      json: true,
-      body: body
-    };
-
-    return promiseRequest(options);
-  }
-
-  /**
    * Put object via bucket url
    * @param {String} url
    * @param {Buffer} body
@@ -164,13 +137,12 @@ class Terrahub {
    */
   _putObject(url, body) {
     const options = {
-      uri: url,
       method: 'PUT',
       body: body,
       headers: Object.assign({ 'Content-Type': 'text/plain' }, this._awsMetadata())
     };
 
-    return promiseRequest(options);
+    return fetch.request(url, options);
   }
 
   /**
@@ -186,7 +158,7 @@ class Terrahub {
       'x-amz-meta-thub-token': config.token,
       'x-amz-meta-thub-run-id': this._runId,
       'x-amz-meta-thub-action': this._action
-    }
+    };
   }
 
   /**

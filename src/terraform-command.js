@@ -45,6 +45,7 @@ class TerraformCommand extends AbstractCommand {
           try {
             this._configLoader.addToGlobalConfig(missingProjectData, answer);
           } catch (error) {
+            this.logger.debug(error);
           }
 
           this._configLoader.updateRootConfig();
@@ -151,6 +152,7 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Return name of the required field missing in project data
+   * @param {Object} projectConfig
    * @return {String|null}
    * @private
    */

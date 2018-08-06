@@ -1,0 +1,19 @@
+resource "aws_default_security_group" "{{ name }}" {
+  vpc_id      = "${var.security_group_vpc_id}"
+
+  ingress {
+    protocol  = "${var.security_group_ingress_protocol}"
+    self      = "${var.security_group_ingress_self}"
+    from_port = "${var.security_group_ingress_from_port}"
+    to_port   = "${var.security_group_ingress_to_port}"
+  }
+
+  egress {
+    from_port   = "${var.security_group_egress_from_port}"
+    to_port     = "${var.security_group_egress_to_port}"
+    protocol    = "${var.security_group_egress_protocol}"
+    cidr_blocks = ["${var.security_group_egress_cidr_blocks}"]
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

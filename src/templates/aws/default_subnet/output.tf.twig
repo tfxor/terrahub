@@ -1,0 +1,25 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_default_subnet.{{ name }}.id}"
+}
+
+output "availability_zone" {
+  value = "${aws_default_subnet.{{ name }}.availability_zone}"
+}
+
+output "cidr_block" {
+  value = "${aws_default_subnet.{{ name }}.cidr_block}"
+}
+
+output "vpc_id" {
+  value = "${aws_default_subnet.{{ name }}.vpc_id}"
+}
+
+output "ipv6_association_id" {
+  value = "${aws_default_subnet.{{ name }}.ipv6_association_id}"
+}
+
+output "ipv6_cidr_block" {
+  value = "${aws_default_subnet.{{ name }}.ipv6_cidr_block}"
+}
