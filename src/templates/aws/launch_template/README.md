@@ -45,6 +45,6 @@ Provides an EC2 launch template resource. Can be used to create instances or aut
 | Name | Description | Type |
 |------|-------------|:----:|
 |arn|Amazon Resource Name (ARN) of the launch template.|string|
-|id|The ID of the launch template.|string|
+|lt_id|The ID of the launch template.|string|
 |default_version|The default version of the launch template.|string|
 |latest_version|The latest version of the launch template.|string|

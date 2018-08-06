@@ -31,6 +31,7 @@ class TerraformCommand extends AbstractCommand {
       const projectConfig = this._configLoader.getProjectConfig();
 
       const missingProjectData = this._getProjectDataMissing(projectConfig);
+      let nonExistingComponents;
 
       if (missingProjectData === 'config') {
         errorMessage = 'Configuration file not found. '
@@ -44,6 +45,7 @@ class TerraformCommand extends AbstractCommand {
           try {
             this._configLoader.addToGlobalConfig(missingProjectData, answer);
           } catch (error) {
+            this.logger.debug(error);
           }
 
           this._configLoader.updateRootConfig();
@@ -54,8 +56,8 @@ class TerraformCommand extends AbstractCommand {
       } else if (this._areComponentsReady()) {
         errorMessage = 'No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`';
-      } else if (!this._includedComponentsExist()) {
-        errorMessage = 'Some of components were not found';
+      } else if ((nonExistingComponents = this._getNonExistingComponents()).length) {
+        errorMessage = 'Some of components were not found: ' + nonExistingComponents.join(', ');
       }
 
       return errorMessage ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
@@ -150,6 +152,7 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Return name of the required field missing in project data
+   * @param {Object} projectConfig
    * @return {String|null}
    * @private
    */
@@ -188,15 +191,14 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @returns {Boolean}
+   * @return {String[]}
    * @private
    */
-  _includedComponentsExist() {
+  _getNonExistingComponents() {
     const cfg = this.getExtendedConfig();
     const names = Object.keys(cfg).map(hash => cfg[hash].name);
-    const existing = this.getIncludes().filter(includeName => names.includes(includeName));
 
-    return existing.length === this.getIncludes().length;
+    return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
 }
 

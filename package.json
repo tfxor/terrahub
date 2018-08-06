@@ -1,7 +1,7 @@
 {
   "name": "terrahub",
   "version": "0.0.17",
-  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management of large amount of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
+  "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
   "preferGlobal": true,
   "bin": {
     "terrahub": "./bin/cli.js",
@@ -9,34 +9,45 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MitocGroup/terrahub.git"
+    "url": "git+https://github.com/TerraHubCorp/terrahub.git"
   },
   "keywords": [
     "terrahub",
     "terraform",
-    "tf"
+    "tf",
+    "devops",
+    "automation",
+    "containers",
+    "serverless",
+    "continuous-integration",
+    "continuous-delivery",
+    "continuous-deployment"
   ],
-  "author": "Mitoc Group",
+  "author": {
+    "name" : "TerraHub Corp",
+    "email" : "hello@terrahub.io",
+    "url" : "https://www.terrahub.io"
+  },
   "license": "MPL-2.0",
-  "homepage": "https://github.com/MitocGroup/terrahub#readme",
+  "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
   "bugs": {
-    "url": "https://github.com/MitocGroup/terrahub/issues"
+    "url": "https://github.com/TerraHubCorp/terrahub/issues"
   },
   "engines": {
     "node": ">=6.0",
     "npm": ">=3.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.269.1",
+    "aws-sdk": "^2.286.2",
     "child-process-promise": "^2.2.1",
-    "download": "^7.0.0",
-    "fs-extra": "^6.0.1",
+    "download": "^7.1.0",
+    "fs-extra": "^7.0.0",
     "glob": "^7.1.2",
     "js-logger": "^1.4.1",
     "js-yaml": "^3.12.0",
     "lodash.mergewith": "^4.6.1",
     "minimist": "^1.2.0",
-    "request": "^2.87.0",
+    "node-fetch": "^2.2.0",
     "semver": "^5.5.0",
     "treeify": "^1.1.0",
     "twig": "^1.12.0"
