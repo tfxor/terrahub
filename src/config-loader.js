@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
@@ -43,7 +44,7 @@ class ConfigLoader {
    * @private
    */
   _readRoot() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
+    const configFile = this._findRootConfig(process.cwd());
 
     if (configFile) {
       this._rootPath = path.dirname(configFile);
@@ -56,6 +57,33 @@ class ConfigLoader {
       this._rootConfig = {};
       this._projectConfig = {};
     }
+  }
+
+  /**
+   * @param {String} dirPath
+   * @return {String|Boolean}
+   * @private
+   */
+  _findRootConfig(dirPath) {
+    const cfgPath = path.join(dirPath, config.defaultFileName);
+    let cfgFile;
+    try {
+      cfgFile = this._getConfig(cfgPath);
+    } catch (error) {
+      cfgFile = {};
+    }
+
+    if (cfgFile.hasOwnProperty('project')) {
+      return cfgPath;
+    }
+
+    const lower = path.resolve(dirPath, '..');
+
+    if (lower !== dirPath) {
+      return this._findRootConfig(lower);
+    }
+
+    return false;
   }
 
   /**
@@ -134,23 +162,39 @@ class ConfigLoader {
    */
   _handleComponentConfig() {
     // Remove root config
-    const config = this.listConfig().slice(1);
+    const [ rootConfig, ...componentConfigs ] = this.listConfig();
+    const invalidComponents = [ rootConfig ];
 
-    config.forEach(configPath => {
+    componentConfigs.forEach(configPath => {
       let config = this._getConfig(configPath);
       const componentPath = path.dirname(this.relativePath(configPath));
       const componentHash = this.getComponentHash(componentPath);
+
+      if (config.hasOwnProperty('project')) {
+        invalidComponents.push(configPath);
+      }
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
       delete config.component;
 
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
+        config['parent'] = this.relativePath(path.resolve(this._rootPath, componentPath, config.parent));
       }
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
+
+    if (invalidComponents.length > 1) {
+      let errorMsg = 'Multiple root configs identified in this project:' + os.EOL;
+
+      invalidComponents.forEach((cfgPath, index) => {
+        errorMsg += `  ${index + 1}. ${cfgPath}` + os.EOL;
+      });
+      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+      throw new Error(errorMsg);
+    }
   }
 
   /**
