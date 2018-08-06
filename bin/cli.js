@@ -37,7 +37,13 @@ function commandCreate(logger = console) {
   return new Command(args, logger);
 }
 
-const command = commandCreate(logger);
+let command;
+try {
+  command = commandCreate(logger);
+} catch (error) {
+  logger.error(error || 'Error occurred');
+  process.exit(1);
+}
 
 command
   .validate()

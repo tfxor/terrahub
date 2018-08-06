@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
   "preferGlobal": true,
   "bin": {
@@ -9,18 +9,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MitocGroup/terrahub.git"
+    "url": "git+https://github.com/TerraHubCorp/terrahub.git"
   },
   "keywords": [
     "terrahub",
     "terraform",
-    "tf"
+    "tf",
+    "devops",
+    "automation",
+    "containers",
+    "serverless",
+    "continuous-integration",
+    "continuous-delivery",
+    "continuous-deployment"
   ],
-  "author": "Mitoc Group",
+  "author": {
+    "name": "TerraHub Corp",
+    "email": "hello@terrahub.io",
+    "url": "https://www.terrahub.io"
+  },
   "license": "MPL-2.0",
-  "homepage": "https://github.com/MitocGroup/terrahub#readme",
+  "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
   "bugs": {
-    "url": "https://github.com/MitocGroup/terrahub/issues"
+    "url": "https://github.com/TerraHubCorp/terrahub/issues"
   },
   "engines": {
     "node": ">=6.0",
