@@ -152,7 +152,7 @@ class AbstractCommand {
       );
     }
 
-    return Promise.resolve();
+    return Promise.resolve(this);
   }
 
   /**

@@ -20,28 +20,30 @@ if (!semver.satisfies(process.version, engines.node)) {
 
 /**
  * Command create
- * @param {logger|*} logger
- * @returns {*}
+ * @param {Logger} logger
+ * @returns {Promise}
  */
 function commandCreate(logger = console) {
-  const command = args._.shift();
-  delete args._;
+  return new Promise(resolve => {
+    const command = args._.shift();
+    delete args._;
 
-  if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp
-    || HelpParser.hasInvalidOptions(command, args)) {
-    args.command = command;
-    return new HelpCommand(args, logger);
-  }
+    if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp
+      || HelpParser.hasInvalidOptions(command, args)) {
+      args.command = command;
 
-  const Command = require(path.join(commandsPath, command));
-  return new Command(args, logger);
+      resolve(new HelpCommand(args, logger));
+    }
+
+    const Command = require(path.join(commandsPath, command));
+
+    resolve(new Command(args, logger));
+  });
 }
 
-const command = commandCreate(logger);
-
-command
-  .validate()
-  .then(() => command.run())
+commandCreate(logger)
+  .then(command => command.validate())
+  .then(command => command.run())
   .then(message => {
     if (message) {
       logger.info(message);

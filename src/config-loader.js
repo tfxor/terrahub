@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
@@ -43,19 +44,67 @@ class ConfigLoader {
    * @private
    */
   _readRoot() {
-    const [configFile] = this._find('.terrahub.+(json|yml|yaml)', process.cwd());
+    const cfgPaths = this._findRootConfigs(process.cwd());
 
-    if (configFile) {
-      this._rootPath = path.dirname(configFile);
-      this._rootConfig = this._getConfig(configFile);
-      this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+    switch (cfgPaths.length) {
+      case 1: {
+        this._rootPath = cfgPaths[0];
+        this._rootConfig = this._getConfig(path.join(this._rootPath, config.defaultFileName));
+        this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
 
-      delete this._rootConfig['project'];
-    } else {
-      this._rootPath = false;
-      this._rootConfig = {};
-      this._projectConfig = {};
+        delete this._rootConfig['project'];
+        break;
+      }
+
+      case 0: {
+        this._rootPath = false;
+        this._rootConfig = {};
+        this._projectConfig = {};
+
+        break;
+      }
+
+      default: {
+        let errorMsg = 'Multiple root configs identified in this project:' + os.EOL;
+
+        cfgPaths.forEach((cfgPath, index) => {
+          errorMsg += `  ${index + 1}. ${cfgPath}` + os.EOL;
+        });
+
+        errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+        throw new Error(errorMsg);
+      }
     }
+  }
+
+  /**
+   * @param {String} dirPath
+   * @return {String[]}
+   * @private
+   */
+  _findRootConfigs(dirPath) {
+    const lower = path.resolve(dirPath, '..');
+    let result;
+
+    if (lower !== dirPath) {
+      result = this._findRootConfigs(lower);
+    } else {
+      result = [];
+    }
+
+    let cfgFile;
+    try {
+      cfgFile = yamlToJson(path.join(dirPath, config.defaultFileName));
+    } catch (error) {
+      cfgFile = {};
+    }
+
+    if (cfgFile.hasOwnProperty('project')) {
+      result.push(dirPath);
+    }
+
+    return result;
   }
 
   /**
@@ -146,7 +195,7 @@ class ConfigLoader {
       delete config.component;
 
       if (config.hasOwnProperty('parent')) {
-        config['parent'] = this.relativePath(path.resolve(componentPath, config.parent));
+        config['parent'] = this.relativePath(path.resolve(this._rootPath, componentPath, config.parent));
       }
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
@@ -210,7 +259,7 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), config.fileName);
-    const forceWorkspace = { terraform: { workspace: config.env }}; // Just remove to revert
+    const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;
