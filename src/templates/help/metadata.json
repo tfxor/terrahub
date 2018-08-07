@@ -128,10 +128,10 @@
           "defaultValue": "Current working directory"
         },
         {
-          "name": "parent",
+          "name": "depends-on",
           "shortcut": "p",
-          "description": "Parent component path",
-          "defaultValue": ""
+          "description": "Paths of the components, which the component depends on (comma separated values)",
+          "defaultValue": []
         },
         {
           "name": "force",
