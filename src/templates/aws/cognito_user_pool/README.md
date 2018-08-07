@@ -25,8 +25,9 @@ Provides a Cognito User Pool resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cognito_user_pool_name|The name of the user pool.|string|
-|cognito_user_pool_id|The id of the user pool.|string|
-|cognito_user_pool_arn|The ARN of the user pool.|string|
-|cognito_user_pool_creation_date|The date the user pool was created.|string|
-|cognito_user_pool_last_modified_date|The date the user pool was last modified.|string|
+|name|The name of the user pool.|string|
+|id|The id of the user pool.|string|
+|thub_id|The id of the user pool (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|arn|The ARN of the user pool.|string|
+|creation_date|The date the user pool was created.|string|
+|last_modified_date|The date the user pool was last modified.|string|

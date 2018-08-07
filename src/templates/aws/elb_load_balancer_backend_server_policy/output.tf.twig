@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_load_balancer_backend_server_policy.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_load_balancer_backend_server_policy.{{ name }}.id}"
+}
+
 output "load_balancer_name" {
   value = "${aws_load_balancer_backend_server_policy.{{ name }}.load_balancer_name}"
 }

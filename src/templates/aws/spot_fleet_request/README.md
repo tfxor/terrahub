@@ -32,5 +32,6 @@ Provides an EC2 Spot Fleet Request resource. This allows a fleet of Spot instanc
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|eni_id|The Spot fleet request ID.|string|
+|id|The Spot fleet request ID.|string|
+|thub_id|The Spot fleet request ID (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |spot_request_state|The state of the Spot fleet request.|string|

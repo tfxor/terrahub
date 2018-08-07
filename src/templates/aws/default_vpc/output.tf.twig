@@ -8,6 +8,10 @@ output "id" {
   value = "${aws_default_vpc.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_default_vpc.{{ name }}.id}"
+}
+
 output "cidr_block" {
   value = "${aws_default_vpc.{{ name }}.cidr_block}"
 }

@@ -21,8 +21,9 @@ Provides a Kinesis Stream resource. Amazon Kinesis is a managed service that sca
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|kinesis_stream_id|The unique Stream id.|string|
-|kinesis_stream_name|The unique Stream name.|string|
-|kinesis_stream_shard_count|The count of Shards for this Stream.|string|
-|kinesis_stream_arn|The Amazon Resource Name (ARN) specifying the Stream.|string|
-|kinesis_stream_shard_level_metrics|A list of shard-level CloudWatch metrics which can be enabled for the stream. See Monitoring with CloudWatch for more.|array|
+|id|The unique Stream id.|string|
+|thub_id|The unique Stream id (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|name|The unique Stream name.|string|
+|shard_count|The count of Shards for this Stream.|string|
+|arn|The Amazon Resource Name (ARN) specifying the Stream.|string|
+|shard_level_metrics|A list of shard-level CloudWatch metrics which can be enabled for the stream. See Monitoring with CloudWatch for more.|array|

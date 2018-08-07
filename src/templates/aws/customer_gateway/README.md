@@ -19,6 +19,7 @@ Provides a customer gateway inside a VPC. These objects can be connected to VPN 
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The amazon-assigned ID of the gateway.|string|
+|thub_id|The amazon-assigned ID of the gateway (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |bgp_asn|The gateway's Border Gateway Protocol (BGP) Autonomous System Number (ASN).|string|
 |ip_address|The IP address of the gateway's Internet-routable external interface.|string|
 |type|The type of customer gateway.|string|

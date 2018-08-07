@@ -14,4 +14,5 @@ Provides an SNS topic resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|sns_topic_arn|The ARN of the SNS topic|string|
+|arn|The ARN of the SNS topic|string|
+|name|The NAME of the SNS topic|string|

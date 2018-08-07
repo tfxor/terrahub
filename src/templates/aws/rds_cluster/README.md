@@ -37,7 +37,8 @@ Note: All arguments including the username and password will be stored in the ra
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|id|The RDS Cluster Identifier|string|
+|id|The RDS Cluster Identifier.|string|
+|thub_id|The RDS Cluster Identifier (hotfix for issue hashicorp/terraform#[7982]).|string|
 |cluster_identifier|The RDS Cluster Identifier|string|
 |cluster_resource_id|The RDS Cluster Resource ID|string|
 |cluster_members|List of RDS Instances that are a part of this cluster|string|

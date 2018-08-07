@@ -20,4 +20,5 @@ Manages a single EBS volume.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The volume ID (e.g. vol-59fcb34e).|string|
+|thub_id|The volume ID (e.g. vol-59fcb34e) (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The volume ARN (e.g. arn:aws:ec2:us-east-1:0123456789012:volume/vol-59fcb34e).|string|

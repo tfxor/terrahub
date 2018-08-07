@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_default_network_acl.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_default_network_acl.{{ name }}.id}"
+}
+
 output "vpc_id" {
   value = "${aws_default_network_acl.{{ name }}.vpc_id}"
 }

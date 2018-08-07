@@ -8,6 +8,10 @@ output "id" {
   value = "${aws_dynamodb_table.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_dynamodb_table.{{ name }}.id}"
+}
+
 output "stream_arn" {
   value = "${aws_dynamodb_table.{{ name }}.stream_arn}"
 }

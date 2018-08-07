@@ -55,14 +55,15 @@ Creates an Amazon CloudFront web distribution.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cf_id|The identifier for the distribution. For example: EDFDVBD632BHDS5.|string|
-|cf_arn|The ARN (Amazon Resource Name) for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.|string|
-|cf_aliases|Extra CNAMEs (alternate domain names), if any, for this distribution.|list|
-|cf_status|The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system.|string|
-|cf_domain_name|The domain name corresponding to the distribution. For example: d604721fxaaqy9.cloudfront.net.|string|
-|cf_etag|The current version of the distribution's information. For example: E2QWRUHAPOMQZL.|string|
-|cf_hosted_zone_id|The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. This attribute is simply an alias for the zone ID Z2FDTNDATAQYW2.|string|
-|cf_last_modified_time|The date and time the distribution was last modified.|string|
-|cf_in_progress_validation_batches|The number of invalidation batches currently in progress.|string|
-|cf_caller_reference|Internal value used by CloudFront to allow future updates to the distribution configuration.|string|
-|cf_active_trusted_signers|The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs.|string|
+|id|The identifier for the distribution. For example: EDFDVBD632BHDS5.|string|
+|thub_id|The identifier for the distribution. For example: EDFDVBD632BHDS5 (matches identifier; hotfix for issue hashicorp/terraform#[7982]).|string|
+|arn|The ARN (Amazon Resource Name) for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.|string|
+|aliases|Extra CNAMEs (alternate domain names), if any, for this distribution.|list|
+|status|The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system.|string|
+|domain_name|The domain name corresponding to the distribution. For example: d604721fxaaqy9.cloudfront.net.|string|
+|etag|The current version of the distribution's information. For example: E2QWRUHAPOMQZL.|string|
+|hosted_zone_id|The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. This attribute is simply an alias for the zone ID Z2FDTNDATAQYW2.|string|
+|last_modified_time|The date and time the distribution was last modified.|string|
+|in_progress_validation_batches|The number of invalidation batches currently in progress.|string|
+|caller_reference|Internal value used by CloudFront to allow future updates to the distribution configuration.|string|
+|active_trusted_signers|The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs.|string|

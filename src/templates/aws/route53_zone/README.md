@@ -19,6 +19,6 @@ Provides a Route53 Hosted Zone resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|route53_name|This is the name of the hosted zone.|string|
-|route53_zone_id|The Hosted Zone ID. This can be referenced by zone records.|string|
-|route53_name_servers|A list of name servers in associated (or default) delegation set. Find more about delegation sets in AWS docs.|array|
+|name|This is the name of the hosted zone.|string|
+|zone_id|The Hosted Zone ID. This can be referenced by zone records.|string|
+|name_servers|A list of name servers in associated (or default) delegation set. Find more about delegation sets in AWS docs.|array|

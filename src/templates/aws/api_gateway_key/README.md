@@ -17,8 +17,9 @@ Provides an API Gateway API Key.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|api_gateway_key_id|The ID of the API key.|string|
-|api_gateway_key_name|The name of the API key.|string|
-|api_gateway_key_created_date|The creation date of the API key.|string|
-|api_gateway_key_last_updated_date|The last update date of the API key.|string|
-|api_gateway_key_value|The value of the API key.|string|
+|id|The ID of the API key.|string|
+|thub_id|The ID of the API key (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|name|The name of the API key.|string|
+|created_date|The creation date of the API key.|string|
+|last_updated_date|The last update date of the API key.|string|
+|value|The value of the API key.|string|
