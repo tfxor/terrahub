@@ -19,7 +19,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. aws_lambda_function, google_cloudfunctions_function)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('parent', 'p', 'Parent component path', String, '')
+      .addOption('depends-on', 'p', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
     ;
   }
@@ -31,9 +31,14 @@ class ComponentCommand extends AbstractCommand {
     this._name = this.getOption('name');
     this._template = this.getOption('template');
     this._directory = this.getOption('directory');
-    this._parent = this.getOption('parent');
+    this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
+    this._appPath = this.getAppPath();
+
+    if (!this._appPath) {
+      throw new Error(`Project's config not found`);
+    }
 
     if (!isAwsNameValid(this._name)) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
@@ -58,9 +63,7 @@ class ComponentCommand extends AbstractCommand {
     let outFile = path.join(directory, config.defaultFileName);
     let componentData = { component: { name: this._name } };
 
-    if (this._parent) {
-      componentData.component['parent'] = this._parent;
-    }
+    componentData.component['dependsOn'] = this._dependsOn;
 
     if (fse.pathExistsSync(outFile)) {
       const config = ConfigLoader.readConfig(outFile);
@@ -109,7 +112,7 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, config.defaultFileName);
 
-      return renderTwig(this._srcFile, { name: this._name, parent: this._parent }, outFile);
+      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn }, outFile);
     }).then(() => 'Done');
   }
 
@@ -118,12 +121,8 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _findExistingComponent() {
-    let cfgPath = path.resolve(process.cwd(), config.defaultFileName);
-    let componentRoot = this.relativePath(this._directory);
-
-    if (!fse.pathExistsSync(cfgPath)) {
-      throw new Error(`Project's config not found`);
-    }
+    const componentRoot = this.relativePath(this._directory);
+    const cfgPath = path.resolve(this._appPath, config.defaultFileName);
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);
