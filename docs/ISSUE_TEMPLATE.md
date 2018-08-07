@@ -6,7 +6,7 @@ About: create a report to help us improve
 ## Describe the Bug
 <!-- A clear and concise description of what the bug is -->
 
-## Steps To Reproduce
+## Steps to Reproduce
 Steps to reproduce the behavior:
 1. Run the command '...'
 
