@@ -24,4 +24,4 @@ Copying an AMI can take several minutes. The creation of this resource will bloc
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the created AMI.|string|
-|thub_id|The ID of the created AMI (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID of the created AMI (hotfix for issue hashicorp/terraform#[7982]).|string|

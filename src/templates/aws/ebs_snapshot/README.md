@@ -17,7 +17,7 @@ Creates a Snapshot of an EBS Volume.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The snapshot ID (e.g. snap-59fcb34e).|string|
-|thub_id|The snapshot ID (e.g. snap-59fcb34e) (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The snapshot ID (e.g. snap-59fcb34e) (hotfix for issue hashicorp/terraform#[7982]).|string|
 |owner_id|The AWS account ID of the EBS snapshot owner.|string|
 |owner_alias|Value from an Amazon-maintained list (amazon, aws-marketplace, microsoft) of snapshot owners.|string|
 |encrypted|Whether the snapshot is encrypted.|string|

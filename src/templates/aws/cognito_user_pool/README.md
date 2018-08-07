@@ -27,7 +27,7 @@ Provides a Cognito User Pool resource.
 |------|-------------|:----:|
 |name|The name of the user pool.|string|
 |id|The id of the user pool.|string|
-|thub_id|The id of the user pool (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The id of the user pool (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the user pool.|string|
 |creation_date|The date the user pool was created.|string|
 |last_modified_date|The date the user pool was last modified.|string|

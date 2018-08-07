@@ -22,7 +22,7 @@ Provides a Load Balancer resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ARN of the load balancer (matches arn).|string|
-|thub_id|The ARN of the load balancer (matches arn; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ARN of the load balancer (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the load balancer (matches id).|string|
 |arn_suffix|The ARN suffix for use with CloudWatch Metrics.|string|
 |dns_name|The DNS name of the load balancer.|string|

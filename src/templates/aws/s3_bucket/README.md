@@ -28,7 +28,7 @@ Creates a S3 bucket resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the bucket.|string|
-|thub_id|The name of the bucket (matches name; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The name of the bucket (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the bucket. Will be of format arn:aws:s3:::bucketname.|string|
 |bucket_domain_name|The bucket domain name. Will be of format bucketname.s3.amazonaws.com.|string|
 |hosted_zone_id|The Route 53 Hosted Zone ID for this bucket's region.|string|

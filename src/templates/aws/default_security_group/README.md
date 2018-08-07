@@ -33,7 +33,7 @@ This resource treats its inline rules as absolute; only the rules defined inline
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the security group.|string|
-|thub_id|The ID of the security group (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID of the security group (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the security group.|string|
 |vpc_id|The VPC ID.|string|
 |owner_id|The owner ID.|string|

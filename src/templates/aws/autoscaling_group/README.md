@@ -27,7 +27,7 @@ Provides an AutoScaling Group resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The autoscaling group id.|string|
-|thub_id|The autoscaling group id (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The autoscaling group id (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN for this AutoScaling Group.|string|
 |availability_zones|The availability zones of the autoscale group.|string|
 |min_size|The minimum size of the autoscale group.|string|

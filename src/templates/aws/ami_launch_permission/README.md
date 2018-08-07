@@ -16,4 +16,4 @@ Adds launch permission to Amazon Machine Image (AMI) from another AWS account.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|A combination of "image_id-account_id".|string|
-|thub_id|A combination of "image_id-account_id" (matches image_id-account_id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|A combination of "image_id-account_id" (hotfix for issue hashicorp/terraform#[7982]).|string|

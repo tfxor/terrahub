@@ -18,7 +18,7 @@ Provides an Elastic network interface (ENI) resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID the ENI is in.|string|
-|thub_id|The ID the ENI is in (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID the ENI is in (hotfix for issue hashicorp/terraform#[7982]).|string|
 |subnet_id|Subnet ID the ENI is in.|string|
 |description|A description for the network interface.|string|
 |private_ips|List of private IPs assigned to the ENI.|string|

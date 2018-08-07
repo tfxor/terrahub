@@ -44,7 +44,7 @@ For more information about Network ACLs, see the AWS Documentation on Network AC
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the Default Network ACL.|string|
-|thub_id|The ID of the Default Network ACL (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID of the Default Network ACL (hotfix for issue hashicorp/terraform#[7982]).|string|
 |vpc_id|The ID of the associated VPC|string|
 |ingress|Set of ingress rules|list|
 |egress|Set of egress rules|list|

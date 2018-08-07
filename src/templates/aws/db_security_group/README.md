@@ -19,5 +19,5 @@ Provides an RDS security group resource. This is only for DB instances in the EC
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db security group ID.|string|
-|thub_id|The db security group ID (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The db security group ID (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The arn of the DB security group.|string|

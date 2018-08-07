@@ -22,7 +22,7 @@ Provides a Kinesis Stream resource. Amazon Kinesis is a managed service that sca
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The unique Stream id.|string|
-|thub_id|The unique Stream id (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The unique Stream id (hotfix for issue hashicorp/terraform#[7982]).|string|
 |name|The unique Stream name.|string|
 |shard_count|The count of Shards for this Stream.|string|
 |arn|The Amazon Resource Name (ARN) specifying the Stream.|string|
