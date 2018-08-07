@@ -34,6 +34,11 @@ class ComponentCommand extends AbstractCommand {
     this._parent = this.getOption('parent');
     this._force = this.getOption('force');
     this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
+    this._appPath = this.getAppPath();
+
+    if (!this._appPath) {
+      throw new Error(`Project's config not found`);
+    }
 
     if (!isAwsNameValid(this._name)) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
@@ -118,12 +123,8 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _findExistingComponent() {
-    let cfgPath = path.resolve(process.cwd(), config.defaultFileName);
-    let componentRoot = this.relativePath(this._directory);
-
-    if (!fse.pathExistsSync(cfgPath)) {
-      throw new Error(`Project's config not found`);
-    }
+    const componentRoot = this.relativePath(this._directory);
+    const cfgPath = path.resolve(this._appPath, config.defaultFileName);
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);

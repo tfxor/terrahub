@@ -193,6 +193,13 @@ class AbstractCommand {
   }
 
   /**
+   * @return {String|Boolean}
+   */
+  getAppPath() {
+    return this._configLoader.appPath();
+  }
+
+  /**
    * @param {String} fullPath
    * @returns {String}
    */
