@@ -2,7 +2,7 @@
 component:
   name: '{{ name }}'
 {% if dependsOn %}
-  dependsOn:
+  depends_on:
 {% for dep in dependsOn %}
     - '{{ dep }}'
 {% endfor %}
