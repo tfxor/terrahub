@@ -1,9 +1,9 @@
 ## local config
 component:
   name: '{{ name }}'
-{% if deps %}
-  depends_on:
-{% for dep in deps %}
+{% if dependsOn %}
+  dependsOn:
+{% for dep in dependsOn %}
     - '{{ dep }}'
 {% endfor %}
 {% endif %}

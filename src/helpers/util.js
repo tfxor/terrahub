@@ -99,12 +99,12 @@ function familyTree(data) {
   Object.keys(object).forEach(hash => {
     let node = object[hash];
 
-    if (node.depends_on.length) {
+    if (node.dependsOn.length) {
       tree[hash] = node;
     } else {
-      const key = toMd5(node.depends_on[0]);
+      const key = toMd5(node.dependsOn[0]);
       if (!object.hasOwnProperty(key)) {
-        throw new Error(`Couldn't find dependency '${node.depends_on[0]}'`);
+        throw new Error(`Can not find dependency '${node.dependsOn[0]}'`);
       }
 
       object[key].children.push(node);

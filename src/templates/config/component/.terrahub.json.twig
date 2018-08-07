@@ -1,10 +1,8 @@
 {
   "component": {
     "name": "{{ name }}",
-{% if deps %}
-    "depends_on": [
-      "{{ deps|join('","') }}"
-    ]
-{% endif %}
+    {% if dependsOn %}
+    "dependsOn": "{{ dependsOn }}"
+    {% endif %}
   }
 }
