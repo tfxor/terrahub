@@ -32,7 +32,7 @@ class ConfigLoader {
   _defaults() {
     return {
       project: this.getProjectConfig(),
-      depends_on: [],
+      dependsOn: [],
       children: [],
       hooks: {},
       build: {}
@@ -185,9 +185,9 @@ class ConfigLoader {
       config = Object.assign(config, config.component);
       delete config.component;
 
-      if (config.hasOwnProperty('depends_on') && config.depends_on.length > 0) {
-        config.depends_on.forEach((dep, index) => {
-          config.depends_on[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
+      if (config.hasOwnProperty('dependsOn') && config.dependsOn.length > 0) {
+        config.dependsOn.forEach((dep, index) => {
+          config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
         });
       }
 

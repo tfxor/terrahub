@@ -58,7 +58,7 @@ class ComponentCommand extends AbstractCommand {
     let outFile = path.join(directory, config.defaultFileName);
     let componentData = { component: { name: this._name } };
 
-    componentData.component['depends_on'] = this._dependsOn;
+    componentData.component['dependsOn'] = this._dependsOn;
 
     if (fse.pathExistsSync(outFile)) {
       const config = ConfigLoader.readConfig(outFile);
@@ -107,7 +107,7 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, config.defaultFileName);
 
-      return renderTwig(this._srcFile, { name: this._name, depends_on: this._dependsOn }, outFile);
+      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn }, outFile);
     }).then(() => 'Done');
   }
 
