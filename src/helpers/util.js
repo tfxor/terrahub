@@ -104,7 +104,7 @@ function familyTree(data) {
     } else {
       const key = toMd5(node.dependsOn[0]);
       if (!object.hasOwnProperty(key)) {
-        throw new Error(`Can not find dependency '${node.dependsOn[0]}'`);
+        throw new Error(`Couldn't find dependency '${node.dependsOn[0]}'`);
       }
 
       object[key].children.push(node);

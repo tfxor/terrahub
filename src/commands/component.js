@@ -19,7 +19,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', String)
       .addOption('template', 't', 'Template name (e.g. aws_lambda_function, google_cloudfunctions_function)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('depends-on', 'p', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
+      .addOption('depends-on', 'o', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
     ;
   }
