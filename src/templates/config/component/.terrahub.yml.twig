@@ -1,17 +1,13 @@
 ## local config
 component:
   name: '{{ name }}'
-  {% if parent %}
-  parent: '{{ parent }}'
-  {% endif %}
+{% if depends_on %}
+  depends_on:
+{% for dep in depends_on %}
+    - '{{ dep }}'
+{% endfor %}
+{% endif %}
 
-#   {% if depends_on %}
-#   depends_on:
-#     {% for dep in depends_on %}
-#     - '{{ dep }}'
-#     {% endfor %}
-#   {% endif %}
-#
 # ## build config
 # build:
 #   env:

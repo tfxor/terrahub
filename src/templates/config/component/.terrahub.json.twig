@@ -1,8 +1,8 @@
 {
   "component": {
-    {% if parent %}
-    "parent": "{{ parent }}",
+    "name": "{{ name }}",
+    {% if depends_on %}
+    "depends_on": "{{ depends_on }}"
     {% endif %}
-    "name": "{{ name }}"
   }
 }
