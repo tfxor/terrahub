@@ -99,7 +99,7 @@ function familyTree(data) {
   Object.keys(object).forEach(hash => {
     let node = object[hash];
 
-    if (node.dependsOn.length) {
+    if (!node.dependsOn.length) {
       tree[hash] = node;
     } else {
       const key = toMd5(node.dependsOn[0]);
