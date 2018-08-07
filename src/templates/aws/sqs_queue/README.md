@@ -15,6 +15,6 @@
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The URL for the created Amazon SQS queue.|string|
-|thub_id|The URL for the created Amazon SQS queue.|string|
+|thub_id|The URL for the created Amazon SQS queue (matches url; hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the SQS queue.|string|
 |name|This is the human-readable name of the queue.|string|

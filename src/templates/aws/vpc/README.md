@@ -23,7 +23,7 @@ Provides an VPC resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the VPC.|string|
-|thub_id|The ID of the VPC.|string|
+|thub_id|The ID of the VPC (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |cidr_block|The CIDR block of the VPC.|string|
 |instance_tenancy|Tenancy of instances spin up within VPC.|string|
 |enable_dns_support|Whether or not the VPC has DNS support.|boolean|

@@ -20,5 +20,5 @@ Provides a CloudWatch Log Metric Filter resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the metric filter.|string|
-|thub_id|The name of the metric filter.|string|
+|thub_id|The name of the metric filter (matches name; hotfix for issue hashicorp/terraform#[7982]).|string|
 |metric_transformation|A block defining collection of information needed to define how metric data gets emitted.|object|

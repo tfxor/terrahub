@@ -19,6 +19,6 @@ Create an API Gateway REST API.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the REST API.|int|
-|thub_id|The ID of the REST API.|int|
+|thub_id|The ID of the REST API (matches id; hotfix for issue hashicorp/terraform#[7982]).|int|
 |root_resource_id|The resource ID of the REST API's root.|int|
 |created_date|The creation date of the REST API.|string|

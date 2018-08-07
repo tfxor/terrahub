@@ -16,4 +16,4 @@ Adds permission to create volumes off of a given EBS Snapshot.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|A combination of "snapshot_id-account_id".|string|
-|thub_id|A combination of "snapshot_id-account_id".|string|
+|thub_id|A combination of "snapshot_id-account_id" (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|

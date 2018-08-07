@@ -45,7 +45,7 @@ NOTE: Because their behavior depends on the live status of the spot market, Spot
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The Spot Instance Request ID.|string|
-|thub_id|The Spot Instance Request ID.|string|
+|thub_id|The Spot Instance Request ID (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |spot_bid_status|The current bid status of the Spot Instance Request.|string|
 |spot_request_state The current request state of the Spot Instance Request.|string|
 |spot_instance_id|The Instance ID (if any) that is currently fulfilling the Spot Instance request.|string|

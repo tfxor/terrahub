@@ -36,8 +36,8 @@ For more information on Amazon Aurora, see Aurora on Amazon RDS in the Amazon RD
 |arn|Amazon Resource Name (ARN) of cluster instance|string|
 |cluster_identifier|The RDS Cluster Identifier|string|
 |identifier|The Instance identifier|string|
-|id|The Instance identifier|string|
-|thub_id|The Instance identifier|string|
+|id|The Instance identifier.|string|
+|thub_id|The Instance identifier (hotfix for issue hashicorp/terraform#[7982]).|string|
 |writer|Boolean indicating if this instance is writable. False indicates this instance is a read replica.|string|
 |allocated_storage|The amount of allocated storage|string|
 |availability_zone|The availability zone of the instance|string|

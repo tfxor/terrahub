@@ -16,4 +16,4 @@ Provides an EC2 placement group. Read more about placement groups in AWS Docs.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the placement group.|string|
-|thub_id|The name of the placement group.|string|
+|thub_id|The name of the placement group (matches name; hotfix for issue hashicorp/terraform#[7982]).|string|

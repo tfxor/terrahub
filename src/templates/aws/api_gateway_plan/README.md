@@ -23,7 +23,7 @@ Provides an API Gateway Usage Plan.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the API resource.|string|
-|thub_id|The ID of the API resource.|string|
+|thub_id|The ID of the API resource (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |name|The name of the usage plan.|string|
 |description|The description of a usage plan.|string|
 |api_stages|The associated API stages of the usage plan.|array|

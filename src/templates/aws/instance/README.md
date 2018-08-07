@@ -32,7 +32,7 @@ Provides an EC2 instance resource. This allows instances to be created, updated,
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The instance ID.|string|
-|thub_id|The instance ID.|string|
+|thub_id|The instance ID (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
 |availability_zone|The availability zone of the instance.|string|
 |placement_group|The placement group of the instance.|string|
 |key_name|The key name of the instance.|string|
