@@ -63,7 +63,7 @@
           "defaultValue": false
         },
         {
-          "name": "output",
+          "name": "format",
           "shortcut": "o",
           "description": "Log only the command result in one of the following formats: json, text",
           "defaultValue": ""
@@ -129,7 +129,7 @@
         },
         {
           "name": "depends-on",
-          "shortcut": "p",
+          "shortcut": "o",
           "description": "Paths of the components, which the component depends on (comma separated values)",
           "defaultValue": []
         },
@@ -313,6 +313,12 @@
       "name": "output",
       "description": "run `terraform output` across multiple terrahub components",
       "options": [
+        {
+          "name": "format",
+          "shortcut": "o",
+          "description": "Specify the output format (text or json)",
+          "defaultValue": "text"
+        },
         {
           "name": "include",
           "shortcut": "i",
