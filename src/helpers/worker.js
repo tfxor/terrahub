@@ -3,6 +3,7 @@
 const cluster = require('cluster');
 const Terrahub = require('../helpers/terrahub');
 const { promiseSeries } = require('../helpers/util');
+const BuildHelper = require('./build-helper');
 
 /**
  * Parse terraform actions
@@ -21,20 +22,38 @@ function getTasks(configs) {
   const terrahubList = configs.map(config => new Terrahub(config));
 
   return getActions().map(action =>
-    () => {
-      const output = [];
-
-      return promiseSeries(terrahubList.map(terrahub =>
-        () => terrahub.getTask(action).then(result => {
-          if (result) {
-            output.push(result);
-          }
-
-          return result;
-        })
-      )).then(() => Promise.resolve(output));
-    }
+    action !== 'build' ? getTerraformTask(terrahubList, action) : getBuildTask(configs)
   );
+}
+
+/**
+ * @param {Terrahub[]} terrahubList
+ * @param {String} action
+ * @return {Function}
+ */
+function getTerraformTask(terrahubList, action) {
+  return () => {
+    const output = [];
+
+    return promiseSeries(terrahubList.map(terrahub =>
+      () => terrahub.getTask(action).then(result => {
+        if (result) {
+          output.push(result);
+        }
+
+        return result;
+      })
+    )).then(() => Promise.resolve(output));
+  }
+}
+
+/**
+ * @param {Object[]} configs
+ * @return {Function}
+ */
+function getBuildTask(configs) {
+  return () =>
+    promiseSeries(configs.map(config => BuildHelper.getComponentBuildTask(config)));
 }
 
 /**

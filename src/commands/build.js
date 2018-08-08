@@ -29,11 +29,10 @@ class BuildCommand extends TerraformCommand {
 
     const config = this.getConfigTree();
     const distributor = new Distributor(config, {
-      worker: 'build-worker.js',
-      env: {
+      env: this.buildEnv(['build'], {
         silent: silent,
         format: format
-      }
+      })
     });
 
     return distributor
