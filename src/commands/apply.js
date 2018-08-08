@@ -20,7 +20,7 @@ class ApplyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigTree();
-    const distributor = new Distributor(config, { env: this.buildEnv('prepare', 'apply') });
+    const distributor = new Distributor(config, { env: this.buildEnv(['prepare', 'apply']) });
 
     return distributor
       .run()

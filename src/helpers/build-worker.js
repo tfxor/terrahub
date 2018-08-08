@@ -75,13 +75,13 @@ function getComponentBuildTask(config) {
         child.stdout.on('data', data => {
           stdout.push(data);
 
-          if (!process.env.output && process.env.silent === 'false') {
+          if (!process.env.format && process.env.silent === 'false') {
             logger.raw(out(name, data));
           }
         });
 
         child.stderr.on('data', data => {
-          if (!process.env.output && process.env.silent === 'false') {
+          if (!process.env.format && process.env.silent === 'false') {
             logger.error(out(name, data));
           }
         });
@@ -105,7 +105,7 @@ function getComponentBuildTask(config) {
  * @param {Boolean} isSuccess
  */
 function printOutput(message, isSuccess) {
-  switch (process.env.output) {
+  switch (process.env.format) {
     case 'json': {
       logger.log(JSON.stringify({ message: message }));
       break;
