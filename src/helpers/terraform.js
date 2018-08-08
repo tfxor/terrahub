@@ -83,6 +83,13 @@ class Terraform {
   }
 
   /**
+   * @return {Object}
+   */
+  getActionOutput() {
+    return this._output;
+  }
+
+  /**
    * Prepare -var
    * @returns {Array}
    * @private
@@ -228,7 +235,9 @@ class Terraform {
       options['-state'] = this._state.getPath();
     }
 
-    return this.run('output', ['-json'].concat(this._optsToArgs(options)));
+    this._showLogs = false;
+
+    return this.run('output', (process.env.format === 'json' ? ['-json'] : []).concat(this._optsToArgs(options)));
   }
 
   /**
@@ -356,7 +365,9 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
+    if (process.env.format !== 'json') {
+      logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
+    }
 
     return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
@@ -390,7 +401,7 @@ class Terraform {
    * @private
    */
   _spawn(command, args, options) {
-    let stdout = [];
+    const stdout = [];
     const promise = spawn(command, args, options);
     const child = promise.childProcess;
 
@@ -402,7 +413,16 @@ class Terraform {
       }
     });
 
-    return promise.then(() => Buffer.concat(stdout));
+    return promise.then(() => {
+      this._output = {
+        action: args[0],
+        component: this.getName(),
+        stdout: Buffer.concat(stdout),
+        env: process.env
+      };
+
+      return Buffer.concat(stdout)
+    });
   }
 
   /**

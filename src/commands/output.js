@@ -26,8 +26,6 @@ class OutputCommand extends TerraformCommand {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
-    this.logger.warn('This command makes sense only after apply command, and configured outputs');
-
     return this._format === 'text' ? this.askQuestion() : this.performAction();
   }
 
@@ -35,6 +33,8 @@ class OutputCommand extends TerraformCommand {
    * @return {Promise}
    */
   askQuestion() {
+    this.logger.warn('This command makes sense only after apply command, and configured outputs');
+
     return yesNoQuestion('Do you want to run it (Y/N)? ').then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
@@ -53,9 +53,7 @@ class OutputCommand extends TerraformCommand {
       env: this.buildEnv(['prepare', 'output'], { format: this._format })
     });
 
-    return distributor
-      .run()
-      .then(() => Promise.resolve('Done'));
+    return distributor.run();
   }
 }
 
