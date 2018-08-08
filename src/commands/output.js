@@ -27,7 +27,7 @@ class OutputCommand extends TerraformCommand {
       }
 
       const config = this.getConfigTree();
-      const distributor = new Distributor(config, { env: this.buildEnv('prepare', 'output') });
+      const distributor = new Distributor(config, { env: this.buildEnv(['prepare', 'output']) });
 
       return distributor
         .run()
