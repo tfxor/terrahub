@@ -12,6 +12,7 @@ class OutputCommand extends TerraformCommand {
     this
       .setName('output')
       .setDescription('run `terraform output` across multiple terrahub components')
+      .addOption('format', 'o', 'Specify the output format (text or json)', String, 'text')
     ;
   }
 
@@ -19,20 +20,42 @@ class OutputCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
+    this._format = this.getOption('format');
+
+    if (!['text', 'json'].includes(this._format)) {
+      return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
+    }
+
     this.logger.warn('This command makes sense only after apply command, and configured outputs');
 
+    return this._format === 'text' ? this.askQuestion() : this.performAction();
+  }
+
+  /**
+   * @return {Promise}
+   */
+  askQuestion() {
     return yesNoQuestion('Do you want to run it (Y/N)? ').then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
       }
 
-      const config = this.getConfigTree();
-      const distributor = new Distributor(config, { env: this.buildEnv(['prepare', 'output']) });
-
-      return distributor
-        .run()
-        .then(() => Promise.resolve('Done'));
+      return this.performAction();
     });
+  }
+
+  /**
+   * @return {Promise}
+   */
+  performAction() {
+    const config = this.getConfigTree();
+    const distributor = new Distributor(config, {
+      env: this.buildEnv(['prepare', 'output'], { format: this._format })
+    });
+
+    return distributor
+      .run()
+      .then(() => Promise.resolve('Done'));
   }
 }
 
