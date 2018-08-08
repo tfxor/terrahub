@@ -93,12 +93,15 @@ class Terrahub {
    * @private
    */
   _getTask() {
+    let buf;
+
     return this._on('start')
       .then(() => this._hook('before')(this._config))
       .then(() => this._terraform[this._action]())
-      .then(buf => this._upload(buf))
-      .then(res => this._hook('after')(this._config, res))
+      .then(res => this._upload(buf = res))
+      .then(() => this._hook('after')(this._config, buf))
       .then(() => this._on('success'))
+      .then(() => Promise.resolve(buf))
       .catch(err => this._on('error', err))
     ;
   }
@@ -110,10 +113,10 @@ class Terrahub {
    */
   _upload(buffer) {
     if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve(buffer);
+      return Promise.resolve();
     }
 
-    return this._putObject(this._getKey(), buffer).then(() => Promise.resolve(buffer));
+    return this._putObject(this._getKey(), buffer);
   }
 
   /**
