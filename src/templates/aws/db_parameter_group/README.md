@@ -22,5 +22,5 @@ Provides an RDS DB parameter group resource .Documentation of the available para
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db parameter group name.|string|
-|thub_id|The db parameter group name.|string|
+|thub_id|The db parameter group name (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the db parameter group.|string|

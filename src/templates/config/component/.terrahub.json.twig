@@ -1,8 +1,8 @@
 {
   "component": {
-    {% if parent %}
-    "parent": "{{ parent }}",
+    "name": "{{ name }}",
+    {% if dependsOn %}
+    "dependsOn": "{{ dependsOn|join('","') }}"
     {% endif %}
-    "name": "{{ name }}"
   }
 }

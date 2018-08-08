@@ -1,13 +1,9 @@
-# Bug Report
-
-Name: short description
-About: create a report to help us improve
-
 ## Describe the Bug
 <!-- A clear and concise description of what the bug is -->
+<!-- note: for support questions, please use stackoverflow -->
 
-## Steps To Reproduce
-Steps to reproduce the behavior:
+## Steps to Reproduce
+<!-- steps to reproduce the behavior -->
 1. Run the command '...'
 
 ## Expected Behavior
@@ -17,6 +13,6 @@ Steps to reproduce the behavior:
 <!-- If applicable, add screenshots to help explain your problem -->
 
 ## Additional Context
- - TerraHub Version: [e.g. 22]
- - OS: [e.g. iOS8.1]
 <!-- Add any other context about the problem here -->
+- TerraHub Version: [e.g. 22]
+- OS: [e.g. iOS8.1]

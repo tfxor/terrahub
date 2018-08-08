@@ -18,5 +18,5 @@ Create an API Gateway Resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The resource's identifier.|int|
-|thub_id|The resource's identifier.|int|
+|thub_id|The resource's identifier (hotfix for issue hashicorp/terraform#[7982]).|int|
 |path|The complete path for this API resource, including all parent paths.|string|

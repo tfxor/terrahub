@@ -17,4 +17,4 @@ Provides the ability to register instances and containers with a LB target group
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|A unique identifier for the attachment|string|
-|thub_id|A unique identifier for the attachment|string|
+|thub_id|A unique identifier for the attachment (hotfix for issue hashicorp/terraform#[7982]).|string|

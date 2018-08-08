@@ -20,7 +20,7 @@ Create an IAM policy.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The policy's ID.|int|
-|thub_id|The policy's ID.|int|
+|thub_id|The policy's ID (hotfix for issue hashicorp/terraform#[7982]).|int|
 |arn|The ARN assigned by AWS to this policy.|string|
 |name|The name of the policy.|int|
 |path|The path of the policy.|int|

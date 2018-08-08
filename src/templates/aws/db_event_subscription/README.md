@@ -22,6 +22,6 @@ Provides a DB event subscription resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the RDS event notification subscription.|string|
-|thub_id|The name of the RDS event notification subscription.|string|
+|thub_id|The name of the RDS event notification subscription (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The Amazon Resource Name of the RDS event notification subscription.|string|
 |customer_aws_id|The AWS customer account associated with the RDS event notification subscription.|string|

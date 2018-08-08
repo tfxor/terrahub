@@ -56,7 +56,7 @@ Creates an Amazon CloudFront web distribution.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The identifier for the distribution. For example: EDFDVBD632BHDS5.|string|
-|thub_id|The identifier for the distribution. For example: EDFDVBD632BHDS5.|string|
+|thub_id|The identifier for the distribution. For example: EDFDVBD632BHDS5 (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN (Amazon Resource Name) for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.|string|
 |aliases|Extra CNAMEs (alternate domain names), if any, for this distribution.|list|
 |status|The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system.|string|

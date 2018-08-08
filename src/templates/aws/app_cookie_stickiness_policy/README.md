@@ -18,7 +18,7 @@ Provides an application cookie stickiness policy, which allows an ELB to wed its
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the policy.|string|
-|thub_id|The ID of the policy.|string|
+|thub_id|The ID of the policy (hotfix for issue hashicorp/terraform#[7982]).|string|
 |name|The name of the stickiness policy.|string|
 |load_balancer|The name of load balancer to which the policy is attached.|string|
 |lb_port|The load balancer port to which the policy is applied.|string|
