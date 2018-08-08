@@ -61,11 +61,9 @@ class Terrahub {
   getTask(action) {
     this._action = action;
 
-    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
-      return this._terraform[action]();
-    }
-
-    return this._getTask();
+    return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
+      this._terraform[action]() : this._getTask())
+      .then(() => this._terraform.getActionOutput());
   }
 
   /**
@@ -100,7 +98,7 @@ class Terrahub {
       .then(res => this._hook('after')(this._config, res))
       .then(() => this._on('success'))
       .catch(err => this._on('error', err))
-    ;
+      ;
   }
 
   /**

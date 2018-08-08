@@ -21,9 +21,19 @@ function getTasks(configs) {
   const terrahubList = configs.map(config => new Terrahub(config));
 
   return getActions().map(action =>
-    () => promiseSeries(terrahubList.map(terrahub =>
-      () => terrahub.getTask(action)
-    ))
+    () => {
+      const output = [];
+
+      return promiseSeries(terrahubList.map(terrahub =>
+        () => terrahub.getTask(action).then(result => {
+          if (result) {
+            output.push(result);
+          }
+
+          return result;
+        })
+      )).then(() => Promise.resolve(output));
+    }
   );
 }
 
