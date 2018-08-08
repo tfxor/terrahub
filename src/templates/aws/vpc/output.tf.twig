@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_vpc.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_vpc.{{ name }}.id}"
+}
+
 output "cidr_block" {
   value = "${aws_vpc.{{ name }}.cidr_block}"
 }

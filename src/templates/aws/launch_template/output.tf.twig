@@ -1,6 +1,10 @@
 # Define list of variables to be output
 
-output "lt_id" {
+output "id" {
+  value = "${aws_launch_template.{{ name }}.id}"
+}
+
+output "thub_id" {
   value = "${aws_launch_template.{{ name }}.id}"
 }
 

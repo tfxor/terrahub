@@ -15,4 +15,5 @@ Provides a resource to create a CloudWatch Events permission to support cross-ac
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_event_permission_id|The statement ID of the CloudWatch Events permission.|string|
+|id|The statement ID of the CloudWatch Events permission.|string|
+|thub_id|The statement ID of the CloudWatch Events permission (hotfix for issue hashicorp/terraform#[7982]).|string|

@@ -22,8 +22,8 @@ Create an IAM role.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|iam_arn|The Amazon Resource Name (ARN) specifying the role.|string|
-|iam_create_date|The creation date of the IAM role.|string|
-|iam_unique_id|The stable and unique string identifying the role.|string|
-|iam_name|The name of the role.|string|
-|iam_description|The description of the role.|string|
+|arn|The Amazon Resource Name (ARN) specifying the role.|string|
+|create_date|The creation date of the IAM role.|string|
+|unique_id|The stable and unique string identifying the role.|string|
+|name|The name of the role.|string|
+|description|The description of the role.|string|

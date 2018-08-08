@@ -33,6 +33,7 @@ Provides an Elastic Load Balancer resource, also known as a "Classic Load Balanc
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The name of the ELB.|string|
+|thub_id|The name of the ELB (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the ELB.|string|
 |name|The name of the ELB.|string|
 |dns_name|The DNS name of the ELB.|string|

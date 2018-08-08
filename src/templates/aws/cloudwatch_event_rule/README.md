@@ -17,4 +17,4 @@ Provides a CloudWatch Event Rule resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_event_rule_arn|The Amazon Resource Name (ARN) of the rule.|string|
+|arn|The Amazon Resource Name (ARN) of the rule.|string|

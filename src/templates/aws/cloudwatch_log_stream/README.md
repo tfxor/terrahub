@@ -15,4 +15,4 @@ Provides a CloudWatch Log Stream resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_log_stream_arn|The Amazon Resource Name (ARN) specifying the log stream.|string|
+|arn|The Amazon Resource Name (ARN) specifying the log stream.|string|

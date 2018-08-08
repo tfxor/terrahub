@@ -48,6 +48,10 @@ output "id" {
   value = "${aws_db_instance.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_db_instance.{{ name }}.id}"
+}
+
 output "instance_class" {
   value = "${aws_db_instance.{{ name }}.instance_class}"
 }

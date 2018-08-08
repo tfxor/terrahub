@@ -17,8 +17,9 @@ Provides an IAM group.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|iam_group_id|The group's ID.|string|
-|iam_group_arn|The ARN assigned by AWS for this group.|string|
-|iam_group_name|The group's name.|string|
-|iam_group_path|The path of the group in IAM.|string|
-|iam_group_unique_id|The unique ID assigned by AWS.|string|
+|id|The group's ID.|string|
+|thub_id|The group's ID (hotfix for issue hashicorp/terraform#[7982]).|string|
+|arn|The ARN assigned by AWS for this group.|string|
+|name|The group's name.|string|
+|path|The path of the group in IAM.|string|
+|unique_id|The unique ID assigned by AWS.|string|

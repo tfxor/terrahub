@@ -7,7 +7,6 @@ management at scale of cloud resources and cloud services across multiple cloud
 accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud,
 or VMs on Microsoft Azure.
 
-
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
 
@@ -24,7 +23,8 @@ or VMs on Microsoft Azure.
 
 ## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
 
-TerraHub CLI is built using [nodejs](https://nodejs.org) and published using [npm](https://www.npmjs.com). Quick steps to get started:
+TerraHub CLI is built using [nodejs](https://nodejs.org) and published using
+[npm](https://www.npmjs.com). Quick steps to get started:
 ```shell
 $ node -v
 v6.10.0
@@ -142,6 +142,7 @@ Configuration example for plan (`.terrahub.json`):
     }
 }
 ```
+
 
 ## @todo
 

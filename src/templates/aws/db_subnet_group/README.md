@@ -19,4 +19,5 @@ Provides an RDS DB subnet group resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The db subnet group name.|string|
+|thub_id|The db subnet group name (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the db subnet group.|string|
