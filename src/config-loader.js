@@ -65,19 +65,18 @@ class ConfigLoader {
    * @private
    */
   _findRootConfig(dirPath) {
-    const cfgPath = path.join(dirPath, config.defaultFileName);
-    let cfgFile;
-    try {
-      cfgFile = this._getConfig(cfgPath);
-    } catch (error) {
-      cfgFile = {};
-    }
+    let config = {};
+    let lower = path.resolve(dirPath, '..');
+    let files = this._find('.terrahub.+(json|yml|yaml)', dirPath);
 
-    if (cfgFile.hasOwnProperty('project')) {
-      return cfgPath;
-    }
+    if (files.length) {
+      const configPath = files.pop();
 
-    const lower = path.resolve(dirPath, '..');
+      config = this._getConfig(configPath);
+      if (config.hasOwnProperty('project')) {
+        return configPath;
+      }
+    }
 
     if (lower !== dirPath) {
       return this._findRootConfig(lower);
