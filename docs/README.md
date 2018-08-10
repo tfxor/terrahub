@@ -1,6 +1,6 @@
 # TerraHub
 
-## Serverless Hub for Terraform
+## DevOps Hub for Terraform
 
 TerraHub is a terraform centric devops tool that simplifies provisioning and
 management at scale of cloud resources and cloud services across multiple cloud

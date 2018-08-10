@@ -28,14 +28,13 @@ class Terrahub {
   _on(event, err = null) {
     let error = null;
     let data = {
-      ThubToken: config.token, // @todo remove after migration
       Action: this._action,
+      Provider: this._project.provider,
       ProjectHash: this._project.code,
       ProjectName: this._project.name,
-      ProjectProvider: this._project.provider,
-      TerraformRunId: this._runId,
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
+      TerraformRunId: this._runId,
       Status: event
     };
 
@@ -98,7 +97,7 @@ class Terrahub {
       .then(res => this._hook('after')(this._config, res))
       .then(() => this._on('success'))
       .catch(err => this._on('error', err))
-      ;
+    ;
   }
 
   /**

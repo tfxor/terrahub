@@ -11,7 +11,7 @@ class Distributor {
    * @param {String} worker
    * @param {Object} env
    */
-  constructor(config, { worker = 'terraform-worker.js', env = {} }) {
+  constructor(config, { worker = 'worker.js', env = {} }) {
     this._env = env;
     this._config = config;
     this._worker = path.join(__dirname, worker);

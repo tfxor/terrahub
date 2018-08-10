@@ -2,6 +2,7 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
+const { yesNoQuestion } = require('../helpers/util');
 
 class DestroyCommand extends TerraformCommand {
   /**
@@ -11,7 +12,7 @@ class DestroyCommand extends TerraformCommand {
     this
       .setName('destroy')
       .setDescription('run `terraform destroy` across multiple terrahub components')
-      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, true)
+      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
     ;
   }
 
@@ -22,9 +23,27 @@ class DestroyCommand extends TerraformCommand {
     const config = this.getConfigTree();
     const distributor = new Distributor(config, { env: this.buildEnv(['prepare', 'destroy']) });
 
-    return distributor
-      .run()
+    return this._getPromise()
+      .then(answer => {
+        if (answer) {
+          return distributor.run();
+        } else {
+          return Promise.reject('Action aborted');
+        }
+      })
       .then(() => Promise.resolve('Done'));
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _getPromise() {
+    if (this.getOption('auto-approve')) {
+      return Promise.resolve(true);
+    } else {
+      return yesNoQuestion('Do you want to perform `destroy` action? (Y/N) ');
+    }
   }
 }
 
