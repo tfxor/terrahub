@@ -47,7 +47,7 @@ class RunCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `run` action for components? (Y/N) ');
+      return yesNoQuestion('Do you want to perform `run` action? (Y/N) ');
     }
   }
 }

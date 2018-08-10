@@ -42,7 +42,7 @@ class DestroyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `destroy` action for components? (Y/N) ');
+      return yesNoQuestion('Do you want to perform `destroy` action? (Y/N) ');
     }
   }
 }
