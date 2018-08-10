@@ -32,6 +32,7 @@ class BuildHelper {
       }
 
       promiseSeries(commandsList.map(it => () => {
+        // console.log(it);
           const [command, ...args] = it.split(' ');
           const stdout = [];
 
@@ -110,7 +111,12 @@ class BuildHelper {
   static _printOutput(message, isSuccess) {
     switch (process.env.format) {
       case 'json': {
-        logger.log(JSON.stringify({ message: message }));
+        const json = { 
+          message: message,
+          error: isSuccess ? 0 : 1
+        };
+
+        logger.log(JSON.stringify(json));
         break;
       }
       case 'text': {

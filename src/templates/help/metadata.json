@@ -12,7 +12,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",
@@ -161,7 +161,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",
@@ -496,7 +496,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",
