@@ -29,10 +29,11 @@ Creates a S3 bucket resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|s3_id|The name of the bucket.|string|
-|s3_arn|The ARN of the bucket. Will be of format arn:aws:s3:::bucketname.|string|
-|s3_bucket_domain_name|The bucket domain name. Will be of format bucketname.s3.amazonaws.com.|string|
-|s3_hosted_zone_id|The Route 53 Hosted Zone ID for this bucket's region.|string|
-|s3_region|The AWS region this bucket resides in.|string|
-|s3_website_endpoint|The website endpoint, if the bucket is configured with a website. If not, this will be an empty string.|string|
-|s3_website_domain|The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records.|string|
+|id|The name of the bucket.|string|
+|thub_id|The name of the bucket (hotfix for issue hashicorp/terraform#[7982]).|string|
+|arn|The ARN of the bucket. Will be of format arn:aws:s3:::bucketname.|string|
+|bucket_domain_name|The bucket domain name. Will be of format bucketname.s3.amazonaws.com.|string|
+|hosted_zone_id|The Route 53 Hosted Zone ID for this bucket's region.|string|
+|region|The AWS region this bucket resides in.|string|
+|website_endpoint|The website endpoint, if the bucket is configured with a website. If not, this will be an empty string.|string|
+|website_domain|The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records.|string|

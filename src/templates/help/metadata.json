@@ -12,7 +12,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",
@@ -63,7 +63,7 @@
           "defaultValue": false
         },
         {
-          "name": "output",
+          "name": "format",
           "shortcut": "o",
           "description": "Log only the command result in one of the following formats: json, text",
           "defaultValue": ""
@@ -128,10 +128,10 @@
           "defaultValue": "Current working directory"
         },
         {
-          "name": "parent",
-          "shortcut": "p",
-          "description": "Parent component path",
-          "defaultValue": ""
+          "name": "depends-on",
+          "shortcut": "o",
+          "description": "Paths of the components, which the component depends on (comma separated values)",
+          "defaultValue": []
         },
         {
           "name": "force",
@@ -161,7 +161,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",
@@ -313,6 +313,12 @@
       "name": "output",
       "description": "run `terraform output` across multiple terrahub components",
       "options": [
+        {
+          "name": "format",
+          "shortcut": "o",
+          "description": "Specify the output format (text or json)",
+          "defaultValue": "text"
+        },
         {
           "name": "include",
           "shortcut": "i",
@@ -490,7 +496,7 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
-          "defaultValue": true
+          "defaultValue": false
         },
         {
           "name": "include",

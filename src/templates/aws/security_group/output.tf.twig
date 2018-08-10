@@ -1,6 +1,10 @@
 # Define list of variables to be output
 
-output "sg_id" {
+output "id" {
+  value = "${aws_security_group.{{ name }}.id}"
+}
+
+output "thub_id" {
   value = "${aws_security_group.{{ name }}.id}"
 }
 

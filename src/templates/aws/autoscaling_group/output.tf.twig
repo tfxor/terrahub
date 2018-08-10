@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_autoscaling_group.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_autoscaling_group.{{ name }}.id}"
+}
+
 output "arn" {
   value = "${aws_autoscaling_group.{{ name }}.arn}"
 }

@@ -16,6 +16,10 @@ output "id" {
   value = "${aws_rds_cluster_instance.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_rds_cluster_instance.{{ name }}.id}"
+}
+
 output "writer" {
   value = "${aws_rds_cluster_instance.{{ name }}.writer}"
 }

@@ -102,7 +102,7 @@ class WorkspaceCommand extends TerraformCommand {
    * @private
    */
   _workspace(action, config) {
-    const distributor = new Distributor(config, { env: this.buildEnv('prepare', action) });
+    const distributor = new Distributor(config, { env: this.buildEnv(['prepare', action]) });
 
     return distributor.run();
   }

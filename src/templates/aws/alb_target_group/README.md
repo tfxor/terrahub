@@ -33,6 +33,7 @@ Provides a Target Group resource for use with Load Balancer resources.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ARN of the Target Group (matches arn).|string|
+|thub_id|The ARN of the Target Group (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the Target Group (matches id).|string|
 |arn_suffix|The ARN suffix for use with CloudWatch Metrics.|string|
 |name|The name of the Target Group.|string|

@@ -5,7 +5,7 @@
 const logger = require('../src/helpers/logger');
 const { updateMetadata } = require('../src/helpers/help-parser');
 
-updateMetadata();
-logger.info('Done');
+updateMetadata(false);
+logger.info('Metadata updated');
 
 process.exit(0);

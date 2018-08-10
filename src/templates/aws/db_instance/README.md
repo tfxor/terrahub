@@ -64,6 +64,7 @@ Note: All arguments including the username and password will be stored in the ra
 |engine_version|The database engine version.|string|
 |hosted_zone_id|The canonical hosted zone ID of the DB instance (to be used in a Route 53 Alias record).|string|
 |id|The RDS instance ID.|string|
+|thub_id|The RDS instance ID (hotfix for issue hashicorp/terraform#[7982]).|string|
 |instance_class|The RDS instance class.|string|
 |maintenance_window|The instance maintenance window.|string|
 |multi_az|If the RDS instance is multi AZ enabled.|string|

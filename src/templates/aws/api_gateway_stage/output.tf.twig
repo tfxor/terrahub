@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_api_gateway_stage.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_api_gateway_stage.{{ name }}.id}"
+}
+
 output "invoke_url" {
   value = "${aws_api_gateway_stage.{{ name }}.invoke_url}"
 }

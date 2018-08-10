@@ -18,6 +18,7 @@ Provides a load balancer policy, which can be attached to an ELB listener or bac
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the policy.|string|
+|thub_id|The ID of the policy (hotfix for issue hashicorp/terraform#[7982]).|string|
 |policy_name|The name of the stickiness policy.|string|
 |policy_type_name|The policy type of the policy.|string|
 |load_balancer_name|The load balancer on which the policy is defined.|string|

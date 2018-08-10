@@ -16,4 +16,5 @@ Provides a proxy protocol policy, which allows an ELB to carry a client connecti
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the policy.|string|
+|thub_id|The ID of the policy (hotfix for issue hashicorp/terraform#[7982]).|string|
 |load_balancer|The load balancer to which the policy is attached.|string|

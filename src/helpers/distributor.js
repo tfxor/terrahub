@@ -3,6 +3,7 @@
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
+const logger = require('./logger');
 
 class Distributor {
   /**
@@ -10,11 +11,12 @@ class Distributor {
    * @param {String} worker
    * @param {Object} env
    */
-  constructor(config, { worker = 'terraform-worker.js', env = {} }) {
+  constructor(config, { worker = 'worker.js', env = {} }) {
     this._env = env;
     this._config = config;
     this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
+    this._output = [];
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -56,7 +58,11 @@ class Distributor {
 
       cluster.on('message', (worker, data) => {
         if (data.isError) {
-          this._error = this._handleError(data.error);
+          return this._error = this._handleError(data.error);
+        }
+
+        if (data.data) {
+          data.data.forEach(it => this._output.push(it));
         }
       });
 
@@ -71,11 +77,40 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            resolve('Done');
+            this._handleOutput().then(result => {
+              resolve(result);
+            });
           }
         }
       });
     });
+  }
+
+  /**
+   * Prints the output data for the 'output' command
+   * @return {Promise}
+   * @private
+   */
+  _handleOutput() {
+    const outputs = this._output.filter(it => it.action === 'output');
+
+    if (!outputs.length) {
+      return Promise.resolve('Done');
+    }
+
+    if (outputs[0].env.format === 'json') {
+      let result = {};
+
+      outputs.forEach(it => result[it.component] = JSON.parse((new Buffer(it.stdout)).toString()));
+
+      logger.log(JSON.stringify(result));
+
+      return Promise.resolve();
+    } else {
+      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`))
+
+      return Promise.resolve('Done');
+    }
   }
 
   /**

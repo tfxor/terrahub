@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_ebs_snapshot.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_ebs_snapshot.{{ name }}.id}"
+}
+
 output "owner_id" {
   value = "${aws_ebs_snapshot.{{ name }}.owner_id}"
 }
