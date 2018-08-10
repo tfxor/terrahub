@@ -20,7 +20,8 @@ Provides an VPC subnet resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|subnet_id|The ID of the subnet.|string|
-|subnet_availability_zone|The AZ for the subnet.|string|
-|subnet_cidr_block|The CIDR block for the subnet.|string|
-|subnet_vpc_id|The VPC ID.|string|
+|id|The ID of the subnet.|string|
+|thub_id|The ID of the subnet (hotfix for issue hashicorp/terraform#[7982]).|string|
+|availability_zone|The AZ for the subnet.|string|
+|cidr_block|The CIDR block for the subnet.|string|
+|vpc_id|The VPC ID.|string|

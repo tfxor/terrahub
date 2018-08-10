@@ -22,10 +22,11 @@ Provides an API Gateway Usage Plan.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|gateway_usage_plan_id|The ID of the API resource.|string|
-|gateway_usage_plan_name|The name of the usage plan.|string|
-|gateway_usage_plan_description|The description of a usage plan.|string|
-|gateway_usage_plan_api_stages|The associated API stages of the usage plan.|array|
-|gateway_usage_plan_quota_settings|The quota of the usage plan.|array|
-|gateway_usage_plan_throttle_settings|The quota of the usage plan.|array|
-|gateway_usage_plan_product_code|The AWS Markeplace product identifier to associate with the usage plan as a SaaS product on AWS Marketplace.|string|
+|id|The ID of the API resource.|string|
+|thub_id|The ID of the API resource (hotfix for issue hashicorp/terraform#[7982]).|string|
+|name|The name of the usage plan.|string|
+|description|The description of a usage plan.|string|
+|api_stages|The associated API stages of the usage plan.|array|
+|quota_settings|The quota of the usage plan.|array|
+|throttle_settings|The quota of the usage plan.|array|
+|product_code|The AWS Markeplace product identifier to associate with the usage plan as a SaaS product on AWS Marketplace.|string|

@@ -4,6 +4,10 @@ output "id" {
   value = "${aws_rds_cluster.{{ name }}.id}"
 }
 
+output "thub_id" {
+  value = "${aws_rds_cluster.{{ name }}.id}"
+}
+
 output "cluster_identifier" {
   value = "${aws_rds_cluster.{{ name }}.cluster_identifier}"
 }

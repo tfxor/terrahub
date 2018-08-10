@@ -31,8 +31,8 @@ Create a Lambda Function resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|lambda_arn|The Amazon Resource Name (ARN) identifying your Lambda Function.|string|
-|lambda_qualified_arn|The Amazon Resource Name (ARN) identifying your Lambda Function Version (if versioning is enabled via publish = true).|string|
-|lambda_invoke_arn|The ARN to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri|string|
-|lambda_version|Latest published version of your Lambda Function.|string|
-|lambda_last_modified|The date this resource was last modified.|string|
+|arn|The Amazon Resource Name (ARN) identifying your Lambda Function.|string|
+|qualified_arn|The Amazon Resource Name (ARN) identifying your Lambda Function Version (if versioning is enabled via publish = true).|string|
+|invoke_arn|The ARN to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri|string|
+|version|Latest published version of your Lambda Function.|string|
+|last_modified|The date this resource was last modified.|string|

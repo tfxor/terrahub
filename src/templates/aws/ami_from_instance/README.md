@@ -20,3 +20,4 @@ Note that the source instance is inspected only at the initial creation of this 
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the created AMI.|string|
+|thub_id|The ID of the created AMI (hotfix for issue hashicorp/terraform#[7982]).|string|

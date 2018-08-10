@@ -86,7 +86,7 @@ class Help extends AbstractCommand {
 
         if (['build', 'list', 'run'].includes(command.name)) {
           variables.cloudAutomation.push(command);
-        } else if (['project', 'component', 'graph', 'create'].includes(command.name)) {
+        } else if (['project', 'component', 'graph'].includes(command.name)) {
           variables.terrahubManagement.push(command);
         } else {
           variables.terraformExecution.push(command);

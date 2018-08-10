@@ -26,6 +26,7 @@ It's recommended to specify create_before_destroy = true in a lifecycle block to
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ARN of the certificate|string|
+|thub_id|The ARN of the certificate (hotfix for issue hashicorp/terraform#[7982]).|string|
 |arn|The ARN of the certificate|string|
 |domain_validation_options|A list of attributes to feed into other resources to complete certificate validation. Can have more than one element, e.g. if SANs are defined. Only set if DNS-validation was used.|string|
 |validation_emails|A list of addresses that received a validation E-Mail. Only set if EMAIL-validation was used.|string|

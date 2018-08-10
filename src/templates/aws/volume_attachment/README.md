@@ -20,6 +20,6 @@ NOTE on EBS block devices: If you use ebs_block_device on an aws_instance, Terra
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|device_name|The device name exposed to the instance|string|
-|instance_id|ID of the Instance|string|
+|device_name|The device name exposed to the instance.|string|
+|instance_id|ID of the Instance.|string|
 |volume_id|ID of the Volume|string|

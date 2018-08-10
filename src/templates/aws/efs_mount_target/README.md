@@ -20,5 +20,6 @@ Provides an Elastic File System (EFS) mount target.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the mount target.|string|
+|thub_id|The ID of the mount target (hotfix for issue hashicorp/terraform#[7982]).|string|
 |dns_name|The DNS name for the given subnet/AZ per documented convention.|string|
 |network_interface_id|The ID of the network interface that Amazon EFS created when it created the mount target.|string|

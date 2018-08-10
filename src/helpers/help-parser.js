@@ -55,17 +55,19 @@ class HelpParser {
 
   /**
    * Updates metadata with new helper info
+   * @param {Boolean} updateBuildDate
    */
-  static updateMetadata() {
+  static updateMetadata(updateBuildDate = true) {
     const packageContent = require(packageJson);
     const commands = HelpParser.getCommandsInstances();
     const commandsDescription = HelpParser.getCommandsDescription(commands);
+    const { buildDate } = require('../templates/help/metadata');
 
     const json = {
       name: packageContent.name,
       version: packageContent.version,
       description: packageContent.description,
-      buildDate: (new Date).toISOString(),
+      buildDate: updateBuildDate ? (new Date).toISOString() : buildDate,
       commands: commandsDescription
     };
 

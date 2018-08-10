@@ -18,6 +18,7 @@ Provides an Elastic IP resource.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|Contains the EIP allocation ID.|string|
+|thub_id|Contains the EIP allocation ID (hotfix for issue hashicorp/terraform#[7982]).|string|
 |private_ip|Contains the private IP address (if in VPC).|string|
 |public_ip|Contains the public IP address.|string|
 |instance|Contains the ID of the attached instance.|string|

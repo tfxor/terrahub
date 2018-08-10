@@ -16,5 +16,5 @@ Provides a CloudWatch Log Group resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cloudwatch_log_group_arn|The Amazon Resource Name (ARN) specifying the log group.|string|
+|arn|The Amazon Resource Name (ARN) specifying the log group.|string|
 

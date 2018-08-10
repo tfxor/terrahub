@@ -99,12 +99,12 @@ function familyTree(data) {
   Object.keys(object).forEach(hash => {
     let node = object[hash];
 
-    if (node.parent === null) {
+    if (!node.dependsOn.length) {
       tree[hash] = node;
     } else {
-      let key = toMd5(node.parent);
+      const key = toMd5(node.dependsOn[0]);
       if (!object.hasOwnProperty(key)) {
-        throw new Error(`Can not find parent '${node.parent}'`);
+        throw new Error(`Couldn't find dependency '${node.dependsOn[0]}'`);
       }
 
       object[key].children.push(node);
@@ -150,14 +150,12 @@ function extend(object, sources, customizer = _customizer) {
  * @return {Promise<Boolean>}
  */
 function yesNoQuestion(question) {
-  return new Promise(resolve => {
-    rl.question(question, answer => {
-      if (!['y', 'yes'].includes(answer.toLowerCase())) {
-        return resolve(false);
-      }
+  return askQuestion(question).then(answer => {
+    if (!['y', 'yes'].includes(answer.toLowerCase())) {
+      return Promise.resolve(false);
+    }
 
-      return resolve(true);
-    });
+    return Promise.resolve(true);
   });
 }
 

@@ -16,4 +16,6 @@ Provides a Cognito Identity Pool resource.
 
 | Name | Description | Type |
 |------|-------------|:----:|
-|cognito_identity_pool_name|The name of the user pool.|string|
+|id|An identity pool ID in the format REGION:GUID.|string|
+|thub_id|An identity pool ID in the format REGION:GUID (hotfix for issue hashicorp/terraform#[7982]).|string|
+|arn|The ARN of the identity pool.|string|
