@@ -111,9 +111,9 @@ class BuildHelper {
   static _printOutput(message, isSuccess) {
     switch (process.env.format) {
       case 'json': {
-        const json = { 
+        const json = {
           message: message,
-          error: isSuccess ? 0 : 1
+          error: isSuccess ? '0' : '1'
         };
 
         logger.log(JSON.stringify(json));
