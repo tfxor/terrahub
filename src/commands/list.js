@@ -174,12 +174,18 @@ class ListCommand extends AbstractCommand {
       return Promise.resolve([]);
     }
 
-    return fetch.get(`thub/listing/retrieve?DataType=1&ThubToken=${config.token}`)
+    return fetch.get(`thub/listing/retrieve?DataType=1`)
       .then(res => res.json())
       .then(json => {
         if (json.errorMessage) {
           const { errorMessage } = JSON.parse(json.errorMessage);
           this.logger.error(errorMessage);
+
+          return Promise.resolve([]);
+        }
+
+        if (json.Message === 'User is not authorized to access this resource') {
+          this.logger.error(new Error('Provided ThubToken is invalid'));
 
           return Promise.resolve([]);
         }
