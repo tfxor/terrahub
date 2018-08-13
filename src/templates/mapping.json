@@ -146,7 +146,12 @@
     "aws_vpc_ipv4_cidr_block_association": "aws/vpc_ipv4_cidr_block_association",
     "aws_vpc_peering_connection": "aws/vpc_peering_connection",
     "aws_vpc_peering_connection_accepter": "aws/vpc_peering_connection_accepter",
-    "aws_vpc_peering_connection_options": "aws/vpc_peering_connection_options"
+    "aws_vpc_peering_connection_options": "aws/vpc_peering_connection_options",
+    "aws_vpn_connection": "aws/vpn_connection",
+    "aws_vpn_connection_route": "aws/vpn_connection_route",
+    "aws_vpn_gateway": "aws/vpn_gateway",
+    "aws_vpn_gateway_attachment": "aws/vpn_gateway_attachment",
+    "aws_vpn_gateway_route_propagation": "aws/vpn_gateway_route_propagation"
   },
   "azurerm": {},
   "google": {}
