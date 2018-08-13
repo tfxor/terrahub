@@ -20,4 +20,4 @@ Provides a VPC/Subnet/ENI Flow Log to capture IP traffic for a specific network 
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The Flow Log ID.|string|
-|thub_id|The Flow Log ID (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The Flow Log ID (hotfix for issue hashicorp/terraform#[7982]).|string|

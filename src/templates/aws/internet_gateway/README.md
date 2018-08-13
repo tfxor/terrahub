@@ -17,4 +17,4 @@ Provides a resource to create a VPC Internet Gateway.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the Internet Gateway.|string|
-|thub_id|The ID of the Internet Gateway (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID of the Internet Gateway (hotfix for issue hashicorp/terraform#[7982]).|string|

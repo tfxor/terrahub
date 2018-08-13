@@ -22,4 +22,4 @@ The aws_default_vpc_dhcp_options behaves differently from normal resources, in t
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the DHCP Options Set.|string|
-|thub_id|TThe ID of the DHCP Options Set (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|TThe ID of the DHCP Options Set (hotfix for issue hashicorp/terraform#[7982]).|string|

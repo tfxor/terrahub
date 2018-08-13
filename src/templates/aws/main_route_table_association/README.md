@@ -16,5 +16,5 @@ Provides a resource for managing the main routing table of a VPC.
 | Name | Description | Type |
 |------|-------------|:----:|
 |id|The ID of the Route Table Association.|string|
-|thub_id|The ID of the Route Table Association (matches id; hotfix for issue hashicorp/terraform#[7982]).|string|
+|thub_id|The ID of the Route Table Association (hotfix for issue hashicorp/terraform#[7982]).|string|
 |original_route_table_id|Used internally, see Notes below.|string|
