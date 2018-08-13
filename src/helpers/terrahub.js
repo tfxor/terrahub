@@ -28,14 +28,13 @@ class Terrahub {
   _on(event, err = null) {
     let error = null;
     let data = {
-      ThubToken: config.token, // @todo remove after migration
       Action: this._action,
+      Provider: this._project.provider,
       ProjectHash: this._project.code,
       ProjectName: this._project.name,
-      ProjectProvider: this._project.provider,
-      TerraformRunId: this._runId,
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
+      TerraformRunId: this._runId,
       Status: event
     };
 
@@ -61,11 +60,9 @@ class Terrahub {
   getTask(action) {
     this._action = action;
 
-    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
-      return this._terraform[action]();
-    }
-
-    return this._getTask();
+    return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
+      this._terraform[action]() : this._getTask())
+      .then(() => this._terraform.getActionOutput());
   }
 
   /**

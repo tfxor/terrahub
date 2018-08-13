@@ -149,14 +149,15 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} actions
+   * @param {String[]} actions
+   * @param {Object} custom
    * @return {Object}
    */
-  buildEnv(...actions) {
-    return {
+  buildEnv(actions, custom = {}) {
+    return Object.assign({
       TERRAFORM_ACTIONS: actions,
       THUB_RUN_ID: uuid()
-    };
+    }, custom);
   }
 
   /**

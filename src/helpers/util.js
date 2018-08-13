@@ -150,14 +150,12 @@ function extend(object, sources, customizer = _customizer) {
  * @return {Promise<Boolean>}
  */
 function yesNoQuestion(question) {
-  return new Promise(resolve => {
-    rl.question(question, answer => {
-      if (!['y', 'yes'].includes(answer.toLowerCase())) {
-        return resolve(false);
-      }
+  return askQuestion(question).then(answer => {
+    if (!['y', 'yes'].includes(answer.toLowerCase())) {
+      return Promise.resolve(false);
+    }
 
-      return resolve(true);
-    });
+    return Promise.resolve(true);
   });
 }
 
