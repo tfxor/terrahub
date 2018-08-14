@@ -27,9 +27,7 @@ class Metadata {
   reBase() {
     const workspaceDir = path.join(this._root, Metadata.STATE_DIR, this._cfg.terraform.workspace);
 
-    this._base = fs.existsSync(workspaceDir)
-      ? workspaceDir
-      : path.join(this._root, this._cfg.terraform.resource);
+    this._base = fs.existsSync(workspaceDir) ? workspaceDir : this._root;
   }
 
   /**

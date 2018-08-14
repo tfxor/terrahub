@@ -36,7 +36,7 @@ class Terraform {
         varFile: [],
         backend: {},
         version: '0.11.7',
-        resource: '.resource',
+        backup: false,
         workspace: 'default'
       }
     };
@@ -79,7 +79,7 @@ class Terraform {
    * @returns {String}
    */
   getResource() {
-    return path.join(this.getRoot(), this._tf.resource);
+    return this.getRoot();
   }
 
   /**
