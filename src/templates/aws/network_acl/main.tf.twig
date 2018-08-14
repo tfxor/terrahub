@@ -1,0 +1,28 @@
+resource "aws_network_acl" "{{ name }}" {
+  vpc_id     = "${var.network_acl_vpc_id}"
+  subnet_ids = ["${var.network_acl_subnet_ids}"] 
+
+  egress {
+    protocol   = "${var.network_acl_egress_protocol}"
+    rule_no    = "${var.network_acl_egress_rule_no}"
+    action     = "${var.network_acl_egress_action}"
+    cidr_block = "${var.network_acl_egress_cidr_block}"
+    from_port  = "${var.network_acl_egress_from_port}"
+    to_port    = "${var.network_acl_egress_to_port}"
+    icmp_type  = "${var.network_acl_egress_icmp_type}"
+    icmp_code  = "${var.network_acl_egress_icmp_code}"
+  }
+
+  ingress {
+    protocol   = "${var.network_acl_ingress_protocol}"
+    rule_no    = "${var.network_acl_ingress_rule_no}"
+    action     = "${var.network_acl_ingress_action}"
+    cidr_block = "${var.network_acl_ingress_cidr_block}"
+    from_port  = "${var.network_acl_ingress_from_port}"
+    to_port    = "${var.network_acl_ingress_to_port}"
+    icmp_type  = "${var.network_acl_ingress_icmp_type}"
+    icmp_code  = "${var.network_acl_ingress_icmp_code}"
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

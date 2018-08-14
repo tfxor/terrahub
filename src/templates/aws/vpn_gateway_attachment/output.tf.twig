@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "vpc_id" {
+  value = "${aws_vpn_gateway_attachment.{{ name }}.vpc_id}"
+}
+
+output "vpn_gateway_id" {
+  value = "${aws_vpn_gateway_attachment.{{ name }}.vpn_gateway_id}"
+}
