@@ -37,7 +37,7 @@ $ terrahub --help
 ```
 
 > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically
-collects your data and uploads to [TerraHub API](https://www.terrahub.io),
+collect your data and upload to [TerraHub API](https://www.terrahub.io),
 which is visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
