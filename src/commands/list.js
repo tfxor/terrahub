@@ -174,8 +174,14 @@ class ListCommand extends AbstractCommand {
       return Promise.resolve([]);
     }
 
-    return fetch.get(`thub/listing/retrieve?DataType=1&ThubToken=${config.token}`)
-      .then(res => res.json())
+    return fetch.get(`thub/listing/retrieve?DataType=1`)
+      .then(res => {
+        if (res.status === 403) {
+          return Promise.resolve({ errorMessage: '{ "errorMessage": "Provided ThubToken is invalid" }' });
+        }
+
+        return res.json();
+      })
       .then(json => {
         if (json.errorMessage) {
           const { errorMessage } = JSON.parse(json.errorMessage);

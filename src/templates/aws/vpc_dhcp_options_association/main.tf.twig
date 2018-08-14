@@ -1,0 +1,4 @@
+resource "aws_vpc_dhcp_options_association" "{{ name }}" {
+  vpc_id          = "${var.vpc_dhcp_options_association_vpc_id}"
+  dhcp_options_id = "${var.vpc_dhcp_options_association_dhcp_options_id}"
+}

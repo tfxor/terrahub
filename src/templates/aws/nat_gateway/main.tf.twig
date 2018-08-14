@@ -1,0 +1,6 @@
+resource "aws_nat_gateway" "{{ name }}" {
+  allocation_id = "${var.nat_gateway_allocation_id}"
+  subnet_id     = "${var.nat_gateway_subnet_id}"
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

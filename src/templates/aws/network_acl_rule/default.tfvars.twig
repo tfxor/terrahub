@@ -1,0 +1,22 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id                 = "123456789012"
+region                     = "us-east-1"
+
+#############
+# top level #
+#############
+network_acl_rule_rule_number = 200
+network_acl_rule_egress      = false
+network_acl_rule_protocol    = "tcp"
+network_acl_rule_rule_action = "allow"
+network_acl_rule_cidr_block  = "0.0.0.0/0"
+network_acl_rule_from_port   = 22
+network_acl_rule_to_port     = 22
+
+##########
+# custom #
+##########

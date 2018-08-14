@@ -1,0 +1,4 @@
+resource "aws_vpn_gateway_route_propagation" "{{ name }}" {
+  vpn_gateway_id = "${var.vpn_gateway_route_propagation_vpn_gateway_id}"
+  route_table_id = "${var.vpn_gateway_route_propagation_route_table_id}"
+}
