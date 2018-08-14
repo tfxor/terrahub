@@ -95,8 +95,8 @@ class Terraform {
    * @private
    */
   _var() {
-    let result = [];
-    let object = this._tf.var;
+    const result = [];
+    const object = this._tf.var;
 
     Object.keys(object).forEach(name => {
       result.push(`-var='${name}=${object[name]}'`);
@@ -111,8 +111,8 @@ class Terraform {
    * @private
    */
   _backend() {
-    let result = [];
-    let object = this._tf.backend;
+    const result = [];
+    const object = this._tf.backend;
 
     Object.keys(object).forEach(name => {
       result.push(`-backend-config='${name}=${object[name]}'`);
@@ -127,7 +127,7 @@ class Terraform {
    * @private
    */
   _varFile() {
-    let result = [];
+    const result = [];
 
     this._tf.varFile.forEach(fileName => {
       result.push(`-var-file='${path.join(this.getRoot(), fileName)}'`);
@@ -277,8 +277,8 @@ class Terraform {
    * @returns {Promise}
    */
   plan() {
-    let statePath = this._state.getPath();
-    let options = { '-out': this._plan.getPath(), '-input': false };
+    const statePath = this._state.getPath();
+    const options = { '-out': this._plan.getPath(), '-input': false };
 
     if (!this._state.isRemote() && fs.existsSync(statePath)) {
       options['-state'] = statePath;
@@ -292,23 +292,23 @@ class Terraform {
    * @returns {Promise}
    */
   apply() {
-    let params = {};
-    let planPath = this._plan.getPath();
-    let statePath = this._state.getPath();
+    const params = {};
+    const planPath = this._plan.getPath();
+    const statePath = this._state.getPath();
 
     if (!this._state.isRemote()) {
       if (fs.existsSync(statePath)) {
-        params = {
+        Object.assign(params, {
           '-state': statePath,
           '-backup': this._state.getBackupPath(),
           '-state-out': statePath
-        };
+        });
       } else if (fs.existsSync(planPath)) {
-        params = { '-state-out': statePath };
+        Object.assign(params, { '-state-out': statePath });
       }
     }
 
-    let options = Object.assign({ '-auto-approve': true, '-input': false }, params);
+    const options = Object.assign({ '-auto-approve': true, '-input': false }, params);
 
     return this
       .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
@@ -333,8 +333,8 @@ class Terraform {
    * @returns {Promise}
    */
   destroy() {
-    let options = {};
-    let statePath = this._state.getPath();
+    const options = {};
+    const statePath = this._state.getPath();
 
     if (!this._state.isRemote() && fs.existsSync(statePath)) {
       Object.assign(options, {
@@ -383,7 +383,7 @@ class Terraform {
    * @private
    */
   _optsToArgs(options) {
-    let args = [];
+    const args = [];
 
     Object.keys(options).forEach(key => {
       args.push(`${key}=${options[key]}`);
