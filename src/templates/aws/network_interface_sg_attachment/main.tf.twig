@@ -1,0 +1,4 @@
+resource "aws_network_interface_sg_attachment" "{{ name }}" {
+  security_group_id    = "${var.network_interface_sg_attachment_security_group_id}"
+  network_interface_id = "${var.network_interface_sg_attachment_network_interface_id}"
+}
