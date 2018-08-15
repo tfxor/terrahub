@@ -213,14 +213,12 @@ class Terraform {
 
     return this.run('state', ['pull', '-no-color']).then(result => {
       this._showLogs = true;
-      const pullStatePath = this._state.getPullPath();
+      const backupPath = this._state.getBackupPath();
       const pullStateContent = JSON.parse(result.toString());
 
-      if (fs.existsSync(pullStatePath)) {
-        fse.moveSync(pullStatePath, this._state.getBackupPath());
-      }
-
-      return fse.writeJson(pullStatePath, pullStateContent);
+      return fse.ensureFile(backupPath)
+        .then(() => fse.writeJson(backupPath, pullStateContent))
+        .then(() => Promise.resolve(backupPath));
     });
   }
 
@@ -322,7 +320,7 @@ class Terraform {
    */
   _getStateContent() {
     if (this._state.isRemote()) {
-      return this.statePull().then(() => fse.readFile(this._state.getPullPath()));
+      return this.statePull().then(path => fse.readFile(path));
     }
 
     return fse.readFile(this._state.getPath());
