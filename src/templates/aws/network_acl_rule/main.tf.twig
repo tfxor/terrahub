@@ -1,0 +1,10 @@
+resource "aws_network_acl_rule" "{{ name }}" {
+  network_acl_id = "${var.network_acl_rule_network_acl_id}"
+  rule_number    = "${var.network_acl_rule_rule_number}"
+  egress         = "${var.network_acl_rule_egress}"
+  protocol       = "${var.network_acl_rule_protocol}"
+  rule_action    = "${var.network_acl_rule_rule_action}"
+  cidr_block     = "${var.network_acl_rule_cidr_block}"
+  from_port      = "${var.network_acl_rule_from_port}"
+  to_port        = "${var.network_acl_rule_to_port}"
+}

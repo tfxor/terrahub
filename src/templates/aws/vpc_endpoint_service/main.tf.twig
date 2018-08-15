@@ -1,0 +1,5 @@
+resource "aws_vpc_endpoint_service" "{{ name }}" {
+  acceptance_required        = "${var.vpc_endpoint_acceptance_required}"
+  network_load_balancer_arns = ["${var.vpc_endpoint_network_load_balancer_arns}"]
+  allowed_principals         = "${var.vpc_endpoint_allowed_principals}"
+}

@@ -1,0 +1,15 @@
+resource "aws_vpc_peering_connection_options" "{{ name }}" {
+  vpc_peering_connection_id = "${var.vpc_peering_connection_options_connection_id}"
+
+  accepter {
+    allow_remote_vpc_dns_resolution  = "${var.vpc_peering_accepter_allow_remote_vpc_dns_resolution}"
+    allow_vpc_to_remote_classic_link = "${var.vpc_peering_accepter_allow_vpc_to_remote_classic_link}"
+    allow_classic_link_to_remote_vpc = "${var.vpc_peering_accepter_allow_classic_link_to_remote_vpc}"
+  }
+
+  requester {
+    allow_remote_vpc_dns_resolution  = "${var.vpc_peering_requester_allow_remote_vpc_dns_resolution}"
+    allow_vpc_to_remote_classic_link = "${var.vpc_peering_requester_allow_vpc_to_remote_classic_link}"
+    allow_classic_link_to_remote_vpc = "${var.vpc_peering_requester_allow_classic_link_to_remote_vpc}"
+  }
+}

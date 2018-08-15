@@ -1,0 +1,6 @@
+resource "aws_default_vpc_dhcp_options" "{{ name }}" {
+  netbios_name_servers = "${var.default_vpc_dhcp_options_netbios_name_servers}"
+  netbios_node_type    = "${var.default_vpc_dhcp_options_netbios_node_type}"
+  
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

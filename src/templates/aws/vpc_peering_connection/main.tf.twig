@@ -1,0 +1,15 @@
+resource "aws_vpc_peering_connection" "{{ name }}" {
+  peer_owner_id = "${var.account_id}"
+  peer_vpc_id   = "${var.vpc_peering_connection_peer_vpc_id}"
+  vpc_id        = "${var.vpc_peering_connection_vpc_id}"
+
+  accepter {
+    allow_remote_vpc_dns_resolution = "${var.vpc_peering_connection_accepter_allow_remote}"
+  }
+
+  requester {
+    allow_remote_vpc_dns_resolution = "${var.vpc_peering_connection_requester_allow_remote}"
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

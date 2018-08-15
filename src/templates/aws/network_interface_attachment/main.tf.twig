@@ -1,0 +1,5 @@
+resource "aws_network_interface_attachment" "{{ name }}" {
+    instance_id          = "${var.network_interface_attachment_instance_id}"
+    network_interface_id = "${var.network_interface_attachment_network_interface_id}"
+    device_index         = "${var.network_interface_attachment_device_index}"
+}

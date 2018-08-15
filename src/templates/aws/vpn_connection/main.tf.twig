@@ -1,0 +1,8 @@
+resource "aws_vpn_connection" "{{ name }}" {
+  vpn_gateway_id      = "${var.vpn_connection_vpn_gateway_id}"
+  customer_gateway_id = "${var.vpn_connection_customer_gateway_id}"
+  type                = "${var.vpn_connection_type}"
+  static_routes_only  = "${var.vpn_connection_static_routes_only}"
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}
