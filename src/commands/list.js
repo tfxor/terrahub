@@ -98,7 +98,12 @@ class ListCommand extends AbstractCommand {
 
         return Promise.resolve();
       })
-      .then(() => Promise.resolve('Done'));
+      .then(() => Promise.resolve('Done'))
+      .catch(err => {
+        throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
+          new Error('Terrahub is missing internet connection') :
+          err;
+      });
   }
 
   /**
@@ -198,8 +203,7 @@ class ListCommand extends AbstractCommand {
         return fse.outputJson(cachePath, data).then(() => {
           return data;
         });
-      })
-    ;
+      });
   }
 
   /**
@@ -260,7 +264,7 @@ class ListCommand extends AbstractCommand {
       const activeRegion = taggingApi.config.region;
 
       res.ResourceTagMappingList.forEach(res => {
-        data.push(this._parseResource(res, activeRegion))
+        data.push(this._parseResource(res, activeRegion));
       });
 
       if (!res.PaginationToken) {
