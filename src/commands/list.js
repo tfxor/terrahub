@@ -203,8 +203,7 @@ class ListCommand extends AbstractCommand {
         return fse.outputJson(cachePath, data).then(() => {
           return data;
         });
-      })
-      ;
+      });
   }
 
   /**
