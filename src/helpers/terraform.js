@@ -3,8 +3,7 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const Plan = require('./plan');
-const State = require('./state');
+const Metadata = require('./metadata');
 const semver = require('semver');
 const logger = require('./logger');
 const { spawn } = require('child-process-promise');
@@ -19,8 +18,7 @@ class Terraform {
   constructor(config) {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
-    this._plan = new Plan(this._config);
-    this._state = new State(this._config);
+    this._metadata = new Metadata(this._config);
     this._showLogs = true;
     this._isWorkspaceSupported = false;
   }
@@ -145,8 +143,7 @@ class Terraform {
 
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
-      .then(() => this._checkResourceDir())
-    ;
+      .then(() => this._checkResourceDir());
   }
 
   /**
@@ -184,8 +181,7 @@ class Terraform {
    * @private
    */
   _reInitPaths() {
-    this._plan.init();
-    this._state.init();
+    this._metadata.init();
 
     return Promise.resolve();
   }
@@ -205,7 +201,7 @@ class Terraform {
    * @returns {Promise}
    */
   statePull() {
-    if (!this._state.isRemote()) {
+    if (!this._metadata.isRemote()) {
       return Promise.resolve();
     }
 
@@ -213,7 +209,7 @@ class Terraform {
 
     return this.run('state', ['pull', '-no-color']).then(result => {
       this._showLogs = true;
-      const backupPath = this._state.getBackupPath();
+      const backupPath = this._metadata.getStateBackupPath();
       const pullStateContent = JSON.parse(result.toString());
 
       return fse.ensureFile(backupPath)
@@ -227,10 +223,11 @@ class Terraform {
    * @returns {Promise}
    */
   output() {
+    const statePath = this._metadata.getStatePath();
     const options = {};
 
-    if (fs.existsSync(this._state.getPath())) {
-      options['-state'] = this._state.getPath();
+    if (fs.existsSync(statePath)) {
+      options['-state'] = statePath;
     }
 
     this._showLogs = false;
@@ -251,9 +248,8 @@ class Terraform {
     const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list'])
-      .then(result => this.run('workspace', [ regex.test(result.toString()) ? 'select' : 'new', workspace ]))
-      .then(() => this._reInitPaths())
-    ;
+      .then(result => this.run('workspace', [regex.test(result.toString()) ? 'select' : 'new', workspace]))
+      .then(() => this._reInitPaths());
   }
 
   /**
@@ -275,14 +271,26 @@ class Terraform {
    * @returns {Promise}
    */
   plan() {
-    const statePath = this._state.getPath();
-    const options = { '-out': this._plan.getPath(), '-input': false };
+    const statePath = this._metadata.getStatePath();
+    const options = { '-out': this._metadata.getPlanPath(), '-input': false };
 
-    if (!this._state.isRemote() && fs.existsSync(statePath)) {
+    if (!this._metadata.isRemote() && fs.existsSync(statePath)) {
       options['-state'] = statePath;
     }
 
-    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)));
+    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
+      .then(data => {
+        const planPath = this._metadata.getPlanPath();
+
+        if (fse.existsSync(planPath)) {
+          const backupPath = this._metadata.getPlanBackupPath();
+          const planContent = fse.readFileSync(planPath).toString();
+
+          fse.outputFileSync(backupPath, planContent);
+        }
+
+        return Promise.resolve(data);
+      });
   }
 
   /**
@@ -291,15 +299,13 @@ class Terraform {
    */
   apply() {
     const params = {};
-    const planPath = this._plan.getPath();
-    const statePath = this._state.getPath();
+    const planPath = this._metadata.getPlanPath();
+    const statePath = this._metadata.getStatePath();
 
-    if (!this._state.isRemote()) {
+    if (!this._metadata.isRemote()) {
       if (fs.existsSync(statePath)) {
         Object.assign(params, {
-          '-state': statePath,
-          '-backup': this._state.getBackupPath(),
-          '-state-out': statePath
+          '-backup': this._metadata.getStateBackupPath()
         });
       } else if (fs.existsSync(planPath)) {
         Object.assign(params, { '-state-out': statePath });
@@ -319,11 +325,11 @@ class Terraform {
    * @private
    */
   _getStateContent() {
-    if (this._state.isRemote()) {
+    if (this._metadata.isRemote()) {
       return this.statePull().then(path => fse.readFile(path));
     }
 
-    return fse.readFile(this._state.getPath());
+    return fse.readFile(this._metadata.getStatePath());
   }
 
   /**
@@ -332,12 +338,12 @@ class Terraform {
    */
   destroy() {
     const options = {};
-    const statePath = this._state.getPath();
+    const statePath = this._metadata.getStatePath();
 
-    if (!this._state.isRemote() && fs.existsSync(statePath)) {
+    if (!this._metadata.isRemote() && fs.existsSync(statePath)) {
       Object.assign(options, {
         '-state': statePath,
-        '-backup': this._state.getBackupPath(),
+        '-backup': this._metadata.getStateBackupPath(),
         '-state-out': statePath
       });
     }
@@ -419,7 +425,7 @@ class Terraform {
         env: process.env
       };
 
-      return Buffer.concat(stdout)
+      return Buffer.concat(stdout);
     });
   }
 
