@@ -7,9 +7,7 @@ class Plan extends Metadata {
    * Init
    * @desc check if workspace dir exists
    */
-  init() {
-    this.reBase();
-  }
+  init() {}
 
   /**
    * @returns {String}

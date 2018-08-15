@@ -93,11 +93,11 @@ class BuildHelper {
     sources.forEach(source => {
       if (source) {
         if (source.commands) {
-          source.commands.forEach(it => destination.push(it));
+          destination.push(...source.commands);
         }
 
         if (source.finally) {
-          source.finally.forEach(it => destination.push(it));
+          destination.push(...source.finally);
         }
       }
     });

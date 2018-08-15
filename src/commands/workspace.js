@@ -26,11 +26,12 @@ class WorkspaceCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    let promises = [];
+    const promises = [];
     let filesToRemove = [];
-    let kill = this.getOption('delete');
-    let configs = this.listConfig();
-    let { name, code } = this.getProjectConfig();
+    const directories = [];
+    const kill = this.getOption('delete');
+    const configs = this.listConfig();
+    const { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
       return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');
@@ -41,6 +42,9 @@ class WorkspaceCommand extends TerraformCommand {
       const envConfig = path.join(dir, config.fileName);
       const tfvarsName = `workspace/${config.env}.tfvars`;
       const tfvarsPath = path.join(dir, tfvarsName);
+      const workspaceEnv = path.join(dir, 'terraform.tfstate.d', config.env);
+
+      directories.push(workspaceEnv);
 
       if (!fs.existsSync(envConfig) && !kill) {
         const creating = new HashTable({});
@@ -64,6 +68,9 @@ class WorkspaceCommand extends TerraformCommand {
       }
     });
 
+    // Remove project root directory
+    directories.shift();
+
     this.reloadConfig();
     let tree = this.getConfigTree();
 
@@ -74,6 +81,7 @@ class WorkspaceCommand extends TerraformCommand {
       return Promise
         .all(promises)
         .then(() => this._workspace('workspaceSelect', tree))
+        .then(() => Promise.all(directories.map(it => fse.ensureDir(it))))
         .then(() => Promise.resolve(message));
     }
 
@@ -91,6 +99,7 @@ class WorkspaceCommand extends TerraformCommand {
       return Promise
         .all(filesToRemove.map(file => fse.unlink(file)))
         .then(() => this._workspace('workspaceDelete', tree))
+        .then(() => Promise.all(directories.map(it => fs.existsSync(it) ? fse.remove(it) : Promise.resolve())))
         .then(() => Promise.resolve(`Terrahub environment '${config.env}' was deleted`));
     });
   }
