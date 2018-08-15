@@ -1,0 +1,6 @@
+resource "aws_vpc_endpoint_connection_notification" "{{ name }}" {
+  vpc_endpoint_service_id     = "${var.vpc_endpoint_vpc_endpoint_service_id}"
+  vpc_endpoint_id             = "${var.vpc_endpoint_vpc_endpoint_id}"
+  connection_notification_arn = "${var.vpc_endpoint_connection_notification_arn}"
+  connection_events           = ["${var.vpc_endpoint_connection_events}"]
+}

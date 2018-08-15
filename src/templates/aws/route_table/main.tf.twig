@@ -1,0 +1,11 @@
+resource "aws_route_table" "{{ name }}" {
+  vpc_id           = "${var.route_table_vpc_id}"
+  propagating_vgws = "${var.route_table_propagating_vgws}"
+
+  route {
+    cidr_block = "${var.route_table_route_cidr_block}"
+    gateway_id = "${var.route_table_route_gateway_id}"
+  }
+
+  tags = "${merge(var.default_tags, var.custom_tags)}"
+}

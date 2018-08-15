@@ -23,7 +23,7 @@ class ArgsParser {
       return value;
     }
 
-    if (type === String && value.constructor === Boolean) {
+    if (type !== Boolean && value.constructor === Boolean) {
       return undefined;
     }
 

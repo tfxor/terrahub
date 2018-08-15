@@ -1,6 +1,10 @@
-# aws_network_interface
+# aws_default_vpc
 
-Provides an Elastic network interface (ENI) resource.
+Provides a resource to manage the default AWS VPC in the current region.
+
+For AWS accounts created after 2013-12-04, each region comes with a Default VPC. This is an advanced resource, and has special caveats to be aware of when using it. Please read this document in its entirety before using this resource.
+
+The aws_default_vpc behaves differently from normal resources, in that Terraform does not create this resource, but instead "adopts" it into management.
 
 ## input variables
 

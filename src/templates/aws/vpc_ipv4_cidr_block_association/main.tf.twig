@@ -1,0 +1,4 @@
+resource "aws_vpc_ipv4_cidr_block_association" "{{ name }}" {
+  vpc_id     = "${var.vpc_ipv4_cidr_block_association_vpc_id}"
+  cidr_block = "${var.vpc_ipv4_cidr_block_association_cidr_block}"
+}

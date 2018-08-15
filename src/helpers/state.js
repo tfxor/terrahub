@@ -10,7 +10,6 @@ class State extends Metadata {
    * @desc check if state is remote and if workspace dir exists
    */
   init() {
-    this.reBase();
     this._isRemote = false;
     const remoteStatePath = this._getRemotePath();
 
@@ -32,14 +31,19 @@ class State extends Metadata {
    * @returns {String}
    */
   getBackupPath() {
-    return path.join(this._base, `${ State.NAME }.${ Date.now() }.backup`);
-  }
+    const backup = this._cfg.terraform.backup;
+    const workspace = this._cfg.terraform.workspace;
 
-  /**
-   * @returns {String}
-   */
-  getPullPath() {
-    return path.join(this._base, `${State.NAME}.pull`);
+    let backupPath;
+    if (backup) {
+      backupPath = path.join(this._root, backup, workspace === 'default' ? './' : workspace);
+    } else {
+      backupPath = this._isRemote ?
+        path.join(this._root, '.terraform', '.backup', workspace === 'default' ? './' : workspace) :
+        path.join(this._base, '.backup');
+    }
+
+    return path.join(backupPath, 'tfstate', `${ State.NAME }.${ Date.now() }.backup`);
   }
 
   /**

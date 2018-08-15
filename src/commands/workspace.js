@@ -26,11 +26,11 @@ class WorkspaceCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    let promises = [];
+    const promises = [];
     let filesToRemove = [];
-    let kill = this.getOption('delete');
-    let configs = this.listConfig();
-    let { name, code } = this.getProjectConfig();
+    const kill = this.getOption('delete');
+    const configs = this.listConfig();
+    const { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
       return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');

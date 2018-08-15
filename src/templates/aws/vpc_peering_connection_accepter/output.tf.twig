@@ -1,0 +1,37 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.id}"
+}
+
+output "thub_id" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.id}"
+}
+
+output "accept_status" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.accept_status}"
+}
+
+output "vpc_id" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.vpc_id}"
+}
+
+output "peer_vpc_id" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.peer_vpc_id}"
+}
+
+output "peer_owner_id" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.peer_owner_id}"
+}
+
+output "peer_region" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.peer_region}"
+}
+
+output "accepter" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.accepter}"
+}
+
+output "requester" {
+  value = "${aws_vpc_peering_connection_accepter.{{ name }}.requester}"
+}
