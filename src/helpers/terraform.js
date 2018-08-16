@@ -223,12 +223,7 @@ class Terraform {
    * @returns {Promise}
    */
   output() {
-    const statePath = this._metadata.getStatePath();
     const options = {};
-
-    if (fs.existsSync(statePath)) {
-      options['-state'] = statePath;
-    }
 
     this._showLogs = false;
 
@@ -271,12 +266,7 @@ class Terraform {
    * @returns {Promise}
    */
   plan() {
-    const statePath = this._metadata.getStatePath();
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
-
-    if (!this._metadata.isRemote() && fs.existsSync(statePath)) {
-      options['-state'] = statePath;
-    }
 
     return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
@@ -298,19 +288,7 @@ class Terraform {
    * @returns {Promise}
    */
   apply() {
-    const params = {};
-    const planPath = this._metadata.getPlanPath();
-    const statePath = this._metadata.getStatePath();
-
-    if (!this._metadata.isRemote()) {
-      if (fs.existsSync(statePath)) {
-        Object.assign(params, {
-          '-backup': this._metadata.getStateBackupPath()
-        });
-      } else if (fs.existsSync(planPath)) {
-        Object.assign(params, { '-state-out': statePath });
-      }
-    }
+    const params = { '-backup': this._metadata.getStateBackupPath() };
 
     const options = Object.assign({ '-auto-approve': true, '-input': false }, params);
 
@@ -337,16 +315,7 @@ class Terraform {
    * @returns {Promise}
    */
   destroy() {
-    const options = {};
-    const statePath = this._metadata.getStatePath();
-
-    if (!this._metadata.isRemote() && fs.existsSync(statePath)) {
-      Object.assign(options, {
-        '-state': statePath,
-        '-backup': this._metadata.getStateBackupPath(),
-        '-state-out': statePath
-      });
-    }
+    const options = { '-backup': this._metadata.getStateBackupPath() };
 
     return this
       .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
