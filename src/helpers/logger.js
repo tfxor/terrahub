@@ -57,7 +57,7 @@ class Logger {
    * @param {String|Error} message
    */
   error(message) {
-    if (message instanceof Error) {
+    if (message.constructor === Error) {
       const { name } = this._logger.getLevel();
 
       message = (name === logger.DEBUG.name)

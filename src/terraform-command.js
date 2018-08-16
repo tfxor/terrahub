@@ -19,6 +19,8 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
     ;
+
+    this._configObject = this._buildConfigObject();
   }
 
   /**
@@ -26,26 +28,45 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(() => {
-      let errorMessage = '';
-
       const projectConfig = this._configLoader.getProjectConfig();
-
       const missingProjectData = this._getProjectDataMissing(projectConfig);
-      let nonExistingComponents;
 
-      if (missingProjectData === 'config') {
-        errorMessage = 'Configuration file not found. '
-          + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`.';
-      } else if (missingProjectData) {
-        return this._handleMissingData(missingProjectData, projectConfig);
-      } else if (this._areComponentsReady()) {
-        errorMessage = 'No components defined in configuration file. '
-          + 'Please create new component or include existing one with `terrahub component`';
-      } else if ((nonExistingComponents = this._getNonExistingComponents()).length) {
-        errorMessage = 'Some of components were not found: ' + nonExistingComponents.join(', ');
+      if (missingProjectData) {
+        return missingProjectData === 'config' ?
+          Promise.reject('Configuration file not found. '
+            + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`.') :
+
+          this._handleMissingData(missingProjectData, projectConfig);
       }
 
-      return errorMessage ? Promise.reject(new Error(errorMessage)) : Promise.resolve();
+      return Promise.resolve();
+    }).then(() => {
+      if (this._isComponentsCountZero()) {
+        return Promise.reject('No components defined in configuration file. '
+          + 'Please create new component or include existing one with `terrahub component`');
+      }
+
+      return Promise.resolve();
+    }).then(() => {
+      const nonExistingComponents = this._getNonExistingComponents();
+
+      if (nonExistingComponents.length) {
+        return Promise.reject('Some of components were not found: ' + nonExistingComponents.join(', '));
+      }
+
+      return Promise.resolve();
+    }).then(() => {
+      const cycle = this._getDependencyCycle();
+
+      if (cycle.length) {
+        return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
+      }
+
+      return Promise.resolve();
+    }).catch(err => {
+      const error = err.constructor === String ? new Error(err) : err;
+
+      return Promise.reject(error);
     });
   }
 
@@ -71,6 +92,61 @@ class TerraformCommand extends AbstractCommand {
 
       return this.validate();
     });
+  }
+
+  /**
+   * @return {String[]}
+   * @private
+   */
+  _getDependencyCycle() {
+    const color = {};
+    const config = this._configObject;
+    const keys = Object.keys(config);
+    const path = [];
+
+    keys.forEach(key => color[key] = 'white');
+    keys.every(key => !depthFirstSearch(key));
+
+    if (path.length) {
+      const index = path.findIndex(it => it === path[path.length - 1]);
+
+      return path.map(key => config[key].name).slice(index + 1);
+    }
+
+    return path;
+
+    /**
+     * @param {String} hash
+     * @return {Boolean}
+     */
+    function depthFirstSearch(hash) {
+      if (color[hash] === 'black') {
+        return false;
+      }
+
+      const dependsOn = config[hash].dependsOn;
+      color[hash] = 'gray';
+      path.push(hash);
+
+      for (const key in dependsOn) {
+        if (color[key] === 'white') {
+          if (depthFirstSearch(key)) {
+            return true;
+          }
+        }
+
+        if (color[key] === 'gray') {
+          path.push(key);
+
+          return true;
+        }
+      }
+
+      color[hash] = 'black';
+      path.pop();
+
+      return false;
+    }
   }
 
   /**
@@ -148,6 +224,44 @@ class TerraformCommand extends AbstractCommand {
     return familyTree(this.getConfig());
   }
 
+
+  /**
+   * Builds object of components' configurations
+   * @return {Object}
+   * @private
+   */
+  _buildConfigObject() {
+    const tree = {};
+    const object = Object.assign({}, this.getConfig());
+
+    Object.keys(object).forEach(hash => {
+      const node = object[hash];
+      const dependsOn = {};
+
+      node.dependsOn.forEach(dep => {
+        const key = toMd5(dep);
+
+        if (!object.hasOwnProperty(key)) {
+          throw new Error(`Couldn't find dependency '${dep}'`);
+        }
+
+        dependsOn[key] = null;
+      });
+
+      node.dependsOn = dependsOn;
+      tree[hash] = node;
+    });
+
+    return tree;
+  }
+
+  /**
+   * Get object of components' configuration
+   */
+  getConfigObject() {
+    return this._configObject;
+  }
+
   /**
    * @param {String[]} actions
    * @param {Object} custom
@@ -196,7 +310,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Boolean}
    * @private
    */
-  _areComponentsReady() {
+  _isComponentsCountZero() {
     return (this._configLoader.componentsCount() === 0);
   }
 
