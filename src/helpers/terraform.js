@@ -288,9 +288,7 @@ class Terraform {
    * @returns {Promise}
    */
   apply() {
-    const params = { '-backup': this._metadata.getStateBackupPath() };
-
-    const options = Object.assign({ '-auto-approve': true, '-input': false }, params);
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
 
     return this
       .run('apply', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
