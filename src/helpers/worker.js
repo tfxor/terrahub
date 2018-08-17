@@ -37,14 +37,16 @@ function run(config) {
     process.send({
       id: cluster.worker.id,
       data: lastResult,
-      isError: false
+      isError: false,
+      hash: config.hash
     });
     process.exit(0);
   }).catch(error => {
     process.send({
       id: cluster.worker.id,
       error: error.message || error,
-      isError: true
+      isError: true,
+      hash: config.hash
     });
     process.exit(1);
   });

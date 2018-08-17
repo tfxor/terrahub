@@ -20,8 +20,8 @@ class DestroyCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const order = this.getTarjanOrder();
-    const distributor = new Distributor(order, ['prepare', 'destroy']);
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config, ['prepare', 'destroy']);
 
     return this._getPromise()
       .then(answer => {

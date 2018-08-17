@@ -18,8 +18,8 @@ class PlanCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const order = this.getTarjanOrder();
-    const distributor = new Distributor(order, ['prepare', 'plan']);
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config, ['prepare', 'plan']);
 
     return distributor
       .run()

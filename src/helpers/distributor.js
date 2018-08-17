@@ -8,7 +8,7 @@ const { uuid } = require("./util");
 
 class Distributor {
   /**
-   * @param {Object[]} config
+   * @param {Object} config
    * @param {String[]} actions
    * @param {Object} options
    */
@@ -25,39 +25,69 @@ class Distributor {
       THUB_RUN_ID: uuid()
     }, env);
 
-    this._config = [].concat(config);
+    this._config = Object.assign({}, config);
     this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
     this._output = [];
     this._threadsCount = os.cpus().length;
+    this._dependencyTable = this._buildDependencyTable(config);
 
     cluster.setupMaster({ exec: this._worker });
   }
 
-
   /**
-   * @param {Object} cfg
+   * @param {Object} config
+   * @return {Object}
    * @private
    */
-  _createWorker(cfg) {
+  _buildDependencyTable(config) {
+    const result = {};
+
+    Object.keys(config).forEach(key => {
+      result[key] = Object.assign({}, config[key].dependsOn);
+    });
+
+    return result;
+  }
+
+
+  /**
+   * @param {String} hash
+   * @private
+   */
+  _createWorker(hash) {
+    const cfgThread = this._config[hash];
     const worker = cluster.fork(this._env);
 
+    delete this._dependencyTable[hash];
+
     this._workersCount++;
-    worker.send(cfg);
+    worker.send(cfgThread);
+  }
+
+  /**
+   * Remove dependencies on this component
+   * @param {String} hash
+   * @private
+   */
+  _removeDependencies(hash) {
+    Object.keys(this._dependencyTable).forEach(key => {
+      delete this._dependencyTable[key][hash];
+    });
   }
 
   /**
    * @private
    */
   _distributeConfigs() {
-    while (this._workersCount < this._threadsCount && this._config.length) {
-      const cfg = this._config[0];
-      const dependsOn = Object.keys(cfg.dependsOn);
+    const hashes = Object.keys(this._dependencyTable);
 
-      if (!this._isOrderDependent || dependsOn.every(it =>
-        !this._config.some(cfg => cfg.hash === it)
-      )) {
-        this._createWorker(this._config.shift());
+    for (let index = 0; this._workersCount < this._threadsCount && index < hashes.length; index++) {
+      const hash = hashes[index];
+      const dependsOn = Object.keys(this._dependencyTable[hash]);
+
+      if (!this._isOrderDependent || !dependsOn.length) {
+        this._createWorker(hash);
       }
     }
   }
@@ -77,12 +107,14 @@ class Distributor {
         if (data.data) {
           this._output.push(data.data);
         }
+
+        this._removeDependencies(data.hash);
       });
 
       cluster.on('exit', (worker, code, signal) => {
         this._workersCount--;
 
-        if (!signal) {
+        if (!signal && code === 0) {
           this._distributeConfigs();
         }
 
@@ -112,7 +144,7 @@ class Distributor {
     }
 
     if (outputs[0].env.format === 'json') {
-      let result = {};
+      const result = {};
 
       outputs.forEach(it => result[it.component] = JSON.parse((new Buffer(it.stdout)).toString()));
 
@@ -134,7 +166,9 @@ class Distributor {
    */
   _handleError(err) {
     Object.keys(cluster.workers).forEach(id => {
-      cluster.workers[id].kill();
+      const worker = cluster.workers[id];
+
+      worker.kill();
     });
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);

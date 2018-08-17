@@ -20,8 +20,8 @@ class ApplyCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const order = this.getTarjanOrder();
-    const distributor = new Distributor(order, ['prepare', 'apply']);
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config, ['prepare', 'apply']);
 
     return this._getPromise()
       .then(answer => {

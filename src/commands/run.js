@@ -23,12 +23,12 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
-    const order = this.getTarjanOrder();
+    const config = this.getConfigObject();
 
-    const distributors = [new Distributor(order,
+    const distributors = [new Distributor(config,
       ['prepare', 'init', 'workspaceSelect', 'plan'], { isOrderDependent: false })];
 
-    distributors.push(...this._actions.map(action => new Distributor(order, [action])));
+    distributors.push(...this._actions.map(action => new Distributor(config, [action])));
 
     return this._getPromise()
       .then(answer => {

@@ -21,7 +21,6 @@ class TerraformCommand extends AbstractCommand {
     ;
 
     this._configObject = this._buildConfigObject();
-    this._componentOrder = null;
   }
 
   /**
@@ -56,8 +55,12 @@ class TerraformCommand extends AbstractCommand {
       }
 
       return Promise.resolve();
-    }).then(() => this._createTarjanOrder()).then(order => {
-      this._componentOrder = order;
+    }).then(() => {
+      const cycle = this._getDependencyCycle();
+
+      if (cycle.length) {
+        return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
+      }
 
       return Promise.resolve();
     }).catch(err => {
@@ -92,16 +95,14 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Sets order in which
-   * @return {Promise}
+   * @return {String[]}
    * @private
    */
-  _createTarjanOrder() {
+  _getDependencyCycle() {
     const color = {};
     const config = this._configObject;
     const keys = Object.keys(config);
     const path = [];
-    const order = [];
 
     keys.forEach(key => color[key] = 'white');
     keys.every(key => color[key] === 'black' ? true : !depthFirstSearch(key));
@@ -109,11 +110,10 @@ class TerraformCommand extends AbstractCommand {
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
 
-      return Promise.reject('There is a dependency cycle between the following components: ' +
-        path.map(key => config[key].name).slice(index + 1).join(', '));
+      return path.map(key => config[key].name).slice(index + 1);
     }
 
-    return Promise.resolve(order);
+    return path;
 
     /**
      * @param {String} hash
@@ -139,18 +139,10 @@ class TerraformCommand extends AbstractCommand {
       }
 
       color[hash] = 'black';
-      order.push(config[hash]);
       path.pop();
 
       return false;
     }
-  }
-
-  /**
-   * @return {Array}
-   */
-  getTarjanOrder() {
-    return this._componentOrder;
   }
 
   /**
@@ -168,7 +160,7 @@ class TerraformCommand extends AbstractCommand {
     };
 
     Object.keys(config).forEach(hash => {
-      result[hash] = extend(config[hash], [cliParams]);
+      result[hash] = extend(config[hash], [cliParams, { hash: hash }]);
     });
 
     return result;
@@ -219,15 +211,6 @@ class TerraformCommand extends AbstractCommand {
 
     return result;
   }
-
-  /**
-   * Get config tree
-   * @returns {Object}
-   */
-  getConfigTree() {
-    return familyTree(this.getConfig());
-  }
-
 
   /**
    * Builds object of components' configurations

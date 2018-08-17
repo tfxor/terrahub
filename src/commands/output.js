@@ -48,8 +48,8 @@ class OutputCommand extends TerraformCommand {
    * @return {Promise}
    */
   performAction() {
-    const order = this.getTarjanOrder();
-    const distributor = new Distributor(order, ['prepare', 'output'], { env: { format: this._format } });
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config, ['prepare', 'output'], { env: { format: this._format } });
 
     return distributor.run();
   }

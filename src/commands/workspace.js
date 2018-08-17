@@ -33,7 +33,7 @@ class WorkspaceCommand extends TerraformCommand {
     const { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
-      return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');
+      return this._workspace('workspaceSelect', this.getConfigObject()).then(() => 'Done');
     }
 
     configs.forEach((configPath, i) => {
@@ -65,7 +65,7 @@ class WorkspaceCommand extends TerraformCommand {
     });
 
     this.reloadConfig();
-    let tree = this.getConfigTree();
+    const cfgObject = this.getConfigObject();
 
     if (!kill) {
       let isUpdate = promises.length !== (configs.length - 1);
@@ -73,7 +73,7 @@ class WorkspaceCommand extends TerraformCommand {
 
       return Promise
         .all(promises)
-        .then(() => this._workspace('workspaceSelect', tree))
+        .then(() => this._workspace('workspaceSelect', cfgObject))
         .then(() => Promise.resolve(message));
     }
 
@@ -90,19 +90,19 @@ class WorkspaceCommand extends TerraformCommand {
 
       return Promise
         .all(filesToRemove.map(file => fse.unlink(file)))
-        .then(() => this._workspace('workspaceDelete', tree))
+        .then(() => this._workspace('workspaceDelete', cfgObject))
         .then(() => Promise.resolve(`Terrahub environment '${config.env}' was deleted`));
     });
   }
 
   /**
    * @param {String} action
-   * @param {Object} config
+   * @param {Object[]} config
    * @return {Promise}
    * @private
    */
   _workspace(action, config) {
-    const distributor = new Distributor(config, { env: this.buildEnv(['prepare', action]) });
+    const distributor = new Distributor(config, ['prepare', action]);
 
     return distributor.run();
   }
