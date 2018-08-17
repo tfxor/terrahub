@@ -21,6 +21,7 @@ class TerraformCommand extends AbstractCommand {
     ;
 
     this._configObject = this._buildConfigObject();
+    this._componentOrder = null;
   }
 
   /**
@@ -55,12 +56,8 @@ class TerraformCommand extends AbstractCommand {
       }
 
       return Promise.resolve();
-    }).then(() => {
-      const cycle = this._getDependencyCycle();
-
-      if (cycle.length) {
-        return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
-      }
+    }).then(() => this._createTarjanOrder()).then(order => {
+      this._componentOrder = order;
 
       return Promise.resolve();
     }).catch(err => {
@@ -95,35 +92,34 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @return {String[]}
+   * Sets order in which
+   * @return {Promise}
    * @private
    */
-  _getDependencyCycle() {
+  _createTarjanOrder() {
     const color = {};
     const config = this._configObject;
     const keys = Object.keys(config);
     const path = [];
+    const order = [];
 
     keys.forEach(key => color[key] = 'white');
-    keys.every(key => !depthFirstSearch(key));
+    keys.every(key => color[key] === 'black' ? true : !depthFirstSearch(key));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
 
-      return path.map(key => config[key].name).slice(index + 1);
+      return Promise.reject('There is a dependency cycle between the following components: ' +
+        path.map(key => config[key].name).slice(index + 1).join(', '));
     }
 
-    return path;
+    return Promise.resolve(order);
 
     /**
      * @param {String} hash
      * @return {Boolean}
      */
     function depthFirstSearch(hash) {
-      if (color[hash] === 'black') {
-        return false;
-      }
-
       const dependsOn = config[hash].dependsOn;
       color[hash] = 'gray';
       path.push(hash);
@@ -143,10 +139,18 @@ class TerraformCommand extends AbstractCommand {
       }
 
       color[hash] = 'black';
+      order.push(config[hash]);
       path.pop();
 
       return false;
     }
+  }
+
+  /**
+   * @return {Array}
+   */
+  getTarjanOrder() {
+    return this._componentOrder;
   }
 
   /**
