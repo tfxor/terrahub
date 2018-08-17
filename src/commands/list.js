@@ -101,7 +101,7 @@ class ListCommand extends AbstractCommand {
       .then(() => Promise.resolve('Done'))
       .catch(err => {
         throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
-          new Error('Terrahub is missing internet connection') :
+          new Error('TerraHub is missing internet connection') :
           err;
       });
   }
