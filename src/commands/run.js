@@ -2,7 +2,7 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion } = require('../helpers/util');
+const { yesNoQuestion, promiseSeries } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -23,15 +23,17 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
-    const config = this.getConfigTree();
-    const distributor = new Distributor(config, {
-      env: this.buildEnv(['prepare', 'init', 'workspaceSelect', 'plan', ...this._actions])
-    });
+    const order = this.getTarjanOrder();
+
+    const distributors = [new Distributor(order,
+      ['prepare', 'init', 'workspaceSelect', 'plan'], { isOrderDependent: false })];
+
+    distributors.push(...this._actions.map(action => new Distributor(order, [action])));
 
     return this._getPromise()
       .then(answer => {
         if (answer) {
-          return distributor.run();
+          return promiseSeries(distributors.map(it => () => it.run()));
         } else {
           return Promise.reject('Action aborted');
         }

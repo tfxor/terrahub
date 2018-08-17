@@ -27,13 +27,8 @@ class BuildCommand extends TerraformCommand {
       return Promise.reject(new Error(`The '${format}' output format is not supported for this command.`));
     }
 
-    const config = this.getConfigTree();
-    const distributor = new Distributor(config, {
-      env: this.buildEnv(['build'], {
-        silent: silent,
-        format: format
-      })
-    });
+    const order = this.getTarjanOrder();
+    const distributor = new Distributor(order, ['build'], { env: { silent: silent, format: format } });
 
     return distributor
       .run()

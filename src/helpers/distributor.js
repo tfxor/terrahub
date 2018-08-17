@@ -4,57 +4,70 @@ const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const logger = require('./logger');
+const { uuid } = require("./util");
 
 class Distributor {
   /**
-   * @param {Object} config
-   * @param {String} worker
-   * @param {Object} env
+   * @param {Object[]} config
+   * @param {String[]} actions
+   * @param {Object} options
    */
-  constructor(config, { worker = 'worker.js', env = {} }) {
-    this._env = env;
-    this._config = config;
+  constructor(config, actions, options = {}) {
+    const {
+      worker = 'worker.js',
+      env = {},
+      isOrderDependent = true
+    } = options;
+
+    this._isOrderDependent = isOrderDependent;
+    this._env = Object.assign({
+      TERRAFORM_ACTIONS: actions,
+      THUB_RUN_ID: uuid()
+    }, env);
+
+    this._config = [].concat(config);
     this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
     this._output = [];
+    this._threadsCount = os.cpus().length;
 
     cluster.setupMaster({ exec: this._worker });
   }
 
+
   /**
-   * @returns {Number}
+   * @param {Object} cfg
    * @private
    */
-  _getThreadsCount() {
-    const coresCount = os.cpus().length;
-    const independent = Object.keys(this._config).length;
+  _createWorker(cfg) {
+    const worker = cluster.fork(this._env);
 
-    return (coresCount <= independent) ? coresCount : independent;
+    this._workersCount++;
+    worker.send(cfg);
   }
 
   /**
-   * @param {String} hash
    * @private
    */
-  _createWorker(hash) {
-    let threadCfg = this._config[hash];
-    let worker = cluster.fork(this._env);
+  _distributeConfigs() {
+    while (this._workersCount < this._threadsCount && this._config.length) {
+      const cfg = this._config[0];
+      const dependsOn = Object.keys(cfg.dependsOn);
 
-    this._workersCount++;
-    worker.send(threadCfg);
+      if (!this._isOrderDependent || dependsOn.every(it =>
+        !this._config.some(cfg => cfg.hash === it)
+      )) {
+        this._createWorker(this._config.shift());
+      }
+    }
   }
 
   /**
    * @returns {Promise}
    */
   run() {
-    const hashes = Object.keys(this._config);
-    let threads = this._getThreadsCount();
-
     return new Promise((resolve, reject) => {
-      for (let i = 0; i < threads; i++) {
-        this._createWorker(hashes.shift());
-      }
+      this._distributeConfigs();
 
       cluster.on('message', (worker, data) => {
         if (data.isError) {
@@ -62,15 +75,15 @@ class Distributor {
         }
 
         if (data.data) {
-          data.data.forEach(it => this._output.push(it));
+          this._output.push(data.data);
         }
       });
 
-      cluster.on('exit', () => {
+      cluster.on('exit', (worker, code, signal) => {
         this._workersCount--;
 
-        if (hashes.length > 0) {
-          this._createWorker(hashes.shift());
+        if (!signal) {
+          this._distributeConfigs();
         }
 
         if (this._workersCount === 0) {
@@ -107,7 +120,7 @@ class Distributor {
 
       return Promise.resolve();
     } else {
-      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`))
+      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`));
 
       return Promise.resolve('Done');
     }
@@ -121,8 +134,7 @@ class Distributor {
    */
   _handleError(err) {
     Object.keys(cluster.workers).forEach(id => {
-      let worker = cluster.workers[id];
-      worker.kill();
+      cluster.workers[id].kill();
     });
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);

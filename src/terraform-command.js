@@ -267,18 +267,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String[]} actions
-   * @param {Object} custom
-   * @return {Object}
-   */
-  buildEnv(actions, custom = {}) {
-    return Object.assign({
-      TERRAFORM_ACTIONS: actions,
-      THUB_RUN_ID: uuid()
-    }, custom);
-  }
-
-  /**
    * Return name of the required field missing in project data
    * @param {Object} projectConfig
    * @return {String|null}

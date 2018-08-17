@@ -7,10 +7,10 @@ const logger = require('./logger');
 class BuildHelper {
   /**
    * @param {Object} config
-   * @return {Function}
+   * @return {Promise}
    */
   static getComponentBuildTask(config) {
-    return () => new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const buildConfig = config.build;
       const name = config.name;
 
@@ -32,7 +32,6 @@ class BuildHelper {
       }
 
       promiseSeries(commandsList.map(it => () => {
-        // console.log(it);
           const [command, ...args] = it.split(' ');
           const stdout = [];
 
