@@ -21,12 +21,12 @@ class ApplyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config, ['prepare', 'apply']);
+    const distributor = new Distributor(config);
 
     return this._getPromise()
       .then(answer => {
         if (answer) {
-          return distributor.run();
+          return distributor.runActions(['prepare', 'apply']);
         } else {
           return Promise.reject('Action aborted');
         }

@@ -2,7 +2,7 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion, promiseSeries } = require('../helpers/util');
+const { yesNoQuestion } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -22,23 +22,44 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
-    const config = this.getConfigObject();
-
-    const distributors = [new Distributor(config,
-      ['prepare', 'init', 'workspaceSelect', 'plan'], { isOrderDependent: false })];
-
-    distributors.push(...this._actions.map(action => new Distributor(config, [action])));
+    this._actions = ['build', 'apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
       .then(answer => {
         if (answer) {
-          return promiseSeries(distributors.map(it => () => it.run()));
+          return this._runPhases();
         } else {
           return Promise.reject('Action aborted');
         }
       })
       .then(() => Promise.resolve('Done'));
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _runPhases() {
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config);
+
+    return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan'], false)
+      .then(() => {
+        const actions = ['build', 'apply'].filter(action => this._actions.includes(action));
+
+        if (actions.length) {
+          return distributor.runActions(actions);
+        }
+
+        return Promise.resolve();
+      })
+      .then(() => {
+        if (this._actions.includes('destroy')) {
+          return distributor.runActions(['destroy']);
+        }
+
+        return Promise.resolve();
+      });
   }
 
   /**

@@ -19,8 +19,6 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
     ;
-
-    this._configObject = this._buildConfigObject();
   }
 
   /**
@@ -95,7 +93,7 @@ class TerraformCommand extends AbstractCommand {
    */
   _getDependencyCycle() {
     const color = {};
-    const config = this._configObject;
+    const config = this.getConfigObject();
     const keys = Object.keys(config);
     const path = [];
 
@@ -208,16 +206,15 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Builds object of components' configurations
+   * Get object of components' configuration
    * @return {Object}
-   * @private
    */
-  _buildConfigObject() {
+  getConfigObject() {
     const tree = {};
     const object = Object.assign({}, this.getConfig());
 
     Object.keys(object).forEach(hash => {
-      const node = object[hash];
+      const node = Object.assign({}, object[hash]);
       const dependsOn = {};
 
       node.dependsOn.forEach(dep => {
@@ -235,13 +232,6 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return tree;
-  }
-
-  /**
-   * Get object of components' configuration
-   */
-  getConfigObject() {
-    return this._configObject;
   }
 
   /**

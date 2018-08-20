@@ -19,10 +19,10 @@ class PlanCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config, ['prepare', 'plan']);
+    const distributor = new Distributor(config);
 
     return distributor
-      .run()
+      .runActions(['prepare', 'plan'], false)
       .then(() => Promise.resolve('Done'));
   }
 }

@@ -8,29 +8,26 @@ const { uuid } = require("./util");
 
 class Distributor {
   /**
-   * @param {Object} config
-   * @param {String[]} actions
-   * @param {Object} options
+   * @param  config
+   * @param options
    */
-  constructor(config, actions, options = {}) {
+  constructor(config, options = {}) {
     const {
       worker = 'worker.js',
-      env = {},
-      isOrderDependent = true
+      silent = false,
+      format = 'text'
     } = options;
 
-    this._isOrderDependent = isOrderDependent;
-    this._env = Object.assign({
-      TERRAFORM_ACTIONS: actions,
-      THUB_RUN_ID: uuid()
-    }, env);
+    this._env = {
+      silent: silent,
+      format: format
+    };
 
+    this.THUB_RUN_ID = uuid();
     this._config = Object.assign({}, config);
     this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
-    this._output = [];
     this._threadsCount = os.cpus().length;
-    this._dependencyTable = this._buildDependencyTable(config);
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -57,7 +54,11 @@ class Distributor {
    */
   _createWorker(hash) {
     const cfgThread = this._config[hash];
-    const worker = cluster.fork(this._env);
+
+    const worker = cluster.fork(Object.assign({
+      THUB_RUN_ID: this.THUB_RUN_ID,
+      TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS
+    }, this._env));
 
     delete this._dependencyTable[hash];
 
@@ -93,9 +94,16 @@ class Distributor {
   }
 
   /**
+   * @param {String[]} actions
+   * @param {Boolean} isOrderDependent
    * @returns {Promise}
    */
-  run() {
+  runActions(actions, isOrderDependent = true) {
+    this._output = [];
+    this._dependencyTable = this._buildDependencyTable(this._config);
+    this._isOrderDependent = isOrderDependent;
+    this.TERRAFORM_ACTIONS = actions;
+
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
 
@@ -118,12 +126,15 @@ class Distributor {
           this._distributeConfigs();
         }
 
-        if (this._workersCount === 0) {
+        const hashes = Object.keys(this._dependencyTable);
+        const workersId = Object.keys(cluster.workers);
+
+        if (!workersId.length && !hashes.length) {
           if (this._error) {
             reject(this._error);
           } else {
-            this._handleOutput().then(result => {
-              resolve(result);
+            this._handleOutput().then(message => {
+              resolve(message);
             });
           }
         }
@@ -133,7 +144,6 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
-   * @return {Promise}
    * @private
    */
   _handleOutput() {
@@ -167,7 +177,6 @@ class Distributor {
   _handleError(err) {
     Object.keys(cluster.workers).forEach(id => {
       const worker = cluster.workers[id];
-
       worker.kill();
     });
 
