@@ -2,7 +2,7 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { familyTree, extend, uuid, askQuestion, toMd5 } = require('./helpers/util');
+const { extend, askQuestion, toMd5 } = require('./helpers/util');
 
 /**
  * @abstract
@@ -27,20 +27,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Promise}
    */
   validate() {
-    return super.validate().then(() => {
-      const projectConfig = this._configLoader.getProjectConfig();
-      const missingProjectData = this._getProjectDataMissing(projectConfig);
-
-      if (missingProjectData) {
-        return missingProjectData === 'config' ?
-          Promise.reject('Configuration file not found. '
-            + 'Either re-run the same command in project\'s root or initialize new project with `terrahub project`.') :
-
-          this._handleMissingData(missingProjectData, projectConfig);
-      }
-
-      return Promise.resolve();
-    }).then(() => {
+    return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
       if (this._isComponentsCountZero()) {
         return Promise.reject('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
@@ -71,27 +58,35 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} missingData
-   * @param {Object} projectConfig
    * @return {Promise}
    * @private
    */
-  _handleMissingData(missingData, projectConfig) {
-    return askQuestion(`Global config is missing project ${missingData}. `
-      + `Please provide value (e.g. ${missingData === 'code' ?
-        this._code(projectConfig.name, projectConfig.provider) : 'terrahub-demo'}): `
-    ).then(answer => {
+  _checkProjectDataMissing() {
+    const projectConfig = this._configLoader.getProjectConfig();
+    const missingData = this._getProjectDataMissing(projectConfig);
 
-      try {
-        this._configLoader.addToGlobalConfig(missingData, answer);
-      } catch (error) {
-        this.logger.debug(error);
-      }
+    if (missingData) {
+      return missingData === 'config' ?
+        Promise.reject('Configuration file not found. Either re-run the same command ' +
+          'in project\'s root or initialize new project with `terrahub project`.') :
+        askQuestion(`Global config is missing project ${missingData}. `
+          + `Please provide value (e.g. ${missingData === 'code' ?
+            this._code(projectConfig.name, projectConfig.provider) : 'terrahub-demo'}): `
+        ).then(answer => {
 
-      this._configLoader.updateRootConfig();
+          try {
+            this._configLoader.addToGlobalConfig(missingData, answer);
+          } catch (error) {
+            this.logger.debug(error);
+          }
 
-      return this.validate();
-    });
+          this._configLoader.updateRootConfig();
+
+          return this._checkProjectDataMissing();
+        });
+    }
+
+    return Promise.resolve();
   }
 
   /**
