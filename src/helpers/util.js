@@ -147,6 +147,18 @@ function extend(object, sources, customizer = _customizer) {
 
 /**
  * @param {String} question
+ * @return {Promise}
+ */
+function askQuestion(question) {
+  return new Promise(resolve => {
+    rl.question(question, answer => {
+      resolve(answer);
+    });
+  });
+}
+
+/**
+ * @param {String} question
  * @return {Promise<Boolean>}
  */
 function yesNoQuestion(question) {
@@ -156,18 +168,6 @@ function yesNoQuestion(question) {
     }
 
     return Promise.resolve(true);
-  });
-}
-
-/**
- * @param {String} question
- * @return {Promise}
- */
-function askQuestion(question) {
-  return new Promise(resolve => {
-    rl.question(question, answer => {
-      resolve(answer);
-    });
   });
 }
 

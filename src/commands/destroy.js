@@ -20,13 +20,13 @@ class DestroyCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const config = this.getConfigTree();
-    const distributor = new Distributor(config, { env: this.buildEnv(['prepare', 'destroy']) });
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config);
 
     return this._getPromise()
       .then(answer => {
         if (answer) {
-          return distributor.run();
+          return distributor.runActions(['prepare', 'destroy']);
         } else {
           return Promise.reject('Action aborted');
         }

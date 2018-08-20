@@ -22,21 +22,44 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
-    const config = this.getConfigTree();
-    const distributor = new Distributor(config, {
-      env: this.buildEnv(['prepare', 'init', 'workspaceSelect', 'plan', ...this._actions])
-    });
+    this._actions = ['build', 'apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
       .then(answer => {
         if (answer) {
-          return distributor.run();
+          return this._runPhases();
         } else {
           return Promise.reject('Action aborted');
         }
       })
       .then(() => Promise.resolve('Done'));
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _runPhases() {
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config);
+
+    return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan'], false)
+      .then(() => {
+        const actions = ['build', 'apply'].filter(action => this._actions.includes(action));
+
+        if (actions.length) {
+          return distributor.runActions(actions);
+        }
+
+        return Promise.resolve();
+      })
+      .then(() => {
+        if (this._actions.includes('destroy')) {
+          return distributor.runActions(['destroy']);
+        }
+
+        return Promise.resolve();
+      });
   }
 
   /**

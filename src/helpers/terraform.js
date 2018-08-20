@@ -336,7 +336,7 @@ class Terraform {
    * @returns {Promise}
    */
   run(cmd, args) {
-    if (process.env.format !== 'json') {
+    if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
 
