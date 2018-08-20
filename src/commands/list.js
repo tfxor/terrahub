@@ -182,7 +182,7 @@ class ListCommand extends AbstractCommand {
     return fetch.get(`thub/listing/retrieve?DataType=1`)
       .then(res => {
         if (res.status === 403) {
-          return Promise.resolve({ errorMessage: '{ "errorMessage": "Provided ThubToken is invalid" }' });
+          return Promise.resolve({ errorMessage: '{ "errorMessage": "Provided THUB_TOKEN is invalid" }' });
         }
 
         return res.json();
@@ -288,14 +288,14 @@ class ListCommand extends AbstractCommand {
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
-    let thubCode = tags.find(item => item.Key === 'ThubCode');
+    let code = tags.find(item => item.Key === 'ThubCode');
 
     return {
       service: service,
       region: region || fallbackRegion,
       accountId: accountId || this.accountId,
       resource: resource,
-      project: thubCode && thubCode.Value || '-'
+      project: code && code.Value || '-'
     };
   }
 
