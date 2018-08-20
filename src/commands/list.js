@@ -174,7 +174,7 @@ class ListCommand extends AbstractCommand {
    * @return {Promise|*}
    * @private
    */
-  _getResourcesFromThubApi() {
+  _getResourcesFromTerrahubApi() {
     if (!config.token) {
       return Promise.resolve([]);
     }
@@ -217,7 +217,7 @@ class ListCommand extends AbstractCommand {
     ).then(([free, paid]) => {
       return Promise.all([
         free ? free : this._getResourcesFromAwsApi(),
-        paid ? paid : this._getResourcesFromThubApi()
+        paid ? paid : this._getResourcesFromTerrahubApi()
       ]).then(([free, paid]) => [...free, ...paid]);
     });
   }
