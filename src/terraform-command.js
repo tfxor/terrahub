@@ -98,7 +98,7 @@ class TerraformCommand extends AbstractCommand {
     const path = [];
 
     keys.forEach(key => color[key] = 'white');
-    keys.every(key => color[key] === 'black' ? true : !depthFirstSearch(key));
+    keys.every(key => color[key] === 'black' ? true : !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -107,35 +107,39 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return path;
+  }
 
-    /**
-     * @param {String} hash
-     * @return {Boolean}
-     */
-    function depthFirstSearch(hash) {
-      const dependsOn = config[hash].dependsOn;
-      color[hash] = 'gray';
-      path.push(hash);
+  /**
+   * @param {String} hash
+   * @param {String[]} path
+   * @param {Object} config
+   * @param {String[]} color
+   * @return {Boolean}
+   * @private
+   */
+  _depthFirstSearch(hash, path, config, color) {
+    const dependsOn = config[hash].dependsOn;
+    color[hash] = 'gray';
+    path.push(hash);
 
-      for (const key in dependsOn) {
-        if (color[key] === 'white') {
-          if (depthFirstSearch(key)) {
-            return true;
-          }
-        }
-
-        if (color[key] === 'gray') {
-          path.push(key);
-
+    for (const key in dependsOn) {
+      if (color[key] === 'white') {
+        if (this._depthFirstSearch(key, path, config, color)) {
           return true;
         }
       }
 
-      color[hash] = 'black';
-      path.pop();
+      if (color[key] === 'gray') {
+        path.push(key);
 
-      return false;
+        return true;
+      }
     }
+
+    color[hash] = 'black';
+    path.pop();
+
+    return false;
   }
 
   /**
