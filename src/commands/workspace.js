@@ -97,7 +97,7 @@ class WorkspaceCommand extends TerraformCommand {
 
   /**
    * @param {String} action
-   * @param {Object[]} config
+   * @param {Object} config
    * @return {Promise}
    * @private
    */

@@ -8,8 +8,8 @@ const { uuid } = require("./util");
 
 class Distributor {
   /**
-   * @param  config
-   * @param options
+   * @param {Object} config
+   * @param {Object} options
    */
   constructor(config, options = {}) {
     const {
