@@ -1,0 +1,4 @@
+resource "aws_codebuild_webhook" "{{ name }}" {
+  project_name  = "${var.codebuild_webhook_project_name}"
+  branch_filter = "${var.codebuild_webhook_branch_filter}"
+}
