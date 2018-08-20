@@ -97,8 +97,8 @@ class TerraformCommand extends AbstractCommand {
     const keys = Object.keys(config);
     const path = [];
 
-    keys.forEach(key => color[key] = 'white');
-    keys.every(key => color[key] === 'black' ? true : !this._depthFirstSearch(key, path, config, color));
+    keys.forEach(key => color[key] = TerraformCommand.white);
+    keys.every(key => color[key] === TerraformCommand.black ? true : !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -113,30 +113,30 @@ class TerraformCommand extends AbstractCommand {
    * @param {String} hash
    * @param {String[]} path
    * @param {Object} config
-   * @param {String[]} color
+   * @param {Number[]} color
    * @return {Boolean}
    * @private
    */
   _depthFirstSearch(hash, path, config, color) {
     const dependsOn = config[hash].dependsOn;
-    color[hash] = 'gray';
+    color[hash] = TerraformCommand.gray;
     path.push(hash);
 
     for (const key in dependsOn) {
-      if (color[key] === 'white') {
+      if (color[key] === TerraformCommand.white) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
         }
       }
 
-      if (color[key] === 'gray') {
+      if (color[key] === TerraformCommand.gray) {
         path.push(key);
 
         return true;
       }
     }
 
-    color[hash] = 'black';
+    color[hash] = TerraformCommand.black;
     path.pop();
 
     return false;
@@ -288,6 +288,24 @@ class TerraformCommand extends AbstractCommand {
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
+
+  /**
+   * @return {Number}
+   * @private
+   */
+  static get black() { return 0; }
+
+  /**
+   * @return {Number}
+   * @private
+   */
+  static get white() { return 1; }
+
+  /**
+   * @return {Number}
+   * @private
+   */
+  static get gray() { return 2; }
 }
 
 module.exports = TerraformCommand;

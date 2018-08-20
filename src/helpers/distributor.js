@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const logger = require('./logger');
-const { uuid } = require("./util");
+const { uuid } = require('./util');
 
 class Distributor {
   /**
