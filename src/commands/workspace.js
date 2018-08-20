@@ -26,11 +26,11 @@ class WorkspaceCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    let promises = [];
+    const promises = [];
     let filesToRemove = [];
-    let kill = this.getOption('delete');
-    let configs = this.listConfig();
-    let { name, code } = this.getProjectConfig();
+    const kill = this.getOption('delete');
+    const configs = this.listConfig();
+    const { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
       return this._workspace('workspaceSelect', this.getConfigTree()).then(() => 'Done');
@@ -69,7 +69,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     if (!kill) {
       let isUpdate = promises.length !== (configs.length - 1);
-      let message = `Terrahub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
+      let message = `TerraHub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
 
       return Promise
         .all(promises)
@@ -91,7 +91,7 @@ class WorkspaceCommand extends TerraformCommand {
       return Promise
         .all(filesToRemove.map(file => fse.unlink(file)))
         .then(() => this._workspace('workspaceDelete', tree))
-        .then(() => Promise.resolve(`Terrahub environment '${config.env}' was deleted`));
+        .then(() => Promise.resolve(`TerraHub environment '${config.env}' was deleted`));
     });
   }
 

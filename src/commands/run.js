@@ -22,10 +22,10 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
+    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
     const config = this.getConfigTree();
-    const actions = ['apply', 'destroy'].filter(action => this.getOption(action));
     const distributor = new Distributor(config, {
-      env: this.buildEnv(['prepare', 'init', 'workspaceSelect', 'plan', ...actions])
+      env: this.buildEnv(['prepare', 'init', 'workspaceSelect', 'plan', ...this._actions])
     });
 
     return this._getPromise()
@@ -44,7 +44,7 @@ class RunCommand extends TerraformCommand {
    * @private
    */
   _getPromise() {
-    if (this.getOption('auto-approve')) {
+    if (this.getOption('auto-approve') || !this._actions.length) {
       return Promise.resolve(true);
     } else {
       return yesNoQuestion('Do you want to perform `run` action? (Y/N) ');
