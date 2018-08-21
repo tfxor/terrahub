@@ -182,7 +182,7 @@ class ListCommand extends AbstractCommand {
     return fetch.get(`thub/listing/retrieve?DataType=1`)
       .then(res => {
         if (res.status === 403) {
-          return Promise.resolve({ errorMessage: '{ "errorMessage": "Provided THUB_TOKEN is invalid" }' });
+          return Promise.resolve({ errorMessage: JSON.stringify({ errorMessage: 'Provided THUB_TOKEN is invalid' }) });
         }
 
         return res.json();
@@ -195,14 +195,12 @@ class ListCommand extends AbstractCommand {
           return Promise.resolve([]);
         }
 
-        return json;
+        return json.data;
       })
       .then(data => {
         const cachePath = this._cachePath(config.token);
 
-        return fse.outputJson(cachePath, data).then(() => {
-          return data;
-        });
+        return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
       });
   }
 
