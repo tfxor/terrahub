@@ -170,6 +170,7 @@ class TerraformCommand extends AbstractCommand {
   getConfig() {
     const config = this.getExtendedConfig();
     const include = this.getIncludes();
+    const exclude = this.getExcludes();
 
     if (include.length > 0) {
       Object.keys(config).forEach(hash => {
@@ -179,14 +180,33 @@ class TerraformCommand extends AbstractCommand {
       });
     }
 
+    if (exclude.length > 0) {
+      Object.keys(config).forEach(hash => {
+        if (exclude.includes(config[hash].name)) {
+          delete config[hash];
+        }
+      });
+    }
+
+    if (!Object.keys(config).length) {
+      throw new Error(`No components available for the '${this.getName()}' action.`)
+    }
+
     return config;
   }
 
   /**
-   * @returns {Array}
+   * @returns {String[]}
    */
   getIncludes() {
     return this.getOption('include');
+  }
+
+  /**
+   * @return {String[]}
+   */
+  getExcludes() {
+    return this.getOption('exclude');
   }
 
   /**
