@@ -51,7 +51,7 @@ class RunCommand extends TerraformCommand {
         const actions = ['build', 'apply'].filter(action => this._actions.includes(action));
 
         if (actions.length) {
-          return distributor.runActions(actions, 'straight');
+          return distributor.runActions(actions, 'forward');
         }
 
         return Promise.resolve();

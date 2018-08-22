@@ -45,7 +45,7 @@ class Distributor {
       result[key] = {};
     });
 
-    if (direction === 'straight') {
+    if (direction === 'forward') {
       Object.keys(config).forEach(key => {
         Object.assign(result[key], config[key].dependsOn);
       });
