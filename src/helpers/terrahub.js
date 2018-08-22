@@ -97,7 +97,11 @@ class Terrahub {
       .then(res => this._hook('after')(this._config, res))
       .then(() => this._on('success'))
       .catch(err => this._on('error', err))
-    ;
+      .catch(err => {
+        throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
+          new Error('TerraHub is missing internet connection') :
+          err;
+      });
   }
 
   /**

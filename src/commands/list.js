@@ -98,7 +98,12 @@ class ListCommand extends AbstractCommand {
 
         return Promise.resolve();
       })
-      .then(() => Promise.resolve('Done'));
+      .then(() => Promise.resolve('Done'))
+      .catch(err => {
+        throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
+          new Error('TerraHub is missing internet connection') :
+          err;
+      });
   }
 
   /**
@@ -169,7 +174,7 @@ class ListCommand extends AbstractCommand {
    * @return {Promise|*}
    * @private
    */
-  _getResourcesFromThubApi() {
+  _getResourcesFromTerrahubApi() {
     if (!config.token) {
       return Promise.resolve([]);
     }
@@ -177,7 +182,7 @@ class ListCommand extends AbstractCommand {
     return fetch.get(`thub/listing/retrieve?DataType=1`)
       .then(res => {
         if (res.status === 403) {
-          return Promise.resolve({ errorMessage: '{ "errorMessage": "Provided ThubToken is invalid" }' });
+          return Promise.resolve({ errorMessage: JSON.stringify({ errorMessage: 'Provided THUB_TOKEN is invalid' }) });
         }
 
         return res.json();
@@ -190,16 +195,13 @@ class ListCommand extends AbstractCommand {
           return Promise.resolve([]);
         }
 
-        return json;
+        return json.data;
       })
       .then(data => {
         const cachePath = this._cachePath(config.token);
 
-        return fse.outputJson(cachePath, data).then(() => {
-          return data;
-        });
-      })
-    ;
+        return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
+      });
   }
 
   /**
@@ -213,7 +215,7 @@ class ListCommand extends AbstractCommand {
     ).then(([free, paid]) => {
       return Promise.all([
         free ? free : this._getResourcesFromAwsApi(),
-        paid ? paid : this._getResourcesFromThubApi()
+        paid ? paid : this._getResourcesFromTerrahubApi()
       ]).then(([free, paid]) => [...free, ...paid]);
     });
   }
@@ -260,7 +262,7 @@ class ListCommand extends AbstractCommand {
       const activeRegion = taggingApi.config.region;
 
       res.ResourceTagMappingList.forEach(res => {
-        data.push(this._parseResource(res, activeRegion))
+        data.push(this._parseResource(res, activeRegion));
       });
 
       if (!res.PaginationToken) {
@@ -284,14 +286,14 @@ class ListCommand extends AbstractCommand {
     let parts = arn.split(':');
     let resource = parts.pop().split('/').pop();
     let [, , service, region, accountId] = parts;
-    let thubCode = tags.find(item => item.Key === 'ThubCode');
+    let code = tags.find(item => item.Key === 'ThubCode');
 
     return {
       service: service,
       region: region || fallbackRegion,
       accountId: accountId || this.accountId,
       resource: resource,
-      project: thubCode && thubCode.Value || '-'
+      project: code && code.Value || '-'
     };
   }
 

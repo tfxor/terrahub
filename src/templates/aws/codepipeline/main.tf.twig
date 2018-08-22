@@ -1,0 +1,23 @@
+resource "aws_codepipeline" "{{ name }}" {
+  name     = "${var.codepipeline_name}"
+  role_arn = "${var.codepipeline_role_arn}"
+
+  artifact_store {
+    location = "${var.codepipeline_artifact_store_location}"
+    type     = "${var.codepipeline_artifact_store_type}"
+    encryption_key {
+      id   = "${var.codepipeline_artifact_store_encryption_key_id}"
+      type = "${var.codepipeline_artifact_store_encryption_key_type}"
+    }
+  }
+
+  stage {
+    name   = "${var.codepipeline_stage_01_name}"
+    action = ["${merge(var.codepipeline_stage_01_action_default,var.codepipeline_stage_01_action_custom)}"]
+  }
+
+  stage {
+    name   = "${var.codepipeline_stage_02_name}"
+    action = ["${merge(var.codepipeline_stage_02_action_default,var.codepipeline_stage_02_action_custom)}"]
+  }
+}

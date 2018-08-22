@@ -1,0 +1,21 @@
+# Define list of variables to be output
+
+output "arn" {
+  value = "${aws_ssm_parameter.{{ name }}.arn}"
+}
+
+output "name" {
+  value = "${aws_ssm_parameter.{{ name }}.name}"
+}
+
+output "description" {
+  value = "${aws_ssm_parameter.{{ name }}.description}"
+}
+
+output "type" {
+  value = "${aws_ssm_parameter.{{ name }}.type}"
+}
+
+output "value" {
+  value = "${aws_ssm_parameter.{{ name }}.value}"
+}

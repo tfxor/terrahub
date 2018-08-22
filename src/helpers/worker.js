@@ -15,64 +15,38 @@ function getActions() {
 
 /**
  * Get task with hooks (if enabled)
- * @param {Object[]} configs
+ * @param {Object} config
  * @return {Function[]}
  */
-function getTasks(configs) {
-  const terrahubList = configs.map(config => new Terrahub(config));
+function getTasks(config) {
+  const terrahub = new Terrahub(config);
 
   return getActions().map(action =>
-    action !== 'build' ? getTerraformTask(terrahubList, action) : getBuildTask(configs)
+    () => (action !== 'build' ?
+       terrahub.getTask(action) :
+       BuildHelper.getComponentBuildTask(config))
   );
 }
 
 /**
- * @param {Terrahub[]} terrahubList
- * @param {String} action
- * @return {Function}
+ * BladeRunner
+ * @param {Object} config
  */
-function getTerraformTask(terrahubList, action) {
-  return () => {
-    const output = [];
-
-    return promiseSeries(terrahubList.map(terrahub =>
-      () => terrahub.getTask(action).then(result => {
-        if (result) {
-          output.push(result);
-        }
-
-        return result;
-      })
-    )).then(() => Promise.resolve(output));
-  }
-}
-
-/**
- * @param {Object[]} configs
- * @return {Function}
- */
-function getBuildTask(configs) {
-  return () =>
-    promiseSeries(configs.map(config => BuildHelper.getComponentBuildTask(config)));
-}
-
-/**
- * Runner
- * @param {Object[]} configs
- */
-function run(configs) {
-  promiseSeries(getTasks(configs)).then(lastResult => {
+function run(config) {
+  promiseSeries(getTasks(config)).then(lastResult => {
     process.send({
       id: cluster.worker.id,
       data: lastResult,
-      isError: false
+      isError: false,
+      hash: config.hash
     });
     process.exit(0);
   }).catch(error => {
     process.send({
       id: cluster.worker.id,
       error: error.message || error,
-      isError: true
+      isError: true,
+      hash: config.hash
     });
     process.exit(1);
   });
@@ -81,18 +55,4 @@ function run(configs) {
 /**
  * Message listener
  */
-process.on('message', config => {
-  let queue = [];
-
-  /**
-   * @param {Object} cfg
-   */
-  function handle(cfg) {
-    queue.push(cfg);
-    cfg.children.forEach(child => handle(child));
-    cfg.children = [];
-  }
-
-  handle(config);
-  run(queue);
-});
+process.on('message', run);
