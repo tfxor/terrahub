@@ -157,6 +157,7 @@ class TerraformCommand extends AbstractCommand {
     };
 
     Object.keys(config).forEach(hash => {
+      // hash is required in distributor to remove components from dependency table
       result[hash] = extend(config[hash], [cliParams, { hash: hash }]);
     });
 
@@ -189,7 +190,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (!Object.keys(config).length) {
-      throw new Error(`No components available for the '${this.getName()}' action.`)
+      throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
     return config;
@@ -244,10 +245,6 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
-        if (!object.hasOwnProperty(key)) {
-          throw new Error(`Couldn't find dependency '${dep}'`);
-        }
-
         dependsOn[key] = null;
       });
 
@@ -256,6 +253,55 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return tree;
+  }
+
+  /**
+   * Checks if all components' dependencies are included in config
+   * @param {Object} config
+   * @return {Promise}
+   */
+  checkDependencies(config) {
+    const fullConfig = this.getExtendedConfig();
+
+    for (let hash in config) {
+      const node = config[hash];
+
+      for (let dep in node.dependsOn) {
+        const depNode = fullConfig[dep];
+
+        if (!(dep in config)) {
+          return Promise.reject(new Error(`Couldn't find dependency '${depNode.name}' of '${node.name}' component.`));
+        }
+      }
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * Checks if all components that depend on all of
+   * the components included in config are included in config
+   * @param {Object} config
+   * @return {Promise}
+   */
+  checkDependenciesReverse(config) {
+    const fullConfig = this.getExtendedConfig();
+
+    for (let hash in config) {
+      const node = config[hash];
+
+      for (let key in fullConfig) {
+        const depNode = fullConfig[key];
+        const dependsOn = depNode.dependsOn.map(it => toMd5(it));
+
+        if (dependsOn.includes(hash) && !(key in config)) {
+          return Promise.reject(new Error(`Couldn't find component '${depNode.name}' ` +
+            `that depends on '${node.name}'.`));
+        }
+      }
+    }
+
+    return Promise.resolve();
   }
 
   /**

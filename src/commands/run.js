@@ -43,7 +43,10 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan'], false)
+    return Promise.resolve()
+      .then(() => this._actions.includes('apply') ? this.checkDependencies(config) : Promise.resolve())
+      .then(() => this._actions.includes('destroy') ? this.checkDependenciesReverse(config) : Promise.resolve())
+      .then(() => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan'], false))
       .then(() => {
         const actions = ['build', 'apply'].filter(action => this._actions.includes(action));
 
