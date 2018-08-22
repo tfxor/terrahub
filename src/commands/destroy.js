@@ -27,7 +27,7 @@ class DestroyCommand extends TerraformCommand {
       .then(() => this._getPromise())
       .then(answer => {
         if (answer) {
-          return distributor.runActions(['prepare', 'destroy']);
+          return distributor.runActions(['prepare', 'destroy'], 'reverse');
         } else {
           return Promise.reject('Action aborted');
         }

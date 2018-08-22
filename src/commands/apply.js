@@ -27,7 +27,7 @@ class ApplyCommand extends TerraformCommand {
       .then(() => this._getPromise())
       .then(answer => {
         if (answer) {
-          return distributor.runActions(['prepare', 'apply']);
+          return distributor.runActions(['prepare', 'apply'], 'straight');
         } else {
           return Promise.reject('Action aborted');
         }
