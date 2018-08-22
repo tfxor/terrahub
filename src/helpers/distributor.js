@@ -59,9 +59,6 @@ class Distributor {
       });
     }
 
-    console.log(direction);
-    console.log(result);
-
     return result;
   }
 
