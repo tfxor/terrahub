@@ -4,57 +4,108 @@ const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const logger = require('./logger');
+const { uuid } = require('./util');
 
 class Distributor {
   /**
    * @param {Object} config
-   * @param {String} worker
-   * @param {Object} env
+   * @param {Object} options
    */
-  constructor(config, { worker = 'worker.js', env = {} }) {
-    this._env = env;
-    this._config = config;
+  constructor(config, options = {}) {
+    const {
+      worker = 'worker.js',
+      silent = false,
+      format = 'text'
+    } = options;
+
+    this._env = {
+      silent: silent,
+      format: format
+    };
+
+    this.THUB_RUN_ID = uuid();
+    this._config = Object.assign({}, config);
     this._worker = path.join(__dirname, worker);
     this._workersCount = 0;
-    this._output = [];
+    this._threadsCount = os.cpus().length;
 
     cluster.setupMaster({ exec: this._worker });
   }
 
   /**
-   * @returns {Number}
+   * @param {Object} config
+   * @return {Object}
    * @private
    */
-  _getThreadsCount() {
-    const coresCount = os.cpus().length;
-    const independent = Object.keys(this._config).length;
+  _buildDependencyTable(config) {
+    const result = {};
 
-    return (coresCount <= independent) ? coresCount : independent;
+    Object.keys(config).forEach(key => {
+      result[key] = Object.assign({}, config[key].dependsOn);
+    });
+
+    return result;
   }
+
 
   /**
    * @param {String} hash
    * @private
    */
   _createWorker(hash) {
-    let threadCfg = this._config[hash];
-    let worker = cluster.fork(this._env);
+    const cfgThread = this._config[hash];
+
+    const worker = cluster.fork(Object.assign({
+      THUB_RUN_ID: this.THUB_RUN_ID,
+      TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS
+    }, this._env));
+
+    delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send(threadCfg);
+    worker.send(cfgThread);
   }
 
   /**
+   * Remove dependencies on this component
+   * @param {String} hash
+   * @private
+   */
+  _removeDependencies(hash) {
+    Object.keys(this._dependencyTable).forEach(key => {
+      delete this._dependencyTable[key][hash];
+    });
+  }
+
+  /**
+   * @private
+   */
+  _distributeConfigs() {
+    const hashes = Object.keys(this._dependencyTable);
+
+    for (let index = 0; this._workersCount < this._threadsCount && index < hashes.length; index++) {
+      const hash = hashes[index];
+      const dependsOn = Object.keys(this._dependencyTable[hash]);
+
+      if (!this._isOrderDependent || !dependsOn.length) {
+        this._createWorker(hash);
+      }
+    }
+  }
+
+  /**
+   * @param {String[]} actions
+   * @param {Boolean} isOrderDependent
    * @returns {Promise}
    */
-  run() {
-    const hashes = Object.keys(this._config);
-    let threads = this._getThreadsCount();
+  runActions(actions, isOrderDependent = true) {
+    this._output = [];
+    this._dependencyTable = this._buildDependencyTable(this._config);
+    this._isOrderDependent = isOrderDependent;
+    this.TERRAFORM_ACTIONS = actions;
 
     return new Promise((resolve, reject) => {
-      for (let i = 0; i < threads; i++) {
-        this._createWorker(hashes.shift());
-      }
+      this._distributeConfigs();
 
       cluster.on('message', (worker, data) => {
         if (data.isError) {
@@ -62,23 +113,28 @@ class Distributor {
         }
 
         if (data.data) {
-          data.data.forEach(it => this._output.push(it));
+          this._output.push(data.data);
         }
+
+        this._removeDependencies(data.hash);
       });
 
-      cluster.on('exit', () => {
+      cluster.on('exit', (worker, code, signal) => {
         this._workersCount--;
 
-        if (hashes.length > 0) {
-          this._createWorker(hashes.shift());
+        if (!signal && code === 0) {
+          this._distributeConfigs();
         }
 
-        if (this._workersCount === 0) {
+        const hashes = Object.keys(this._dependencyTable);
+        const workersId = Object.keys(cluster.workers);
+
+        if (!workersId.length && !hashes.length) {
           if (this._error) {
             reject(this._error);
           } else {
-            this._handleOutput().then(result => {
-              resolve(result);
+            this._handleOutput().then(message => {
+              resolve(message);
             });
           }
         }
@@ -88,7 +144,6 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
-   * @return {Promise}
    * @private
    */
   _handleOutput() {
@@ -99,7 +154,7 @@ class Distributor {
     }
 
     if (outputs[0].env.format === 'json') {
-      let result = {};
+      const result = {};
 
       outputs.forEach(it => result[it.component] = JSON.parse((new Buffer(it.stdout)).toString()));
 
@@ -107,7 +162,7 @@ class Distributor {
 
       return Promise.resolve();
     } else {
-      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`))
+      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`));
 
       return Promise.resolve('Done');
     }
@@ -121,7 +176,7 @@ class Distributor {
    */
   _handleError(err) {
     Object.keys(cluster.workers).forEach(id => {
-      let worker = cluster.workers[id];
+      const worker = cluster.workers[id];
       worker.kill();
     });
 
