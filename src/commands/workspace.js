@@ -104,7 +104,7 @@ class WorkspaceCommand extends TerraformCommand {
   _workspace(action, config) {
     const distributor = new Distributor(config);
 
-    return distributor.runActions(['prepare', action], false);
+    return distributor.runActions(['prepare', action]);
   }
 }
 

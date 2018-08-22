@@ -34,15 +34,30 @@ class Distributor {
 
   /**
    * @param {Object} config
+   * @param {String} direction
    * @return {Object}
    * @private
    */
-  _buildDependencyTable(config) {
+  _buildDependencyTable(config, direction) {
     const result = {};
 
     Object.keys(config).forEach(key => {
-      result[key] = Object.assign({}, config[key].dependsOn);
+      result[key] = {};
     });
+
+    if (direction === 'forward') {
+      Object.keys(config).forEach(key => {
+        Object.assign(result[key], config[key].dependsOn);
+      });
+    }
+
+    if (direction === 'reverse') {
+      Object.keys(config).forEach(key => {
+        Object.keys(config[key].dependsOn).forEach(hash => {
+          result[hash][key] = null;
+        });
+      });
+    }
 
     return result;
   }
@@ -87,7 +102,7 @@ class Distributor {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
-      if (!this._isOrderDependent || !dependsOn.length) {
+      if (!dependsOn.length) {
         this._createWorker(hash);
       }
     }
@@ -95,13 +110,12 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {Boolean} isOrderDependent
+   * @param {String} dependencyDirection
    * @returns {Promise}
    */
-  runActions(actions, isOrderDependent = true) {
+  runActions(actions, dependencyDirection = null) {
     this._output = [];
-    this._dependencyTable = this._buildDependencyTable(this._config);
-    this._isOrderDependent = isOrderDependent;
+    this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     return new Promise((resolve, reject) => {
