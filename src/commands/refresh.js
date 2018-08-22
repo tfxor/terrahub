@@ -1,6 +1,5 @@
 'use strict';
 
-const { fetch } = require('../parameters');
 const TerraformCommand = require('../terraform-command');
 
 class RefreshCommand extends TerraformCommand {
@@ -18,17 +17,7 @@ class RefreshCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    console.log(JSON.stringify(this.getConfig(), null, 2));
-
-    return fetch
-      .get('code/webhook/update')
-      .then(res => res.json())
-      .then(json => {
-        console.log('JSON', json);
-
-        return Promise.resolve('Done');
-      })
-    ;
+    return Promise.resolve('Done');
   }
 }
 
