@@ -4,6 +4,7 @@ const path = require('path');
 const Terraform = require('../helpers/terraform');
 const { toMd5 } = require('../helpers/util');
 const { config, fetch } = require('../parameters');
+const logger = require('./logger');
 
 class Terrahub {
   /**
@@ -114,7 +115,12 @@ class Terrahub {
       return Promise.resolve(buffer);
     }
 
-    return this._putObject(this._getKey(), buffer).then(() => Promise.resolve(buffer));
+    const key = this._getKey();
+    const url = this._buildS3Url(key);
+
+    return this._putObject(url, buffer)
+      .then(() => this._callParseLambda(key))
+      .then(() => Promise.resolve(buffer));
   }
 
   /**
@@ -126,7 +132,33 @@ class Terrahub {
     const dir = config.api.replace('api', 'public');
     const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
 
-    return `${Terrahub.METADATA_DOMAIN}/${dir}/${this._timestamp}/${keyName}`;
+    return `${dir}/${this._timestamp}/${keyName}`;
+  }
+
+  /**
+   * Get destination url
+   * @param {String} key
+   * @return {string}
+   * @private
+   */
+  _buildS3Url(key) {
+    return `${Terrahub.METADATA_DOMAIN}/${key}`;
+  }
+
+  /**
+   * @param {String} key
+   * @return {Promise}
+   * @private
+   */
+  _callParseLambda(key) {
+    const url = `thub/resource/parse-${ this._action === 'plan' ? 'plan' : 'state' }`;
+    const options = {
+      body: JSON.stringify(Object.assign({ Key: key }, this._awsMetadata())),
+    };
+
+    fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
+
+    return Promise.resolve();
   }
 
   /**
@@ -140,7 +172,7 @@ class Terrahub {
     const options = {
       method: 'PUT',
       body: body,
-      headers: Object.assign({ 'Content-Type': 'text/plain' }, this._awsMetadata())
+      headers: { 'Content-Type': 'text/plain', 'x-amz-acl': 'bucket-owner-full-control' }
     };
 
     return fetch.request(url, options);
@@ -153,12 +185,10 @@ class Terrahub {
    */
   _awsMetadata() {
     return {
-      'x-amz-acl': 'bucket-owner-full-control',
-      'x-amz-meta-thub-code': this._project.code,
-      'x-amz-meta-thub-name': this._project.name,
-      'x-amz-meta-thub-token': config.token,
-      'x-amz-meta-thub-run-id': this._runId,
-      'x-amz-meta-thub-action': this._action
+      'ProjectCode': this._project.code,
+      'ProjectName': this._project.name,
+      'ThubRunId': this._runId,
+      'ThubAction': this._action
     };
   }
 
