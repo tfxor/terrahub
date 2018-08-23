@@ -29,17 +29,32 @@ class WorkspaceCommand extends TerraformCommand {
     const promises = [];
     let filesToRemove = [];
     const kill = this.getOption('delete');
-    const configs = this.listConfig();
+    const configs = this.getConfigObject();
+
+    const rootPath = this.getAppPath();
+    const rootConfigPath = path.join(rootPath, config.defaultFileName);
+
+    const dirPaths = Object.keys(configs).map(hash => path.join(rootPath, configs[hash].root));
+    const configsList = dirPaths.map(it => path.join(it, config.defaultFileName));
+    const envConfigsList = this.listEnvConfig();
+
+    const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
+    const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
+
+    if (includeRootConfig) {
+      configsList.unshift(rootConfigPath);
+    }
+
     const { name, code } = this.getProjectConfig();
 
     if (config.isDefault) {
-      return this._workspace('workspaceSelect', this.getConfigObject()).then(() => 'Done');
+      return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }
 
-    configs.forEach((configPath, i) => {
+    configsList.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
       const envConfig = path.join(dir, config.fileName);
-      const tfvarsName = `workspace/${config.env}.tfvars`;
+      const tfvarsName = path.join('workspace', `${config.env}.tfvars`);
       const tfvarsPath = path.join(dir, tfvarsName);
 
       if (!fs.existsSync(envConfig) && !kill) {
@@ -54,7 +69,7 @@ class WorkspaceCommand extends TerraformCommand {
 
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
-        if (i !== 0) { // Skip root path
+        if (i !== 0 || !includeRootConfig) { // Skip root path
           promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
         }
       }
@@ -68,7 +83,7 @@ class WorkspaceCommand extends TerraformCommand {
     const cfgObject = this.getConfigObject();
 
     if (!kill) {
-      let isUpdate = promises.length !== (configs.length - 1);
+      let isUpdate = promises.length !== (configsList.length - 1);
       let message = `TerraHub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
 
       return Promise
