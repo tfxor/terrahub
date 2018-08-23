@@ -153,7 +153,7 @@ class Terrahub {
   _callParseLambda(key) {
     const url = `thub/resource/parse-${ this._action === 'plan' ? 'plan' : 'state' }`;
     const options = {
-      body: Object.assign(this._awsMetadata(), { key: key }),
+      body: Object.assign(this._awsMetadata(), { Key: key }),
     };
 
     fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
