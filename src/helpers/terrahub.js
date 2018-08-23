@@ -185,11 +185,10 @@ class Terrahub {
    */
   _awsMetadata() {
     return {
-      'thub-code': this._project.code,
-      'thub-name': this._project.name,
-      'thub-token': config.token,
-      'thub-run-id': this._runId,
-      'thub-action': this._action
+      'ProjectCode': this._project.code,
+      'ProjectName': this._project.name,
+      'ThubRunId': this._runId,
+      'ThubAction': this._action
     };
   }
 
