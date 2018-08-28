@@ -81,10 +81,10 @@ variable "lambda_security_group_ids" {
 #########################
 # environment variables #
 #########################
-#variable "lambda_environment_variables" {
-#  description = "A map that defines environment variables for the Lambda function."
-#  type        = "map"
-#}
+variable "lambda_environment_variables" {
+  description = "A map that defines environment variables for the Lambda function."
+  type        = "map"
+}
 
 ########
 # tags #
