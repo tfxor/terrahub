@@ -245,6 +245,10 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
+        if (!(key in object)) {
+          throw new Error(`Couldn't find dependency '${dep}' of '${node.name}' component.`);
+        }
+
         dependsOn[key] = null;
       });
 
