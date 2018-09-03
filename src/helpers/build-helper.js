@@ -31,8 +31,17 @@ class BuildHelper {
         );
       }
 
-      promiseSeries(commandsList.map(it => () => {
-          const [command, ...args] = it.split(' ');
+      promiseSeries(commandsList.map(it =>
+        () => {
+          let fullCommand = it;
+
+          if (it.constructor === Object) {
+            const key = Object.keys(it)[0];
+
+            fullCommand = [key, it[key]].join(': ');
+          }
+
+          const [command, ...args] = fullCommand.split(' ');
           const stdout = [];
 
           const promise = spawn(command, args, {
