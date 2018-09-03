@@ -133,10 +133,10 @@ class Distributor {
         this._removeDependencies(data.hash);
       });
 
-      cluster.on('exit', (worker, code, signal) => {
+      cluster.on('exit', (worker, code) => {
         this._workersCount--;
 
-        if (!signal && code === 0) {
+        if (code === 0) {
           this._distributeConfigs();
         }
 
@@ -193,6 +193,8 @@ class Distributor {
       const worker = cluster.workers[id];
       worker.kill();
     });
+
+    this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
