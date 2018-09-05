@@ -22,7 +22,7 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    this._actions = ['build', 'apply', 'destroy'].filter(action => this.getOption(action));
+    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
       .then(answer => {
@@ -44,25 +44,15 @@ class RunCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return Promise.resolve()
-      .then(() => this._actions.includes('apply') ? this.checkDependencies(config) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ? this.checkDependenciesReverse(config) : Promise.resolve())
+      .then(() => this._actions.includes('apply') ?
+        this.checkDependencies(config) : Promise.resolve())
+      .then(() => this._actions.includes('destroy') ?
+        this.checkDependenciesReverse(config) : Promise.resolve())
       .then(() => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan']))
-      .then(() => {
-        const actions = ['build', 'apply'].filter(action => this._actions.includes(action));
-
-        if (actions.length) {
-          return distributor.runActions(actions, 'forward');
-        }
-
-        return Promise.resolve();
-      })
-      .then(() => {
-        if (this._actions.includes('destroy')) {
-          return distributor.runActions(['destroy'], 'reverse');
-        }
-
-        return Promise.resolve();
-      });
+      .then(() => this._actions.includes('apply') ?
+        distributor.runActions(['apply'], 'forward') : Promise.resolve())
+      .then(() => this._actions.includes('destroy') ?
+        distributor.runActions(['destroy'], 'reverse') : Promise.resolve());
   }
 
   /**
