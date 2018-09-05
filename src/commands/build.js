@@ -30,8 +30,7 @@ class BuildCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config, { silent: silent, format: format });
 
-    return this.checkDependencies(config)
-      .then(() => distributor.runActions(['build'], 'forward'))
+    return distributor.runActions(['build'])
       .then(() => Promise.resolve(!['json'].includes(format) ? 'Done' : ''))
       .catch(err => ['json'].includes(format) ? Promise.resolve() : Promise.reject(err));
   }
