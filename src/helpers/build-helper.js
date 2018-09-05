@@ -3,6 +3,7 @@
 const { promiseSeries } = require('../helpers/util');
 const { spawn } = require('child-process-promise');
 const logger = require('./logger');
+const path = require('path');
 
 class BuildHelper {
   /**
@@ -45,7 +46,7 @@ class BuildHelper {
           const stdout = [];
 
           const promise = spawn(command, args, {
-            cwd: process.cwd(),
+            cwd: path.join(config.project.root, config.root),
             env: env,
             shell: true,
           });
