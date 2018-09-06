@@ -2,8 +2,8 @@
 
 const cluster = require('cluster');
 const Terrahub = require('../helpers/terrahub');
-const { promiseSeries } = require('../helpers/util');
 const BuildHelper = require('./build-helper');
+const { promiseSeries } = require('../helpers/util');
 
 /**
  * Parse terraform actions
@@ -23,8 +23,7 @@ function getTasks(config) {
 
   return getActions().map(action =>
     () => (action !== 'build' ?
-       terrahub.getTask(action) :
-       BuildHelper.getComponentBuildTask(config))
+      terrahub.getTask(action) : BuildHelper.getComponentBuildTask(config))
   );
 }
 
