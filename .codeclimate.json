@@ -21,6 +21,11 @@
         "threshold": 30
       }
     },
+    "argument-count": {
+      "config": {
+        "threshold": 5
+      }
+    },
     "similar-code": {
       "enabled": false
     }
