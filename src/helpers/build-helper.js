@@ -1,9 +1,9 @@
 'use strict';
 
-const { promiseSeries } = require('../helpers/util');
-const { spawn } = require('child-process-promise');
-const logger = require('./logger');
 const path = require('path');
+const logger = require('./logger');
+// const { spawn } = require('child-process-promise');
+const { promiseSeries, spawner } = require('../helpers/util');
 
 class BuildHelper {
   /**
@@ -42,31 +42,26 @@ class BuildHelper {
             fullCommand = [key, it[key]].join(': ');
           }
 
+          const isVerbose = !process.env.format && process.env.silent === 'false';
           const [command, ...args] = fullCommand.split(' ');
-          const stdout = [];
-
-          const promise = spawn(command, args, {
+          const options = {
             cwd: path.join(config.project.root, config.root),
             env: env,
             shell: true,
-          });
-          const child = promise.childProcess;
+          };
 
-          child.stdout.on('data', data => {
-            stdout.push(data);
-
-            if (!process.env.format && process.env.silent === 'false') {
-              logger.raw(this._out(name, data));
+          return spawner(command, args, options,
+            err => {
+              if (isVerbose) {
+                logger.error(this._out(name, err));
+              }
+            },
+            data => {
+              if (isVerbose) {
+                logger.raw(this._out(name, data));
+              }
             }
-          });
-
-          child.stderr.on('data', data => {
-            if (!process.env.format && process.env.silent === 'false') {
-              logger.error(this._out(name, data));
-            }
-          });
-
-          return promise.then(() => Buffer.concat(stdout));
+          );
         })
       ).then(() => {
         this._printOutput(`Build successfully finished for [${name}].`, true);
