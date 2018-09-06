@@ -3,10 +3,9 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const Metadata = require('./metadata');
 const semver = require('semver');
 const logger = require('./logger');
-// const { spawn } = require('child-process-promise');
+const Metadata = require('./metadata');
 const Downloader = require('./downloader');
 const { homePath } = require('../parameters');
 const { extend, spawner } = require('../helpers/util');

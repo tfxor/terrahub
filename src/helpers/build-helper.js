@@ -2,7 +2,6 @@
 
 const path = require('path');
 const logger = require('./logger');
-// const { spawn } = require('child-process-promise');
 const { promiseSeries, spawner } = require('../helpers/util');
 
 class BuildHelper {
