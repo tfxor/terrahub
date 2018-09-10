@@ -126,6 +126,17 @@ class ConfigLoader {
   }
 
   /**
+   * Get list of configuration files for the specified environment
+   * @param {*} dir
+   * @return {Array}
+   */
+  listEnvConfig(dir = false) {
+    const searchParh = dir || this.appPath();
+
+    return searchParh ? this._find(`**/.terrahub.${config.env}.+(json|yml|yaml)`, searchParh) : [];
+  }
+
+  /**
    * Count of configured components
    * @returns {Number}
    */

@@ -22,7 +22,7 @@ class InitCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return distributor
-      .runActions(['prepare', 'init'], false)
+      .runActions(['prepare', 'init'])
       .then(() => Promise.resolve('Done'));
   }
 }

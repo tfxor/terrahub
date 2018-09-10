@@ -178,6 +178,15 @@ class AbstractCommand {
   }
 
   /**
+   * Get list of configuration files for the specified environment
+   * @param {String|Boolean} dir
+   * @returns {String[]}
+   */
+  listEnvConfig(dir = false) {
+    return this._configLoader.listEnvConfig(dir);
+  }
+
+  /**
    * Get full consolidated config
    * @returns {Object}
    */
