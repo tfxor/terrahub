@@ -157,4 +157,3 @@ Configuration example for plan (`.terrahub.json`):
 ## @todo
 
 - Get rid of `download` npm module
-- Implement `--exclude` option for terraform commands

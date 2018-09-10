@@ -16,10 +16,10 @@ lambda_memory_size                    = 128
 lambda_runtime                        = "nodejs6.10"
 lambda_timeout                        = 3
 lambda_publish                        = false
-lambda_reserved_concurrent_executions = 0
 lambda_handler                        = "index.handler"
 lambda_s3_bucket                      = "www.terrahub.io"
 lambda_s3_key                         = "hello-world"
+lambda_reserved_concurrent_executions = 0
 
 ##############
 # vpc config #
@@ -30,7 +30,7 @@ lambda_security_group_ids = []
 #########################
 # environment variables #
 #########################
-#lambda_environment_variables = {}
+lambda_environment_variables = {}
 
 ########
 # tags #

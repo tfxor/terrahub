@@ -3,13 +3,12 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const Metadata = require('./metadata');
 const semver = require('semver');
 const logger = require('./logger');
-const { spawn } = require('child-process-promise');
+const Metadata = require('./metadata');
 const Downloader = require('./downloader');
-const { extend } = require('../helpers/util');
 const { homePath } = require('../parameters');
+const { extend, spawner } = require('../helpers/util');
 
 class Terraform {
   /**
@@ -24,7 +23,7 @@ class Terraform {
   }
 
   /**
-   * @returns {Object}
+   * @return {Object}
    * @private
    */
   _defaults() {
@@ -42,14 +41,14 @@ class Terraform {
 
   /**
    * Terraform module name
-   * @returns {String}
+   * @return {String}
    */
   getName() {
     return this._config.name || this._config.root;
   }
 
   /**
-   * @returns {String}
+   * @return {String}
    */
   getVersion() {
     if (!semver.valid(this._tf.version)) {
@@ -60,21 +59,21 @@ class Terraform {
   }
 
   /**
-   * @returns {String}
+   * @return {String}
    */
   getRoot() {
     return path.join(this._config.project.root, this._config.root);
   }
 
   /**
-   * @returns {String}
+   * @return {String}
    */
   getBinary() {
     return homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
-   * @returns {String}
+   * @return {String}
    */
   getResource() {
     return this.getRoot();
@@ -89,7 +88,7 @@ class Terraform {
 
   /**
    * Prepare -var
-   * @returns {Array}
+   * @return {Array}
    * @private
    */
   _var() {
@@ -121,7 +120,7 @@ class Terraform {
 
   /**
    * Prepare -var-file
-   * @returns {Array}
+   * @return {Array}
    * @private
    */
   _varFile() {
@@ -136,7 +135,7 @@ class Terraform {
 
   /**
    * Perform terraform init & all required checks
-   * @returns {Promise}
+   * @return {Promise}
    */
   prepare() {
     logger.debug(JSON.stringify(this._config, null, 2));
@@ -148,7 +147,7 @@ class Terraform {
 
   /**
    * Ensure binary exists (download otherwise)
-   * @returns {Promise}
+   * @return {Promise}
    */
   _checkTerraformBinary() {
     if (fs.existsSync(this.getBinary())) {
@@ -159,7 +158,7 @@ class Terraform {
   }
 
   /**
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _checkResourceDir() {
@@ -188,7 +187,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/init.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   init() {
     return this
@@ -198,7 +197,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/state/pull.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   statePull() {
     if (!this._metadata.isRemote()) {
@@ -220,7 +219,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/output.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   output() {
     const options = {};
@@ -232,7 +231,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/workspace/select.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   workspaceSelect() {
     if (!this._isWorkspaceSupported) {
@@ -249,7 +248,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/workspace/delete.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   workspaceDelete() {
     if (!this._isWorkspaceSupported) {
@@ -263,7 +262,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/plan.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   plan() {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
@@ -285,7 +284,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/apply.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
@@ -297,7 +296,7 @@ class Terraform {
 
   /**
    * Get state content whether is remote or local
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _getStateContent() {
@@ -310,7 +309,7 @@ class Terraform {
 
   /**
    * https://www.terraform.io/docs/commands/destroy.html
-   * @returns {Promise}
+   * @return {Promise}
    */
   destroy() {
     const options = { '-backup': this._metadata.getStateBackupPath() };
@@ -323,7 +322,7 @@ class Terraform {
   /**
    * https://www.terraform.io/docs/commands/show.html
    * @param {String} planOrStatePath
-   * @returns {Promise}
+   * @return {Promise}
    */
   show(planOrStatePath) {
     return this.run('show', ['-no-color', planOrStatePath]);
@@ -333,7 +332,7 @@ class Terraform {
    * Run terraform command
    * @param {String} cmd
    * @param {Array} args
-   * @returns {Promise}
+   * @return {Promise}
    */
   run(cmd, args) {
     if (this._showLogs) {
@@ -350,7 +349,7 @@ class Terraform {
   /**
    * Transform options into arguments
    * @param {Object} options
-   * @returns {Array}
+   * @return {Array}
    * @private
    */
   _optsToArgs(options) {
@@ -368,37 +367,33 @@ class Terraform {
    * @param {String} command
    * @param {Array} args
    * @param {Object} options
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _spawn(command, args, options) {
-    const stdout = [];
-    const promise = spawn(command, args, options);
-    const child = promise.childProcess;
-
-    child.stderr.on('data', data => logger.error(this._out(data)));
-    child.stdout.on('data', data => {
-      stdout.push(data);
-      if (this._showLogs) {
-        logger.raw(this._out(data));
+    return spawner(
+      command, args, options,
+      err => logger.error(this._out(err)),
+      data => {
+        if (this._showLogs) {
+          logger.raw(this._out(data));
+        }
       }
-    });
-
-    return promise.then(() => {
+    ).then(buffer => {
       this._output = {
         action: args[0],
         component: this.getName(),
-        stdout: Buffer.concat(stdout),
+        stdout: buffer,
         env: process.env
       };
 
-      return Buffer.concat(stdout);
+      return Promise.resolve(buffer);
     });
   }
 
   /**
    * @param {Buffer} data
-   * @returns {String}
+   * @return {String}
    * @private
    */
   _out(data) {

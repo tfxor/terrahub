@@ -40,14 +40,6 @@ class TerraformCommand extends AbstractCommand {
       }
 
       return Promise.resolve();
-    }).then(() => {
-      const cycle = this._getDependencyCycle();
-
-      if (cycle.length) {
-        return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
-      }
-
-      return Promise.resolve();
     }).catch(err => {
       const error = err.constructor === String ? new Error(err) : err;
 
@@ -88,61 +80,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @return {String[]}
-   * @private
-   */
-  _getDependencyCycle() {
-    const color = {};
-    const config = this.getConfigObject();
-    const keys = Object.keys(config);
-    const path = [];
-
-    keys.forEach(key => color[key] = TerraformCommand.white);
-    keys.every(key => color[key] === TerraformCommand.black ? true : !this._depthFirstSearch(key, path, config, color));
-
-    if (path.length) {
-      const index = path.findIndex(it => it === path[path.length - 1]);
-
-      return path.map(key => config[key].name).slice(index + 1);
-    }
-
-    return path;
-  }
-
-  /**
-   * @param {String} hash
-   * @param {String[]} path
-   * @param {Object} config
-   * @param {Number[]} color
-   * @return {Boolean}
-   * @private
-   */
-  _depthFirstSearch(hash, path, config, color) {
-    const dependsOn = config[hash].dependsOn;
-    color[hash] = TerraformCommand.gray;
-    path.push(hash);
-
-    for (const key in dependsOn) {
-      if (color[key] === TerraformCommand.white) {
-        if (this._depthFirstSearch(key, path, config, color)) {
-          return true;
-        }
-      }
-
-      if (color[key] === TerraformCommand.gray) {
-        path.push(key);
-
-        return true;
-      }
-    }
-
-    color[hash] = TerraformCommand.black;
-    path.pop();
-
-    return false;
-  }
-
-  /**
    * Get extended config via CLI
    * @returns {Object}
    */
@@ -157,6 +94,7 @@ class TerraformCommand extends AbstractCommand {
     };
 
     Object.keys(config).forEach(hash => {
+      // hash is required in distributor to remove components from dependency table
       result[hash] = extend(config[hash], [cliParams, { hash: hash }]);
     });
 
@@ -189,7 +127,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (!Object.keys(config).length) {
-      throw new Error(`No components available for the '${this.getName()}' action.`)
+      throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
     return config;
@@ -244,10 +182,6 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
-        if (!object.hasOwnProperty(key)) {
-          throw new Error(`Couldn't find dependency '${dep}'`);
-        }
-
         dependsOn[key] = null;
       });
 
@@ -256,6 +190,124 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return tree;
+  }
+
+  /**
+   * Checks if there is a cycle between dependencies included in the config
+   * @param {Object} config
+   * @return {Promise}
+   */
+  checkDependencyCycle(config) {
+    const cycle = this._getDependencyCycle(config);
+
+    if (cycle.length) {
+      return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * @return {String[]}
+   * @param {Object} config
+   * @private
+   */
+  _getDependencyCycle(config) {
+    const color = {};
+    const keys = Object.keys(config);
+    const path = [];
+
+    keys.forEach(key => color[key] = TerraformCommand.white);
+    keys.every(key => color[key] === TerraformCommand.black ? true : !this._depthFirstSearch(key, path, config, color));
+
+    if (path.length) {
+      const index = path.findIndex(it => it === path[path.length - 1]);
+
+      return path.map(key => config[key].name).slice(index + 1);
+    }
+
+    return path;
+  }
+
+  /**
+   * @param {String} hash
+   * @param {String[]} path
+   * @param {Object} config
+   * @param {Number[]} color
+   * @return {Boolean}
+   * @private
+   */
+  _depthFirstSearch(hash, path, config, color) {
+    const dependsOn = config[hash].dependsOn;
+    color[hash] = TerraformCommand.gray;
+    path.push(hash);
+
+    for (const key in dependsOn) {
+      if (color[key] === TerraformCommand.white) {
+        if (this._depthFirstSearch(key, path, config, color)) {
+          return true;
+        }
+      }
+
+      if (color[key] === TerraformCommand.gray) {
+        path.push(key);
+
+        return true;
+      }
+    }
+
+    color[hash] = TerraformCommand.black;
+    path.pop();
+
+    return false;
+  }
+
+  /**
+   * Checks if all components' dependencies are included in config
+   * @param {Object} config
+   * @return {Promise}
+   */
+  checkDependencies(config) {
+    const fullConfig = this.getExtendedConfig();
+
+    for (let hash in config) {
+      const node = config[hash];
+
+      for (let dep in node.dependsOn) {
+        const depNode = fullConfig[dep];
+
+        if (!(dep in config)) {
+          return Promise.reject(new Error(`Couldn't find dependency '${depNode.name}' of '${node.name}' component.`));
+        }
+      }
+    }
+
+    return this.checkDependencyCycle(config);
+  }
+
+  /**
+   * Checks if all components that depend on the components included in run are included in config
+   * @param {Object} config
+   * @return {Promise}
+   */
+  checkDependenciesReverse(config) {
+    const fullConfig = this.getExtendedConfig();
+
+    for (let hash in config) {
+      const node = config[hash];
+
+      for (let key in fullConfig) {
+        const depNode = fullConfig[key];
+        const dependsOn = depNode.dependsOn.map(it => toMd5(it));
+
+        if (dependsOn.includes(hash) && !(key in config)) {
+          return Promise.reject(new Error(`Couldn't find component '${depNode.name}' ` +
+            `that depends on '${node.name}'.`));
+        }
+      }
+    }
+
+    return this.checkDependencyCycle(config);
   }
 
   /**

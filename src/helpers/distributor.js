@@ -34,15 +34,30 @@ class Distributor {
 
   /**
    * @param {Object} config
+   * @param {String} direction
    * @return {Object}
    * @private
    */
-  _buildDependencyTable(config) {
+  _buildDependencyTable(config, direction) {
     const result = {};
 
     Object.keys(config).forEach(key => {
-      result[key] = Object.assign({}, config[key].dependsOn);
+      result[key] = {};
     });
+
+    if (direction === 'forward') {
+      Object.keys(config).forEach(key => {
+        Object.assign(result[key], config[key].dependsOn);
+      });
+    }
+
+    if (direction === 'reverse') {
+      Object.keys(config).forEach(key => {
+        Object.keys(config[key].dependsOn).forEach(hash => {
+          result[hash][key] = null;
+        });
+      });
+    }
 
     return result;
   }
@@ -87,7 +102,7 @@ class Distributor {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
-      if (!this._isOrderDependent || !dependsOn.length) {
+      if (!dependsOn.length) {
         this._createWorker(hash);
       }
     }
@@ -95,13 +110,12 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {Boolean} isOrderDependent
-   * @returns {Promise}
+   * @param {String} dependencyDirection
+   * @return {Promise}
    */
-  runActions(actions, isOrderDependent = true) {
+  runActions(actions, dependencyDirection = null) {
     this._output = [];
-    this._dependencyTable = this._buildDependencyTable(this._config);
-    this._isOrderDependent = isOrderDependent;
+    this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     return new Promise((resolve, reject) => {
@@ -109,7 +123,8 @@ class Distributor {
 
       cluster.on('message', (worker, data) => {
         if (data.isError) {
-          return this._error = this._handleError(data.error);
+          this._error = this._handleError(data.error);
+          return;
         }
 
         if (data.data) {
@@ -119,10 +134,10 @@ class Distributor {
         this._removeDependencies(data.hash);
       });
 
-      cluster.on('exit', (worker, code, signal) => {
+      cluster.on('exit', (worker, code) => {
         this._workersCount--;
 
-        if (!signal && code === 0) {
+        if (code === 0) {
           this._distributeConfigs();
         }
 
@@ -144,6 +159,7 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
+   * @return {*}
    * @private
    */
   _handleOutput() {
@@ -171,7 +187,7 @@ class Distributor {
   /**
    * Kill parallel workers and build an error
    * @param {Error|Object} err
-   * @returns {Error}
+   * @return {Error}
    * @private
    */
   _handleError(err) {
@@ -179,6 +195,8 @@ class Distributor {
       const worker = cluster.workers[id];
       worker.kill();
     });
+
+    this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
