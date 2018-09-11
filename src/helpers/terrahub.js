@@ -63,7 +63,8 @@ class Terrahub {
 
     return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
       this._terraform[action]() : this._getTask())
-      .then(() => this._terraform.getActionOutput());
+      .then(() => action === 'output' ?
+        this._terraform.getActionOutput() : null);
   }
 
   /**
@@ -151,7 +152,7 @@ class Terrahub {
    * @private
    */
   _callParseLambda(key) {
-    const url = `thub/resource/parse-${ this._action === 'plan' ? 'plan' : 'state' }`;
+    const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
     const options = {
       body: JSON.stringify(Object.assign({ Key: key }, this._awsMetadata())),
     };
