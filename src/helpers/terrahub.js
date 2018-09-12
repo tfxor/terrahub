@@ -1,10 +1,10 @@
 'use strict';
 
 const path = require('path');
-const Terraform = require('../helpers/terraform');
-const { toMd5 } = require('../helpers/util');
-const { config, fetch } = require('../parameters');
 const logger = require('./logger');
+const Terraform = require('../helpers/terraform');
+const { config, fetch } = require('../parameters');
+const { toMd5, spawner } = require('../helpers/util');
 
 class Terrahub {
   /**
@@ -23,7 +23,7 @@ class Terrahub {
   /**
    * @param {String} event
    * @param {Error|String} err
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _on(event, err = null) {
@@ -56,38 +56,65 @@ class Terrahub {
   /**
    * Compose terrahub task
    * @param {String} action
-   * @returns {Promise}
+   * @return {Promise}
    */
   getTask(action) {
     this._action = action;
 
     return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
       this._terraform[action]() : this._getTask())
-      .then(() => this._terraform.getActionOutput());
+      .then(() => action === 'output' ?
+        this._terraform.getActionOutput() : null);
   }
 
   /**
    * Check if custom hook is provided
    * @param {String} hook
-   * @returns {Function}
+   * @return {Function}
    * @private
    */
   _hook(hook) {
     try {
       const hookPath = this._config.hooks[this._action][hook];
-      const fullPath = path.isAbsolute(hookPath)
-        ? hookPath
-        : path.join(this._project.root, hookPath);
+      if (!hookPath) {
+        return () => Promise.resolve();
+      }
 
-      return require(fullPath);
+      const extension = path.extname(hookPath);
+      const fullPath = path.isAbsolute(hookPath) ? hookPath : path.join(this._project.root, hookPath);
+
+      switch (extension) {
+        case '.js':
+          return require(fullPath);
+        case '.sh':
+          return () => this._spawn('bash', fullPath);
+        default:
+          logger.error(`'${extension}' scripts are not supported`);
+      }
     } catch (err) {
       return () => Promise.resolve();
     }
   }
 
   /**
+   * @param {String} binary
+   * @param {String} filePath
+   * @return {Promise}
+   * @private
+   */
+  _spawn(binary, filePath) {
+    return spawner(binary, [filePath], {
+      cwd: path.join(this._config.project.root, this._config.root),
+      shell: true
+    },
+    err => logger.error(`[${this._config.name}] ${err.toString()}`),
+    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+    );
+  }
+
+  /**
    * Get set of actions
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _getTask() {
@@ -99,15 +126,17 @@ class Terrahub {
       .then(() => this._on('success'))
       .catch(err => this._on('error', err))
       .catch(err => {
-        throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
-          new Error('TerraHub is missing internet connection') :
-          err;
+        if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
+          err = new Error('Internet connection issue');
+        }
+
+        throw err;
       });
   }
 
   /**
    * @param {Buffer} buffer
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _upload(buffer) {
@@ -116,7 +145,7 @@ class Terrahub {
     }
 
     const key = this._getKey();
-    const url = this._buildS3Url(key);
+    const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
 
     return this._putObject(url, buffer)
       .then(() => this._callParseLambda(key))
@@ -125,7 +154,7 @@ class Terrahub {
 
   /**
    * Get destination key
-   * @returns {String}
+   * @return {String}
    * @private
    */
   _getKey() {
@@ -136,22 +165,12 @@ class Terrahub {
   }
 
   /**
-   * Get destination url
-   * @param {String} key
-   * @return {string}
-   * @private
-   */
-  _buildS3Url(key) {
-    return `${Terrahub.METADATA_DOMAIN}/${key}`;
-  }
-
-  /**
    * @param {String} key
    * @return {Promise}
    * @private
    */
   _callParseLambda(key) {
-    const url = `thub/resource/parse-${ this._action === 'plan' ? 'plan' : 'state' }`;
+    const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
     const options = {
       body: JSON.stringify(Object.assign({ Key: key }, this._awsMetadata())),
     };
@@ -165,7 +184,7 @@ class Terrahub {
    * Put object via bucket url
    * @param {String} url
    * @param {Buffer} body
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _putObject(url, body) {
@@ -180,21 +199,21 @@ class Terrahub {
 
   /**
    * Get AWS metadata
-   * @returns {Object}
+   * @return {Object}
    * @private
    */
   _awsMetadata() {
     return {
-      'ProjectCode': this._project.code,
-      'ProjectName': this._project.name,
-      'ThubRunId': this._runId,
-      'ThubAction': this._action
+      ThubRunId: this._runId,
+      ThubAction: this._action,
+      ProjectName: this._project.name,
+      ProjectCode: this._project.code
     };
   }
 
   /**
    * Metadata bucket associated domain
-   * @returns {String}
+   * @return {String}
    * @constructor
    */
   static get METADATA_DOMAIN() {

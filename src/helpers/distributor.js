@@ -111,7 +111,7 @@ class Distributor {
   /**
    * @param {String[]} actions
    * @param {String} dependencyDirection
-   * @returns {Promise}
+   * @return {Promise}
    */
   runActions(actions, dependencyDirection = null) {
     this._output = [];
@@ -123,7 +123,8 @@ class Distributor {
 
       cluster.on('message', (worker, data) => {
         if (data.isError) {
-          return this._error = this._handleError(data.error);
+          this._error = this._handleError(data.error);
+          return;
         }
 
         if (data.data) {
@@ -158,6 +159,7 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
+   * @return {*}
    * @private
    */
   _handleOutput() {
@@ -185,7 +187,7 @@ class Distributor {
   /**
    * Kill parallel workers and build an error
    * @param {Error|Object} err
-   * @returns {Error}
+   * @return {Error}
    * @private
    */
   _handleError(err) {
