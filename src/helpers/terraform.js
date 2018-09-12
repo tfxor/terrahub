@@ -240,10 +240,17 @@ class Terraform {
     }
 
     const workspace = this._tf.workspace;
-    const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
+    const regexAll = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list'])
-      .then(result => this.run('workspace', [regex.test(result.toString()) ? 'select' : 'new', workspace]))
+      .then(result => {
+        const regexSelected = new RegExp(`\\*\\s${workspace}$`, 'm');
+        const isWorkspaceSelected = regexSelected.test(result.toString());
+
+        return isWorkspaceSelected ? 
+          Promise.resolve() :
+          this.run('workspace', [regexAll.test(result.toString()) ? 'select' : 'new', workspace])
+      })
       .then(() => this._reInitPaths());
   }
 
