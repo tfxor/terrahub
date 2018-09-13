@@ -237,18 +237,17 @@ class Terraform {
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }
-
     const workspace = this._tf.workspace;
-    const regexAll = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list'])
       .then(result => {
         const regexSelected = new RegExp(`\\*\\s${workspace}$`, 'm');
-        const isWorkspaceSelected = regexSelected.test(result.toString());
+        const regexExists = new RegExp(`\\s.${workspace}$`, 'm');
+        const output = result.toString();
 
-        return isWorkspaceSelected ? 
+        return regexSelected.test(output) ? 
           Promise.resolve() :
-          this.run('workspace', [regexAll.test(result.toString()) ? 'select' : 'new', workspace])
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
       })
       .then(() => this._reInitPaths());
   }
