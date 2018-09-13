@@ -1,25 +1,27 @@
 resource "aws_lambda_function" "{{ name }}" {
-  function_name                  = "${var.lambda_function_name}"
-  handler                        = "${var.lambda_handler}"
-  runtime                        = "${var.lambda_runtime}"
-  role                           = "arn:aws:iam::${var.account_id}:role/${var.lambda_iam_role}"
-  description                    = "${var.lambda_description}"
-  memory_size                    = "${var.lambda_memory_size}"
-  timeout                        = "${var.lambda_timeout}"
+  function_name = "${var.lambda_function_name}"
+  description   = "${var.lambda_description}"
+  handler       = "${var.lambda_handler}"
+  runtime       = "${var.lambda_runtime}"
+  memory_size   = "${var.lambda_memory_size}"
+  timeout       = "${var.lambda_timeout}"
+  publish       = "${var.lambda_publish}"
+  role          = "arn:aws:iam::${var.account_id}:role/${var.lambda_iam_role}"
   reserved_concurrent_executions = "${var.lambda_reserved_concurrent_executions}"
-  publish                        = "${var.lambda_publish}"
 
-  s3_bucket                      = "${var.lambda_s3_bucket}"
-  s3_key                         = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
+  # count            = "${data.external.{{ name }}.result["error"] == "0" ? 1 : 0}"
+  # source_code_hash = "${base64sha256(file(data.null_data_source.{{ name }}.outputs["output_path"]))}"
+  s3_bucket        = "${var.lambda_s3_bucket}"
+  s3_key           = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
 
-  vpc_config {
-    subnet_ids         = "${var.lambda_subnet_ids}"
-    security_group_ids = "${var.lambda_security_group_ids}"
-  }
+  # vpc_config {
+  #   subnet_ids         = "${var.lambda_subnet_ids}"
+  #   security_group_ids = "${var.lambda_security_group_ids}"
+  # }
 
-  #environment {
-  #  variables = "${var.lambda_environment_variables}"
-  #}
+  # environment {
+  #   variables = "${var.lambda_environment_variables}"
+  # }
 
   tags = "${merge(var.default_tags, var.custom_tags)}"
 }

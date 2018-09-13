@@ -6,6 +6,7 @@ const yaml = require('js-yaml');
 const Twig = require('twig');
 const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
+const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
 
 const rl = ReadLine.createInterface({
@@ -172,12 +173,36 @@ function yesNoQuestion(question) {
 }
 
 /**
+ * Just better spawn with middleware
+ * @param {String} command
+ * @param {Array} args
+ * @param {Object} options
+ * @param {Function} onStderr
+ * @param {Function} onStdout
+ * @returns {Promise}
+ */
+function spawner(command, args, options, onStderr, onStdout) {
+  const stdout = [];
+  const promise = spawn(command, args, options);
+  const child = promise.childProcess;
+
+  child.stderr.on('data', onStderr);
+  child.stdout.on('data', data => {
+    stdout.push(data);
+    onStdout(data);
+  });
+
+  return promise.then(() => Buffer.concat(stdout));
+}
+
+/**
  * Public methods
  */
 module.exports = {
   uuid,
   toMd5,
   extend,
+  spawner,
   yamlToJson,
   jsonToYaml,
   familyTree,
