@@ -18,7 +18,7 @@ class Terraform {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._metadata = new Metadata(this._config);
-    this._showLogs = true;
+    this._showLogs = process.env.silent === 'false';
     this._isWorkspaceSupported = false;
   }
 
@@ -245,7 +245,7 @@ class Terraform {
         const regexExists = new RegExp(`\\s.${workspace}$`, 'm');
         const output = result.toString();
 
-        return regexSelected.test(output) ? 
+        return regexSelected.test(output) ?
           Promise.resolve() :
           this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
       })
