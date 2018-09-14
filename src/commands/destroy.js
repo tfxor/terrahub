@@ -21,7 +21,7 @@ class DestroyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, { silent: this.getOption('silent') });
 
     return this.checkDependenciesReverse(config)
       .then(() => this._getPromise())

@@ -39,6 +39,12 @@
           "defaultValue": []
         },
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -56,12 +62,6 @@
       "name": "build",
       "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
       "options": [
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the commands without console output",
-          "defaultValue": false
-        },
         {
           "name": "format",
           "shortcut": "o",
@@ -91,6 +91,12 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -188,6 +194,12 @@
           "defaultValue": []
         },
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -246,6 +258,12 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -344,6 +362,12 @@
           "defaultValue": []
         },
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -384,6 +408,12 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -463,6 +493,12 @@
           "defaultValue": []
         },
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -523,6 +559,12 @@
           "defaultValue": []
         },
         {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -563,6 +605,12 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -611,6 +659,12 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command without additional output",
+          "defaultValue": false
         },
         {
           "name": "env",
