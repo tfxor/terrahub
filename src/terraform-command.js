@@ -18,6 +18,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('exclude', 'x', 'List of components to exclude', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+      .addOption('silent', 's', 'Runs the command without additional output', Boolean, false)
     ;
   }
 
