@@ -11,7 +11,6 @@ class BuildCommand extends TerraformCommand {
     this
       .setName('build')
       .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
-      .addOption('silent', 's', 'Runs the commands without console output', Boolean, false)
       .addOption('format', 'o', 'Log only the command result in one of the following formats: json, text', String, '')
     ;
   }

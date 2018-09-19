@@ -18,7 +18,7 @@ class Terraform {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._metadata = new Metadata(this._config);
-    this._showLogs = true;
+    this._showLogs = process.env.silent === 'false';
     this._isWorkspaceSupported = false;
   }
 
@@ -237,12 +237,18 @@ class Terraform {
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }
-
     const workspace = this._tf.workspace;
-    const regex = new RegExp(`(\\*\\s|\\s.)${workspace}$`, 'm');
 
     return this.run('workspace', ['list'])
-      .then(result => this.run('workspace', [regex.test(result.toString()) ? 'select' : 'new', workspace]))
+      .then(result => {
+        const regexSelected = new RegExp(`\\*\\s${workspace}$`, 'm');
+        const regexExists = new RegExp(`\\s.${workspace}$`, 'm');
+        const output = result.toString();
+
+        return regexSelected.test(output) ?
+          Promise.resolve() :
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
+      })
       .then(() => this._reInitPaths());
   }
 
