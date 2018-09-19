@@ -177,7 +177,7 @@
     }],
     "require-jsdoc": 2,
     "semi-spacing": 0,
-    "semi": 0,
+    "semi": 1,
     "sort-vars": 0,
     "space-after-keywords": 0,
     "space-before-blocks": 0,
