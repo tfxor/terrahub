@@ -174,7 +174,13 @@ class Distributor {
     if (outputs[0].env.format === 'json') {
       const result = {};
 
-      outputs.forEach(it => result[it.component] = JSON.parse((new Buffer(it.stdout)).toString()));
+      outputs.forEach(it => {
+        let stdout = (new Buffer(it.stdout)).toString();
+        if (stdout[0] !== '{') {
+          stdout = stdout.slice(stdout.indexOf('{'));
+        }
+        result[it.component] = JSON.parse(stdout);
+      });
 
       logger.log(JSON.stringify(result));
 
