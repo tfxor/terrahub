@@ -15,12 +15,14 @@ class Distributor {
     const {
       worker = 'worker.js',
       silent = false,
-      format = 'text'
+      format = 'text',
+      skip = false
     } = options;
 
     this._env = {
       silent: silent,
-      format: format
+      format: format,
+      skip: skip
     };
 
     this.THUB_RUN_ID = uuid();
