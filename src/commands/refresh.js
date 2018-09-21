@@ -1,5 +1,6 @@
 'use strict';
 
+const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 
 class RefreshCommand extends TerraformCommand {
@@ -9,7 +10,7 @@ class RefreshCommand extends TerraformCommand {
   configure() {
     this
       .setName('refresh')
-      .setDescription('run `terraform refresh` across multiple terrahub components [Not Implemented Yet]')
+      .setDescription('run `terraform refresh` across multiple terrahub components')
     ;
   }
 
@@ -17,7 +18,10 @@ class RefreshCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    return Promise.resolve('Done');
+    const config = this.getConfigObject();
+    const distributor = new Distributor(config, { silent: this.getOption('silent') });
+
+    return distributor.runActions(['prepare', 'refresh']);
   }
 }
 
