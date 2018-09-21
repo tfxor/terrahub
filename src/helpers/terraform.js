@@ -247,7 +247,7 @@ class Terraform {
 
         return regexSelected.test(output) ?
           Promise.resolve() :
-          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace]);
       })
       .then(() => this._reInitPaths());
   }
@@ -294,7 +294,7 @@ class Terraform {
    */
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
-    const args = [this._optsToArgs(options)]
+    const args = [this._optsToArgs(options)];
 
     if (process.env.skip === 'true') {
       args.push(this._metadata.getPlanPath());
@@ -330,6 +330,18 @@ class Terraform {
     return this
       .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(() => this._getStateContent());
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/refresh.html
+   * @return {Promise}
+   */
+  refresh() {
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false };
+
+    return this
+      .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), this._var()));
+
   }
 
   /**

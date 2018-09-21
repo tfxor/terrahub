@@ -466,7 +466,7 @@
     },
     {
       "name": "refresh",
-      "description": "run `terraform refresh` across multiple terrahub components [Not Implemented Yet]",
+      "description": "run `terraform refresh` across multiple terrahub components",
       "options": [
         {
           "name": "include",
