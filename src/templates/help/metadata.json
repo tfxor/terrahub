@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-09-11T16:24:03.218Z",
+  "buildDate": "2018-09-19T16:27:37.382Z",
   "commands": [
     {
       "name": "apply",
