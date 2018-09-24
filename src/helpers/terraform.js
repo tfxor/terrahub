@@ -294,16 +294,9 @@ class Terraform {
    */
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
-    const args = [this._optsToArgs(options)];
-
-    if (process.env.skip === 'true') {
-      args.push(this._metadata.getPlanPath());
-    } else {
-      args.push(this._varFile(), this._var());
-    }
 
     return this
-      .run('apply', ['-no-color'].concat(...args))
+      .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent());
   }
 
