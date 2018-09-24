@@ -16,6 +16,8 @@ class TerraformCommand extends AbstractCommand {
     this
       .addOption('include', 'i', 'List of components to include', Array, [])
       .addOption('exclude', 'x', 'List of components to exclude', Array, [])
+      .addOption('include-regex', 'I', 'List of components to include-regex', Array, [])
+      .addOption('exclude-regex', 'X', 'List of components to exclude-regex', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('silent', 's', 'Runs the command without additional output', Boolean, false)
@@ -110,10 +112,28 @@ class TerraformCommand extends AbstractCommand {
     const config = this.getExtendedConfig();
     const include = this.getIncludes();
     const exclude = this.getExcludes();
+    const includeRegex = this.getIncludesRegex();
+    const excludeRegex = this.getExcludesRegex();
+
+    if (includeRegex.length > 0) {
+      Object.keys(config).forEach(hash => {
+        if (!includeRegex.some(regex => regex.test(config[hash].name))) {
+          delete config[hash];
+        }
+      });
+    }
 
     if (include.length > 0) {
       Object.keys(config).forEach(hash => {
         if (!include.includes(config[hash].name)) {
+          delete config[hash];
+        }
+      });
+    }
+
+    if (excludeRegex.length > 0) {
+      Object.keys(config).forEach(hash => {
+        if (excludeRegex.some(regex => regex.test(config[hash].name))) {
           delete config[hash];
         }
       });
@@ -148,6 +168,19 @@ class TerraformCommand extends AbstractCommand {
     return this.getOption('exclude');
   }
 
+  /**
+   * @returns {RegExp[]}
+   */
+  getIncludesRegex() {
+    return this.getOption('include-regex').map(it => new RegExp(it));
+  }  
+  
+  /**
+  * @returns {RegExp[]}
+  */
+  getExcludesRegex() {
+    return this.getOption('exclude-regex').map(it => new RegExp(it));
+  }
   /**
    * @returns {Array}
    */
