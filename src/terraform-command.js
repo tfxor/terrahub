@@ -6,6 +6,7 @@ const { extend, askQuestion, toMd5 } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
+const os = require('os');
 
 /**
  * @abstract
@@ -217,17 +218,27 @@ class TerraformCommand extends AbstractCommand {
       throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
     }
 
-    const stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath() });
-    const diffList = stdout.toString().split('\n').slice(0, -1).map(it => join(this.getAppPath(), it));
+    let stdout;
+    try {
+      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath() }).toString();
+    } catch (error) {
+      throw new Error('Git is not installed on this device.');
+    }
+
+    if (stdout.includes(/^Not a git repository/)) {
+      throw new Error(`Git repository not found in '${this.getAppPath()}'`);
+    }
+
+    const diffList = stdout.split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
 
     if (!diffList.length) {
       return [];
     }
 
     const config = super.getConfig();
-    const projectCiMapping = this.getProjectCi() ? this.getProjectCi().mapping : [];
+    const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping | []) : [];
 
-    const isAll = (projectCiMapping || []).some(dep => this._compareCiMappingToGitDiff(dep, diffList));
+    const isAll = projectCiMapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList));
 
     if (isAll) {
       return Object.keys(config).map(key => config[key].name);
