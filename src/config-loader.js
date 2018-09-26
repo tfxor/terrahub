@@ -16,6 +16,7 @@ class ConfigLoader {
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
+    this._projectCi = {};
     this._otherRootPaths = [];
 
     /**
@@ -35,7 +36,8 @@ class ConfigLoader {
       dependsOn: [],
       children: [],
       hooks: {},
-      build: {}
+      build: {},
+      ci: {}
     };
   }
 
@@ -50,8 +52,9 @@ class ConfigLoader {
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+      this._projectCi = Object.assign({}, this._rootConfig['ci']);
 
-      delete this._rootConfig['project'];
+      ['project', 'ci'].forEach(it => delete this._rootConfig[it]);
     } else {
       this._rootPath = false;
       this._rootConfig = {};
@@ -94,6 +97,14 @@ class ConfigLoader {
   }
 
   /**
+   * Get Project CI mapping
+   * @return {Object}
+   */
+  getProjectCi() {
+    return this._projectCi;
+  }
+
+  /**
    * Get project config
    * @returns {Object}
    */
@@ -109,6 +120,7 @@ class ConfigLoader {
     if (!Object.keys(this._config).length) {
       this._handleRootConfig();
       this._handleComponentConfig();
+      this._handleProjectCi();
     }
 
     return this._config;
@@ -175,6 +187,18 @@ class ConfigLoader {
   }
 
   /**
+   * Prepare CI data
+   * @private
+   */
+  _handleProjectCi() {
+    if ('mapping' in this._projectCi) {
+      this._projectCi.mapping.forEach(
+        (it, index) => this._projectCi.mapping[index] = path.resolve(this.appPath(), it)
+      );
+    }
+  }
+
+  /**
    * Consolidate all components' config
    * @private
    */
@@ -195,9 +219,23 @@ class ConfigLoader {
       config = Object.assign(config, config.component);
       delete config.component;
 
-      if (config.hasOwnProperty('dependsOn') && config.dependsOn.length > 0) {
+      if (config.hasOwnProperty('dependsOn')) {
+        if (!(config.dependsOn instanceof Array)) {
+          throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
+        }
+
         config.dependsOn.forEach((dep, index) => {
           config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
+        });
+      }
+
+      if (config.hasOwnProperty('ci') && config['ci'].hasOwnProperty('mapping')) {
+        if (!(config.ci.mapping instanceof Array)) {
+          throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
+        }
+
+        config.ci.mapping.forEach((dep, index) => {
+          config.ci.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
         });
       }
 
@@ -262,7 +300,7 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), config.fileName);
-    const forceWorkspace = { terraform: { workspace: config.env }}; // Just remove to revert
+    const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;

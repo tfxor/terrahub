@@ -45,6 +45,12 @@
           "defaultValue": false
         },
         {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -97,6 +103,12 @@
           "shortcut": "s",
           "description": "Runs the command without additional output",
           "defaultValue": false
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
         },
         {
           "name": "env",
@@ -200,6 +212,12 @@
           "defaultValue": false
         },
         {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -264,6 +282,12 @@
           "shortcut": "s",
           "description": "Runs the command without additional output",
           "defaultValue": false
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
         },
         {
           "name": "env",
@@ -368,6 +392,12 @@
           "defaultValue": false
         },
         {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -414,6 +444,12 @@
           "shortcut": "s",
           "description": "Runs the command without additional output",
           "defaultValue": false
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
         },
         {
           "name": "env",
@@ -499,6 +535,12 @@
           "defaultValue": false
         },
         {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -565,6 +607,12 @@
           "defaultValue": false
         },
         {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -611,6 +659,12 @@
           "shortcut": "s",
           "description": "Runs the command without additional output",
           "defaultValue": false
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
         },
         {
           "name": "env",
@@ -665,6 +719,12 @@
           "shortcut": "s",
           "description": "Runs the command without additional output",
           "defaultValue": false
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "To be updated",
+          "defaultValue": []
         },
         {
           "name": "env",

@@ -3,6 +3,9 @@
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5 } = require('./helpers/util');
+const { execSync } = require('child_process');
+const { lstatSync } = require('fs');
+const { join } = require('path');
 
 /**
  * @abstract
@@ -19,6 +22,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('silent', 's', 'Runs the command without additional output', Boolean, false)
+      .addOption('git-diff', 'g', 'To be updated', Array, [])
     ;
   }
 
@@ -110,6 +114,15 @@ class TerraformCommand extends AbstractCommand {
     const config = this.getExtendedConfig();
     const include = this.getIncludes();
     const exclude = this.getExcludes();
+    const gitDiff = this.getGitDiff();
+
+    if (gitDiff.length > 0) {
+      Object.keys(config).forEach(hash => {
+        if (!gitDiff.includes(config[hash].name)) {
+          delete config[hash];
+        }
+      });
+    }
 
     if (include.length > 0) {
       Object.keys(config).forEach(hash => {
@@ -146,6 +159,82 @@ class TerraformCommand extends AbstractCommand {
    */
   getExcludes() {
     return this.getOption('exclude');
+  }
+
+  /**
+   * Get Project CI mapping
+   * @return {Object}
+   */
+  getProjectCi() {
+    return this._configLoader.getProjectCi();
+  }
+
+  /**
+   * @return {String[]}
+   */
+  getGitDiff() {
+    const commits = this.getOption('git-diff');
+
+    if (!commits.length) {
+      return [];
+    }
+
+    if (commits.length > 2) {
+      throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
+    }
+
+    const stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath() });
+    const diffList = stdout.toString().split('\n').slice(0, -1).map(it => join(this.getAppPath(), it));
+
+    if (!diffList.length) {
+      return [];
+    }
+
+    const config = super.getConfig();
+    const projectCiMapping = this.getProjectCi() ? this.getProjectCi().mapping : [];
+
+    const isAll = (projectCiMapping || []).some(dep => {
+      const stat = lstatSync(dep);
+
+      if (stat.isFile()) {
+        return diffList.some(diff => dep === diff);
+      }
+
+      if (stat.isDirectory()) {
+        return diffList.some(diff => diff.includes(dep));
+      }
+
+      return false;
+    });
+
+    if (isAll) {
+      return Object.keys(config).map(key => config[key].name);
+    }
+
+    const runList = [];
+
+    Object.keys(config).forEach(hash => {
+      const cfg = config[hash];
+
+      if ('ci' in cfg && 'mapping' in cfg['ci'] &&
+        cfg.ci.mapping.some(dep => {
+          const stat = lstatSync(dep);
+
+          if (stat.isFile()) {
+            return diffList.some(diff => dep === diff);
+          }
+
+          if (stat.isDirectory()) {
+            return diffList.some(diff => diff.includes(dep));
+          }
+
+          return false;
+        })) {
+        runList.push(cfg.name);
+      }
+    });
+
+    return runList;
   }
 
   /**
@@ -218,8 +307,8 @@ class TerraformCommand extends AbstractCommand {
     const keys = Object.keys(config);
     const path = [];
 
-    keys.forEach(key => color[key] = TerraformCommand.white);
-    keys.every(key => color[key] === TerraformCommand.black ? true : !this._depthFirstSearch(key, path, config, color));
+    keys.forEach(key => color[key] = TerraformCommand.WHITE);
+    keys.every(key => color[key] === TerraformCommand.BLACK ? true : !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -240,24 +329,24 @@ class TerraformCommand extends AbstractCommand {
    */
   _depthFirstSearch(hash, path, config, color) {
     const dependsOn = config[hash].dependsOn;
-    color[hash] = TerraformCommand.gray;
+    color[hash] = TerraformCommand.GRAY;
     path.push(hash);
 
     for (const key in dependsOn) {
-      if (color[key] === TerraformCommand.white) {
+      if (color[key] === TerraformCommand.WHITE) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
         }
       }
 
-      if (color[key] === TerraformCommand.gray) {
+      if (color[key] === TerraformCommand.GRAY) {
         path.push(key);
 
         return true;
       }
     }
 
-    color[hash] = TerraformCommand.black;
+    color[hash] = TerraformCommand.BLACK;
     path.pop();
 
     return false;
@@ -366,19 +455,19 @@ class TerraformCommand extends AbstractCommand {
    * @return {Number}
    * @private
    */
-  static get black() { return 0; }
+  static get BLACK() { return 0; }
 
   /**
    * @return {Number}
    * @private
    */
-  static get white() { return 1; }
+  static get WHITE() { return 1; }
 
   /**
    * @return {Number}
    * @private
    */
-  static get gray() { return 2; }
+  static get GRAY() { return 2; }
 }
 
 module.exports = TerraformCommand;
