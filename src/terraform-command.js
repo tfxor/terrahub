@@ -189,8 +189,8 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-  * @returns {RegExp[]}
-  */
+   * @returns {RegExp[]}
+   */
   getExcludesRegex() {
     return this.getOption('exclude-regex').map(it => new RegExp(it));
   }
@@ -227,19 +227,7 @@ class TerraformCommand extends AbstractCommand {
     const config = super.getConfig();
     const projectCiMapping = this.getProjectCi() ? this.getProjectCi().mapping : [];
 
-    const isAll = (projectCiMapping || []).some(dep => {
-      const stat = lstatSync(dep);
-
-      if (stat.isFile()) {
-        return diffList.some(diff => dep === diff);
-      }
-
-      if (stat.isDirectory()) {
-        return diffList.some(diff => diff.includes(dep));
-      }
-
-      return false;
-    });
+    const isAll = (projectCiMapping || []).some(dep => this._compareCiMappingToGitDiff(dep, diffList));
 
     if (isAll) {
       return Object.keys(config).map(key => config[key].name);
@@ -251,24 +239,33 @@ class TerraformCommand extends AbstractCommand {
       const cfg = config[hash];
 
       if ('ci' in cfg && 'mapping' in cfg['ci'] &&
-        cfg.ci.mapping.some(dep => {
-          const stat = lstatSync(dep);
-
-          if (stat.isFile()) {
-            return diffList.some(diff => dep === diff);
-          }
-
-          if (stat.isDirectory()) {
-            return diffList.some(diff => diff.includes(dep));
-          }
-
-          return false;
-        })) {
+        cfg.ci.mapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList))
+      ) {
         runList.push(cfg.name);
       }
     });
 
     return runList;
+  }
+
+  /**
+   * @param {String} dep
+   * @param {Array} diffList
+   * @return {Boolean}
+   * @private
+   */
+  _compareCiMappingToGitDiff(dep, diffList) {
+    const stat = lstatSync(dep);
+
+    if (stat.isFile()) {
+      return diffList.some(diff => dep === diff);
+    }
+
+    if (stat.isDirectory()) {
+      return diffList.some(diff => diff.includes(dep));
+    }
+
+    return false;
   }
 
   /**
