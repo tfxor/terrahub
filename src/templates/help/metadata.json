@@ -27,6 +27,18 @@
           "defaultValue": []
         },
         {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
+          "defaultValue": []
+        },
+        {
           "name": "var",
           "shortcut": "r",
           "description": "Variable(s) to be used by terraform",
@@ -84,6 +96,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
@@ -194,6 +218,18 @@
           "defaultValue": []
         },
         {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
+          "defaultValue": []
+        },
+        {
           "name": "var",
           "shortcut": "r",
           "description": "Variable(s) to be used by terraform",
@@ -263,6 +299,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
@@ -374,6 +422,18 @@
           "defaultValue": []
         },
         {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
+          "defaultValue": []
+        },
+        {
           "name": "var",
           "shortcut": "r",
           "description": "Variable(s) to be used by terraform",
@@ -425,6 +485,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
@@ -502,7 +574,7 @@
     },
     {
       "name": "refresh",
-      "description": "run `terraform refresh` across multiple terrahub components [Not Implemented Yet]",
+      "description": "run `terraform refresh` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -514,6 +586,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
@@ -589,6 +673,18 @@
           "defaultValue": []
         },
         {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
+          "defaultValue": []
+        },
+        {
           "name": "var",
           "shortcut": "r",
           "description": "Variable(s) to be used by terraform",
@@ -640,6 +736,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
@@ -700,6 +808,18 @@
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include-regex",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude-regex",
           "defaultValue": []
         },
         {
