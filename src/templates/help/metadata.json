@@ -17,25 +17,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -53,14 +59,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -89,25 +89,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -125,14 +131,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -208,25 +208,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -244,14 +250,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -292,25 +292,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -328,14 +334,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -412,25 +412,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -448,14 +454,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -476,27 +476,39 @@
       "description": "run `terraform plan` across multiple terrahub components",
       "options": [
         {
+          "name": "destroy",
+          "shortcut": "d",
+          "description": "Runs the command with destroy plan",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -514,14 +526,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -579,25 +585,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -615,14 +627,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -663,25 +669,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -699,14 +711,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -729,25 +735,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -765,14 +777,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
@@ -801,25 +807,31 @@
         {
           "name": "include",
           "shortcut": "i",
-          "description": "List of components to include",
+          "description": "List of components to include (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "exclude",
           "shortcut": "x",
-          "description": "List of components to exclude",
+          "description": "List of components to exclude (comma separated values)",
           "defaultValue": []
         },
         {
           "name": "include-regex",
           "shortcut": "I",
-          "description": "List of components to include-regex",
+          "description": "List of components to include (regex search)",
           "defaultValue": []
         },
         {
           "name": "exclude-regex",
           "shortcut": "X",
-          "description": "List of components to exclude-regex",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
           "defaultValue": []
         },
         {
@@ -837,14 +849,8 @@
         {
           "name": "silent",
           "shortcut": "s",
-          "description": "Runs the command without additional output",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "To be updated",
-          "defaultValue": []
         },
         {
           "name": "env",
