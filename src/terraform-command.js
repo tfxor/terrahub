@@ -18,14 +18,14 @@ class TerraformCommand extends AbstractCommand {
    */
   initialize() {
     this
-      .addOption('include', 'i', 'List of components to include', Array, [])
-      .addOption('exclude', 'x', 'List of components to exclude', Array, [])
-      .addOption('include-regex', 'I', 'List of components to include-regex', Array, [])
-      .addOption('exclude-regex', 'X', 'List of components to exclude-regex', Array, [])
+      .addOption('include', 'i', 'List of components to include (comma separated values)', Array, [])
+      .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
+      .addOption('include-regex', 'I', 'List of components to include (regex search)', Array, [])
+      .addOption('exclude-regex', 'X', 'List of components to exclude (regex search)', Array, [])
+      .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('silent', 's', 'Runs the command without additional output', Boolean, false)
-      .addOption('git-diff', 'g', 'To be updated', Array, [])
+      .addOption('silent', 's', 'Runs the command silently (without any output)', Boolean, false)
     ;
   }
 
