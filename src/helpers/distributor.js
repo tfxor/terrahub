@@ -16,13 +16,13 @@ class Distributor {
       worker = 'worker.js',
       silent = false,
       format = 'text',
-      skip = false
+      planDestroy = false
     } = options;
 
     this._env = {
       silent: silent,
       format: format,
-      skip: skip
+      planDestroy: planDestroy
     };
 
     this.THUB_RUN_ID = uuid();

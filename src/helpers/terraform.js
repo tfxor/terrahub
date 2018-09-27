@@ -247,7 +247,7 @@ class Terraform {
 
         return regexSelected.test(output) ?
           Promise.resolve() :
-          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace]);
       })
       .then(() => this._reInitPaths());
   }
@@ -272,8 +272,9 @@ class Terraform {
    */
   plan() {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
+    const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
 
-    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
+    return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
         const planPath = this._metadata.getPlanPath();
 
@@ -294,16 +295,9 @@ class Terraform {
    */
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
-    const args = [this._optsToArgs(options)]
-
-    if (process.env.skip === 'true') {
-      args.push(this._metadata.getPlanPath());
-    } else {
-      args.push(this._varFile(), this._var());
-    }
 
     return this
-      .run('apply', ['-no-color'].concat(...args))
+      .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent());
   }
 
@@ -330,6 +324,18 @@ class Terraform {
     return this
       .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(() => this._getStateContent());
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/refresh.html
+   * @return {Promise}
+   */
+  refresh() {
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false };
+
+    return this
+      .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), this._var()));
+
   }
 
   /**

@@ -105,7 +105,10 @@
     "no-unused-vars": [ 2, {
       "args": "none"
     }],
-    "no-use-before-define": 2,
+    "no-use-before-define": ["error", {
+      "functions": false,
+      "classes": true
+    }],
     "callback-return": 0,
     "global-require": 0,
     "handle-callback-err": 2,
