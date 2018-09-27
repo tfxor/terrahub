@@ -16,13 +16,13 @@ class BuildHelper {
 
       const env = Object.assign({}, process.env);
       if (buildConfig.env) {
-        this._extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
+        BuildHelper._extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
       }
 
       const commandsList = [];
 
       if (buildConfig.phases) {
-        this._pushCommandsAndFinally(
+        BuildHelper._pushCommandsAndFinally(
           commandsList,
           buildConfig.phases.install,
           buildConfig.phases.pre_build,
@@ -52,22 +52,22 @@ class BuildHelper {
           return spawner(command, args, options,
             err => {
               if (isVerbose) {
-                logger.error(this._out(name, err));
+                logger.error(BuildHelper._out(name, err));
               }
             },
             data => {
               if (isVerbose) {
-                logger.raw(this._out(name, data));
+                logger.raw(BuildHelper._out(name, data));
               }
             }
           );
         })
       ).then(() => {
-        this._printOutput(`Build successfully finished for [${name}].`, true);
+        BuildHelper._printOutput(`Build successfully finished for [${name}].`, true);
 
         resolve();
       }).catch(err => {
-        this._printOutput(`Build failed for [${name}].`, false);
+        BuildHelper._printOutput(`Build failed for [${name}].`, false);
 
         reject(err);
       });

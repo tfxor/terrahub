@@ -41,7 +41,9 @@ class RunCommand extends TerraformCommand {
    */
   _runPhases() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config, { silent: this.getOption('silent') });
+    const distributor = new Distributor(config, { 
+      silent: this.getOption('silent')
+    });
 
     return Promise.resolve()
       .then(() => this._actions.includes('apply') ?
