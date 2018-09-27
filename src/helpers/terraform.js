@@ -272,8 +272,9 @@ class Terraform {
    */
   plan() {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
+    const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
 
-    return this.run('plan', ['-no-color'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
+    return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
         const planPath = this._metadata.getPlanPath();
 
