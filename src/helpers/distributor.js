@@ -9,25 +9,11 @@ const { uuid } = require('./util');
 class Distributor {
   /**
    * @param {Object} config
-   * @param {Object} options
    */
-  constructor(config, options = {}) {
-    const {
-      worker = 'worker.js',
-      silent = false,
-      format = 'text',
-      planDestroy = false
-    } = options;
-
-    this._env = {
-      silent: silent,
-      format: format,
-      planDestroy: planDestroy
-    };
-
+  constructor(config) {
     this.THUB_RUN_ID = uuid();
     this._config = Object.assign({}, config);
-    this._worker = path.join(__dirname, worker);
+    this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._threadsCount = os.cpus().length;
 
@@ -115,7 +101,20 @@ class Distributor {
    * @param {String} dependencyDirection
    * @return {Promise}
    */
-  runActions(actions, dependencyDirection = null) {
+  runActions(actions, options) {
+    const {
+      silent = false,
+      format = 'text',
+      planDestroy = false,
+      dependencyDirection = null
+    } = options;
+
+    this._env = {
+      silent: silent,
+      format: format,
+      planDestroy: planDestroy
+    };
+
     this._output = [];
     this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;

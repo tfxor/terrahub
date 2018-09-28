@@ -318,13 +318,7 @@ class Terraform {
    * https://www.terraform.io/docs/commands/destroy.html
    * @return {Promise}
    */
-  destroy() {
-    const options = { '-backup': this._metadata.getStateBackupPath() };
-
-    return this
-      .run('destroy', ['-no-color', '-force'].concat(this._varFile(), this._var(), this._optsToArgs(options)))
-      .then(() => this._getStateContent());
-  }
+  destroy() { return this.apply() }
 
   /**
    * https://www.terraform.io/docs/commands/refresh.html
