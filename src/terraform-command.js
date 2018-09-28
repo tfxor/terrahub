@@ -220,12 +220,12 @@ class TerraformCommand extends AbstractCommand {
 
     let stdout;
     try {
-      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath() }).toString();
+      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath(), stdio: 'ignore' }).toString();
     } catch (error) {
       throw new Error('Git is not installed on this device.');
     }
 
-    if (stdout.includes(/^Not a git repository/)) {
+    if (/^Not a git repository/.test(stdout)) {
       throw new Error(`Git repository not found in '${this.getAppPath()}'`);
     }
 
@@ -236,7 +236,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     const config = super.getConfig();
-    const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping | []) : [];
+    const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping || []) : [];
 
     const isAll = projectCiMapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList));
 
