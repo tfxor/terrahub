@@ -1,4 +1,5 @@
 {
   "token": false,
-  "format": "yml"
+  "format": "yml",
+  "retryCount": 2
 }
