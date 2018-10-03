@@ -196,6 +196,38 @@ function spawner(command, args, options, onStderr, onStdout) {
 }
 
 /**
+ * @param {Function<Promise>} promise
+ * @param {Object} options
+ * @return {Promise}
+ */
+function exponentialBackoff(promiseFunction, options) {
+  const {
+    conditionFn = () => true,
+    maxRetries = 2
+  } = options;
+  let retries = 0;
+
+  function retry() {
+    return promiseFunction().catch(error =>
+      conditionFn(error) && retries < maxRetries ?
+        setTimeoutPromise(1000*Math.exp(retries++)).then(() => retry()) : Promise.reject(error)
+    );
+  }
+
+  return retry();
+}
+
+/**
+ * @param {Number} timeout
+ * @return {Promise}
+ */
+function setTimeoutPromise(timeout) {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
+
+/**
  * Public methods
  */
 module.exports = {
@@ -210,5 +242,7 @@ module.exports = {
   promiseSeries,
   yesNoQuestion,
   askQuestion,
-  isAwsNameValid
+  isAwsNameValid,
+  exponentialBackoff,
+  setTimeoutPromise
 };
