@@ -8,6 +8,7 @@ const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
+const { EOL } = require('os');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -196,7 +197,7 @@ function spawner(command, args, options, onStderr, onStdout) {
 }
 
 /**
- * @param {Function<Promise>} promise
+ * @param {Function<Promise>} promiseFunction
  * @param {Object} options
  * @return {Promise}
  */
@@ -208,10 +209,14 @@ function exponentialBackoff(promiseFunction, options) {
   let retries = 0;
 
   function retry() {
-    return promiseFunction().catch(error =>
-      conditionFn(error) && retries < maxRetries ?
-        setTimeoutPromise(1000*Math.exp(retries++)).then(() => retry()) : Promise.reject(error)
-    );
+    return promiseFunction().catch(error => {
+      if (conditionFn(error) && retries < maxRetries) {
+        return setTimeoutPromise(1000*Math.exp(retries++)).then(() => retry());
+      } else {
+        error.Message += `${EOL}Failed after ${maxRetries} retries.`;
+        return Promise.reject(error);
+      }
+    });
   }
 
   return retry();
