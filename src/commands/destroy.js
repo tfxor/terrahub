@@ -21,18 +21,17 @@ class DestroyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config, { silent: this.getOption('silent') });
+    const distributor = new Distributor(config);
 
     return this.checkDependenciesReverse(config)
       .then(() => this._getPromise())
-      .then(answer => {
-        if (answer) {
-          return distributor.runActions(['prepare', 'destroy'], 'reverse');
-        } else {
-          return Promise.reject('Action aborted');
-        }
-      })
-      .then(() => Promise.resolve('Done'));
+      .then(answer => answer ?
+        distributor.runActions(['prepare', 'plan', 'destroy'], {
+          silent: this.getOption('silent'),
+          planDestroy: true,
+          dependencyDirection:'reverse'
+        }) : Promise.reject('Action aborted')
+      ).then(() => Promise.resolve('Done'));
   }
 
   /**
