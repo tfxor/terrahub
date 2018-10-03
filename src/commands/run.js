@@ -41,20 +41,29 @@ class RunCommand extends TerraformCommand {
    */
   _runPhases() {
     const config = this.getConfigObject();
-    const distributor = new Distributor(config, { 
-      silent: this.getOption('silent')
-    });
+    const distributor = new Distributor(config);
 
     return Promise.resolve()
       .then(() => this._actions.includes('apply') ?
         this.checkDependencies(config) : Promise.resolve())
       .then(() => this._actions.includes('destroy') ?
         this.checkDependenciesReverse(config) : Promise.resolve())
-      .then(() => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan']))
+      .then(() => distributor.runActions(this._actions.length ? 
+        ['prepare', 'init', 'workspaceSelect'] : 
+        ['prepare', 'init', 'workspaceSelect', 'plan'], {
+          silent: this.getOption('silent')
+        }))
       .then(() => this._actions.includes('apply') ?
-        distributor.runActions(['apply'], 'forward') : Promise.resolve())
+        distributor.runActions(['plan', 'apply'], { 
+          silent: this.getOption('silent'),
+          dependencyDirection: 'forward'
+        }) : Promise.resolve())
       .then(() => this._actions.includes('destroy') ?
-        distributor.runActions(['destroy'], 'reverse') : Promise.resolve());
+        distributor.runActions(['plan', 'destroy'], { 
+          silent: this.getOption('silent'),
+          dependencyDirection: 'reverse',
+          planDestroy: true
+        }) : Promise.resolve());
   }
 
   /**
