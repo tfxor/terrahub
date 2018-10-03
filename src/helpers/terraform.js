@@ -193,7 +193,6 @@ class Terraform {
     const promise = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
-    console.log(this.getName());
     return exponentialBackoff(promise, { conditionFun: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._reInitPaths());
   }
