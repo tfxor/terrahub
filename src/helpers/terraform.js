@@ -287,13 +287,12 @@ class Terraform {
 
     return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
-        let metadata;
+        const metadata = {};
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
         const planData = data.toString().match(regex);
         
-        if (planData != null){
-          const planCounter = data.toString().match(regex).slice(-3);
-          metadata = {};
+        if (planData) {
+          const planCounter = planData.slice(-3);
           ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
         } else {
           ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');          
