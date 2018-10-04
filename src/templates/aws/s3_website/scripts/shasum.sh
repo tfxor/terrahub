@@ -8,7 +8,7 @@ if [ -z "${THUB_SRC}" ]; then
 fi
 
 ## Setup environmental variables
-[ -f .env ] && . .env
+[ -f .terrahub_build.env ] && . .terrahub_build.env
 
 ## Checking if THUB_BUILD_OK is true
 if [ "$THUB_BUILD_OK" == "true" ]; then

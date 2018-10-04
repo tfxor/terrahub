@@ -15,7 +15,7 @@ if [ -z "${THUB_ZIP_PATH}" ]; then
 fi
 
 ## Setup environmental variables
-[ -f .env ] && . .env
+[ -f .terrahub_build.env ] && . .terrahub_build.env
 
 ## Checking if THUB_BUILD_OK is true
 if [ "$THUB_BUILD_OK" == "true" ]; then

@@ -15,7 +15,7 @@ if [ -z "${THUB_COMPARE_PATH}" ]; then
 fi
 
 ## Setup environmental variables
-[ -f .env ] && . .env
+[ -f .terrahub_build.env ] && . .terrahub_build.env
 
 ## Compare SHA256 sums from THUB_SRC file with files in THUB_COMPARE_PATH
 echo "THUB_BUILD_OK='${THUB_BUILD_OK}' ==> Comparing SHA256 sums."
@@ -26,7 +26,7 @@ else
 fi
 
 ## Checking if needs to skip SHA256 sums compare
-echo "export THUB_SHA=\"${THUB_SHA}\"" >> .env
+echo "export THUB_SHA=\"${THUB_SHA}\"" >> .terrahub_build.env
 echo "INFO: Current SHA256 => ${THUB_SHA}"
 if [ "${THUB_BUILD_OK}" == "true" ]; then
   echo "INFO: THUB_BUILD_OK='${THUB_BUILD_OK}' ==> Skipping comparing SHA256 sums."
@@ -38,7 +38,7 @@ THUB_COMPARE=$(head -n 1 ${THUB_SRC})
 echo "INFO: S3 Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
-  echo 'export THUB_BUILD_OK="true"' >> .env
+  echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
 else
   echo 'Build is NOT required.'
 fi
