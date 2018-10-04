@@ -293,17 +293,10 @@ class Terraform {
         
         if (planData != null){
           const planCounter = data.toString().match(regex).slice(-3);
-          metadata = {
-            add: planCounter[0],
-            change: planCounter[1],
-            destroy: planCounter[2]
-          };
+          metadata = {};
+          ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
         } else {
-          metadata = {
-            add: '0',
-            change: '0',
-            destroy: '0'
-          };
+          ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');          
         };
 
         this._output.metadata = metadata;
