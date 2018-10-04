@@ -220,9 +220,13 @@ class TerraformCommand extends AbstractCommand {
 
     let stdout;
     try {
-      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath(), stdio: 'ignore' }).toString();
+      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath(), stdio: 'ignore' });
     } catch (error) {
       throw new Error('Git is not installed on this device.');
+    }
+
+    if (!stdout) {
+      throw new Error('There are no changes between commits or branches.')
     }
 
     if (/^Not a git repository/.test(stdout)) {
