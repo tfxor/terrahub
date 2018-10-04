@@ -57,7 +57,8 @@ const def = {
   env: 'default',
   api: 'api',
   token: false,
-  format: 'yml'
+  format: 'yml',
+  retryCount: 2
 };
 const env = {
   env: _getEnv(args),
@@ -82,6 +83,7 @@ module.exports = {
     home: _homePath(),
     token: cfg.token,
     format: cfg.format,
+    retryCount: cfg.retryCount,
     isHelp: _isHelp(args),
     isDefault: isDefault,
     fileName: isDefault ? `.terrahub.${cfg.format}` : `.terrahub.${cfg.env}.${cfg.format}`,
