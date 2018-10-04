@@ -158,5 +158,8 @@
     "aws_vpn_gateway_route_propagation": "aws/vpn_gateway_route_propagation"
   },
   "azurerm": {},
-  "google": {}
+  "google": {
+    "google_folder_iam_policy":"gcp/folder_iam_policy",
+    "google_project":"gcp/project"
+  }
 }
