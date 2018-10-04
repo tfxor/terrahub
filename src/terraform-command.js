@@ -212,9 +212,7 @@ class TerraformCommand extends AbstractCommand {
 
     if (!commits.length) {
       return [];
-    }
-
-    if (commits.length > 2) {
+    } else if (commits.length > 2) {
       throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
     }
 
@@ -230,9 +228,7 @@ class TerraformCommand extends AbstractCommand {
 
         if (/not found/.test(stderr)) {
           err = new Error('Git is not installed on this device.');
-        }
-
-        if (/Not a git repository/.test(stderr)) {
+        } else if (/Not a git repository/.test(stderr)) {
           err = new Error(`Git repository not found in '${this.getAppPath()}'`)
         }
       }
