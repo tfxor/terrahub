@@ -287,6 +287,26 @@ class Terraform {
 
     return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
+        let metadata;
+        const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
+        const planData = data.toString().match(regex);
+        
+        if (planData != null){
+          const planCounter = data.toString().match(regex).slice(-3);
+          metadata = {
+            add: planCounter[0],
+            change: planCounter[1],
+            destroy: planCounter[2]
+          };
+        } else {
+          metadata = {
+            add: '0',
+            change: '0',
+            destroy: '0'
+          };
+        };
+
+        this._output.metadata = metadata;
         const planPath = this._metadata.getPlanPath();
 
         if (fse.existsSync(planPath)) {
@@ -408,7 +428,8 @@ class Terraform {
         action: args[0],
         component: this.getName(),
         stdout: buffer,
-        env: process.env
+        env: process.env,
+        metadata: null
       };
 
       return Promise.resolve(buffer);
