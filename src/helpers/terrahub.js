@@ -44,7 +44,7 @@ class Terrahub {
       data['Error'] = error.message;
     }
 
-    if(data.Action === 'plan' && event === 'success') {
+    if (data.Action === 'plan' && event === 'success') {
       data.Metadata = this._terraform.getActionOutput().metadata;
     }
 
