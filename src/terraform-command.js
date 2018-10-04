@@ -220,20 +220,7 @@ class TerraformCommand extends AbstractCommand {
     try {
       stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      this.logger.debug(error);
-      let err = error;
-
-      if (error.stderr) {
-        const stderr = error.stderr.toString();
-
-        if (/not found/.test(stderr)) {
-          err = new Error('Git is not installed on this device.');
-        } else if (/Not a git repository/.test(stderr)) {
-          err = new Error(`Git repository not found in '${this.getAppPath()}'`)
-        }
-      }
-
-      throw err;
+      this._handleGitDiffError(error);
     }
 
     if (!stdout) {
@@ -268,6 +255,27 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return runList;
+  }
+
+  /**
+   * @param {Error} error
+   * @private
+   */
+  _handleGitDiffError(error) {
+    this.logger.debug(error);
+    let err = error;
+
+    if (error.stderr) {
+      const stderr = error.stderr.toString();
+
+      if (/not found/.test(stderr)) {
+        err = new Error('Git is not installed on this device.');
+      } else if (/Not a git repository/.test(stderr)) {
+        err = new Error(`Git repository not found in '${this.getAppPath()}'`)
+      }
+    }
+
+    throw err;
   }
 
   /**
