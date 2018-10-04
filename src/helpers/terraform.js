@@ -291,7 +291,7 @@ class Terraform {
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
         const planData = data.toString().match(regex);
         
-        if (planData != null) {
+        if (planData) {
           const planCounter = planData.slice(-3);
           ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
         } else {
