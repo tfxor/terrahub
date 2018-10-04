@@ -7,8 +7,8 @@ const semver = require('semver');
 const logger = require('./logger');
 const Metadata = require('./metadata');
 const Downloader = require('./downloader');
-const { homePath } = require('../parameters');
-const { extend, spawner } = require('../helpers/util');
+const { homePath, config } = require('../parameters');
+const { extend, spawner, exponentialBackoff } = require('../helpers/util');
 
 class Terraform {
   /**
@@ -190,9 +190,20 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    return this
-      .run('init', ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+    const promise = () => this.run('init',
+      ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
+
+    return exponentialBackoff(promise, { conditionFun: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._reInitPaths());
+  }
+
+  /**
+   * @param {Error} error
+   * @return {Boolean}
+   * @private
+   */
+  _checkIgnoreError(error) {
+    return [/handshake timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.Message));
   }
 
   /**
@@ -318,7 +329,7 @@ class Terraform {
    * https://www.terraform.io/docs/commands/destroy.html
    * @return {Promise}
    */
-  destroy() { return this.apply() }
+  destroy() { return this.apply(); }
 
   /**
    * https://www.terraform.io/docs/commands/refresh.html
