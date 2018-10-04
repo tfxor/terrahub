@@ -212,24 +212,22 @@ class TerraformCommand extends AbstractCommand {
 
     if (!commits.length) {
       return [];
-    }
-
-    if (commits.length > 2) {
+    } else if (commits.length > 2) {
       throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
     }
 
     let stdout;
     try {
-      stdout = execSync(`git diff ${commits.join(' ')} --name-only`, { cwd: this.getAppPath(), stdio: 'ignore' }).toString();
+      stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      throw new Error('Git is not installed on this device.');
+      this._handleGitDiffError(error);
     }
 
-    if (/^Not a git repository/.test(stdout)) {
-      throw new Error(`Git repository not found in '${this.getAppPath()}'`);
+    if (!stdout) {
+      throw new Error('There are no changes between commits, commit and working tree, etc.')
     }
 
-    const diffList = stdout.split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
+    const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
 
     if (!diffList.length) {
       return [];
@@ -257,6 +255,27 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return runList;
+  }
+
+  /**
+   * @param {Error} error
+   * @private
+   */
+  _handleGitDiffError(error) {
+    this.logger.debug(error);
+    let err = error;
+
+    if (error.stderr) {
+      const stderr = error.stderr.toString();
+
+      if (/not found/.test(stderr)) {
+        err = new Error('Git is not installed on this device.');
+      } else if (/Not a git repository/.test(stderr)) {
+        err = new Error(`Git repository not found in '${this.getAppPath()}'`)
+      }
+    }
+
+    throw err;
   }
 
   /**

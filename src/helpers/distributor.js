@@ -98,7 +98,7 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {String} dependencyDirection
+   * @param {Object} options
    * @return {Promise}
    */
   runActions(actions, options) {

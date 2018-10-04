@@ -18,14 +18,14 @@ fi
 THUB_AWS_OPTIONS="${@:3}"
 
 ## Clean environmental variables
-> .env
+> .terrahub_build.env
 
 ## Checking if THUB_S3_PATH file exists in S3
 aws --version > /dev/null 2>&1 || { echo >&2 'awscli is missing. Aborting...'; exit 1; }
 THUB_CHECK_TYPE=$(aws s3 ls ${THUB_S3_PATH} ${THUB_AWS_OPTIONS} || echo "")
 if [ -z "${THUB_CHECK_TYPE}" ]; then
   echo "INFO: ${THUB_S3_PATH} does NOT exist ==> First execution."
-  echo 'export THUB_BUILD_OK="true"' >> .env
+  echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
   exit 0
 fi
 
