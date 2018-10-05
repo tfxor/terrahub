@@ -1,0 +1,13 @@
+# Define list of variables to be output
+
+output "email" {
+  value = "${google_service_account.{{ name }}.email}"
+}
+
+output "name" {
+  value = "${google_service_account.{{ name }}.name}"
+}
+
+output "unique_id" {
+  value = "${google_service_account.{{ name }}.unique_id}"
+}
