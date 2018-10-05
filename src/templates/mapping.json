@@ -159,7 +159,12 @@
   },
   "azurerm": {},
   "google": {
-    "google_folder_iam_policy":"gcp/folder_iam_policy",
-    "google_project":"gcp/project"
+    "google_project":"gcp/project",
+    "google_service_account":"gcp/service_account",
+    "google_service_account_key":"gcp/service_account_key",
+    "google_project_iam_binding":"gcp/project_iam_binding",
+    "google_project_iam_policy":"gcp/project_iam_policy",
+    "google_project_iam_member":"gcp/project_iam_member",
+    "google_project_service":"gcp/project_service"
   }
 }

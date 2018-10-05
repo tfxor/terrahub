@@ -1,0 +1,29 @@
+# Define list of variables to be output
+
+output "name" {
+  value = "${google_service_account_key.{{ name }}.name}"
+}
+
+output "public_key" {
+  value = "${google_service_account_key.{{ name }}.public_key}"
+}
+
+output "private_key" {
+  value = "${google_service_account_key.{{ name }}.private_key}"
+}
+
+output "private_key_encrypted" {
+  value = "${google_service_account_key.{{ name }}.private_key_encrypted}"
+}
+
+output "private_key_fingerprint" {
+  value = "${google_service_account_key.{{ name }}.private_key_fingerprint}"
+}
+
+output "valid_after" {
+  value = "${google_service_account_key.{{ name }}.valid_after}"
+}
+
+output "valid_before" {
+  value = "${google_service_account_key.{{ name }}.valid_before}"
+}

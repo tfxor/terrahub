@@ -18,10 +18,10 @@ It's important to note that any project resources that were added to your Terraf
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 |google_project_name|The display name of the project.|string|{{ name }}|No|
-|google_project_project_id|The project ID. Changing this forces a new project to be created.|string|{{ name }}|No|
-|google_project_org_id|The numeric ID of the organization this project belongs to. Changing this forces a new project to be created. Only one of org_id or folder_id may be specified. If the org_id is specified then the project is created at the top level. Changing this forces the project to be migrated to the newly specified organization.|string||No|
+|google_project_id|The project ID. Changing this forces a new project to be created.|string|{{ name }}-{{ code }}|No|
+|google_org_id|The numeric ID of the organization this project belongs to. Changing this forces a new project to be created. Only one of org_id or folder_id may be specified. If the org_id is specified then the project is created at the top level. Changing this forces the project to be migrated to the newly specified organization.|string||No|
 |google_project_folder_id|The numeric ID of the folder this project should be created under. Only one of org_id or folder_id may be specified. If the folder_id is specified, then the project is created under the specified folder. Changing this forces the project to be migrated to the newly specified folder.|string||No|
-|google_project_billing_account|The alphanumeric ID of the billing account this project belongs to. The user or service account performing this operation with Terraform must have Billing Account Administrator privileges (roles/billing.admin) in the organization. See Google Cloud Billing API Access Control for more details.|string||No|
+|google_billing_account|The alphanumeric ID of the billing account this project belongs to. The user or service account performing this operation with Terraform must have Billing Account Administrator privileges (roles/billing.admin) in the organization. See Google Cloud Billing API Access Control for more details.|string||No|
 |google_project_skip_delete|If true, the Terraform resource can be deleted without deleting the Project via the Google API.|boolean|false|No|
 |google_project_auto_create_network|If true, the Terraform resource can be deleted without deleting the Project via the Google API.|boolean|false|No|
 |custom_labels|Custom labels. A set of key/value label pairs to assign to the project.|map||No|
@@ -32,9 +32,3 @@ It's important to note that any project resources that were added to your Terraf
 | Name | Description | Type |
 |------|-------------|:----:|
 |number|The numeric identifier of the project.|string|
-|app_engine_0_name|Unique name of the app, usually apps/{PROJECT_ID}|string|
-|app_engine_0_url_dispatch_rule|A list of dispatch rule blocks. Each block has a domain, path, and service field.|string|
-|app_engine_0_code_bucket|The GCS bucket code is being stored in for this app.|string|
-|app_engine_0_default_hostname|The default hostname for this app.|string|
-|app_engine_0_default_bucket|The GCS bucket content is being stored in for this app.|string|
-|app_engine_0_gcr_domain|The GCR domain used for storing managed Docker images for this app.|string|

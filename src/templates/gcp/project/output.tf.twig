@@ -3,27 +3,3 @@
 output "number" {
   value = "${google_project.{{ name }}.number}"
 }
-
-output "app_engine_0_name" {
-  value = "${google_project.{{ name }}.app_engine.0.name}"
-}
-
-output "app_engine_0_url_dispatch_rule" {
-  value = "${google_project.{{ name }}.app_engine.0.url_dispatch_rule}"
-}
-
-output "app_engine_0_code_bucket" {
-  value = "${google_project.{{ name }}.app_engine.0.code_bucket}"
-}
-
-output "app_engine_0_default_hostname" {
-  value = "${google_project.{{ name }}.app_engine.0.default_hostname}"
-}
-
-output "app_engine_0_default_bucket" {
-  value = "${google_project.{{ name }}.app_engine.0.default_bucket}"
-}
-
-output "app_engine_0_gcr_domain" {
-  value = "${google_project.{{ name }}.app_engine.0.gcr_domain}"
-}
