@@ -2,12 +2,13 @@
 #   program = ["node", "./scripts/build.js"]
 #   query = {
 #     component = "{{ name }}"
+#     env       = "${terraform.workspace}"
 #   }
 # }
 
 # data "null_data_source" "{{ name }}" {
 #   depends_on = ["data.external.{{ name }}"]
 #   inputs = {
-#     output_path = "${path.module}/${var.lambda_runtime}.zip"
+#     output_path = "${path.module}/${var.lambda_runtime}.txt"
 #   }
 # }
