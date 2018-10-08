@@ -1,0 +1,6 @@
+resource "google_project_iam_binding" "{{ name }}" {
+  project = "${var.google_project_id}-{{ code }}"
+  role    = "${var.google_project_role}"
+
+  members = "${var.google_project_members}"
+}

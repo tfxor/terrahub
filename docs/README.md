@@ -60,7 +60,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [init](commands/init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
 | [output](commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :x: |
+| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
 | [show](commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||
