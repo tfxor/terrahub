@@ -223,7 +223,7 @@ class TerraformCommand extends AbstractCommand {
       this._handleGitDiffError(error);
     }
 
-    if (!stdout) {
+    if (!stdout || !stdout.toString().length) {
       throw new Error('There are no changes between commits, commit and working tree, etc.')
     }
 
