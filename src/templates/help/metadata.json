@@ -800,7 +800,7 @@
       "options": [
         {
           "name": "delete",
-          "shortcut": "d",
+          "shortcut": "D",
           "description": "Delete workspace environment (paired with --env)",
           "defaultValue": false
         },
