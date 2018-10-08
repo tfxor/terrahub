@@ -18,7 +18,7 @@ class WorkspaceCommand extends TerraformCommand {
     this
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terrahub components')
-      .addOption('delete', 'd', 'Delete workspace environment (paired with --env)', Boolean, false)
+      .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)
     ;
   }
 
