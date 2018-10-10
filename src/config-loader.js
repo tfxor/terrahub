@@ -337,16 +337,16 @@ class ConfigLoader {
    * @returns {Object}
    */
   static writeConfig(json, outFile) {
-    const format = config.format;
+    const format = path.extname(outFile);
 
     switch (format) {
-      case 'yml':
-      case 'yaml':
+      case '.yml':
+      case '.yaml':
         return jsonToYaml(json, outFile);
-      case 'json':
+      case '.json':
         return fse.outputJsonSync(outFile, json, { spaces: 2 });
       default:
-        throw new Error(`.${format} config is not supported!`);
+        throw new Error(`${format} config is not supported!`);
     }
   }
 
