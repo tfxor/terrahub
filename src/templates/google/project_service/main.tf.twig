@@ -1,5 +1,5 @@
 resource "google_project_service" "{{ name }}" {
-  project            = "${var.google_project_id}-{{ code }}"
+  project            = "${var.google_project_id}"
   service            = "${var.google_project_service_name}.googleapis.com"
   disable_on_destroy = "${var.google_project_disable_on_destroy}"
 }

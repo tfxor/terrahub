@@ -1,6 +1,6 @@
 resource "google_project" "{{ name }}" {
   name                = "${var.google_project_name}"
-  project_id          = "${lower(var.google_project_id)}-{{ code }}"
+  project_id          = "${var.google_project_id}"
   org_id              = "${var.google_org_id}"
   folder_id           = "${var.google_project_folder_id}"
   billing_account     = "${var.google_billing_account}"

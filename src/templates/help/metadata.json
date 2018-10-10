@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-10-04T13:33:50.641Z",
+  "buildDate": "2018-10-08T15:23:33.199Z",
   "commands": [
     {
       "name": "apply",
@@ -800,7 +800,7 @@
       "options": [
         {
           "name": "delete",
-          "shortcut": "d",
+          "shortcut": "D",
           "description": "Delete workspace environment (paired with --env)",
           "defaultValue": false
         },
