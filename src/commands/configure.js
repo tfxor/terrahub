@@ -22,11 +22,13 @@ class ConfigureCommand extends TerraformCommand {
   run() {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
+    const data = configContent instanceof Array ? configContent : [configContent];
 
     if (global === true) {
-      let content = ConfigLoader.readConfig(cfgPath);
-      let finalContent = this._updateConfig(configContent, content);
-      ConfigLoader.writeConfig(finalContent, cfgPath);
+      const content = ConfigLoader.readConfig(cfgPath);
+
+      data.forEach(it => this._updateConfig(it, content));
+      ConfigLoader.writeConfig(content, cfgPath);
 
       return Promise.resolve('Done');
     }
@@ -36,26 +38,22 @@ class ConfigureCommand extends TerraformCommand {
       const configs = this.getConfig();
 
       Object.keys(configs).forEach(key => {
-        const componentPath = path.join(
-          configs[key].project.root,
-          configs[key].root,
-          config.defaultFileName
-        );
+        const componentPath = path.join(configs[key].project.root, configs[key].root, config.defaultFileName);
 
-        let content = ConfigLoader.readConfig(componentPath);
-        let finalContent = this._updateConfig(configContent, content);
+        const content = ConfigLoader.readConfig(componentPath);
 
-        ConfigLoader.writeConfig(finalContent, componentPath);
+        data.forEach(it => this._updateConfig(it, content));
+        ConfigLoader.writeConfig(content, componentPath);
       });
 
       return Promise.resolve('Done');
     }
 
-    const rootPath = this.getAppPath();
-    const rootConfigPath = path.join(rootPath, config.defaultFileName);
-    let content = ConfigLoader.readConfig(rootConfigPath);
-    let finalContent = this._updateConfig(configContent, content);
-    ConfigLoader.writeConfig(finalContent, rootConfigPath);
+    const rootConfigPath = path.join(this.getAppPath(), config.defaultFileName);
+    const content = ConfigLoader.readConfig(rootConfigPath);
+
+    data.forEach(it => this._updateConfig(it, content));
+    ConfigLoader.writeConfig(content, rootConfigPath);
 
     return Promise.resolve('Done');
   }
@@ -64,61 +62,58 @@ class ConfigureCommand extends TerraformCommand {
    *
    */
   _updateConfig(string, content) {
+    const regex = /([^[]+)\[\d*]/;
+    let [keyString, ...value] = string.split('=');
 
-    const obj = content;
-    let [keyString, ...value] = '';
-    let condition = string instanceof Array;
-    let forCondition = condition ? string.length : 1;
+    value = value.join('=');
 
-    for (let y = 0; y < forCondition; y++) {
-      [keyString, ...value] = condition === true ? string[y].split('=') : string.split('=');
-      const keys = keyString.split('.');
-      let destination = obj;
-      let i = 0;
+    let destination = content;
+    const keys = keyString.split('.');
 
-      for (i = 0; i < keys.length - 1; i++) {
-        const key = keys[i];
-        if (/\[\d*\]/.test(key)) {
-          if (destination instanceof Array) {
-            destination.push([]);
-            destination = destination[destination.length - 1];
-          } else {
-            destination[key] = [];
-            destination = destination[key];
-          }
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+
+      if (regex.test(key)) {
+        if (destination instanceof Array) {
+          destination.push([]);
+          destination = destination[destination.length - 1];
         } else {
-          if (destination instanceof Array) {
-            destination.push({});
-            destination = destination[destination.length - 1];
-          } else {
-            if (!destination.hasOwnProperty(key)) {
-              destination[key] = {};
-            }
-            destination = destination[key];
-          }
+          destination[key] = [];
+          destination = destination[key];
         }
-      }
-      
-      if (destination instanceof Array) {
-        destination.push(value);
       } else {
-        try {
-          if (/\[\d*\]/.test(keyString)) {
-            destination[keys[keys.length - 1].slice(0, -2)].push(JSON.parse(value));
-          } else {
-            destination[keys[keys.length - 1]] = JSON.parse(value);
+        if (destination instanceof Array) {
+          destination.push({});
+          destination = destination[destination.length - 1];
+        } else {
+          if (!destination.hasOwnProperty(key)) {
+            destination[key] = {};
           }
-        } catch (error) {
-          if (/\[\d*\]/.test(keyString) === true) {
-            destination[keys[keys.length - 1].slice(0, -2)] = [];
-            destination[keys[keys.length - 1].slice(0, -2)].push(JSON.parse(value));
-          } else {
-            destination[keys[keys.length - 1]] = value;
-          }
+          destination = destination[key];
         }
       }
     }
-    return obj;
+
+    const lastKey = keys[keys.length - 1];
+    const match = lastKey.match(regex);
+    const finalKey = match ? match.slice(-2)[1] : lastKey;
+
+    let load;
+    try {
+      load = JSON.parse(value);
+    } catch (error) {
+      load = value;
+    }
+
+    if (match) {
+      if (!destination[finalKey] || !(destination[finalKey] instanceof Array)) {
+        destination[finalKey] = [];
+      }
+
+      destination[finalKey].push(load);
+    } else {
+      destination[finalKey] = load;
+    }
   }
 }
 
