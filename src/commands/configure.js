@@ -59,8 +59,9 @@ class ConfigureCommand extends TerraformCommand {
   }
 
   /**
-   * @param string
-   * @param content
+   * @param {String} string 
+   * @param {Object} content
+   * @return {Object}
    * @private
    */
   _updateConfig(string, content) {
@@ -99,9 +100,10 @@ class ConfigureCommand extends TerraformCommand {
   }
 
   /**
-   * @param destination
-   * @param key
-   * @param regex
+   * @param {Object|Array} destination
+   * @param {String} key
+   * @param {RegExp} regex
+   * @return {Object|Array}
    * @private
    */
   _intermidiateFill(destination, key, regex) {
