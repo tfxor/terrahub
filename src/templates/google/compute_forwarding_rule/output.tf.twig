@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "creation_timestamp" {
+  value = "${google_compute_forwarding_rule.{{ name }}.creation_timestamp}"
+}
+
+output "label_fingerprint" {
+  value = "${google_compute_forwarding_rule.{{ name }}.label_fingerprint}"
+}
+
+output "service_name" {
+  value = "${google_compute_forwarding_rule.{{ name }}.service_name}"
+}
+
+output "self_link" {
+  value = "${google_compute_forwarding_rule.{{ name }}.self_link}"
+}
