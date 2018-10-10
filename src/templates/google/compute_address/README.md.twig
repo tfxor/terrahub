@@ -1,0 +1,32 @@
+# google_compute_address
+
+Represents an Address resource.
+
+Each virtual machine instance has an ephemeral internal IP address and, optionally, an external IP address. To communicate between instances on the same network, you can use an instance's internal IP address. To communicate with the Internet and instances outside of the same network, you must specify the instance's external IP address.
+
+Internal IP addresses are ephemeral and only belong to an instance for the lifetime of the instance; if the instance is deleted and recreated, the instance is assigned a new internal IP address, either by Compute Engine or by you. External IP addresses can be either ephemeral or static.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|google_compute_address_name|Name of the resource. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.|string|{{ name }}|No|
+|google_subnetwork|The URL of the subnetwork in which to reserve the address. If an IP address is specified, it must be within the subnetwork's IP range. This field can only be used with INTERNAL type with GCE_ENDPOINT/DNS_RESOLVER purposes.|string||Yes|
+|google_compute_address_type|The type of address to reserve, either INTERNAL or EXTERNAL. If unspecified, defaults to EXTERNAL.|string|INTERNAL|No|
+|google_compute_address_ip|The static external IP address represented by this resource. Only IPv4 is supported. An address may only be specified for INTERNAL address types. The IP address must be inside the specified subnetwork, if any.|string|10.2.0.42|No|
+|google_region|The Region in which the created address should reside. If it is not provided, the provider region is used.|string|us-central1|No|
+|google_compute_address_description|An optional description of this resource.|string|Managed by TerraHub|No|
+|google_compute_address_network_tier|The networking tier used for configuring this address. This field can take the following values: PREMIUM or STANDARD. If this field is not specified, it is assumed to be PREMIUM.|string|STANDARD|No|
+|google_project_id|The ID of the project in which the resource belongs. If it is not provided, the provider project is used.|string||Yes|
+|custom_labels|Custom labels. A set of key/value label pairs to assign to the project.|map||No|
+|default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|creation_timestamp|Creation timestamp in RFC3339 text format.|string|
+|users|The URLs of the resources that are using this address.|string|
+|label_fingerprint|The fingerprint used for optimistic locking of this resource. Used internally during updates. This property is in beta, and should be used with the terraform-provider-google-beta provider. See Provider Versions for more details on beta fields.|string|
+|self_link|The URI of the created resource.|string|
+|address|The IP of the created resource.|string|

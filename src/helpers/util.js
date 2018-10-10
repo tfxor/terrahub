@@ -184,16 +184,25 @@ function yesNoQuestion(question) {
  */
 function spawner(command, args, options, onStderr, onStdout) {
   const stdout = [];
+  const stderr = [];
   const promise = spawn(command, args, options);
   const child = promise.childProcess;
 
-  child.stderr.on('data', onStderr);
+  child.stderr.on('data', data => {
+    stderr.push(data);
+    onStderr(data);
+  });
+
   child.stdout.on('data', data => {
     stdout.push(data);
     onStdout(data);
   });
 
-  return promise.then(() => Buffer.concat(stdout));
+  return promise.then(() => Buffer.concat(stdout))
+    .catch(err => {
+      err.message = stderr;
+      throw err;
+    });
 }
 
 /**
@@ -203,17 +212,17 @@ function spawner(command, args, options, onStderr, onStdout) {
  */
 function exponentialBackoff(promiseFunction, options) {
   const {
-    conditionFn = () => true,
+    conditionFunction = () => true,
     maxRetries = 2
   } = options;
   let retries = 0;
 
   function retry() {
     return promiseFunction().catch(error => {
-      if (conditionFn(error) && retries < maxRetries) {
-        return setTimeoutPromise(1000*Math.exp(retries++)).then(() => retry());
+      if (conditionFunction(error) && retries < maxRetries) {
+        return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
       } else {
-        error.Message += `${EOL}Failed after ${maxRetries} retries.`;
+        error.message += `${EOL}Failed after ${maxRetries} retries.`;
         return Promise.reject(error);
       }
     });

@@ -1,0 +1,6 @@
+data "google_iam_policy" "{{ name }}" {
+  binding {
+    role = "${var.google_project_role}"
+    members = "${var.google_project_members}"
+  }
+}

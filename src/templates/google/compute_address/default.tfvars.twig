@@ -1,0 +1,24 @@
+# Specify default values for variables defined in variables.tf
+
+#############
+# top level #
+#############
+google_compute_address_name         = "{{ name }}"
+google_project_id                   = "{{ name }}"
+google_subnetwork                   = ""
+google_compute_address_type         = "INTERNAL"
+google_compute_address_ip           = "10.0.0.1"
+google_region                       = "us-central1
+google_compute_address_description  = "Managed by TerraHub"
+google_compute_address_network_tier = "STANDARD"
+
+##########
+# labels #
+##########
+custom_labels  = {}
+default_labels = {
+  "thubname"    = "{{ name }}"
+  "thubcode"    = "{{ code }}"
+  "thubenv"     = "default"
+  "description" = "managed-by-terrahub"
+}
