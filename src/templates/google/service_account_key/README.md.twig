@@ -10,6 +10,7 @@ Creates and manages service account key-pairs, which allow the user to establish
 |google_service_account_key_algorithm|The algorithm used to generate the key. KEY_ALG_RSA_2048 is the default algorithm. Valid values are listed at ServiceAccountPrivateKeyType (only used on create)|string|KEY_ALG_RSA_2048|No|
 |google_service_account_key_public_key_type|The output format of the public key requested. X509_PEM is the default output format.|string|X509_PEM|No|
 |google_service_account_key_private_key_type|The output format of the private key. TYPE_GOOGLE_CREDENTIALS_FILE is the default output format.|string|TYPE_GOOGLE_CREDENTIALS_FILE|No|
+|google_project_id|The project ID. Changing this forces a new project to be created.|string|{{ name }}|No|
 
 ## output parameters
 

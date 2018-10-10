@@ -31,6 +31,10 @@ variable "google_project_auto_create_network" {
   description = "If true, the Terraform resource can be deleted without deleting the Project via the Google API."
 }
 
+variable "google_location_id" {
+  description = "The location to serve the app from."
+}
+
 ##########
 # labels #
 ##########
