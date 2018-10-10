@@ -7,5 +7,9 @@ resource "google_project" "{{ name }}" {
   skip_delete         = "${var.google_project_skip_delete}"
   auto_create_network = "${var.google_project_auto_create_network}"
 
+  app_engine          = {
+    location_id = "${var.google_location_id}"
+  }
+
   labels              = "${merge(var.default_labels, var.custom_labels)}"
 }

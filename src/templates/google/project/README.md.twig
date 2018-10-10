@@ -24,6 +24,7 @@ It's important to note that any project resources that were added to your Terraf
 |google_billing_account|The alphanumeric ID of the billing account this project belongs to. The user or service account performing this operation with Terraform must have Billing Account Administrator privileges (roles/billing.admin) in the organization. See Google Cloud Billing API Access Control for more details.|string||No|
 |google_project_skip_delete|If true, the Terraform resource can be deleted without deleting the Project via the Google API.|boolean|false|No|
 |google_project_auto_create_network|If true, the Terraform resource can be deleted without deleting the Project via the Google API.|boolean|false|No|
+|google_location_id|The location to serve the app from.|string|us-central|No|
 |custom_labels|Custom labels. A set of key/value label pairs to assign to the project.|map||No|
 |default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"ThubName"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
