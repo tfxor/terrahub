@@ -4,5 +4,10 @@
     {% if dependsOn %}
     "dependsOn": "{{ dependsOn|join('","') }}"
     {% endif %}
+  },
+  "ci": {
+    "mapping": [
+      '.'
+    ]
   }
 }
