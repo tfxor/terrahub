@@ -59,7 +59,9 @@ class ConfigureCommand extends TerraformCommand {
   }
 
   /**
-   *
+   * @param string
+   * @param content
+   * @private
    */
   _updateConfig(string, content) {
     const regex = /([^[]+)\[\d*]/;
@@ -72,28 +74,8 @@ class ConfigureCommand extends TerraformCommand {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-
-      if (regex.test(key)) {
-        if (destination instanceof Array) {
-          destination.push([]);
-          destination = destination[destination.length - 1];
-        } else {
-          destination[key] = [];
-          destination = destination[key];
-        }
-      } else {
-        if (destination instanceof Array) {
-          destination.push({});
-          destination = destination[destination.length - 1];
-        } else {
-          if (!destination.hasOwnProperty(key)) {
-            destination[key] = {};
-          }
-          destination = destination[key];
-        }
-      }
+      destination = this._intermidiateFill(destination, key, regex);
     }
-
     const lastKey = keys[keys.length - 1];
     const match = lastKey.match(regex);
     const finalKey = match ? match.slice(-2)[1] : lastKey;
@@ -114,6 +96,30 @@ class ConfigureCommand extends TerraformCommand {
     } else {
       destination[finalKey] = load;
     }
+  }
+
+  /**
+   * @param destination
+   * @param key
+   * @param regex
+   * @private
+   */
+  _intermidiateFill(destination, key, regex) {
+    const match = key.match(regex);
+    const finalKey = match ? match.slice(-2)[1] : key;
+    const value = match ? [] : {};
+
+    if (destination instanceof Array) {
+      destination.push(value);
+      destination = destination[destination.length - 1];
+    } else {
+      if (!match && !destination.hasOwnProperty(finalKey)) {
+        destination[finalKey] = value;
+      }
+      destination = destination[finalKey];
+    }
+
+    return destination;
   }
 }
 
