@@ -1,0 +1,17 @@
+resource "google_compute_forwarding_rule" "{{ name }}" {
+  name          = "${var.google_compute_forwarding_rule_name}"
+  description   = "${var.google_compute_forwarding_rule_description}"  
+  ip_address    = "${var.google_compute_forwarding_rule_ip_address}"
+  ip_protocol   = "${var.google_compute_forwarding_rule_ip_protocol}"
+  ip_version    = "${var.google_compute_forwarding_rule_ip_version}"
+  network       = "${var.google_network}"
+  port_range    = "${var.google_compute_forwarding_rule_port_range}"
+  subnetwork    = "${var.google_subnetwork}"
+  target        = "${var.google_target}"
+  network_tier  = "${var.google_compute_forwarding_rule_network_tier}"
+  region        = "${var.google_project_region}"
+  project       = "${var.google_project_id}"
+  service_label = "${var.google_service_label}"
+
+  labels = "${merge(var.default_labels, var.custom_labels)}"
+}

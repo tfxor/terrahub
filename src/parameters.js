@@ -77,6 +77,7 @@ module.exports = {
   homePath: _homePath,
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
+  cfgPath: cfgPath,
   config: {
     api: cfg.api,
     env: cfg.env,
@@ -87,7 +88,7 @@ module.exports = {
     isHelp: _isHelp(args),
     isDefault: isDefault,
     fileName: isDefault ? `.terrahub.${cfg.format}` : `.terrahub.${cfg.env}.${cfg.format}`,
-    defaultFileName: `.terrahub.${cfg.format}`
+    defaultFileName: `.terrahub.${cfg.format}`,
   },
   templates: {
     aws: path.join(templates, 'aws'),

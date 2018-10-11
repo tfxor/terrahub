@@ -1,0 +1,21 @@
+# Define list of variables to be output
+
+output "creation_timestamp" {
+  value = "${google_compute_address.{{ name }}.creation_timestamp}"
+}
+
+output "users" {
+  value = "${google_compute_address.{{ name }}.users}"
+}
+
+output "label_fingerprint" {
+  value = "${google_compute_address.{{ name }}.label_fingerprint}"
+}
+
+output "self_link" {
+  value = "${google_compute_address.{{ name }}.self_link}"
+}
+
+output "address" {
+  value = "${google_compute_address.{{ name }}.address}"
+}

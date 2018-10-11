@@ -196,6 +196,84 @@
       ]
     },
     {
+      "name": "configure",
+      "description": "add, update or remove data from terrahub config files",
+      "options": [
+        {
+          "name": "config",
+          "shortcut": "c",
+          "description": "config",
+          "defaultValue": ""
+        },
+        {
+          "name": "global",
+          "shortcut": "G",
+          "description": "fefgjiosgis",
+          "defaultValue": false
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
+          "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
       "name": "destroy",
       "description": "run `terraform destroy` across multiple terrahub components",
       "options": [
