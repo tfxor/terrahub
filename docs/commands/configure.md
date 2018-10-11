@@ -1,13 +1,14 @@
-# terrahub workspace
+# terrahub configure
 
 ```
-Usage: terrahub workspace [options]
+Usage: terrahub configure [options]
 
 terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
-this command will run `terraform workspace` across multiple terrahub components
+this command will add, change or remove config parameters from terrahub config files
 
 Options:
-  --delete, -D 	 Delete workspace environment (paired with --env)
+  --config, -c 		 Configuration parameter to be affected by command execution
+  --global, -G 		 Update global config file instead of root or local
   --include, -i 	 List of components to include (comma separated values)
   --exclude, -x 	 List of components to exclude (comma separated values)
   --include-regex, -I 	 List of components to include (regex search)
@@ -15,7 +16,7 @@ Options:
   --git-diff, -g 	 List of components to include (git diff)
   --var, -r 		 Variable(s) to be used by terraform
   --var-file, -l 	 Variable file(s) to be used by terraform
-  --silent, -s 	 Runs the command silently (without any output)
+  --silent, -s 		 Runs the command silently (without any output)
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands
 ```

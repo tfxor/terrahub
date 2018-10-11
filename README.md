@@ -53,6 +53,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 || **# terrahub management** ||
 | [project](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/project.md) | create new or define existing folder as project that manages terraform configuration | :heavy_check_mark: |
 | [component](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
+| [configure](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/configure.md) | add, change or remove config parameters from terrahub config files | :heavy_check_mark: |
 | [graph](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/graph.md) | show dependencies graph for terraform configuration mapped as terrahub components | :heavy_check_mark: |
 || **# terraform execution** ||
 | [apply](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
