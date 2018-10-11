@@ -222,7 +222,7 @@ function exponentialBackoff(promiseFunction, options) {
       if (conditionFunction(error) && retries < maxRetries) {
         return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
       } else {
-        error.Message += `${EOL}Failed after ${maxRetries} retries.`;
+        error.message += `${EOL}Failed after ${maxRetries} retries.`;
         return Promise.reject(error);
       }
     });

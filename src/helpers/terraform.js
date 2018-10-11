@@ -203,7 +203,8 @@ class Terraform {
    * @private
    */
   _checkIgnoreError(error) {
-    return [/handshake timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+    return [/handshake timeout/, /connection reset by peer/,
+      /failed to decode/, /EOF/].some(it => it.test(error.message));
   }
 
   /**
@@ -296,7 +297,7 @@ class Terraform {
           ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
         } else {
           ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
-        };
+        }
 
         this._output.metadata = metadata;
         const planPath = this._metadata.getPlanPath();
@@ -425,7 +426,7 @@ class Terraform {
       };
 
       return Promise.resolve(buffer);
-    })
+    });
   }
 
   /**

@@ -1,0 +1,13 @@
+# Define list of variables to be output
+
+output "gateway_ipv4" {
+  value = "${google_compute_network.{{ name }}.gateway_ipv4}"
+}
+
+output "name" {
+  value = "${google_compute_network.{{ name }}.name}"
+}
+
+output "self_link" {
+  value = "${google_compute_network.{{ name }}.self_link}"
+}
