@@ -1,0 +1,21 @@
+# google_compute_network
+
+Manages a network within GCE. For more information see the official documentation and API.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|compute_network_name|A unique name for the resource, required by GCE. Changing this forces a new resource to be created.|string|{{ name }}|No|
+|compute_network_auto_create_subnetworks|If set to true, this network will be created in auto subnet mode, and Google will create a subnet for each region automatically. If set to false, a custom subnetted network will be created that can support google_compute_subnetwork resources.|string|true|No|
+|compute_network_routing_mode|Sets the network-wide routing mode for Cloud Routers to use. Accepted values are "GLOBAL" or "REGIONAL".|string|REGIONAL|No|
+|compute_network_description|A brief description of this resource.|string|Managed by TerraHub|No|
+|google_project_id|The project ID. If not specified, uses the ID of the project configured with the provider.|string||Yes|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|gateway_ipv4|The IPv4 address of the gateway.|string|
+|name|The unique name of the network.|string|
+|self_link|The URI of the created resource.|string|

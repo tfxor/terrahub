@@ -1,0 +1,11 @@
+# Specify default values for variables defined in variables.tf
+
+#############
+# top level #
+#############
+google_compute_subnetwork_name             = "{{ name }}"
+google_compute_subnetwork_ip_cidr_range    = "10.0.0.0/24"
+google_region                              = "us-central1"
+google_compute_subnetwork_description      = "Managed by TerraHub"
+google_compute_subnetwork_enable_flow_logs = "false"
+google_project_id                          = "{{ name }}"

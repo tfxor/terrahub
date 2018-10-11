@@ -1,6 +1,6 @@
 # TerraHub
 
-## DevOps Hub for Terraform
+## DevOps Hub for Terraform Automation
 
 TerraHub is a terraform centric devops tool that simplifies provisioning and
 management at scale of cloud resources and cloud services across multiple cloud
