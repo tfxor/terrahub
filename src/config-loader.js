@@ -133,7 +133,15 @@ class ConfigLoader {
    */
   listConfig(dir = false) {
     const searchPath = dir || this.appPath();
+    const { include, ignore } = this.getProjectConfig();
+    if (include && include.length) {
+      const ignoreArray = []
 
+      include.forEach(it => {
+        ignoreArray.push(...this._find('**/.terrahub.+(json|yml|yaml)', path.resolve(this.appPath(), it), ignore));
+      })
+      return ignoreArray
+    }
     return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
   }
 
@@ -256,11 +264,12 @@ class ConfigLoader {
    * Find files by pattern
    * @param {String} pattern
    * @param {String} path
+   * @param {String[]} ignore
    * @returns {*}
    * @private
    */
-  _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: ConfigLoader.IGNORE_PATTERNS });
+  _find(pattern, path, ignore = []) {
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: ConfigLoader.IGNORE_PATTERNS.concat(ignore) });
   }
 
   /**
