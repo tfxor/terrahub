@@ -3,7 +3,11 @@
     "name": "{{ name }}",
     "code": "{{ code }}",
     "provider": "{{ provider }}"
-    "include": []
+    "include": ["./"]
+    "ignore": [
+      "**/.terraform/*",
+      "**/node_modules/*"
+    ]
   },
   "terraform": {
     "varFile": ["default.tfvars"]

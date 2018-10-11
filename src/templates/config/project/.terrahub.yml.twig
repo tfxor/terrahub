@@ -4,10 +4,10 @@ project:
   code: '{{ code }}'
   provider: '{{ provider }}'
   include:
-  - /.*$/i
+  - ./
   ignore:
-  - /^(.*\/)?.terraform(\/?$)?/i
-  - /^(.*\/)?node_modules(\/?$)?/i
+  - **/.terraform/*
+  - **/node_modules/*
 
 ## terraform config
 terraform:
