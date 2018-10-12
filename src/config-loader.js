@@ -144,11 +144,11 @@ class ConfigLoader {
 
     let searchPaths;
     if (dir) {
-      searchPaths = dir;
+      searchPaths = [dir];
     } else if (include && include.length) {
       searchPaths = include.map(it => path.resolve(this.appPath(), it));
     } else {
-      searchPaths = this.appPath();
+      searchPaths = [this.appPath()];
     }
 
     return searchPaths
