@@ -175,8 +175,7 @@ class AbstractCommand {
    */
   listConfig(dir = false) {
     return this._configLoader.listConfig({
-      dir: dir,
-      isEnv: false
+      dir: dir
     });
   }
 
@@ -188,7 +187,7 @@ class AbstractCommand {
   listCurrentEnvConfig(dir = false) {
     return this._configLoader.listConfig({
       dir: dir,
-      isEnv: true
+      env: 'specific'
     });
   }
 
@@ -200,7 +199,7 @@ class AbstractCommand {
   listAllEnvConfig(dir = false) {
     return this._configLoader.listConfig({
       dir: dir,
-      isAllEnv: true
+      env: 'every'
     });
   }
 
