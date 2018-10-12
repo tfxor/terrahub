@@ -128,11 +128,19 @@ class ConfigLoader {
 
   /**
    * Get list of configuration files
-   * @param {*} dir
+   * @param {Object} options
    * @returns {Array}
    */
-  listConfig(dir = false) {
+  listConfig(options = {}) {
     const { include } = this.getProjectConfig();
+    const {
+      dir = false,
+      isEnv = false
+    } = options;
+
+    const searchPattern = isEnv ?
+      `**/.terrahub.${config.env}.+(json|yml|yaml)` :
+      '**/.terrahub.+(json|yml|yaml)';
 
     let searchPaths;
     if (dir) {
@@ -142,24 +150,13 @@ class ConfigLoader {
     } else {
       searchPaths = this.appPath();
     }
-    
+
     return searchPaths
-      .map(it => this._find('**/.terrahub.+(json|yml|yaml)', it))
+      .map(it => this._find(searchPattern, it))
       .reduce((accumulator, currentValue) => {
         accumulator.push(...currentValue);
         return accumulator;
       });
-  }
-
-  /**
-   * Get list of configuration files for the specified environment
-   * @param {*} dir
-   * @return {Array}
-   */
-  listEnvConfig(dir = false) {
-    const searchParh = dir || this.appPath();
-
-    return searchParh ? this._find(`**/.terrahub.${config.env}.+(json|yml|yaml)`, searchParh) : [];
   }
 
   /**
