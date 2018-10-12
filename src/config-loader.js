@@ -128,24 +128,35 @@ class ConfigLoader {
 
   /**
    * Get list of configuration files
-   * @param {*} dir
+   * @param {Object} options
    * @returns {Array}
    */
-  listConfig(dir = false) {
-    const searchPath = dir || this.appPath();
+  listConfig(options = {}) {
+    const { include } = this.getProjectConfig();
+    const {
+      dir = false,
+      isEnv = false
+    } = options;
 
-    return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
-  }
+    const searchPattern = isEnv ?
+      `**/.terrahub.${config.env}.+(json|yml|yaml)` :
+      '**/.terrahub.+(json|yml|yaml)';
 
-  /**
-   * Get list of configuration files for the specified environment
-   * @param {*} dir
-   * @return {Array}
-   */
-  listEnvConfig(dir = false) {
-    const searchParh = dir || this.appPath();
+    let searchPaths;
+    if (dir) {
+      searchPaths = [dir];
+    } else if (include && include.length) {
+      searchPaths = include.map(it => path.resolve(this.appPath(), it));
+    } else {
+      searchPaths = [this.appPath()];
+    }
 
-    return searchParh ? this._find(`**/.terrahub.${config.env}.+(json|yml|yaml)`, searchParh) : [];
+    return searchPaths
+      .map(it => this._find(searchPattern, it))
+      .reduce((accumulator, currentValue) => {
+        accumulator.push(...currentValue);
+        return accumulator;
+      });
   }
 
   /**
@@ -260,7 +271,7 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: ConfigLoader.IGNORE_PATTERNS });
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.IGNORE_PATTERNS });
   }
 
   /**
@@ -355,8 +366,8 @@ class ConfigLoader {
    * @returns {String[]}
    * @constructor
    */
-  static get IGNORE_PATTERNS() {
-    return ['**/node_modules/*'];
+  get IGNORE_PATTERNS() {
+    return this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
   }
 }
 

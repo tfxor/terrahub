@@ -174,7 +174,10 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listConfig(dir = false) {
-    return this._configLoader.listConfig(dir);
+    return this._configLoader.listConfig({
+      dir: dir,
+      isEnv: false
+    });
   }
 
   /**
@@ -183,7 +186,10 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listEnvConfig(dir = false) {
-    return this._configLoader.listEnvConfig(dir);
+    return this._configLoader.listConfig({
+      dir: dir,
+      isEnv: true
+    });
   }
 
   /**
