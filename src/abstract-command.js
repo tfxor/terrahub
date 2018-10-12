@@ -175,8 +175,7 @@ class AbstractCommand {
    */
   listConfig(dir = false) {
     return this._configLoader.listConfig({
-      dir: dir,
-      isEnv: false
+      dir: dir
     });
   }
 
@@ -185,10 +184,22 @@ class AbstractCommand {
    * @param {String|Boolean} dir
    * @returns {String[]}
    */
-  listEnvConfig(dir = false) {
+  listCurrentEnvConfig(dir = false) {
     return this._configLoader.listConfig({
       dir: dir,
-      isEnv: true
+      env: 'specific'
+    });
+  }
+
+  /**
+   * Get list of configuration files for the specified environment
+   * @param {String|Boolean} dir
+   * @returns {String[]}
+   */
+  listAllEnvConfig(dir = false) {
+    return this._configLoader.listConfig({
+      dir: dir,
+      env: 'every'
     });
   }
 
