@@ -21,6 +21,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
       .addOption('depends-on', 'o', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
+      .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -33,6 +34,7 @@ class ComponentCommand extends AbstractCommand {
     this._directory = this.getOption('directory');
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
+    this._delete = this.getOption('delete');
     this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
     this._appPath = this.getAppPath();
 
@@ -44,7 +46,26 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    return this._template ? this._createNewComponent() : this._addExistingComponent();
+    return this._delete ? 
+      this._deleteComponent() :
+        this._template ? 
+          this._createNewComponent() : 
+          this._addExistingComponent();
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _deleteComponent() {
+    const config = this.getConfig();
+    
+    const key = Object.keys(config).find(it => config[it].name === this._name);
+    const configPath = path.join(config[key].project.root, config[key].root);
+    const configFiles = this.listAllEnvConfig(configPath);
+    
+    return Promise.all(configFiles.map(it => fse.remove(it)))
+      .then(() => Promise.resolve('Done'));
   }
 
   /**

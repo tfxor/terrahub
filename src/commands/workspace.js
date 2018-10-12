@@ -36,7 +36,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     const dirPaths = Object.keys(configs).map(hash => path.join(rootPath, configs[hash].root));
     const configsList = dirPaths.map(it => path.join(it, config.defaultFileName));
-    const envConfigsList = this.listEnvConfig();
+    const envConfigsList = this.listCurrentEnvConfig();
 
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);

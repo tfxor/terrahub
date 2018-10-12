@@ -135,12 +135,18 @@ class ConfigLoader {
     const { include } = this.getProjectConfig();
     const {
       dir = false,
-      isEnv = false
+      isEnv = false,
+      isAllEnv = false,
     } = options;
 
-    const searchPattern = isEnv ?
-      `**/.terrahub.${config.env}.+(json|yml|yaml)` :
-      '**/.terrahub.+(json|yml|yaml)';
+    let searchPattern;
+    if (isAllEnv) {
+      searchPattern = `**/.terrahub*.+(json|yml|yaml)`;
+    } else if(isEnv){
+      searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
+    } else {
+      searchPattern =  '**/.terrahub.+(json|yml|yaml)';
+    }
 
     let searchPaths;
     if (dir) {
