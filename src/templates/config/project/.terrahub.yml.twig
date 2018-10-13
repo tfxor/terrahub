@@ -3,6 +3,11 @@ project:
   name: '{{ name }}'
   code: '{{ code }}'
   provider: '{{ provider }}'
+  include:
+  - ./
+  ignore:
+  - '**/.terraform/*'
+  - '**/node_modules/*'
 
 ## terraform config
 terraform:

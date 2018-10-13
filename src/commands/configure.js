@@ -11,9 +11,9 @@ class ConfigureCommand extends TerraformCommand {
    */
   configure() {
     this.setName('configure')
-      .setDescription('add, update or remove data from terrahub config files')
-      .addOption('config', 'c', 'config', String, '')
-      .addOption('global', 'G', 'fefgjiosgis', Boolean, false);
+      .setDescription('add, change or remove config parameters from terrahub config files')
+      .addOption('config', 'c', 'Configuration parameter to be affected by command execution', String, '')
+      .addOption('global', 'G', 'Update global config file instead of root or local', Boolean, false);
   }
 
   /**
