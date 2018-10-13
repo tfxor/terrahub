@@ -1,0 +1,6 @@
+resource "aws_iam_user_group_membership" "{{ name }}" {
+  user = "${var.iam_user_name}"
+  groups = [
+    "${var.iam_groups_name}"
+  ]
+}
