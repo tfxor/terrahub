@@ -161,21 +161,21 @@
   },
   "azurerm": {},
   "google": {
-    "google_project":"google/project",
-    "google_service_account":"google/service_account",
-    "google_service_account_key":"google/service_account_key",
-    "google_project_iam_binding":"google/project_iam_binding",
-    "google_project_iam_policy":"google/project_iam_policy",
-    "google_project_iam_member":"google/project_iam_member",
-    "google_project_service":"google/project_service",
+    "google_compute_address":"google/compute_address",
+    "google_compute_forwarding_rule":"google/compute_forwarding_rule",
     "google_compute_network":"google/compute_network",
     "google_compute_network_peering":"google/compute_network_peering",
     "google_compute_subnetwork":"google/compute_subnetwork",
-    "google_compute_subnetwork_iam_policy":"google/compute_subnetwork_iam_policy",
     "google_compute_subnetwork_iam_binding":"google/compute_subnetwork_iam_binding",
     "google_compute_subnetwork_iam_member":"google/compute_subnetwork_iam_member",
-    "google_compute_address":"google/compute_address",
+    "google_compute_subnetwork_iam_policy":"google/compute_subnetwork_iam_policy",
     "google_compute_vpn_gateway":"google/compute_vpn_gateway",
-    "google_compute_forwarding_rule":"google/compute_forwarding_rule"
+    "google_project":"google/project",
+    "google_project_iam_binding":"google/project_iam_binding",
+    "google_project_iam_member":"google/project_iam_member",
+    "google_project_iam_policy":"google/project_iam_policy",
+    "google_service_account":"google/service_account",
+    "google_project_service":"google/project_service",
+    "google_service_account_key":"google/service_account_key"
   }
 }
