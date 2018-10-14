@@ -4,15 +4,15 @@ project:
   code: '{{ code }}'
   provider: '{{ provider }}'
   include:
-  - ./
-  ignore:
+  - '.'
+  exclude:
   - '**/.terraform/*'
   - '**/node_modules/*'
 
 ## terraform config
 terraform:
   varFile:
-    - 'default.tfvars'
+  - 'default.tfvars'
 #   var:
 #     region: us-east-1
 #     account_id: 123456789012

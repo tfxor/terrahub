@@ -5,4 +5,4 @@ project:
 
 terraform:
   varFile:
-    - 'default.tfvars'
+  - 'default.tfvars'
