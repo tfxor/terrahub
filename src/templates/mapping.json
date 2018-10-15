@@ -162,6 +162,10 @@
   "azurerm": {},
   "google": {
     "google_compute_address":"google/compute_address",
+    "google_compute_attached_disk":"google/compute_attached_disk",
+    "google_compute_autoscaler":"google/compute_autoscaler",
+    "google_compute_backend_bucket":"google/compute_backend_bucket",
+    "google_compute_backend_service":"google/compute_backend_service",
     "google_compute_forwarding_rule":"google/compute_forwarding_rule",
     "google_compute_network":"google/compute_network",
     "google_compute_network_peering":"google/compute_network_peering",
@@ -176,6 +180,12 @@
     "google_project_iam_policy":"google/project_iam_policy",
     "google_service_account":"google/service_account",
     "google_project_service":"google/project_service",
-    "google_service_account_key":"google/service_account_key"
+    "google_service_account_key":"google/service_account_key",
+    "google_storage_bucket":"google/storage_bucket",
+    "google_storage_bucket_acl":"google/storage_bucket_acl",
+    "google_storage_bucket_iam_binding":"google/storage_bucket_iam_binding",
+    "google_storage_bucket_iam_member":"google/storage_bucket_iam_member",
+    "google_storage_bucket_iam_policy":"google/storage_bucket_iam_policy",
+    "google_storage_website":"google/storage_website"
   }
 }

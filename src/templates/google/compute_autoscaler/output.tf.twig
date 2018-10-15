@@ -1,0 +1,9 @@
+# Define list of variables to be output
+
+output "creation_timestamp" {
+  value = "${google_compute_autoscaler.{{ name }}.creation_timestamp}"
+}
+
+output "self_link" {
+  value = "${google_compute_autoscaler.{{ name }}.self_link}"
+}

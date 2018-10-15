@@ -1,0 +1,23 @@
+# google_compute_backend_service
+
+A Backend Service defines a group of virtual machines that will serve traffic for load balancing. For more information see the official documentation and the API.
+
+For internal load balancing, use a google_compute_region_backend_service.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|google_compute_backend_service_name||string|{{ name }}|No|
+|google_compute_backend_service_description||string|{{ name }}|No|
+|google_compute_backend_service_port_name||string|{{ name }}|No|
+|google_compute_backend_service_protocol||string|{{ name }}|No|
+|google_compute_backend_service_timeout_sec||string|{{ name }}|No|
+|google_compute_backend_service_enable_cdn||boolean|{{ name }}|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|fingerprint|The fingerprint of the backend service.|string|
+|self_link|The URI of the created resource.|string|

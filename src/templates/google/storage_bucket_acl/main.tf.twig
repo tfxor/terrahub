@@ -1,0 +1,4 @@
+resource "google_storage_bucket_acl" "{{ name }}" {
+  bucket      = "${var.google_storage_bucket_name}"
+  role_entity = "${var.google_storage_bucket_role_entity}"
+}
