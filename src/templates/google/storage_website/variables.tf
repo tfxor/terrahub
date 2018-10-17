@@ -73,4 +73,3 @@ variable "default_labels" {
   description = "Default labels. A set of key/value label pairs to assign to the project."
   default     = {}
 }
-

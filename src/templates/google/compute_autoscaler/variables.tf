@@ -41,4 +41,3 @@ variable "google_compute_autoscaler_policy_cooldown_period" {
 variable "google_compute_autoscaler_policy_cpu_utilization_target" {
   description = "The target CPU utilization that the autoscaler should maintain. Must be a float value in the range (0, 1]. If not specified, the default is 0.6. If the CPU level is below the target utilization, the autoscaler scales down the number of instances until it reaches the minimum number of instances you specified or until the average CPU of your instances reaches the target utilization. If the average CPU is above the target utilization, the autoscaler scales up until it reaches the maximum number of instances you specified or until the average utilization reaches the target utilization."
 }
-
