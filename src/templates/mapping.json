@@ -44,6 +44,7 @@
     "aws_codebuild_webhook": "aws/codebuild_webhook",
     "aws_codepipeline": "aws/codepipeline",
     "aws_cognito_identity_pool": "aws/cognito_identity_pool",
+    "aws_cognito_user_group": "aws/cognito_user_group",
     "aws_cognito_user_pool": "aws/cognito_user_pool",
     "aws_customer_gateway": "aws/customer_gateway",
     "aws_dax_cluster": "aws/dax_cluster",
