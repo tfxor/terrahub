@@ -1,4 +1,5 @@
 resource "aws_lambda_function" "{{ name }}" {
+  depends_on    = ["data.external.{{ name }}"]
   function_name = "${var.lambda_function_name}"
   description   = "${var.lambda_description}"
   handler       = "${var.lambda_handler}"
@@ -9,8 +10,6 @@ resource "aws_lambda_function" "{{ name }}" {
   role          = "arn:aws:iam::${var.account_id}:role/${var.lambda_iam_role}"
   reserved_concurrent_executions = "${var.lambda_reserved_concurrent_executions}"
 
-  # count            = "${data.external.{{ name }}.result["error"] == "0" ? 1 : 0}"
-  # source_code_hash = "${base64sha256(file(data.null_data_source.{{ name }}.outputs["output_path"]))}"
   s3_bucket        = "${var.lambda_s3_bucket}"
   s3_key           = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
 

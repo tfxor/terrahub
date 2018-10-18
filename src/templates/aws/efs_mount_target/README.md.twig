@@ -12,8 +12,6 @@ Provides an Elastic File System (EFS) mount target.
 |efs_mount_target_subnet_id|The ID of the subnet to add the mount target in.|string||Yes|
 |efs_mount_target_ip_address|The address (within the address range of the specified subnet) at which the file system may be mounted via the mount target.|string||Yes|
 |efs_mount_target_security_groups|A list of up to 5 VPC security group IDs (that must be for the same VPC as subnet specified) in effect for the mount target.|list||Yes|
-|custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
 
 ## output parameters
 

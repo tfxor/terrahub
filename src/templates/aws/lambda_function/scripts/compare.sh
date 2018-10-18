@@ -25,6 +25,9 @@ else
   THUB_SHA=$(find ${THUB_COMPARE_PATH} -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
 fi
 
+## Change value in tfvar
+sed -i 's/do-not-change/'${THUB_SHA}'/g' ./default.tfvars
+
 ## Checking if needs to skip SHA256 sums compare
 echo "export THUB_SHA=\"${THUB_SHA}\"" >> .terrahub_build.env
 echo "INFO: Current SHA256 => ${THUB_SHA}"
