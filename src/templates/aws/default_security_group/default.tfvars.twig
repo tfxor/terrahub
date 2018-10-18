@@ -27,10 +27,10 @@ security_group_egress_cidr_blocks = "0.0.0.0/0"
 ########
 custom_tags  = {}
 default_tags = {
-  "ThubName"    = "{{ name }}"
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
   "ThubCode"    = "{{ code }}"
   "ThubEnv"     = "default"
-  "Description" = "Managed by TerraHub"
 }
 
 ##########

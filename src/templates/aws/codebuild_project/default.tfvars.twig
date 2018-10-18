@@ -50,10 +50,10 @@ codebuild_project_cache_type = "S3"
 ########
 custom_tags  = {}
 default_tags = {
-  "ThubName"    = "{{ name }}"
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
   "ThubCode"    = "{{ code }}"
   "ThubEnv"     = "default"
-  "Description" = "Managed by TerraHub"
 }
 
 ##########

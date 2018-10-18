@@ -43,10 +43,10 @@ launch_template_ni_associate_public_ip_address = false
 launch_template_resource_type = "instance"
 custom_tags                   = {}
 default_tags                  = {
-  "ThubName"    = "{{ name }}"
+  "Name"        = "{{ name }}"
+  "Description" = "Managed by TerraHub"
   "ThubCode"    = "{{ code }}"
   "ThubEnv"     = "default"
-  "Description" = "Managed by TerraHub"
 }
 
 ##########
