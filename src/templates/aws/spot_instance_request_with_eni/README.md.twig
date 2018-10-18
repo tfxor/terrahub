@@ -38,7 +38,7 @@ NOTE: Because their behavior depends on the live status of the spot market, Spot
 |instance_launch_group|A launch group is a group of spot instances that launch together and terminate together. If left empty instances are launched and terminated individually.|string||Yes|
 |instance_block_duration_minutes|The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360). The duration period starts as soon as your Spot instance receives its instance ID.|number|60|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

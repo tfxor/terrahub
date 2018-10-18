@@ -29,7 +29,7 @@ NOTE on Network ACLs and Network ACL Rules: Terraform currently provides both a 
 |network_acl_ingress_icmp_type|The ICMP type to be used.|number|0|No|
 |network_acl_ingress_icmp_code|The ICMP type code to be used.|number|0|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

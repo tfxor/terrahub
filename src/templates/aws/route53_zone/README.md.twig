@@ -13,7 +13,7 @@ Provides a Route53 Hosted Zone resource.
 |route53_comment|A comment for the hosted zone.|string|Managed by TerraHub|No|
 |route53_force_destroy|Whether to destroy all records (possibly managed outside of Terraform) in the zone when destroying the zone.|boolean|false|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

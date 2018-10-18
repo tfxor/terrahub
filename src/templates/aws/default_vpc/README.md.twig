@@ -16,7 +16,7 @@ The aws_default_vpc behaves differently from normal resources, in that Terraform
 |default_vpc_enable_dns_hostnames|A boolean flag to enable/disable DNS hostnames in the VPC.|boolean|false|No|
 |default_vpc_enable_classiclink|A boolean flag to enable/disable ClassicLink for the VPC. Only valid in regions and accounts that support EC2 Classic. See the ClassicLink documentation for more information.|boolean|false|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

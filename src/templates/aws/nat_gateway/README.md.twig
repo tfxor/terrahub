@@ -11,7 +11,7 @@ Provides a resource to create a VPC NAT Gateway.
 |nat_gateway_allocation_id|The Allocation ID of the Elastic IP address for the gateway.|string||Yes|
 |nat_gateway_subnet_id|The Subnet ID of the subnet in which to place the gateway.|string||Yes|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

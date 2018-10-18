@@ -20,7 +20,7 @@ Provides an AutoScaling Group resource.
 |autoscaling_group_vpc_zone_identifier|A list of subnet IDs to launch resources in.|list||Yes|
 |autoscaling_group_load_balancers|A list of elastic load balancer names to add to the autoscaling group names. Only valid for classic load balancers. For ALBs, use target_group_arns instead.|list||Yes|
 |custom_tags|Custom tags.|list||No|
-|default_tags|Default tags.|list|[{key = "Name" value= "{{ name }}" propagate_at_launch = true},{key = "ThubCode" value = "{{ code }}" propagate_at_launch = true}, {key = "ThubEnv" value = "default" propagate_at_launch = true},{ key = "Description" value = "Managed by TerraHub" propagate_at_launch = true}]|No|
+|default_tags|Default tags.|list|[{key = "Name" value= "{{ name }}" propagate_at_launch = true},{key = "Description" value = "Managed by TerraHub" propagate_at_launch = true},{key = "ThubCode" value = "{{ code }}" propagate_at_launch = true},{key = "ThubEnv" value = "default" propagate_at_launch = true}]|No|
 
 ## output parameters
 

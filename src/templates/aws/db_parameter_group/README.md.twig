@@ -15,7 +15,7 @@ Provides an RDS DB parameter group resource .Documentation of the available para
 |db_parameter_group_parameter_value|The value of the DB parameter.|string|utf8|No|
 |db_parameter_group_parameter_apply_method|immediate or pending-reboot. Some engines can't apply some parameters without a reboot, and you will need to specify pending-reboot here.|string|immediate|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

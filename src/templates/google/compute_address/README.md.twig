@@ -19,7 +19,7 @@ Internal IP addresses are ephemeral and only belong to an instance for the lifet
 |google_compute_address_network_tier|The networking tier used for configuring this address. This field can take the following values: PREMIUM or STANDARD. If this field is not specified, it is assumed to be PREMIUM.|string|STANDARD|No|
 |google_project_id|The ID of the project in which the resource belongs. If it is not provided, the provider project is used.|string||Yes|
 |custom_labels|Custom labels. A set of key/value label pairs to assign to the project.|map||No|
-|default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"name"= "{{ name }}","description" = "managed-by-terraHub","thubcode"= "{{ code }}","thubenv"= "default"}|No|
 
 ## output parameters
 

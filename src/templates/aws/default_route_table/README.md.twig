@@ -30,7 +30,7 @@ NOTE on Route Tables and Routes: Terraform currently provides both a standalone 
 |default_route_table_vpc_peering_connection_id|The VPC Peering ID.|string||Yes|
 |default_route_table_network_interface_id|The ID of the elastic network interface (eni) to use.|string||Yes|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

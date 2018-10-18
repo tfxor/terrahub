@@ -21,7 +21,7 @@ Provides a Load Balancer resource.
 |lb_enable_cross_zone_load_balancing|If true, cross-zone load balancing of the load balancer will be enabled. This is a network load balancer feature.|boolean|false|No|
 |lb_enable_http2|Indicates whether HTTP/2 is enabled in application load balancers.|boolean|true|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 

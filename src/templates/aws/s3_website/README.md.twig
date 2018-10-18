@@ -22,7 +22,7 @@ Creates a S3 bucket resource.
 |s3_bucket_website_index_document|Amazon S3 returns this index document when requests are made to the root domain or any of the subfolders.|string||Yes|
 |s3_bucket_website_error_document|An absolute path to the document to return in case of a 4XX error.|string||Yes|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 
 ## output parameters

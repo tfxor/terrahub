@@ -20,7 +20,7 @@ A ForwardingRule resource. A ForwardingRule resource specifies which pool of tar
 |google_project_id|The ID of the project in which the resource belongs. If it is not provided, the provider project is used.|string||Yes|
 |google_service_label|An optional prefix to the service name for this Forwarding Rule. If specified, will be the first label of the fully qualified service name. The label must be 1-63 characters long, and comply with RFC1035. Specifically, the label must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash. This field is only used for internal load balancing. This property is in beta, and should be used with the terraform-provider-google-beta provider.|string||No|
 |custom_labels|Custom labels. A set of key/value label pairs to assign to the project.|map||No|
-|default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_labels|Default labels. A set of key/value label pairs to assign to the project.|map|{"name"= "{{ name }}","description" = "managed-by-terraHub","thubcode"= "{{ code }}","thubenv"= "default"}|No|
 
 ## output parameters
 

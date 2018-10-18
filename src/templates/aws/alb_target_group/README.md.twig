@@ -26,7 +26,7 @@ Provides a Target Group resource for use with Load Balancer resources.
 |lb_target_group_healthy_threshold|The number of consecutive health checks successes required before considering an unhealthy target healthy.|number|3|No|
 |lb_target_group_unhealthy_threshold|The number of consecutive health check failures required before considering the target unhealthy . For Network Load Balancers, this value must be the same as the healthy_threshold.|number|3|No|
 |custom_tags|Custom tags.|map||No|
-|default_tags|Default tags.|map|{"Name"= "{{ name }}","ThubCode"= "{{ code }}","ThubEnv"= "default","Description" = "Managed by TerraHub"}|No|
+|default_tags|Default tags.|map|{"Name"= "{{ name }}","Description" = "Managed by TerraHub","ThubCode"= "{{ code }}","ThubEnv"= "default"}|No|
 
 ## output parameters
 
