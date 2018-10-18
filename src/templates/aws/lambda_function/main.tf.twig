@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "{{ name }}" {
-  # depends_on    = ["data.external.{{ name }}"]
+  depends_on    = ["data.external.{{ name }}"]
   function_name = "${var.lambda_function_name}"
   description   = "${var.lambda_description}"
   handler       = "${var.lambda_handler}"

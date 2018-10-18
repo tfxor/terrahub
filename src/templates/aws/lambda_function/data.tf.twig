@@ -1,7 +1,7 @@
-# data "external" "{{ name }}" {
-#   program = ["node", "./scripts/build.js"]
-#   query = {
-#     component = "{{ name }}"
-#     env       = "${terraform.workspace}"
-#   }
-# }
+data "external" "{{ name }}" {
+  program = ["node", "./scripts/build.js"]
+  query = {
+    component = "{{ name }}"
+    env       = "${terraform.workspace}"
+  }
+}
