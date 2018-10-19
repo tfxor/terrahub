@@ -64,7 +64,7 @@ class ConfigureCommand extends TerraformCommand {
 
   /**
    * @param {String} string
-   @param {Object} content
+   * @param {Object} content
    * @return {Object}
    * @private
    */
