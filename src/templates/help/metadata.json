@@ -208,13 +208,19 @@
         {
           "name": "config",
           "shortcut": "c",
-          "description": "Configuration parameter to be affected by command execution",
+          "description": "Create, update or delete config parameter from config file",
           "defaultValue": ""
         },
         {
           "name": "global",
           "shortcut": "G",
           "description": "Update global config file instead of root or local",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete corresponding configuration parameter",
           "defaultValue": false
         },
         {

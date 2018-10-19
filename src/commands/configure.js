@@ -13,7 +13,8 @@ class ConfigureCommand extends TerraformCommand {
     this.setName('configure')
       .setDescription('add, change or remove config parameters from terrahub config files')
       .addOption('config', 'c', 'Create, update or delete config parameter from config file', String, '')
-      .addOption('global', 'G', 'Update global config file instead of root or local', Boolean, false);
+      .addOption('global', 'G', 'Update global config file instead of root or local', Boolean, false)
+      .addOption('delete', 'D', 'Delete corresponding configuration parameter', Boolean, false);
   }
 
   /**
@@ -23,11 +24,13 @@ class ConfigureCommand extends TerraformCommand {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
+    const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
 
     if (global === true) {
       const content = ConfigLoader.readConfig(cfgPath);
 
-      data.forEach(it => this._updateConfig(it, content));
+      data.forEach(it => this[configAction](it, content));
+
       ConfigLoader.writeConfig(content, cfgPath);
 
       return Promise.resolve('Done');
@@ -42,7 +45,8 @@ class ConfigureCommand extends TerraformCommand {
 
         const content = ConfigLoader.readConfig(componentPath);
 
-        data.forEach(it => this._updateConfig(it, content));
+        data.forEach(it => this[configAction](it, content));
+
         ConfigLoader.writeConfig(content, componentPath);
       });
 
@@ -52,14 +56,39 @@ class ConfigureCommand extends TerraformCommand {
     const rootConfigPath = path.join(this.getAppPath(), config.defaultFileName);
     const content = ConfigLoader.readConfig(rootConfigPath);
 
-    data.forEach(it => this._updateConfig(it, content));
+    data.forEach(it => this[configAction](it, content));
     ConfigLoader.writeConfig(content, rootConfigPath);
 
     return Promise.resolve('Done');
   }
 
   /**
-   * @param {String} string 
+   * @param {String} string
+   * @param {Object} content
+   * @return {Object}
+   * @private
+   */
+  _deleteFromConfig(string, content) {
+    const keys = string.split('.');
+    const lastKey = keys.pop();
+    let destination = content;
+    keys.forEach((it, index) => {
+      if (destination[it] && delete[it].hasOwnProperty(it)) {
+        destination = destination[it];
+      } else {
+        throw new Error(`The given key doesn't exist in config: ${keys.slice(0, index + 1).join('.')}`);
+      }
+    });
+
+    if (destination.hasOwnProperty(lastKey)) {
+      delete destination[lastKey];
+    } else {
+      throw new Error(`The given key doesn't exist in config: ${string}`);
+    }
+  }
+
+  /**
+   * @param {String} string
    * @param {Object} content
    * @return {Object}
    * @private
@@ -69,15 +98,15 @@ class ConfigureCommand extends TerraformCommand {
     let [keyString, ...value] = string.split('=');
 
     value = value.join('=');
-
     let destination = content;
-    const keys = keyString.split('.');
 
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-      destination = this._intermidiateFill(destination, key, regex);
-    }
-    const lastKey = keys[keys.length - 1];
+    const keys = keyString.split('.');
+    const lastKey = keys.pop();
+
+    keys.forEach(key => {
+      destination = this._intermediateFill(destination, key, regex);
+    });
+
     const match = lastKey.match(regex);
     const finalKey = match ? match.slice(-2)[1] : lastKey;
 
@@ -106,7 +135,7 @@ class ConfigureCommand extends TerraformCommand {
    * @return {Object|Array}
    * @private
    */
-  _intermidiateFill(destination, key, regex) {
+  _intermediateFill(destination, key, regex) {
     const match = key.match(regex);
     const finalKey = match ? match.slice(-2)[1] : key;
     const value = match ? [] : {};
@@ -115,7 +144,7 @@ class ConfigureCommand extends TerraformCommand {
       destination.push(value);
       destination = destination[destination.length - 1];
     } else {
-      if (!match && !destination.hasOwnProperty(finalKey)) {
+      if (!match && !(destination[finalKey] instanceof Object)) {
         destination[finalKey] = value;
       }
       destination = destination[finalKey];
