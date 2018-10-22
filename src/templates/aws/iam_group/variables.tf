@@ -13,9 +13,8 @@ variable "region" {
 #############
 # top level #
 #############
-
 variable "iam_group_name" {
-  description = "he group's name. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. Group names are not distinguished by case."
+  description = "The group's name. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. Group names are not distinguished by case."
 }
 
 variable "iam_group_path" {

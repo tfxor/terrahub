@@ -4,11 +4,11 @@ component:
 {% if dependsOn %}
   dependsOn:
 {% for dep in dependsOn %}
-  - '{{ dep }}'
+    - '{{ dep }}'
 {% endfor %}
 {% endif %}
 
 ## ci config
 ci:
   mapping:
-  - '.'
+    - '.'

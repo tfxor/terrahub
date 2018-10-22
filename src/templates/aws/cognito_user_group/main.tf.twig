@@ -1,0 +1,7 @@
+resource "aws_cognito_user_group" "{{ name }}" {
+  name         = "${var.cognito_user_group_name}"
+  user_pool_id = "${var.cognito_user_pool_id}"
+  description  = "${var.cognito_user_group_description}"
+  precedence   = "${var.cognito_user_group_precedence}"
+  role_arn     = "arn:aws:iam::${var.account_id}:role/${var.iam_role_name}"
+}
