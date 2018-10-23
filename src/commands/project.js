@@ -41,7 +41,7 @@ class ProjectCommand extends AbstractCommand {
       const srcFile = path.join(templates.config, 'project', `.terrahub.${config.format}.twig`);
       const outFile = path.join(directory, config.defaultFileName);
 
-      if (fs.existsSync(outFile)) {
+      if (Object.keys(this.getProjectConfig()).length || fs.existsSync(outFile)) {
         this.logger.warn(`Project already configured`);
         return Promise.resolve();
       }

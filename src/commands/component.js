@@ -35,7 +35,7 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
-    this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
+    this._srcFile = path.join(templates.config, 'component', `.terrahub${this.getProjectFormat()}.twig`);
     this._appPath = this.getAppPath();
 
     if (!this._appPath) {
@@ -81,7 +81,7 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Couldn't create '${directory}' because path is invalid.`);
     }
 
-    let outFile = path.join(directory, config.defaultFileName);
+    let outFile = path.join(directory, this._defaultFileName());
     let componentData = { component: { name: this._name } };
 
     componentData.component['dependsOn'] = this._dependsOn;
@@ -131,7 +131,7 @@ class ComponentCommand extends AbstractCommand {
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
-      const outFile = path.join(directory, config.defaultFileName);
+      const outFile = path.join(directory, this._defaultFileName());
 
       return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn }, outFile);
     }).then(() => 'Done');
@@ -143,7 +143,7 @@ class ComponentCommand extends AbstractCommand {
    */
   _findExistingComponent() {
     const componentRoot = this.relativePath(this._directory);
-    const cfgPath = path.resolve(this._appPath, config.defaultFileName);
+    const cfgPath = path.resolve(this._appPath, this._defaultFileName());
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);
@@ -160,6 +160,14 @@ class ComponentCommand extends AbstractCommand {
 
     return { name: name, path: cfgPath, config: rawConfig };
   }
+
+  /**
+   * @returns {String}
+   * @private
+   */
+  _defaultFileName() {
+      return this.getDefaultFileName ? `.terrahub${this.getProjectFormat()}` : this.getDefaultFileName();
+    }
 
   /**
    * @returns {String}
