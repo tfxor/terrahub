@@ -219,12 +219,16 @@ function exponentialBackoff(promiseFunction, options) {
 
   function retry() {
     return promiseFunction().catch(error => {
-      if (conditionFunction(error) && retries < maxRetries) {
-        return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
-      } else {
+      if (!conditionFunction(error)) {
+        return Promise.reject(error);
+      }
+
+      if (retries >= maxRetries) {
         error.message += `${EOL}Failed after ${maxRetries} retries.`;
         return Promise.reject(error);
       }
+
+      return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
     });
   }
 
