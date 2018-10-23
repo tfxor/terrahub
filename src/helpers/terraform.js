@@ -203,7 +203,7 @@ class Terraform {
    * @private
    */
   _checkIgnoreError(error) {
-    return [/token/, /timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+    return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
   }
 
   /**
