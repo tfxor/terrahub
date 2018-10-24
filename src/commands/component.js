@@ -166,8 +166,8 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _defaultFileName() {
-      return this.getDefaultFileName ? `.terrahub${this.getProjectFormat()}` : this.getDefaultFileName();
-    }
+    return this.getDefaultFileName() ? `.terrahub${this.getProjectFormat()}` : this.getDefaultFileName();
+  }
 
   /**
    * @returns {String}
