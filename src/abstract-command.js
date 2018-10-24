@@ -240,6 +240,27 @@ class AbstractCommand {
   reloadConfig() {
     this._configLoader = new ConfigLoader();
   }
+
+  /** 
+   * @returns {String}
+   */
+  getFileName() {
+    return this._configLoader.getFileName();
+  }
+
+  /** 
+   * @returns {String}
+   */
+  getDefaultFileName() {
+    return this._configLoader.getDefaultFileName();
+  }
+
+  /** 
+   * @returns {String}
+   */
+  getProjectFormat() {
+    return this._configLoader.getProjectFormat();
+  }
 }
 
 module.exports = AbstractCommand;

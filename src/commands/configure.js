@@ -41,7 +41,7 @@ class ConfigureCommand extends TerraformCommand {
       const configs = this.getConfig();
 
       Object.keys(configs).forEach(key => {
-        const componentPath = path.join(configs[key].project.root, configs[key].root, config.defaultFileName);
+        const componentPath = path.join(configs[key].project.root, configs[key].root, this.getDefaultFileName());
 
         const content = ConfigLoader.readConfig(componentPath);
 
@@ -53,7 +53,7 @@ class ConfigureCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
-    const rootConfigPath = path.join(this.getAppPath(), config.defaultFileName);
+    const rootConfigPath = path.join(this.getAppPath(), this.getDefaultFileName());
     const content = ConfigLoader.readConfig(rootConfigPath);
 
     data.forEach(it => this[configAction](it, content));
