@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "creation_timestamp" {
+  value = "${google_compute_subnetwork.{{ name }}.creation_timestamp}"
+}
+
+output "gateway_address" {
+  value = "${google_compute_subnetwork.{{ name }}.gateway_address}"
+}
+
+output "fingerprint" {
+  value = "${google_compute_subnetwork.{{ name }}.fingerprint}"
+}
+
+output "self_link" {
+  value = "${google_compute_subnetwork.{{ name }}.self_link}"
+}

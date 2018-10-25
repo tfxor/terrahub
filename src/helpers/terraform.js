@@ -193,7 +193,7 @@ class Terraform {
     const promise = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
-    return exponentialBackoff(promise, { conditionFun: this._checkIgnoreError, maxRetries: config.retryCount })
+    return exponentialBackoff(promise, { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._reInitPaths());
   }
 
@@ -203,7 +203,7 @@ class Terraform {
    * @private
    */
   _checkIgnoreError(error) {
-    return [/handshake timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.Message));
+    return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
   }
 
   /**
@@ -287,6 +287,18 @@ class Terraform {
 
     return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(data => {
+        const metadata = {};
+        const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
+        const planData = data.toString().match(regex);
+
+        if (planData) {
+          const planCounter = planData.slice(-3);
+          ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
+        } else {
+          ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
+        }
+
+        this._output.metadata = metadata;
         const planPath = this._metadata.getPlanPath();
 
         if (fse.existsSync(planPath)) {
@@ -408,7 +420,8 @@ class Terraform {
         action: args[0],
         component: this.getName(),
         stdout: buffer,
-        env: process.env
+        env: process.env,
+        metadata: null
       };
 
       return Promise.resolve(buffer);

@@ -1,0 +1,29 @@
+# Specify default values for variables defined in variables.tf
+
+#############
+# top level #
+#############
+google_compute_forwarding_rule_name         = "{{ name }}"
+google_compute_forwarding_rule_description  = "Managed by TerraHub"
+google_compute_forwarding_rule_ip_address   = "10.0.0.1"
+google_compute_forwarding_rule_ip_protocol  = "TCP"
+google_compute_forwarding_rule_ip_version   = "IPV4"
+google_network                              = "" 
+google_compute_forwarding_rule_port_range   = "TargetHttpProxy: 80, 8080"
+google_subnetwork                           = "" 
+google_target                               = ""
+google_compute_forwarding_rule_network_tier = "STANDARD"
+google_project_region                       = "us-central1"
+google_project_id                           = ""
+google_service_label                        = ""
+
+##########
+# labels #
+##########
+custom_labels  = {}
+default_labels = {
+  "name"        = "{{ name }}"
+  "description" = "managed-by-terrahub"
+  "thubcode"    = "{{ code }}"
+  "thubenv"     = "default"
+}

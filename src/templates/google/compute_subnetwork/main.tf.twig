@@ -1,0 +1,9 @@
+resource "google_compute_subnetwork" "{{ name }}" {
+  name             = "${var.google_compute_subnetwork_name}"
+  ip_cidr_range    = "${var.google_compute_subnetwork_ip_cidr_range}"
+  region           = "${var.google_region}"
+  network          = "${var.google_compute_subnetwork_network}"
+  description      = "${var.google_compute_subnetwork_description}"
+  enable_flow_logs = "${var.google_compute_subnetwork_enable_flow_logs}"
+  project          = "${var.google_project_id}"
+}

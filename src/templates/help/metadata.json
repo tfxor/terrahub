@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.25",
+  "version": "0.0.28",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-10-03T14:17:31.079Z",
+  "buildDate": "2018-10-11T12:33:57.775Z",
   "commands": [
     {
       "name": "apply",
@@ -179,6 +179,96 @@
           "name": "force",
           "shortcut": "f",
           "description": "Replace directory. Works only with template option",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete terrahub configuration files in the component folder",
+          "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "configure",
+      "description": "add, change or remove config parameters from terrahub config files",
+      "options": [
+        {
+          "name": "config",
+          "shortcut": "c",
+          "description": "Create, update or delete config parameter from config file",
+          "defaultValue": ""
+        },
+        {
+          "name": "global",
+          "shortcut": "G",
+          "description": "Update global config file instead of root or local",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete corresponding configuration parameter",
+          "defaultValue": false
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
           "defaultValue": false
         },
         {
@@ -806,7 +896,7 @@
       "options": [
         {
           "name": "delete",
-          "shortcut": "d",
+          "shortcut": "D",
           "description": "Delete workspace environment (paired with --env)",
           "defaultValue": false
         },

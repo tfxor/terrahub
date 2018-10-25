@@ -8,43 +8,7 @@ component:
 {% endfor %}
 {% endif %}
 
-# ## build config
-# build:
-#   env:
-#     variables:
-#       KEY: "Value"
-#     parameter-store:
-#       SECRET: "Value"
-#   phases:
-#     install:
-#       commands:
-#         - command
-#       finally:
-#         - command
-#     pre_build:
-#       commands:
-#         - command
-#       finally:
-#         - command
-#     build:
-#       commands:
-#         - command
-#       finally:
-#         - command
-#     post_build:
-#       commands:
-#         - command
-#       finally:
-#         - command
-#   artifacts:
-#     files:
-#       - file
-#     discard-paths: yes/no
-#   cache:
-#     paths:
-#       - path
-
-# ci:
-#   mapping:
-#   - '.' ## current folder relative to where .terrahub.yml is defined
-#   - '..' ## parent folder relative to where .terrahub.yml is defined
+## ci config
+ci:
+  mapping:
+    - '.'

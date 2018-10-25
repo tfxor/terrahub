@@ -1,0 +1,17 @@
+# google_storage_bucket_iam_member
+
+Non-authoritative. Updates the IAM policy to grant a role to a new member. Other members for the role for the storage bucket are preserved.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|google_bucket_name|The name of the bucket it applies to.|string||Yes|
+|google_project_role|The project ID. If not specified, uses the ID of the project configured with the provider.|string|roles/viewer|No|
+|google_project_members|Identities that will be granted the privilege in role.|list||Yes|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|etag|The etag of the project's IAM policy.|string|

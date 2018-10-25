@@ -2,7 +2,7 @@ resource "aws_api_gateway_deployment" "{{ name }}" {
   rest_api_id       = "${data.aws_api_gateway_rest_api.{{ name }}.id}"
   description       = "${var.api_gateway_deployment_description}"
   stage_name        = "${var.api_gateway_deployment_stage_name}"
-  stage_description = "${var.api_gateway_deployment_stage_description}"
+  stage_description = "${format("%s %s", var.api_gateway_deployment_stage_description, timestamp())}"
 
   # variables        = {
   #   ${var.api_gateway_deployment_variables}"
