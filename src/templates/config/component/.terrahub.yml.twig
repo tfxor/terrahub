@@ -1,14 +1,11 @@
 ## local config
 component:
   name: '{{ name }}'
+  mapping:
+    - '.'
 {% if dependsOn %}
   dependsOn:
 {% for dep in dependsOn %}
     - '{{ dep }}'
 {% endfor %}
 {% endif %}
-
-## ci config
-ci:
-  mapping:
-    - '.'
