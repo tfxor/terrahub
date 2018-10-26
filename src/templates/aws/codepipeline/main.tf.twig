@@ -1,6 +1,6 @@
 resource "aws_codepipeline" "{{ name }}" {
   name     = "${var.codepipeline_name}"
-  role_arn = "${var.codepipeline_role_arn}"
+  role_arn = "arn:aws:iam::${var.account_id}:role/${var.codepipeline_role_arn}"
 
   artifact_store {
     location = "${var.codepipeline_artifact_store_location}"
@@ -13,11 +13,11 @@ resource "aws_codepipeline" "{{ name }}" {
 
   stage {
     name   = "${var.codepipeline_stage_01_name}"
-    action = ["${merge(var.codepipeline_stage_01_action_default,var.codepipeline_stage_01_action_custom)}"]
+    action = ["${concat(var.codepipeline_stage_01_action_default,var.codepipeline_stage_01_action_custom)}"]
   }
 
   stage {
     name   = "${var.codepipeline_stage_02_name}"
-    action = ["${merge(var.codepipeline_stage_02_action_default,var.codepipeline_stage_02_action_custom)}"]
+    action = ["${concat(var.codepipeline_stage_02_action_default,var.codepipeline_stage_02_action_custom)}"]
   }
 }
