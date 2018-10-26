@@ -500,6 +500,12 @@
           "defaultValue": "text"
         },
         {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",

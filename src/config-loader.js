@@ -18,6 +18,7 @@ class ConfigLoader {
     this._projectConfig = {};
     this._projectCi = {};
     this._otherRootPaths = [];
+    this._format = '.' + config.format;
 
     /**
      * Initialisation
@@ -47,8 +48,10 @@ class ConfigLoader {
    */
   _readRoot() {
     const configFile = this._findRootConfig(process.cwd());
-
     if (configFile) {
+      this._format = path.extname(configFile);
+      this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
+      this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
@@ -62,6 +65,14 @@ class ConfigLoader {
     }
   }
 
+  getFileName() {
+    return this._fileName;
+  }
+
+  getDefaultFileName() {
+    return this._defaultFileName;
+  }
+  
   /**
    * @param {String} dirPath
    * @return {String|Boolean}
@@ -102,6 +113,13 @@ class ConfigLoader {
    */
   getProjectCi() {
     return this._projectCi;
+  }
+  /**
+   * Get Project Format
+   * @return {String}
+   */
+  getProjectFormat() {
+    return this._format;
   }
 
   /**
