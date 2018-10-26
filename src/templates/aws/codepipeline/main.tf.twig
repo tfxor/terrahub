@@ -1,6 +1,6 @@
 resource "aws_codepipeline" "{{ name }}" {
   name     = "${var.codepipeline_name}"
-  role_arn = "arn:aws:iam::${var.account_id}:role/${var.codepipeline_role_arn}"
+  role_arn = "arn:aws:iam::${var.account_id}:role/${var.codepipeline_role_name}"
 
   artifact_store {
     location = "${var.codepipeline_artifact_store_location}"
