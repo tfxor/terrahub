@@ -763,6 +763,12 @@
           "defaultValue": false
         },
         {
+          "name": "dry-run",
+          "shortcut": "u",
+          "description": "Prints the list of components that are included in the action",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
