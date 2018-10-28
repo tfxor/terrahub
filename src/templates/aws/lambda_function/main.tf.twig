@@ -10,8 +10,12 @@ resource "aws_lambda_function" "{{ name }}" {
   role          = "arn:aws:iam::${var.account_id}:role/${var.lambda_iam_role}"
   reserved_concurrent_executions = "${var.lambda_reserved_concurrent_executions}"
 
-  s3_bucket        = "${var.lambda_s3_bucket}"
-  s3_key           = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
+  s3_bucket = "${var.lambda_s3_bucket}"
+  s3_key    = "${var.lambda_s3_key}/${var.lambda_runtime}.zip"
+
+  # tracing_config {
+  #   mode = "${var.lambda_xray_enabled}"
+  # }
 
   # vpc_config {
   #   subnet_ids         = "${var.lambda_subnet_ids}"
