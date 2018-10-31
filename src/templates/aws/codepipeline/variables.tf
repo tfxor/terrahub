@@ -18,8 +18,8 @@ variable "codepipeline_name" {
   description = "The name of the pipeline."
 }
 
-variable "codepipeline_role_arn" {
-  description = "A service role Amazon Resource Name (ARN) that grants AWS CodePipeline permission to make calls to AWS services on your behalf."
+variable "codepipeline_role_name" {
+  description = "A service role Amazon Resource Name that grants AWS CodePipeline permission to make calls to AWS services on your behalf."
 }
 
 ##################

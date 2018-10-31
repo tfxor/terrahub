@@ -13,6 +13,7 @@ class OutputCommand extends TerraformCommand {
       .setName('output')
       .setDescription('run `terraform output` across multiple terrahub components')
       .addOption('format', 'o', 'Specify the output format (text or json)', String, 'text')
+      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
     ;
   }
 
@@ -33,9 +34,8 @@ class OutputCommand extends TerraformCommand {
    * @return {Promise}
    */
   askQuestion() {
-    this.logger.warn('This command makes sense only after apply command, and configured outputs');
-
-    return yesNoQuestion('Do you want to run it (Y/N)? ').then(confirmed => {
+ 
+    return this._getPromise().then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
       }
@@ -54,6 +54,20 @@ class OutputCommand extends TerraformCommand {
     return distributor.runActions(['prepare', 'output'], {
       format: this._format 
     });
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _getPromise() {
+    if (this.getOption('auto-approve')) {
+      return Promise.resolve(true);
+    } else {
+      this.logger.warn('This command makes sense only after apply command, and configured outputs');
+
+      return yesNoQuestion('Do you want to run it (Y/N)? ');
+    }
   }
 }
 

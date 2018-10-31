@@ -8,7 +8,7 @@ google_project_id                   = "{{ name }}"
 google_subnetwork                   = ""
 google_compute_address_type         = "INTERNAL"
 google_compute_address_ip           = "10.0.0.1"
-google_region                       = "us-central1
+google_region                       = "us-central1"
 google_compute_address_description  = "Managed by TerraHub"
 google_compute_address_network_tier = "STANDARD"
 
@@ -17,8 +17,8 @@ google_compute_address_network_tier = "STANDARD"
 ##########
 custom_labels  = {}
 default_labels = {
-  "thubname"    = "{{ name }}"
+  "name"        = "{{ name }}"
+  "description" = "managed-by-terrahub"
   "thubcode"    = "{{ code }}"
   "thubenv"     = "default"
-  "description" = "managed-by-terrahub"
 }

@@ -21,6 +21,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
       .addOption('depends-on', 'o', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
+      .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -33,7 +34,8 @@ class ComponentCommand extends AbstractCommand {
     this._directory = this.getOption('directory');
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
-    this._srcFile = path.join(templates.config, 'component', `.terrahub.${config.format}.twig`);
+    this._delete = this.getOption('delete');
+    this._srcFile = path.join(templates.config, 'component', `.terrahub${this.getProjectFormat()}.twig`);
     this._appPath = this.getAppPath();
 
     if (!this._appPath) {
@@ -44,7 +46,26 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    return this._template ? this._createNewComponent() : this._addExistingComponent();
+    return this._delete ? 
+      this._deleteComponent() :
+        this._template ? 
+          this._createNewComponent() : 
+          this._addExistingComponent();
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _deleteComponent() {
+    const config = this.getConfig();
+    
+    const key = Object.keys(config).find(it => config[it].name === this._name);
+    const configPath = path.join(config[key].project.root, config[key].root);
+    const configFiles = this.listAllEnvConfig(configPath);
+    
+    return Promise.all(configFiles.map(it => fse.remove(it)))
+      .then(() => Promise.resolve('Done'));
   }
 
   /**
@@ -60,7 +81,7 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Couldn't create '${directory}' because path is invalid.`);
     }
 
-    let outFile = path.join(directory, config.defaultFileName);
+    let outFile = path.join(directory, this._defaultFileName());
     let componentData = { component: { name: this._name } };
 
     componentData.component['dependsOn'] = this._dependsOn;
@@ -110,7 +131,7 @@ class ComponentCommand extends AbstractCommand {
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
-      const outFile = path.join(directory, config.defaultFileName);
+      const outFile = path.join(directory, this._defaultFileName());
 
       return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn }, outFile);
     }).then(() => 'Done');
@@ -122,7 +143,7 @@ class ComponentCommand extends AbstractCommand {
    */
   _findExistingComponent() {
     const componentRoot = this.relativePath(this._directory);
-    const cfgPath = path.resolve(this._appPath, config.defaultFileName);
+    const cfgPath = path.resolve(this._appPath, this._defaultFileName());
 
     let name = '';
     let rawConfig = ConfigLoader.readConfig(cfgPath);
@@ -138,6 +159,14 @@ class ComponentCommand extends AbstractCommand {
     });
 
     return { name: name, path: cfgPath, config: rawConfig };
+  }
+
+  /**
+   * @returns {String}
+   * @private
+   */
+  _defaultFileName() {
+    return this.getDefaultFileName() ? `.terrahub${this.getProjectFormat()}` : this.getDefaultFileName();
   }
 
   /**
