@@ -1,29 +1,30 @@
 resource "aws_codebuild_project" "{{ name }}" {
   name          = "${var.codebuild_project_name}"
+  description   = "${var.codebuild_project_description}"
+
+  source {
+    type            = "${var.codebuild_project_source_type}"
+    location        = "${var.codebuild_project_source_location}"
+    git_clone_depth = "${var.codebuild_project_source_git_clone_depth}"
+  }
+
+  environment {
+    image                = "${var.codebuild_project_environment_image}"
+    compute_type         = "${var.codebuild_project_environment_compute_type}"
+    type                 = "${var.codebuild_project_environment_type}"
+    environment_variable = ["${var.codebuild_project_environment_variable}"]
+    privileged_mode      = "${var.codebuild_project_environment_privileged_mode}"
+  }
+
   badge_enabled = "${var.codebuild_project_badge_enabled}"
   build_timeout = "${var.codebuild_project_build_timeout}"
-  description   = "${var.codebuild_project_description}"
-  service_role  = "${var.codebuild_project_service_role}"
+  service_role  = "arn:aws:iam::${var.account_id}:role/${var.codebuild_project_service_role}"
 
   artifacts {
     type           = "${var.codebuild_project_artifacts_type}"
     name           = "${var.codebuild_project_artifacts_name}"
     namespace_type = "${var.codebuild_project_artifacts_namespace_type}"
     packaging      = "${var.codebuild_project_artifacts_packaging}"
-  }
-
-  environment {
-    compute_type         = "${var.codebuild_project_environment_compute_type}"
-    image                = "${var.codebuild_project_environment_image}"
-    type                 = "${var.codebuild_project_environment_type}"
-    environment_variable = "${var.codebuild_project_environment_variable}"
-    privileged_mode      = "${var.codebuild_project_environment_privileged_mode}
-  }
-
-  source {
-    type            = "${var.codebuild_project_source_type}"
-    location        = "${var.codebuild_project_source_location}"
-    git_clone_depth = "${var.codebuild_project_source_git_clone_depth}"
   }
 
   cache {

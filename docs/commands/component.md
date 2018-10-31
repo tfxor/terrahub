@@ -10,7 +10,7 @@ Options:
   --name, -n 		 Uniquely identifiable cloud resource name
   --template, -t 	 Template name (e.g. aws_lambda_function, google_cloudfunctions_function)
   --directory, -d 	 Path to the component (default: cwd)
-  --parent, -p 		 Parent component path
+  --depends-on, -o 	 Paths of the components, which the component depends on (comma separated values)
   --force, -f 		 Replace directory. Works only with template option
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands

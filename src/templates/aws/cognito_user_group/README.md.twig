@@ -1,0 +1,20 @@
+# aws_cognito_user_group
+
+Provides a Cognito User Group resource.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
+|cognito_user_group_name|The name of the user group.|string|{{ name }}|No|
+|cognito_user_pool_id|The user pool ID.|string||Yes|
+|cognito_user_group_description|The description of the user group.|string|Managed by TerraHub|No|
+|cognito_user_group_precedence|The precedence of the user group.|string|0|Yes|
+|iam_role_name|The name of iam role.|string||Yes|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|

@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.27",
+  "version": "0.0.31",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-10-08T15:23:33.199Z",
+  "buildDate": "2018-10-30T13:59:22.357Z",
   "commands": [
     {
       "name": "apply",
@@ -182,6 +182,12 @@
           "defaultValue": false
         },
         {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete terrahub configuration files in the component folder",
+          "defaultValue": false
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -197,18 +203,24 @@
     },
     {
       "name": "configure",
-      "description": "add, update or remove data from terrahub config files",
+      "description": "add, change or remove config parameters from terrahub config files",
       "options": [
         {
           "name": "config",
           "shortcut": "c",
-          "description": "config",
+          "description": "Create, update or delete config parameter from config file",
           "defaultValue": ""
         },
         {
           "name": "global",
           "shortcut": "G",
-          "description": "fefgjiosgis",
+          "description": "Update global config file instead of root or local",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete corresponding configuration parameter",
           "defaultValue": false
         },
         {
@@ -488,6 +500,12 @@
           "defaultValue": "text"
         },
         {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
@@ -742,6 +760,12 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
+          "defaultValue": false
+        },
+        {
+          "name": "dry-run",
+          "shortcut": "u",
+          "description": "Prints the list of components that are included in the action",
           "defaultValue": false
         },
         {

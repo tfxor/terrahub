@@ -174,7 +174,9 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listConfig(dir = false) {
-    return this._configLoader.listConfig(dir);
+    return this._configLoader.listConfig({
+      dir: dir
+    });
   }
 
   /**
@@ -182,8 +184,23 @@ class AbstractCommand {
    * @param {String|Boolean} dir
    * @returns {String[]}
    */
-  listEnvConfig(dir = false) {
-    return this._configLoader.listEnvConfig(dir);
+  listCurrentEnvConfig(dir = false) {
+    return this._configLoader.listConfig({
+      dir: dir,
+      env: 'specific'
+    });
+  }
+
+  /**
+   * Get list of configuration files for the specified environment
+   * @param {String|Boolean} dir
+   * @returns {String[]}
+   */
+  listAllEnvConfig(dir = false) {
+    return this._configLoader.listConfig({
+      dir: dir,
+      env: 'every'
+    });
   }
 
   /**
@@ -222,6 +239,27 @@ class AbstractCommand {
    */
   reloadConfig() {
     this._configLoader = new ConfigLoader();
+  }
+
+  /** 
+   * @returns {String}
+   */
+  getFileName() {
+    return this._configLoader.getFileName();
+  }
+
+  /** 
+   * @returns {String}
+   */
+  getDefaultFileName() {
+    return this._configLoader.getDefaultFileName();
+  }
+
+  /** 
+   * @returns {String}
+   */
+  getProjectFormat() {
+    return this._configLoader.getProjectFormat();
   }
 }
 

@@ -1,0 +1,24 @@
+resource "google_storage_bucket" "{{ name }}" {
+  name          = "${var.google_storage_bucket_name}"
+  location      = "${var.google_storage_bucket_location}"
+  project       = "${var.google_project_id}"
+  force_destroy = "${var.google_storage_bucket_force_destroy}"
+
+  cors {
+  	origin          = "${var.google_storage_bucket_cors_origin}"
+  	method          = "${var.google_storage_bucket_cors_method}"
+  	response_header = "${var.google_storage_bucket_cors_response_header}"
+  	max_age_seconds = "${var.google_storage_bucket_cors_max_age_seconds}"
+  }
+
+  versioning {
+  	enabled = "${var.google_storage_bucket_versioning_enabled}"
+  }
+  
+  website {
+    main_page_suffix = "${var.google_storage_website_index_document}"
+    not_found_page   = "${var.google_storage_website_error_document}"
+  }
+
+  labels = "${merge(var.default_labels, var.custom_labels)}"
+}

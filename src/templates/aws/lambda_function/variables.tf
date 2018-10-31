@@ -65,6 +65,11 @@ variable "lambda_s3_key" {
   type        = "string"
 }
 
+variable "lambda_xray_enabled" {
+  description = "Can be either PassThrough or Active"
+  type        = "string"
+}
+
 ##############
 # vpc config #
 ##############
@@ -92,11 +97,9 @@ variable "lambda_environment_variables" {
 variable "custom_tags" {
   type        = "map"
   description = "Custom tags"
-  default     = {}
 }
 
 variable "default_tags" {
   type        = "map"
   description = "Default tags"
-  default     = {}
 }

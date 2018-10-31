@@ -1,0 +1,5 @@
+resource "google_storage_bucket_iam_binding" "{{ name }}" {
+  bucket  = "${var.google_bucket_name}"
+  role    = "${var.google_project_role}"
+  members = "${var.google_project_members}"
+}

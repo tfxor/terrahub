@@ -39,6 +39,7 @@ echo "INFO: S3 Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
   echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
+  sed -i 's/"${var.lambda_publish}"/"${var.lambda_publish}"\nsource_code_hash = "${base64sha256("'${THUB_SHA}'")}"/g' ./main.tf
 else
   echo 'Build is NOT required.'
 fi
