@@ -25,9 +25,6 @@ else
   THUB_SHA=$(find ${THUB_COMPARE_PATH} -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
 fi
 
-## Change value in tfvar
-sed -i 's/do-not-change/'${THUB_SHA}'/g' ./default.tfvars
-
 ## Checking if needs to skip SHA256 sums compare
 echo "export THUB_SHA=\"${THUB_SHA}\"" >> .terrahub_build.env
 echo "INFO: Current SHA256 => ${THUB_SHA}"
@@ -42,6 +39,7 @@ echo "INFO: S3 Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
   echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
+  sed -i 's/"${var.lambda_publish}"/"${var.lambda_publish}"\nsource_code_hash = "${base64sha256("'${THUB_SHA}'")}"/g' ./main.tf
 else
   echo 'Build is NOT required.'
 fi

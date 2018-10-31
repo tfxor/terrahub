@@ -15,7 +15,7 @@ Note: The stage (Minimum of at least two stage blocks is required) A stage block
 |account_id|The id of AWS account.|string||Yes|
 |region|This is the AWS region.|string|us-east-1|Yes|
 |codepipeline_name|The name of the pipeline.|string|{{ name }}|No|
-|codepipeline_role_arn|A service role Amazon Resource Name (ARN) that grants AWS CodePipeline permission to make calls to AWS services on your behalf.|string||Yes|
+|codepipeline_role_name|A service role Amazon Resource Name that grants AWS CodePipeline permission to make calls to AWS services on your behalf.|string||Yes|
 |codepipeline_artifact_store_location|The location where AWS CodePipeline stores artifacts for a pipeline, such as an S3 bucket.|string||Yes|
 |codepipeline_artifact_store_type|The type of the artifact store, such as Amazon S3.|string|S3|No|
 |codepipeline_artifact_store_encryption_key_id|The KMS key ARN or ID.|string||Yes|

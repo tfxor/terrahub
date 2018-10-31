@@ -13,12 +13,13 @@ lambda_function_name = "{{ name }}"
 lambda_iam_role      = "{{ name }}"
 lambda_description   = "Managed by TerraHub"
 lambda_memory_size   = 128
-lambda_runtime       = "nodejs6.10"
+lambda_runtime       = "nodejs8.10"
 lambda_timeout       = 3
 lambda_publish       = false
 lambda_handler       = "index.handler"
 lambda_s3_bucket     = "www.terrahub.io"
 lambda_s3_key        = "hello-world"
+lambda_xray_enabled  = "PassThrough"
 lambda_reserved_concurrent_executions = 0
 
 ##############
@@ -41,7 +42,6 @@ default_tags = {
   "Description" = "Managed by TerraHub"
   "ThubCode"    = "{{ code }}"
   "ThubEnv"     = "default"
-  "ThubBuild"   = "do-not-change"
 }
 
 ##########

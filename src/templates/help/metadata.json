@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.0.28",
+  "version": "0.0.31",
   "description": "TerraHub is a terraform centric devops tool that simplifies provisioning and management at scale of cloud resources and cloud services across multiple cloud accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud, or VMs on Microsoft Azure.",
-  "buildDate": "2018-10-11T12:33:57.775Z",
+  "buildDate": "2018-10-30T13:59:22.357Z",
   "commands": [
     {
       "name": "apply",
@@ -500,6 +500,12 @@
           "defaultValue": "text"
         },
         {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve terraform execution",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
@@ -754,6 +760,12 @@
           "name": "auto-approve",
           "shortcut": "y",
           "description": "Auto approve terraform execution",
+          "defaultValue": false
+        },
+        {
+          "name": "dry-run",
+          "shortcut": "u",
+          "description": "Prints the list of components that are included in the action",
           "defaultValue": false
         },
         {
