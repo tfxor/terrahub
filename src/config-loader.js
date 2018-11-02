@@ -48,6 +48,7 @@ class ConfigLoader {
    */
   _readRoot() {
     const configFile = this._findRootConfig(process.cwd());
+
     if (configFile) {
       this._format = path.extname(configFile);
       this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
@@ -72,7 +73,7 @@ class ConfigLoader {
   getDefaultFileName() {
     return this._defaultFileName;
   }
-  
+
   /**
    * @param {String} dirPath
    * @return {String|Boolean}
@@ -86,7 +87,7 @@ class ConfigLoader {
     if (files.length) {
       const configPath = files.pop();
 
-      config = this._getConfig(configPath);
+      config = ConfigLoader.readConfig(configPath);
       if (config.hasOwnProperty('project')) {
         return configPath;
       }
@@ -114,6 +115,7 @@ class ConfigLoader {
   getProjectCi() {
     return this._projectCi;
   }
+
   /**
    * Get Project Format
    * @return {String}
@@ -157,9 +159,9 @@ class ConfigLoader {
     } = options;
 
     let searchPattern;
-    switch(env) {
+    switch (env) {
       case 'default':
-        searchPattern =  '**/.terrahub.+(json|yml|yaml)';
+        searchPattern = '**/.terrahub.+(json|yml|yaml)';
         break;
       case 'specific':
         searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
@@ -314,7 +316,7 @@ class ConfigLoader {
    * @param {String} value
    */
   addToGlobalConfig(key, value) {
-    const cfgPath = path.join(this._rootPath, config.defaultFileName);
+    const cfgPath = path.join(this._rootPath, this.getDefaultFileName());
     const cfg = ConfigLoader.readConfig(cfgPath);
 
     cfg.project[key] = value;
@@ -337,7 +339,7 @@ class ConfigLoader {
    */
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
-    const envPath = path.join(path.dirname(cfgPath), config.fileName);
+    const envPath = path.join(path.dirname(cfgPath), this.getFileName());
     const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
