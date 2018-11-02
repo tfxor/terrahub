@@ -79,7 +79,7 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = null) {
-    if (!hook[this._action] || !this._config.hook[this._action][hook]) {
+    if (!this._config.hook[this._action][hook]) {
       return () => Promise.resolve();
     }
 
@@ -114,10 +114,7 @@ class Terrahub {
       }
 
       return () => this._spawn(command, args);
-    })).catch(error => {
-      logger.debug(error);
-      return Promise.resolve();
-    });
+    }))
   }
 
   /**

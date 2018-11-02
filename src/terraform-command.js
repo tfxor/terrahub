@@ -423,12 +423,18 @@ class TerraformCommand extends AbstractCommand {
 
     for (let hash in config) {
       const node = config[hash];
-
+      
       for (let dep in node.dependsOn) {
         const depNode = fullConfig[dep];
 
         if (!(dep in config)) {
-          return Promise.reject(new Error(`Couldn't find dependency '${depNode.name}' of '${node.name}' component.`));
+          if (depNode) {
+            return Promise.reject(new Error(`Couldn't find dependency '${depNode}' of '${node.name}' component.`));
+          } else {
+            const missingNode = fullConfig[hash].dependsOn.find(it => toMd5(it) === dep);
+
+            return Promise.reject(new Error(`Couldn't find component in '${missingNode}' that component '${node.name}' depends on.`));            
+          }
         }
       }
     }
