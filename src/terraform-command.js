@@ -429,7 +429,7 @@ class TerraformCommand extends AbstractCommand {
 
       const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
 
-      issueDependencies.forEach((it, index) => {
+      issueDependencies.forEach(it => {
         if (it in fullConfig) {
           const name = fullConfig[it].name;
 
