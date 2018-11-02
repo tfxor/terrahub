@@ -347,8 +347,9 @@ class TerraformCommand extends AbstractCommand {
    * Checks if there is a cycle between dependencies included in the config
    * @param {Object} config
    * @return {Promise}
+   * @private
    */
-  checkDependencyCycle(config) {
+  _checkDependencyCycle(config) {
     const cycle = this._getDependencyCycle(config);
 
     if (cycle.length) {
@@ -415,10 +416,45 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Checks if all components' dependencies are included in config
+   * direction can be 'forward', 'reverse' or 'all'
    * @param {Object} config
+   * @param {String} direction
    * @return {Promise}
    */
-  checkDependencies(config) {
+  checkDependencies(config, direction = 'forward') {
+    const issues = [];
+
+    switch (direction) {
+      case 'forward':
+        issues.push(...this.getDependencyIssues(config));
+        break;
+
+      case 'reverse':
+        issues.push(...this.getReverseDependencyIssues(config));
+        break;
+
+      case 'all':
+        issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
+        break;
+    }
+
+    if (issues.length) {
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+
+      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+    }
+
+    return this._checkDependencyCycle(config);
+  }
+
+  /**
+   * Returns an array of error strings related to
+   * all components' dependencies are included in config
+   * @param {Object} config
+   * @return {String[]}
+   */
+  getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const issues = [];
 
@@ -440,22 +476,16 @@ class TerraformCommand extends AbstractCommand {
       });
     });
 
-    if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      return Promise.reject(new Error(errorStrings.join(os.EOL)));
-    }
-
-    return this.checkDependencyCycle(config);
+    return issues;
   }
 
   /**
-   * Checks if all components that depend on the components included in run are included in config
+   * Returns an array of error strings related to
+   * components that depend on the components included in run are included in config
    * @param {Object} config
-   * @return {Promise}
+   * @return {String[]}
    */
-  checkDependenciesReverse(config) {
+  getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const issues = [];
 
@@ -471,28 +501,7 @@ class TerraformCommand extends AbstractCommand {
         `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
     });
 
-    if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      return Promise.reject(new Error(errorStrings.join(os.EOL)));
-    }
-
-    for (let hash in config) {
-      const node = config[hash];
-
-      for (let key in fullConfig) {
-        const depNode = fullConfig[key];
-        const dependsOn = depNode.dependsOn.map(it => toMd5(it));
-
-        if (dependsOn.includes(hash) && !(key in config)) {
-          return Promise.reject(new Error(`Couldn't find component '${depNode.name}' ` +
-            `that depends on '${node.name}'.`));
-        }
-      }
-    }
-
-    return this.checkDependencyCycle(config);
+    return issues;
   }
 
   /**

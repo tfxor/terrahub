@@ -26,9 +26,9 @@ class ApplyCommand extends TerraformCommand {
     return this.checkDependencies(config)
       .then(() => this._getPromise())
       .then(answer => answer ?
-        distributor.runActions(['prepare', 'plan', 'apply'], { 
+        distributor.runActions(['prepare', 'plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection:'forward'
+          dependencyDirection: 'forward'
         }) : Promise.reject('Action aborted')
       ).then(() => Promise.resolve('Done'));
   }
