@@ -36,7 +36,7 @@ class ConfigLoader {
       project: this.getProjectConfig(),
       dependsOn: [],
       children: [],
-      hooks: {},
+      hook: {},
       build: {},
       ci: {}
     };

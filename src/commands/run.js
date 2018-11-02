@@ -50,10 +50,22 @@ class RunCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return Promise.resolve()
-      .then(() => this._actions.includes('apply') ?
-        this.checkDependencies(config) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ?
-        this.checkDependenciesReverse(config) : Promise.resolve())
+      .then(() => {
+        if (!this._actions.length) {
+          return Promise.resolve();
+        }
+
+        let direction;
+        if (this._actions.length === 2) {
+          direction = 'all';
+        } else if (this._actions.includes('apply')) {
+          direction = 'forward';
+        } else {
+          direction = 'reverse';
+        }
+
+        return this.checkDependencies(config);
+      })
       .then(() => distributor.runActions(this._actions.length ?
         ['prepare', 'init', 'workspaceSelect'] :
         ['prepare', 'init', 'workspaceSelect', 'plan'], {

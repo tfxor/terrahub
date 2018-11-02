@@ -347,8 +347,9 @@ class TerraformCommand extends AbstractCommand {
    * Checks if there is a cycle between dependencies included in the config
    * @param {Object} config
    * @return {Promise}
+   * @private
    */
-  checkDependencyCycle(config) {
+  _checkDependencyCycle(config) {
     const cycle = this._getDependencyCycle(config);
 
     if (cycle.length) {
@@ -415,14 +416,47 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Checks if all components' dependencies are included in config
+   * direction can be 'forward', 'reverse' or 'all'
    * @param {Object} config
+   * @param {String} direction
    * @return {Promise}
    */
-  checkDependencies(config) {
-    const fullConfig = this.getExtendedConfig();
+  checkDependencies(config, direction = 'forward') {
+    const issues = [];
 
-    let errorMessage = 'TerraHub failed because of the following issues:';
-    const length = errorMessage.length;
+    switch (direction) {
+      case 'forward':
+        issues.push(...this.getDependencyIssues(config));
+        break;
+
+      case 'reverse':
+        issues.push(...this.getReverseDependencyIssues(config));
+        break;
+
+      case 'all':
+        issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
+        break;
+    }
+
+    if (issues.length) {
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+
+      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+    }
+
+    return this._checkDependencyCycle(config);
+  }
+
+  /**
+   * Returns an array of error strings related to
+   * all components' dependencies are included in config
+   * @param {Object} config
+   * @return {String[]}
+   */
+  getDependencyIssues(config) {
+    const fullConfig = this.getExtendedConfig();
+    const issues = [];
 
     Object.keys(config).forEach(hash => {
       const node = config[hash];
@@ -433,45 +467,41 @@ class TerraformCommand extends AbstractCommand {
         if (it in fullConfig) {
           const name = fullConfig[it].name;
 
-          errorMessage += os.EOL + `- '${node.name}' component depends on '${name}' that is excluded from execution list`;
+          issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
         } else {
           const dir = fullConfig[hash].dependsOn.find(dep => toMd5(dep) === it);
 
-          errorMessage += os.EOL + `- '${node.name}' component depends on the component in '${dir}' directory that doesn't exist`;
+          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
         }
       });
     });
 
-    if (errorMessage.length > length) {
-      return Promise.reject(new Error(errorMessage));
-    }
-
-    return this.checkDependencyCycle(config);
+    return issues;
   }
 
   /**
-   * Checks if all components that depend on the components included in run are included in config
+   * Returns an array of error strings related to
+   * components that depend on the components included in run are included in config
    * @param {Object} config
-   * @return {Promise}
+   * @return {String[]}
    */
-  checkDependenciesReverse(config) {
+  getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
+    const issues = [];
 
-    for (let hash in config) {
-      const node = config[hash];
+    const keys = Object.keys(fullConfig).filter(key => !(key in config));
 
-      for (let key in fullConfig) {
-        const depNode = fullConfig[key];
-        const dependsOn = depNode.dependsOn.map(it => toMd5(it));
+    keys.forEach(hash => {
+      const depNode = fullConfig[hash];
+      const dependsOn = depNode.dependsOn.map(path => toMd5(path));
 
-        if (dependsOn.includes(hash) && !(key in config)) {
-          return Promise.reject(new Error(`Couldn't find component '${depNode.name}' ` +
-            `that depends on '${node.name}'.`));
-        }
-      }
-    }
+      const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
 
-    return this.checkDependencyCycle(config);
+      issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
+        `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
+    });
+
+    return issues;
   }
 
   /**
