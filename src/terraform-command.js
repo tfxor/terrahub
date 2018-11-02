@@ -224,7 +224,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (!stdout || !stdout.toString().length) {
-      throw new Error('There are no changes between commits, commit and working tree, etc.')
+      throw new Error('There are no changes between commits, commit and working tree, etc.');
     }
 
     const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
@@ -271,7 +271,7 @@ class TerraformCommand extends AbstractCommand {
       if (/not found/.test(stderr)) {
         err = new Error('Git is not installed on this device.');
       } else if (/Not a git repository/.test(stderr)) {
-        err = new Error(`Git repository not found in '${this.getAppPath()}'`)
+        err = new Error(`Git repository not found in '${this.getAppPath()}'`);
       }
     }
 
@@ -423,7 +423,7 @@ class TerraformCommand extends AbstractCommand {
 
     for (let hash in config) {
       const node = config[hash];
-      
+
       for (let dep in node.dependsOn) {
         const depNode = fullConfig[dep];
 
@@ -433,7 +433,7 @@ class TerraformCommand extends AbstractCommand {
           } else {
             const missingNode = fullConfig[hash].dependsOn.find(it => toMd5(it) === dep);
 
-            return Promise.reject(new Error(`Couldn't find component in '${missingNode}' that component '${node.name}' depends on.`));            
+            return Promise.reject(new Error(`Couldn't find component in '${missingNode}' that component '${node.name}' depends on.`));
           }
         }
       }

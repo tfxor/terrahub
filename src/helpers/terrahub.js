@@ -100,10 +100,12 @@ class Terrahub {
         case '.js':
           return () => {
             const promise = require(args[0])(this._config, res);
+
             return promise instanceof Promise ?
               promise :
               Promise.resolve(promise);
           };
+
         case '.sh':
           command = 'bash';
           break;
