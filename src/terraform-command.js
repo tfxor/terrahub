@@ -441,8 +441,10 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-      return Promise.reject(new Error('TerraHub failed because of the following issues:' + os.EOL +
-        issues.map((it, index) => `${index + 1}. ${it}`).join(os.EOL)));
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+
+      return Promise.reject(new Error(errorStrings.join(os.EOL)));
     }
 
     return this.checkDependencyCycle(config);
@@ -455,6 +457,26 @@ class TerraformCommand extends AbstractCommand {
    */
   checkDependenciesReverse(config) {
     const fullConfig = this.getExtendedConfig();
+    const issues = [];
+
+    const keys = Object.keys(fullConfig).filter(key => !(key in config));
+
+    keys.forEach(hash => {
+      const depNode = fullConfig[hash];
+      const dependsOn = depNode.dependsOn.map(path => toMd5(path));
+
+      const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
+
+      issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
+        `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
+    });
+
+    if (issues.length) {
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+
+      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+    }
 
     for (let hash in config) {
       const node = config[hash];
