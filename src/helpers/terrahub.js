@@ -98,9 +98,12 @@ class Terrahub {
       let command;
       switch (extension) {
         case '.js':
-          require(args[0])(this._config, res);
-          return () => Promise.resolve();
-
+          return () => {
+            const promise = require(args[0])(this._config, res);
+            return promise instanceof Promise ? 
+              promise : 
+              Promise.resolve(promise);  
+          }
         case '.sh':
           command = 'bash';
           break;
