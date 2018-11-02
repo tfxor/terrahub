@@ -4,7 +4,7 @@ const path = require('path');
 const logger = require('./logger');
 const Terraform = require('../helpers/terraform');
 const { config, fetch } = require('../parameters');
-const { toMd5, spawner } = require('../helpers/util');
+const { promiseSeries, toMd5, spawner } = require('../helpers/util');
 
 class Terrahub {
   /**
@@ -74,30 +74,49 @@ class Terrahub {
   /**
    * Check if custom hook is provided
    * @param {String} hook
+   * @param {String} res
    * @return {Function}
    * @private
    */
-  _hook(hook) {
-    try {
-      const hookPath = this._config.hooks[this._action][hook];
-      if (!hookPath) {
-        return () => Promise.resolve();
-      }
-
-      const extension = path.extname(hookPath);
-      const fullPath = path.isAbsolute(hookPath) ? hookPath : path.join(this._project.root, hookPath);
-
-      switch (extension) {
-        case '.js':
-          return require(fullPath);
-        case '.sh':
-          return () => this._spawn('bash', fullPath);
-        default:
-          logger.error(`'${extension}' scripts are not supported`);
-      }
-    } catch (err) {
+  _hook(hook, res = null) {
+    if (!this._config.hook[this._action][hook]) {
       return () => Promise.resolve();
     }
+
+    const hookPath = this._config.hook[this._action][hook];
+    const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
+
+    return promiseSeries(commandsList.map(it => {
+      const args = it.split(' ');
+      const extension = path.extname(args[0]);
+
+      // If the first arg is a script file get its absolute path
+      if (extension) {
+        args[0] = path.resolve(this._project.root, this._config.root, args[0]);
+      }
+
+      let command;
+      switch (extension) {
+        case '.js':
+          return () => {
+            const promise = require(args[0])(this._config, res);
+
+            return promise instanceof Promise ?
+              promise :
+              Promise.resolve(promise);
+          };
+
+        case '.sh':
+          command = 'bash';
+          break;
+
+        default:
+          command = args.shift();
+          break;
+      }
+
+      return () => this._spawn(command, args);
+    }));
   }
 
   /**
@@ -107,12 +126,12 @@ class Terrahub {
    * @private
    */
   _spawn(binary, filePath) {
-    return spawner(binary, [filePath], {
-      cwd: path.join(this._config.project.root, this._config.root),
-      shell: true
-    },
-    err => logger.error(`[${this._config.name}] ${err.toString()}`),
-    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+    return spawner(binary, filePath, {
+        cwd: path.join(this._config.project.root, this._config.root),
+        shell: true
+      },
+      err => logger.error(`[${this._config.name}] ${err.toString()}`),
+      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
   }
 
@@ -123,10 +142,10 @@ class Terrahub {
    */
   _getTask() {
     return this._on('start')
-      .then(() => this._hook('before')(this._config))
+      .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(buf => this._upload(buf))
-      .then(res => this._hook('after')(this._config, res))
+      .then(res => this._hook('after', res))
       .then(() => this._on('success'))
       .catch(err => this._on('error', err))
       .catch(err => {
