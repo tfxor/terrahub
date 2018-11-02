@@ -224,7 +224,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (!stdout || !stdout.toString().length) {
-      throw new Error('There are no changes between commits, commit and working tree, etc.')
+      throw new Error('There are no changes between commits, commit and working tree, etc.');
     }
 
     const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
@@ -271,7 +271,7 @@ class TerraformCommand extends AbstractCommand {
       if (/not found/.test(stderr)) {
         err = new Error('Git is not installed on this device.');
       } else if (/Not a git repository/.test(stderr)) {
-        err = new Error(`Git repository not found in '${this.getAppPath()}'`)
+        err = new Error(`Git repository not found in '${this.getAppPath()}'`);
       }
     }
 
@@ -421,16 +421,29 @@ class TerraformCommand extends AbstractCommand {
   checkDependencies(config) {
     const fullConfig = this.getExtendedConfig();
 
-    for (let hash in config) {
+    let errorMessage = 'TerraHub failed because of the following issues:';
+    const length = errorMessage.length;
+
+    Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      for (let dep in node.dependsOn) {
-        const depNode = fullConfig[dep];
+      const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
 
-        if (!(dep in config)) {
-          return Promise.reject(new Error(`Couldn't find dependency '${depNode.name}' of '${node.name}' component.`));
+      issueDependencies.forEach(it => {
+        if (it in fullConfig) {
+          const name = fullConfig[it].name;
+
+          errorMessage += os.EOL + `- '${node.name}' component depends on '${name}' that is excluded from execution list`;
+        } else {
+          const dir = fullConfig[hash].dependsOn.find(dep => toMd5(dep) === it);
+
+          errorMessage += os.EOL + `- '${node.name}' component depends on the component in '${dir}' directory that doesn't exist`;
         }
-      }
+      });
+    });
+
+    if (errorMessage.length > length) {
+      return Promise.reject(new Error(errorMessage));
     }
 
     return this.checkDependencyCycle(config);

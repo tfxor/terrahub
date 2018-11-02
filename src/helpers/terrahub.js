@@ -79,7 +79,7 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = null) {
-    if (!hook[this._action] || !this._config.hook[this._action][hook]) {
+    if (!this._config.hook[this._action][hook]) {
       return () => Promise.resolve();
     }
 
@@ -100,10 +100,12 @@ class Terrahub {
         case '.js':
           return () => {
             const promise = require(args[0])(this._config, res);
-            return promise instanceof Promise ? 
-              promise : 
-              Promise.resolve(promise);  
-          }
+
+            return promise instanceof Promise ?
+              promise :
+              Promise.resolve(promise);
+          };
+
         case '.sh':
           command = 'bash';
           break;
@@ -114,10 +116,7 @@ class Terrahub {
       }
 
       return () => this._spawn(command, args);
-    })).catch(error => {
-      logger.debug(error);
-      return Promise.resolve();
-    });
+    }));
   }
 
   /**
