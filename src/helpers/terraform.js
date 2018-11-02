@@ -190,10 +190,11 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    const promise = () => this.run('init',
+    const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
-    return exponentialBackoff(promise, { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
+    return exponentialBackoff(promiseFunction,
+      { conditionFunction: this._checkIgnoreErrorInit, maxRetries: config.retryCount })
       .then(() => this._reInitPaths());
   }
 
@@ -202,8 +203,8 @@ class Terraform {
    * @return {Boolean}
    * @private
    */
-  _checkIgnoreError(error) {
-    return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+  _checkIgnoreErrorInit(error) {
+    return [/timeout/, /connection reset by peer/, /failed to decode/].some(it => it.test(error.message));
   }
 
   /**
@@ -285,7 +286,11 @@ class Terraform {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
 
-    return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
+    const promiseFunction = () => this.run('plan',
+      args.concat(this._varFile(), this._var(), this._optsToArgs(options)));
+
+    return exponentialBackoff(promiseFunction,
+      { conditionFunction: this._checkIgnoreErrorPlan, maxRetries: config.retryCount })
       .then(data => {
         const metadata = {};
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
@@ -310,6 +315,15 @@ class Terraform {
 
         return Promise.resolve(data);
       });
+  }
+
+  /**
+   * @param {Error} error
+   * @return {Boolean}
+   * @private
+   */
+  _checkIgnoreErrorPlan(error) {
+    return [/EOF/].some(it => it.test(error.message));
   }
 
   /**
