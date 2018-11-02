@@ -420,9 +420,7 @@ class TerraformCommand extends AbstractCommand {
    */
   checkDependencies(config) {
     const fullConfig = this.getExtendedConfig();
-
-    let errorMessage = 'TerraHub failed because of the following issues:';
-    const length = errorMessage.length;
+    const issues = [];
 
     Object.keys(config).forEach(hash => {
       const node = config[hash];
@@ -433,17 +431,18 @@ class TerraformCommand extends AbstractCommand {
         if (it in fullConfig) {
           const name = fullConfig[it].name;
 
-          errorMessage += os.EOL + `- '${node.name}' component depends on '${name}' that is excluded from execution list`;
+          issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
         } else {
           const dir = fullConfig[hash].dependsOn.find(dep => toMd5(dep) === it);
 
-          errorMessage += os.EOL + `- '${node.name}' component depends on the component in '${dir}' directory that doesn't exist`;
+          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
         }
       });
     });
 
-    if (errorMessage.length > length) {
-      return Promise.reject(new Error(errorMessage));
+    if (issues.length) {
+      return Promise.reject(new Error('TerraHub failed because of the following issues:' + os.EOL +
+        issues.map((it, index) => `${index + 1}. ${it}`).join(os.EOL)));
     }
 
     return this.checkDependencyCycle(config);
