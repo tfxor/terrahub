@@ -6,6 +6,7 @@ const path = require('path');
 const glob = require('glob');
 const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
+const { EOL } = require('os');
 
 class ConfigLoader {
   /**
@@ -17,7 +18,6 @@ class ConfigLoader {
     this._rootConfig = {};
     this._projectConfig = {};
     this._projectCi = {};
-    this._otherRootPaths = [];
     this._format = '.' + config.format;
 
     /**
@@ -197,14 +197,6 @@ class ConfigLoader {
   }
 
   /**
-   * Get all root paths found in the project directory
-   * @return {String[]}
-   */
-  getRootPaths() {
-    return this._otherRootPaths.concat([this._rootPath]);
-  }
-
-  /**
    * Separate root config from component's config
    * @private
    */
@@ -243,17 +235,19 @@ class ConfigLoader {
    * @private
    */
   _handleComponentConfig() {
-    // Remove root config
-    const componentConfigs = this.listConfig().slice(1);
+    const configPaths = this.listConfig();
+    const rootPaths = {};
 
-    componentConfigs.forEach(configPath => {
+    configPaths.forEach(configPath => {
       let config = this._getConfig(configPath);
-      const componentPath = path.dirname(this.relativePath(configPath));
-      const componentHash = this.getComponentHash(componentPath);
 
       if (config.hasOwnProperty('project')) {
-        this._otherRootPaths.push(configPath);
+        rootPaths[path.dirname(configPath)] = null;
+        return;
       }
+
+      const componentPath = path.dirname(this.relativePath(configPath));
+      const componentHash = this.getComponentHash(componentPath);
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
@@ -281,6 +275,20 @@ class ConfigLoader {
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
+
+    rootPaths[this._rootPath] = null;
+    const pathsArray = Object.keys(rootPaths);
+
+    if (pathsArray.length > 1) {
+      let errorMsg = 'Multiple root configs identified in this project:' + EOL;
+
+      pathsArray.forEach((cfgPath, index) => {
+        errorMsg += `  ${index + 1}. ${cfgPath}` + EOL;
+      });
+      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+      throw new Error(errorMsg);
+    }
   }
 
   /**

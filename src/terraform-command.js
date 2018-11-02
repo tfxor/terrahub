@@ -421,22 +421,29 @@ class TerraformCommand extends AbstractCommand {
   checkDependencies(config) {
     const fullConfig = this.getExtendedConfig();
 
-    for (let hash in config) {
+    let errorMessage = 'TerraHub failed because of the following issues:';
+    const length = errorMessage.length;
+
+    Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      for (let dep in node.dependsOn) {
-        const depNode = fullConfig[dep];
+      const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
 
-        if (!(dep in config)) {
-          if (depNode) {
-            return Promise.reject(new Error(`Couldn't find dependency '${depNode}' of '${node.name}' component.`));
-          } else {
-            const missingNode = fullConfig[hash].dependsOn.find(it => toMd5(it) === dep);
+      issueDependencies.forEach((it, index) => {
+        if (it in fullConfig) {
+          const name = fullConfig[it].name;
 
-            return Promise.reject(new Error(`Couldn't find component in '${missingNode}' that component '${node.name}' depends on.`));
-          }
+          errorMessage += os.EOL + `- '${node.name}' component depends on '${name}' that is excluded from execution list`;
+        } else {
+          const dir = fullConfig[hash].dependsOn.find(dep => toMd5(dep) === it);
+
+          errorMessage += os.EOL + `- '${node.name}' component depends on the component in '${dir}' directory that doesn't exist`;
         }
-      }
+      });
+    });
+
+    if (errorMessage.length > length) {
+      return Promise.reject(new Error(errorMessage));
     }
 
     return this.checkDependencyCycle(config);
