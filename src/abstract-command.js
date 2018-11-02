@@ -143,18 +143,6 @@ class AbstractCommand {
       );
     }
 
-    const rootPaths = this._configLoader.getRootPaths();
-    if (rootPaths.length > 1) {
-      let errorMsg = 'Multiple root configs identified in this project:' + os.EOL;
-
-      rootPaths.forEach((cfgPath, index) => {
-        errorMsg += `  ${index + 1}. ${cfgPath}` + os.EOL;
-      });
-      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
-
-      return Promise.reject(new Error(errorMsg));
-    }
-
     const required = Object.keys(this._options).filter(name => {
       return typeof this.getOption(name) === 'undefined';
     });
@@ -241,21 +229,21 @@ class AbstractCommand {
     this._configLoader = new ConfigLoader();
   }
 
-  /** 
+  /**
    * @returns {String}
    */
   getFileName() {
     return this._configLoader.getFileName();
   }
 
-  /** 
+  /**
    * @returns {String}
    */
   getDefaultFileName() {
     return this._configLoader.getDefaultFileName();
   }
 
-  /** 
+  /**
    * @returns {String}
    */
   getProjectFormat() {
