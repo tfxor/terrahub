@@ -2,7 +2,7 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5 } = require('./helpers/util');
+const { extend, askQuestion, toMd5, yesNoQuestion } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
@@ -300,9 +300,23 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @param {Object} config 
+   * @param {String} action
+   * @return {String}
+   */
+  askForApprovement(config, action) {
+    const length = Object.keys(config).length;
+
+    if (length < 5) {
+      this.printConfigCommaSeparated(config);
+    } else {
+      this.printConfigAsList(config);
+    }
+    return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
+  }
+
+  /**
    * @param {String} config
-   * @return {Boolean}
-   * @private
    */
   printConfigAsList(config) {
     const componentList = {};
@@ -317,6 +331,9 @@ class TerraformCommand extends AbstractCommand {
     });
   }
 
+  /**
+   * @param {String} config
+   */
   printConfigCommaSeparated(config) {
     const componentList = {};
 

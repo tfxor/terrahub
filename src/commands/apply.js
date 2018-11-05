@@ -2,7 +2,6 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion } = require('../helpers/util');
 
 class ApplyCommand extends TerraformCommand {
   /**
@@ -41,18 +40,8 @@ class ApplyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return this.askForApprovement(this.getConfigObject());
+      return this.askForApprovement(this.getConfigObject(), 'apply');
     }
-  }
-
-  askForApprovement(config) {
-    const length = Object.keys(config).length;
-    if (length < 5) {
-      this.printConfigCommaSeparated(config);
-    } else {
-      this.printConfigAsList(config);
-    }
-    return yesNoQuestion(`Do you want to perform apply action? (Y/N) `);
   }
 }
 
