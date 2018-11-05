@@ -7,6 +7,7 @@ const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
+const treeify = require('treeify');
 
 /**
  * @abstract
@@ -296,6 +297,35 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return false;
+  }
+
+  /**
+   * @param {String} config
+   * @return {Boolean}
+   * @private
+   */
+  printConfigAsList(config) {
+    const componentList = {};
+
+    Object.keys(config).map(key => componentList[config[key].name] = null);
+
+    const { name } = this.getProjectConfig();
+    this.logger.log(`Project: ${name}`);
+
+    treeify.asLines(componentList, false, line => {
+      this.logger.log(` ${line}`);
+    });
+  }
+
+  printConfigCommaSeparated(config) {
+    const componentList = {};
+
+    Object.keys(config).map(key => componentList[config[key].name] = null);
+    
+    const components = Object.keys(componentList).join(', ');
+    const { name } = this.getProjectConfig();
+
+    this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
   }
 
   /**

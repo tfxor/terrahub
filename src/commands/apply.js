@@ -41,8 +41,18 @@ class ApplyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `apply` action? (Y/N) ');
+      return this.askForApprovement(this.getConfigObject());
     }
+  }
+
+  askForApprovement(config) {
+    const length = Object.keys(config).length;
+    if (length < 5) {
+      this.printConfigCommaSeparated(config);
+    } else {
+      this.printConfigAsList(config);
+    }
+    return yesNoQuestion(`Do you want to perform apply action? (Y/N) `);
   }
 }
 

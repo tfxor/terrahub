@@ -3,7 +3,6 @@
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 const { yesNoQuestion } = require('../helpers/util');
-const treeify = require('treeify');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -25,7 +24,9 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     if (this.getOption('dry-run')) {
-      return this._dryRun();
+      this.printConfigAsList(this.getConfigObject());
+
+      return Promise.resolve('Done');
     }
 
     this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
@@ -92,29 +93,18 @@ class RunCommand extends TerraformCommand {
     if (this.getOption('auto-approve') || !this._actions.length) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `run` action? (Y/N) ');
+      return this.askForApprovement(this.getConfigObject());
     }
   }
 
-  /**
-   * Logs list of the components to be included in the run
-   * @return {Promise}
-   * @private
-   */
-  _dryRun() {
-    const config = this.getConfigObject();
-    const componentList = {};
-
-    Object.keys(config).map(key => componentList[config[key].name] = null);
-
-    const { name } = this.getProjectConfig();
-    this.logger.log(`Project: ${name}`);
-
-    treeify.asLines(componentList, false, line => {
-      this.logger.log(` ${line}`);
-    });
-
-    return Promise.resolve('Done');
+  askForApprovement(config) {
+    const length = Object.keys(config).length;
+    if (length < 5) {
+      this.printConfigCommaSeparated(config);
+    } else {
+      this.printConfigAsList(config);
+    }
+    return yesNoQuestion('Do you want to perform `run` action? (Y/N) ');
   }
 }
 
