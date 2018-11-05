@@ -79,11 +79,13 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = null) {
-    if (!this._config.hook[this._action][hook]) {
+    let hookPath;
+    try {
+      hookPath = this._config.hook[this._action][hook];
+    } catch (error) {
       return () => Promise.resolve();
     }
 
-    const hookPath = this._config.hook[this._action][hook];
     const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
 
     return promiseSeries(commandsList.map(it => {

@@ -50,10 +50,22 @@ class RunCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return Promise.resolve()
-      .then(() => this._actions.includes('apply') ?
-        this.checkDependencies(config) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ?
-        this.checkDependenciesReverse(config) : Promise.resolve())
+      .then(() => {
+        if (!this._actions.length) {
+          return Promise.resolve();
+        }
+
+        let direction;
+        if (this._actions.length === 2) {
+          direction = TerraformCommand.BIDIRECTIONAL;
+        } else if (this._actions.includes('apply')) {
+          direction = TerraformCommand.FORWARD;
+        } else {
+          direction = TerraformCommand.REVERSE;
+        }
+
+        return this.checkDependencies(config, direction);
+      })
       .then(() => distributor.runActions(this._actions.length ?
         ['prepare', 'init', 'workspaceSelect'] :
         ['prepare', 'init', 'workspaceSelect', 'plan'], {
@@ -62,12 +74,12 @@ class RunCommand extends TerraformCommand {
       .then(() => this._actions.includes('apply') ?
         distributor.runActions(['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'forward'
+          dependencyDirection: TerraformCommand.FORWARD
         }) : Promise.resolve())
       .then(() => this._actions.includes('destroy') ?
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'reverse',
+          dependencyDirection: TerraformCommand.REVERSE,
           planDestroy: true
         }) : Promise.resolve());
   }
