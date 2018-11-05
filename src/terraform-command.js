@@ -585,7 +585,7 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @return {Number}
    */
-  static get BIDIRECTIONAL() { return 0; }
+  static get BIDIRECTIONAL() { return 2; }
 }
 
 module.exports = TerraformCommand;
