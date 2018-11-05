@@ -57,14 +57,14 @@ class RunCommand extends TerraformCommand {
 
         let direction;
         if (this._actions.length === 2) {
-          direction = 'all';
+          direction = TerraformCommand.BIDIRECTIONAL;
         } else if (this._actions.includes('apply')) {
-          direction = 'forward';
+          direction = TerraformCommand.FORWARD;
         } else {
-          direction = 'reverse';
+          direction = TerraformCommand.REVERSE;
         }
 
-        return this.checkDependencies(config);
+        return this.checkDependencies(config, direction);
       })
       .then(() => distributor.runActions(this._actions.length ?
         ['prepare', 'init', 'workspaceSelect'] :
@@ -74,12 +74,12 @@ class RunCommand extends TerraformCommand {
       .then(() => this._actions.includes('apply') ?
         distributor.runActions(['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'forward'
+          dependencyDirection: TerraformCommand.FORWARD
         }) : Promise.resolve())
       .then(() => this._actions.includes('destroy') ?
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'reverse',
+          dependencyDirection: TerraformCommand.REVERSE,
           planDestroy: true
         }) : Promise.resolve());
   }
