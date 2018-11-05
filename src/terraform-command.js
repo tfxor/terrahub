@@ -416,24 +416,23 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Checks if all components' dependencies are included in config
-   * direction can be 'forward', 'reverse' or 'all'
    * @param {Object} config
-   * @param {String} direction
+   * @param {Number} direction
    * @return {Promise}
    */
-  checkDependencies(config, direction = 'forward') {
+  checkDependencies(config, direction = TerraformCommand.FORWARD) {
     const issues = [];
 
     switch (direction) {
-      case 'forward':
+      case TerraformCommand.FORWARD:
         issues.push(...this.getDependencyIssues(config));
         break;
 
-      case 'reverse':
+      case TerraformCommand.REVERSE:
         issues.push(...this.getReverseDependencyIssues(config));
         break;
 
-      case 'all':
+      case TerraformCommand.BIDIRECTIONAL:
         issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
         break;
     }
@@ -572,6 +571,21 @@ class TerraformCommand extends AbstractCommand {
    * @private
    */
   static get GRAY() { return 2; }
+
+  /**
+   * @return {Number}
+   */
+  static get FORWARD() { return 0; }
+
+  /**
+   * @return {Number}
+   */
+  static get REVERSE() { return 1; }
+
+  /**
+   * @return {Number}
+   */
+  static get BIDIRECTIONAL() { return 0; }
 }
 
 module.exports = TerraformCommand;
