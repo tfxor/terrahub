@@ -253,15 +253,15 @@ function physicalCpuCount() {
   }
 
   let amount;
-  let Platform = platform();
+  let platformCheck = platform();
 
-  if (Platform === 'linux') {
+  if (platformCheck === 'linux') {
     const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
     amount = parseInt(output.trim(), 10);
-  } else if (Platform === 'darwin') {
+  } else if (platformCheck === 'darwin') {
     const output = exec('sysctl -n hw.physicalcpu_max');
     amount = parseInt(output.trim(), 10);
-  } else if (Platform === 'windows') {
+  } else if (platformCheck === 'windows') {
     const output = exec('WMIC CPU Get NumberOfCores');
     amount = output.split(EOL)
       .map(function parse(line) { return parseInt(line) })
