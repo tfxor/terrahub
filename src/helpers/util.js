@@ -8,7 +8,8 @@ const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
-const { EOL } = require('os');
+const { EOL, platform, cpus } = require('os');
+const childProcess = require('child_process');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -245,6 +246,38 @@ function setTimeoutPromise(timeout) {
   });
 }
 
+function physicalCpuCount() {
+  function exec(command) {
+    const output = childProcess.execSync(command, { encoding: 'utf8' });
+    return output;
+  }
+
+  let amount;
+  let Platform = platform();
+
+  if (Platform === 'linux') {
+    const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
+    amount = parseInt(output.trim(), 10);
+  } else if (Platform === 'darwin') {
+    const output = exec('sysctl -n hw.physicalcpu_max');
+    amount = parseInt(output.trim(), 10);
+  } else if (Platform === 'windows') {
+    const output = exec('WMIC CPU Get NumberOfCores');
+    amount = output.split(EOL)
+      .map(function parse(line) { return parseInt(line) })
+      .filter(function numbers(value) { return !isNaN(value) })
+      .reduce(function add(sum, number) { return sum + number }, 0);
+  } else {
+    const cores = cpus().filter(function (cpu, index) {
+      const hasHyperthreading = cpu.model.includes('Intel');
+      const isOdd = index % 2 === 1;
+      return !hasHyperthreading || isOdd;
+    });
+    amount = cores.length;
+  }
+  return amount;
+}
+
 /**
  * Public methods
  */
@@ -262,5 +295,6 @@ module.exports = {
   askQuestion,
   isAwsNameValid,
   exponentialBackoff,
-  setTimeoutPromise
+  setTimeoutPromise,
+  physicalCpuCount
 };

@@ -58,7 +58,8 @@ const def = {
   api: 'api',
   token: false,
   format: 'yml',
-  retryCount: 2
+  retryCount: 2,
+  useLogicalCpu: false
 };
 const env = {
   env: _getEnv(args),
@@ -86,7 +87,8 @@ module.exports = {
     format: cfg.format,
     retryCount: cfg.retryCount,
     isHelp: _isHelp(args),
-    isDefault: isDefault
+    isDefault: isDefault,
+    useLogicalCpu: cfg.useLogicalCpu
   },
   templates: {
     aws: path.join(templates, 'aws'),
