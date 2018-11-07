@@ -300,49 +300,37 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} config 
+   * @param {Object} config
    * @param {String} action
    * @return {String}
    */
   askForApprovement(config, action) {
     const length = Object.keys(config).length;
 
-    if (length < 5) {
-      this.printConfigCommaSeparated(config);
-    } else {
-      this.printConfigAsList(config);
-    }
+    this.printConfig(config, length)
     return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
   }
 
   /**
    * @param {String} config
+   * @param {String} length
    */
-  printConfigAsList(config) {
+  printConfig(config, length) {
     const componentList = {};
 
     Object.keys(config).map(key => componentList[config[key].name] = null);
 
     const { name } = this.getProjectConfig();
-    this.logger.log(`Project: ${name}`);
+    if (length < 5) {
+      const components = Object.keys(componentList).join(', ');
+      this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
+    } else {
+      this.logger.log(`Project: ${name}`);
 
-    treeify.asLines(componentList, false, line => {
-      this.logger.log(` ${line}`);
-    });
-  }
-
-  /**
-   * @param {String} config
-   */
-  printConfigCommaSeparated(config) {
-    const componentList = {};
-
-    Object.keys(config).map(key => componentList[config[key].name] = null);
-    
-    const components = Object.keys(componentList).join(', ');
-    const { name } = this.getProjectConfig();
-
-    this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
+      treeify.asLines(componentList, false, line => {
+        this.logger.log(` ${line}`);
+      });
+    }
   }
 
   /**
