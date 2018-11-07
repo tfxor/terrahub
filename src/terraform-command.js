@@ -305,9 +305,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String}
    */
   askForApprovement(config, action) {
-    const length = Object.keys(config).length;
-
-    this.printConfig(config, length)
+    this.printConfig(config)
     return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
   }
 
@@ -315,8 +313,9 @@ class TerraformCommand extends AbstractCommand {
    * @param {String} config
    * @param {String} length
    */
-  printConfig(config, length) {
+  printConfig(config) {
     const componentList = {};
+    const length = Object.keys(config).length;
 
     Object.keys(config).map(key => componentList[config[key].name] = null);
 
