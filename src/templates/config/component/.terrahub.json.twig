@@ -6,4 +6,7 @@
     ,"dependsOn": "{{ dependsOn|join('","') }}"
     {% endif %}
   }
+  {% if data %}
+,{{ data }}
+  {% endif %}
 }
