@@ -305,7 +305,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String}
    */
   askForApprovement(config, action) {
-    this.printConfig(config)
+    this.printConfig(config);
     return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
   }
 
