@@ -139,7 +139,7 @@ class ComponentCommand extends AbstractCommand {
         data = fse.readFileSync(specificConfigPath);
       }
 
-      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn, data: data}, outFile);
+      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => 'Done');
   }
 
