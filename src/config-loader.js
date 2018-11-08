@@ -66,10 +66,16 @@ class ConfigLoader {
     }
   }
 
+  /**
+   * @return {String}
+   */
   getFileName() {
     return this._fileName;
   }
 
+  /**
+   * @return {String}
+   */
   getDefaultFileName() {
     return this._defaultFileName;
   }

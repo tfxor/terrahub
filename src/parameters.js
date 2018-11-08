@@ -59,7 +59,7 @@ const def = {
   token: false,
   format: 'yml',
   retryCount: 2,
-  useLogicalCpu: false
+  usePhysicalCpu: false
 };
 const env = {
   env: _getEnv(args),
@@ -87,8 +87,9 @@ module.exports = {
     format: cfg.format,
     retryCount: cfg.retryCount,
     isHelp: _isHelp(args),
+    defaultFileName: `.terrahub.${cfg.format}`,
     isDefault: isDefault,
-    useLogicalCpu: cfg.useLogicalCpu
+    usePhysicalCpu: cfg.usePhysicalCpu
   },
   templates: {
     aws: path.join(templates, 'aws'),

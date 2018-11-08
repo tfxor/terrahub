@@ -17,7 +17,7 @@ class Distributor {
     this._config = Object.assign({}, cfg);
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
-    this._threadsCount = config.useLogicalCpu ? physicalCpuCount() : os.cpus().length;
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
     cluster.setupMaster({ exec: this._worker });
   }
 
