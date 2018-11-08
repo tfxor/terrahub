@@ -3,7 +3,7 @@
     "name": "{{ name }}",
     "mapping": ["."]
     {% if dependsOn %}
-    ,"dependsOn": "{{ dependsOn|join('","') }}"
+    ,"dependsOn": ["{{ dependsOn|join('","') }}"]
     {% endif %}
   }
   {% if data %}
