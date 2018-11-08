@@ -132,13 +132,10 @@ class ComponentCommand extends AbstractCommand {
       })
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
-      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName());
+      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() +'.twig');
       let data = '';
-      const format = this.getProjectFormat();
 
-      if (fse.existsSync(specificConfigPath) && format === '.json') {
-        data = fse.readFileSync(specificConfigPath).slice(1,-1);
-      } else if (fse.existsSync(specificConfigPath) && format === '.yml') {
+      if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
 
