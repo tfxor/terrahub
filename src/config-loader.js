@@ -6,6 +6,7 @@ const path = require('path');
 const glob = require('glob');
 const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
+const { EOL } = require('os');
 
 class ConfigLoader {
   /**
@@ -17,7 +18,6 @@ class ConfigLoader {
     this._rootConfig = {};
     this._projectConfig = {};
     this._projectCi = {};
-    this._otherRootPaths = [];
     this._format = '.' + config.format;
 
     /**
@@ -36,7 +36,7 @@ class ConfigLoader {
       project: this.getProjectConfig(),
       dependsOn: [],
       children: [],
-      hooks: {},
+      hook: {},
       build: {},
       ci: {}
     };
@@ -48,6 +48,7 @@ class ConfigLoader {
    */
   _readRoot() {
     const configFile = this._findRootConfig(process.cwd());
+
     if (configFile) {
       this._format = path.extname(configFile);
       this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
@@ -65,14 +66,20 @@ class ConfigLoader {
     }
   }
 
+  /**
+   * @return {String}
+   */
   getFileName() {
     return this._fileName;
   }
 
+  /**
+   * @return {String}
+   */
   getDefaultFileName() {
     return this._defaultFileName;
   }
-  
+
   /**
    * @param {String} dirPath
    * @return {String|Boolean}
@@ -86,7 +93,7 @@ class ConfigLoader {
     if (files.length) {
       const configPath = files.pop();
 
-      config = this._getConfig(configPath);
+      config = ConfigLoader.readConfig(configPath);
       if (config.hasOwnProperty('project')) {
         return configPath;
       }
@@ -114,6 +121,7 @@ class ConfigLoader {
   getProjectCi() {
     return this._projectCi;
   }
+
   /**
    * Get Project Format
    * @return {String}
@@ -157,9 +165,9 @@ class ConfigLoader {
     } = options;
 
     let searchPattern;
-    switch(env) {
+    switch (env) {
       case 'default':
-        searchPattern =  '**/.terrahub.+(json|yml|yaml)';
+        searchPattern = '**/.terrahub.+(json|yml|yaml)';
         break;
       case 'specific':
         searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
@@ -192,14 +200,6 @@ class ConfigLoader {
    */
   componentsCount() {
     return Object.keys(this.getFullConfig()).length;
-  }
-
-  /**
-   * Get all root paths found in the project directory
-   * @return {String[]}
-   */
-  getRootPaths() {
-    return this._otherRootPaths.concat([this._rootPath]);
   }
 
   /**
@@ -241,17 +241,19 @@ class ConfigLoader {
    * @private
    */
   _handleComponentConfig() {
-    // Remove root config
-    const componentConfigs = this.listConfig().slice(1);
+    const configPaths = this.listConfig();
+    const rootPaths = {};
 
-    componentConfigs.forEach(configPath => {
+    configPaths.forEach(configPath => {
       let config = this._getConfig(configPath);
-      const componentPath = path.dirname(this.relativePath(configPath));
-      const componentHash = this.getComponentHash(componentPath);
 
       if (config.hasOwnProperty('project')) {
-        this._otherRootPaths.push(configPath);
+        rootPaths[path.dirname(configPath)] = null;
+        return;
       }
+
+      const componentPath = path.dirname(this.relativePath(configPath));
+      const componentHash = this.getComponentHash(componentPath);
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
@@ -279,6 +281,20 @@ class ConfigLoader {
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
+
+    rootPaths[this._rootPath] = null;
+    const pathsArray = Object.keys(rootPaths);
+
+    if (pathsArray.length > 1) {
+      let errorMsg = 'Multiple root configs identified in this project:' + EOL;
+
+      pathsArray.forEach((cfgPath, index) => {
+        errorMsg += `  ${index + 1}. ${cfgPath}` + EOL;
+      });
+      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+      throw new Error(errorMsg);
+    }
   }
 
   /**
@@ -314,7 +330,7 @@ class ConfigLoader {
    * @param {String} value
    */
   addToGlobalConfig(key, value) {
-    const cfgPath = path.join(this._rootPath, config.defaultFileName);
+    const cfgPath = path.join(this._rootPath, this.getDefaultFileName());
     const cfg = ConfigLoader.readConfig(cfgPath);
 
     cfg.project[key] = value;
@@ -337,7 +353,7 @@ class ConfigLoader {
    */
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
-    const envPath = path.join(path.dirname(cfgPath), config.fileName);
+    const envPath = path.join(path.dirname(cfgPath), this.getFileName());
     const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
