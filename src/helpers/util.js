@@ -246,7 +246,14 @@ function setTimeoutPromise(timeout) {
   });
 }
 
+/**
+ * @return {Number}
+ */
 function physicalCpuCount() {
+  /**
+   * @param {String} command 
+   * @return {String}
+   */
   function exec(command) {
     const output = childProcess.execSync(command, { encoding: 'utf8' });
     return output;
