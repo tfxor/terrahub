@@ -1,5 +1,6 @@
 'use strict';
 
+const TerraformCommand = require('../terraform-command');
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
@@ -22,34 +23,36 @@ class Distributor {
 
   /**
    * @param {Object} config
-   * @param {String} direction
+   * @param {Number} direction
    * @return {Object}
    * @private
    */
   _buildDependencyTable(config, direction) {
     const result = {};
+    const keys = Object.keys(config);
 
-    Object.keys(config).forEach(key => {
+    keys.forEach(key => {
       result[key] = {};
     });
 
-    if (direction === 'forward') {
-      Object.keys(config).forEach(key => {
-        Object.assign(result[key], config[key].dependsOn);
-      });
-    }
-
-    if (direction === 'reverse') {
-      Object.keys(config).forEach(key => {
-        Object.keys(config[key].dependsOn).forEach(hash => {
-          result[hash][key] = null;
+    switch (direction) {
+      case TerraformCommand.FORWARD:
+        keys.forEach(key => {
+          Object.assign(result[key], config[key].dependsOn);
         });
-      });
+        break;
+
+      case TerraformCommand.REVERSE:
+        keys.forEach(key => {
+          Object.keys(config[key].dependsOn).forEach(hash => {
+            result[hash][key] = null;
+          });
+        });
+        break;
     }
 
     return result;
   }
-
 
   /**
    * @param {String} hash

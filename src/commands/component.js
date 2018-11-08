@@ -121,7 +121,7 @@ class ComponentCommand extends AbstractCommand {
     }
 
     return Promise.all(
-      glob.sync('**', { cwd: templatePath, nodir: true, dot: true }).map(file => {
+      glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
         const srcFile = path.join(templatePath, file);
@@ -132,8 +132,14 @@ class ComponentCommand extends AbstractCommand {
       })
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
+      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() +'.twig');
+      let data = '';
 
-      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn }, outFile);
+      if (fse.existsSync(specificConfigPath)) {
+        data = fse.readFileSync(specificConfigPath);
+      }
+
+      return renderTwig(this._srcFile, { name: this._name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => 'Done');
   }
 
