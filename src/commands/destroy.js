@@ -2,7 +2,6 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion } = require('../helpers/util');
 
 class DestroyCommand extends TerraformCommand {
   /**
@@ -42,7 +41,7 @@ class DestroyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `destroy` action? (Y/N) ');
+      return this.askForApprovement(this.getConfigObject(), 'destroy');
     }
   }
 }

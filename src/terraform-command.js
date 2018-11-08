@@ -2,11 +2,12 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5 } = require('./helpers/util');
+const { extend, askQuestion, toMd5, yesNoQuestion } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
+const treeify = require('treeify');
 
 /**
  * @abstract
@@ -296,6 +297,39 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return false;
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} action
+   * @return {String}
+   */
+  askForApprovement(config, action) {
+    this.printConfig(config);
+    return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
+  }
+
+  /**
+   * @param {String} config
+   * @param {String} length
+   */
+  printConfig(config) {
+    const componentList = {};
+    const length = Object.keys(config).length;
+
+    Object.keys(config).map(key => componentList[config[key].name] = null);
+
+    const { name } = this.getProjectConfig();
+    if (length < 5) {
+      const components = Object.keys(componentList).join(', ');
+      this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
+    } else {
+      this.logger.log(`Project: ${name}`);
+
+      treeify.asLines(componentList, false, line => {
+        this.logger.log(` ${line}`);
+      });
+    }
   }
 
   /**

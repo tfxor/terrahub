@@ -86,6 +86,7 @@ module.exports = {
     format: cfg.format,
     retryCount: cfg.retryCount,
     isHelp: _isHelp(args),
+    defaultFileName: `.terrahub.${cfg.format}`,
     isDefault: isDefault
   },
   templates: {
