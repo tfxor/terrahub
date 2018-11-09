@@ -81,7 +81,6 @@ class ComponentCommand extends AbstractCommand {
 
     return terraform.workspaceList()
       .then(data => {
-        console.log('±±±', data);
         data.map(it => {
           if (it != 'default') {
             const outFile = path.join(directory, `.terrahub.${it}.yml`);
