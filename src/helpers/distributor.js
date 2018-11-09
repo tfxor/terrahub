@@ -10,7 +10,7 @@ const { config } = require('../parameters');
 
 class Distributor {
   /**
-   * @param {Object} config
+   * @param {Object} cfg
    */
   constructor(cfg) {
     this.THUB_RUN_ID = uuid();
@@ -107,7 +107,7 @@ class Distributor {
   runActions(actions, options) {
     const {
       silent = false,
-      format = 'text',
+      format = '',
       planDestroy = false,
       dependencyDirection = null
     } = options;
