@@ -321,14 +321,14 @@ class TerraformCommand extends AbstractCommand {
 
     const { name } = this.getProjectConfig();
     if (length < 5) {
-      const components = Object.keys(componentList).join(', ');
-      this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
-    } else {
       this.logger.log(`Project: ${name}`);
 
       treeify.asLines(componentList, false, line => {
         this.logger.log(` ${line}`);
       });
+    } else {
+      const components = Object.keys(componentList).join(', ');
+      this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''} : ${components}`);
     }
   }
 
