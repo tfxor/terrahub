@@ -1,4 +1,4 @@
-# Hooks
+# Hook
 
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
 
@@ -8,7 +8,7 @@ In order to provide you the best experience we have implemented hooks functional
 * `terraform apply`
 * `terraform destroy`
 
-All the hooks should return a Promise and look like: 
+All the hooks should return a Promise and look like:
 
 * before hook:
 
@@ -42,10 +42,10 @@ module.exports = hook;
 Configuration example for plan (`.terrahub.json`):
 
 ```text
-"hooks": {
+"hook": {
     "plan": {
-        "before": "./hooks/plan/before.js",
-        "after": "./hooks/plan/after.js"
+        "before": "./hook/plan/before.js",
+        "after": "./hook/plan/after.js"
     }
 }
 ```

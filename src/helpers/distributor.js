@@ -107,7 +107,7 @@ class Distributor {
   runActions(actions, options) {
     const {
       silent = false,
-      format = 'text',
+      format = '',
       planDestroy = false,
       dependencyDirection = null
     } = options;
