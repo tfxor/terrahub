@@ -10,11 +10,11 @@ const { config } = require('../parameters');
 
 class Distributor {
   /**
-   * @param {Object} config
+   * @param {Object} configObject
    */
-  constructor(cfg) {
+  constructor(configObject) {
     this.THUB_RUN_ID = uuid();
-    this._config = Object.assign({}, cfg);
+    this._config = Object.assign({}, configObject);
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
