@@ -86,6 +86,10 @@ class Terrahub {
       return () => Promise.resolve();
     }
 
+    if (!hookPath) {
+      return () => Promise.resolve();
+    }
+
     const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
 
     return promiseSeries(commandsList.map(it => {
