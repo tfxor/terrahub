@@ -7,6 +7,7 @@ const ConfigLoader = require('../config-loader');
 const { config, templates } = require('../parameters');
 const { renderTwig, isAwsNameValid, extend } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
+const Terraform = require('../helpers/terraform');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -46,11 +47,11 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    return this._delete ? 
+    return this._delete ?
       this._deleteComponent() :
-        this._template ? 
-          this._createNewComponent() : 
-          this._addExistingComponent();
+      this._template ?
+        this._createNewComponent() :
+        this._addExistingComponent();
   }
 
   /**
@@ -59,11 +60,11 @@ class ComponentCommand extends AbstractCommand {
    */
   _deleteComponent() {
     const config = this.getConfig();
-    
+
     const key = Object.keys(config).find(it => config[it].name === this._name);
     const configPath = path.join(config[key].project.root, config[key].root);
     const configFiles = this.listAllEnvConfig(configPath);
-    
+
     return Promise.all(configFiles.map(it => fse.remove(it)))
       .then(() => Promise.resolve('Done'));
   }
@@ -74,36 +75,54 @@ class ComponentCommand extends AbstractCommand {
    */
   _addExistingComponent() {
     const directory = path.resolve(this._directory);
+    const projectPath = this.getAppPath();
+    const componentPath = this._configLoader.relativePath(process.cwd());
+    const terraform = new Terraform({ root: componentPath, project: { root: projectPath } });
+    // console.log(terraform.workspaceList())
 
-    const existing = this._findExistingComponent();
+    return terraform.workspaceList()
+      .then(data => {
+        console.log('±±±', data);
+        data.map(it => {
+          if (it != 'default') {
+            const outFile = path.join(directory, `.terrahub.${it}.yml`);
+            ConfigLoader.writeConfig({}, outFile);
+          }
+        });
+      }).catch(() => {
+        return Promise.resolve();
+      })
+      .then(() => {
+        const existing = this._findExistingComponent();
 
-    if (!fse.pathExistsSync(directory)) {
-      throw new Error(`Couldn't create '${directory}' because path is invalid.`);
-    }
+        if (!fse.pathExistsSync(directory)) {
+          throw new Error(`Couldn't create '${directory}' because path is invalid.`);
+        }
 
-    let outFile = path.join(directory, this._defaultFileName());
-    let componentData = { component: { name: this._name } };
+        let outFile = path.join(directory, this._defaultFileName());
+        let componentData = { component: { name: this._name } };
 
-    componentData.component['dependsOn'] = this._dependsOn;
+        componentData.component['dependsOn'] = this._dependsOn;
 
-    if (fse.pathExistsSync(outFile)) {
-      const config = ConfigLoader.readConfig(outFile);
+        if (fse.pathExistsSync(outFile)) {
+          const config = ConfigLoader.readConfig(outFile);
 
-      throw new Error(config.project
-        ? `Configuring components in project's root is NOT allowed.`
-        : `Couldn't create config because terraform component already exists.`);
-    }
+          throw new Error(config.project
+            ? `Configuring components in project's root is NOT allowed.`
+            : `Couldn't create config because terraform component already exists.`);
+        }
 
-    if (existing.name) {
-      componentData.component = extend(existing.config[existing.name], [componentData.component]);
-      delete existing.config[existing.name];
+        if (existing.name) {
+          componentData.component = extend(existing.config[existing.name], [componentData.component]);
+          delete existing.config[existing.name];
 
-      ConfigLoader.writeConfig(existing.config, existing.path);
-    }
+          ConfigLoader.writeConfig(existing.config, existing.path);
+        }
 
-    ConfigLoader.writeConfig(componentData, outFile);
+        ConfigLoader.writeConfig(componentData, outFile);
 
-    return Promise.resolve('Done');
+        return Promise.resolve('Done');
+      });
   }
 
   /**
@@ -132,7 +151,7 @@ class ComponentCommand extends AbstractCommand {
       })
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
-      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() +'.twig');
+      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
       let data = '';
 
       if (fse.existsSync(specificConfigPath)) {
