@@ -35,7 +35,11 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
-    this._srcFile = path.join(templates.config, 'component', `.terrahub${this.getProjectFormat()}.twig`);
+
+    const projectFormat = this.getProjectFormat();
+
+    this._srcFile = path.join(templates.config, 'component',
+      `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`);
     this._appPath = this.getAppPath();
 
     if (!this._appPath) {
@@ -46,11 +50,11 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    return this._delete ? 
+    return this._delete ?
       this._deleteComponent() :
-        this._template ? 
-          this._createNewComponent() : 
-          this._addExistingComponent();
+      this._template ?
+        this._createNewComponent() :
+        this._addExistingComponent();
   }
 
   /**
@@ -59,11 +63,11 @@ class ComponentCommand extends AbstractCommand {
    */
   _deleteComponent() {
     const config = this.getConfig();
-    
+
     const key = Object.keys(config).find(it => config[it].name === this._name);
     const configPath = path.join(config[key].project.root, config[key].root);
     const configFiles = this.listAllEnvConfig(configPath);
-    
+
     return Promise.all(configFiles.map(it => fse.remove(it)))
       .then(() => Promise.resolve('Done'));
   }
@@ -132,7 +136,7 @@ class ComponentCommand extends AbstractCommand {
       })
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
-      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() +'.twig');
+      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
       let data = '';
 
       if (fse.existsSync(specificConfigPath)) {

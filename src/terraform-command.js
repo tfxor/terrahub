@@ -416,7 +416,7 @@ class TerraformCommand extends AbstractCommand {
     const path = [];
 
     keys.forEach(key => color[key] = TerraformCommand.WHITE);
-    keys.every(key => color[key] === TerraformCommand.BLACK ? true : !this._depthFirstSearch(key, path, config, color));
+    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -542,8 +542,10 @@ class TerraformCommand extends AbstractCommand {
 
       const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
 
-      issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
-        `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
+      if (issueNodes.length) {
+        issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
+          `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
+      }
     });
 
     return issues;
