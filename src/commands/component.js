@@ -82,7 +82,7 @@ class ComponentCommand extends AbstractCommand {
     return terraform.workspaceList()
       .then(data => {
         data.map(it => {
-          if (it != 'default') {
+          if (it !== 'default') {
             const outFile = path.join(directory, `.terrahub.${it}.yml`);
             ConfigLoader.writeConfig({}, outFile);
           }
