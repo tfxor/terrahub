@@ -36,7 +36,11 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
-    this._srcFile = path.join(templates.config, 'component', `.terrahub${this.getProjectFormat()}.twig`);
+
+    const projectFormat = this.getProjectFormat();
+
+    this._srcFile = path.join(templates.config, 'component',
+      `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`);
     this._appPath = this.getAppPath();
 
     if (!this._appPath) {

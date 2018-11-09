@@ -38,7 +38,9 @@ class ProjectCommand extends AbstractCommand {
         throw new Error('Project code has collisions');
       }
 
-      const srcFile = path.join(templates.config, 'project', `.terrahub.${config.format}.twig`);
+      const format = config.format === 'yaml' ? 'yml' : config.format;
+
+      const srcFile = path.join(templates.config, 'project', `.terrahub.${format}.twig`);
       const outFile = path.join(directory, config.defaultFileName);
 
       if (Object.keys(this.getProjectConfig()).length || fs.existsSync(outFile)) {
