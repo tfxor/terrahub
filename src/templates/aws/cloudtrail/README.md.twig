@@ -1,0 +1,27 @@
+# aws_s3_bucket_notification
+
+Provides a S3 bucket notification resource.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This id of AWS region.|string||Yes|
+|aws_cloudtrail_name|Specifies the name of the trail.|string|{{ name }}|No|
+|aws_cloudtrail_s3_bucket_name|Specifies the name of the S3 bucket designated for publishing log files.|string||Yes|
+|aws_cloudtrail_s3_key_prefix|Specifies the S3 key prefix that precedes the name of the bucket you have designated for log file delivery.|string|/AWSLogs/CloudTrail/|No|
+|aws_cloudtrail_include_global_service_events|Specifies whether the trail is publishing events from global services such as IAM to the log files.|boolean|false|No|
+|aws_cloudtrail_enable_logging|Enables logging for the trail. Defaults to true. Setting this to false will pause logging.|boolean|false|No|
+|aws_cloudtrail_is_multi_region_trail|Specifies whether the trail is created in the current region or in all regions.|boolean|false|No|
+|aws_cloudtrail_enable_log_file_validation|Specifies whether log file integrity validation is enabled.|boolean|false|No|
+|aws_cloudtrail_read_write_type|Specify if you want your trail to log read-only events, write-only events, or all. By default, the value is All. You can specify only the following value: ReadOnly, WriteOnly, All.|string|All|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|id|The name of the trail.|string|
+|thub_id|The name of the trail. For example: EDFDVBD632BHDS5 (hotfix for issue hashicorp/terraform#[7982]).|string|
+|home_region|The region in which the trail was created.|string|
+|arn|The Amazon Resource Name of the trail.|string|

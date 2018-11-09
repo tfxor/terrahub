@@ -1,0 +1,17 @@
+# Define list of variables to be output
+
+output "id" {
+  value = "${aws_cloudtrail.{{ name }}.id}"
+}
+
+output "thub_id" {
+  value = "${aws_cloudtrail.{{ name }}.id}"
+}
+
+output "home_region" {
+  value = "${aws_cloudtrail.{{ name }}.home_region}"
+}
+
+output "arn" {
+  value = "${aws_cloudtrail.{{ name }}.arn}"
+}
