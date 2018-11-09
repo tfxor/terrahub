@@ -78,7 +78,6 @@ class ComponentCommand extends AbstractCommand {
     const projectPath = this.getAppPath();
     const componentPath = this._configLoader.relativePath(process.cwd());
     const terraform = new Terraform({ root: componentPath, project: { root: projectPath } });
-    // console.log(terraform.workspaceList())
 
     return terraform.workspaceList()
       .then(data => {
