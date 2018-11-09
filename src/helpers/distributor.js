@@ -5,19 +5,19 @@ const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const logger = require('./logger');
-const { uuid } = require('./util');
+const { uuid, physicalCpuCount } = require('./util');
+const { config } = require('../parameters');
 
 class Distributor {
   /**
    * @param {Object} config
    */
-  constructor(config) {
+  constructor(cfg) {
     this.THUB_RUN_ID = uuid();
-    this._config = Object.assign({}, config);
+    this._config = Object.assign({}, cfg);
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
-    this._threadsCount = os.cpus().length;
-
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
     cluster.setupMaster({ exec: this._worker });
   }
 
