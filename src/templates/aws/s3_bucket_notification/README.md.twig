@@ -1,0 +1,20 @@
+# aws_s3_bucket_notification
+
+Provides a S3 bucket notification resource.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This id of AWS region.|string||Yes|
+|aws_s3_bucket_notification_s3_bucket_name|The name of the bucket to put notification configuration.|string||Yes|
+|aws_s3_bucket_notification_lambda_function_name|Specifies Amazon Lambda function NAME.|string||Yes|
+|aws_s3_bucket_notification_events|Specifies event for which to send notifications.|list|["s3:ObjectCreated:*"]|No|
+|aws_s3_bucket_notification_filter_prefix|Specifies object key name prefix.|string|AWSLogs/|No|
+|aws_s3_bucket_notification_filter_suffix|Specifies object key name suffix.|string||No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
