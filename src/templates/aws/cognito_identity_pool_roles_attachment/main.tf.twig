@@ -1,0 +1,7 @@
+resource "aws_cognito_identity_pool_roles_attachment" "{{ name }}" {
+  identity_pool_id = "${var.cognito_identity_pool_name}"
+  roles {
+    "authenticated"   = "arn:aws:iam::${var.account_id}:role/${var.cognito_iam_auth_role_name}"
+    "unauthenticated" = "arn:aws:iam::${var.account_id}:role/${var.cognito_iam_unauth_role_name}"
+  }
+}
