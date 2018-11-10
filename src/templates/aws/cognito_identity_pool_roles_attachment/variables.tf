@@ -14,7 +14,7 @@ variable "region" {
 #############
 # top level #
 #############
-variable "identity_pool_id" {
+variable "cognito_identity_pool_id" {
   description = "An identity pool ID in the format REGION:GUID."
 }
 
