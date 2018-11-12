@@ -98,8 +98,7 @@ class ConfigureCommand extends TerraformCommand {
    * @private
    */
   _cleanConfig(destination, keys) {
-    console.log(Object.keys(destination[keys[0]]).length)
-    
+
     if (keys.length !== 1) {
       this._cleanConfig(destination[keys[0]], keys.slice(1));
     }
