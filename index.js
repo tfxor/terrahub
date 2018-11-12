@@ -1,7 +1,7 @@
 'use strict';
 
-const BuildHelper = require('./src/helpers/build-helper');
+const { getComponentBuildTask } = require('./src/helpers/build-helper');
 
 module.exports = {
-  BuildHelper
+  getComponentBuildTask
 };
