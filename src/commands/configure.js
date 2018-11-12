@@ -72,6 +72,7 @@ class ConfigureCommand extends TerraformCommand {
     const keys = string.split('.');
     const lastKey = keys.pop();
     let destination = content;
+
     keys.forEach((it, index) => {
       if (destination[it] && delete[it].hasOwnProperty(it)) {
         destination = destination[it];
@@ -82,8 +83,28 @@ class ConfigureCommand extends TerraformCommand {
 
     if (destination.hasOwnProperty(lastKey)) {
       delete destination[lastKey];
+
+      if (!Object.keys(destination).length) {
+        this._cleanConfig(content, keys);
+      }
     } else {
       throw new Error(`The given key doesn't exist in config: ${string}`);
+    }
+  }
+
+  /**
+   * @param {Object} destination
+   * @param {Array} keys
+   * @private
+   */
+  _cleanConfig(destination, keys) {
+
+    if (keys.length !== 1) {
+      this._cleanConfig(destination[keys[0]], keys.slice(1));
+    }
+
+    if (!Object.keys(destination[keys[0]]).length) {
+      delete destination[keys[0]];
     }
   }
 
