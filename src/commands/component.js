@@ -5,7 +5,7 @@ const path = require('path');
 const glob = require('glob');
 const ConfigLoader = require('../config-loader');
 const { config, templates } = require('../parameters');
-const { renderTwig, isAwsNameValid, extend } = require('../helpers/util');
+const { renderTwig, isAwsNameValid, extend, yesNoQuestion } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/terraform');
 
@@ -69,8 +69,14 @@ class ComponentCommand extends AbstractCommand {
     const configPath = path.join(config[key].project.root, config[key].root);
     const configFiles = this.listAllEnvConfig(configPath);
 
-    return Promise.all(configFiles.map(it => fse.remove(it)))
-      .then(() => Promise.resolve('Done'));
+    return yesNoQuestion('Do you want to perform delete action? (Y/N) ').then(answer => {
+      if (!answer) {
+        return Promise.reject('Action aborted');
+      } else {
+        return Promise.all(configFiles.map(it => fse.remove(it)))
+          .then(() => Promise.resolve('Done'));
+      }
+    });
   }
 
   /**
