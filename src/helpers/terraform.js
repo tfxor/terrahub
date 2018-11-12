@@ -278,15 +278,15 @@ class Terraform {
       .then(() => this.run('workspace', ['delete', this._tf.workspace]));
   }
 
-   /**
+  /**
    * https://www.terraform.io/docs/commands/workspace/list.html
    * @return {Promise}
    */
   workspaceList() {
-    return this.run('workspace', ['list']).then(it =>{
-      let reg = /[a-z]+/gm;
-      let res = it.toString().match(reg);
-      return res;
+    return this.run('workspace', ['list']).then(it => {
+      const reg = /[a-z]+/gm;
+
+      return it.toString().match(reg);
     });
   }
 
