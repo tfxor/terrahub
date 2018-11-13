@@ -5,7 +5,7 @@ const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, yesNoQuestion } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
-const { join, resolve } = require('path');
+const { join } = require('path');
 const os = require('os');
 const treeify = require('treeify');
 
