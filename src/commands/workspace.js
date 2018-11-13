@@ -118,10 +118,12 @@ class WorkspaceCommand extends TerraformCommand {
    */
   _workspace(action, config) {
     const distributor = new Distributor(config);
-
-    return distributor.runActions(['prepare', action], {
-      silent: this.getOption('silent')
-    });
+    return this.checkDependencies(config)
+      .then(() => {
+        return distributor.runActions(['prepare', action], {
+          silent: this.getOption('silent')
+        });
+      });
   }
 }
 

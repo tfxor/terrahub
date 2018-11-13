@@ -20,11 +20,13 @@ class InitCommand extends TerraformCommand {
   run() {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
-
-    return distributor
-      .runActions(['prepare', 'init'], {
-        silent: this.getOption('silent')
-      }).then(() => Promise.resolve('Done'));
+    return this.checkDependencies(config)
+      .then(() => {
+        return distributor
+          .runActions(['prepare', 'init'], {
+            silent: this.getOption('silent')
+          }).then(() => Promise.resolve('Done'));
+      });
   }
 }
 
