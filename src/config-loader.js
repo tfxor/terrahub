@@ -405,6 +405,13 @@ class ConfigLoader {
   }
 
   /**
+   * @returns {String[]}
+   */
+  static get availableFormats() {
+    return ['.yml', '.yaml', '.json'];
+  }
+
+  /**
    * Glob patterns to exclude matches
    * @returns {String[]}
    * @constructor
