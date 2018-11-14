@@ -22,7 +22,7 @@ class InitCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return distributor
-      .runActions(['prepare', 'init'], {
+      .runActions(['prepare', 'workspaceSelect', 'init'], {
         silent: this.getOption('silent')
       }).then(() => Promise.resolve('Done'));
   }
