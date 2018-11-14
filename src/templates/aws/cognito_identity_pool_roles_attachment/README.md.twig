@@ -1,0 +1,20 @@
+# aws_cognito_identity_pool_roles_attachment
+
+Provides an AWS Cognito Identity Pool Roles Attachment.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|cognito_identity_pool_id|An identity pool ID in the format REGION:GUID.|string||Yes|
+|cognito_iam_auth_role_name|The name of IAM role used for authenticated users.|string||Yes|
+|cognito_iam_unauth_role_name|The name of IAM role used for unauthenticated users.|string||Yes|
+ 
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|id|The identity pool ID.|string|
+|identity_pool_id|An identity pool ID in the format REGION:GUID.|string|
+|role_mapping|The List of Role Mapping.|list|
+|roles|The map of roles associated with this pool. For a given role, the key will be either "authenticated" or "unauthenticated" and the value will be the Role ARN.|map|

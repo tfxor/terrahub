@@ -25,7 +25,7 @@ class DestroyCommand extends TerraformCommand {
     return this.checkDependencies(config, TerraformCommand.REVERSE)
       .then(() => this._getPromise())
       .then(answer => answer ?
-        distributor.runActions(['prepare', 'plan', 'destroy'], {
+        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
           silent: this.getOption('silent'),
           planDestroy: true,
           dependencyDirection: TerraformCommand.REVERSE

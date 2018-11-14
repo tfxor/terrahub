@@ -1,5 +1,6 @@
 {
   "format": "yml",
   "token": false,
-  "retryCount": 2
+  "retryCount": 2,
+  "usePhysicalCpu": false
 }
