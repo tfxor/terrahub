@@ -26,7 +26,7 @@ class Terrahub {
    * @return {Promise}
    * @private
    */
-  _on(event, err = null) {
+  _on(event, err = null, output) {
     let error = null;
     let data = {
       Action: this._action,
@@ -53,29 +53,38 @@ class Terrahub {
       : fetch.post('thub/realtime/create', { body: JSON.stringify(data) });
 
     return actionPromise.then(() => {
-      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
+      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve(output);
     });
   }
 
   /**
    * Compose terrahub task
    * @param {String} action
+   * @param {Object} options
    * @return {Promise}
    */
-  getTask(action) {
+  getTask(action, options) {
     this._action = action;
 
+    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
+      return this._terraform[action]();
+    } else {
+      if (options && !options.aborted) {
+        return this._getTask();
+      } else {
+        return this._on('aborted');
+      }
+    }
+
     return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
-      this._terraform[action]() : this._getTask())
-      .then(() => action === 'output' ?
-        this._terraform.getActionOutput() : null);
+      this._terraform[action]() : this._getTask());
   }
 
   /**
    * Check if custom hook is provided
    * @param {String} hook
-   * @param {String} res
-   * @return {Function}
+   * @param {Object} res
+   * @return {Promise}
    * @private
    */
   _hook(hook, res = null) {
@@ -83,11 +92,11 @@ class Terrahub {
     try {
       hookPath = this._config.hook[this._action][hook];
     } catch (error) {
-      return () => Promise.resolve();
+      return Promise.resolve(res);
     }
 
     if (!hookPath) {
-      return () => Promise.resolve();
+      return Promise.resolve(res);
     }
 
     const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
@@ -105,11 +114,11 @@ class Terrahub {
       switch (extension) {
         case '.js':
           return () => {
-            const promise = require(args[0])(this._config, res);
+            const promise = require(args[0])(this._config, res.buffer);
 
-            return promise instanceof Promise ?
+            return (promise instanceof Promise ?
               promise :
-              Promise.resolve(promise);
+              Promise.resolve(promise)).then(() => Promise.resolve(res));
           };
 
         case '.sh':
@@ -121,7 +130,7 @@ class Terrahub {
           break;
       }
 
-      return () => this._spawn(command, args);
+      return () => this._spawn(command, args).then(() => Promise.resolve(res));
     }));
   }
 
@@ -150,9 +159,9 @@ class Terrahub {
     return this._on('start')
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
-      .then(buf => this._upload(buf))
+      .then(data => this._upload(data))
       .then(res => this._hook('after', res))
-      .then(() => this._on('success'))
+      .then(data => this._on('success', null, data))
       .catch(err => this._on('error', err))
       .catch(err => {
         if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
@@ -164,21 +173,21 @@ class Terrahub {
   }
 
   /**
-   * @param {Buffer} buffer
+   * @param {Object} data
    * @return {Promise}
    * @private
    */
-  _upload(buffer) {
-    if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve(buffer);
+  _upload(data) {
+    if (!config.token || !data || !['plan', 'apply', 'destroy'].includes(this._action)) {
+      return Promise.resolve(data);
     }
 
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
 
-    return this._putObject(url, buffer)
+    return this._putObject(url, data)
       .then(() => this._callParseLambda(key))
-      .then(() => Promise.resolve(buffer));
+      .then(() => Promise.resolve(data));
   }
 
   /**

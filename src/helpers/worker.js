@@ -22,8 +22,8 @@ function getTasks(config) {
   const terrahub = new Terrahub(config);
 
   return getActions().map(action =>
-    () => (action !== 'build' ?
-      terrahub.getTask(action) : BuildHelper.getComponentBuildTask(config))
+    (options) => (action !== 'build' ?
+      terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
   );
 }
 

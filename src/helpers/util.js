@@ -38,7 +38,11 @@ function uuid() {
  * @returns {*}
  */
 function promiseSeries(promises) {
-  return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
+  return promises.reduce((prev, fn) => prev.then(data => {
+    const options = data ? { aborted: !!data.skip } : {};
+
+    return fn(options);
+  }), Promise.resolve());
 }
 
 /**
@@ -251,7 +255,7 @@ function setTimeoutPromise(timeout) {
  */
 function physicalCpuCount() {
   /**
-   * @param {String} command 
+   * @param {String} command
    * @return {String}
    */
   function exec(command) {
@@ -271,9 +275,9 @@ function physicalCpuCount() {
   } else if (platformCheck === 'windows') {
     const output = exec('WMIC CPU Get NumberOfCores');
     amount = output.split(EOL)
-      .map(function parse(line) { return parseInt(line) })
-      .filter(function numbers(value) { return !isNaN(value) })
-      .reduce(function add(sum, number) { return sum + number }, 0);
+      .map(function parse(line) { return parseInt(line); })
+      .filter(function numbers(value) { return !isNaN(value); })
+      .reduce(function add(sum, number) { return sum + number; }, 0);
   } else {
     const cores = cpus().filter(function (cpu, index) {
       const hasHyperthreading = cpu.model.includes('Intel');

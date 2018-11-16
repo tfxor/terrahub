@@ -308,11 +308,13 @@ class Terraform {
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
         const planData = data.toString().match(regex);
 
+        let skip = false;
         if (planData) {
           const planCounter = planData.slice(-3);
           ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
         } else {
           ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
+          skip = true;
         }
 
         this._output.metadata = metadata;
@@ -325,7 +327,10 @@ class Terraform {
           fse.outputFileSync(backupPath, planContent);
         }
 
-        return Promise.resolve(data);
+        return Promise.resolve({
+          data: data,
+          skip: skip
+        });
       });
   }
 
@@ -347,7 +352,8 @@ class Terraform {
 
     return this
       .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
-      .then(() => this._getStateContent());
+      .then(() => this._getStateContent())
+      .then(buffer => ({ buffer: buffer }));
   }
 
   /**
