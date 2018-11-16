@@ -23,12 +23,13 @@ class Terrahub {
   /**
    * @param {String} event
    * @param {Error|String} err
+   * @param {Object} data
    * @return {Promise}
    * @private
    */
-  _on(event, err = null, output) {
+  _on(event, err = null, data = {}) {
     let error = null;
-    let data = {
+    let payload = {
       Action: this._action,
       Provider: this._project.provider,
       ProjectHash: this._project.code,
@@ -41,19 +42,19 @@ class Terrahub {
 
     if (err) {
       error = new Error(err.message || err);
-      data['Error'] = error.message;
+      payload['Error'] = error.message;
     }
 
-    if (data.Action === 'plan' && event === 'success') {
-      data.Metadata = this._terraform.getActionOutput().metadata;
+    if (payload.Action === 'plan' && event === 'success') {
+      payload.Metadata = data.metadata;
     }
 
     let actionPromise = !config.token
       ? Promise.resolve()
-      : fetch.post('thub/realtime/create', { body: JSON.stringify(data) });
+      : fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
     return actionPromise.then(() => {
-      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve(output);
+      return payload.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve(data);
     });
   }
 
@@ -66,15 +67,22 @@ class Terrahub {
   getTask(action, options) {
     this._action = action;
 
-    if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
-      return this._terraform[action]();
-    }
+    return Promise.resolve().then(() => {
+      if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
+        return this._terraform[action]();
+      }
 
-    if (options && !options.aborted) {
-      return this._getTask();
-    } else {
-      return this._on('aborted');
-    }
+      if (options && !options.aborted) {
+        return this._getTask();
+      } else {
+        return this._on('aborted', null, {});
+      }
+    }).then(data => {
+      data.action = this._action;
+      data.component = this._config.name;
+
+      return data;
+    });
   }
 
   /**
@@ -175,7 +183,7 @@ class Terrahub {
    * @private
    */
   _upload(data) {
-    if (!config.token || !data || !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!config.token || !data || !data.buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
       return Promise.resolve(data);
     }
 

@@ -18,7 +18,7 @@ class Terraform {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._metadata = new Metadata(this._config);
-    this._showLogs = process.env.silent === 'false';
+    this._showLogs = process.env.silent === 'false' && !process.env.format;
     this._isWorkspaceSupported = false;
   }
 
@@ -80,13 +80,6 @@ class Terraform {
   }
 
   /**
-   * @return {Object}
-   */
-  getActionOutput() {
-    return this._output;
-  }
-
-  /**
    * Prepare -var
    * @return {Array}
    * @private
@@ -142,7 +135,8 @@ class Terraform {
 
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
-      .then(() => this._checkResourceDir());
+      .then(() => this._checkResourceDir())
+      .then(() => ({}));
   }
 
   /**
@@ -195,7 +189,8 @@ class Terraform {
 
     return exponentialBackoff(promiseFunction,
       { conditionFunction: this._checkIgnoreErrorInit, maxRetries: config.retryCount })
-      .then(() => this._reInitPaths());
+      .then(() => this._reInitPaths())
+      .then(() => ({}));
   }
 
   /**
@@ -236,9 +231,8 @@ class Terraform {
   output() {
     const options = {};
 
-    this._showLogs = false;
-
-    return this.run('output', (process.env.format === 'json' ? ['-json'] : []).concat(this._optsToArgs(options)));
+    return this.run('output', (process.env.format === 'json' ? ['-json'] : []).concat(this._optsToArgs(options)))
+      .then(buffer => ({ buffer: buffer }));
   }
 
   /**
@@ -261,7 +255,8 @@ class Terraform {
           Promise.resolve() :
           this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace]);
       })
-      .then(() => this._reInitPaths());
+      .then(() => this._reInitPaths())
+      .then(() => ({}));
   }
 
   /**
@@ -317,7 +312,6 @@ class Terraform {
           skip = true;
         }
 
-        this._output.metadata = metadata;
         const planPath = this._metadata.getPlanPath();
 
         if (fse.existsSync(planPath)) {
@@ -329,7 +323,8 @@ class Terraform {
 
         return Promise.resolve({
           data: data,
-          skip: skip
+          skip: skip,
+          metadata: metadata
         });
       });
   }
@@ -447,17 +442,7 @@ class Terraform {
           logger.raw(this._out(data));
         }
       }
-    ).then(buffer => {
-      this._output = {
-        action: args[0],
-        component: this.getName(),
-        stdout: buffer,
-        env: process.env,
-        metadata: null
-      };
-
-      return Promise.resolve(buffer);
-    });
+    );
   }
 
   /**

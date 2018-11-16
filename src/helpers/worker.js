@@ -33,11 +33,15 @@ function getTasks(config) {
  */
 function run(config) {
   promiseSeries(getTasks(config)).then(lastResult => {
+    if (lastResult.action !== 'output') {
+      delete lastResult.buffer;
+    }
+
     process.send({
       id: cluster.worker.id,
       data: lastResult,
       isError: false,
-      hash: config.hash
+      hash: config.hash,
     });
     process.exit(0);
   }).catch(error => {
