@@ -68,13 +68,14 @@ class Terrahub {
 
     if (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action)) {
       return this._terraform[action]();
-    } else {
-      if (options && !options.aborted) {
-        return this._getTask();
-      } else {
-        return this._on('aborted');
-      }
     }
+
+    if (options && !options.aborted) {
+      return this._getTask();
+    } else {
+      return this._on('aborted');
+    }
+
 
     return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
       this._terraform[action]() : this._getTask());
