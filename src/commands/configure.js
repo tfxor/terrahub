@@ -23,7 +23,7 @@ class ConfigureCommand extends TerraformCommand {
   run() {
     const configContent = this.getOption('config');
 
-    if(!configContent) {
+    if (!configContent) {
       throw new Error(`Missing required options: --config`)
     }
 
