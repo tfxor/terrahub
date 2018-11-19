@@ -194,7 +194,7 @@ class Distributor {
         break;
 
       default:
-        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.stdout).toString('utf8'))}`));
+        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
         break;
     }
   }
