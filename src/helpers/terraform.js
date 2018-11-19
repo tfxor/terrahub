@@ -335,7 +335,7 @@ class Terraform {
    * @private
    */
   _checkIgnoreErrorPlan(error) {
-    return [/EOF/].some(it => it.test(error.message));
+    return [/EOF/, /timeout/].some(it => it.test(error.message));
   }
 
   /**

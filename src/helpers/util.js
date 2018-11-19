@@ -259,8 +259,7 @@ function physicalCpuCount() {
    * @return {String}
    */
   function exec(command) {
-    const output = childProcess.execSync(command, { encoding: 'utf8' });
-    return output;
+    return childProcess.execSync(command, { encoding: 'utf8' });
   }
 
   let amount;
