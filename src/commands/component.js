@@ -134,8 +134,9 @@ class ComponentCommand extends AbstractCommand {
 
           ConfigLoader.writeConfig(existing.config, existing.path);
         }
+        const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
 
-        glob.sync('.terrahub.*', { cwd: projectPath, dot: true }).map(file => {
+        glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns }).map(file => {
           if (file != `.terrahub${this.getProjectFormat()}`)
             ConfigLoader.writeConfig({}, file);
         });
