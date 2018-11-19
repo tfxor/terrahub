@@ -22,6 +22,11 @@ class ConfigureCommand extends TerraformCommand {
    */
   run() {
     const configContent = this.getOption('config');
+
+    if(!configContent) {
+      throw new Error(`Missing required options: --config`)
+    }
+
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
