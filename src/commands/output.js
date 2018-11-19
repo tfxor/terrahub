@@ -23,7 +23,7 @@ class OutputCommand extends TerraformCommand {
   run() {
     this._format = this.getOption('format');
 
-    if (this._format && !['text', 'json'].includes(this._format)) {
+    if (!['text', 'json', ''].includes(this._format)) {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
