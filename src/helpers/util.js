@@ -251,12 +251,11 @@ function setTimeoutPromise(timeout) {
  */
 function physicalCpuCount() {
   /**
-   * @param {String} command 
+   * @param {String} command
    * @return {String}
    */
   function exec(command) {
-    const output = childProcess.execSync(command, { encoding: 'utf8' });
-    return output;
+    return childProcess.execSync(command, { encoding: 'utf8' });
   }
 
   let amount;
@@ -271,9 +270,9 @@ function physicalCpuCount() {
   } else if (platformCheck === 'windows') {
     const output = exec('WMIC CPU Get NumberOfCores');
     amount = output.split(EOL)
-      .map(function parse(line) { return parseInt(line) })
-      .filter(function numbers(value) { return !isNaN(value) })
-      .reduce(function add(sum, number) { return sum + number }, 0);
+      .map(function parse(line) { return parseInt(line); })
+      .filter(function numbers(value) { return !isNaN(value); })
+      .reduce(function add(sum, number) { return sum + number; }, 0);
   } else {
     const cores = cpus().filter(function (cpu, index) {
       const hasHyperthreading = cpu.model.includes('Intel');
