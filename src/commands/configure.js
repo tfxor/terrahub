@@ -12,7 +12,7 @@ class ConfigureCommand extends TerraformCommand {
   configure() {
     this.setName('configure')
       .setDescription('add, change or remove config parameters from terrahub config files')
-      .addOption('config', 'c', 'Create, update or delete config parameter from config file', String, '')
+      .addOption('config', 'c', 'Create, update or delete config parameter from config file', String)
       .addOption('global', 'G', 'Update global config file instead of root or local', Boolean, false)
       .addOption('delete', 'D', 'Delete corresponding configuration parameter', Boolean, false);
   }
@@ -22,11 +22,6 @@ class ConfigureCommand extends TerraformCommand {
    */
   run() {
     const configContent = this.getOption('config');
-
-    if (!configContent) {
-      throw new Error(`Missing required options: --config`)
-    }
-
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
