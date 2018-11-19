@@ -72,10 +72,14 @@ class Terrahub {
         return this._terraform[action]();
       }
 
-      if (options && !options.aborted) {
-        return this._getTask();
+      if (options.aborted) {
+        return this._on('aborted', null, {})
+          .then(res => {
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was aborted due to 'No changes. Infrastructure is up-to-date.'`);
+            return res;
+          });
       } else {
-        return this._on('aborted', null, {});
+        return this._getTask();
       }
     }).then(data => {
       data.action = this._action;

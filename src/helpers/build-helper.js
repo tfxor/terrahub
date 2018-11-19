@@ -65,7 +65,9 @@ class BuildHelper {
       ).then(() => {
         BuildHelper._printOutput(`Build successfully finished for [${name}].`, true);
 
-        resolve();
+        resolve({
+          action: 'build'
+        });
       }).catch(err => {
         BuildHelper._printOutput(`Build failed for [${name}].`, false);
 
