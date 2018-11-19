@@ -75,7 +75,7 @@ class Terrahub {
       if (options.aborted) {
         return this._on('aborted', null, {})
           .then(res => {
-            logger.warn(`Action '${this._action}' for '${this._config.name}' was aborted due to 'No changes. Infrastructure is up-to-date.'`);
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. Infrastructure is up-to-date.'`);
             return res;
           });
       } else {

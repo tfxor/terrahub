@@ -99,15 +99,15 @@ class ComponentCommand extends AbstractCommand {
 
     return terraform.workspaceList()
       .then(data => {
-        data.map(it => {
+        data.forEach(it => {
           if (it !== 'default') {
-            const outFile = path.join(directory, `.terrahub.${it}.yml`);
+            const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
             ConfigLoader.writeConfig({}, outFile);
           }
         });
-      }).catch(() => {
+
         return Promise.resolve();
-      })
+      }).catch(() => Promise.resolve())
       .then(() => {
         const existing = this._findExistingComponent();
 

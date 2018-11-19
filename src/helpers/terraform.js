@@ -298,10 +298,10 @@ class Terraform {
 
     return exponentialBackoff(promiseFunction,
       { conditionFunction: this._checkIgnoreErrorPlan, maxRetries: config.retryCount })
-      .then(data => {
+      .then(buffer => {
         const metadata = {};
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
-        const planData = data.toString().match(regex);
+        const planData = buffer.toString().match(regex);
 
         let skip = false;
         if (planData) {
@@ -322,7 +322,7 @@ class Terraform {
         }
 
         return Promise.resolve({
-          data: data,
+          buffer: buffer,
           skip: skip,
           metadata: metadata
         });
