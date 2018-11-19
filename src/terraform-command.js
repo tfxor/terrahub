@@ -243,19 +243,15 @@ class TerraformCommand extends AbstractCommand {
       return Object.keys(config).map(key => config[key].name);
     }
 
-    const runList = [];
-
-    Object.keys(config).forEach(hash => {
+    return Object.keys(config).reduce((filtered, hash) => {
       const cfg = config[hash];
 
-      if ('ci' in cfg && 'mapping' in cfg['ci'] &&
-        cfg.ci.mapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList))
-      ) {
-        runList.push(cfg.name);
+      if ('mapping' in cfg && cfg.mapping.some(dep => diffList.some(diff => diff.includes(dep)))) {
+        filtered.push(cfg.name);
       }
-    });
 
-    return runList;
+      return filtered;
+    }, []);
   }
 
   /**
@@ -277,26 +273,6 @@ class TerraformCommand extends AbstractCommand {
     }
 
     throw err;
-  }
-
-  /**
-   * @param {String} dep
-   * @param {Array} diffList
-   * @return {Boolean}
-   * @private
-   */
-  _compareCiMappingToGitDiff(dep, diffList) {
-    const stat = lstatSync(dep);
-
-    if (stat.isFile()) {
-      return diffList.some(diff => dep === diff);
-    }
-
-    if (stat.isDirectory()) {
-      return diffList.some(diff => diff.includes(dep));
-    }
-
-    return false;
   }
 
   /**
