@@ -30,9 +30,10 @@ function getTasks(config) {
 /**
  * BladeRunner
  * @param {Object} config
+ * @param {Function} callback
  */
 function run(config) {
-  promiseSeries(getTasks(config)).then(lastResult => {
+  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { aborted: !!data.skip } : {}))).then(lastResult => {
     if (lastResult.action !== 'output') {
       delete lastResult.buffer;
     }
