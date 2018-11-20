@@ -194,7 +194,7 @@ class Terrahub {
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
 
-    return this._putObject(url, data)
+    return this._putObject(url, data.buffer);
       .then(() => this._callParseLambda(key))
       .then(() => Promise.resolve(data));
   }

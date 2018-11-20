@@ -42,7 +42,7 @@ function run(config) {
       id: cluster.worker.id,
       data: lastResult,
       isError: false,
-      hash: config.hash,
+      hash: config.hash
     });
     process.exit(0);
   }).catch(error => {
