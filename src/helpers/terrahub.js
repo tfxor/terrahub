@@ -96,7 +96,7 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = null) {
-    if (['aborted', 'skip'].includes(res.status)) {
+    if (['abort', 'skip'].includes(res.status)) {
       return Promise.resolve(res);
     }
 
