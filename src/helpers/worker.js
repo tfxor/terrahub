@@ -22,8 +22,8 @@ function getTasks(config) {
   const terrahub = new Terrahub(config);
 
   return getActions().map(action =>
-    () => (action !== 'build' ?
-      terrahub.getTask(action) : BuildHelper.getComponentBuildTask(config))
+    (options) => (action !== 'build' ?
+      terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
   );
 }
 
@@ -32,23 +32,29 @@ function getTasks(config) {
  * @param {Object} config
  */
 function run(config) {
-  promiseSeries(getTasks(config)).then(lastResult => {
-    process.send({
-      id: cluster.worker.id,
-      data: lastResult,
-      isError: false,
-      hash: config.hash
+  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { aborted: !!data.skip } : {})))
+    .then(lastResult => {
+      if (lastResult.action !== 'output') {
+        delete lastResult.buffer;
+      }
+
+      process.send({
+        id: cluster.worker.id,
+        data: lastResult,
+        isError: false,
+        hash: config.hash
+      });
+      process.exit(0);
+    })
+    .catch(error => {
+      process.send({
+        id: cluster.worker.id,
+        error: error.message || error,
+        isError: true,
+        hash: config.hash
+      });
+      process.exit(1);
     });
-    process.exit(0);
-  }).catch(error => {
-    process.send({
-      id: cluster.worker.id,
-      error: error.message || error,
-      isError: true,
-      hash: config.hash
-    });
-    process.exit(1);
-  });
 }
 
 /**

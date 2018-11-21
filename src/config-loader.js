@@ -269,13 +269,13 @@ class ConfigLoader {
         });
       }
 
-      if (config.hasOwnProperty('ci') && config['ci'].hasOwnProperty('mapping')) {
-        if (!(config.ci.mapping instanceof Array)) {
+      if (config.hasOwnProperty('mapping')) {
+        if (!(config.mapping instanceof Array)) {
           throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
         }
 
-        config.ci.mapping.forEach((dep, index) => {
-          config.ci.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
+        config.mapping.forEach((dep, index) => {
+          config.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
         });
       }
 

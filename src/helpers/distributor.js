@@ -118,7 +118,7 @@ class Distributor {
       planDestroy: planDestroy
     };
 
-    this._output = [];
+    this._results = [];
     this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -132,7 +132,7 @@ class Distributor {
         }
 
         if (data.data) {
-          this._output.push(data.data);
+          this._results.push(data.data);
         }
 
         this._removeDependencies(data.hash);
@@ -152,9 +152,13 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            this._handleOutput().then(message => {
-              resolve(message);
-            });
+            let message = 'Done';
+            if (format) {
+              this._handleOutput(format);
+              message = '';
+            }
+
+            resolve(message);
           }
         }
       });
@@ -163,34 +167,35 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
+   * @param {String} format
    * @return {*}
    * @private
    */
-  _handleOutput() {
-    const outputs = this._output.filter(it => it.action === 'output');
+  _handleOutput(format) {
+    const outputs = this._results.filter(it => it.action === 'output');
 
     if (!outputs.length) {
-      return Promise.resolve('Done');
+      return;
     }
 
-    if (outputs[0].env.format === 'json') {
-      const result = {};
+    switch (format) {
+      case 'json':
+        const result = {};
 
-      outputs.forEach(it => {
-        let stdout = (new Buffer(it.stdout)).toString();
-        if (stdout[0] !== '{') {
-          stdout = stdout.slice(stdout.indexOf('{'));
-        }
-        result[it.component] = JSON.parse(stdout);
-      });
+        outputs.forEach(it => {
+          let stdout = (Buffer.from(it.buffer)).toString('utf8');
+          if (stdout[0] !== '{') {
+            stdout = stdout.slice(stdout.indexOf('{'));
+          }
+          result[it.component] = JSON.parse(stdout);
+        });
 
-      logger.log(JSON.stringify(result));
+        logger.log(JSON.stringify(result));
+        break;
 
-      return Promise.resolve();
-    } else {
-      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`));
-
-      return Promise.resolve('Done');
+      default:
+        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
+        break;
     }
   }
 
@@ -207,7 +212,9 @@ class Distributor {
     });
 
     this._dependencyTable = {};
-
+    if (err instanceof Array) {
+      err = err.map(it => Buffer.from(it).toString('utf8')).join(os.EOL);
+    }
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 }

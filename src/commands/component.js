@@ -99,15 +99,15 @@ class ComponentCommand extends AbstractCommand {
 
     return terraform.workspaceList()
       .then(data => {
-        data.map(it => {
+        data.forEach(it => {
           if (it !== 'default') {
-            const outFile = path.join(directory, `.terrahub.${it}.yml`);
+            const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
             ConfigLoader.writeConfig({}, outFile);
           }
         });
-      }).catch(() => {
+
         return Promise.resolve();
-      })
+      }).catch(() => Promise.resolve())
       .then(() => {
         const existing = this._findExistingComponent();
 
@@ -134,10 +134,21 @@ class ComponentCommand extends AbstractCommand {
 
           ConfigLoader.writeConfig(existing.config, existing.path);
         }
+        const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
 
-        ConfigLoader.writeConfig(componentData, outFile);
+        glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns }).map(file => {
+          if (file != `.terrahub${this.getProjectFormat()}`)
+            ConfigLoader.writeConfig({}, file);
+        });
+        const specificConfigPath = path.join(path.dirname(templates.mapping), this._configLoader.getDefaultFileName() + '.twig');
+        let data = '';
 
-        return Promise.resolve('Done');
+        if (fse.existsSync(specificConfigPath)) {
+          data = fse.readFileSync(specificConfigPath);
+        }
+
+        return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile)
+          .then(() => 'Done');
       });
   }
 
