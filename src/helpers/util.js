@@ -35,10 +35,11 @@ function uuid() {
 
 /**
  * @param {Function[]} promises
+ * @param {Function} callback
  * @returns {*}
  */
-function promiseSeries(promises) {
-  return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
+function promiseSeries(promises, callback = (prev, fn) => prev.then(fn)) {
+  return promises.reduce(callback, Promise.resolve());
 }
 
 /**
