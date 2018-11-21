@@ -18,7 +18,7 @@ class Terraform {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._metadata = new Metadata(this._config);
-    this._showLogs = process.env.silent === 'false';
+    this._showLogs = process.env.silent === 'false' && !process.env.format;
     this._isWorkspaceSupported = false;
   }
 
@@ -80,13 +80,6 @@ class Terraform {
   }
 
   /**
-   * @return {Object}
-   */
-  getActionOutput() {
-    return this._output;
-  }
-
-  /**
    * Prepare -var
    * @return {Array}
    * @private
@@ -142,7 +135,8 @@ class Terraform {
 
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
-      .then(() => this._checkResourceDir());
+      .then(() => this._checkResourceDir())
+      .then(() => ({ status: 'success' }));
   }
 
   /**
@@ -190,11 +184,13 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    const promise = () => this.run('init',
+    const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
-    return exponentialBackoff(promise, { conditionFun: this._checkIgnoreError, maxRetries: config.retryCount })
-      .then(() => this._reInitPaths());
+    return exponentialBackoff(promiseFunction,
+      { conditionFunction: this._checkIgnoreErrorInit, maxRetries: config.retryCount })
+      .then(() => this._reInitPaths())
+      .then(() => ({ status: 'success' }));
   }
 
   /**
@@ -202,8 +198,8 @@ class Terraform {
    * @return {Boolean}
    * @private
    */
-  _checkIgnoreError(error) {
-    return [/handshake timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.Message));
+  _checkIgnoreErrorInit(error) {
+    return [/timeout/, /connection reset by peer/, /failed to decode/].some(it => it.test(error.message));
   }
 
   /**
@@ -235,9 +231,8 @@ class Terraform {
   output() {
     const options = {};
 
-    this._showLogs = false;
-
-    return this.run('output', (process.env.format === 'json' ? ['-json'] : []).concat(this._optsToArgs(options)));
+    return this.run('output', (process.env.format === 'json' ? ['-json'] : []).concat(this._optsToArgs(options)))
+      .then(buffer => ({ buffer: buffer }));
   }
 
   /**
@@ -257,10 +252,11 @@ class Terraform {
         const output = result.toString();
 
         return regexSelected.test(output) ?
-          Promise.resolve() :
-          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace]);
+          Promise.resolve({ status: 'skip' }) :
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
+            .then(() => Promise.resolve({ status: 'success' }));
       })
-      .then(() => this._reInitPaths());
+      .then(res => this._reInitPaths().then(() => Promise.resolve(res)));
   }
 
   /**
@@ -278,6 +274,18 @@ class Terraform {
   }
 
   /**
+   * https://www.terraform.io/docs/commands/workspace/list.html
+   * @return {Promise}
+   */
+  workspaceList() {
+    return this.run('workspace', ['list']).then(it => {
+      const reg = /[a-z]+/gm;
+
+      return it.toString().match(reg);
+    });
+  }
+
+  /**
    * https://www.terraform.io/docs/commands/plan.html
    * @return {Promise}
    */
@@ -285,8 +293,25 @@ class Terraform {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
 
-    return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
-      .then(data => {
+    const promiseFunction = () => this.run('plan',
+      args.concat(this._varFile(), this._var(), this._optsToArgs(options)));
+
+    return exponentialBackoff(promiseFunction,
+      { conditionFunction: this._checkIgnoreErrorPlan, maxRetries: config.retryCount })
+      .then(buffer => {
+        const metadata = {};
+        const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
+        const planData = buffer.toString().match(regex);
+
+        let skip = false;
+        if (planData) {
+          const planCounter = planData.slice(-3);
+          ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
+        } else {
+          ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
+          skip = true;
+        }
+
         const planPath = this._metadata.getPlanPath();
 
         if (fse.existsSync(planPath)) {
@@ -296,8 +321,22 @@ class Terraform {
           fse.outputFileSync(backupPath, planContent);
         }
 
-        return Promise.resolve(data);
+        return Promise.resolve({
+          buffer: buffer,
+          skip: skip,
+          metadata: metadata,
+          status: 'success'
+        });
       });
+  }
+
+  /**
+   * @param {Error} error
+   * @return {Boolean}
+   * @private
+   */
+  _checkIgnoreErrorPlan(error) {
+    return [/EOF/, /timeout/].some(it => it.test(error.message));
   }
 
   /**
@@ -309,7 +348,8 @@ class Terraform {
 
     return this
       .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
-      .then(() => this._getStateContent());
+      .then(() => this._getStateContent())
+      .then(buffer => ({ buffer: buffer, status: 'success' }));
   }
 
   /**
@@ -403,16 +443,7 @@ class Terraform {
           logger.raw(this._out(data));
         }
       }
-    ).then(buffer => {
-      this._output = {
-        action: args[0],
-        component: this.getName(),
-        stdout: buffer,
-        env: process.env
-      };
-
-      return Promise.resolve(buffer);
-    });
+    );
   }
 
   /**

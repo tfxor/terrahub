@@ -4,7 +4,7 @@ const path = require('path');
 const logger = require('./logger');
 const Terraform = require('../helpers/terraform');
 const { config, fetch } = require('../parameters');
-const { toMd5, spawner } = require('../helpers/util');
+const { promiseSeries, toMd5, spawner } = require('../helpers/util');
 
 class Terrahub {
   /**
@@ -21,14 +21,14 @@ class Terrahub {
   }
 
   /**
-   * @param {String} event
+   * @param {Object} data
    * @param {Error|String} err
    * @return {Promise}
    * @private
    */
-  _on(event, err = null) {
+  _on(data, err = null) {
     let error = null;
-    let data = {
+    let payload = {
       Action: this._action,
       Provider: this._project.provider,
       ProjectHash: this._project.code,
@@ -36,79 +36,129 @@ class Terrahub {
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
       TerraformRunId: this._runId,
-      Status: event
+      Status: data.status
     };
 
     if (err) {
       error = new Error(err.message || err);
-      data['Error'] = error.message;
+      payload['Error'] = error.message;
+    }
+    if (payload.Action === 'plan' && data.status === 'success') {
+      payload.Metadata = data.metadata;
     }
 
     let actionPromise = !config.token
       ? Promise.resolve()
-      : fetch.post('thub/realtime/create', { body: JSON.stringify(data) });
+      : fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
     return actionPromise.then(() => {
-      return data.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve();
+      return payload.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve(data);
     });
   }
 
   /**
    * Compose terrahub task
    * @param {String} action
+   * @param {Object} options
    * @return {Promise}
    */
-  getTask(action) {
+  getTask(action, options) {
     this._action = action;
 
-    return (!['init', 'workspaceSelect', 'plan', 'apply', 'output', 'destroy'].includes(this._action) ?
-      this._terraform[action]() : this._getTask())
-      .then(() => action === 'output' ?
-        this._terraform.getActionOutput() : null);
+    return Promise.resolve().then(() => {
+      if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
+        return this._terraform[action]();
+      }
+
+      if (options.skip) {
+        return this._on({ status: 'skip' })
+          .then(res => {
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. Infrastructure is up-to-date.'`);
+            return res;
+          });
+      } else {
+        return this._getTask();
+      }
+    }).then(data => {
+      data.action = this._action;
+      data.component = this._config.name;
+
+      return data;
+    });
   }
 
   /**
    * Check if custom hook is provided
    * @param {String} hook
-   * @return {Function}
+   * @param {Object} res
+   * @return {Promise}
    * @private
    */
-  _hook(hook) {
+  _hook(hook, res = null) {
+    if (['aborted', 'skip'].includes(res.status)) {
+      return Promise.resolve(res);
+    }
+
+    let hookPath;
     try {
-      const hookPath = this._config.hooks[this._action][hook];
-      if (!hookPath) {
-        return () => Promise.resolve();
+      hookPath = this._config.hook[this._action][hook];
+    } catch (error) {
+      return Promise.resolve(res);
+    }
+
+    if (!hookPath) {
+      return Promise.resolve(res);
+    }
+
+    const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
+
+    return promiseSeries(commandsList.map(it => {
+      const args = it.split(' ');
+      const extension = path.extname(args[0]);
+
+      // If the first arg is a script file get its absolute path
+      if (extension) {
+        args[0] = path.resolve(this._project.root, this._config.root, args[0]);
       }
 
-      const extension = path.extname(hookPath);
-      const fullPath = path.isAbsolute(hookPath) ? hookPath : path.join(this._project.root, hookPath);
-
+      let command;
       switch (extension) {
         case '.js':
-          return require(fullPath);
+          return () => {
+            const promise = require(args[0])(this._config, res.buffer);
+
+            return (promise instanceof Promise ?
+              promise :
+              Promise.resolve()).then(() => Promise.resolve(res));
+          };
+
         case '.sh':
-          return () => this._spawn('bash', fullPath);
+          command = 'bash';
+          break;
+
         default:
-          logger.error(`'${extension}' scripts are not supported`);
+          command = args.shift();
+          break;
       }
-    } catch (err) {
-      return () => Promise.resolve();
-    }
+
+      return () => this._spawn(command, args, { env: process.env }).then(() => Promise.resolve(res));
+    }));
   }
 
   /**
    * @param {String} binary
    * @param {String} filePath
+   * @param {Object} options
    * @return {Promise}
    * @private
    */
-  _spawn(binary, filePath) {
-    return spawner(binary, [filePath], {
-      cwd: path.join(this._config.project.root, this._config.root),
-      shell: true
-    },
-    err => logger.error(`[${this._config.name}] ${err.toString()}`),
-    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+  _spawn(binary, filePath, options = {}) {
+    return spawner(binary, [filePath], Object.assign({
+        cwd: path.join(this._config.project.root, this._config.root),
+        shell: true
+      }, options),
+      err => logger.error(`[${this._config.name}] ${err.toString()}`),
+      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
   }
 
@@ -118,13 +168,13 @@ class Terrahub {
    * @private
    */
   _getTask() {
-    return this._on('start')
-      .then(() => this._hook('before')(this._config))
+    return this._on({ status: 'start' })
+      .then(() => this._hook('before', {}))
       .then(() => this._terraform[this._action]())
-      .then(buf => this._upload(buf))
-      .then(res => this._hook('after')(this._config, res))
-      .then(() => this._on('success'))
-      .catch(err => this._on('error', err))
+      .then(data => this._upload(data))
+      .then(res => this._hook('after', res))
+      .then(data => this._on(data, null))
+      .catch(err => this._on({ status: 'error' }, err))
       .catch(err => {
         if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
           err = new Error('Internet connection issue');
@@ -135,21 +185,21 @@ class Terrahub {
   }
 
   /**
-   * @param {Buffer} buffer
+   * @param {Object} data
    * @return {Promise}
    * @private
    */
-  _upload(buffer) {
-    if (!config.token || !buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve(buffer);
+  _upload(data) {
+    if (!config.token || !data || !data.buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
+      return Promise.resolve(data);
     }
 
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
 
-    return this._putObject(url, buffer)
+    return this._putObject(url, data.buffer)
       .then(() => this._callParseLambda(key))
-      .then(() => Promise.resolve(buffer));
+      .then(() => Promise.resolve(data));
   }
 
   /**
