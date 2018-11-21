@@ -45,15 +45,16 @@ function run(config) {
         hash: config.hash
       });
       process.exit(0);
-    }).catch(error => {
-    process.send({
-      id: cluster.worker.id,
-      error: error.message || error,
-      isError: true,
-      hash: config.hash
+    })
+    .catch(error => {
+      process.send({
+        id: cluster.worker.id,
+        error: error.message || error,
+        isError: true,
+        hash: config.hash
+      });
+      process.exit(1);
     });
-    process.exit(1);
-  });
 }
 
 /**
