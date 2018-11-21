@@ -96,7 +96,7 @@ class Terrahub {
    * @return {Promise}
    * @private
    */
-  _hook(hook, res = null) {
+  _hook(hook, res = {}) {
     let hookPath;
     try {
       hookPath = this._config.hook[this._action][hook];
