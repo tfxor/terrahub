@@ -96,7 +96,7 @@ class Terrahub {
    * @return {Promise}
    * @private
    */
-  _hook(hook, res = null) {
+  _hook(hook, res = {}) {
     let hookPath;
     try {
       hookPath = this._config.hook[this._action][hook];
@@ -167,7 +167,7 @@ class Terrahub {
    */
   _getTask() {
     return this._on('start')
-      .then(() => this._hook('before', {}))
+      .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
