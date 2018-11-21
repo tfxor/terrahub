@@ -18,7 +18,7 @@ class WorkspaceCommand extends TerraformCommand {
     this
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terrahub components')
-      .addOption('delete', 'd', 'Delete workspace environment (paired with --env)', Boolean, false)
+      .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)
     ;
   }
 
@@ -32,11 +32,11 @@ class WorkspaceCommand extends TerraformCommand {
     const configs = this.getConfigObject();
 
     const rootPath = this.getAppPath();
-    const rootConfigPath = path.join(rootPath, config.defaultFileName);
+    const rootConfigPath = path.join(rootPath, this.getDefaultFileName());
 
     const dirPaths = Object.keys(configs).map(hash => path.join(rootPath, configs[hash].root));
-    const configsList = dirPaths.map(it => path.join(it, config.defaultFileName));
-    const envConfigsList = this.listEnvConfig();
+    const configsList = dirPaths.map(it => path.join(it, this.getDefaultFileName()));
+    const envConfigsList = this.listCurrentEnvConfig();
 
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
@@ -53,7 +53,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     configsList.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
-      const envConfig = path.join(dir, config.fileName);
+      const envConfig = path.join(dir, this.getFileName());
       const tfvarsName = path.join('workspace', `${config.env}.tfvars`);
       const tfvarsPath = path.join(dir, tfvarsName);
 

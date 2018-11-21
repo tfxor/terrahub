@@ -2,11 +2,12 @@
 
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5 } = require('./helpers/util');
+const { extend, askQuestion, toMd5, yesNoQuestion } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
+const treeify = require('treeify');
 
 /**
  * @abstract
@@ -223,8 +224,8 @@ class TerraformCommand extends AbstractCommand {
       this._handleGitDiffError(error);
     }
 
-    if (!stdout) {
-      throw new Error('There are no changes between commits, commit and working tree, etc.')
+    if (!stdout || !stdout.toString().length) {
+      throw new Error('There are no changes between commits, commit and working tree, etc.');
     }
 
     const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
@@ -242,19 +243,15 @@ class TerraformCommand extends AbstractCommand {
       return Object.keys(config).map(key => config[key].name);
     }
 
-    const runList = [];
-
-    Object.keys(config).forEach(hash => {
+    return Object.keys(config).reduce((filtered, hash) => {
       const cfg = config[hash];
 
-      if ('ci' in cfg && 'mapping' in cfg['ci'] &&
-        cfg.ci.mapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList))
-      ) {
-        runList.push(cfg.name);
+      if ('mapping' in cfg && cfg.mapping.some(dep => diffList.some(diff => diff.includes(dep)))) {
+        filtered.push(cfg.name);
       }
-    });
 
-    return runList;
+      return filtered;
+    }, []);
   }
 
   /**
@@ -271,7 +268,7 @@ class TerraformCommand extends AbstractCommand {
       if (/not found/.test(stderr)) {
         err = new Error('Git is not installed on this device.');
       } else if (/Not a git repository/.test(stderr)) {
-        err = new Error(`Git repository not found in '${this.getAppPath()}'`)
+        err = new Error(`Git repository not found in '${this.getAppPath()}'`);
       }
     }
 
@@ -279,23 +276,48 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} dep
-   * @param {Array} diffList
-   * @return {Boolean}
-   * @private
+   * @param {Object} config
+   * @param {String} action
+   * @return {String}
    */
-  _compareCiMappingToGitDiff(dep, diffList) {
-    const stat = lstatSync(dep);
+  askForApprovement(config, action) {
+    const length = Object.keys(config).length;
 
-    if (stat.isFile()) {
-      return diffList.some(diff => dep === diff);
+    if (length > 5) {
+      this.printConfigCommaSeparated(config);
+    } else {
+      this.printConfigAsList(config);
     }
 
-    if (stat.isDirectory()) {
-      return diffList.some(diff => diff.includes(dep));
-    }
+    return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
+  }
 
-    return false;
+  /**
+   * @param {Object} config
+   */
+  printConfigCommaSeparated(config) {
+    const { name } = this.getProjectConfig();
+    const components = Object.keys(config).map(key => config[key].name).join(', ');
+
+    this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
+  }
+
+  /**
+   * @param config
+   */
+  printConfigAsList(config) {
+    const { name } = this.getProjectConfig();
+    const componentList = {};
+
+    Object.keys(config).forEach(key => {
+      componentList[config[key].name] = null;
+    });
+
+    this.logger.log(`Project: ${name}`);
+
+    treeify.asLines(componentList, false, line => {
+      this.logger.log(` ${line}`);
+    });
   }
 
   /**
@@ -325,13 +347,21 @@ class TerraformCommand extends AbstractCommand {
   getConfigObject() {
     const tree = {};
     const object = Object.assign({}, this.getConfig());
+    const issues = [];
 
     Object.keys(object).forEach(hash => {
       const node = Object.assign({}, object[hash]);
       const dependsOn = {};
+      const fullConfig = this.getExtendedConfig();
 
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
+
+        if (!object[key]) {
+          const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
+
+          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
+        }
 
         dependsOn[key] = null;
       });
@@ -340,6 +370,13 @@ class TerraformCommand extends AbstractCommand {
       tree[hash] = node;
     });
 
+    if (issues.length) {
+
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+      throw new Error(errorStrings.join(os.EOL));
+    }
+
     return tree;
   }
 
@@ -347,8 +384,9 @@ class TerraformCommand extends AbstractCommand {
    * Checks if there is a cycle between dependencies included in the config
    * @param {Object} config
    * @return {Promise}
+   * @private
    */
-  checkDependencyCycle(config) {
+  _checkDependencyCycle(config) {
     const cycle = this._getDependencyCycle(config);
 
     if (cycle.length) {
@@ -369,7 +407,7 @@ class TerraformCommand extends AbstractCommand {
     const path = [];
 
     keys.forEach(key => color[key] = TerraformCommand.WHITE);
-    keys.every(key => color[key] === TerraformCommand.BLACK ? true : !this._depthFirstSearch(key, path, config, color));
+    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -416,49 +454,86 @@ class TerraformCommand extends AbstractCommand {
   /**
    * Checks if all components' dependencies are included in config
    * @param {Object} config
+   * @param {Number} direction
    * @return {Promise}
    */
-  checkDependencies(config) {
-    const fullConfig = this.getExtendedConfig();
+  checkDependencies(config, direction = TerraformCommand.FORWARD) {
+    const issues = [];
 
-    for (let hash in config) {
-      const node = config[hash];
+    switch (direction) {
+      case TerraformCommand.FORWARD:
+        issues.push(...this.getDependencyIssues(config));
+        break;
 
-      for (let dep in node.dependsOn) {
-        const depNode = fullConfig[dep];
+      case TerraformCommand.REVERSE:
+        issues.push(...this.getReverseDependencyIssues(config));
+        break;
 
-        if (!(dep in config)) {
-          return Promise.reject(new Error(`Couldn't find dependency '${depNode.name}' of '${node.name}' component.`));
-        }
-      }
+      case TerraformCommand.BIDIRECTIONAL:
+        issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
+        break;
     }
 
-    return this.checkDependencyCycle(config);
+    if (issues.length) {
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+
+      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+    }
+
+    return this._checkDependencyCycle(config);
   }
 
   /**
-   * Checks if all components that depend on the components included in run are included in config
+   * Returns an array of error strings related to
+   * all components' dependencies are included in config
    * @param {Object} config
-   * @return {Promise}
+   * @return {String[]}
    */
-  checkDependenciesReverse(config) {
+  getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
+    const issues = [];
 
-    for (let hash in config) {
+    Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      for (let key in fullConfig) {
-        const depNode = fullConfig[key];
-        const dependsOn = depNode.dependsOn.map(it => toMd5(it));
+      const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
 
-        if (dependsOn.includes(hash) && !(key in config)) {
-          return Promise.reject(new Error(`Couldn't find component '${depNode.name}' ` +
-            `that depends on '${node.name}'.`));
-        }
+      issueDependencies.forEach(it => {
+        const name = fullConfig[it].name;
+
+        issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
+      });
+    });
+
+    return issues;
+  }
+
+  /**
+   * Returns an array of error strings related to
+   * components that depend on the components included in run are included in config
+   * @param {Object} config
+   * @return {String[]}
+   */
+  getReverseDependencyIssues(config) {
+    const fullConfig = this.getExtendedConfig();
+    const issues = [];
+
+    const keys = Object.keys(fullConfig).filter(key => !(key in config));
+
+    keys.forEach(hash => {
+      const depNode = fullConfig[hash];
+      const dependsOn = depNode.dependsOn.map(path => toMd5(path));
+
+      const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
+
+      if (issueNodes.length) {
+        issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
+          `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
       }
-    }
+    });
 
-    return this.checkDependencyCycle(config);
+    return issues;
   }
 
   /**
@@ -529,6 +604,21 @@ class TerraformCommand extends AbstractCommand {
    * @private
    */
   static get GRAY() { return 2; }
+
+  /**
+   * @return {Number}
+   */
+  static get FORWARD() { return 0; }
+
+  /**
+   * @return {Number}
+   */
+  static get REVERSE() { return 1; }
+
+  /**
+   * @return {Number}
+   */
+  static get BIDIRECTIONAL() { return 2; }
 }
 
 module.exports = TerraformCommand;

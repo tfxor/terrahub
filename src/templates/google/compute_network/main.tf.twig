@@ -1,0 +1,7 @@
+resource "google_compute_network" "{{ name }}" {
+  name                    = "${var.compute_network_name}"
+  auto_create_subnetworks = "${var.compute_network_auto_create_subnetworks}"
+  routing_mode            = "${var.compute_network_routing_mode}"
+  description             = "${var.compute_network_description}"
+  project                 = "${var.google_project_id}"
+}

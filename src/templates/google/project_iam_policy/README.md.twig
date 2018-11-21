@@ -1,0 +1,19 @@
+# google_project_iam_binding
+
+Authoritative. Sets the IAM policy for the project and replaces any existing policy already attached.
+
+Note: google_project_iam_policy cannot be used in conjunction with google_project_iam_binding and google_project_iam_member or they will fight over what your policy should be.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|google_project_id|The project ID. If not specified, uses the ID of the project configured with the provider.|string||Yes|
+|google_project_role|The project ID. If not specified, uses the ID of the project configured with the provider.|string|roles/viewer|No|
+|google_project_members|Identities that will be granted the privilege in role.|list|[]|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|etag|The etag of the project's IAM policy.|string|

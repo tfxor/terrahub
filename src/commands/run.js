@@ -2,7 +2,6 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -15,6 +14,7 @@ class RunCommand extends TerraformCommand {
       .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
+      .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
     ;
   }
 
@@ -22,6 +22,12 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
+    if (this.getOption('dry-run')) {
+      this.printConfigAsList(this.getConfigObject());
+
+      return Promise.resolve('Done');
+    }
+
     this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
@@ -44,24 +50,36 @@ class RunCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return Promise.resolve()
-      .then(() => this._actions.includes('apply') ?
-        this.checkDependencies(config) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ?
-        this.checkDependenciesReverse(config) : Promise.resolve())
-      .then(() => distributor.runActions(this._actions.length ? 
-        ['prepare', 'init', 'workspaceSelect'] : 
+      .then(() => {
+        if (!this._actions.length) {
+          return Promise.resolve();
+        }
+
+        let direction;
+        if (this._actions.length === 2) {
+          direction = TerraformCommand.BIDIRECTIONAL;
+        } else if (this._actions.includes('apply')) {
+          direction = TerraformCommand.FORWARD;
+        } else {
+          direction = TerraformCommand.REVERSE;
+        }
+
+        return this.checkDependencies(config, direction);
+      })
+      .then(() => distributor.runActions(this._actions.length ?
+        ['prepare', 'init', 'workspaceSelect'] :
         ['prepare', 'init', 'workspaceSelect', 'plan'], {
-          silent: this.getOption('silent')
-        }))
+        silent: this.getOption('silent')
+      }))
       .then(() => this._actions.includes('apply') ?
-        distributor.runActions(['plan', 'apply'], { 
+        distributor.runActions(['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'forward'
+          dependencyDirection: TerraformCommand.FORWARD
         }) : Promise.resolve())
       .then(() => this._actions.includes('destroy') ?
-        distributor.runActions(['plan', 'destroy'], { 
+        distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: 'reverse',
+          dependencyDirection: TerraformCommand.REVERSE,
           planDestroy: true
         }) : Promise.resolve());
   }
@@ -74,7 +92,7 @@ class RunCommand extends TerraformCommand {
     if (this.getOption('auto-approve') || !this._actions.length) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `run` action? (Y/N) ');
+      return this.askForApprovement(this.getConfigObject(), 'run');
     }
   }
 }

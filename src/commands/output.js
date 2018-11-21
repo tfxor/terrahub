@@ -34,7 +34,6 @@ class OutputCommand extends TerraformCommand {
    * @return {Promise}
    */
   askQuestion() {
-
     return this._getPromise().then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');

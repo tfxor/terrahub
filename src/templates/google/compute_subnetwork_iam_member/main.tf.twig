@@ -1,0 +1,7 @@
+resource "google_compute_subnetwork_iam_member" "{{ name }}" {
+  subnetwork = "${var.google_subnetwork}"
+  project    = "${var.google_project_id}"
+  region     = "${var.google_project_region}"
+  role       = "${var.google_project_role}"
+  members    = "${var.google_project_members}"
+}

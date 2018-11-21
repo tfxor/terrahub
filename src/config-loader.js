@@ -6,6 +6,7 @@ const path = require('path');
 const glob = require('glob');
 const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
+const { EOL } = require('os');
 
 class ConfigLoader {
   /**
@@ -17,7 +18,7 @@ class ConfigLoader {
     this._rootConfig = {};
     this._projectConfig = {};
     this._projectCi = {};
-    this._otherRootPaths = [];
+    this._format = '.' + config.format;
 
     /**
      * Initialisation
@@ -35,7 +36,7 @@ class ConfigLoader {
       project: this.getProjectConfig(),
       dependsOn: [],
       children: [],
-      hooks: {},
+      hook: {},
       build: {},
       ci: {}
     };
@@ -49,6 +50,9 @@ class ConfigLoader {
     const configFile = this._findRootConfig(process.cwd());
 
     if (configFile) {
+      this._format = path.extname(configFile);
+      this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
+      this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
@@ -60,6 +64,20 @@ class ConfigLoader {
       this._rootConfig = {};
       this._projectConfig = {};
     }
+  }
+
+  /**
+   * @return {String}
+   */
+  getFileName() {
+    return this._fileName;
+  }
+
+  /**
+   * @return {String}
+   */
+  getDefaultFileName() {
+    return this._defaultFileName;
   }
 
   /**
@@ -75,7 +93,7 @@ class ConfigLoader {
     if (files.length) {
       const configPath = files.pop();
 
-      config = this._getConfig(configPath);
+      config = ConfigLoader.readConfig(configPath);
       if (config.hasOwnProperty('project')) {
         return configPath;
       }
@@ -105,6 +123,14 @@ class ConfigLoader {
   }
 
   /**
+   * Get Project Format
+   * @return {String}
+   */
+  getProjectFormat() {
+    return this._format;
+  }
+
+  /**
    * Get project config
    * @returns {Object}
    */
@@ -128,24 +154,44 @@ class ConfigLoader {
 
   /**
    * Get list of configuration files
-   * @param {*} dir
+   * @param {Object} options
    * @returns {Array}
    */
-  listConfig(dir = false) {
-    const searchPath = dir || this.appPath();
+  listConfig(options = {}) {
+    const { include } = this.getProjectConfig();
+    const {
+      dir = false,
+      env = 'default'
+    } = options;
 
-    return searchPath ? this._find('**/.terrahub.+(json|yml|yaml)', searchPath) : [];
-  }
+    let searchPattern;
+    switch (env) {
+      case 'default':
+        searchPattern = '**/.terrahub.+(json|yml|yaml)';
+        break;
+      case 'specific':
+        searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
+        break;
+      case 'every':
+        searchPattern = '**/.terrahub*.+(json|yml|yaml)';
+        break;
+    }
 
-  /**
-   * Get list of configuration files for the specified environment
-   * @param {*} dir
-   * @return {Array}
-   */
-  listEnvConfig(dir = false) {
-    const searchParh = dir || this.appPath();
+    let searchPaths;
+    if (dir) {
+      searchPaths = [dir];
+    } else if (include && include.length) {
+      searchPaths = include.map(it => path.resolve(this.appPath(), it));
+    } else {
+      searchPaths = [this.appPath()];
+    }
 
-    return searchParh ? this._find(`**/.terrahub.${config.env}.+(json|yml|yaml)`, searchParh) : [];
+    return searchPaths
+      .map(it => this._find(searchPattern, it))
+      .reduce((accumulator, currentValue) => {
+        accumulator.push(...currentValue);
+        return accumulator;
+      });
   }
 
   /**
@@ -154,14 +200,6 @@ class ConfigLoader {
    */
   componentsCount() {
     return Object.keys(this.getFullConfig()).length;
-  }
-
-  /**
-   * Get all root paths found in the project directory
-   * @return {String[]}
-   */
-  getRootPaths() {
-    return this._otherRootPaths.concat([this._rootPath]);
   }
 
   /**
@@ -203,17 +241,19 @@ class ConfigLoader {
    * @private
    */
   _handleComponentConfig() {
-    // Remove root config
-    const componentConfigs = this.listConfig().slice(1);
+    const configPaths = this.listConfig();
+    const rootPaths = {};
 
-    componentConfigs.forEach(configPath => {
+    configPaths.forEach(configPath => {
       let config = this._getConfig(configPath);
-      const componentPath = path.dirname(this.relativePath(configPath));
-      const componentHash = this.getComponentHash(componentPath);
 
       if (config.hasOwnProperty('project')) {
-        this._otherRootPaths.push(configPath);
+        rootPaths[path.dirname(configPath)] = null;
+        return;
       }
+
+      const componentPath = path.dirname(this.relativePath(configPath));
+      const componentHash = this.getComponentHash(componentPath);
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
@@ -229,18 +269,32 @@ class ConfigLoader {
         });
       }
 
-      if (config.hasOwnProperty('ci') && config['ci'].hasOwnProperty('mapping')) {
-        if (!(config.ci.mapping instanceof Array)) {
+      if (config.hasOwnProperty('mapping')) {
+        if (!(config.mapping instanceof Array)) {
           throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
         }
 
-        config.ci.mapping.forEach((dep, index) => {
-          config.ci.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
+        config.mapping.forEach((dep, index) => {
+          config.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
         });
       }
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
+
+    rootPaths[this._rootPath] = null;
+    const pathsArray = Object.keys(rootPaths);
+
+    if (pathsArray.length > 1) {
+      let errorMsg = 'Multiple root configs identified in this project:' + EOL;
+
+      pathsArray.forEach((cfgPath, index) => {
+        errorMsg += `  ${index + 1}. ${cfgPath}` + EOL;
+      });
+      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
+
+      throw new Error(errorMsg);
+    }
   }
 
   /**
@@ -260,7 +314,7 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: ConfigLoader.IGNORE_PATTERNS });
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.IGNORE_PATTERNS });
   }
 
   /**
@@ -276,7 +330,7 @@ class ConfigLoader {
    * @param {String} value
    */
   addToGlobalConfig(key, value) {
-    const cfgPath = path.join(this._rootPath, config.defaultFileName);
+    const cfgPath = path.join(this._rootPath, this.getDefaultFileName());
     const cfg = ConfigLoader.readConfig(cfgPath);
 
     cfg.project[key] = value;
@@ -299,7 +353,7 @@ class ConfigLoader {
    */
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
-    const envPath = path.join(path.dirname(cfgPath), config.fileName);
+    const envPath = path.join(path.dirname(cfgPath), this.getFileName());
     const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
@@ -337,17 +391,24 @@ class ConfigLoader {
    * @returns {Object}
    */
   static writeConfig(json, outFile) {
-    const format = config.format;
+    const format = path.extname(outFile);
 
     switch (format) {
-      case 'yml':
-      case 'yaml':
+      case '.yml':
+      case '.yaml':
         return jsonToYaml(json, outFile);
-      case 'json':
+      case '.json':
         return fse.outputJsonSync(outFile, json, { spaces: 2 });
       default:
-        throw new Error(`.${format} config is not supported!`);
+        throw new Error(`${format} config is not supported!`);
     }
+  }
+
+  /**
+   * @returns {String[]}
+   */
+  static get availableFormats() {
+    return ['.yml', '.yaml', '.json'];
   }
 
   /**
@@ -355,8 +416,8 @@ class ConfigLoader {
    * @returns {String[]}
    * @constructor
    */
-  static get IGNORE_PATTERNS() {
-    return ['**/node_modules/*'];
+  get IGNORE_PATTERNS() {
+    return this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
   }
 }
 

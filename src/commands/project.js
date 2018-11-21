@@ -5,6 +5,7 @@ const path = require('path');
 const AbstractCommand = require('../abstract-command');
 const { templates, config } = require('../parameters');
 const { renderTwig, toMd5, isAwsNameValid } = require('../helpers/util');
+const ConfigLoader = require('../config-loader')
 
 class ProjectCommand extends AbstractCommand {
   /**
@@ -38,11 +39,15 @@ class ProjectCommand extends AbstractCommand {
         throw new Error('Project code has collisions');
       }
 
-      const srcFile = path.join(templates.config, 'project', `.terrahub.${config.format}.twig`);
-      const outFile = path.join(directory, config.defaultFileName);
+      const format = config.format === 'yaml' ? 'yml' : config.format;
 
-      if (fs.existsSync(outFile)) {
-        this.logger.warn(`Project already configured`);
+      const srcFile = path.join(templates.config, 'project', `.terrahub.${format}.twig`);
+      const outFile = path.join(directory, config.defaultFileName);
+      const isProjectExisting = ConfigLoader.availableFormats
+        .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
+      
+      if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
+        this.logger.warn(`Project already configured in ${directory} directory`);
         return Promise.resolve();
       }
 

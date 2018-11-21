@@ -1,6 +1,6 @@
 # TerraHub
 
-## DevOps Hub for Terraform
+## DevOps Hub for Terraform Automation
 
 TerraHub is a terraform centric devops tool that simplifies provisioning and
 management at scale of cloud resources and cloud services across multiple cloud
@@ -41,8 +41,7 @@ collect your data and upload to [TerraHub API](https://www.terrahub.io),
 which is visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
-[Settings](https://console.terrahub.io/settings) >
-[Access](https://console.terrahub.io/settings/access) to copy TerraHub token.
+[Settings](https://console.terrahub.io/settings) to copy TerraHub token.
 Next, you can setup `THUB_TOKEN` environmental variable or update `token` value
 in `$HOME/.terrahub/.terrahub.json` global config file.
 
@@ -53,6 +52,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 || **# terrahub management** ||
 | [project](commands/project.md) | create new or define existing folder as project that manages terraform configuration | :heavy_check_mark: |
 | [component](commands/component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
+| [configure](commands/configure.md) | add, change or remove config parameters from terrahub config files | :heavy_check_mark: |
 | [graph](commands/graph.md) | show dependencies graph for terraform configuration mapped as terrahub components | :heavy_check_mark: |
 || **# terraform execution** ||
 | [apply](commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
@@ -60,7 +60,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [init](commands/init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
 | [output](commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :x: |
+| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
 | [show](commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||

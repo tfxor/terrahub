@@ -1,0 +1,5 @@
+# Define list of variables to be output
+
+output "etag" {
+  value = "${google_compute_subnetwork_iam_policy.{{ name }}.etag}"
+}

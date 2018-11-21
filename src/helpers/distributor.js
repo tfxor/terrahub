@@ -1,55 +1,58 @@
 'use strict';
 
+const TerraformCommand = require('../terraform-command');
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const logger = require('./logger');
-const { uuid } = require('./util');
+const { uuid, physicalCpuCount } = require('./util');
+const { config } = require('../parameters');
 
 class Distributor {
   /**
-   * @param {Object} config
+   * @param {Object} configObject
    */
-  constructor(config) {
+  constructor(configObject) {
     this.THUB_RUN_ID = uuid();
-    this._config = Object.assign({}, config);
+    this._config = Object.assign({}, configObject);
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
-    this._threadsCount = os.cpus().length;
-
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
     cluster.setupMaster({ exec: this._worker });
   }
 
   /**
    * @param {Object} config
-   * @param {String} direction
+   * @param {Number} direction
    * @return {Object}
    * @private
    */
   _buildDependencyTable(config, direction) {
     const result = {};
+    const keys = Object.keys(config);
 
-    Object.keys(config).forEach(key => {
+    keys.forEach(key => {
       result[key] = {};
     });
 
-    if (direction === 'forward') {
-      Object.keys(config).forEach(key => {
-        Object.assign(result[key], config[key].dependsOn);
-      });
-    }
-
-    if (direction === 'reverse') {
-      Object.keys(config).forEach(key => {
-        Object.keys(config[key].dependsOn).forEach(hash => {
-          result[hash][key] = null;
+    switch (direction) {
+      case TerraformCommand.FORWARD:
+        keys.forEach(key => {
+          Object.assign(result[key], config[key].dependsOn);
         });
-      });
+        break;
+
+      case TerraformCommand.REVERSE:
+        keys.forEach(key => {
+          Object.keys(config[key].dependsOn).forEach(hash => {
+            result[hash][key] = null;
+          });
+        });
+        break;
     }
 
     return result;
   }
-
 
   /**
    * @param {String} hash
@@ -104,7 +107,7 @@ class Distributor {
   runActions(actions, options) {
     const {
       silent = false,
-      format = 'text',
+      format = '',
       planDestroy = false,
       dependencyDirection = null
     } = options;
@@ -115,7 +118,7 @@ class Distributor {
       planDestroy: planDestroy
     };
 
-    this._output = [];
+    this._results = [];
     this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -129,7 +132,7 @@ class Distributor {
         }
 
         if (data.data) {
-          this._output.push(data.data);
+          this._results.push(data.data);
         }
 
         this._removeDependencies(data.hash);
@@ -149,9 +152,13 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            this._handleOutput().then(message => {
-              resolve(message);
-            });
+            let message = 'Done';
+            if (format) {
+              this._handleOutput(format);
+              message = '';
+            }
+
+            resolve(message);
           }
         }
       });
@@ -160,34 +167,35 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
+   * @param {String} format
    * @return {*}
    * @private
    */
-  _handleOutput() {
-    const outputs = this._output.filter(it => it.action === 'output');
+  _handleOutput(format) {
+    const outputs = this._results.filter(it => it.action === 'output');
 
     if (!outputs.length) {
-      return Promise.resolve('Done');
+      return;
     }
 
-    if (outputs[0].env.format === 'json') {
-      const result = {};
+    switch (format) {
+      case 'json':
+        const result = {};
 
-      outputs.forEach(it => {
-        let stdout = (new Buffer(it.stdout)).toString();
-        if (stdout[0] !== '{') {
-          stdout = stdout.slice(stdout.indexOf('{'));
-        }
-        result[it.component] = JSON.parse(stdout);
-      });
+        outputs.forEach(it => {
+          let stdout = (Buffer.from(it.buffer)).toString('utf8');
+          if (stdout[0] !== '{') {
+            stdout = stdout.slice(stdout.indexOf('{'));
+          }
+          result[it.component] = JSON.parse(stdout);
+        });
 
-      logger.log(JSON.stringify(result));
+        logger.log(JSON.stringify(result));
+        break;
 
-      return Promise.resolve();
-    } else {
-      outputs.forEach(it => logger.raw(`[${it.component}] ${(new Buffer(it.stdout)).toString()}`));
-
-      return Promise.resolve('Done');
+      default:
+        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
+        break;
     }
   }
 
@@ -204,7 +212,9 @@ class Distributor {
     });
 
     this._dependencyTable = {};
-
+    if (err instanceof Array) {
+      err = err.map(it => Buffer.from(it).toString('utf8')).join(os.EOL);
+    }
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 }

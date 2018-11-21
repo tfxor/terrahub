@@ -58,7 +58,8 @@ const def = {
   api: 'api',
   token: false,
   format: 'yml',
-  retryCount: 2
+  retryCount: 2,
+  usePhysicalCpu: false
 };
 const env = {
   env: _getEnv(args),
@@ -77,6 +78,7 @@ module.exports = {
   homePath: _homePath,
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
+  cfgPath: cfgPath,
   config: {
     api: cfg.api,
     env: cfg.env,
@@ -85,9 +87,9 @@ module.exports = {
     format: cfg.format,
     retryCount: cfg.retryCount,
     isHelp: _isHelp(args),
+    defaultFileName: `.terrahub.${cfg.format}`,
     isDefault: isDefault,
-    fileName: isDefault ? `.terrahub.${cfg.format}` : `.terrahub.${cfg.env}.${cfg.format}`,
-    defaultFileName: `.terrahub.${cfg.format}`
+    usePhysicalCpu: cfg.usePhysicalCpu
   },
   templates: {
     aws: path.join(templates, 'aws'),

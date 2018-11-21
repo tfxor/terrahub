@@ -19,6 +19,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 || **# terrahub management** ||
 | [project](commands/project.md) | create new or define existing folder as project that manages terraform configuration | :heavy_check_mark: |
 | [component](commands/component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
+| [configure](commands/configure.md) | add, change or remove config parameters from terrahub config files | :heavy_check_mark: |
 | [graph](commands/graph.md) | show dependencies graph for terraform configuration mapped as terrahub components | :heavy_check_mark: |
 || **# terraform execution** ||
 | [apply](commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
@@ -26,7 +27,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [init](commands/init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
 | [output](commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :x: |
+| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
 | [show](commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||

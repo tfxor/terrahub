@@ -2,7 +2,6 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { yesNoQuestion } = require('../helpers/util');
 
 class DestroyCommand extends TerraformCommand {
   /**
@@ -23,13 +22,13 @@ class DestroyCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    return this.checkDependenciesReverse(config)
+    return this.checkDependencies(config, TerraformCommand.REVERSE)
       .then(() => this._getPromise())
       .then(answer => answer ?
-        distributor.runActions(['prepare', 'plan', 'destroy'], {
+        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
           silent: this.getOption('silent'),
           planDestroy: true,
-          dependencyDirection:'reverse'
+          dependencyDirection: TerraformCommand.REVERSE
         }) : Promise.reject('Action aborted')
       ).then(() => Promise.resolve('Done'));
   }
@@ -42,7 +41,7 @@ class DestroyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to perform `destroy` action? (Y/N) ');
+      return this.askForApprovement(this.getConfigObject(), 'destroy');
     }
   }
 }

@@ -21,35 +21,31 @@ autoscaling_group_timeouts_delete           = "15m"
 ########
 # tags #
 ########
-custom_tags  = [
-  {
-      key                 = "telemetry"
-      value               = "true"
-      propagate_at_launch = true
-    }
-]
-default_tags = [
-    {
-      key                 = "ThubName"
-      value               = "{{ name }}"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "ThubCode"
-      value               = "{{ code }}"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "ThubEnv"
-      value               = "default"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Description"
-      value               = "Managed by TerraHub"
-      propagate_at_launch = true
-    }
-  ]
+custom_tags = [{
+  key   = "telemetry"
+  value = "true"
+  propagate_at_launch = true
+}]
+default_tags = [{
+  key   = "Name"
+  value = "{{ name }}"
+  propagate_at_launch = true
+},
+{
+  key   = "Description"
+  value = "Managed by TerraHub"
+  propagate_at_launch = true
+},
+{
+  key   = "ThubCode"
+  value = "{{ code }}"
+  propagate_at_launch = true
+},
+{
+  key   = "ThubEnv"
+  value = "default"
+  propagate_at_launch = true
+}]
 
 ##########
 # custom #

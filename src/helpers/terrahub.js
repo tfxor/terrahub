@@ -23,6 +23,7 @@ class Terrahub {
   /**
    * @param {Object} data
    * @param {Error|String} err
+   * @param {Object} data
    * @return {Promise}
    * @private
    */

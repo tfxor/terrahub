@@ -95,7 +95,7 @@ function updateJsonFiles() {
  */
 function npmPublish() {
   logger.info('Running npm publish');
-  return exec('npm publish').then(result => {
+  return exec('dev="alpha" && test="beta" && stage="rc" && master="latest" && BRANCH="$(git branch | grep \\* | cut -d \" \" -f2)" && npm publish --tag ${!BRANCH}').then(result => {
     if (result.error) {
       throw result.error;
     }

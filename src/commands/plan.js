@@ -23,7 +23,7 @@ class PlanCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return distributor
-      .runActions(['prepare', 'plan'], {
+      .runActions(['prepare', 'workspaceSelect', 'plan'], {
         silent: this.getOption('silent'),
         planDestroy: this.getOption('destroy')
       }).then(() => Promise.resolve('Done'));

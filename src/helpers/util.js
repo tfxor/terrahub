@@ -8,7 +8,8 @@ const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
-const { EOL } = require('os');
+const { EOL, platform, cpus } = require('os');
+const childProcess = require('child_process');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -34,10 +35,11 @@ function uuid() {
 
 /**
  * @param {Function[]} promises
+ * @param {Function} callback
  * @returns {*}
  */
-function promiseSeries(promises) {
-  return promises.reduce((prev, fn) => prev.then(fn), Promise.resolve());
+function promiseSeries(promises, callback = (prev, fn) => prev.then(fn)) {
+  return promises.reduce(callback, Promise.resolve());
 }
 
 /**
@@ -184,16 +186,25 @@ function yesNoQuestion(question) {
  */
 function spawner(command, args, options, onStderr, onStdout) {
   const stdout = [];
+  const stderr = [];
   const promise = spawn(command, args, options);
   const child = promise.childProcess;
 
-  child.stderr.on('data', onStderr);
+  child.stderr.on('data', data => {
+    stderr.push(data);
+    onStderr(data);
+  });
+
   child.stdout.on('data', data => {
     stdout.push(data);
     onStdout(data);
   });
 
-  return promise.then(() => Buffer.concat(stdout));
+  return promise.then(() => Buffer.concat(stdout))
+    .catch(err => {
+      err.message = stderr;
+      throw err;
+    });
 }
 
 /**
@@ -203,19 +214,23 @@ function spawner(command, args, options, onStderr, onStdout) {
  */
 function exponentialBackoff(promiseFunction, options) {
   const {
-    conditionFn = () => true,
+    conditionFunction = () => true,
     maxRetries = 2
   } = options;
   let retries = 0;
 
   function retry() {
     return promiseFunction().catch(error => {
-      if (conditionFn(error) && retries < maxRetries) {
-        return setTimeoutPromise(1000*Math.exp(retries++)).then(() => retry());
-      } else {
-        error.Message += `${EOL}Failed after ${maxRetries} retries.`;
+      if (!conditionFunction(error)) {
         return Promise.reject(error);
       }
+
+      if (retries >= maxRetries) {
+        error.message += `${EOL}Failed after ${maxRetries} retries.`;
+        return Promise.reject(error);
+      }
+
+      return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
     });
   }
 
@@ -230,6 +245,44 @@ function setTimeoutPromise(timeout) {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
   });
+}
+
+/**
+ * @return {Number}
+ */
+function physicalCpuCount() {
+  /**
+   * @param {String} command
+   * @return {String}
+   */
+  function exec(command) {
+    return childProcess.execSync(command, { encoding: 'utf8' });
+  }
+
+  let amount;
+  let platformCheck = platform();
+
+  if (platformCheck === 'linux') {
+    const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
+    amount = parseInt(output.trim(), 10);
+  } else if (platformCheck === 'darwin') {
+    const output = exec('sysctl -n hw.physicalcpu_max');
+    amount = parseInt(output.trim(), 10);
+  } else if (platformCheck === 'windows') {
+    const output = exec('WMIC CPU Get NumberOfCores');
+    amount = output.split(EOL)
+      .map(function parse(line) { return parseInt(line); })
+      .filter(function numbers(value) { return !isNaN(value); })
+      .reduce(function add(sum, number) { return sum + number; }, 0);
+  } else {
+    const cores = cpus().filter(function (cpu, index) {
+      const hasHyperthreading = cpu.model.includes('Intel');
+      const isOdd = index % 2 === 1;
+      return !hasHyperthreading || isOdd;
+    });
+    amount = cores.length;
+  }
+  return amount;
 }
 
 /**
@@ -249,5 +302,6 @@ module.exports = {
   askQuestion,
   isAwsNameValid,
   exponentialBackoff,
-  setTimeoutPromise
+  setTimeoutPromise,
+  physicalCpuCount
 };

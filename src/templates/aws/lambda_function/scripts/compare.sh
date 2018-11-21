@@ -20,9 +20,9 @@ fi
 ## Compare SHA256 sums from THUB_SRC file with files in THUB_COMPARE_PATH
 echo "THUB_BUILD_OK='${THUB_BUILD_OK}' ==> Comparing SHA256 sums."
 if [ "$(uname)" == "Darwin" ]; then
-  THUB_SHA=$(find -s ${THUB_COMPARE_PATH} -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
+  THUB_SHA=$(find -s ${THUB_COMPARE_PATH} -path **/node_modules -prune -o -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
 else
-  THUB_SHA=$(find ${THUB_COMPARE_PATH} -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
+  THUB_SHA=$(find ${THUB_COMPARE_PATH} -path **/node_modules -prune -o -type f -exec shasum -a 256 {} \; | sort -k 2 | shasum -a 256 | cut -f 1 -d " ")
 fi
 
 ## Checking if needs to skip SHA256 sums compare
@@ -39,6 +39,7 @@ echo "INFO: S3 Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
   echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
+  sed -i 's/"${var.lambda_publish}"/"${var.lambda_publish}"\nsource_code_hash = "${base64sha256("'${THUB_SHA}'")}"/g' ./main.tf
 else
   echo 'Build is NOT required.'
 fi
