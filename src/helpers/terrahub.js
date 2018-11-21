@@ -167,7 +167,7 @@ class Terrahub {
    */
   _getTask() {
     return this._on('start')
-      .then(() => this._hook('before'))
+      .then(() => this._hook('before', {}))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
