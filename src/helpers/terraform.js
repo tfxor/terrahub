@@ -240,6 +240,9 @@ class Terraform {
    * @return {Promise}
    */
   workspaceSelect() {
+
+    // console.log('workspace',config.env)
+    // console.log('test', this._tf)
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }

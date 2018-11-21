@@ -127,7 +127,7 @@ class Terrahub {
 
             return (promise instanceof Promise ?
               promise :
-              Promise.resolve(promise)).then(() => Promise.resolve(res));
+              Promise.resolve()).then(() => Promise.resolve(res));
           };
 
         case '.sh':

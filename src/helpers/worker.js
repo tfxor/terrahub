@@ -30,22 +30,22 @@ function getTasks(config) {
 /**
  * BladeRunner
  * @param {Object} config
- * @param {Function} callback
  */
 function run(config) {
-  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { aborted: !!data.skip } : {}))).then(lastResult => {
-    if (lastResult.action !== 'output') {
-      delete lastResult.buffer;
-    }
+  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { aborted: !!data.skip } : {})))
+    .then(lastResult => {
+      if (lastResult.action !== 'output') {
+        delete lastResult.buffer;
+      }
 
-    process.send({
-      id: cluster.worker.id,
-      data: lastResult,
-      isError: false,
-      hash: config.hash
-    });
-    process.exit(0);
-  }).catch(error => {
+      process.send({
+        id: cluster.worker.id,
+        data: lastResult,
+        isError: false,
+        hash: config.hash
+      });
+      process.exit(0);
+    }).catch(error => {
     process.send({
       id: cluster.worker.id,
       error: error.message || error,
