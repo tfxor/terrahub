@@ -139,21 +139,22 @@ class Terrahub {
           break;
       }
 
-      return () => this._spawn(command, args).then(() => Promise.resolve(res));
+      return () => this._spawn(command, args, { env: process.env }).then(() => Promise.resolve(res));
     }));
   }
 
   /**
    * @param {String} binary
    * @param {String} filePath
+   * @param {Object} options
    * @return {Promise}
    * @private
    */
-  _spawn(binary, filePath) {
-    return spawner(binary, filePath, {
+  _spawn(binary, filePath, options = {}) {
+    return spawner(binary, [filePath], Object.assign({
         cwd: path.join(this._config.project.root, this._config.root),
         shell: true
-      },
+      }, options),
       err => logger.error(`[${this._config.name}] ${err.toString()}`),
       data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
