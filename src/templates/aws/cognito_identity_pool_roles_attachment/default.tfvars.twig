@@ -9,18 +9,9 @@ region     = "us-east-1"
 #############
 # top level #
 #############
-eip_vpc = true
-
-########
-# tags #
-########
-custom_tags  = {}
-default_tags = {
-  "Name"        = "{{ name }}"
-  "Description" = "Managed by TerraHub"
-  "ThubCode"    = "{{ code }}"
-  "ThubEnv"     = "default"
-}
+cognito_identity_pool_id     = ""
+cognito_iam_auth_role_name   = "{{ name }}"
+cognito_iam_unauth_role_name = "{{ name }}"
 
 ##########
 # custom #

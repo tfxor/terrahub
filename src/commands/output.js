@@ -12,7 +12,7 @@ class OutputCommand extends TerraformCommand {
     this
       .setName('output')
       .setDescription('run `terraform output` across multiple terrahub components')
-      .addOption('format', 'o', 'Specify the output format (text or json)', String, 'text')
+      .addOption('format', 'o', 'Specify the output format (text or json)', String, '')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
     ;
   }
@@ -23,11 +23,11 @@ class OutputCommand extends TerraformCommand {
   run() {
     this._format = this.getOption('format');
 
-    if (!['text', 'json'].includes(this._format)) {
+    if (!['text', 'json', ''].includes(this._format)) {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
-    return this._format === 'text' ? this.askQuestion() : this.performAction();
+    return !this._format ? this.askQuestion() : this.performAction();
   }
 
   /**
@@ -51,7 +51,7 @@ class OutputCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    return distributor.runActions(['prepare', 'output'], {
+    return distributor.runActions(['prepare', 'workspaceSelect', 'output'], {
       format: this._format 
     });
   }

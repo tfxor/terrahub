@@ -243,19 +243,15 @@ class TerraformCommand extends AbstractCommand {
       return Object.keys(config).map(key => config[key].name);
     }
 
-    const runList = [];
-
-    Object.keys(config).forEach(hash => {
+    return Object.keys(config).reduce((filtered, hash) => {
       const cfg = config[hash];
 
-      if ('ci' in cfg && 'mapping' in cfg['ci'] &&
-        cfg.ci.mapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList))
-      ) {
-        runList.push(cfg.name);
+      if ('mapping' in cfg && cfg.mapping.some(dep => diffList.some(diff => diff.includes(dep)))) {
+        filtered.push(cfg.name);
       }
-    });
 
-    return runList;
+      return filtered;
+    }, []);
   }
 
   /**
@@ -277,26 +273,6 @@ class TerraformCommand extends AbstractCommand {
     }
 
     throw err;
-  }
-
-  /**
-   * @param {String} dep
-   * @param {Array} diffList
-   * @return {Boolean}
-   * @private
-   */
-  _compareCiMappingToGitDiff(dep, diffList) {
-    const stat = lstatSync(dep);
-
-    if (stat.isFile()) {
-      return diffList.some(diff => dep === diff);
-    }
-
-    if (stat.isDirectory()) {
-      return diffList.some(diff => diff.includes(dep));
-    }
-
-    return false;
   }
 
   /**
@@ -371,13 +347,21 @@ class TerraformCommand extends AbstractCommand {
   getConfigObject() {
     const tree = {};
     const object = Object.assign({}, this.getConfig());
+    const issues = [];
 
     Object.keys(object).forEach(hash => {
       const node = Object.assign({}, object[hash]);
       const dependsOn = {};
+      const fullConfig = this.getExtendedConfig();
 
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
+
+        if (!object[key]) {
+          const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
+
+          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
+        }
 
         dependsOn[key] = null;
       });
@@ -385,6 +369,13 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn = dependsOn;
       tree[hash] = node;
     });
+
+    if (issues.length) {
+
+      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
+      errorStrings.unshift('TerraHub failed because of the following issues:');
+      throw new Error(errorStrings.join(os.EOL));
+    }
 
     return tree;
   }
@@ -509,15 +500,9 @@ class TerraformCommand extends AbstractCommand {
       const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
 
       issueDependencies.forEach(it => {
-        if (it in fullConfig) {
-          const name = fullConfig[it].name;
+        const name = fullConfig[it].name;
 
-          issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
-        } else {
-          const dir = fullConfig[hash].dependsOn.find(dep => toMd5(dep) === it);
-
-          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
-        }
+        issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
       });
     });
 
