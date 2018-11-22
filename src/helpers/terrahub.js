@@ -21,13 +21,13 @@ class Terrahub {
   }
 
   /**
-   * @param {String} event
+   * @param {Object} data
    * @param {Error|String} err
    * @param {Object} data
    * @return {Promise}
    * @private
    */
-  _on(event, err = null, data = {}) {
+  _on(data, err = null) {
     let error = null;
     let payload = {
       Action: this._action,
@@ -37,15 +37,14 @@ class Terrahub {
       TerraformHash: this._componentHash,
       TerraformName: this._config.name,
       TerraformRunId: this._runId,
-      Status: event
+      Status: data.status
     };
 
     if (err) {
       error = new Error(err.message || err);
       payload['Error'] = error.message;
     }
-
-    if (payload.Action === 'plan' && event === 'success') {
+    if (payload.Action === 'plan' && data.status === 'success') {
       payload.Metadata = data.metadata;
     }
 
@@ -72,8 +71,8 @@ class Terrahub {
         return this._terraform[action]();
       }
 
-      if (options.aborted) {
-        return this._on('aborted', null, {})
+      if (options.skip) {
+        return this._on({ status: 'skip' })
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. Infrastructure is up-to-date.'`);
             return res;
@@ -97,6 +96,10 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = {}) {
+    if (['abort', 'skip'].includes(res.status)) {
+      return Promise.resolve(res);
+    }
+
     let hookPath;
     try {
       hookPath = this._config.hook[this._action][hook];
@@ -166,13 +169,13 @@ class Terrahub {
    * @private
    */
   _getTask() {
-    return this._on('start')
+    return this._on({ status: 'start' })
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
-      .then(data => this._on('success', null, data))
-      .catch(err => this._on('error', err))
+      .then(data => this._on(data, null))
+      .catch(err => this._on({ status: 'error' }, err))
       .catch(err => {
         if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
           err = new Error('Internet connection issue');
