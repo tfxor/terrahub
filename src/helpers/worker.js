@@ -32,7 +32,7 @@ function getTasks(config) {
  * @param {Object} config
  */
 function run(config) {
-  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { aborted: !!data.skip } : {})))
+  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
         delete lastResult.buffer;
