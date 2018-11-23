@@ -34,7 +34,6 @@ class OutputCommand extends TerraformCommand {
    * @return {Promise}
    */
   askQuestion() {
- 
     return this._getPromise().then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
@@ -51,8 +50,8 @@ class OutputCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    return distributor.runActions(['prepare', 'workspaceSelect', 'output'], {
-      format: this._format 
+    return distributor.runActions(['prepare', 'output'], {
+      format: this._format
     });
   }
 
