@@ -111,6 +111,10 @@ class Terrahub {
       return Promise.resolve(res);
     }
 
+    if (this._config && this._config.hook.env) {
+      Object.assign(process.env, this._config.hook.env.variables);
+    }
+
     const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
 
     return promiseSeries(commandsList.map(it => {
