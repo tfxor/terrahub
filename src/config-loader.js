@@ -279,6 +279,13 @@ class ConfigLoader {
         });
       }
 
+      if (config.hasOwnProperty('env')) {
+        ['hook', 'build'].forEach(key => {
+          if (config[key]) {
+            config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+          }
+        });
+      }
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
 
