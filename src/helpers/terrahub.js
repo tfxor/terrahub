@@ -96,11 +96,6 @@ class Terrahub {
    * @private
    */
   _hook(hook, res = {}) {
-
-    if(this._config && this._config.hook.env) {
-      Object.assign(process.env, this._config.hook.env.variables);
-    }
-
     if (['abort', 'skip'].includes(res.status)) {
       return Promise.resolve(res);
     }
@@ -114,6 +109,10 @@ class Terrahub {
 
     if (!hookPath) {
       return Promise.resolve(res);
+    }
+
+    if (this._config && this._config.hook.env) {
+      Object.assign(process.env, this._config.hook.env.variables);
     }
 
     const commandsList = hookPath instanceof Array ? hookPath : [hookPath];

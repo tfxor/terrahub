@@ -38,7 +38,7 @@ class ConfigLoader {
       children: [],
       hook: {},
       build: {},
-      env: { variables: {} } 
+      env: { variables: {} }
     };
   }
 
@@ -281,17 +281,15 @@ class ConfigLoader {
       if (config.hasOwnProperty('env')) {
         ['hook', 'build'].forEach(key => {
           if (config[key]) {
-            if(!config[key].env) {
+            if (!config[key].env) {
               config[key].env = {};
             }
-              config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+            config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
           }
         });
       }
 
-    ['env','component'].forEach(key => {
-      delete config[key];
-    })
+      ['env', 'component'].forEach(key => delete config[key]);
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
