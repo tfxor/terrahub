@@ -204,7 +204,7 @@ class ConfigureCommand extends TerraformCommand {
   _askQuestion() {
     return this._getPromise().then(confirmed => {
       if (!confirmed) {
-        return Promise.resolve('Canceled');
+        return Promise.reject('Action aborted');
       }
       return this._runner();
     });
@@ -218,7 +218,7 @@ class ConfigureCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion('Do you want to run it (Y/N)? ');
+      return yesNoQuestion(`Do you want to perform delete action on given component ${this.getOption('config')} (Y/N)? `);
     }
   }
 }
