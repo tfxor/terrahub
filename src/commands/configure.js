@@ -4,6 +4,7 @@ const path = require('path');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
 const { config, cfgPath } = require('../parameters');
+const { yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ConfigureCommand extends TerraformCommand {
   /**
@@ -14,18 +15,39 @@ class ConfigureCommand extends TerraformCommand {
       .setDescription('add, change or remove config parameters from terrahub config files')
       .addOption('config', 'c', 'Create, update or delete config parameter from config file', String)
       .addOption('global', 'G', 'Update global config file instead of root or local', Boolean, false)
-      .addOption('delete', 'D', 'Delete corresponding configuration parameter', Boolean, false);
+      .addOption('delete', 'D', 'Delete corresponding configuration parameter', Boolean, false)
+      .addOption('auto-approve', 'y', 'Auto approve for delete option', Boolean, false);
   }
 
   /**
    * @returns {Promise}
    */
   run() {
+    return this.getOption('delete') ? this._askQuestion() : this._runner();
+  }
+
+  /**
+   * @returns {Promise}
+   * @private
+   */
+  _runner() {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
 
+    this._runAction(global, data, configAction);
+    return Promise.resolve('Done');
+  }
+
+  /**
+   * @param {Boolean} global
+   * @param {Array} data
+   * @param {String} configAction
+   * @returns {Promise}
+   * @private
+   */
+  _runAction(global, data, configAction) {
     if (global === true) {
       const content = ConfigLoader.readConfig(cfgPath);
 
@@ -172,6 +194,32 @@ class ConfigureCommand extends TerraformCommand {
     }
 
     return destination;
+  }
+
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _askQuestion() {
+    return this._getPromise().then(confirmed => {
+      if (!confirmed) {
+        return Promise.resolve('Canceled');
+      }
+      return this._runner();
+    });
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _getPromise() {
+    if (this.getOption('auto-approve')) {
+      return Promise.resolve(true);
+    } else {
+      return yesNoQuestion('Do you want to run it (Y/N)? ');
+    }
   }
 }
 

@@ -10,6 +10,8 @@ const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
 const { EOL, platform, cpus } = require('os');
 const childProcess = require('child_process');
+const logger = require('./logger');
+const treeify = require('treeify');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -247,6 +249,21 @@ function setTimeoutPromise(timeout) {
   });
 }
 
+function printConfigAsList(config, projectConfig) {
+  const { name } = projectConfig;
+  const componentList = {};
+
+  config.map(key => {
+    componentList[key] = null;
+  });
+
+  logger.log(`Project: ${name}`);
+
+  treeify.asLines(componentList, false, line => {
+    logger.log(` ${line}`);
+  });
+}
+
 /**
  * @return {Number}
  */
@@ -303,5 +320,6 @@ module.exports = {
   isAwsNameValid,
   exponentialBackoff,
   setTimeoutPromise,
-  physicalCpuCount
+  physicalCpuCount,
+  printConfigAsList
 };
