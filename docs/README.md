@@ -2,7 +2,7 @@
 
 ## DevOps Hub for Terraform Automation
 
-TerraHub is a user interface driven terraform centric devops tool.
+TerraHub is a terraform centric user interface driven devops tool.
 TerraHub provides incremental value by automating the management at scale
 of cloud resources and cloud services across multiple cloud accounts.
 For example: Serverless on Amazon AWS, or Kubernetes on Google  Cloud,
