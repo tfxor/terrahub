@@ -81,10 +81,15 @@ class ComponentCommand extends AbstractCommand {
   _deleteComponent(name) {
     const config = this.getConfig();
     const key = Object.keys(config).find(it => config[it].name === name);
-    const configPath = path.join(config[key].project.root, config[key].root);
-    const configFiles = this.listAllEnvConfig(configPath);
+    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
 
-    return Promise.all(configFiles.map(it => fse.remove(it)));
+    if (configPath) {
+      const configFiles = this.listAllEnvConfig(configPath);
+
+      return Promise.all(configFiles.map(it => fse.remove(it)));
+    } else {
+      throw new Error(`Terrahub component with provided name: '${this.getOption('name')}' doesn't exist`);
+    }
   }
 
   /**
