@@ -311,7 +311,7 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
-        if (!object[key]) {
+        if (!fullConfig[key]) {
           const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
 
           issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
@@ -325,9 +325,9 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-
       const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
       errorStrings.unshift('TerraHub failed because of the following issues:');
+
       throw new Error(errorStrings.join(os.EOL));
     }
 
