@@ -4,7 +4,7 @@ const path = require('path');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
 const { config, cfgPath } = require('../parameters');
-const { yesNoQuestion, printConfigAsList } = require('../helpers/util');
+const { yesNoQuestion } = require('../helpers/util');
 
 class ConfigureCommand extends TerraformCommand {
   /**
@@ -23,14 +23,14 @@ class ConfigureCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    return this.getOption('delete') ? this._askQuestion() : this._runner();
+    return this.getOption('delete') ? this._deleteConfig() : this._addConfig();
   }
 
   /**
    * @returns {Promise}
    * @private
    */
-  _runner() {
+  _addConfig() {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
@@ -201,12 +201,12 @@ class ConfigureCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _askQuestion() {
+  _deleteConfig() {
     return this._getPromise().then(confirmed => {
       if (!confirmed) {
         return Promise.reject('Action aborted');
       }
-      return this._runner();
+      return this._addConfig();
     });
   }
 

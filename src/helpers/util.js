@@ -249,13 +249,52 @@ function setTimeoutPromise(timeout) {
   });
 }
 
+/**
+ * @param {Object} config
+ * @param {String} action
+ * @param {Object} projectConfig
+ * @return {String}
+ */
+function askForApprovement(config, action, projectConfig) {
+  const length = Object.keys(config).length;
+
+  if (length > 5) {
+    printConfigCommaSeparated(config, projectConfig);
+  } else {
+    printConfigAsList(config, projectConfig);
+  }
+
+  return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
+}
+
+/**
+ * @param {Object} config
+ * @param {Array} projectConfig
+ */
+function printConfigCommaSeparated(config, projectConfig) {
+  const { name } = projectConfig;
+  const components = Object.keys(config).map(key => config[key].name).join(', ');
+
+  logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
+}
+
+/**
+ * @param {Object} config
+ * @param {Array} projectConfig
+ */
 function printConfigAsList(config, projectConfig) {
   const { name } = projectConfig;
   const componentList = {};
 
-  config.map(key => {
-    componentList[key] = null;
-  });
+  if (config instanceof Array) {
+    config.map(key => {
+      componentList[key] = null;
+    });
+  } else if (config instanceof Object) {
+    Object.keys(config).forEach(key => {
+      componentList[config[key].name] = null;
+    });
+  }
 
   logger.log(`Project: ${name}`);
 
@@ -321,5 +360,7 @@ module.exports = {
   exponentialBackoff,
   setTimeoutPromise,
   physicalCpuCount,
-  printConfigAsList
+  printConfigAsList,
+  printConfigCommaSeparated,
+  askForApprovement
 };

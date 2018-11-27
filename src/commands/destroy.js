@@ -2,6 +2,7 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
+const { askForApprovement } = require('../helpers/util');
 
 class DestroyCommand extends TerraformCommand {
   /**
@@ -41,7 +42,7 @@ class DestroyCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return this.askForApprovement(this.getConfigObject(), 'destroy');
+      return askForApprovement(this.getConfigObject(), 'destroy', this.getProjectConfig);
     }
   }
 }
