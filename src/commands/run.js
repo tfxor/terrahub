@@ -2,6 +2,7 @@
 
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
+const { printConfigAsList, askForApprovement } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -23,8 +24,7 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     if (this.getOption('dry-run')) {
-      this.printConfigAsList(this.getConfigObject());
-
+      printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
 
@@ -92,7 +92,7 @@ class RunCommand extends TerraformCommand {
     if (this.getOption('auto-approve') || !this._actions.length) {
       return Promise.resolve(true);
     } else {
-      return this.askForApprovement(this.getConfigObject(), 'run');
+      return askForApprovement(this.getConfigObject(), 'run', this.getProjectConfig());
     }
   }
 }
