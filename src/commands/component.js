@@ -58,7 +58,7 @@ class ComponentCommand extends AbstractCommand {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {
-          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
+          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => Promise.resolve());
         }
       });
     } else if (this._template) {
@@ -86,10 +86,15 @@ class ComponentCommand extends AbstractCommand {
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
-      return Promise.all(configFiles.map(it => fse.remove(it)));
-    } else {
-      throw new Error(`Terrahub component with provided name: '${this.getOption('name')}' doesn't exist`);
+      return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
+        this.logger.info(`Done for terrahub component: '${name}'`);
+
+        return Promise.resolve();
+      });
     }
+
+    this.logger.error(`Terrahub component with provided name: '${name}' doesn't exist`);
+    return Promise.resolve();
   }
 
   /**
