@@ -60,7 +60,7 @@ class ComponentCommand extends AbstractCommand {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {
-          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => Promise.resolve('Done'));
+          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
         }
       });
     } else if (this._template) {
