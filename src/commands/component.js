@@ -88,10 +88,15 @@ class ComponentCommand extends AbstractCommand {
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
-      return Promise.all(configFiles.map(it => fse.remove(it)));
-    } else {
-      throw new Error(`Terrahub component with provided name: '${this.getOption('name')}' doesn't exist`);
+      return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
+        this.logger.info(`Done for terrahub component: '${name}'`);
+
+        return Promise.resolve();
+      });
     }
+
+    this.logger.warn(`Terrahub component with provided name: '${name}' doesn't exist`);
+    return Promise.resolve();
   }
 
   /**
