@@ -10,6 +10,8 @@ const { spawn } = require('child-process-promise');
 const { createHash } = require('crypto');
 const { EOL, platform, cpus } = require('os');
 const childProcess = require('child_process');
+const logger = require('./logger');
+const treeify = require('treeify');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -248,6 +250,60 @@ function setTimeoutPromise(timeout) {
 }
 
 /**
+ * @param {Object} config
+ * @param {String} action
+ * @param {Object} projectConfig
+ * @return {String}
+ */
+function askForApprovement(config, action, projectConfig) {
+  const length = Object.keys(config).length;
+
+  if (length > 5) {
+    printConfigCommaSeparated(config, projectConfig);
+  } else {
+    printConfigAsList(config, projectConfig);
+  }
+
+  return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
+}
+
+/**
+ * @param {Object} config
+ * @param {Array} projectConfig
+ */
+function printConfigCommaSeparated(config, projectConfig) {
+  const { name } = projectConfig;
+  const components = Object.keys(config).map(key => config[key].name).join(', ');
+
+  logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
+}
+
+/**
+ * @param {Object} config
+ * @param {Array} projectConfig
+ */
+function printConfigAsList(config, projectConfig) {
+  const { name } = projectConfig;
+  const componentList = {};
+
+  if (config instanceof Array) {
+    config.map(key => {
+      componentList[key] = null;
+    });
+  } else if (config instanceof Object) {
+    Object.keys(config).forEach(key => {
+      componentList[config[key].name] = null;
+    });
+  }
+
+  logger.log(`Project: ${name}`);
+
+  treeify.asLines(componentList, false, line => {
+    logger.log(` ${line}`);
+  });
+}
+
+/**
  * @return {Number}
  */
 function physicalCpuCount() {
@@ -303,5 +359,8 @@ module.exports = {
   isAwsNameValid,
   exponentialBackoff,
   setTimeoutPromise,
-  physicalCpuCount
+  physicalCpuCount,
+  printConfigAsList,
+  printConfigCommaSeparated,
+  askForApprovement
 };

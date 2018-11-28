@@ -5,7 +5,7 @@ const path = require('path');
 const glob = require('glob');
 const ConfigLoader = require('../config-loader');
 const { config, templates } = require('../parameters');
-const { renderTwig, isAwsNameValid, extend, yesNoQuestion } = require('../helpers/util');
+const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/terraform');
 
@@ -54,6 +54,8 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
+      printConfigAsList(this._name, this.getProjectConfig());
+
       return yesNoQuestion('Do you want to perform delete action? (Y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
