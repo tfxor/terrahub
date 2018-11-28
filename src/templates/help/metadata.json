@@ -223,6 +223,12 @@
           "defaultValue": false
         },
         {
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve for delete option",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
