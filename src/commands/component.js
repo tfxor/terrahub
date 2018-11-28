@@ -60,7 +60,7 @@ class ComponentCommand extends AbstractCommand {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {
-          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => Promise.resolve());
+          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => Promise.resolve('Done'));
         }
       });
     } else if (this._template) {
@@ -95,7 +95,7 @@ class ComponentCommand extends AbstractCommand {
       });
     }
 
-    this.logger.error(`Terrahub component with provided name: '${name}' doesn't exist`);
+    this.logger.warn(`Terrahub component with provided name: '${name}' doesn't exist`);
     return Promise.resolve();
   }
 
