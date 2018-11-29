@@ -212,19 +212,6 @@ class Distributor {
    * @private
    */
   _handleWorkspaceList(results) {
-    const tree = this._format(results);
-
-    treeify.asLines(tree, false, line => {
-      logger.log(` ${line}`);
-    });
-  }
-
-  /**
-   *
-   * @param {Array} results
-   * @return {Object}
-   */
-  _format(results) {
     const result = {};
 
     results.forEach(item => {
@@ -232,8 +219,9 @@ class Distributor {
       result[item.activeWorkspace][item.component] = null;
     });
 
-
-    return result;
+    treeify.asLines(result, false, line => {
+      logger.log(` ${line}`);
+    });
   }
 
   /**

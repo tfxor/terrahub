@@ -9,7 +9,6 @@ const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
 const { config, templates } = require('../parameters');
 const { renderTwig, yesNoQuestion } = require('../helpers/util');
-const treeify = require('treeify');
 
 class WorkspaceCommand extends TerraformCommand {
   /**
