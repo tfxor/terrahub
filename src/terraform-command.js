@@ -7,7 +7,6 @@ const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
-const treeify = require('treeify');
 
 /**
  * @abstract
@@ -276,51 +275,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} config
-   * @param {String} action
-   * @return {String}
-   */
-  askForApprovement(config, action) {
-    const length = Object.keys(config).length;
-
-    if (length > 5) {
-      this.printConfigCommaSeparated(config);
-    } else {
-      this.printConfigAsList(config);
-    }
-
-    return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
-  }
-
-  /**
-   * @param {Object} config
-   */
-  printConfigCommaSeparated(config) {
-    const { name } = this.getProjectConfig();
-    const components = Object.keys(config).map(key => config[key].name).join(', ');
-
-    this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
-  }
-
-  /**
-   * @param config
-   */
-  printConfigAsList(config) {
-    const { name } = this.getProjectConfig();
-    const componentList = {};
-
-    Object.keys(config).forEach(key => {
-      componentList[config[key].name] = null;
-    });
-
-    this.logger.log(`Project: ${name}`);
-
-    treeify.asLines(componentList, false, line => {
-      this.logger.log(` ${line}`);
-    });
-  }
-
-  /**
    * @returns {Array}
    */
   getVarFile() {
@@ -357,7 +311,7 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
-        if (!object[key]) {
+        if (!fullConfig[key]) {
           const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
 
           issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
@@ -371,9 +325,9 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-
       const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
       errorStrings.unshift('TerraHub failed because of the following issues:');
+
       throw new Error(errorStrings.join(os.EOL));
     }
 

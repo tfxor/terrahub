@@ -5,7 +5,7 @@ const path = require('path');
 const glob = require('glob');
 const ConfigLoader = require('../config-loader');
 const { config, templates } = require('../parameters');
-const { renderTwig, isAwsNameValid, extend, yesNoQuestion } = require('../helpers/util');
+const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/terraform');
 
@@ -54,6 +54,8 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
+      printConfigAsList(this._name, this.getProjectConfig());
+
       return yesNoQuestion('Do you want to perform delete action? (Y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
@@ -81,10 +83,20 @@ class ComponentCommand extends AbstractCommand {
   _deleteComponent(name) {
     const config = this.getConfig();
     const key = Object.keys(config).find(it => config[it].name === name);
-    const configPath = path.join(config[key].project.root, config[key].root);
-    const configFiles = this.listAllEnvConfig(configPath);
+    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
 
-    return Promise.all(configFiles.map(it => fse.remove(it)));
+    if (configPath) {
+      const configFiles = this.listAllEnvConfig(configPath);
+
+      return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
+        this.logger.info(`Done for terrahub component: '${name}'`);
+
+        return Promise.resolve();
+      });
+    }
+
+    this.logger.warn(`Terrahub component with provided name: '${name}' doesn't exist`);
+    return Promise.resolve();
   }
 
   /**

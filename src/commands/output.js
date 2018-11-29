@@ -27,7 +27,7 @@ class OutputCommand extends TerraformCommand {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
-    return !this._format ? this.askQuestion() : this.performAction();
+    return this.askQuestion();
   }
 
   /**
@@ -60,7 +60,7 @@ class OutputCommand extends TerraformCommand {
    * @private
    */
   _getPromise() {
-    if (this.getOption('auto-approve')) {
+    if (!this._format || this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
       this.logger.warn('This command makes sense only after apply command, and configured outputs');
