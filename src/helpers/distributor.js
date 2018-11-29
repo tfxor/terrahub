@@ -212,12 +212,12 @@ class Distributor {
    * @private
    */
   _handleWorkspaceList(results) {
-    const result = {};
-
-    results.forEach(item => {
-      item.workspaces.filter(it => !result[it]).forEach(it => result[it] = {});
-      result[item.activeWorkspace][item.component] = null;
-    });
+    const result = results.reduce((acc, item) => {
+      item.workspaces.filter(it => !acc[it]).forEach(it => acc[it] = {});
+      acc[item.activeWorkspace][item.component] = null;
+    
+      return acc;
+    }, {});
 
     treeify.asLines(result, false, line => {
       logger.log(` ${line}`);
