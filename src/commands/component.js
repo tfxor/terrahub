@@ -110,8 +110,8 @@ class ComponentCommand extends AbstractCommand {
     const terraform = new Terraform({ root: componentPath, project: { root: projectPath } });
 
     return terraform.workspaceList()
-      .then(data => {
-        data.forEach(it => {
+      .then(({ workspaces }) => {
+        workspaces.forEach(it => {
           if (it !== 'default') {
             const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
             ConfigLoader.writeConfig({}, outFile);

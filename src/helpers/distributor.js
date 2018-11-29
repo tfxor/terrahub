@@ -7,6 +7,7 @@ const cluster = require('cluster');
 const logger = require('./logger');
 const { uuid, physicalCpuCount } = require('./util');
 const { config } = require('../parameters');
+const treeify = require('treeify');
 
 class Distributor {
   /**
@@ -118,7 +119,7 @@ class Distributor {
       planDestroy: planDestroy
     };
 
-    this._results = [];
+    const results = [];
     this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -132,7 +133,7 @@ class Distributor {
         }
 
         if (data.data) {
-          this._results.push(data.data);
+          results.push(data.data);
         }
 
         this._removeDependencies(data.hash);
@@ -152,10 +153,22 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            let message = 'Done';
-            if (format) {
-              this._handleOutput(format);
-              message = '';
+            let message = '';
+
+            switch (actions[actions.length - 1]) {
+              case 'output':
+                if (format) {
+                  this._handleOutput(results, format);
+                }
+                break;
+
+              case 'workspaceList':
+                this._handleWorkspaceList(results);
+                break;
+
+              default:
+                message = 'Done';
+                break;
             }
 
             resolve(message);
@@ -167,22 +180,16 @@ class Distributor {
 
   /**
    * Prints the output data for the 'output' command
+   * @param {Object[]} results
    * @param {String} format
-   * @return {*}
    * @private
    */
-  _handleOutput(format) {
-    const outputs = this._results.filter(it => it.action === 'output');
-
-    if (!outputs.length) {
-      return;
-    }
-
+  _handleOutput(results, format) {
     switch (format) {
       case 'json':
         const result = {};
 
-        outputs.forEach(it => {
+        results.forEach(it => {
           let stdout = (Buffer.from(it.buffer)).toString('utf8');
           if (stdout[0] !== '{') {
             stdout = stdout.slice(stdout.indexOf('{'));
@@ -194,9 +201,27 @@ class Distributor {
         break;
 
       default:
-        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
+        // @todo: investigate if this row is really required
+        results.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
         break;
     }
+  }
+
+  /**
+   * @param {Object[]} results
+   * @private
+   */
+  _handleWorkspaceList(results) {
+    const result = results.reduce((acc, item) => {
+      item.workspaces.filter(it => !acc[it]).forEach(it => acc[it] = {});
+      acc[item.activeWorkspace][item.component] = null;
+    
+      return acc;
+    }, {});
+
+    treeify.asLines(result, false, line => {
+      logger.log(` ${line}`);
+    });
   }
 
   /**

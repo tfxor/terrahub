@@ -912,6 +912,12 @@
           "defaultValue": false
         },
         {
+          "name": "list",
+          "shortcut": "L",
+          "description": "Shows list of terrahub components",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
