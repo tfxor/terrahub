@@ -774,6 +774,12 @@
           "defaultValue": false
         },
         {
+          "name": "build",
+          "shortcut": "b",
+          "description": "Enable build command as part of automated workflow",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
