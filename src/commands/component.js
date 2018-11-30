@@ -78,6 +78,7 @@ class ComponentCommand extends AbstractCommand {
 
   /**
    * @return {Promise}
+   * @param {String} name
    * @private
    */
   _deleteComponent(name) {
@@ -101,6 +102,7 @@ class ComponentCommand extends AbstractCommand {
 
   /**
    * @return {Promise}
+   * @param {String} name
    * @private
    */
   _addExistingComponent(name) {
@@ -166,6 +168,7 @@ class ComponentCommand extends AbstractCommand {
 
   /**
    * @return {Promise}
+   * @param {String} name
    * @private
    */
   _createNewComponent(name) {

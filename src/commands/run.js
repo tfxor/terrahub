@@ -54,7 +54,7 @@ class RunCommand extends TerraformCommand {
 
     return Promise.resolve()
       .then(() => {
-        switch (isApply*1 + isDestroy*2) {
+        switch (isApply * 1 + isDestroy * 2) {
           case 0:
             return Promise.resolve();
 
@@ -62,11 +62,11 @@ class RunCommand extends TerraformCommand {
             direction = TerraformCommand.FORWARD;
             break;
 
-            case 2:
+          case 2:
             direction = TerraformCommand.REVERSE;
             break;
 
-            case 3:
+          case 3:
             direction = TerraformCommand.BIDIRECTIONAL;
             break;
         }
@@ -83,7 +83,7 @@ class RunCommand extends TerraformCommand {
             actions.push('build');
           }
         }
-        
+
         return distributor.runActions(actions, {
           silent: this.getOption('silent')
         });
