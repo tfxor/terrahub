@@ -54,6 +54,7 @@ class RunCommand extends TerraformCommand {
 
     return Promise.resolve()
       .then(() => {
+        let direction;
         switch (isApply * 1 + isDestroy * 2) {
           case 0:
             return Promise.resolve();
