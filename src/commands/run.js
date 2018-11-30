@@ -16,6 +16,7 @@ class RunCommand extends TerraformCommand {
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
+      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
     ;
   }
 
@@ -27,8 +28,6 @@ class RunCommand extends TerraformCommand {
       printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-
-    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
       .then(answer => {
@@ -49,39 +48,61 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
+    const isApply = this.getOption('apply');
+    const isDestroy = this.getOption('destroy');
+    const isBuild = this.getOption('build');
+
     return Promise.resolve()
       .then(() => {
-        if (!this._actions.length) {
-          return Promise.resolve();
-        }
-
         let direction;
-        if (this._actions.length === 2) {
-          direction = TerraformCommand.BIDIRECTIONAL;
-        } else if (this._actions.includes('apply')) {
-          direction = TerraformCommand.FORWARD;
-        } else {
-          direction = TerraformCommand.REVERSE;
+        switch (isApply * 1 + isDestroy * 2) {
+          case 0:
+            return Promise.resolve();
+
+          case 1:
+            direction = TerraformCommand.FORWARD;
+            break;
+
+          case 2:
+            direction = TerraformCommand.REVERSE;
+            break;
+
+          case 3:
+            direction = TerraformCommand.BIDIRECTIONAL;
+            break;
         }
 
         return this.checkDependencies(config, direction);
       })
-      .then(() => distributor.runActions(this._actions.length ?
-        ['prepare', 'init', 'workspaceSelect'] :
-        ['prepare', 'init', 'workspaceSelect', 'plan'], {
-        silent: this.getOption('silent')
-      }))
-      .then(() => this._actions.includes('apply') ?
-        distributor.runActions(['plan', 'apply'], {
+      .then(() => {
+        const actions = ['prepare', 'init', 'workspaceSelect'];
+
+        if (!isApply && !isDestroy) {
+          actions.push('plan');
+
+          if (isBuild) {
+            actions.push('build');
+          }
+        }
+
+        return distributor.runActions(actions, {
+          silent: this.getOption('silent')
+        });
+      })
+      .then(() => !isApply ?
+        Promise.resolve() :
+        distributor.runActions(isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
           dependencyDirection: TerraformCommand.FORWARD
-        }) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ?
+        })
+      )
+      .then(() => !isDestroy ?
+        Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.REVERSE,
-          planDestroy: true
-        }) : Promise.resolve());
+          dependencyDirection: TerraformCommand.REVERSE
+        })
+      );
   }
 
   /**
@@ -89,7 +110,7 @@ class RunCommand extends TerraformCommand {
    * @private
    */
   _getPromise() {
-    if (this.getOption('auto-approve') || !this._actions.length) {
+    if (this.getOption('auto-approve') || !(this.getOption('apply') || this.getOption('destroy'))) {
       return Promise.resolve(true);
     } else {
       return askForApprovement(this.getConfigObject(), 'run', this.getProjectConfig());
