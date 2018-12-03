@@ -66,8 +66,8 @@ class TerraformCommand extends AbstractCommand {
       return missingData === 'config' ?
         Promise.reject('Configuration file not found. Either re-run the same command ' +
           'in project\'s root or initialize new project with `terrahub project`.') :
-        askQuestion(`Global config is missing project ${missingData}. `
-          + `Please provide value (e.g. ${missingData === 'code' ? this._code(projectConfig.name) : 'terrahub-demo'}): `
+        askQuestion(`Global config is missing project ${missingData}. Please provide value 
+          (e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
         ).then(answer => {
 
           try {
@@ -355,19 +355,19 @@ class TerraformCommand extends AbstractCommand {
    */
   _getDependencyCycle(config) {
     const keys = Object.keys(config);
-    const paths = [];
+    const path = [];
     const color = {};
 
     keys.forEach(key => { color[key] = TerraformCommand.WHITE; });
-    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, paths, config, color));
+    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
 
-    if (paths.length) {
-      const index = paths.findIndex(it => it === paths[paths.length - 1]);
+    if (path.length) {
+      const index = path.findIndex(it => it === path[path.length - 1]);
 
-      return paths.map(key => config[key].name).slice(index + 1);
+      return path.map(key => config[key].name).slice(index + 1);
     }
 
-    return paths;
+    return path;
   }
 
   /**
@@ -508,15 +508,6 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return null;
-  }
-
-  /**
-   * @param {String} name
-   * @return {String}
-   * @private
-   */
-  _code(name) {
-    return toMd5(name + Date.now().toString()).slice(0, 8);
   }
 
   /**

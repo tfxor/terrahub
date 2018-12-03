@@ -5,7 +5,7 @@ const path = require('path');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
 const { templates, config, fetch } = require('../parameters');
-const { renderTwig, toMd5, isAwsNameValid } = require('../helpers/util');
+const { renderTwig, isAwsNameValid } = require('../helpers/util');
 
 class ProjectCommand extends AbstractCommand {
   /**
@@ -25,8 +25,8 @@ class ProjectCommand extends AbstractCommand {
    */
   run() {
     const name = this.getOption('name');
+    const code = this.getProjectCode(name);
     const directory = path.resolve(this.getOption('directory'));
-    const code = this._code(name);
 
     if (!isAwsNameValid(name)) {
       throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
@@ -72,16 +72,6 @@ class ProjectCommand extends AbstractCommand {
         // @todo get rid of `errorMessage` in future
         throw new Error(err.message || err.errorMessage);
       });
-  }
-
-  /**
-   * Generate project code
-   * @param {String} name
-   * @returns {String}
-   * @private
-   */
-  _code(name) {
-    return toMd5(name + Date.now().toString()).slice(0, 8);
   }
 }
 
