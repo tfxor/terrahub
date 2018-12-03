@@ -125,7 +125,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _format(data, level = 0, depth = 0) {
-    let result = {};
+    const result = {};
     const titles = ['Project', 'Account', 'Region', 'Service', 'Resource'];
     const keys = Object.keys(data);
 
@@ -179,23 +179,31 @@ class ListCommand extends AbstractCommand {
       return Promise.resolve([]);
     }
 
-    return fetch.get(`thub/listing/retrieve?DataType=1`)
+    return fetch.get('thub/listing/retrieve?type=list')
       .then(res => {
         if (res.status === 403) {
-          return Promise.resolve({ errorMessage: JSON.stringify({ errorMessage: 'Provided THUB_TOKEN is invalid' }) });
+          return Promise.resolve({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
         }
 
         return res.json();
       })
       .then(json => {
-        if (json.errorMessage) {
-          const { errorMessage } = JSON.parse(json.errorMessage);
-          this.logger.error(errorMessage);
+        if (json.hasOwnProperty('errorType')) {
+          // @todo get rid of `errorMessage` in future
+          this.logger.error(json.message || json.errorMessage);
 
           return Promise.resolve([]);
         }
 
-        return json.data;
+        return json.data.map(row => {
+          return {
+            service: row.service_name,
+            region: row.region,
+            accountId: row.cloud_account_id,
+            resource: row.resource_name,
+            project: row.project_hash
+          };
+        });
       })
       .then(data => {
         const cachePath = this._cachePath(config.token);

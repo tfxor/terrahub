@@ -20,8 +20,10 @@ class Fetch {
    */
   get(url) {
     return fetch(URL.resolve(this.baseUrl, url), {
+      method: 'GET',
       headers: {
-        'Authorization': this.authorization
+        'Authorization': this.authorization,
+        'Content-Type': 'application/json'
       }
     });
   }

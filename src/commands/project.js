@@ -2,10 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
-const { templates, config } = require('../parameters');
+const { templates, config, fetch } = require('../parameters');
 const { renderTwig, toMd5, isAwsNameValid } = require('../helpers/util');
-const ConfigLoader = require('../config-loader')
 
 class ProjectCommand extends AbstractCommand {
   /**
@@ -16,7 +16,6 @@ class ProjectCommand extends AbstractCommand {
       .setName('project')
       .setDescription('create new or define existing folder as project that manages terraform configuration')
       .addOption('name', 'n', 'Project name', String)
-      .addOption('provider', 'p', 'Cloud provider', String, 'aws')
       .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
     ;
   }
@@ -26,9 +25,8 @@ class ProjectCommand extends AbstractCommand {
    */
   run() {
     const name = this.getOption('name');
-    const provider = this.getOption('provider');
     const directory = path.resolve(this.getOption('directory'));
-    const code = this._code(name, provider);
+    const code = this._code(name);
 
     if (!isAwsNameValid(name)) {
       throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
@@ -45,13 +43,13 @@ class ProjectCommand extends AbstractCommand {
       const outFile = path.join(directory, config.defaultFileName);
       const isProjectExisting = ConfigLoader.availableFormats
         .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
-      
+
       if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
         this.logger.warn(`Project already configured in ${directory} directory`);
         return Promise.resolve();
       }
 
-      return renderTwig(srcFile, { name, provider, code }, outFile).then(() => {
+      return renderTwig(srcFile, { name, code }, outFile).then(() => {
         return Promise.resolve('Project successfully initialized');
       });
     });
@@ -68,19 +66,30 @@ class ProjectCommand extends AbstractCommand {
       return Promise.resolve(true);
     }
 
-    // @todo call API and check code collisions
-    return Promise.resolve(true);
+    return fetch.get(`thub/hash/validate?projectHash=${code}`).then(res => {
+      if (res.status === 403) {
+        return Promise.resolve({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
+      }
+
+      return res.json();
+    }).then(json => {
+      if (json.hasOwnProperty('errorType')) {
+        // @todo get rid of `errorMessage` in future
+        throw new Error(json.message || json.errorMessage);
+      }
+
+      return json.data.isValid;
+    });
   }
 
   /**
    * Generate project code
    * @param {String} name
-   * @param {String} provider
    * @returns {String}
    * @private
    */
-  _code(name, provider) {
-    return toMd5(name + provider).slice(0, 8);
+  _code(name) {
+    return toMd5(name + Date.now().toString()).slice(0, 8);
   }
 }
 

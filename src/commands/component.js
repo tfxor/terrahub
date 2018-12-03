@@ -3,11 +3,11 @@
 const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const ConfigLoader = require('../config-loader');
-const { config, templates } = require('../parameters');
-const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
-const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/terraform');
+const ConfigLoader = require('../config-loader');
+const { templates } = require('../parameters');
+const AbstractCommand = require('../abstract-command');
+const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -18,9 +18,9 @@ class ComponentCommand extends AbstractCommand {
       .setName('component')
       .setDescription('create new or include existing terraform configuration into current terrahub project')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
-      .addOption('template', 't', 'Template name (e.g. aws_lambda_function, google_cloudfunctions_function)', String, '')
+      .addOption('template', 't', 'Template name (e.g. aws_ami, google_project)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('depends-on', 'o', 'Paths of the components, which the component depends on (comma separated values)', Array, [])
+      .addOption('depends-on', 'o', 'Component paths, which the component depends on (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;
@@ -39,9 +39,12 @@ class ComponentCommand extends AbstractCommand {
 
     const projectFormat = this.getProjectFormat();
 
-    this._srcFile = path.join(templates.config, 'component',
-      `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`);
     this._appPath = this.getAppPath();
+    this._srcFile = path.join(
+      templates.config,
+      'component',
+      `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`
+    );
 
     if (!this._appPath) {
       throw new Error(`Project's config not found`);
@@ -77,6 +80,7 @@ class ComponentCommand extends AbstractCommand {
   }
 
   /**
+   * @param {String} name
    * @return {Promise}
    * @private
    */
@@ -100,6 +104,7 @@ class ComponentCommand extends AbstractCommand {
   }
 
   /**
+   * @param {String} name
    * @return {Promise}
    * @private
    */
@@ -146,25 +151,27 @@ class ComponentCommand extends AbstractCommand {
 
           ConfigLoader.writeConfig(existing.config, existing.path);
         }
+
         const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
 
         glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns }).map(file => {
-          if (file != `.terrahub${this.getProjectFormat()}`)
+          if (file !== `.terrahub${this.getProjectFormat()}`) {
             ConfigLoader.writeConfig({}, file);
+          }
         });
-        const specificConfigPath = path.join(path.dirname(templates.mapping), this._configLoader.getDefaultFileName() + '.twig');
-        let data = '';
 
-        if (fse.existsSync(specificConfigPath)) {
-          data = fse.readFileSync(specificConfigPath);
-        }
+        const templateName = this._configLoader.getDefaultFileName() + '.twig';
+        const specificConfigPath = path.join(path.dirname(templates.mapping), templateName);
+        const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
 
-        return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile)
-          .then(() => 'Done');
+        return renderTwig(
+          this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile
+        ).then(() => 'Done');
       });
   }
 
   /**
+   * @param {String} name
    * @return {Promise}
    * @private
    */
@@ -237,15 +244,14 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _getTemplatePath() {
-    const { provider } = this.getProjectConfig();
+    const mapping = require(templates.mapping);
+    const templateDir = path.join(path.dirname(templates.mapping), mapping[this._template]);
 
-    const mapping = require(templates.mapping)[provider];
-
-    if (!Object.keys(mapping).includes(this._template)) {
+    if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);
     }
 
-    return path.join(path.dirname(templates.mapping), mapping[this._template]);
+    return templateDir;
   }
 }
 

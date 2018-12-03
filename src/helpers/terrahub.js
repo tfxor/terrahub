@@ -23,29 +23,28 @@ class Terrahub {
   /**
    * @param {Object} data
    * @param {Error|String} err
-   * @param {Object} data
    * @return {Promise}
    * @private
    */
   _on(data, err = null) {
     let error = null;
     let payload = {
-      Action: this._action,
-      Provider: this._project.provider,
-      ProjectHash: this._project.code,
-      ProjectName: this._project.name,
-      TerraformHash: this._componentHash,
-      TerraformName: this._config.name,
-      TerraformRunId: this._runId,
-      Status: data.status
+      action: this._action,
+      projectHash: this._project.code,
+      projectName: this._project.name,
+      terraformHash: this._componentHash,
+      terraformName: this._config.name,
+      terraformRunId: this._runId,
+      status: data.status
     };
 
     if (err) {
       error = new Error(err.message || err);
-      payload['Error'] = error.message;
+      payload.error = error.message;
     }
-    if (payload.Action === 'plan' && data.status === 'success') {
-      payload.Metadata = data.metadata;
+
+    if (payload.action === 'plan' && data.status === 'success') {
+      payload.metadata = data.metadata;
     }
 
     let actionPromise = !config.token
@@ -74,7 +73,8 @@ class Terrahub {
       if (options.skip) {
         return this._on({ status: 'skip' })
           .then(res => {
-            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. Infrastructure is up-to-date.'`);
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. 
+              Infrastructure is up-to-date.'`);
             return res;
           });
       } else {
@@ -132,9 +132,7 @@ class Terrahub {
           return () => {
             const promise = require(args[0])(this._config, res.buffer);
 
-            return (promise instanceof Promise ?
-              promise :
-              Promise.resolve()).then(() => Promise.resolve(res));
+            return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
           };
 
         case '.sh':
@@ -159,11 +157,11 @@ class Terrahub {
    */
   _spawn(binary, filePath, options = {}) {
     return spawner(binary, [filePath], Object.assign({
-        cwd: path.join(this._config.project.root, this._config.root),
-        shell: true
-      }, options),
-      err => logger.error(`[${this._config.name}] ${err.toString()}`),
-      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+      cwd: path.join(this._config.project.root, this._config.root),
+      shell: true
+    }, options),
+    err => logger.error(`[${this._config.name}] ${err.toString()}`),
+    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
   }
 
