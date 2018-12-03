@@ -66,20 +66,12 @@ class ProjectCommand extends AbstractCommand {
       return Promise.resolve(true);
     }
 
-    return fetch.get(`thub/hash/validate?projectHash=${code}`).then(res => {
-      if (res.status === 403) {
-        return Promise.resolve({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
-      }
-
-      return res.json();
-    }).then(json => {
-      if (json.hasOwnProperty('errorType')) {
+    return fetch.get(`thub/hash/validate?projectHash=${code}`)
+      .then(json => json.data.isValid)
+      .catch(err => {
         // @todo get rid of `errorMessage` in future
-        throw new Error(json.message || json.errorMessage);
-      }
-
-      return json.data.isValid;
-    });
+        throw new Error(err.message || err.errorMessage);
+      });
   }
 
   /**

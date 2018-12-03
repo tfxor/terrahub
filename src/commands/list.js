@@ -179,37 +179,21 @@ class ListCommand extends AbstractCommand {
       return Promise.resolve([]);
     }
 
-    return fetch.get('thub/listing/retrieve?type=list')
-      .then(res => {
-        if (res.status === 403) {
-          return Promise.resolve({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
-        }
-
-        return res.json();
-      })
-      .then(json => {
-        if (json.hasOwnProperty('errorType')) {
-          // @todo get rid of `errorMessage` in future
-          this.logger.error(json.message || json.errorMessage);
-
-          return Promise.resolve([]);
-        }
-
-        return json.data.map(row => {
-          return {
-            service: row.service_name,
-            region: row.region,
-            accountId: row.cloud_account_id,
-            resource: row.resource_name,
-            project: row.project_hash
-          };
-        });
-      })
-      .then(data => {
-        const cachePath = this._cachePath(config.token);
-
-        return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
+    return fetch.get('thub/listing/retrieve?type=list').then(json => {
+      return json.data.map(row => {
+        return {
+          service: row.service_name,
+          region: row.region,
+          accountId: row.cloud_account_id,
+          resource: row.resource_name,
+          project: row.project_hash
+        };
       });
+    }).then(data => {
+      const cachePath = this._cachePath(config.token);
+
+      return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
+    });
   }
 
   /**
