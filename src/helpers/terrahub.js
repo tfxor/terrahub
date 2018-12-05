@@ -30,12 +30,11 @@ class Terrahub {
     let error = null;
     let payload = {
       action: this._action,
-      projectHash: this._project.code,
-      projectName: this._project.name,
+      status: data.status,
+      projectId: this._project.id,
       terraformHash: this._componentHash,
       terraformName: this._config.name,
-      terraformRunId: this._runId,
-      status: data.status
+      terraformRunId: this._runId
     };
 
     if (err) {
@@ -166,12 +165,34 @@ class Terrahub {
   }
 
   /**
+   * @return {Promise}
+   * @private
+   */
+  _checkProject() {
+    if (!config.token) {
+      return Promise.resolve();
+    }
+
+    const payload = {
+      name: this._project.name,
+      hash: this._project.code
+    };
+
+    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+      this._project.id = json.data.id;
+
+      return Promise.resolve();
+    });
+  }
+
+  /**
    * Get set of actions
    * @return {Promise}
    * @private
    */
   _getTask() {
-    return this._on({ status: 'start' })
+    return this._checkProject()
+      .then(() => this._on({ status: 'start' }))
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
@@ -225,7 +246,12 @@ class Terrahub {
   _callParseLambda(key) {
     const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
     const options = {
-      body: JSON.stringify(Object.assign({ Key: key }, this._awsMetadata())),
+      body: JSON.stringify({
+        key: key,
+        projectId: this._project.id,
+        thubRunId: this._runId,
+        thubAction: this._action
+      })
     };
 
     fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
@@ -248,20 +274,6 @@ class Terrahub {
     };
 
     return fetch.request(url, options);
-  }
-
-  /**
-   * Get AWS metadata
-   * @return {Object}
-   * @private
-   */
-  _awsMetadata() {
-    return {
-      ThubRunId: this._runId,
-      ThubAction: this._action,
-      ProjectName: this._project.name,
-      ProjectCode: this._project.code
-    };
   }
 
   /**

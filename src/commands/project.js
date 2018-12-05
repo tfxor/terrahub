@@ -38,7 +38,6 @@ class ProjectCommand extends AbstractCommand {
       }
 
       const format = config.format === 'yaml' ? 'yml' : config.format;
-
       const srcFile = path.join(templates.config, 'project', `.terrahub.${format}.twig`);
       const outFile = path.join(directory, config.defaultFileName);
       const isProjectExisting = ConfigLoader.availableFormats
@@ -66,7 +65,7 @@ class ProjectCommand extends AbstractCommand {
       return Promise.resolve(true);
     }
 
-    return fetch.get(`thub/hash/validate?projectHash=${code}`)
+    return fetch.get(`thub/project/validate?hash=${code}`)
       .then(json => json.data.isValid)
       .catch(err => {
         // @todo get rid of `errorMessage` in future
