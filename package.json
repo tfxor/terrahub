@@ -8,6 +8,35 @@
     "terrahub": "./bin/cli.js",
     "thub": "./bin/cli.js"
   },
+  "author": {
+    "name": "TerraHub Corp",
+    "email": "hello@terrahub.io",
+    "url": "https://www.terrahub.io"
+  },
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
+  "bugs": {
+    "url": "https://github.com/TerraHubCorp/terrahub/issues"
+  },
+  "engines": {
+    "node": ">=6.0",
+    "npm": ">=3.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.370.0",
+    "child-process-promise": "^2.2.1",
+    "download": "^7.1.0",
+    "fs-extra": "^7.0.1",
+    "glob": "^7.1.2",
+    "js-logger": "^1.6.0",
+    "js-yaml": "^3.12.0",
+    "lodash.mergewith": "^4.6.1",
+    "minimist": "^1.2.0",
+    "node-fetch": "^2.3.0",
+    "semver": "^5.6.0",
+    "treeify": "^1.1.0",
+    "twig": "^1.12.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TerraHubCorp/terrahub.git"
@@ -43,34 +72,5 @@
     "google cloud platform",
     "azure",
     "microsoft azure"
-  ],
-  "author": {
-    "name": "TerraHub Corp",
-    "email": "hello@terrahub.io",
-    "url": "https://www.terrahub.io"
-  },
-  "license": "MPL-2.0",
-  "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
-  "bugs": {
-    "url": "https://github.com/TerraHubCorp/terrahub/issues"
-  },
-  "engines": {
-    "node": ">=6.0",
-    "npm": ">=3.0"
-  },
-  "dependencies": {
-    "aws-sdk": "^2.286.2",
-    "child-process-promise": "^2.2.1",
-    "download": "^7.1.0",
-    "fs-extra": "^7.0.0",
-    "glob": "^7.1.2",
-    "js-logger": "^1.4.1",
-    "js-yaml": "^3.12.0",
-    "lodash.mergewith": "^4.6.1",
-    "minimist": "^1.2.0",
-    "node-fetch": "^2.2.0",
-    "semver": "^5.5.0",
-    "treeify": "^1.1.0",
-    "twig": "^1.12.0"
-  }
+  ]
 }
