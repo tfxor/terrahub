@@ -100,7 +100,8 @@ class RunCommand extends TerraformCommand {
         Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.REVERSE
+          dependencyDirection: TerraformCommand.REVERSE,
+          planDestroy: true
         })
       );
   }
