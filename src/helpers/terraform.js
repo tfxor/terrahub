@@ -239,7 +239,7 @@ class Terraform {
     return this.run('workspace', ['list'])
       .then(result => {
         const regexSelected = new RegExp(`\\*\\s${workspace}$`, 'm');
-        const regexExists = new RegExp(`\\s.${workspace}$`, 'm');
+        const regexExists = new RegExp(`\\s${workspace}$`, 'm');
         const output = result.toString();
 
         return regexSelected.test(output) ?
@@ -269,10 +269,16 @@ class Terraform {
    * @return {Promise}
    */
   workspaceList() {
-    return this.run('workspace', ['list']).then(it => {
-      const reg = /[a-z]+/gm;
+    this._showLogs = false;
+    return this.run('workspace', ['list']).then(buffer => {
+      const workspaces = buffer.toString().match(/[a-z]+/gm);
+      const activeWorkspace = buffer.toString().match(/\*\s([a-z]+)/m)[1];
 
-      return it.toString().match(reg);
+      return {
+        action: 'workspaceList',
+        activeWorkspace: activeWorkspace,
+        workspaces: workspaces
+      };
     });
   }
 

@@ -19,6 +19,7 @@ class WorkspaceCommand extends TerraformCommand {
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terrahub components')
       .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)
+      .addOption('list', 'L', 'Shows list of terrahub components', Boolean, false)
     ;
   }
 
@@ -41,6 +42,10 @@ class WorkspaceCommand extends TerraformCommand {
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
 
+    if (this.getOption('list')) {
+      this.logger.log(`Project: ${this.getProjectConfig.name}`);
+      return this._workspace('workspaceList', configs).then(() => 'Done');
+    }
     if (includeRootConfig) {
       configsList.unshift(rootConfigPath);
     }
