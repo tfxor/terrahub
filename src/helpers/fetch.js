@@ -19,11 +19,12 @@ class Fetch {
    * @return {Promise}
    */
   get(url) {
-    return fetch(URL.resolve(this.baseUrl, url), {
-      headers: {
-        'Authorization': this.authorization
-      }
-    });
+    const params = {
+      method: 'GET',
+      headers: this._getHeaders()
+    };
+
+    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse);
   }
 
   /**
@@ -34,22 +35,10 @@ class Fetch {
   post(url, opts = {}) {
     const defaults = {
       method: 'POST',
-      headers: {
-        'Authorization': this.authorization,
-        'Content-Type': 'application/json'
-      }
+      headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts));
-  }
-
-  /**
-   * @param {String} url
-   * @param {Object} opts
-   * @return {Promise}
-   */
-  put(url, opts = {}) {
-    return this.post(url, merge(opts, { method: 'PUT' }));
+    return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts)).then(this._handleResponse);
   }
 
   /**
@@ -60,6 +49,32 @@ class Fetch {
    */
   request(url, opts = {}) {
     return fetch(url, opts);
+  }
+
+  /**
+   * @return {Object}
+   * @private
+   */
+  _getHeaders() {
+    return {
+      'Authorization': this.authorization,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  /**
+   * @param {Object} result
+   * @return {Promise}
+   * @private
+   */
+  _handleResponse(result) {
+    if (result.status === 403) {
+      return Promise.reject({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
+    }
+
+    return result.json().then(json => {
+      return result.ok && !json.hasOwnProperty('errorType') ? json : Promise.reject(json);
+    });
   }
 }
 

@@ -146,15 +146,10 @@ module.exports = hook;
 Configuration example for plan (`.terrahub.json`):
 
 ```text
-"hooks": {
+"hook": {
     "plan": {
         "before": "./hooks/plan/before.js",
         "after": "./hooks/plan/after.js"
     }
 }
 ```
-
-
-## @todo
-
-- Get rid of `download` npm module
