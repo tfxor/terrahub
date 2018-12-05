@@ -126,6 +126,7 @@ class Terrahub {
         args[0] = path.resolve(this._project.root, this._config.root, args[0]);
       }
 
+      logger.warn(`[${this._config.name}] Executing hook '${it}' ${hook} ${this._action} action.`);
       let command;
       switch (extension) {
         case '.js':
@@ -152,13 +153,13 @@ class Terrahub {
 
   /**
    * @param {String} binary
-   * @param {String} filePath
+   * @param {String[]} args
    * @param {Object} options
    * @return {Promise}
    * @private
    */
-  _spawn(binary, filePath, options = {}) {
-    return spawner(binary, [filePath], Object.assign({
+  _spawn(binary, args, options = {}) {
+    return spawner(binary, args, Object.assign({
         cwd: path.join(this._config.project.root, this._config.root),
         shell: true
       }, options),
