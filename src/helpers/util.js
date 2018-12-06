@@ -341,6 +341,28 @@ function physicalCpuCount() {
   return amount;
 }
 
+
+/**
+ * @param {Error} error
+ * @param {String} AppPath
+ * @private
+ */
+function handleGitDiffError(error, AppPath) {
+  logger.debug(error);
+
+  if (error.stderr) {
+    const stderr = error.stderr.toString();
+
+    if (/not found/.test(stderr)) {
+      error.message = 'Cache is not enabled because git cli is missing. For better developer experience, please install git.';
+    } else if (/Not a git repository/i.test(stderr)) {
+      error.message = 'Cache is not enabled because current project is not using git. For better developer experience, please commit your project into a git repository.';
+    }
+  }
+
+  return error;
+}
+
 /**
  * Public methods
  */
@@ -362,5 +384,6 @@ module.exports = {
   physicalCpuCount,
   printConfigAsList,
   printConfigCommaSeparated,
-  askForApprovement
+  askForApprovement,
+  handleGitDiffError
 };
