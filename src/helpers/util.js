@@ -356,7 +356,7 @@ function handleGitDiffError(error, appPath) {
     if (/not found/.test(stderr)) {
       error.message = 'Git is not installed on this device.';
     } else if (/Not a git repository/i.test(stderr)) {
-      error.message = `Git repository not found in '${appPath}'`;
+      error.message = `Git repository not found in '${appPath}'.`;
     }
   }
 
