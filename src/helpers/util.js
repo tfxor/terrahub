@@ -341,6 +341,28 @@ function physicalCpuCount() {
   return amount;
 }
 
+
+/**
+ * @param {Error} error
+ * @param {String} appPath
+ * @private
+ */
+function handleGitDiffError(error, appPath) {
+  logger.debug(error);
+
+  if (error.stderr) {
+    const stderr = error.stderr.toString();
+
+    if (/not found/.test(stderr)) {
+      error.message = 'Git is not installed on this device.';
+    } else if (/Not a git repository/i.test(stderr)) {
+      error.message = `Git repository not found in '${appPath}'.`;
+    }
+  }
+
+  return error;
+}
+
 /**
  * Public methods
  */
@@ -362,5 +384,6 @@ module.exports = {
   physicalCpuCount,
   printConfigAsList,
   printConfigCommaSeparated,
-  askForApprovement
+  askForApprovement,
+  handleGitDiffError
 };

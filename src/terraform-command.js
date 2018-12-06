@@ -2,6 +2,10 @@
 
 const os = require('os');
 const Args = require('../src/helpers/args-parser');
+const AbstractCommand = require('./abstract-command');
+const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
+const { execSync } = require('child_process');
+const { lstatSync } = require('fs');
 const { join } = require('path');
 const { execSync } = require('child_process');
 const AbstractCommand = require('./abstract-command');
@@ -218,7 +222,7 @@ class TerraformCommand extends AbstractCommand {
     try {
       stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      this._handleGitDiffError(error);
+      throw handleGitDiffError(error, this.getAppPath());
     }
 
     if (!stdout || !stdout.toString().length) {
@@ -251,26 +255,6 @@ class TerraformCommand extends AbstractCommand {
     }, []);
   }
 
-  /**
-   * @param {Error} error
-   * @private
-   */
-  _handleGitDiffError(error) {
-    this.logger.debug(error);
-    let err = error;
-
-    if (error.stderr) {
-      const stderr = error.stderr.toString();
-
-      if (/not found/.test(stderr)) {
-        err = new Error('Git is not installed on this device.');
-      } else if (/Not a git repository/.test(stderr)) {
-        err = new Error(`Git repository not found in '${this.getAppPath()}'`);
-      }
-    }
-
-    throw err;
-  }
 
   /**
    * @returns {Array}
@@ -300,11 +284,11 @@ class TerraformCommand extends AbstractCommand {
     const tree = {};
     const object = Object.assign({}, this.getConfig());
     const issues = [];
+    const fullConfig = this.getExtendedConfig();
 
     Object.keys(object).forEach(hash => {
       const node = Object.assign({}, object[hash]);
       const dependsOn = {};
-      const fullConfig = this.getExtendedConfig();
 
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
