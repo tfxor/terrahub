@@ -1,7 +1,6 @@
 project:
   name: 'TerraHub_CLI'
   code: '59d5adf8'
-  provider: 'aws'
 
 terraform:
   varFile:

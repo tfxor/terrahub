@@ -23,29 +23,27 @@ class Terrahub {
   /**
    * @param {Object} data
    * @param {Error|String} err
-   * @param {Object} data
    * @return {Promise}
    * @private
    */
   _on(data, err = null) {
     let error = null;
     let payload = {
-      Action: this._action,
-      Provider: this._project.provider,
-      ProjectHash: this._project.code,
-      ProjectName: this._project.name,
-      TerraformHash: this._componentHash,
-      TerraformName: this._config.name,
-      TerraformRunId: this._runId,
-      Status: data.status
+      action: this._action,
+      status: data.status,
+      projectId: this._project.id,
+      terraformHash: this._componentHash,
+      terraformName: this._config.name,
+      terraformRunId: this._runId
     };
 
     if (err) {
       error = new Error(err.message || err);
-      payload['Error'] = error.message;
+      payload.error = error.message;
     }
-    if (payload.Action === 'plan' && data.status === 'success') {
-      payload.Metadata = data.metadata;
+
+    if (payload.action === 'plan' && data.status === 'success') {
+      payload.metadata = data.metadata;
     }
 
     let actionPromise = !config.token
@@ -74,7 +72,8 @@ class Terrahub {
       if (options.skip) {
         return this._on({ status: 'skip' })
           .then(res => {
-            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. Infrastructure is up-to-date.'`);
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. 
+              Infrastructure is up-to-date.'`);
             return res;
           });
       } else {
@@ -126,15 +125,14 @@ class Terrahub {
         args[0] = path.resolve(this._project.root, this._config.root, args[0]);
       }
 
+      logger.warn(`[${this._config.name}] Executing hook '${it}' ${hook} ${this._action} action.`);
       let command;
       switch (extension) {
         case '.js':
           return () => {
             const promise = require(args[0])(this._config, res.buffer);
 
-            return (promise instanceof Promise ?
-              promise :
-              Promise.resolve()).then(() => Promise.resolve(res));
+            return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
           };
 
         case '.sh':
@@ -152,19 +150,40 @@ class Terrahub {
 
   /**
    * @param {String} binary
-   * @param {String} filePath
+   * @param {String[]} args
    * @param {Object} options
    * @return {Promise}
    * @private
    */
-  _spawn(binary, filePath, options = {}) {
-    return spawner(binary, [filePath], Object.assign({
-        cwd: path.join(this._config.project.root, this._config.root),
-        shell: true
-      }, options),
-      err => logger.error(`[${this._config.name}] ${err.toString()}`),
-      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+  _spawn(binary, args, options = {}) {
+    return spawner(binary, args, Object.assign({
+      cwd: path.join(this._config.project.root, this._config.root),
+      shell: true
+    }, options),
+    err => logger.error(`[${this._config.name}] ${err.toString()}`),
+    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _checkProject() {
+    if (!config.token) {
+      return Promise.resolve();
+    }
+
+    const payload = {
+      name: this._project.name,
+      hash: this._project.code
+    };
+
+    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+      this._project.id = json.data.id;
+
+      return Promise.resolve();
+    });
   }
 
   /**
@@ -173,7 +192,8 @@ class Terrahub {
    * @private
    */
   _getTask() {
-    return this._on({ status: 'start' })
+    return this._checkProject()
+      .then(() => this._on({ status: 'start' }))
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
@@ -227,7 +247,12 @@ class Terrahub {
   _callParseLambda(key) {
     const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
     const options = {
-      body: JSON.stringify(Object.assign({ Key: key }, this._awsMetadata())),
+      body: JSON.stringify({
+        key: key,
+        projectId: this._project.id,
+        thubRunId: this._runId,
+        thubAction: this._action
+      })
     };
 
     fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
@@ -250,20 +275,6 @@ class Terrahub {
     };
 
     return fetch.request(url, options);
-  }
-
-  /**
-   * Get AWS metadata
-   * @return {Object}
-   * @private
-   */
-  _awsMetadata() {
-    return {
-      ThubRunId: this._runId,
-      ThubAction: this._action,
-      ProjectName: this._project.name,
-      ProjectCode: this._project.code
-    };
   }
 
   /**

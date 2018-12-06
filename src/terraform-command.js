@@ -1,12 +1,15 @@
 'use strict';
 
+const os = require('os');
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
-const os = require('os');
+const { execSync } = require('child_process');
+const AbstractCommand = require('./abstract-command');
+const { extend, askQuestion, toMd5 } = require('./helpers/util');
 
 /**
  * @abstract
@@ -67,9 +70,8 @@ class TerraformCommand extends AbstractCommand {
       return missingData === 'config' ?
         Promise.reject('Configuration file not found. Either re-run the same command ' +
           'in project\'s root or initialize new project with `terrahub project`.') :
-        askQuestion(`Global config is missing project ${missingData}. `
-          + `Please provide value (e.g. ${missingData === 'code' ?
-            this._code(projectConfig.name, projectConfig.provider) : 'terrahub-demo'}): `
+        askQuestion(`Global config is missing project ${missingData}. Please provide value 
+          (e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
         ).then(answer => {
 
           try {
@@ -336,11 +338,11 @@ class TerraformCommand extends AbstractCommand {
    * @private
    */
   _getDependencyCycle(config) {
-    const color = {};
     const keys = Object.keys(config);
     const path = [];
+    const color = {};
 
-    keys.forEach(key => color[key] = TerraformCommand.WHITE);
+    keys.forEach(key => { color[key] = TerraformCommand.WHITE; });
     keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
@@ -490,16 +492,6 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return null;
-  }
-
-  /**
-   * @param {String} name
-   * @param {String} provider
-   * @return {String}
-   * @private
-   */
-  _code(name, provider) {
-    return toMd5(name + provider).slice(0, 8);
   }
 
   /**
