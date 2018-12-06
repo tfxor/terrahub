@@ -301,7 +301,7 @@ class TerraformCommand extends AbstractCommand {
 
         dependsOn[key] = null;
       });
-    
+
       node.dependsOn = dependsOn;
       tree[hash] = node;
     });
