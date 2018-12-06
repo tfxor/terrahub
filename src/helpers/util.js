@@ -344,19 +344,19 @@ function physicalCpuCount() {
 
 /**
  * @param {Error} error
- * @param {String} AppPath
+ * @param {String} appPath
  * @private
  */
-function handleGitDiffError(error, AppPath) {
+function handleGitDiffError(error, appPath) {
   logger.debug(error);
 
   if (error.stderr) {
     const stderr = error.stderr.toString();
 
     if (/not found/.test(stderr)) {
-      error.message = 'Cache is not enabled because git cli is missing. For better developer experience, please install git.';
+      error.message = 'Git is not installed on this device.';
     } else if (/Not a git repository/i.test(stderr)) {
-      error.message = 'Cache is not enabled because current project is not using git. For better developer experience, please commit your project into a git repository.';
+      error.message = `Git repository not found in '${appPath}'`;
     }
   }
 
