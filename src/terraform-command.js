@@ -7,9 +7,6 @@ const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/ut
 const { execSync } = require('child_process');
 const { lstatSync } = require('fs');
 const { join } = require('path');
-const { execSync } = require('child_process');
-const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5 } = require('./helpers/util');
 
 /**
  * @abstract
