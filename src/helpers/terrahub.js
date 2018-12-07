@@ -32,8 +32,8 @@ class Terrahub {
       action: this._action,
       status: data.status,
       projectId: this._project.id,
-      terraformHash: this._componentHash,
-      terraformName: this._config.name,
+      componentHash: this._componentHash,
+      componentName: this._config.name,
       terraformRunId: this._runId
     };
 
