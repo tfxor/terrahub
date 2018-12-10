@@ -1,10 +1,10 @@
 'use strict';
 
-const os = require('os');
-const Args = require('../src/helpers/args-parser');
-const { config, homePath } = require('./parameters');
-const ConfigLoader = require('./config-loader');
 const fse = require('fs-extra');
+const Args = require('../src/helpers/args-parser');
+const { toMd5 } = require('../src/helpers/util');
+const ConfigLoader = require('./config-loader');
+const { config, homePath } = require('./parameters');
 
 /**
  * @abstract
@@ -248,6 +248,15 @@ class AbstractCommand {
    */
   getProjectFormat() {
     return this._configLoader.getProjectFormat();
+  }
+
+  /**
+   * Generate project code
+   * @param {String} name
+   * @returns {String}
+   */
+  getProjectCode(name) {
+    return toMd5(name + Date.now().toString()).slice(0, 8);
   }
 }
 

@@ -4,9 +4,9 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
+const { EOL } = require('os');
 const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
-const { EOL } = require('os');
 
 class ConfigLoader {
   /**
