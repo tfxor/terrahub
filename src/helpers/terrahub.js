@@ -245,7 +245,7 @@ class Terrahub {
    * @private
    */
   _callParseLambda(key) {
-    const url = `thub/resource/parse-${this._action === 'apply' ? 'state' : this._action}`;
+    const url = `thub/resource/parse-${this._action}`;
 
     const options = {
       body: JSON.stringify({
