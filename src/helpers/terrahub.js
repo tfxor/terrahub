@@ -39,7 +39,7 @@ class Terrahub {
 
     if (err) {
       error = new Error(err.message || err);
-      payload.error = error.message;
+      payload.error = error.message.trim();
     }
 
     if (payload.action === 'plan' && data.status === 'success') {
@@ -245,7 +245,8 @@ class Terrahub {
    * @private
    */
   _callParseLambda(key) {
-    const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
+    const url = `thub/resource/parse-${this._action}`;
+
     const options = {
       body: JSON.stringify({
         key: key,
@@ -255,7 +256,10 @@ class Terrahub {
       })
     };
 
-    fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
+    fetch.post(url, options).catch(error => {
+      logger.error(`[${this._config.name}] Failed to trigger parse function`);
+      logger.debug(error);
+    });
 
     return Promise.resolve();
   }
