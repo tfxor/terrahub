@@ -39,7 +39,7 @@ class Terrahub {
 
     if (err) {
       error = new Error(err.message || err);
-      payload.error = error.message;
+      payload.error = error.message.trim();
     }
 
     if (payload.action === 'plan' && data.status === 'success') {
