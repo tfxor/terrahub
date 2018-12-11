@@ -251,8 +251,7 @@ class Terrahub {
       body: JSON.stringify({
         key: key,
         projectId: this._project.id,
-        thubRunId: this._runId,
-        thubAction: this._action
+        thubRunId: this._runId
       })
     };
 
