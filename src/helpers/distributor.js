@@ -1,11 +1,11 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
-const { uuid, physicalCpuCount } = require('./util');
+const Dictionary = require("./dictionary");
 const { config } = require('../parameters');
+const { uuid, physicalCpuCount } = require('./util');
 
 class Distributor {
   /**
@@ -36,13 +36,13 @@ class Distributor {
     }, {});
 
     switch (direction) {
-      case TerraformCommand.FORWARD:
+      case Dictionary.DIRECTION.FORWARD:
         keys.forEach(key => {
           Object.assign(result[key], config[key].dependsOn);
         });
         break;
 
-      case TerraformCommand.REVERSE:
+      case Dictionary.DIRECTION.REVERSE:
         keys.forEach(key => {
           Object.keys(config[key].dependsOn).forEach(hash => {
             result[hash][key] = null;

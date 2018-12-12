@@ -1,12 +1,13 @@
 'use strict';
 
 const os = require('os');
+const { join } = require('path');
+const { lstatSync } = require('fs');
+const { execSync } = require('child_process');
+const Dictionary = require('./helpers/dictionary');
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
-const { execSync } = require('child_process');
-const { lstatSync } = require('fs');
-const { join } = require('path');
 
 /**
  * @abstract
@@ -339,8 +340,8 @@ class TerraformCommand extends AbstractCommand {
     const path = [];
     const color = {};
 
-    keys.forEach(key => { color[key] = TerraformCommand.WHITE; });
-    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
+    keys.forEach(key => { color[key] = Dictionary.COLOR.WHITE; });
+    keys.every(key => color[key] === Dictionary.COLOR.BLACK || !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -361,24 +362,24 @@ class TerraformCommand extends AbstractCommand {
    */
   _depthFirstSearch(hash, path, config, color) {
     const dependsOn = config[hash].dependsOn;
-    color[hash] = TerraformCommand.GRAY;
+    color[hash] = Dictionary.COLOR.GRAY;
     path.push(hash);
 
     for (const key in dependsOn) {
-      if (color[key] === TerraformCommand.WHITE) {
+      if (color[key] === Dictionary.COLOR.WHITE) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
         }
       }
 
-      if (color[key] === TerraformCommand.GRAY) {
+      if (color[key] === Dictionary.COLOR.GRAY) {
         path.push(key);
 
         return true;
       }
     }
 
-    color[hash] = TerraformCommand.BLACK;
+    color[hash] = Dictionary.COLOR.BLACK;
     path.pop();
 
     return false;
@@ -390,19 +391,19 @@ class TerraformCommand extends AbstractCommand {
    * @param {Number} direction
    * @return {Promise}
    */
-  checkDependencies(config, direction = TerraformCommand.FORWARD) {
+  checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
     const issues = [];
 
     switch (direction) {
-      case TerraformCommand.FORWARD:
+      case Dictionary.DIRECTION.FORWARD:
         issues.push(...this.getDependencyIssues(config));
         break;
 
-      case TerraformCommand.REVERSE:
+      case Dictionary.DIRECTION.REVERSE:
         issues.push(...this.getReverseDependencyIssues(config));
         break;
 
-      case TerraformCommand.BIDIRECTIONAL:
+      case Dictionary.DIRECTION.BIDIRECTIONAL:
         issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
         break;
     }
@@ -509,39 +510,6 @@ class TerraformCommand extends AbstractCommand {
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get BLACK() { return 0; }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get WHITE() { return 1; }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get GRAY() { return 2; }
-
-  /**
-   * @return {Number}
-   */
-  static get FORWARD() { return 0; }
-
-  /**
-   * @return {Number}
-   */
-  static get REVERSE() { return 1; }
-
-  /**
-   * @return {Number}
-   */
-  static get BIDIRECTIONAL() { return 2; }
 }
 
 module.exports = TerraformCommand;

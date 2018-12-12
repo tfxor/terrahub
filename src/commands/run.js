@@ -1,5 +1,6 @@
 'use strict';
 
+const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 const { printConfigAsList, askForApprovement } = require('../helpers/util');
@@ -73,14 +74,14 @@ class RunCommand extends TerraformCommand {
         Promise.resolve() :
         distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.FORWARD
+          dependencyDirection: Dictionary.DIRECTION.FORWARD
         })
       )
       .then(() => !this._isDestroy ?
         Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.REVERSE,
+          dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
         })
       );
@@ -111,15 +112,15 @@ class RunCommand extends TerraformCommand {
         return Promise.resolve();
 
       case 1:
-        direction = TerraformCommand.FORWARD;
+        direction = Dictionary.DIRECTION.FORWARD;
         break;
 
       case 2:
-        direction = TerraformCommand.REVERSE;
+        direction = Dictionary.DIRECTION.REVERSE;
         break;
 
       case 3:
-        direction = TerraformCommand.BIDIRECTIONAL;
+        direction = Dictionary.DIRECTION.BIDIRECTIONAL;
         break;
     }
 
