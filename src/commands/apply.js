@@ -1,5 +1,6 @@
 'use strict';
 
+const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 const { askForApprovement } = require('../helpers/util');
@@ -28,7 +29,7 @@ class ApplyCommand extends TerraformCommand {
       .then(answer => answer ?
         distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.FORWARD
+          dependencyDirection: Dictionary.DIRECTION.FORWARD
         }) : Promise.reject('Action aborted')
       ).then(() => Promise.resolve('Done'));
   }

@@ -5,7 +5,6 @@ const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
 const logger = require('./logger');
-const Terrahub = require('./terrahub');
 const Metadata = require('./metadata');
 const Downloader = require('./downloader');
 const { homePath, config } = require('../parameters');
@@ -133,6 +132,8 @@ class Terraform {
    */
   prepare() {
     logger.debug(JSON.stringify(this._config, null, 2));
+
+    console.log(Terrahub.REALTIME);
 
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())

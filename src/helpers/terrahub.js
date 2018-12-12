@@ -42,7 +42,7 @@ class Terrahub {
       payload.error = error.message.trim();
     }
 
-    if (payload.action === 'plan' && data.status === 'success') {
+    if (payload.action === 'plan' && data.status === Terrahub.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
 
@@ -66,7 +66,7 @@ class Terrahub {
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
-        return this._terraform[action]();
+        return this._terraform[action]().catch(err => console.log(err));
       }
 
       if (options.skip) {
