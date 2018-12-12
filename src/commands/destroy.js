@@ -1,5 +1,6 @@
 'use strict';
 
+const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 const { askForApprovement } = require('../helpers/util');
@@ -23,13 +24,13 @@ class DestroyCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    return this.checkDependencies(config, TerraformCommand.REVERSE)
+    return this.checkDependencies(config, Dictionary.DIRECTION.REVERSE)
       .then(() => this._getPromise())
       .then(answer => answer ?
         distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
           silent: this.getOption('silent'),
           planDestroy: true,
-          dependencyDirection: TerraformCommand.REVERSE
+          dependencyDirection: Dictionary.DIRECTION.REVERSE
         }) : Promise.reject('Action aborted')
       ).then(() => Promise.resolve('Done'));
   }

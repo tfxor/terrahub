@@ -1,13 +1,11 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
-const logger = require('./logger');
-const { uuid, physicalCpuCount } = require('./util');
+const Dictionary = require("./dictionary");
 const { config } = require('../parameters');
-const treeify = require('treeify');
+const { uuid, physicalCpuCount } = require('./util');
 
 class Distributor {
   /**
@@ -29,21 +27,22 @@ class Distributor {
    * @private
    */
   _buildDependencyTable(config, direction) {
-    const result = {};
     const keys = Object.keys(config);
 
-    keys.forEach(key => {
-      result[key] = {};
-    });
+    const result = keys.reduce((acc, key) => {
+      acc[key] = {};
+
+      return acc;
+    }, {});
 
     switch (direction) {
-      case TerraformCommand.FORWARD:
+      case Dictionary.DIRECTION.FORWARD:
         keys.forEach(key => {
           Object.assign(result[key], config[key].dependsOn);
         });
         break;
 
-      case TerraformCommand.REVERSE:
+      case Dictionary.DIRECTION.REVERSE:
         keys.forEach(key => {
           Object.keys(config[key].dependsOn).forEach(hash => {
             result[hash][key] = null;
@@ -153,74 +152,10 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            let message = '';
-
-            switch (actions[actions.length - 1]) {
-              case 'output':
-                if (format) {
-                  this._handleOutput(results, format);
-                }
-                break;
-
-              case 'workspaceList':
-                this._handleWorkspaceList(results);
-                break;
-
-              default:
-                message = 'Done';
-                break;
-            }
-
-            resolve(message);
+            resolve(results);
           }
         }
       });
-    });
-  }
-
-  /**
-   * Prints the output data for the 'output' command
-   * @param {Object[]} results
-   * @param {String} format
-   * @private
-   */
-  _handleOutput(results, format) {
-    switch (format) {
-      case 'json':
-        const result = {};
-
-        results.forEach(it => {
-          let stdout = (Buffer.from(it.buffer)).toString('utf8');
-          if (stdout[0] !== '{') {
-            stdout = stdout.slice(stdout.indexOf('{'));
-          }
-          result[it.component] = JSON.parse(stdout);
-        });
-
-        logger.log(JSON.stringify(result));
-        break;
-
-      default:
-        // @todo: investigate if this row is really required
-        results.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
-        break;
-    }
-  }
-
-  /**
-   * @param {Object[]} results
-   * @private
-   */
-  _handleWorkspaceList(results) {
-    const result = results.reduce((acc, item) => {
-      item.workspaces.filter(it => !acc[it]).forEach(it => acc[it] = {});
-      acc[item.activeWorkspace][item.component] = null;
-    
-      return acc;
-    }, {});
-
-    treeify.asLines(result, false, line => {
-      logger.log(` ${line}`);
     });
   }
 

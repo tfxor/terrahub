@@ -155,7 +155,7 @@ class ConfigLoader {
   /**
    * Get list of configuration files
    * @param {Object} options
-   * @returns {Array}
+   * @returns {String[]}
    */
   listConfig(options = {}) {
     const { include } = this.getProjectConfig();
@@ -191,7 +191,7 @@ class ConfigLoader {
       .reduce((accumulator, currentValue) => {
         accumulator.push(...currentValue);
         return accumulator;
-      });
+      }, []);
   }
 
   /**
@@ -429,7 +429,7 @@ class ConfigLoader {
    * @constructor
    */
   get IGNORE_PATTERNS() {
-    return this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
+    return this.getProjectConfig().ignore || ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
   }
 }
 
