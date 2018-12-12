@@ -36,8 +36,7 @@ class ConfigureCommand extends TerraformCommand {
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
 
-    this._runAction(global, data, configAction);
-    return Promise.resolve('Done');
+    return this._runAction(global, data, configAction);
   }
 
   /**
