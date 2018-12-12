@@ -29,12 +29,13 @@ class Distributor {
    * @private
    */
   _buildDependencyTable(config, direction) {
-    const result = {};
     const keys = Object.keys(config);
 
-    keys.forEach(key => {
-      result[key] = {};
-    });
+    const result = keys.reduce((acc, key) => {
+      acc[key] = {};
+
+      return acc;
+    }, {});
 
     switch (direction) {
       case TerraformCommand.FORWARD:
