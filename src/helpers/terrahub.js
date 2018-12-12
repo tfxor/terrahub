@@ -255,10 +255,14 @@ class Terrahub {
       })
     };
 
-    return process.env.DEBUG ? fetch.post(url, options).catch(error => {
+    const promise = fetch.post(url, options).catch(error => {
       error.message = `[${this._config.name}] Failed to trigger parse function`;
       logger.error(error);
-    }) : Promise.resolve();
+
+      return Promise.resolve();
+    });
+
+    return process.env.DEBUG ? promise : Promise.resolve();
   }
 
   /**
