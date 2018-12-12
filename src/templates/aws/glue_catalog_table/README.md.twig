@@ -1,0 +1,19 @@
+# aws_glue_catalog_table
+
+Provides a Glue Catalog Table Resource. You can refer to the Glue Developer Guide for a full explanation of the Glue Data Catalog functionality.
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
+|glue_catalog_table_name|Name of the table. For Hive compatibility, this must be entirely lowercase.|string|{{ name }}|No|
+|glue_catalog_table_database_name|Name of the metadata database where the table metadata resides. For Hive compatibility, this must be all lowercase.|string|{{ name }}|No|
+|glue_catalog_table_catalog_id|ID of the Glue Catalog and database to create the table in. If omitted, this defaults to the AWS Account ID plus the database name.|string|{{ name }}|No|
+|glue_catalog_table_description|Description of the table.|string|Managed by TerraHub|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
