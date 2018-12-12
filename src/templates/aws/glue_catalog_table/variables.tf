@@ -29,3 +29,42 @@ variable "glue_catalog_table_catalog_id" {
 variable "glue_catalog_table_description" {
   description = "Description of the table."
 }
+
+variable "glue_catalog_table_partition_keys_columns" {
+  type        = "list"
+  description = "A list of columns by which the table is partitioned. Only primitive types are supported as partition keys."
+}
+
+variable "glue_catalog_table_type" {
+  description = "The type of this table (EXTERNAL_TABLE, VIRTUAL_VIEW, etc.)."
+}
+
+variable "glue_catalog_table_parameters" {
+  type        = "map"
+  description = "Properties associated with this table, as a list of key-value pairs."
+}
+
+######################
+# storage descriptor #
+######################
+variable "glue_catalog_table_storage_descriptor_columns" {
+  type        = "list"
+  description = "A list of the Columns in the table."
+}
+
+variable "glue_catalog_table_storage_descriptor_location" {
+  description = "The physical location of the table. By default this takes the form of the warehouse location, followed by the database location in the warehouse, followed by the table name."
+}
+
+variable "glue_catalog_table_storage_descriptor_input_format" {
+  description = "The input format: SequenceFileInputFormat (binary), or TextInputFormat, or a custom format."
+}
+
+variable "glue_catalog_table_storage_descriptor_output_format" {
+  description = "The input format: SequenceFileInputFormat (binary), or TextInputFormat, or a custom format."
+}
+
+variable "glue_catalog_table_storage_descriptor_ser_de_info" {
+  type        = "list"
+  description = "Serialization/deserialization (SerDe) information."
+}

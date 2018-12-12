@@ -13,7 +13,22 @@ glue_catalog_table_name           = "{{ name }}"
 glue_catalog_table_database_name  = "{{ name }}"
 glue_catalog_table_catalog_id     = ""
 glue_catalog_table_description    = "Managed by TerraHub"
+glue_catalog_table_partition_keys_columns = []
+glue_catalog_table_type       = "EXTERNAL_TABLE"
+glue_catalog_table_parameters = {
+    classification = "json"
+}
+
+######################
+# storage descriptor #
+######################
+glue_catalog_table_storage_descriptor_columns       = []
+glue_catalog_table_storage_descriptor_location      = "s3:"
+glue_catalog_table_storage_descriptor_input_format  = "org.apache.hadoop.mapred.TextInputFormat"
+glue_catalog_table_storage_descriptor_output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+glue_catalog_table_storage_descriptor_ser_de_info   = []
 
 ##########
 # custom #
 ##########
+
