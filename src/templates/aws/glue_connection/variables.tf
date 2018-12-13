@@ -48,15 +48,15 @@ variable "glue_connection_properties_username" {
 ####################################
 # physical connection requirements #
 ####################################
-#variable "glue_connection_availability_zone" {
-#  description = "The availability zone of the connection. This field is redundant and implied by subnet_id, but is currently an api requirement."
-#}
+variable "glue_connection_availability_zone" {
+  description = "The availability zone of the connection. This field is redundant and implied by subnet_id, but is currently an api requirement."
+}
 
-#variable "glue_connection_security_group_id_list" {
-#  type        = "list"
-#  description = "The security group ID list used by the connection."
-#}
+variable "glue_connection_security_group_id_list" {
+  type        = "list"
+  description = "The security group ID list used by the connection."
+}
 
-#variable "glue_connection_subnet_id" {
-#  description = "The subnet ID used by the connection."
-#}
+variable "glue_connection_subnet_id" {
+  description = "The subnet ID used by the connection."
+}

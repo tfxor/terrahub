@@ -17,7 +17,7 @@ Provides a Glue Job resource.
 |glue_job_default_arguments|The map of default arguments for this job. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.|map|{}|No|
 |glue_job_command_script_name|The name of the job command. Defaults to glueetl|string|glueetl|No|
 |glue_job_command_script_location_path|Specifies the S3 path to a script that executes a job.|string||No|
-|glue_job_command_script_file_name|Specifies the file name to a script that executes a job.|string|{{ name }}|No|
+|glue_job_command_script_file_name|Specifies the file name to a script that executes a job.|string||No|
 
 ## output parameters
 
