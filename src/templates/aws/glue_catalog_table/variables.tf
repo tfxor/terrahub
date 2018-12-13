@@ -61,7 +61,7 @@ variable "glue_catalog_table_storage_descriptor_input_format" {
 }
 
 variable "glue_catalog_table_storage_descriptor_output_format" {
-  description = "The input format: SequenceFileInputFormat (binary), or TextInputFormat, or a custom format."
+  description = "The output format: SequenceFileOutputFormat (binary), or IgnoreKeyTextOutputFormat, or a custom format."
 }
 
 variable "glue_catalog_table_storage_descriptor_ser_de_info" {
