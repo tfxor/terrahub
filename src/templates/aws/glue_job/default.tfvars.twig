@@ -1,0 +1,29 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id                 = "123456789012"
+region                     = "us-east-1"
+
+#############
+# top level #
+#############
+glue_job_name               = "{{ name }}"
+glue_job_iam_role_name      = ""
+glue_job_description        = "Managed by TerraHub"
+glue_job_connections        = []
+glue_job_allocated_capacity = "2"
+glue_job_timeout            = "10"
+glue_job_default_arguments  = {}   
+
+###########
+# command #
+###########
+glue_job_command_script_name          = "glueetl"
+glue_job_command_script_location_path = ""
+glue_job_command_script_file_name     = "{{ name }}.py"
+
+##########
+# custom #
+##########

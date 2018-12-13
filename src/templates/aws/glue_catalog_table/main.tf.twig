@@ -5,7 +5,7 @@ resource "aws_glue_catalog_table" "{{ name }}" {
   partition_keys = "${var.glue_catalog_table_partition_keys_columns}"
   storage_descriptor = {
     columns       = "${var.glue_catalog_table_storage_descriptor_columns}"
-    location      = "${var.glue_catalog_table_storage_descriptor_location}"
+    location      = "s3://${var.glue_catalog_table_storage_descriptor_location}"
     input_format  = "${var.glue_catalog_table_storage_descriptor_input_format}"
     output_format = "${var.glue_catalog_table_storage_descriptor_output_format}"
     ser_de_info   = "${var.glue_catalog_table_storage_descriptor_ser_de_info}"
