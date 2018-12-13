@@ -20,6 +20,7 @@ Provides a Glue Catalog Table Resource. You can refer to the Glue Developer Guid
 |glue_catalog_table_storage_descriptor_input_format|The input format: SequenceFileInputFormat (binary), or TextInputFormat, or a custom format.|string|org.apache.hadoop.mapred.TextInputFormat|No|
 |glue_catalog_table_storage_descriptor_output_format|The output format: SequenceFileOutputFormat (binary), or IgnoreKeyTextOutputFormat, or a custom format.|string|org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat|No|
 |glue_catalog_table_storage_descriptor_ser_de_info|Serialization/deserialization (SerDe) information.|list|[]|No|
+|glue_catalog_table_storage_descriptor_sort_columns|A list of Order objects specifying the sort order of each bucket in the table.|list|[]|No|
 
 ## output parameters
 

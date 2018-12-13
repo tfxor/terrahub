@@ -9,6 +9,7 @@ resource "aws_glue_catalog_table" "{{ name }}" {
     input_format  = "${var.glue_catalog_table_storage_descriptor_input_format}"
     output_format = "${var.glue_catalog_table_storage_descriptor_output_format}"
     ser_de_info   = "${var.glue_catalog_table_storage_descriptor_ser_de_info}"
+    sort_columns  = "${var.glue_catalog_table_storage_descriptor_sort_columns}"
   }
   table_type = "${var.glue_catalog_table_type}"
   parameters = "${var.glue_catalog_table_parameters}"

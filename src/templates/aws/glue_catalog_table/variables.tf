@@ -68,3 +68,8 @@ variable "glue_catalog_table_storage_descriptor_ser_de_info" {
   type        = "list"
   description = "Serialization/deserialization (SerDe) information."
 }
+
+variable "glue_catalog_table_storage_descriptor_sort_columns" {
+  type        = "list"
+  description = "A list of Order objects specifying the sort order of each bucket in the table."
+}
