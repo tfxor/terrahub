@@ -1,12 +1,11 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
-const logger = require('./logger');
-const { uuid, physicalCpuCount } = require('./util');
+const Dictionary = require("./dictionary");
 const { config } = require('../parameters');
+const { uuid, physicalCpuCount } = require('./util');
 
 class Distributor {
   /**
@@ -28,21 +27,22 @@ class Distributor {
    * @private
    */
   _buildDependencyTable(config, direction) {
-    const result = {};
     const keys = Object.keys(config);
 
-    keys.forEach(key => {
-      result[key] = {};
-    });
+    const result = keys.reduce((acc, key) => {
+      acc[key] = {};
+
+      return acc;
+    }, {});
 
     switch (direction) {
-      case TerraformCommand.FORWARD:
+      case Dictionary.DIRECTION.FORWARD:
         keys.forEach(key => {
           Object.assign(result[key], config[key].dependsOn);
         });
         break;
 
-      case TerraformCommand.REVERSE:
+      case Dictionary.DIRECTION.REVERSE:
         keys.forEach(key => {
           Object.keys(config[key].dependsOn).forEach(hash => {
             result[hash][key] = null;
@@ -118,7 +118,7 @@ class Distributor {
       planDestroy: planDestroy
     };
 
-    this._results = [];
+    const results = [];
     this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -132,7 +132,7 @@ class Distributor {
         }
 
         if (data.data) {
-          this._results.push(data.data);
+          results.push(data.data);
         }
 
         this._removeDependencies(data.hash);
@@ -152,51 +152,11 @@ class Distributor {
           if (this._error) {
             reject(this._error);
           } else {
-            let message = 'Done';
-            if (format) {
-              this._handleOutput(format);
-              message = '';
-            }
-
-            resolve(message);
+            resolve(results);
           }
         }
       });
     });
-  }
-
-  /**
-   * Prints the output data for the 'output' command
-   * @param {String} format
-   * @return {*}
-   * @private
-   */
-  _handleOutput(format) {
-    const outputs = this._results.filter(it => it.action === 'output');
-
-    if (!outputs.length) {
-      return;
-    }
-
-    switch (format) {
-      case 'json':
-        const result = {};
-
-        outputs.forEach(it => {
-          let stdout = (Buffer.from(it.buffer)).toString('utf8');
-          if (stdout[0] !== '{') {
-            stdout = stdout.slice(stdout.indexOf('{'));
-          }
-          result[it.component] = JSON.parse(stdout);
-        });
-
-        logger.log(JSON.stringify(result));
-        break;
-
-      default:
-        outputs.forEach(it => logger.raw(`[${it.component}] ${(Buffer.from(it.buffer).toString('utf8'))}`));
-        break;
-    }
   }
 
   /**

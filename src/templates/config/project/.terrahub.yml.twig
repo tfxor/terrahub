@@ -2,12 +2,12 @@
 project:
   name: '{{ name }}'
   code: '{{ code }}'
-  provider: '{{ provider }}'
   include:
     - '.'
   exclude:
-    - '**/.terraform/*'
-    - '**/node_modules/*'
+    - '**/.terraform/**'
+    - '**/node_modules/**'
+    - '**/.git/**'
 
 ## terraform config
 terraform:
