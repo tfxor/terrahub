@@ -8,7 +8,6 @@ this command will create new or define existing folder as project that manages t
 
 Options:
   --name, -n 		 Project name
-  --provider, -p 	 Cloud provider
   --directory, -d 	 Path where project should be created (default: cwd)
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands

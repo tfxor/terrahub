@@ -4,9 +4,9 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
+const { EOL } = require('os');
 const { config } = require('./parameters');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
-const { EOL } = require('os');
 
 class ConfigLoader {
   /**
@@ -38,7 +38,7 @@ class ConfigLoader {
       children: [],
       hook: {},
       build: {},
-      ci: {}
+      env: { variables: {} }
     };
   }
 
@@ -155,7 +155,7 @@ class ConfigLoader {
   /**
    * Get list of configuration files
    * @param {Object} options
-   * @returns {Array}
+   * @returns {String[]}
    */
   listConfig(options = {}) {
     const { include } = this.getProjectConfig();
@@ -191,7 +191,7 @@ class ConfigLoader {
       .reduce((accumulator, currentValue) => {
         accumulator.push(...currentValue);
         return accumulator;
-      });
+      }, []);
   }
 
   /**
@@ -257,7 +257,6 @@ class ConfigLoader {
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
-      delete config.component;
 
       if (config.hasOwnProperty('dependsOn')) {
         if (!(config.dependsOn instanceof Array)) {
@@ -278,6 +277,19 @@ class ConfigLoader {
           config.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
         });
       }
+
+      if (config.hasOwnProperty('env')) {
+        ['hook', 'build'].forEach(key => {
+          if (config[key]) {
+            if (!config[key].env) {
+              config[key].env = {};
+            }
+            config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+          }
+        });
+      }
+
+      ['env', 'component'].forEach(key => delete config[key]);
 
       this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
     });
@@ -417,7 +429,7 @@ class ConfigLoader {
    * @constructor
    */
   get IGNORE_PATTERNS() {
-    return this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
+    return this.getProjectConfig().ignore || ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
   }
 }
 

@@ -1,11 +1,12 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const semver = require('semver');
 const logger = require('./logger');
 const Metadata = require('./metadata');
+const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { homePath, config } = require('../parameters');
 const { extend, spawner, exponentialBackoff } = require('../helpers/util');
@@ -136,7 +137,7 @@ class Terraform {
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
-      .then(() => ({}));
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -188,18 +189,9 @@ class Terraform {
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
     return exponentialBackoff(promiseFunction,
-      { conditionFunction: this._checkIgnoreErrorInit, maxRetries: config.retryCount })
+      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._reInitPaths())
-      .then(() => ({}));
-  }
-
-  /**
-   * @param {Error} error
-   * @return {Boolean}
-   * @private
-   */
-  _checkIgnoreErrorInit(error) {
-    return [/timeout/, /connection reset by peer/, /failed to decode/].some(it => it.test(error.message));
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -248,15 +240,15 @@ class Terraform {
     return this.run('workspace', ['list'])
       .then(result => {
         const regexSelected = new RegExp(`\\*\\s${workspace}$`, 'm');
-        const regexExists = new RegExp(`\\s.${workspace}$`, 'm');
+        const regexExists = new RegExp(`\\s${workspace}$`, 'm');
         const output = result.toString();
 
         return regexSelected.test(output) ?
-          Promise.resolve() :
-          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace]);
+          Promise.resolve({ status: Dictionary.REALTIME.SKIP }) :
+          this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
+            .then(() => Promise.resolve({ status: Dictionary.REALTIME.SUCCESS }));
       })
-      .then(() => this._reInitPaths())
-      .then(() => ({}));
+      .then(res => this._reInitPaths().then(() => Promise.resolve(res)));
   }
 
   /**
@@ -278,10 +270,16 @@ class Terraform {
    * @return {Promise}
    */
   workspaceList() {
-    return this.run('workspace', ['list']).then(it => {
-      const reg = /[a-z]+/gm;
+    this._showLogs = false;
+    return this.run('workspace', ['list']).then(buffer => {
+      const workspaces = buffer.toString().match(/[a-z]+/gm);
+      const activeWorkspace = buffer.toString().match(/\*\s([a-z]+)/m)[1];
 
-      return it.toString().match(reg);
+      return {
+        action: 'workspaceList',
+        activeWorkspace: activeWorkspace,
+        workspaces: workspaces
+      };
     });
   }
 
@@ -297,7 +295,7 @@ class Terraform {
       args.concat(this._varFile(), this._var(), this._optsToArgs(options)));
 
     return exponentialBackoff(promiseFunction,
-      { conditionFunction: this._checkIgnoreErrorPlan, maxRetries: config.retryCount })
+      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(buffer => {
         const metadata = {};
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
@@ -324,18 +322,10 @@ class Terraform {
         return Promise.resolve({
           buffer: buffer,
           skip: skip,
-          metadata: metadata
+          metadata: metadata,
+          status: Dictionary.REALTIME.SUCCESS
         });
       });
-  }
-
-  /**
-   * @param {Error} error
-   * @return {Boolean}
-   * @private
-   */
-  _checkIgnoreErrorPlan(error) {
-    return [/EOF/, /timeout/].some(it => it.test(error.message));
   }
 
   /**
@@ -345,10 +335,13 @@ class Terraform {
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
 
-    return this
-      .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
+    const promiseFunction = () => this
+      .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()));
+
+    return exponentialBackoff(promiseFunction,
+      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._getStateContent())
-      .then(buffer => ({ buffer: buffer }));
+      .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -379,7 +372,6 @@ class Terraform {
 
     return this
       .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), this._var()));
-
   }
 
   /**
@@ -407,6 +399,15 @@ class Terraform {
       env: process.env,
       shell: true
     });
+  }
+
+  /**
+   * @param {Error} error
+   * @return {Boolean}
+   * @private
+   */
+  _checkIgnoreError(error) {
+    return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
   }
 
   /**

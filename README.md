@@ -2,9 +2,10 @@
 
 ## DevOps Hub for Terraform Automation
 
-TerraHub is a terraform centric devops tool that simplifies provisioning and
-management at scale of cloud resources and cloud services across multiple cloud
-accounts. For example: Serverless on Amazon AWS, or Kubernetes on Google Cloud,
+TerraHub is a terraform centric user interface driven devops tool.
+TerraHub provides incremental value by automating the management at scale
+of cloud resources and cloud services across multiple cloud accounts.
+For example: Serverless on Amazon AWS, or Kubernetes on Google  Cloud,
 or VMs on Microsoft Azure.
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
@@ -145,15 +146,10 @@ module.exports = hook;
 Configuration example for plan (`.terrahub.json`):
 
 ```text
-"hooks": {
+"hook": {
     "plan": {
         "before": "./hooks/plan/before.js",
         "after": "./hooks/plan/after.js"
     }
 }
 ```
-
-
-## @todo
-
-- Get rid of `download` npm module

@@ -18,9 +18,3 @@ package-lock.json
 
 # npm cache directory
 .npm
-
-# dotenv environment variables file
-.env
-
-# Downloads
-bin/terraform.*

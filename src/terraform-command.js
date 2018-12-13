@@ -1,13 +1,13 @@
 'use strict';
 
+const os = require('os');
+const { join } = require('path');
+const { lstatSync } = require('fs');
+const { execSync } = require('child_process');
+const Dictionary = require('./helpers/dictionary');
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5, yesNoQuestion } = require('./helpers/util');
-const { execSync } = require('child_process');
-const { lstatSync } = require('fs');
-const { join } = require('path');
-const os = require('os');
-const treeify = require('treeify');
+const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
 
 /**
  * @abstract
@@ -68,9 +68,8 @@ class TerraformCommand extends AbstractCommand {
       return missingData === 'config' ?
         Promise.reject('Configuration file not found. Either re-run the same command ' +
           'in project\'s root or initialize new project with `terrahub project`.') :
-        askQuestion(`Global config is missing project ${missingData}. `
-          + `Please provide value (e.g. ${missingData === 'code' ?
-            this._code(projectConfig.name, projectConfig.provider) : 'terrahub-demo'}): `
+        askQuestion(`Global config is missing project ${missingData}. Please provide value 
+          (e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
         ).then(answer => {
 
           try {
@@ -221,7 +220,7 @@ class TerraformCommand extends AbstractCommand {
     try {
       stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      this._handleGitDiffError(error);
+      throw handleGitDiffError(error, this.getAppPath());
     }
 
     if (!stdout || !stdout.toString().length) {
@@ -254,71 +253,6 @@ class TerraformCommand extends AbstractCommand {
     }, []);
   }
 
-  /**
-   * @param {Error} error
-   * @private
-   */
-  _handleGitDiffError(error) {
-    this.logger.debug(error);
-    let err = error;
-
-    if (error.stderr) {
-      const stderr = error.stderr.toString();
-
-      if (/not found/.test(stderr)) {
-        err = new Error('Git is not installed on this device.');
-      } else if (/Not a git repository/.test(stderr)) {
-        err = new Error(`Git repository not found in '${this.getAppPath()}'`);
-      }
-    }
-
-    throw err;
-  }
-
-  /**
-   * @param {Object} config
-   * @param {String} action
-   * @return {String}
-   */
-  askForApprovement(config, action) {
-    const length = Object.keys(config).length;
-
-    if (length > 5) {
-      this.printConfigCommaSeparated(config);
-    } else {
-      this.printConfigAsList(config);
-    }
-
-    return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
-  }
-
-  /**
-   * @param {Object} config
-   */
-  printConfigCommaSeparated(config) {
-    const { name } = this.getProjectConfig();
-    const components = Object.keys(config).map(key => config[key].name).join(', ');
-
-    this.logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
-  }
-
-  /**
-   * @param config
-   */
-  printConfigAsList(config) {
-    const { name } = this.getProjectConfig();
-    const componentList = {};
-
-    Object.keys(config).forEach(key => {
-      componentList[config[key].name] = null;
-    });
-
-    this.logger.log(`Project: ${name}`);
-
-    treeify.asLines(componentList, false, line => {
-      this.logger.log(` ${line}`);
-    });
-  }
 
   /**
    * @returns {Array}
@@ -348,16 +282,16 @@ class TerraformCommand extends AbstractCommand {
     const tree = {};
     const object = Object.assign({}, this.getConfig());
     const issues = [];
+    const fullConfig = this.getExtendedConfig();
 
     Object.keys(object).forEach(hash => {
       const node = Object.assign({}, object[hash]);
       const dependsOn = {};
-      const fullConfig = this.getExtendedConfig();
 
       node.dependsOn.forEach(dep => {
         const key = toMd5(dep);
 
-        if (!object[key]) {
+        if (!fullConfig[key]) {
           const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
 
           issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
@@ -371,9 +305,9 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-
       const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
       errorStrings.unshift('TerraHub failed because of the following issues:');
+
       throw new Error(errorStrings.join(os.EOL));
     }
 
@@ -402,12 +336,12 @@ class TerraformCommand extends AbstractCommand {
    * @private
    */
   _getDependencyCycle(config) {
-    const color = {};
     const keys = Object.keys(config);
     const path = [];
+    const color = {};
 
-    keys.forEach(key => color[key] = TerraformCommand.WHITE);
-    keys.every(key => color[key] === TerraformCommand.BLACK || !this._depthFirstSearch(key, path, config, color));
+    keys.forEach(key => { color[key] = Dictionary.COLOR.WHITE; });
+    keys.every(key => color[key] === Dictionary.COLOR.BLACK || !this._depthFirstSearch(key, path, config, color));
 
     if (path.length) {
       const index = path.findIndex(it => it === path[path.length - 1]);
@@ -428,24 +362,24 @@ class TerraformCommand extends AbstractCommand {
    */
   _depthFirstSearch(hash, path, config, color) {
     const dependsOn = config[hash].dependsOn;
-    color[hash] = TerraformCommand.GRAY;
+    color[hash] = Dictionary.COLOR.GRAY;
     path.push(hash);
 
     for (const key in dependsOn) {
-      if (color[key] === TerraformCommand.WHITE) {
+      if (color[key] === Dictionary.COLOR.WHITE) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
         }
       }
 
-      if (color[key] === TerraformCommand.GRAY) {
+      if (color[key] === Dictionary.COLOR.GRAY) {
         path.push(key);
 
         return true;
       }
     }
 
-    color[hash] = TerraformCommand.BLACK;
+    color[hash] = Dictionary.COLOR.BLACK;
     path.pop();
 
     return false;
@@ -457,19 +391,19 @@ class TerraformCommand extends AbstractCommand {
    * @param {Number} direction
    * @return {Promise}
    */
-  checkDependencies(config, direction = TerraformCommand.FORWARD) {
+  checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
     const issues = [];
 
     switch (direction) {
-      case TerraformCommand.FORWARD:
+      case Dictionary.DIRECTION.FORWARD:
         issues.push(...this.getDependencyIssues(config));
         break;
 
-      case TerraformCommand.REVERSE:
+      case Dictionary.DIRECTION.REVERSE:
         issues.push(...this.getReverseDependencyIssues(config));
         break;
 
-      case TerraformCommand.BIDIRECTIONAL:
+      case Dictionary.DIRECTION.BIDIRECTIONAL:
         issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
         break;
     }
@@ -559,16 +493,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} name
-   * @param {String} provider
-   * @return {String}
-   * @private
-   */
-  _code(name, provider) {
-    return toMd5(name + provider).slice(0, 8);
-  }
-
-  /**
    * @returns {Boolean}
    * @private
    */
@@ -586,39 +510,6 @@ class TerraformCommand extends AbstractCommand {
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get BLACK() { return 0; }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get WHITE() { return 1; }
-
-  /**
-   * @return {Number}
-   * @private
-   */
-  static get GRAY() { return 2; }
-
-  /**
-   * @return {Number}
-   */
-  static get FORWARD() { return 0; }
-
-  /**
-   * @return {Number}
-   */
-  static get REVERSE() { return 1; }
-
-  /**
-   * @return {Number}
-   */
-  static get BIDIRECTIONAL() { return 2; }
 }
 
 module.exports = TerraformCommand;

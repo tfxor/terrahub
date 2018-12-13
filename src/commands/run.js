@@ -1,7 +1,9 @@
 'use strict';
 
+const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
+const { printConfigAsList, askForApprovement } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -15,6 +17,7 @@ class RunCommand extends TerraformCommand {
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
+      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
     ;
   }
 
@@ -23,12 +26,9 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     if (this.getOption('dry-run')) {
-      this.printConfigAsList(this.getConfigObject());
-
+      printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-
-    this._actions = ['apply', 'destroy'].filter(action => this.getOption(action));
 
     return this._getPromise()
       .then(answer => {
@@ -49,39 +49,42 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
+    this._isApply = this.getOption('apply');
+    this._isDestroy = this.getOption('destroy');
+    this._isBuild = this.getOption('build');
+
     return Promise.resolve()
+      .then(() => this._checkDependencies(config))
       .then(() => {
-        if (!this._actions.length) {
-          return Promise.resolve();
+        const actions = ['prepare', 'init', 'workspaceSelect'];
+
+        if (!this._isApply && !this._isDestroy) {
+          actions.push('plan');
+
+          if (this._isBuild) {
+            actions.push('build');
+          }
         }
 
-        let direction;
-        if (this._actions.length === 2) {
-          direction = TerraformCommand.BIDIRECTIONAL;
-        } else if (this._actions.includes('apply')) {
-          direction = TerraformCommand.FORWARD;
-        } else {
-          direction = TerraformCommand.REVERSE;
-        }
-
-        return this.checkDependencies(config, direction);
+        return distributor.runActions(actions, {
+          silent: this.getOption('silent')
+        });
       })
-      .then(() => distributor.runActions(this._actions.length ?
-        ['prepare', 'init', 'workspaceSelect'] :
-        ['prepare', 'init', 'workspaceSelect', 'plan'], {
-        silent: this.getOption('silent')
-      }))
-      .then(() => this._actions.includes('apply') ?
-        distributor.runActions(['plan', 'apply'], {
+      .then(() => !this._isApply ?
+        Promise.resolve() :
+        distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.FORWARD
-        }) : Promise.resolve())
-      .then(() => this._actions.includes('destroy') ?
+          dependencyDirection: Dictionary.DIRECTION.FORWARD
+        })
+      )
+      .then(() => !this._isDestroy ?
+        Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.REVERSE,
+          dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
-        }) : Promise.resolve());
+        })
+      );
   }
 
   /**
@@ -89,11 +92,39 @@ class RunCommand extends TerraformCommand {
    * @private
    */
   _getPromise() {
-    if (this.getOption('auto-approve') || !this._actions.length) {
+    if (this.getOption('auto-approve') || !(this.getOption('apply') || this.getOption('destroy'))) {
       return Promise.resolve(true);
     } else {
-      return this.askForApprovement(this.getConfigObject(), 'run');
+      return askForApprovement(this.getConfigObject(), 'run', this.getProjectConfig());
     }
+  }
+
+  /**
+   * Checks config dependencies in the corresponding order if check is required
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _checkDependencies(config) {
+    let direction;
+    switch (this._isApply * 1 + this._isDestroy * 2) {
+      case 0:
+        return Promise.resolve();
+
+      case 1:
+        direction = Dictionary.DIRECTION.FORWARD;
+        break;
+
+      case 2:
+        direction = Dictionary.DIRECTION.REVERSE;
+        break;
+
+      case 3:
+        direction = Dictionary.DIRECTION.BIDIRECTIONAL;
+        break;
+    }
+
+    return this.checkDependencies(config, direction)
   }
 }
 
