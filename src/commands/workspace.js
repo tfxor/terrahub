@@ -54,69 +54,69 @@ class WorkspaceCommand extends TerraformCommand {
     }
 
     const { name, code } = this.getProjectConfig();
-    return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
-      if (config.isDefault) {
-        return this._workspace('workspaceSelect', configs).then(() => 'Done');
+    // return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
+    if (config.isDefault) {
+      return this._workspace('workspaceSelect', configs).then(() => 'Done');
+    }
+
+    configsList.forEach((configPath, i) => {
+      const dir = path.dirname(configPath);
+      const envConfig = path.join(dir, this.getFileName());
+      const tfvarsName = path.join('workspace', `${config.env}.tfvars`);
+      const tfvarsPath = path.join(dir, tfvarsName);
+
+      if (!fs.existsSync(envConfig) && !kill) {
+        const creating = new HashTable({});
+        const existing = new HashTable(ConfigLoader.readConfig(configPath));
+        const template = path.join(templates.workspace, 'default.tfvars.twig');
+
+        existing.transform('varFile', (key, value) => {
+          value.push(tfvarsName);
+          creating.set(key, value);
+        });
+
+        ConfigLoader.writeConfig(creating.getRaw(), envConfig);
+
+        if (i !== 0 || !includeRootConfig) { // Skip root path
+          promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
+        }
       }
 
-      configsList.forEach((configPath, i) => {
-        const dir = path.dirname(configPath);
-        const envConfig = path.join(dir, this.getFileName());
-        const tfvarsName = path.join('workspace', `${config.env}.tfvars`);
-        const tfvarsPath = path.join(dir, tfvarsName);
-
-        if (!fs.existsSync(envConfig) && !kill) {
-          const creating = new HashTable({});
-          const existing = new HashTable(ConfigLoader.readConfig(configPath));
-          const template = path.join(templates.workspace, 'default.tfvars.twig');
-
-          existing.transform('varFile', (key, value) => {
-            value.push(tfvarsName);
-            creating.set(key, value);
-          });
-
-          ConfigLoader.writeConfig(creating.getRaw(), envConfig);
-
-          if (i !== 0 || !includeRootConfig) { // Skip root path
-            promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
-          }
-        }
-
-        if (fs.existsSync(envConfig) && kill) {
-          filesToRemove.push(envConfig, tfvarsPath);
-        }
-      });
-
-      this.reloadConfig();
-      const cfgObject = this.getConfigObject();
-
-      if (!kill) {
-        let isUpdate = promises.length !== (configsList.length - 1);
-        let message = `TerraHub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
-
-        return Promise
-          .all(promises)
-          .then(() => this._workspace('workspaceSelect', cfgObject))
-          .then(() => Promise.resolve(message));
+      if (fs.existsSync(envConfig) && kill) {
+        filesToRemove.push(envConfig, tfvarsPath);
       }
-
-      return yesNoQuestion(`Do you want to delete workspace '${config.env}' (Y/N)? `).then(confirmed => {
-        if (!confirmed) {
-          return Promise.resolve('Canceled');
-        }
-
-        filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
-
-        if (!filesToRemove.length) {
-          return Promise.resolve('Nothing to remove');
-        }
-
-        return Promise
-          .all(filesToRemove.map(file => fse.unlink(file)))
-          .then(() => this._workspace('workspaceDelete', cfgObject))
-          .then(() => Promise.resolve(`TerraHub environment '${config.env}' was deleted`));
-      });
     });
+
+    this.reloadConfig();
+    const cfgObject = this.getConfigObject();
+
+    if (!kill) {
+      let isUpdate = promises.length !== (configsList.length - 1);
+      let message = `TerraHub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
+
+      return Promise
+        .all(promises)
+        .then(() => this._workspace('workspaceSelect', cfgObject))
+        .then(() => Promise.resolve(message));
+    }
+
+    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (Y/N)? `).then(confirmed => {
+      if (!confirmed) {
+        return Promise.resolve('Canceled');
+      }
+
+      filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
+
+      if (!filesToRemove.length) {
+        return Promise.resolve('Nothing to remove');
+      }
+
+      return Promise
+        .all(filesToRemove.map(file => fse.unlink(file)))
+        .then(() => this._workspace('workspaceDelete', cfgObject))
+        .then(() => Promise.resolve(`TerraHub environment '${config.env}' was deleted`));
+    });
+
   }
 
   /**

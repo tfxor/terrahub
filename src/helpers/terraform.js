@@ -8,8 +8,10 @@ const logger = require('./logger');
 const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
-const { homePath, config } = require('../parameters');
+const { homePath, config, fetch } = require('../parameters');
 const { extend, spawner, exponentialBackoff } = require('../helpers/util');
+const { execSync } = require('child_process');
+const url = require('url');
 
 class Terraform {
   /**
@@ -38,6 +40,14 @@ class Terraform {
         workspace: 'default'
       }
     };
+  }
+
+  /**
+   * @param {Object} data
+   * @returns {Object}
+   */
+  getExtendedProcessEnv(data) {
+    Object.assign(process.env, data);
   }
 
   /**
@@ -393,11 +403,13 @@ class Terraform {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
-
-    return this._spawn(this.getBinary(), [cmd, ...args], {
-      cwd: this.getRoot(),
-      env: process.env,
-      shell: true
+    return this._getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
+      console.log('~~~~~~~~~~~', process.env);
+      return this._spawn(this.getBinary(), [cmd, ...args], {
+        cwd: this.getRoot(),
+        env: process.env,
+        shell: true
+      });
     });
   }
 
@@ -453,6 +465,46 @@ class Terraform {
    */
   _out(data) {
     return `[${this.getName()}] ${data.toString()}`;
+  }
+
+  /**
+   * Get Resources from TerraHub API
+   * @return {Promise|*}
+   */
+  _getEnvVarsFromAPI() {
+    if (!config.token) {
+      return Promise.resolve([]);
+    }
+    try {
+      const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
+      const data = Buffer.from(urlGet).toString('utf-8');
+      const isUrl = !!url.parse(data).host;
+      // works for gitlab/github/bitbucket, add azure, google, amazon
+      const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
+      const sshData = /\:(.*).*(?=\.)/;
+
+      const gitlab = /\@(.*)\.(.*)(.*)(?=\.)/;
+      let bitbucket;
+      const github = bitbucket = /\@([^.]+)/;
+
+      const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
+      const provider = gitlab ? data.match(gitlab)[1] : data.match(github)[1];
+
+      if (repo && provider) {
+        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+          if (Object.keys(json.data).length) {
+            let test = JSON.parse(json.data.env_var);
+            return Object.keys(test).reduce((acc, key) => {
+              acc[key] = test[key].value;
+              return acc;
+            }, {});
+          }
+        });
+      }
+    } catch (err) {
+      console.log('±±±±±±±±±±±', err);
+      return Promise.resolve(err);
+    }
   }
 }
 

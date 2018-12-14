@@ -23,17 +23,16 @@ class DestroyCommand extends TerraformCommand {
   run() {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
-    return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
-      return this.checkDependencies(config, Dictionary.DIRECTION.REVERSE)
-        .then(() => this._getPromise())
-        .then(answer => answer ?
-          distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
-            silent: this.getOption('silent'),
-            planDestroy: true,
-            dependencyDirection: Dictionary.DIRECTION.REVERSE
-          }) : Promise.reject('Action aborted')
-        ).then(() => Promise.resolve('Done'));
-    });
+
+    return this.checkDependencies(config, Dictionary.DIRECTION.REVERSE)
+      .then(() => this._getPromise())
+      .then(answer => answer ?
+        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
+          silent: this.getOption('silent'),
+          planDestroy: true,
+          dependencyDirection: Dictionary.DIRECTION.REVERSE
+        }) : Promise.reject('Action aborted')
+      ).then(() => Promise.resolve('Done'));
   }
 
   /**
