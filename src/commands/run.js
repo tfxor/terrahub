@@ -1,5 +1,6 @@
 'use strict';
 
+const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 const { printConfigAsList, askForApprovement } = require('../helpers/util');
@@ -48,39 +49,19 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    const isApply = this.getOption('apply');
-    const isDestroy = this.getOption('destroy');
-    const isBuild = this.getOption('build');
+    this._isApply = this.getOption('apply');
+    this._isDestroy = this.getOption('destroy');
+    this._isBuild = this.getOption('build');
 
     return Promise.resolve()
-      .then(() => {
-        let direction;
-        switch (isApply * 1 + isDestroy * 2) {
-          case 0:
-            return Promise.resolve();
-
-          case 1:
-            direction = TerraformCommand.FORWARD;
-            break;
-
-          case 2:
-            direction = TerraformCommand.REVERSE;
-            break;
-
-          case 3:
-            direction = TerraformCommand.BIDIRECTIONAL;
-            break;
-        }
-
-        return this.checkDependencies(config, direction);
-      })
+      .then(() => this._checkDependencies(config))
       .then(() => {
         const actions = ['prepare', 'init', 'workspaceSelect'];
 
-        if (!isApply && !isDestroy) {
+        if (!this._isApply && !this._isDestroy) {
           actions.push('plan');
 
-          if (isBuild) {
+          if (this._isBuild) {
             actions.push('build');
           }
         }
@@ -89,18 +70,18 @@ class RunCommand extends TerraformCommand {
           silent: this.getOption('silent')
         });
       })
-      .then(() => !isApply ?
+      .then(() => !this._isApply ?
         Promise.resolve() :
-        distributor.runActions(isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
+        distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.FORWARD
+          dependencyDirection: Dictionary.DIRECTION.FORWARD
         })
       )
-      .then(() => !isDestroy ?
+      .then(() => !this._isDestroy ?
         Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
-          dependencyDirection: TerraformCommand.REVERSE,
+          dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
         })
       );
@@ -116,6 +97,34 @@ class RunCommand extends TerraformCommand {
     } else {
       return askForApprovement(this.getConfigObject(), 'run', this.getProjectConfig());
     }
+  }
+
+  /**
+   * Checks config dependencies in the corresponding order if check is required
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _checkDependencies(config) {
+    let direction;
+    switch (this._isApply * 1 + this._isDestroy * 2) {
+      case 0:
+        return Promise.resolve();
+
+      case 1:
+        direction = Dictionary.DIRECTION.FORWARD;
+        break;
+
+      case 2:
+        direction = Dictionary.DIRECTION.REVERSE;
+        break;
+
+      case 3:
+        direction = Dictionary.DIRECTION.BIDIRECTIONAL;
+        break;
+    }
+
+    return this.checkDependencies(config, direction)
   }
 }
 

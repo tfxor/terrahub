@@ -1,11 +1,12 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const semver = require('semver');
 const logger = require('./logger');
 const Metadata = require('./metadata');
+const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { homePath, config } = require('../parameters');
 const { extend, spawner, exponentialBackoff } = require('../helpers/util');
@@ -136,7 +137,7 @@ class Terraform {
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
-      .then(() => ({ status: 'success' }));
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -190,7 +191,7 @@ class Terraform {
     return exponentialBackoff(promiseFunction,
       { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._reInitPaths())
-      .then(() => ({ status: 'success' }));
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -243,9 +244,9 @@ class Terraform {
         const output = result.toString();
 
         return regexSelected.test(output) ?
-          Promise.resolve({ status: 'skip' }) :
+          Promise.resolve({ status: Dictionary.REALTIME.SKIP }) :
           this.run('workspace', [regexExists.test(output) ? 'select' : 'new', workspace])
-            .then(() => Promise.resolve({ status: 'success' }));
+            .then(() => Promise.resolve({ status: Dictionary.REALTIME.SUCCESS }));
       })
       .then(res => this._reInitPaths().then(() => Promise.resolve(res)));
   }
@@ -322,7 +323,7 @@ class Terraform {
           buffer: buffer,
           skip: skip,
           metadata: metadata,
-          status: 'success'
+          status: Dictionary.REALTIME.SUCCESS
         });
       });
   }
@@ -340,7 +341,7 @@ class Terraform {
     return exponentialBackoff(promiseFunction,
       { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
       .then(() => this._getStateContent())
-      .then(buffer => ({ buffer: buffer, status: 'success' }));
+      .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**

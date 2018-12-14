@@ -9,6 +9,7 @@ const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
 const { config, templates } = require('../parameters');
 const { renderTwig, yesNoQuestion } = require('../helpers/util');
+const treeify = require('treeify');
 
 class WorkspaceCommand extends TerraformCommand {
   /**
@@ -44,7 +45,9 @@ class WorkspaceCommand extends TerraformCommand {
 
     if (this.getOption('list')) {
       this.logger.log(`Project: ${this.getProjectConfig.name}`);
-      return this._workspace('workspaceList', configs).then(() => 'Done');
+      return this._workspace('workspaceList', configs)
+        .then(results => this._handleWorkspaceList(results))
+        .then(() => 'Done');
     }
     if (includeRootConfig) {
       configsList.unshift(rootConfigPath);
@@ -126,6 +129,23 @@ class WorkspaceCommand extends TerraformCommand {
 
     return distributor.runActions(['prepare', action], {
       silent: this.getOption('silent')
+    });
+  }
+
+  /**
+   * @param {Object[]} results
+   * @private
+   */
+  _handleWorkspaceList(results) {
+    const result = results.reduce((acc, item) => {
+      item.workspaces.filter(it => !acc[it]).forEach(it => acc[it] = {});
+      acc[item.activeWorkspace][item.component] = null;
+
+      return acc;
+    }, {});
+
+    treeify.asLines(result, false, line => {
+      this.logger.log(` ${line}`);
     });
   }
 }

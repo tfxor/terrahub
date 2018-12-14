@@ -27,32 +27,18 @@ class OutputCommand extends TerraformCommand {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
-    return this.askQuestion();
-  }
-
-  /**
-   * @return {Promise}
-   */
-  askQuestion() {
-    return this._getPromise().then(confirmed => {
-      if (!confirmed) {
-        return Promise.resolve('Canceled');
+    return this._getPromise().then(isConfirmed => {
+      if (!isConfirmed) {
+        return Promise.resolve('Action aborted');
       }
 
-      return this.performAction();
-    });
-  }
+      const config = this.getConfigObject();
+      const distributor = new Distributor(config);
 
-  /**
-   * @return {Promise}
-   */
-  performAction() {
-    const config = this.getConfigObject();
-    const distributor = new Distributor(config);
-
-    return distributor.runActions(['prepare', 'output'], {
-      format: this._format
-    });
+      return distributor.runActions(['prepare', 'output'], {
+        format: this._format
+      });
+    }).then(results => this._handleOutput(results));
   }
 
   /**
@@ -66,6 +52,30 @@ class OutputCommand extends TerraformCommand {
       this.logger.warn('This command makes sense only after apply command, and configured outputs');
 
       return yesNoQuestion('Do you want to run it (Y/N)? ');
+    }
+  }
+
+  /**
+   * Prints the output data for the 'output' command
+   * @param {Object[]} results
+   * @private
+   */
+  _handleOutput(results) {
+    switch (this._format) {
+      case 'json':
+        const result = results.reduce((acc, it) => {
+          const stdout = (Buffer.from(it.buffer)).toString('utf8');
+
+          acc[it.component] = stdout[0] !== '{' ? JSON.parse(stdout.slice(stdout.indexOf('{'))) : JSON.parse(stdout);
+
+          return acc;
+        }, {});
+
+        this.logger.log(JSON.stringify(result));
+        return Promise.resolve();
+
+      default:
+        return Promise.resolve('Done');
     }
   }
 }

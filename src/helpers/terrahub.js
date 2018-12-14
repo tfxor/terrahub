@@ -39,10 +39,10 @@ class Terrahub {
 
     if (err) {
       error = new Error(err.message || err || 'Unknown message');
-      payload.error = error.message;
+      payload.error = error.message.trim();
     }
 
-    if (payload.action === 'plan' && data.status === 'success') {
+    if (payload.action === 'plan' && data.status === Terrahub.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
 
@@ -66,11 +66,11 @@ class Terrahub {
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
-        return this._terraform[action]();
+        return this._terraform[action]().catch(err => console.log(err));
       }
 
       if (options.skip) {
-        return this._on({ status: 'skip' })
+        return this._on({ status: Terrahub.REALTIME.SKIP })
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. 
               Infrastructure is up-to-date.'`);
@@ -193,13 +193,13 @@ class Terrahub {
    */
   _getTask() {
     return this._checkProject()
-      .then(() => this._on({ status: 'start' }))
+      .then(() => this._on({ status: Terrahub.REALTIME.START }))
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
       .then(data => this._on(data, null))
-      .catch(err => this._on({ status: 'error' }, err))
+      .catch(err => this._on({ status: Terrahub.REALTIME.ERROR }, err))
       .catch(err => {
         if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
           err = new Error('Internet connection issue');
@@ -245,19 +245,24 @@ class Terrahub {
    * @private
    */
   _callParseLambda(key) {
-    const url = `thub/resource/parse-${this._action === 'plan' ? 'plan' : 'state'}`;
+    const url = `thub/resource/parse-${this._action}`;
+
     const options = {
       body: JSON.stringify({
         key: key,
         projectId: this._project.id,
-        thubRunId: this._runId,
-        thubAction: this._action
+        thubRunId: this._runId
       })
     };
 
-    fetch.post(url, options).catch(() => logger.error(`[${this._config.name}] Failed to trigger parse function`));
+    const promise = fetch.post(url, options).catch(error => {
+      error.message = `[${this._config.name}] Failed to trigger parse function`;
+      logger.error(error);
 
-    return Promise.resolve();
+      return Promise.resolve();
+    });
+
+    return process.env.DEBUG ? promise : Promise.resolve();
   }
 
   /**
@@ -284,6 +289,20 @@ class Terrahub {
    */
   static get METADATA_DOMAIN() {
     return 'https://data-lake-terrahub-us-east-1.s3.amazonaws.com';
+  }
+
+  /**
+   * @return {{START: number, SUCCESS: number, ERROR: number, SKIP: number, ABORT: number, TIMEOUT: number}}
+   */
+  static get REALTIME() {
+    return {
+      START: 0,
+      SUCCESS: 1,
+      ERROR: 2,
+      SKIP: 3,
+      ABORT: 4,
+      TIMEOUT: 5
+    };
   }
 }
 
