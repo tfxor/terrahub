@@ -1,0 +1,34 @@
+# Specify default values for variables defined in variables.tf
+
+############
+# provider #
+############
+account_id                 = "123456789012"
+region                     = "us-east-1"
+
+#############
+# top level #
+#############
+glue_connection_name             = "{{ name }}"
+glue_connection_catalog_id       = ""
+glue_connection_type             = "JBDC"
+glue_connection_description      = "Managed by TerraHub"
+glue_catalog_database_parameters = []
+
+#########################
+# connection properties #
+#########################
+glue_connection_properties_jdbc_connection_url = ""
+glue_connection_properties_password            = ""
+glue_connection_properties_username            = ""
+
+####################################
+# physical connection requirements #
+####################################
+glue_connection_availability_zone      = "us-east-1a"
+glue_connection_security_group_id_list = []
+glue_connection_subnet_id              = ""
+
+##########
+# custom #
+##########

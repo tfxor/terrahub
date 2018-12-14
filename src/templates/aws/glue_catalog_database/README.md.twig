@@ -1,0 +1,19 @@
+# aws_glue_catalog_database
+
+Provides a Glue Catalog Database Resource. You can refer to the Glue Developer Guide for a full explanation of the Glue Data Catalog functionality
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
+|glue_catalog_database_name|The name of the database.|string|{{ name }}|No|
+|glue_catalog_database_catalog_id|ID of the Glue Catalog to create the database in. If omitted, this defaults to the AWS Account ID.|string||No|
+|glue_catalog_database_description|Description of the database.|string|Managed by TerraHub|No|
+|glue_catalog_database_parameters|A list of key-value pairs that define parameters and properties of the database.|list|[]|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
