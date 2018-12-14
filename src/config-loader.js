@@ -5,7 +5,9 @@ const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const { EOL } = require('os');
-const { config } = require('./parameters');
+const { config, fetch } = require('./parameters');
+const { execSync } = require('child_process');
+const url = require('url');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
 class ConfigLoader {
@@ -376,6 +378,46 @@ class ConfigLoader {
     return (!config.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
+  }
+
+  /**
+   * Get Resources from TerraHub API
+   * @return {Promise|*}
+   */
+  static getEnvVarsFromAPI() {
+    console.log('hereeeee')
+    if (!config.token) {
+      return Promise.resolve([]);
+    }
+    try {
+      const urlGet = execSync('git remote get-url origin', { cwd: process.cwd(), stdio: 'pipe' });
+      const data = Buffer.from(urlGet).toString('utf-8');
+      const isUrl = !!url.parse(data).host;
+      // works for gitlab/github/bitbucket, add azure, google, amazon
+      const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
+      const sshData = /\:(.*).*(?=\.)/;
+
+      const gitlab = /\@(.*)\.(.*)(.*)(?=\.)/;
+      let bitbucket;
+      const github = bitbucket = /\@([^.]+)/;
+
+      const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
+      const provider = gitlab ? data.match(gitlab)[1] : data.match(github)[1];
+
+      if (repo && provider) {
+        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+          if (Object.keys(json.data).length) {
+            let test = JSON.parse(json.data.env_var);
+            return Object.keys(test).reduce((acc, key) => {
+              acc[key] = test[key].value;
+              return acc;
+            }, {});
+          }
+        });
+      }
+    } catch (err) {
+      return Promise.resolve(err);
+    }
   }
 
   /**

@@ -54,7 +54,6 @@ class WorkspaceCommand extends TerraformCommand {
     }
 
     const { name, code } = this.getProjectConfig();
-    // return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
     if (config.isDefault) {
       return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }
@@ -116,7 +115,6 @@ class WorkspaceCommand extends TerraformCommand {
         .then(() => this._workspace('workspaceDelete', cfgObject))
         .then(() => Promise.resolve(`TerraHub environment '${config.env}' was deleted`));
     });
-
   }
 
   /**

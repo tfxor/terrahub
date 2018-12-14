@@ -8,8 +8,6 @@ const Dictionary = require('./helpers/dictionary');
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
-const { fetch, config } = require('./parameters');
-const url = require('url');
 
 /**
  * @abstract

@@ -8,19 +8,22 @@ const logger = require('./logger');
 const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
-const { homePath, config, fetch } = require('../parameters');
+const { homePath, config } = require('../parameters');
 const { extend, spawner, exponentialBackoff } = require('../helpers/util');
-const { execSync } = require('child_process');
-const url = require('url');
+const ConfigLoader = require('../config-loader')
 
 class Terraform {
   /**
    * @param {Object} config
    */
   constructor(config) {
-    this._config = extend({}, [this._defaults(), config]);
-    this._tf = this._config.terraform;
-    this._metadata = new Metadata(this._config);
+    ConfigLoader.getEnvVarsFromAPI().then(data => {
+      this._config = extend({}, [this._defaults(), config]);
+      this._tf = this._config.terraform;
+      this._metadata = new Metadata(this._config);
+    })
+    
+
     this._showLogs = process.env.silent === 'false' && !process.env.format;
     this._isWorkspaceSupported = false;
   }
@@ -195,6 +198,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
+    console.log('this',this._config)
     const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
@@ -403,12 +407,10 @@ class Terraform {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
-    return this._getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
-      return this._spawn(this.getBinary(), [cmd, ...args], {
-        cwd: this.getRoot(),
-        env: process.env,
-        shell: true
-      });
+    return this._spawn(this.getBinary(), [cmd, ...args], {
+      cwd: this.getRoot(),
+      env: process.env,
+      shell: true
     });
   }
 
@@ -464,45 +466,6 @@ class Terraform {
    */
   _out(data) {
     return `[${this.getName()}] ${data.toString()}`;
-  }
-
-  /**
-   * Get Resources from TerraHub API
-   * @return {Promise|*}
-   */
-  _getEnvVarsFromAPI() {
-    if (!config.token) {
-      return Promise.resolve([]);
-    }
-    try {
-      const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
-      const data = Buffer.from(urlGet).toString('utf-8');
-      const isUrl = !!url.parse(data).host;
-      // works for gitlab/github/bitbucket, add azure, google, amazon
-      const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
-      const sshData = /\:(.*).*(?=\.)/;
-
-      const gitlab = /\@(.*)\.(.*)(.*)(?=\.)/;
-      let bitbucket;
-      const github = bitbucket = /\@([^.]+)/;
-
-      const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
-      const provider = gitlab ? data.match(gitlab)[1] : data.match(github)[1];
-
-      if (repo && provider) {
-        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
-          if (Object.keys(json.data).length) {
-            let test = JSON.parse(json.data.env_var);
-            return Object.keys(test).reduce((acc, key) => {
-              acc[key] = test[key].value;
-              return acc;
-            }, {});
-          }
-        });
-      }
-    } catch (err) {
-      return Promise.resolve(err);
-    }
   }
 }
 
