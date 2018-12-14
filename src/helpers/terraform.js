@@ -404,7 +404,6 @@ class Terraform {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
     return this._getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
-      console.log('~~~~~~~~~~~', process.env);
       return this._spawn(this.getBinary(), [cmd, ...args], {
         cwd: this.getRoot(),
         env: process.env,
@@ -502,7 +501,6 @@ class Terraform {
         });
       }
     } catch (err) {
-      console.log('±±±±±±±±±±±', err);
       return Promise.resolve(err);
     }
   }
