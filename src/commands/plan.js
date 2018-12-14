@@ -21,12 +21,13 @@ class PlanCommand extends TerraformCommand {
   run() {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
-
-    return distributor
-      .runActions(['prepare', 'workspaceSelect', 'plan'], {
-        silent: this.getOption('silent'),
-        planDestroy: this.getOption('destroy')
-      }).then(() => Promise.resolve('Done'));
+    return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
+      return distributor
+        .runActions(['prepare', 'workspaceSelect', 'plan'], {
+          silent: this.getOption('silent'),
+          planDestroy: this.getOption('destroy')
+        }).then(() => Promise.resolve('Done'));
+    });
   }
 }
 

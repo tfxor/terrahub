@@ -8,6 +8,8 @@ const Dictionary = require('./helpers/dictionary');
 const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
+const { fetch, config } = require('./parameters');
+const url = require('url');
 
 /**
  * @abstract
@@ -166,6 +168,14 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return config;
+  }
+
+  /**
+   * @param {Object} data
+   * @returns {Object}
+   */
+  getExtendedProcessEnv(data) {
+    Object.assign(process.env, data);
   }
 
   /**
@@ -468,6 +478,39 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return issues;
+  }
+
+  /**
+   * Get Resources from TerraHub API
+   * @return {Promise|*}
+   */
+  getEnvVarsFromAPI() {
+    if (!config.token) {
+      return Promise.resolve([]);
+    }
+    try {
+      const urlGet = execSync('git remote get-url origin', { cwd: this.getAppPath(), stdio: 'pipe' });
+      const data = Buffer.from(urlGet).toString('utf-8');
+      const isUrl = !!url.parse(data).host;
+      // works for gitlab/github/bitbucket, add azure, google, amazon
+      const repo = isUrl ? data.match(/(?:.*?\/){3}(.*)(?=\.)/)[1] : data.match(/\:(.*).*(?=\.)/)[1];
+      const provider = data.match(/\@(.*)\.(.*)(.*)(?=\.)/) ? data.match(/\@(.*)\.(.*)(.*)(?=\.)/)[1] : data.match(/\@([^.]+)/)[1];
+
+      if (repo && provider) {
+        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+          if (Object.keys(json.data).length) {
+            let test = JSON.parse(json.data.env_var);
+            let save = {};
+            Object.keys(test).forEach(data => {
+              save[data] = test[data].value;
+            });
+            return save;
+          }
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   /**

@@ -20,10 +20,11 @@ class RefreshCommand extends TerraformCommand {
   run() {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
-
-    return distributor.runActions(['prepare', 'workspaceSelect', 'refresh'], {
-      silent: this.getOption('silent')
-    }).then(() => Promise.resolve('Done'));
+    return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
+      return distributor.runActions(['prepare', 'workspaceSelect', 'refresh'], {
+        silent: this.getOption('silent')
+      }).then(() => Promise.resolve('Done'));
+    });
   }
 }
 

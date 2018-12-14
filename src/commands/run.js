@@ -29,16 +29,17 @@ class RunCommand extends TerraformCommand {
       printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-
-    return this._getPromise()
-      .then(answer => {
-        if (answer) {
-          return this._runPhases();
-        } else {
-          return Promise.reject('Action aborted');
-        }
-      })
-      .then(() => Promise.resolve('Done'));
+    return this.getEnvVarsFromAPI().then(data => this.getExtendedProcessEnv(data)).then(() => {
+      return this._getPromise()
+        .then(answer => {
+          if (answer) {
+            return this._runPhases();
+          } else {
+            return Promise.reject('Action aborted');
+          }
+        })
+        .then(() => Promise.resolve('Done'));
+    });
   }
 
   /**
@@ -124,7 +125,7 @@ class RunCommand extends TerraformCommand {
         break;
     }
 
-    return this.checkDependencies(config, direction)
+    return this.checkDependencies(config, direction);
   }
 }
 
