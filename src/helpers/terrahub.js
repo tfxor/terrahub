@@ -38,7 +38,7 @@ class Terrahub {
     };
 
     if (err) {
-      error = new Error(err.message || err);
+      error = new Error(err.message || err || 'Unknown message');
       payload.error = error.message;
     }
 
@@ -51,7 +51,7 @@ class Terrahub {
       : fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
     return actionPromise.then(() => {
-      return payload.hasOwnProperty('Error') ? Promise.reject(error) : Promise.resolve(data);
+      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
     });
   }
 
