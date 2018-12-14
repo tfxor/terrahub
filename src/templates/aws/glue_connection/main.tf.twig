@@ -1,0 +1,21 @@
+resource "aws_glue_connection" "{{ name }}" {
+  name       = "${var.glue_connection_name}"
+  catalog_id = "${
+    var.glue_connection_catalog_id != "" ?
+    var.glue_connection_catalog_id : var.account_id
+  }"
+  connection_type = "${var.glue_connection_type}"
+  description     = "${var.glue_connection_description}"
+
+  connection_properties = {
+    JDBC_CONNECTION_URL = "${var.glue_connection_properties_jdbc_connection_url}"
+    PASSWORD            = "${var.glue_connection_properties_password}"
+    USERNAME            = "${var.glue_connection_properties_username}"
+  }
+
+  #physical_connection_requirements {
+  #  availability_zone      = "${var.glue_connection_availability_zone}"
+  #  security_group_id_list = ["${var.glue_connection_security_group_id_list}"]
+  #  subnet_id              = "${var.glue_connection_subnet_id}"
+  #}
+}
