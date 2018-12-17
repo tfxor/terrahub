@@ -18,11 +18,10 @@ glue_crawler_configuration = ""
 glue_crawler_schedule      = "cron(15 12 * * ? *)"
 glue_crawler_table_prefix  = ""
 
-#############
-# s3 target #
-#############
-glue_crawler_s3_target_path       = ""
-glue_crawler_s3_target_exclusions = []
+###################
+# dynamodb target #
+###################
+glue_crawler_dynamodb_target_path = "{{ name }}"
 
 ########################
 # schema change policy #

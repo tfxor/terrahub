@@ -7,9 +7,8 @@ resource "aws_glue_crawler" "{{ name }}" {
   #configuration = "${var.glue_crawler_configuration}"
   #schedule      = "${var.glue_crawler_schedule}"
   #table_prefix  = "${var.glue_crawler_table_prefix}"
-  s3_target {
-    path       = "s3://${var.glue_crawler_s3_target_path}"
-    exclusions =  "${var.glue_crawler_s3_target_exclusions}"
+  dynamodb_target {
+    path = "${var.glue_crawler_dynamodb_target_path}"
   }
   #schema_change_policy = {
   #  delete_behavior = "${var.glue_crawler_delete_behavior}"

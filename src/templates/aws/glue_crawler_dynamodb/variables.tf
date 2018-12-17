@@ -47,16 +47,11 @@ variable "glue_crawler_table_prefix" {
   description = "The table prefix used for catalog tables that are created."
 }
 
-#############
-# s3 target #
-#############
-variable "glue_crawler_s3_target_path" {
-  description = "The path to the Amazon S3 target."
-}
-
-variable "glue_crawler_s3_target_exclusions" {
-  type        = "list"
-  description = "A list of glob patterns used to exclude from the crawl."
+###################
+# dynamodb target #
+###################
+variable "glue_crawler_dynamodb_target_path" {
+  description = "The name of the DynamoDB table to crawl."
 }
 
 ########################
