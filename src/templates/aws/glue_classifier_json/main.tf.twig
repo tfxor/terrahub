@@ -1,0 +1,6 @@
+resource "aws_glue_classifier" "{{ name }}" {
+  name = "${var.glue_classifier_name}"
+  json_classifier {
+    json_path = "${var.glue_classifier_json_path}"
+  }
+}
