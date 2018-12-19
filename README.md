@@ -76,8 +76,12 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 
 [Running Terraform in Automation](https://terraform.io/guides/running-terraform-in-automation.html)
 describes the value proposition of deploying regularly in production.
-TerraHub takes terraform automation to another level of simplicity and
-built-in capabilities. Here below is how it works:
+Tools like [Atlantis](https://github.com/runatlantis/atlantis),
+[Terragrunt](https://github.com/gruntwork-io/terragrunt) and
+[Astro](https://github.com/uber/astro) partially cover automation needs.
+
+TerraHub takes terraform automation to a new level of simplicity and built-in
+capabilities. Here below is how it works:
 
 ![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
 
