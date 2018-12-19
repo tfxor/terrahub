@@ -79,6 +79,6 @@ describes the value proposition of deploying regularly in production.
 TerraHub takes terraform automation to another level of simplicity and
 built-in capabilities. Here below is how it works:
 
-![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.gif "TerraHub Automation")
+![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
 
 
