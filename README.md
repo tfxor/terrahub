@@ -1,6 +1,8 @@
 # TerraHub
 
 ## DevOps Hub for Terraform Automation
+Quick Links: [Install](#install) | [Examples](#examples) |
+  [Features](#features) | [Commands](#commands) | [Automation](#automation)
 
 TerraHub ecosystem includes:
 * [TerraHub CLI](https://www.npmjs.com/package/terrahub) -
@@ -14,18 +16,7 @@ auditing and reporting capabilities for historical terraform runs
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
 
-## [Features](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features.md)
-
-1. [Make it easier and faster to create reusable terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features1.md)
-2. [Simplify and distribute the way terraform configuration is executed](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features2.md)
-3. [Accelerate and automate the testing of terraform commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features3.md)
-4. [Integrate and manage any existing terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features4.md)
-5. [Centralize cloud resources management through realtime dashboards](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features5.md)
-6. [Streamline integration and deployment with built-in CI and CD processes](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features6.md)
-7. [NO NEED to expose your private network to outside world at all](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features7.md)
-
-
-## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
+## [Install](https://github.com/TerraHubCorp/terrahub/blob/master/docs/install.md)
 
 TerraHub CLI is built using [nodejs](https://nodejs.org) and published using
 [npm](https://www.npmjs.com). Quick steps to get started:
@@ -46,8 +37,28 @@ which is further visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
 [Settings](https://console.terrahub.io/settings) page to copy TerraHub Token.
-Next, you can setup `THUB_TOKEN` environmental variable or update `token` value
-in `$HOME/.terrahub/.terrahub.json` global config file.
+Next, you can setup TerraHub Token as `THUB_TOKEN` environmental variable or
+update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
+
+
+## [Examples](https://github.com/TerraHubCorp/terrahub/blob/master/docs/examples.md)
+
+* [Terraform Demo using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-aws)
+* [Terraform Demo using Google Provider](https://github.com/TerraHubCorp/demo-terraform-google)
+
+
+## [Features](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features.md)
+
+1. [Make it easier and faster to create reusable terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features1.md)
+2. [Simplify and distribute the way terraform configuration is executed](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features2.md)
+3. [Accelerate and automate the testing of terraform commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features3.md)
+4. [Integrate and manage any existing terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features4.md)
+5. [Centralize cloud resources management through realtime dashboards](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features5.md)
+6. [Streamline integration and deployment with built-in CI and CD processes](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features6.md)
+7. [NO NEED to expose your private network to outside world at all](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features7.md)
+
+
+## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
 
 When running `terrahub --help`, you will get a list of commands, summarized below:
 
@@ -79,11 +90,9 @@ describes the value proposition of deploying regularly in production.
 Tools like [Astro](https://github.com/uber/astro),
 [Atlantis](https://github.com/runatlantis/atlantis) and
 [Terragrunt](https://github.com/gruntwork-io/terragrunt)
-partially cover automation needs.
+partially cover automation workflow, but not deep enough.
 
 TerraHub takes terraform automation to a new level of simplicity and
 built-in capabilities. Here below is how it works:
 
 ![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
-
-
