@@ -20,7 +20,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
       .addOption('template', 't', 'Template name (e.g. aws_ami, google_project)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('depends-on', 'o', 'Component paths, which the component depends on (comma separated)', Array, [])
+      .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;

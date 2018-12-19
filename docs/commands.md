@@ -28,7 +28,6 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [output](commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
 | [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
-| [show](commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||
 | [build](commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |

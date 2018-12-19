@@ -62,7 +62,6 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [output](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
 | [refresh](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
-| [show](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||
 | [build](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
