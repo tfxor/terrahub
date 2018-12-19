@@ -2,11 +2,14 @@
 
 ## DevOps Hub for Terraform Automation
 
-TerraHub is a terraform centric user interface driven devops tool.
-TerraHub provides incremental value by automating the management at scale
-of cloud resources and cloud services across multiple cloud accounts.
-For example: Serverless on Amazon AWS, or Kubernetes on Google  Cloud,
-or VMs on Microsoft Azure.
+TerraHub ecosystem includes:
+* [TerraHub CLI](https://www.npmjs.com/package/terrahub) -
+terraform automation and orchestration tool (open source)
+* [TerraHub API](https://www.terrahub.io/api) -
+data and logs management, requires token to collect anything
+* [TerraHub Console](https://console.terrahub.io) -
+enterprise friendly GUI to show realtime executions, includes
+auditing and reporting capabilities for historical terraform runs
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
@@ -39,10 +42,10 @@ $ terrahub --help
 
 > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically
 collect your data and upload to [TerraHub API](https://www.terrahub.io),
-which is visualized in [TerraHub Console](https://console.terrahub.io).
+which is further visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
-[Settings](https://console.terrahub.io/settings) to copy TerraHub token.
+[Settings](https://console.terrahub.io/settings) page to copy TerraHub Token.
 Next, you can setup `THUB_TOKEN` environmental variable or update `token` value
 in `$HOME/.terrahub/.terrahub.json` global config file.
 
@@ -69,86 +72,13 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [list](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
 
 
-## [Structure](https://github.com/TerraHubCorp/terrahub/blob/master/docs/structure.md)
+## [Automation](https://github.com/TerraHubCorp/terrahub/blob/master/docs/automation.md)
 
-You can use whatever structure you want, but we recommend you follow this one: 
+[Running Terraform in Automation](https://terraform.io/guides/running-terraform-in-automation.html)
+describes the value proposition of deploying regularly in production.
+TerraHub takes terraform automation to another level of simplicity and
+built-in capabilities. Here below is how it works:
 
-```text
-your-project
-├─ .terrahub
-│  ├─ s3
-│  │  ├── .terrahub.yml
-│  │  ├── README.md
-│  │  ├── default.tfvars
-│  │  ├── main.tf
-│  │  ├── output.tf
-│  │  ├── provider.tf
-│  │  └── variables.tf
-│  ├─ cloudfront
-│  │  ├── .terrahub.yml
-│  │  ├── README.md
-│  │  ├── default.tfvars
-│  │  ├── main.tf
-│  │  ├── output.tf
-│  │  ├── provider.tf
-│  │  └── variables.tf
-├─ .terrahub.yml
-├─ src
-└─ ...
-```
-
-> One exception: **No terraform scripts in root of your project!**
+![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.gif "TerraHub Automation")
 
 
-## [Hooks](https://github.com/TerraHubCorp/terrahub/blob/master/docs/hooks.md)
-
-In order to provide you the best experience we have implemented hooks functionality for following actions: 
-
-* `terraform init`
-* `terraform workspace`
-* `terraform plan`
-* `terraform apply`
-* `terraform output`
-* `terraform destroy`
-
-All the hooks should return a Promise and look like: 
-
-* before hook:
-
-```javascript
-/**
- * @param {Object} moduleConfig
- * @returns {Promise}
- */
-function hook(moduleConfig) {
-  return Promise.resolve();
-}
-
-module.exports = hook;
-```
-
-* after hook:
-
-```javascript
-/**
- * @param {Object} moduleConfig
- * @param {Buffer} cmdResult
- * @returns {Promise}
- */
-function hook(moduleConfig, cmdResult) {
-  return Promise.resolve();
-}
-
-module.exports = hook;
-```
-
-Configuration example for plan (`.terrahub.json`):
-
-```text
-"hook": {
-    "plan": {
-        "before": "./hooks/plan/before.js",
-        "after": "./hooks/plan/after.js"
-    }
-}
-```

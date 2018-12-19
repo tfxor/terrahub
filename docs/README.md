@@ -2,11 +2,14 @@
 
 ## DevOps Hub for Terraform Automation
 
-TerraHub is a terraform centric user interface driven devops tool.
-TerraHub provides incremental value by automating the management at scale
-of cloud resources and cloud services across multiple cloud accounts.
-For example: Serverless on Amazon AWS, or Kubernetes on Google  Cloud,
-or VMs on Microsoft Azure.
+TerraHub ecosystem includes:
+* [TerraHub CLI](https://www.npmjs.com/package/terrahub) -
+terraform automation and orchestration tool (open source)
+* [TerraHub API](https://www.terrahub.io/api) -
+data and logs management, requires token to collect anything
+* [TerraHub Console](https://console.terrahub.io) -
+enterprise friendly GUI to show realtime executions, includes
+auditing and reporting capabilities for historical terraform runs
 
 ![TerraHub CLI and TerraHub Console in Action](images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
@@ -39,10 +42,10 @@ $ terrahub --help
 
 > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically
 collect your data and upload to [TerraHub API](https://www.terrahub.io),
-which is visualized in [TerraHub Console](https://console.terrahub.io).
+which is further visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
-[Settings](https://console.terrahub.io/settings) to copy TerraHub token.
+[Settings](https://console.terrahub.io/settings) page to copy TerraHub Token.
 Next, you can setup `THUB_TOKEN` environmental variable or update `token` value
 in `$HOME/.terrahub/.terrahub.json` global config file.
 
