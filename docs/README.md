@@ -43,8 +43,8 @@ update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
 
 ## [Examples](examples.md)
 
-* [Terraform Demo using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-aws)
-* [Terraform Demo using Google Provider](https://github.com/TerraHubCorp/demo-terraform-google)
+* [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
+* [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
 
 
 ## [Features](features.md)
@@ -96,3 +96,5 @@ TerraHub takes terraform automation to a new level of simplicity and
 built-in capabilities. Here below is how it works:
 
 ![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
+
+To learn more, please visit [TerraHub Website](https://www.terrahub.io/how-it-works)
