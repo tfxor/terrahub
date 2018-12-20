@@ -1,28 +1,22 @@
 # TerraHub
 
 ## DevOps Hub for Terraform Automation
+Quick Links: [Install](#install) | [Examples](#examples) |
+  [Features](#features) | [Commands](#commands) | [Automation](#automation)
 
-TerraHub is a terraform centric user interface driven devops tool.
-TerraHub provides incremental value by automating the management at scale
-of cloud resources and cloud services across multiple cloud accounts.
-For example: Serverless on Amazon AWS, or Kubernetes on Google  Cloud,
-or VMs on Microsoft Azure.
+TerraHub ecosystem includes:
+* [TerraHub CLI](https://www.npmjs.com/package/terrahub) -
+terraform automation and orchestration tool (open source)
+* [TerraHub API](https://www.terrahub.io/api) -
+data and logs management, requires token to collect anything
+* [TerraHub Console](https://console.terrahub.io) -
+enterprise friendly GUI to show realtime executions, includes
+auditing and reporting capabilities for historical terraform runs
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
 
-## [Features](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features.md)
-
-1. [Make it easier and faster to create reusable terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features1.md)
-2. [Simplify and distribute the way terraform configuration is executed](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features2.md)
-3. [Accelerate and automate the testing of terraform commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features3.md)
-4. [Integrate and manage any existing terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features4.md)
-5. [Centralize cloud resources management through realtime dashboards](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features5.md)
-6. [Streamline integration and deployment with built-in CI and CD processes](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features6.md)
-7. [NO NEED to expose your private network to outside world at all](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features7.md)
-
-
-## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
+## [Install](https://github.com/TerraHubCorp/terrahub/blob/master/docs/install.md)
 
 TerraHub CLI is built using [nodejs](https://nodejs.org) and published using
 [npm](https://www.npmjs.com). Quick steps to get started:
@@ -39,12 +33,32 @@ $ terrahub --help
 
 > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically
 collect your data and upload to [TerraHub API](https://www.terrahub.io),
-which is visualized in [TerraHub Console](https://console.terrahub.io).
+which is further visualized in [TerraHub Console](https://console.terrahub.io).
 In order to do that, please sign up for a free account at
 [console.terrahub.io](https://console.terrahub.io) and navigate to
-[Settings](https://console.terrahub.io/settings) to copy TerraHub token.
-Next, you can setup `THUB_TOKEN` environmental variable or update `token` value
-in `$HOME/.terrahub/.terrahub.json` global config file.
+[Settings](https://console.terrahub.io/settings) page to copy TerraHub Token.
+Next, you can setup TerraHub Token as `THUB_TOKEN` environmental variable or
+update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
+
+
+## [Examples](https://github.com/TerraHubCorp/terrahub/blob/master/docs/examples.md)
+
+* [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
+* [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
+
+
+## [Features](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features.md)
+
+1. [Make it easier and faster to create reusable terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features1.md)
+2. [Simplify and distribute the way terraform configuration is executed](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features2.md)
+3. [Accelerate and automate the testing of terraform commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features3.md)
+4. [Integrate and manage any existing terraform configuration](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features4.md)
+5. [Centralize cloud resources management through realtime dashboards](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features5.md)
+6. [Streamline integration and deployment with built-in CI and CD processes](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features6.md)
+7. [NO NEED to expose your private network to outside world at all](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features7.md)
+
+
+## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
 
 When running `terrahub --help`, you will get a list of commands, summarized below:
 
@@ -62,7 +76,6 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [output](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
 | [plan](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
 | [refresh](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
-| [show](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/show.md) | run `terraform show` across multiple terrahub components | :x: |
 | [workspace](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||
 | [build](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
@@ -70,86 +83,18 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [list](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
 
 
-## [Structure](https://github.com/TerraHubCorp/terrahub/blob/master/docs/structure.md)
+## [Automation](https://github.com/TerraHubCorp/terrahub/blob/master/docs/automation.md)
 
-You can use whatever structure you want, but we recommend you follow this one: 
+[Running Terraform in Automation](https://terraform.io/guides/running-terraform-in-automation.html)
+describes the value proposition of deploying regularly in production.
+Tools like [Astro](https://github.com/uber/astro),
+[Atlantis](https://github.com/runatlantis/atlantis) and
+[Terragrunt](https://github.com/gruntwork-io/terragrunt)
+partially cover automation workflow, but not deep enough.
 
-```text
-your-project
-├─ .terrahub
-│  ├─ s3
-│  │  ├── .terrahub.yml
-│  │  ├── README.md
-│  │  ├── default.tfvars
-│  │  ├── main.tf
-│  │  ├── output.tf
-│  │  ├── provider.tf
-│  │  └── variables.tf
-│  ├─ cloudfront
-│  │  ├── .terrahub.yml
-│  │  ├── README.md
-│  │  ├── default.tfvars
-│  │  ├── main.tf
-│  │  ├── output.tf
-│  │  ├── provider.tf
-│  │  └── variables.tf
-├─ .terrahub.yml
-├─ src
-└─ ...
-```
+TerraHub takes terraform automation to a new level of simplicity and
+built-in capabilities. Here below is how it works:
 
-> One exception: **No terraform scripts in root of your project!**
+![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
 
-
-## [Hooks](https://github.com/TerraHubCorp/terrahub/blob/master/docs/hooks.md)
-
-In order to provide you the best experience we have implemented hooks functionality for following actions: 
-
-* `terraform init`
-* `terraform workspace`
-* `terraform plan`
-* `terraform apply`
-* `terraform output`
-* `terraform destroy`
-
-All the hooks should return a Promise and look like: 
-
-* before hook:
-
-```javascript
-/**
- * @param {Object} moduleConfig
- * @returns {Promise}
- */
-function hook(moduleConfig) {
-  return Promise.resolve();
-}
-
-module.exports = hook;
-```
-
-* after hook:
-
-```javascript
-/**
- * @param {Object} moduleConfig
- * @param {Buffer} cmdResult
- * @returns {Promise}
- */
-function hook(moduleConfig, cmdResult) {
-  return Promise.resolve();
-}
-
-module.exports = hook;
-```
-
-Configuration example for plan (`.terrahub.json`):
-
-```text
-"hook": {
-    "plan": {
-        "before": "./hooks/plan/before.js",
-        "after": "./hooks/plan/after.js"
-    }
-}
-```
+To learn more, please visit [TerraHub Website](https://www.terrahub.io/how-it-works)
