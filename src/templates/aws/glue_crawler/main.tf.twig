@@ -1,0 +1,18 @@
+resource "aws_glue_crawler" "{{ name }}" {
+  database_name = "${var.glue_crawler_database_name}"
+  name          = "${var.glue_crawler_name}"
+  role          = "arn:aws:iam::${var.account_id}:role/${var.glue_crawler_iam_role_name}"
+  description   = "${var.glue_crawler_description}"
+  #classifiers   = "${var.glue_crawler_classifiers}"
+  #configuration = "${var.glue_crawler_configuration}"
+  #schedule      = "${var.glue_crawler_schedule}"
+  #table_prefix  = "${var.glue_crawler_table_prefix}"
+  s3_target {
+    path       = "s3://${var.glue_crawler_s3_target_path}"
+    exclusions =  "${var.glue_crawler_s3_target_exclusions}"
+  }
+  #schema_change_policy = {
+  #  delete_behavior = "${var.glue_crawler_delete_behavior}"
+  #  update_behavior = "${var.glue_crawler_update_behavior}"
+  #}
+}
