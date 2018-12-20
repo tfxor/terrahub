@@ -24,7 +24,7 @@ your-project
 └─ ...
 ```
 
-> One exception: **No terraform scripts in root of your project!**
+> NOTE: **AVOID terraform configurations in root of your project!**
 
 
 ## Return

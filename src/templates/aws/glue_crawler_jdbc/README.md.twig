@@ -1,0 +1,30 @@
+# aws_glue_crawler
+
+Manages a Glue Crawler. More information can be found in the AWS Glue Developer Guide
+
+## input variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+|account_id|The id of AWS account.|string||Yes|
+|region|This is the AWS region.|string|us-east-1|Yes|
+|glue_crawler_database_name|Glue database where results are written.|string|{{ name }}|No|
+|glue_crawler_name|Name of the crawler.|string|{{ name }}|No|
+|glue_crawler_iam_role_name|The IAM role friendly name (including path without leading slash), or NAME of an IAM role, used by the crawler to access other resources.|string||No|
+|glue_crawler_description|Description of the crawler.|string|Managed by TerraHub|No|
+|glue_crawler_classifiers|List of custom classifiers. By default, all AWS classifiers are included in a crawl, but these custom classifiers always override the default classifiers for a given classification.|list|[]|No|
+|glue_crawler_configuration|JSON string of configuration information.|string||No|
+|glue_crawler_schedule|A cron expression used to specify the schedule. For more information, see Time-Based Schedules for Jobs and Crawlers. For example, to run something every day at 12:15 UTC, you would specify: cron(15 12 * * ? *).|string|cron(15 12 * * ? *)|No|
+|glue_crawler_table_prefix|The table prefix used for catalog tables that are created.|string||No|
+|glue_crawler_jdbc_target_connection_name|The name of the connection to use to connect to the JDBC target.|string|{{ name }}|No|
+|glue_crawler_jdbc_target_path|The path of the JDBC target.|string||No|
+|glue_crawler_jdbc_target_exclusions|A list of glob patterns used to exclude from the crawl.|list|[]|No|
+|glue_crawler_delete_behavior|The deletion behavior when the crawler finds a deleted object. Valid values: LOG, DELETE_FROM_DATABASE, or DEPRECATE_IN_DATABASE. Defaults to DEPRECATE_IN_DATABASE.|string|DEPRECATE_IN_DATABASE|No|
+|glue_crawler_update_behavior|The update behavior when the crawler finds a changed schema. Valid values: LOG or UPDATE_IN_DATABASE. Defaults to UPDATE_IN_DATABASE.|string|UPDATE_IN_DATABASE|No|
+
+## output parameters
+
+| Name | Description | Type |
+|------|-------------|:----:|
+|id|Crawler name|string|
+|thub_id|Crawler name|string|
