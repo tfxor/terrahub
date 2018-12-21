@@ -1,4 +1,4 @@
-# Feature #2
+# Feature \#2
 
 ## Simplify and distribute the way terraform configuration is executed
 

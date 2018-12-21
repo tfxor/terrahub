@@ -1,4 +1,4 @@
-# Feature #5
+# Feature \#5
 
 ## Centralize cloud resources management through realtime dashboards
 

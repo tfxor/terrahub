@@ -1,6 +1,6 @@
 # Hooks
 
-In order to provide you the best experience we have implemented hooks functionality for following actions: 
+In order to provide you the best experience we have implemented hooks functionality for following actions:
 
 * `terraform init`
 * `terraform workspace`
@@ -39,7 +39,7 @@ function hook(moduleConfig, cmdResult) {
 module.exports = hook;
 ```
 
-Configuration example for plan (`.terrahub.json`):
+Configuration example for plan \(`.terrahub.json`\):
 
 ```text
 "hook": {

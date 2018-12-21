@@ -1,4 +1,4 @@
-# Feature #3
+# Feature \#3
 
 ## Accelerate and automate the testing of terraform commands
 

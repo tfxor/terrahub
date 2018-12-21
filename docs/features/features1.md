@@ -1,4 +1,4 @@
-# Feature #1
+# Feature \#1
 
 ## Make it easier and faster to create reusable terraform configuration
 

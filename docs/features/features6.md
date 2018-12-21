@@ -1,4 +1,4 @@
-# Feature #6
+# Feature \#6
 
 ## Streamline integration and deployment with built-in CI and CD processes
 

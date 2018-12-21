@@ -22,6 +22,7 @@ TerraHub ecosystem includes:
 * [TerraHub Console](https://console.terrahub.io)
 
   enterprise friendly GUI to show realtime executions, includes
+
   auditing and reporting capabilities for historical terraform runs
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
