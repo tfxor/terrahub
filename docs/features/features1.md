@@ -1,7 +1,8 @@
-# Feature #1
+# Feature \#1
 
 ## Make it easier and faster to create reusable terraform configuration
-```
+
+```text
 $ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
@@ -36,6 +37,7 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 -rw-r--r--  1 eugene  staff  2318 Apr 07 16:38 variables.tf
 ```
 
-
 ## Return
-Back to [all features](../features.md)
+
+Back to [all features](../features-1.md)
+
