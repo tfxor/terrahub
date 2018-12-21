@@ -1,6 +1,6 @@
 # terrahub build
 
-```text
+```
 Usage: terrahub build [options]
 
 terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
@@ -21,7 +21,6 @@ Options:
 ```
 
 To use terrahub build command you need to add your code in component terrahub configuration file. You can use the following template:
-
 ```yaml
 build:
   version: Version
@@ -71,6 +70,4 @@ build:
 For more details please visit [AWS CodeBuild User Guide](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)
 
 ## Return
-
-Back to [all commands](../commands-1.md)
-
+Back to [all commands](../commands.md)
