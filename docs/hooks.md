@@ -1,6 +1,6 @@
 # Hook
 
-In order to provide you the best experience we have implemented hooks functionality for following actions: 
+In order to provide you the best experience we have implemented hooks functionality for following actions:
 
 * `terraform init`
 * `terraform workspace`
@@ -39,7 +39,7 @@ function hook(moduleConfig, cmdResult) {
 module.exports = hook;
 ```
 
-Configuration example for plan (`.terrahub.json`):
+Configuration example for plan \(`.terrahub.json`\):
 
 ```text
 "hook": {
@@ -50,6 +50,7 @@ Configuration example for plan (`.terrahub.json`):
 }
 ```
 
-
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](https://github.com/TerraHubCorp/terrahub/tree/0b5cea1de3eac64419791bb8b07d60777bab1a6a/docs/readme.md)
+
