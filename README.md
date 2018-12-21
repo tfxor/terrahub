@@ -2,26 +2,33 @@
 
 ## Quick Links
 
-[Install](#install) | [Examples](#examples) | [Features](#features) | [Commands](#commands) | [Automation](#automation)
+[TerraHub CLI](#terrahub-cli) | [TerraHub API](#terrahub-api) | [TerraHub Console](#terrahub-console) | [Install](#install) | [Examples](#examples) | [Features](#features) | [Commands](#commands) | [Automation](#automation)
 
-TerraHub ecosystem includes:
+## TerraHub CLI
 
-* [TerraHub CLI](https://www.npmjs.com/package/terrahub) -
-  terraform automation and orchestration tool \(open source\)
+terraform automation and orchestration tool
+- built using [node.js](https://nodejs.org)
+- published using [npm](https://www.npmjs.com/package/terrahub)
+- managed using [github](https://github.com/TerraHubCorp/terrahub)
+- documented using [gitbook](https://www1.terrahub.io)
 
-* [TerraHub API](https://www.terrahub.io/api) -
-  data and logs management, requires token to collect anything
+## TerraHub API
 
-* [TerraHub Console](https://console.terrahub.io) -
-  enterprise friendly GUI to show realtime executions, as well as
-  auditing and reporting capabilities for historical terraform runs
+data and logs management, requires token to collect anything
+- built using [node.js](https://nodejs.org)
+- documented using [swagger](https://www.terrahub.io/api)
 
-![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
+## TerraHub Console
+
+enterprise friendly GUI to show realtime executions, as well as
+auditing and reporting capabilities for historical terraform runs
+- built using [vue.js](https://vuejs.org)
+- published using [terrahub](https://console.terrahub.io)
 
 
 ## [Install](https://github.com/TerraHubCorp/terrahub/blob/master/docs/install.md)
 
-TerraHub CLI is built using [nodejs](https://nodejs.org) and published using [npm](https://www.npmjs.com). Quick steps to get started:
+Quick steps to get started:
 
 ```shell
 $ node -v
@@ -41,6 +48,8 @@ $ terrahub --help
 
 
 ## [Examples](https://github.com/TerraHubCorp/terrahub/blob/master/docs/examples.md)
+
+![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
