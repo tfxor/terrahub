@@ -2,7 +2,8 @@
 
 ## Quick Links
 
-[TerraHub CLI](#terrahub-cli) | [TerraHub API](#terrahub-api) | [TerraHub Console](#terrahub-console) | [Install](#install) | [Examples](#examples) | [Features](#features) | [Commands](#commands) | [Automation](#automation)
+[TerraHub CLI](#terrahub-cli) | [TerraHub API](#terrahub-api) | [TerraHub Console](#terrahub-console) | [Install CLI](#install-cli) | [Examples](#examples) | [Learn More](#learn-more)
+
 
 ## TerraHub CLI
 
@@ -12,21 +13,25 @@ terraform automation and orchestration tool
 - managed using [github](https://github.com/TerraHubCorp/terrahub)
 - documented using [gitbook](https://www1.terrahub.io)
 
+
 ## TerraHub API
 
 data and logs management, requires token to collect anything
 - built using [node.js](https://nodejs.org)
+- managed using [swagger](https://www.terrahub.io/api)
 - documented using [swagger](https://www.terrahub.io/api)
+
 
 ## TerraHub Console
 
 enterprise friendly GUI to show realtime executions, as well as
 auditing and reporting capabilities for historical terraform runs
 - built using [vue.js](https://vuejs.org)
+- managed using [webpack](https://webpack.js.org)
 - published using [terrahub](https://console.terrahub.io)
 
 
-## [Install](https://github.com/TerraHubCorp/terrahub/blob/master/docs/install.md)
+## Install CLI
 
 Quick steps to get started:
 
@@ -47,7 +52,7 @@ $ terrahub --help
 > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically collect your data and upload to [TerraHub API](https://www.terrahub.io), which is further visualized in [TerraHub Console](https://console.terrahub.io). In order to do that, please sign up for a free account at [console.terrahub.io](https://console.terrahub.io) and navigate to [Settings](https://console.terrahub.io/settings) page to copy TerraHub Token. Next, you can setup TerraHub Token as `THUB_TOKEN` environmental variable or update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
 
 
-## [Examples](https://github.com/TerraHubCorp/terrahub/blob/master/docs/examples.md)
+## Examples
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
@@ -55,25 +60,25 @@ $ terrahub --help
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
 
 
-## [Features](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features.md)
+## Features
 
 1. [Feature \#1](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features1.md) -
-    Make it easier and faster to create reusable terraform configuration
+Make it easier and faster to create reusable terraform configuration
 2. [Feature \#2](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features2.md) -
-    Simplify and distribute the way terraform configuration is executed
+Simplify and distribute the way terraform configuration is executed
 3. [Feature \#3](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features3.md) -
-    Accelerate and automate the testing of terraform commands
+Accelerate and automate the testing of terraform commands
 4. [Feature \#4](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features4.md) -
-    Integrate and manage any existing terraform configuration
+Integrate and manage any existing terraform configuration
 5. [Feature \#5](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features5.md) -
-    Centralize cloud resources management through realtime dashboards
+Centralize cloud resources management through realtime dashboards
 6. [Feature \#6](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features6.md) -
-    Streamline integration and deployment with built-in CI and CD processes
+Streamline integration and deployment with built-in CI and CD processes
 7. [Feature \#7](https://github.com/TerraHubCorp/terrahub/blob/master/docs/features/features7.md) -
-    NO NEED to expose your private network to outside world at all
+NO NEED to expose your private network to outside world at all
 
 
-## [Commands](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands.md)
+## Commands
 
 When running `terrahub --help`, you will get a list of commands, summarized below:
 
@@ -98,7 +103,7 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [list](https://github.com/TerraHubCorp/terrahub/blob/master/docs/commands/list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
 
 
-## [Automation](https://github.com/TerraHubCorp/terrahub/blob/master/docs/automation.md)
+## Automation
 
 Official guide for [Running Terraform in Automation](https://terraform.io/guides/running-terraform-in-automation.html) describes the value proposition of deploying regularly in production. Tools like [Astro](https://github.com/uber/astro), [Atlantis](https://github.com/runatlantis/atlantis) and [Terragrunt](https://github.com/gruntwork-io/terragrunt) partially cover automation workflow needs, but not deep enough.
 
