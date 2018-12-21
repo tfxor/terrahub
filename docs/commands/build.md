@@ -72,4 +72,5 @@ For more details please visit [AWS CodeBuild User Guide](https://docs.aws.amazon
 
 ## Return
 
-Back to [all commands](README.md)
+Back to [all commands](../commands-1.md)
+

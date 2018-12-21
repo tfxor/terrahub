@@ -2,7 +2,7 @@
 
 ## Simplify and distribute the way terraform configuration is executed
 
-```shell
+```text
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .
 [s3-bucket] Initializing provider plugins...
@@ -31,7 +31,7 @@ $ terrahub apply --auto-approve
 ❌ [s3-bucket] status code: 409, request id: E953BE0A2F944F7A, host id: VTvexuPQ4uMRAuihHqk/RxyGf+6fyGoMygzs1u3I96Hn2LwsBjRNbAEQQz6knE2GA20+GF7Fjvo=
 ```
 
-
 ## Return
 
-Back to [all features](README.md)
+Back to [all features](../features-1.md)
+

@@ -2,7 +2,7 @@
 
 ## Centralize cloud resources management through realtime dashboards
 
-```shell
+```text
 $ terrahub list --depth 4
 💡 Querying cloud accounts, regions and services. It might take a while...
 Compiling the list of cloud resources. Use --depth, -d option to view details about projects, accounts, regions and services.
@@ -22,7 +22,7 @@ Please visit https://www.terrahub.io and register to see ALL cloud resources.
 ✅ Done
 ```
 
-
 ## Return
 
-Back to [all features](README.md)
+Back to [all features](../features-1.md)
+

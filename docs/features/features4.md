@@ -2,7 +2,7 @@
 
 ## Integrate and manage any existing terraform configuration
 
-```shell
+```text
 $ cd ./security-terraform/
 
 $ ls -alR
@@ -56,7 +56,7 @@ lrwxr-xr-x  1 eugene  staff    22 Apr 07 21:31 provider.vars.tf -> ../provider.v
 -rw-r--r--  1 eugene  staff    30 Apr 07 21:27 variables.tf
 ```
 
-
 ## Return
 
-Back to [all features](README.md)
+Back to [all features](../features-1.md)
+
