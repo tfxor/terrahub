@@ -1,7 +1,8 @@
 # Feature #4
 
 ## Integrate and manage any existing terraform configuration
-```
+
+```shell
 $ cd ./security-terraform/
 
 $ ls -alR
@@ -57,4 +58,5 @@ lrwxr-xr-x  1 eugene  staff    22 Apr 07 21:31 provider.vars.tf -> ../provider.v
 
 
 ## Return
-Back to [all features](../features.md)
+
+Back to [all features](README.md)

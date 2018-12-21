@@ -1,4 +1,4 @@
-# Hook
+# Hooks
 
 In order to provide you the best experience we have implemented hooks functionality for following actions: 
 
@@ -52,4 +52,5 @@ Configuration example for plan (`.terrahub.json`):
 
 
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](README.md)

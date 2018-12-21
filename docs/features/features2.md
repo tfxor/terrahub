@@ -1,7 +1,8 @@
 # Feature #2
 
 ## Simplify and distribute the way terraform configuration is executed
-```
+
+```shell
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .
 [s3-bucket] Initializing provider plugins...
@@ -32,4 +33,5 @@ $ terrahub apply --auto-approve
 
 
 ## Return
-Back to [all features](../features.md)
+
+Back to [all features](README.md)

@@ -2,7 +2,8 @@
 
 
 ## [1. Make it easier and faster to create reusable terraform configuration](features/features1.md)
-```
+
+```shell
 $ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
@@ -13,7 +14,8 @@ More details [here](features/features1.md)
 
 
 ## [2. Simplify and distribute the way terraform configuration is executed](features/features2.md)
-```
+
+```shell
 $ terrahub init
 💡 [s3-bucket] terraform init -no-color .
 [s3-bucket]
@@ -30,7 +32,8 @@ More details [here](features/features2.md)
 
 
 ## [3. Accelerate and automate the testing of terraform commands](features/features3.md)
-```
+
+```shell
 $ terrahub run --apply --destroy --auto-approve
 💡 [s3-bucket] terraform init -no-color .
 [s3-bucket]
@@ -45,7 +48,8 @@ More details [here](features/features3.md)
 
 
 ## [4. Integrate and manage any existing terraform configuration](features/features4.md)
-```
+
+```shell
 $ cd ./security-terraform/
 
 $ terrahub project -n "Security_Terraform"
@@ -59,7 +63,8 @@ More details [here](features/features4.md)
 
 
 ## [5. Centralize cloud resources management through realtime dashboards](features/features5.md)
-```
+
+```shell
 $ terrahub list --depth 4
 💡 Querying cloud accounts, regions and services. It might take a while...
 Compiling the list of cloud resources. Use --depth, -d option to view details about projects, accounts, regions and services.
@@ -71,6 +76,7 @@ More details [here](features/features5.md)
 
 
 ## [6. Streamline integration and deployment with built-in CI and CD processes](features/features6.md)
+
 ```
 TBU
 ```
@@ -79,6 +85,7 @@ More details [here](features/features6.md)
 
 
 ## [7. NO NEED to expose your private network to outside world at all](features/features7.md)
+
 ```
 TBU
 ```
@@ -87,4 +94,5 @@ More details [here](features/features7.md)
 
 
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](../README.md)

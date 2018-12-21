@@ -1,8 +1,13 @@
-# TerraHub
+---
+name: TerraHub
+description: DevOps Hub for Terraform Automation
+---
 
-## DevOps Hub for Terraform Automation
-Quick Links: [Install](#install) | [Examples](#examples) |
-  [Features](#features) | [Commands](#commands) | [Automation](#automation)
+# Welcome to TerraHub
+
+## Quick Links
+
+[Install](#install) | [Examples](#examples) | [Features](#features) | [Commands](#commands) | [Automation](#automation)
 
 TerraHub ecosystem includes:
 * [TerraHub CLI](https://www.npmjs.com/package/terrahub) -

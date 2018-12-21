@@ -1,7 +1,8 @@
 # Feature #1
 
 ## Make it easier and faster to create reusable terraform configuration
-```
+
+```shell
 $ mkdir ./thub-demo/ && cd ./thub-demo/
 
 $ terrahub project -n "thub-demo"
@@ -38,4 +39,5 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 
 
 ## Return
-Back to [all features](../features.md)
+
+Back to [all features](README.md)
