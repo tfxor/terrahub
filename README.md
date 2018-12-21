@@ -89,9 +89,7 @@ Getting started with TerraHub CLI is pretty straightforward:
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
-More examples:
+More Resources:
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
-
-
-## [Continue Learning about TerraHub](https://www1.terrahub.io)
+* [Official TerraHub Documentation](https://www1.terrahub.io)
