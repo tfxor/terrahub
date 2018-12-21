@@ -26,6 +26,7 @@ your-project
 
 > NOTE: **AVOID terraform configurations in root of your project!**
 
-
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](https://github.com/TerraHubCorp/terrahub/tree/a9d1822eae83783b84e5398738e2812effddc46d/docs/readme.md)
+

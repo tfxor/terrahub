@@ -1,7 +1,8 @@
-# Feature #3
+# Feature \#3
 
 ## Accelerate and automate the testing of terraform commands
-```
+
+```text
 $ terrahub run --apply --destroy --auto-approve
 💡 [s3-bucket] terraform init -no-color .
 [s3-bucket] Initializing provider plugins...
@@ -23,6 +24,7 @@ persisted to local or remote state storage.
 ✅ Done
 ```
 
-
 ## Return
-Back to [all features](../features.md)
+
+Back to [all features](../features-1.md)
+
