@@ -1,7 +1,11 @@
 # Table of Contents
 
 * [Welcome to TerraHub](README.md)
-* [Getting Started](docs/README.md)
+* [What is TerraHub?](docs/README.md)
+  * [TerraHub CLI](docs/terrahub/cli.md)
+  * [TerraHub API](docs/terrahub/api.md)
+  * [TerraHub Console](docs/terrahub/console.md)
+* [Getting Started](docs/getting-started.md)
   * [Install](docs/install.md)
   * [Examples](docs/examples.md)
   * [Features](docs/features/README.md)
