@@ -35,7 +35,7 @@ auditing and reporting capabilities for historical terraform runs
 
 Getting started with TerraHub CLI is pretty straightforward.
 
-1. Check if `node` is installed:
+* Check if `node` is installed:
 
 ```shell
 node -v
@@ -49,7 +49,7 @@ v6.10.0
 
 > NOTE: If `node` is missing, check out [Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/)
 
-2. Next, check if `npm` is installed:
+* Next, check if `npm` is installed:
 
 ```shell
 npm -v
@@ -63,7 +63,7 @@ v3.10.0
 
 > NOTE: If `npm` is missing, check out [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-3. Finally, install `terrahub`:
+* Finally, install `terrahub`:
 
 ```shell
 npm install -g terrahub
@@ -76,7 +76,7 @@ The output should look similar to the one below (do not copy paste):
 └── terrahub@0.0.1
 ```
 
-4. Test if `terrahub` cli was installed properly:
+* Test if `terrahub` cli was installed properly:
 
 ```shell
 terrahub --help
