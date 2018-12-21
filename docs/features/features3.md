@@ -25,6 +25,6 @@ persisted to local or remote state storage.
 ```
 
 
-## Return
+## Go Back
 
-Back to [all features](README.md)
+[Go Back to Features](README.md)

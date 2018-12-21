@@ -18,6 +18,6 @@ Options:
 ```
 
 
-## Return
+## Go Back
 
-Back to [all commands](README.md)
+[Go Back to Commands](README.md)

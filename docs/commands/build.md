@@ -70,6 +70,6 @@ build:
 
 For more details please visit [AWS CodeBuild User Guide](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)
 
-## Return
+## Go Back
 
-Back to [all commands](README.md)
+[Go Back to Commands](README.md)

@@ -5,6 +5,6 @@
 TBU
 
 
-## Return
+## Go Back
 
-Back to [all features](README.md)
+[Go Back to Features](README.md)

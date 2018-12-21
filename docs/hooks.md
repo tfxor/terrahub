@@ -51,6 +51,6 @@ Configuration example for plan \(`.terrahub.json`\):
 ```
 
 
-## Return
+## Go Back
 
-Back to [readme](README.md)
+[Go Back to Getting Started](README.md)

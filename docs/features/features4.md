@@ -57,6 +57,6 @@ lrwxr-xr-x  1 eugene  staff    22 Apr 07 21:31 provider.vars.tf -> ../provider.v
 ```
 
 
-## Return
+## Go Back
 
-Back to [all features](README.md)
+[Go Back to Features](README.md)

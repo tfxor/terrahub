@@ -18,6 +18,6 @@ $ terrahub --help
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
 
 
-## Return
+## Go Back
 
-Back to [readme](README.md)
+[Go Back to Getting Started](README.md)

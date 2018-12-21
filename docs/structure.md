@@ -27,5 +27,6 @@ your-project
 > NOTE: **AVOID terraform configurations in root of your project!**
 
 
-## Return
-Back to [readme](readme.md)
+## Go Back
+
+[Go Back to Getting Started](README.md)

@@ -38,6 +38,6 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 ```
 
 
-## Return
+## Go Back
 
-Back to [all features](README.md)
+[Go Back to Features](README.md)

@@ -6,7 +6,9 @@ TerraHub takes terraform automation to a new level of simplicity and built-in ca
 
 ![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
 
+To learn more, please visit [TerraHub Website](https://www.terrahub.io/how-it-works)
 
-## Return
 
-Back to [readme](README.md)
+## Go Back
+
+[Go Back to Getting Started](README.md)

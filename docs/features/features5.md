@@ -23,6 +23,6 @@ Please visit https://www.terrahub.io and register to see ALL cloud resources.
 ```
 
 
-## Return
+## Go Back
 
-Back to [all features](README.md)
+[Go Back to Features](README.md)
