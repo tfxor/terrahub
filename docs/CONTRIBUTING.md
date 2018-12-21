@@ -6,13 +6,13 @@ We've put together the following guidelines to help you figure out where you can
 
 ## Table of Contents
 
-1. [Types of contributions we're looking for](./#types-of-contributions-were-looking-for)
-2. [Ground rules & expectations](./#ground-rules--expectations)
-3. [How to contribute](./#how-to-contribute)
-4. [Style guide](./#style-guide)
-5. [Setting up your environment](./#setting-up-your-environment)
-6. [Contribution review process](./#contribution-review-process)
-7. [Community](./#community)
+1. [Types of contributions we're looking for](#types-of-contributions-were-looking-for)
+2. [Ground rules & expectations](#ground-rules--expectations)
+3. [How to contribute](#how-to-contribute)
+4. [Style guide](#style-guide)
+5. [Setting up your environment](#setting-up-your-environment)
+6. [Contribution review process](#contribution-review-process)
+7. [Community](#community)
 
 
 ## Types of contributions we're looking for

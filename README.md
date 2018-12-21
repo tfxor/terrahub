@@ -7,7 +7,7 @@ description: DevOps Hub for Terraform Automation
 
 ## Quick Links
 
-[Install](./#install) | [Examples](./#examples) | [Features](./#features) | [Commands](./#commands) | [Automation](./#automation)
+[Install](#install) | [Examples](#examples) | [Features](#features) | [Commands](#commands) | [Automation](#automation)
 
 TerraHub ecosystem includes:
 
