@@ -47,7 +47,6 @@ The output should look similar to the one below (do not copy paste):
 v6.10.0
 ```
 
-> 
 {% hint style="info" %}
 If `node` is missing, check out [Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/)
 {% endhint %}
