@@ -1,7 +1,9 @@
 # Features
 
 
-## [1. Make it easier and faster to create reusable terraform configuration](features/features1.md)
+## [Feature \#1](features/features1.md)
+
+### Make it easier and faster to create reusable terraform configuration
 
 ```shell
 $ mkdir ./thub-demo/ && cd ./thub-demo/
@@ -13,7 +15,9 @@ $ terrahub project -n "thub-demo"
 More details [here](features/features1.md)
 
 
-## [2. Simplify and distribute the way terraform configuration is executed](features/features2.md)
+## [Feature \#2](features/features2.md)
+
+### Simplify and distribute the way terraform configuration is executed
 
 ```shell
 $ terrahub init
@@ -31,7 +35,9 @@ $ terrahub init
 More details [here](features/features2.md)
 
 
-## [3. Accelerate and automate the testing of terraform commands](features/features3.md)
+## [Feature \#3](features/features3.md)
+
+### Accelerate and automate the testing of terraform commands
 
 ```shell
 $ terrahub run --apply --destroy --auto-approve
@@ -47,7 +53,9 @@ $ terrahub run --apply --destroy --auto-approve
 More details [here](features/features3.md)
 
 
-## [4. Integrate and manage any existing terraform configuration](features/features4.md)
+## [Feature \#4](features/features4.md)
+
+### Integrate and manage any existing terraform configuration
 
 ```shell
 $ cd ./security-terraform/
@@ -62,7 +70,9 @@ $ terrahub component -n "iam-idp" -d ./iam-idp/
 More details [here](features/features4.md)
 
 
-## [5. Centralize cloud resources management through realtime dashboards](features/features5.md)
+## [Feature \#5](features/features5.md)
+
+### Centralize cloud resources management through realtime dashboards
 
 ```shell
 $ terrahub list --depth 4
@@ -75,7 +85,9 @@ Compiling the list of cloud resources. Use --depth, -d option to view details ab
 More details [here](features/features5.md)
 
 
-## [6. Streamline integration and deployment with built-in CI and CD processes](features/features6.md)
+## [Feature \#6](features/features6.md)
+
+### Streamline integration and deployment with built-in CI and CD processes
 
 ```
 TBU
@@ -84,7 +96,9 @@ TBU
 More details [here](features/features6.md)
 
 
-## [7. NO NEED to expose your private network to outside world at all](features/features7.md)
+## [Feature \#7](features/features7.md)
+
+### NO NEED to expose your private network to outside world at all
 
 ```
 TBU

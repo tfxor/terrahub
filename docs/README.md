@@ -1,8 +1,3 @@
----
-name: TerraHub
-description: DevOps Hub for Terraform Automation
----
-
 # Welcome to TerraHub
 
 ## Quick Links
