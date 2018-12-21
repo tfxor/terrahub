@@ -1,14 +1,19 @@
 # Commands
 
-TerraHub CLI is built using [nodejs](https://nodejs.org) and published using [npm](https://www.npmjs.com). Quick steps to get started:
+TerraHub CLI is built using [nodejs](https://nodejs.org) and published using
+[npm](https://www.npmjs.com). Quick steps to get started:
+
 ```shell
 $ node -v
 v6.10.0
+
 $ npm -v
 v3.10.0
+
 $ npm install -g terrahub
 ~/.nvm/versions/node/v6.10.0/lib
 └── terrahub@0.0.1
+
 $ terrahub --help
 ```
 
@@ -36,4 +41,5 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 
 
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](../README.md)

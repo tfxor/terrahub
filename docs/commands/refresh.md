@@ -1,6 +1,6 @@
 # terrahub refresh
 
-```
+```text
 Usage: terrahub refresh [options]
 
 terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
@@ -21,4 +21,5 @@ Options:
 
 
 ## Return
-Back to [all commands](../commands.md)
+
+Back to [all commands](README.md)

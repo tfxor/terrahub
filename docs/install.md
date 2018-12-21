@@ -24,4 +24,5 @@ update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
 
 
 ## Return
-Back to [readme](readme.md)
+
+Back to [readme](README.md)
