@@ -1,10 +1,5 @@
 # Feature \#6
 
-## Streamline integration and deployment with built-in CI and CD processes
+## Streamlined Integration and Deployment with Built-in CI and CD Processes
 
 TBU
-
-
-## Return
-
-Back to [all features](README.md)
