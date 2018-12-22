@@ -37,8 +37,3 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 | [build](build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
 | [run](run.md) | execute automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
 | [list](list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
-
-
-## Go Back
-
-[Go Back to What is TerraHub](../README.md)

@@ -21,8 +21,3 @@ Projects
 Please visit https://www.terrahub.io and register to see ALL cloud resources.
 ✅ Done
 ```
-
-
-## Go Back
-
-[Go Back to Features](README.md)

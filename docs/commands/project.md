@@ -12,8 +12,3 @@ Options:
   --env, -e 		 Workspace environment
   --help, -h 		 Show list of available commands
 ```
-
-
-## Go Back
-
-[Go Back to Commands](README.md)

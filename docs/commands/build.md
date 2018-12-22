@@ -69,7 +69,3 @@ build:
 ```
 
 For more details please visit [AWS CodeBuild User Guide](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)
-
-## Go Back
-
-[Go Back to Commands](README.md)

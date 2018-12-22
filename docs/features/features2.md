@@ -30,8 +30,3 @@ $ terrahub apply --auto-approve
     * aws_s3_bucket.s3-bucket: Error creating S3 bucket: BucketAlreadyExists: The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.
 ❌ [s3-bucket] status code: 409, request id: E953BE0A2F944F7A, host id: VTvexuPQ4uMRAuihHqk/RxyGf+6fyGoMygzs1u3I96Hn2LwsBjRNbAEQQz6knE2GA20+GF7Fjvo=
 ```
-
-
-## Go Back
-
-[Go Back to Features](README.md)

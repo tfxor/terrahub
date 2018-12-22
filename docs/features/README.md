@@ -122,8 +122,3 @@ TBU
 ```
 
 More details [here](features7.md)
-
-
-## Go Back
-
-[Go Back to What is TerraHub](../README.md)

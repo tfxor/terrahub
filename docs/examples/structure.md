@@ -25,8 +25,3 @@ your-project
 ```
 
 > NOTE: **AVOID terraform configurations in root of your project!**
-
-
-## Go Back
-
-[Go Back to Demos and Examples](README.md)

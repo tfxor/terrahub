@@ -36,8 +36,3 @@ auditing and reporting capabilities for historical terraform runs
 * built using [vue.js](https://vuejs.org)
 * managed using [webpack](https://webpack.js.org)
 * published using [terrahub](https://console.terrahub.io)
-
-
-## Go Back
-
-[Go Back to Welcome to TerraHub](../README.md)

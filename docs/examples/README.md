@@ -16,8 +16,3 @@ $ terrahub --help
 
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
-
-
-## Go Back
-
-[Go Back to What is TerraHub](../README.md)

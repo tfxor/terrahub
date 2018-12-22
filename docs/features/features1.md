@@ -36,8 +36,3 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 -rw-r--r--  1 eugene  staff   115 Apr 07 16:38 provider.tf
 -rw-r--r--  1 eugene  staff  2318 Apr 07 16:38 variables.tf
 ```
-
-
-## Go Back
-
-[Go Back to Features](README.md)

@@ -23,8 +23,3 @@ persisted to local or remote state storage.
 [s3-bucket] Destroy complete! Resources: 0 destroyed.
 ✅ Done
 ```
-
-
-## Go Back
-
-[Go Back to Features](README.md)
