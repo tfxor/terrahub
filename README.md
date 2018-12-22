@@ -49,10 +49,10 @@ Getting started with TerraHub CLI is pretty straightforward:
 
   > NOTE: If `npm` is missing, check out [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-2. Finally, install `terrahub`:
+2. Install `terrahub` globally using `npm`:
 
   ```shell
-  npm install -g terrahub
+  npm install --global terrahub
   ```
 
   The output should look similar to the one below (do not copy paste):
