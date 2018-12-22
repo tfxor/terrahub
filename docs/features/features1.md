@@ -1,6 +1,6 @@
 # Feature \#1
 
-## Make it easier and faster to create reusable terraform configuration
+## Easier and Faster Create Reusable Terraform Configurations
 
 ```shell
 $ mkdir ./thub-demo/ && cd ./thub-demo/
@@ -36,8 +36,3 @@ drwxr-xr-x  3 eugene  staff   102 Apr 07 16:38 ..
 -rw-r--r--  1 eugene  staff   115 Apr 07 16:38 provider.tf
 -rw-r--r--  1 eugene  staff  2318 Apr 07 16:38 variables.tf
 ```
-
-
-## Return
-
-Back to [all features](README.md)
