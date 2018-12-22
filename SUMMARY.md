@@ -36,3 +36,5 @@
 * [CODE OF CONDUCT](docs/CODE_OF_CONDUCT.md)
 * [CONTRIBUTING](docs/CONTRIBUTING.md)
 * [LICENSE](LICENSE.md)
+* [PRIVACY POLICY](docs/terrahub/privacy.md)
+* [TERMS AND CONDITIONS](docs/terrahub/terms.md)
