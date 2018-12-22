@@ -2,21 +2,7 @@
 
 Getting started with TerraHub CLI is pretty straightforward:
 
-1. Check if `node` is installed:
-
-  ```shell
-  node -v
-  ```
-
-  The output should look similar to the one below (do not copy paste):
-
-  ```text
-  v6.10.0
-  ```
-
-  > NOTE: If `node` is missing, check out [Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/)
-
-2. Next, check if `npm` is installed:
+1. Next, check if `npm` is installed:
 
   ```shell
   npm -v
@@ -30,7 +16,7 @@ Getting started with TerraHub CLI is pretty straightforward:
 
   > NOTE: If `npm` is missing, check out [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-3. Finally, install `terrahub`:
+2. Finally, install `terrahub`:
 
   ```shell
   npm install -g terrahub
@@ -43,7 +29,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   └── terrahub@0.0.1
   ```
 
-4. Test if `terrahub` cli was installed properly:
+3. Test if `terrahub` cli was installed properly:
 
   ```shell
   terrahub --help
