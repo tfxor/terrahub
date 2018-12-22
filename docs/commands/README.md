@@ -1,45 +1,60 @@
 # Commands
 
-TerraHub CLI is built using [nodejs](https://nodejs.org) and published using
-[npm](https://www.npmjs.com). Quick steps to get started:
+Getting started with TerraHub CLI is pretty straightforward:
 
-```shell
-$ node -v
-v6.10.0
+1. Next, check if `npm` is installed:
 
-$ npm -v
-v3.10.0
+  ```shell
+  npm -v
+  ```
 
-$ npm install -g terrahub
-~/.nvm/versions/node/v6.10.0/lib
-└── terrahub@0.0.1
+  The output should look similar to the one below (do not copy paste):
 
-$ terrahub --help
-```
+  ```text
+  v3.10.0
+  ```
+
+  > NOTE: If `npm` is missing, check out [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
+2. Install `terrahub` globally using `npm`:
+
+  ```shell
+  npm install --global terrahub
+  ```
+
+  The output should look similar to the one below (do not copy paste):
+
+  ```text
+  ~/.nvm/versions/node/v6.10.0/lib
+  └── terrahub@0.0.1
+  ```
+
+3. Test if `terrahub` cli was installed properly:
+
+  ```shell
+  terrahub --help
+  ```
+
+  > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically collect your data and upload to [TerraHub API](https://www.terrahub.io/api), which is further visualized in [TerraHub Console](https://console.terrahub.io). In order to do that, please sign up for a free account at [console.terrahub.io](https://console.terrahub.io) and navigate to [Settings](https://console.terrahub.io/settings) page to copy TerraHub Token. Next, setup TerraHub Token as `THUB_TOKEN` environmental variable or update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
 
 When running `terrahub --help`, you will get a list of commands, summarized below:
 
 | Command  | Description | Status |
 | :---:    | :---        | :---:  |
 || **# terrahub management** ||
-| [project](commands/project.md) | create new or define existing folder as project that manages terraform configuration | :heavy_check_mark: |
-| [component](commands/component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
-| [configure](commands/configure.md) | add, change or remove config parameters from terrahub config files | :heavy_check_mark: |
-| [graph](commands/graph.md) | show dependencies graph for terraform configuration mapped as terrahub components | :heavy_check_mark: |
+| [project](project.md) | create new or define existing folder as project that manages terraform configuration | :heavy_check_mark: |
+| [component](component.md) | create new or include existing terraform configuration into current terrahub project | :heavy_check_mark: |
+| [configure](configure.md) | add, change or remove config parameters from terrahub config files | :heavy_check_mark: |
+| [graph](graph.md) | show dependencies graph for terraform configuration mapped as terrahub components | :heavy_check_mark: |
 || **# terraform execution** ||
-| [apply](commands/apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
-| [destroy](commands/destroy.md) | run `terraform destroy` across multiple terrahub components | :heavy_check_mark: |
-| [init](commands/init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
-| [output](commands/output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
-| [plan](commands/plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
-| [refresh](commands/refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
-| [workspace](commands/workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
+| [apply](apply.md) | run `terraform apply` across multiple terrahub components | :heavy_check_mark: |
+| [destroy](destroy.md) | run `terraform destroy` across multiple terrahub components | :heavy_check_mark: |
+| [init](init.md) | run `terraform init` across multiple terrahub components | :heavy_check_mark: |
+| [output](output.md) | run `terraform output` across multiple terrahub components | :heavy_check_mark: |
+| [plan](plan.md) | run `terraform plan` across multiple terrahub components | :heavy_check_mark: |
+| [refresh](refresh.md) | run `terraform refresh` across multiple terrahub components | :heavy_check_mark: |
+| [workspace](workspace.md) | run `terraform workspace` across multiple terrahub components | :heavy_check_mark: |
 || **# cloud automation** ||
-| [build](commands/build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
-| [run](commands/run.md) | execute automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
-| [list](commands/list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
-
-
-## Return
-
-Back to [readme](../README.md)
+| [build](build.md) | build code used by terraform configuration (e.g. AWS Lambda, Google Functions) | :heavy_check_mark: |
+| [run](run.md) | execute automated workflow terraform init > workspace > plan > apply | :heavy_check_mark: |
+| [list](list.md) | list cloud resources by projects > accounts > regions > services > resources | :heavy_check_mark: |
