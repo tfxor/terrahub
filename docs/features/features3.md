@@ -1,6 +1,6 @@
 # Feature \#3
 
-## Accelerate and automate the testing of terraform commands
+## Automated and Accelerated Method of Testing Terraform Commands
 
 ```shell
 $ terrahub run --apply --destroy --auto-approve

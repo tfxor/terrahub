@@ -20,4 +20,4 @@ $ terrahub --help
 
 ## Go Back
 
-[Go Back to Getting Started](README.md)
+[Go Back to What is TerraHub](../README.md)

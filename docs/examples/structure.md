@@ -29,4 +29,4 @@ your-project
 
 ## Go Back
 
-[Go Back to Getting Started](README.md)
+[Go Back to Demos and Examples](README.md)

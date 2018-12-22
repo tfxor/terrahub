@@ -1,6 +1,6 @@
 # Feature \#4
 
-## Integrate and manage any existing terraform configuration
+## Integrated Process to Manage Existing Terraform Configurations
 
 ```shell
 $ cd ./security-terraform/

@@ -40,4 +40,4 @@ auditing and reporting capabilities for historical terraform runs
 
 ## Go Back
 
-[Go Back to Welcome to TerraHub](../README.md)
+[Go Back to Welcome to TerraHub](../../README.md)

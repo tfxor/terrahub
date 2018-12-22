@@ -11,4 +11,4 @@ To learn more, please visit [TerraHub Website](https://www.terrahub.io/how-it-wo
 
 ## Go Back
 
-[Go Back to Getting Started](README.md)
+[Go Back to What is TerraHub](../README.md)

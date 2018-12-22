@@ -1,6 +1,6 @@
 # Feature \#7
 
-## NO NEED to expose your private network to outside world at all
+## NO NEED to Expose Private Networks to Outside World at All
 
 TBU
 

@@ -1,6 +1,6 @@
 # Feature \#5
 
-## Centralize cloud resources management through realtime dashboards
+## Centralized Management of Cloud Resources Through Realtime Dashboards
 
 ```shell
 $ terrahub list --depth 4

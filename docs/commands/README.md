@@ -41,4 +41,4 @@ When running `terrahub --help`, you will get a list of commands, summarized belo
 
 ## Go Back
 
-[Go Back to Getting Started](../README.md)
+[Go Back to What is TerraHub](../README.md)
