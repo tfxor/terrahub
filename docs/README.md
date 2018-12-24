@@ -4,12 +4,12 @@
 
 TerraHub is the DevOps Hub for Terraform Automation, which includes:
 * [TerraHub CLI](#terrahub-cli) -
-  terraform automation and orchestration tool \(open source\)
+terraform automation and orchestration tool \(open source\)
 * [TerraHub API](#terrahub-api) -
-  data and logs management, requires token to collect anything
+data and logs management, requires token to collect anything
 * [TerraHub Console](#terrahub-console) -
-  enterprise friendly GUI to show realtime executions, as well as
-  auditing and reporting capabilities for historical terraform runs
+enterprise friendly GUI to show realtime executions, as well as
+auditing and reporting capabilities for historical terraform runs
 
 
 ## TerraHub CLI
@@ -18,7 +18,7 @@ terraform automation and orchestration tool
 * built using [node.js](https://nodejs.org)
 * published using [npm](https://www.npmjs.com/package/terrahub)
 * managed using [github](https://github.com/TerraHubCorp/terrahub)
-* documented using [gitbook](https://www1.terrahub.io)
+* documented using [gitbook](https://docs.terrahub.io)
 
 
 ## TerraHub API
