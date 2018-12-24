@@ -13,7 +13,7 @@ terraform automation and orchestration tool
 * built using [node.js](https://nodejs.org)
 * published using [npm](https://www.npmjs.com/package/terrahub)
 * managed using [github](https://github.com/TerraHubCorp/terrahub)
-* documented using [gitbook](https://www1.terrahub.io)
+* documented using [gitbook](https://docs.terrahub.io)
 
 
 ## TerraHub API
@@ -80,4 +80,4 @@ Getting started with TerraHub CLI is pretty straightforward:
 Examples and Documentation:
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
-* [Official TerraHub Documentation](https://www1.terrahub.io)
+* [Official TerraHub Documentation](https://docs.terrahub.io)
