@@ -20,7 +20,7 @@ NO NEED to expose your private network to outside world at all
 
 ## [Feature \#1](features1.md)
 
-### Make it easier and faster to create reusable terraform configuration
+### Easier and Faster Create Reusable Terraform Configurations
 
 ```shell
 $ mkdir ./thub-demo/ && cd ./thub-demo/
@@ -34,7 +34,7 @@ More details [here](features1.md)
 
 ## [Feature \#2](features2.md)
 
-### Simplify and distribute the way terraform configuration is executed
+### Simplified and Distributed Process of Executing Terraform Configurations
 
 ```shell
 $ terrahub init
@@ -54,7 +54,7 @@ More details [here](features2.md)
 
 ## [Feature \#3](features3.md)
 
-### Accelerate and automate the testing of terraform commands
+### Automated and Accelerated Process of Testing Terraform Commands
 
 ```shell
 $ terrahub run --apply --destroy --auto-approve
@@ -72,7 +72,7 @@ More details [here](features3.md)
 
 ## [Feature \#4](features4.md)
 
-### Integrate and manage any existing terraform configuration
+### Integrated Process to Manage Existing Terraform Configurations
 
 ```shell
 $ cd ./security-terraform/
@@ -89,7 +89,7 @@ More details [here](features4.md)
 
 ## [Feature \#5](features5.md)
 
-### Centralize cloud resources management through realtime dashboards
+### Centralized Management of Cloud Resources Through Realtime Dashboards
 
 ```shell
 $ terrahub list --depth 4
@@ -104,7 +104,7 @@ More details [here](features5.md)
 
 ## [Feature \#6](features6.md)
 
-### Streamline integration and deployment with built-in CI and CD processes
+### Streamlined Integration and Deployment with Built-in CI and CD Processes
 
 ```
 TBU
@@ -115,7 +115,7 @@ More details [here](features6.md)
 
 ## [Feature \#7](features7.md)
 
-### NO NEED to expose your private network to outside world at all
+### NO NEED to Expose Private Networks to Outside World at All
 
 ```
 TBU

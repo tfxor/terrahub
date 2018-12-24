@@ -1,6 +1,6 @@
 # Feature \#2
 
-## Simplified and Distributed Method to Execute Terraform Configurations
+## Simplified and Distributed Process of Executing Terraform Configurations
 
 ```shell
 $ terrahub init
