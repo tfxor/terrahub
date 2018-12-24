@@ -4,6 +4,8 @@
 
 [TerraHub CLI](#terrahub-cli) | [TerraHub API](#terrahub-api) | [TerraHub Console](#terrahub-console) | [Install CLI](#install-cli) | [Examples and More](#examples)
 
+Official TerraHub Documentation: https://docs.terrahub.io
+
 
 ## TerraHub CLI
 
@@ -11,7 +13,7 @@ terraform automation and orchestration tool
 * built using [node.js](https://nodejs.org)
 * published using [npm](https://www.npmjs.com/package/terrahub)
 * managed using [github](https://github.com/TerraHubCorp/terrahub)
-* documented using [gitbook](https://www1.terrahub.io)
+* documented using [gitbook](https://docs.terrahub.io)
 
 
 ## TerraHub API
@@ -41,7 +43,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   npm -v
   ```
 
-  The output should look similar to the one below (do not copy paste):
+  The output should look similar to the one below (no need to copy paste):
 
   ```text
   v3.10.0
@@ -55,7 +57,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   npm install --global terrahub
   ```
 
-  The output should look similar to the one below (do not copy paste):
+  The output should look similar to the one below (no need to copy paste):
 
   ```text
   ~/.nvm/versions/node/v6.10.0/lib
@@ -78,4 +80,4 @@ Getting started with TerraHub CLI is pretty straightforward:
 Examples and Documentation:
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
-* [Official TerraHub Documentation](https://www1.terrahub.io)
+* [Official TerraHub Documentation](https://docs.terrahub.io)

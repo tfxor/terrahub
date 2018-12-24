@@ -18,7 +18,7 @@ terraform automation and orchestration tool
 * built using [node.js](https://nodejs.org)
 * published using [npm](https://www.npmjs.com/package/terrahub)
 * managed using [github](https://github.com/TerraHubCorp/terrahub)
-* documented using [gitbook](https://www1.terrahub.io)
+* documented using [gitbook](https://docs.terrahub.io)
 
 
 ## TerraHub API
