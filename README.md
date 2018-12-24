@@ -43,7 +43,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   npm -v
   ```
 
-  The output should look similar to the one below (do not copy paste):
+  The output should look similar to the one below (no need to copy paste):
 
   ```text
   v3.10.0
@@ -57,7 +57,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   npm install --global terrahub
   ```
 
-  The output should look similar to the one below (do not copy paste):
+  The output should look similar to the one below (no need to copy paste):
 
   ```text
   ~/.nvm/versions/node/v6.10.0/lib
