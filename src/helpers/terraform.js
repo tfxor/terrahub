@@ -8,21 +8,21 @@ const logger = require('./logger');
 const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
-const { homePath, config } = require('../parameters');
+const { homePath, config, fetch } = require('../parameters');
 const { extend, spawner, exponentialBackoff } = require('../helpers/util');
-const ConfigLoader = require('../config-loader')
+const ConfigLoader = require('../config-loader');
+const { execSync } = require('child_process');
+const url = require('url');
 
 class Terraform {
   /**
    * @param {Object} config
    */
   constructor(config) {
-    ConfigLoader.getEnvVarsFromAPI().then(data => {
-      this._config = extend({}, [this._defaults(), config]);
-      this._tf = this._config.terraform;
-      this._metadata = new Metadata(this._config);
-    })
-    
+    this.envVars = process.env;
+    this._config = extend({}, [this._defaults(), config]);
+    this._tf = this._config.terraform;
+    this._metadata = new Metadata(this._config);
 
     this._showLogs = process.env.silent === 'false' && !process.env.format;
     this._isWorkspaceSupported = false;
@@ -150,7 +150,18 @@ class Terraform {
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
+      .then(() => this._fetchEnvironmentVariables())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
+  }
+
+  /**
+   * Fetch environment variables from api
+   * @return {Promise}
+   */
+  _fetchEnvironmentVariables() {
+    return this._getEnvVarsFromAPI().then(data => {
+      return Object.assign(this.envVars, data);
+    });
   }
 
   /**
@@ -198,7 +209,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    console.log('this',this._config)
+    console.log('this', this._config);
     const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
@@ -409,7 +420,7 @@ class Terraform {
     }
     return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
-      env: process.env,
+      env: this.envVars,
       shell: true
     });
   }
@@ -466,6 +477,46 @@ class Terraform {
    */
   _out(data) {
     return `[${this.getName()}] ${data.toString()}`;
+  }
+
+  /**
+   * Get Resources from TerraHub API
+   * @return {Promise|*}
+   */
+  _getEnvVarsFromAPI() {
+    if (!config.token) {
+      return Promise.resolve([]);
+    }
+    try {
+      const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
+      console.log('this._config.project.root', this._config.project.root);
+      const data = Buffer.from(urlGet).toString('utf-8');
+      const isUrl = !!url.parse(data).host;
+      // works for gitlab/github/bitbucket, add azure, google, amazon
+      const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
+      const sshData = /\:(.*).*(?=\.)/;
+
+      const gitlab = /\@(.*)\.(.*)(.*)(?=\.)/;
+      let bitbucket;
+      const github = bitbucket = /\@([^.]+)/;
+
+      const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
+      const provider = gitlab ? data.match(gitlab)[1] : data.match(github)[1];
+
+      if (repo && provider) {
+        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+          if (Object.keys(json.data).length) {
+            let test = JSON.parse(json.data.env_var);
+            return Object.keys(test).reduce((acc, key) => {
+              acc[key] = test[key].value;
+              return acc;
+            }, {});
+          }
+        });
+      }
+    } catch (err) {
+      return Promise.resolve({});
+    }
   }
 }
 
