@@ -46,14 +46,6 @@ class Terraform {
   }
 
   /**
-   * @param {Object} data
-   * @returns {Object}
-   */
-  getExtendedProcessEnv(data) {
-    Object.assign(process.env, data);
-  }
-
-  /**
    * Terraform module name
    * @return {String}
    */
