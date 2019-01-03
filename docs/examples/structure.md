@@ -24,8 +24,4 @@ your-project
 └─ ...
 ```
 
-> One exception: **No terraform scripts in root of your project!**
-
-
-## Return
-Back to [readme](readme.md)
+> NOTE: **AVOID terraform configurations in root of your project!**

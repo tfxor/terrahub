@@ -38,7 +38,7 @@ class Terrahub {
     };
 
     if (err) {
-      error = new Error(err.message || err || 'Unknown message');
+      error = new Error(err.message || err || 'Unknown error');
       payload.error = error.message.trim();
     }
 
