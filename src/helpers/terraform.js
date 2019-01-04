@@ -483,16 +483,10 @@ class Terraform {
       const data = Buffer.from(urlGet).toString('utf-8');
       const isUrl = !!url.parse(data).host;
       // works for gitlab/github/bitbucket, add azure, google, amazon
-      const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
-      const sshData = /\:(.*).*(?=\.)/;
-      // works for github, gitlab both url and ssh, and only for ssh bitbucket 
-      const gitLabHubBucket= /(?:@([^.]+))|\/\/([^.?@]+)/;
-      // works if bitbucket is url
-      const bitBucketUrl = /(?:@([^.]+))/;
+      const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
+      const sshData = /@([^.]*).*:(.*).*(?=\.)/;
 
-      const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
-      const provider = isUrl ? data.match(bitBucketUrl)[1] : data.match(gitLabHubBucket)[1];
-
+      const [ , provider, repo ] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
         return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
