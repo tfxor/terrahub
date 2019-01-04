@@ -201,6 +201,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
+    console.log('hey', this.envVars)
     const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
@@ -484,12 +485,10 @@ class Terraform {
       const isUrl = !!url.parse(data).host;
       // works for gitlab/github/bitbucket, add azure, google, amazon
       const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
-      const sshData = /\:(.*).*(?=\.)/;
-      // works for github, gitlab both url and ssh, and only for ssh bitbucket 
-      const gitLabHubBucket= /(?:@([^.]+))/;
+      const sshData = /@([^.]*).*:(.*).*(?=\.)/;
 
-      const repo = isUrl ? data.match(urlData)[2] : data.match(sshData)[1];
-      const provider = isUrl ? data.match(urlData)[1] : data.match(gitLabHubBucket)[1];
+      const repo = isUrl ? data.match(urlData)[2] : data.match(sshData)[2];
+      const provider = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
 
       if (repo && provider) {
         return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
