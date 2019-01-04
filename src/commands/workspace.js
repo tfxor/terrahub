@@ -54,7 +54,6 @@ class WorkspaceCommand extends TerraformCommand {
     }
 
     const { name, code } = this.getProjectConfig();
-
     if (config.isDefault) {
       return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }

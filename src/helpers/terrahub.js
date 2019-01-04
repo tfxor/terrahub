@@ -157,11 +157,11 @@ class Terrahub {
    */
   _spawn(binary, args, options = {}) {
     return spawner(binary, args, Object.assign({
-      cwd: path.join(this._config.project.root, this._config.root),
-      shell: true
-    }, options),
-    err => logger.error(`[${this._config.name}] ${err.toString()}`),
-    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+        cwd: path.join(this._config.project.root, this._config.root),
+        shell: true
+      }, options),
+      err => logger.error(`[${this._config.name}] ${err.toString()}`),
+      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
   }
 
