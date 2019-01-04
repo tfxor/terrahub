@@ -477,23 +477,22 @@ class Terraform {
    */
   _getEnvVarsFromAPI() {
     if (!config.token) {
-      return Promise.resolve([]);
+      return Promise.resolve({});
     }
     try {
       const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
-      console.log('this._config.project.root', this._config.project.root);
       const data = Buffer.from(urlGet).toString('utf-8');
       const isUrl = !!url.parse(data).host;
       // works for gitlab/github/bitbucket, add azure, google, amazon
       const urlData = /(?:.*?\/){3}(.*)(?=\.)/;
       const sshData = /\:(.*).*(?=\.)/;
-
-      const gitlab = /\@(.*)\.(.*)(.*)(?=\.)/;
-      let bitbucket;
-      const github = bitbucket = /\@([^.]+)/;
+      // works for github, gitlab both url and ssh, and only for ssh bitbucket 
+      const gitLabHubBucket= /(?:@([^.]+))|\/\/([^.?@]+)/;
+      // works if bitbucket is url
+      const bitBucketUrl = /(?:@([^.]+))/;
 
       const repo = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
-      const provider = gitlab ? data.match(gitlab)[1] : data.match(github)[1];
+      const provider = isUrl ? data.match(bitBucketUrl)[1] : data.match(gitLabHubBucket)[1];
 
       if (repo && provider) {
         return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
