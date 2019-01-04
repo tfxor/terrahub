@@ -201,7 +201,6 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    console.log('this', this._config);
     const promiseFunction = () => this.run('init',
       ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
 
