@@ -487,8 +487,6 @@ class Terraform {
       const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
       const sshData = /@([^.]*).*:(.*).*(?=\.)/;
 
-      // const repo = isUrl ? data.match(urlData)[2] : data.match(sshData)[2];
-      // const provider = isUrl ? data.match(urlData)[1] : data.match(sshData)[1];
       const [ , provider, repo ] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
         return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
