@@ -8,7 +8,7 @@ TerraHub is the DevOps Hub for Terraform Automation, which includes:
 * [TerraHub API](#terrahub-api) -
   data and logs management, requires token to collect anything
 * [TerraHub Console](#terrahub-console) -
-  enterprise friendly GUI to show realtime executions, as well as
+  enterprise friendly GUI to show realtime terraform executions, as well as
   auditing and reporting capabilities for historical terraform runs
 
 
@@ -31,7 +31,7 @@ data and logs management, requires token to collect anything
 
 ## TerraHub Console
 
-enterprise friendly GUI to show realtime executions, as well as
+enterprise friendly GUI to show realtime terraform executions, as well as
 auditing and reporting capabilities for historical terraform runs
 * built using [vue.js](https://vuejs.org)
 * managed using [webpack](https://webpack.js.org)
