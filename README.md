@@ -26,7 +26,7 @@ data and logs management, requires token to collect anything
 
 ## TerraHub Console
 
-enterprise friendly GUI to show realtime executions, as well as
+enterprise friendly GUI to show realtime terraform executions, as well as
 auditing and reporting capabilities for historical terraform runs
 * built using [vue.js](https://vuejs.org)
 * managed using [webpack](https://webpack.js.org)
@@ -70,14 +70,17 @@ Getting started with TerraHub CLI is pretty straightforward:
   terrahub --help
   ```
 
-  > NOTE: [TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically collect your data and upload to [TerraHub API](https://www.terrahub.io/api), which is further visualized in [TerraHub Console](https://console.terrahub.io). In order to do that, please sign up for a free account at [console.terrahub.io](https://console.terrahub.io) and navigate to [Settings](https://console.terrahub.io/settings) page to copy TerraHub Token. Next, setup TerraHub Token as `THUB_TOKEN` environmental variable or update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
+### TerraHub Token
+
+[TerraHub CLI](https://www.npmjs.com/package/terrahub) doesn't magically collect your data and upload to [TerraHub API](https://www.terrahub.io/api), which is further visualized in [TerraHub Console](https://console.terrahub.io). In order to do that, please sign up for a free account at [console.terrahub.io](https://console.terrahub.io) and navigate to [Settings](https://console.terrahub.io/settings) page to copy TerraHub Token. Next, setup TerraHub Token as `THUB_TOKEN` environmental variable or update `token` value in global config file - `$HOME/.terrahub/.terrahub.json`.
 
 
 ## Examples
 
 ![TerraHub CLI and TerraHub Console in Action](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-in-action.gif "TerraHub CLI and TerraHub Console in Action")
 
-Examples and Documentation:
+More Examples:
 * [Terraform Automation using AWS Provider](https://github.com/TerraHubCorp/demo-terraform-automation-aws)
 * [Terraform Automation using Google Provider](https://github.com/TerraHubCorp/demo-terraform-automation-google)
-* [Official TerraHub Documentation](https://docs.terrahub.io)
+
+Official TerraHub Documentation: https://docs.terrahub.io
