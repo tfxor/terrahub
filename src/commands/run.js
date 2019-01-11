@@ -29,7 +29,6 @@ class RunCommand extends TerraformCommand {
       printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-
     return this._getPromise()
       .then(answer => {
         if (answer) {
@@ -124,7 +123,7 @@ class RunCommand extends TerraformCommand {
         break;
     }
 
-    return this.checkDependencies(config, direction)
+    return this.checkDependencies(config, direction);
   }
 }
 
