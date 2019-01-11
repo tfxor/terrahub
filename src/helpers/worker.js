@@ -67,13 +67,10 @@ function jitMiddleware(config) {
     let data = { [it]: cfg.template[it] };
 
     switch (it) {
-      case 'terraform':
-        name = 'backend.tf';
-        break;
       case 'resource':
         name = 'main.tf';
         break;
-      case 'values':
+      case 'tfvars':
         name = `${cfg.cfgEnv === 'default' ? '' : 'workspace/'}${cfg.cfgEnv}.tfvars`;
         data = cfg.template[it];
         break;
