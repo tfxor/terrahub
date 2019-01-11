@@ -2,9 +2,9 @@
 
 const fse = require('fs-extra');
 const Args = require('../src/helpers/args-parser');
-const { toMd5 } = require('../src/helpers/util');
+const { config } = require('./parameters');
 const ConfigLoader = require('./config-loader');
-const { config, homePath } = require('./parameters');
+const { toMd5, homePath } = require('../src/helpers/util');
 
 /**
  * @abstract

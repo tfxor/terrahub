@@ -2,6 +2,7 @@
 
 const fse = require('fs-extra');
 const path = require('path');
+const { homePath } = require('../helpers/util');
 
 class Metadata {
   /**
@@ -10,8 +11,6 @@ class Metadata {
   constructor(config) {
     this._cfg = config;
     this._base = false;
-    this._root = path.join(this._cfg.project.root, this._cfg.root);
-
     this._isRemote = false;
     const remoteStatePath = this._getRemoteStatePath();
 
@@ -31,12 +30,21 @@ class Metadata {
   }
 
   /**
+   * @return {String}
+   */
+  getRoot() {
+    return this._cfg.isJit
+      ? homePath('jit', this._cfg.hash)
+      : path.join(this._cfg.project.root, this._cfg.root);
+  }
+
+  /**
    * Re-init base path
    */
   reBase() {
-    const workspaceDir = path.join(this._root, Metadata.STATE_DIR, this._cfg.terraform.workspace);
+    const workspaceDir = path.join(this.getRoot(), Metadata.STATE_DIR, this._cfg.terraform.workspace);
 
-    this._base = fse.existsSync(workspaceDir) ? workspaceDir : this._root;
+    this._base = fse.existsSync(workspaceDir) ? workspaceDir : this.getRoot();
   }
 
   /**
@@ -66,7 +74,7 @@ class Metadata {
    * @private
    */
   _getRemoteStatePath() {
-    return path.join(this._root, '.terraform', Metadata.STATE);
+    return path.join(this.getRoot(), '.terraform', Metadata.STATE);
   }
 
   /**
@@ -74,14 +82,12 @@ class Metadata {
    * @private
    */
   _getBackupDir() {
-    const backup = this._cfg.terraform.backup;
+    const backup = this._cfg.terraform.backup || '.backup';
     const workspace = this._cfg.terraform.workspace;
+    const realRootPath = path.join(this._cfg.project.root, this._cfg.root);
 
-    return backup ?
-      path.join(this._root, backup, workspace === 'default' ? './' : workspace) :
-      this._isRemote ?
-        path.join(this._root, '.terraform', '.backup', workspace === 'default' ? './' : workspace) :
-        path.join(this._base, '.backup');
+    // @todo discuss w/ Eugene how and where to backup
+    return path.join(realRootPath, backup, workspace === 'default' ? './' : workspace);
   }
 
   /**

@@ -3,15 +3,16 @@
 const fs = require('fs');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
+const path = require('path');
 const Twig = require('twig');
+const logger = require('./logger');
+const treeify = require('treeify');
 const ReadLine = require('readline');
 const mergeWith = require('lodash.mergewith');
 const { spawn } = require('child-process-promise');
-const { createHash } = require('crypto');
-const { EOL, platform, cpus } = require('os');
 const childProcess = require('child_process');
-const logger = require('./logger');
-const treeify = require('treeify');
+const { createHash } = require('crypto');
+const { EOL, platform, cpus, homedir } = require('os');
 
 const rl = ReadLine.createInterface({
   input: process.stdin,
@@ -33,6 +34,15 @@ function toMd5(text) {
  */
 function uuid() {
   return toMd5(Date.now().toString());
+}
+
+/**
+ * Get terrahub home path
+ * @param {String} suffix
+ * @returns {*}
+ */
+function homePath(...suffix) {
+  return path.join(homedir(), '.terrahub', ...suffix);
 }
 
 /**
@@ -202,11 +212,10 @@ function spawner(command, args, options, onStderr, onStdout) {
     onStdout(data);
   });
 
-  return promise.then(() => Buffer.concat(stdout))
-    .catch(err => {
-      err.message = stderr;
-      throw err;
-    });
+  return promise.then(() => Buffer.concat(stdout)).catch(err => {
+    err.message = stderr;
+    throw err;
+  });
 }
 
 /**
@@ -341,11 +350,10 @@ function physicalCpuCount() {
   return amount;
 }
 
-
 /**
  * @param {Error} error
  * @param {String} appPath
- * @private
+ * @return {*}
  */
 function handleGitDiffError(error, appPath) {
   logger.debug(error);
@@ -371,6 +379,7 @@ module.exports = {
   toMd5,
   extend,
   spawner,
+  homePath,
   yamlToJson,
   jsonToYaml,
   familyTree,
@@ -380,10 +389,8 @@ module.exports = {
   askQuestion,
   isAwsNameValid,
   exponentialBackoff,
-  setTimeoutPromise,
   physicalCpuCount,
   printConfigAsList,
-  printConfigCommaSeparated,
   askForApprovement,
   handleGitDiffError
 };

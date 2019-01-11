@@ -1,9 +1,10 @@
 'use strict';
 
+const fse = require('fs-extra');
 const cluster = require('cluster');
 const Terrahub = require('../helpers/terrahub');
 const BuildHelper = require('./build-helper');
-const { promiseSeries } = require('../helpers/util');
+const { promiseSeries, homePath, extend } = require('../helpers/util');
 
 /**
  * Parse terraform actions
@@ -28,11 +29,69 @@ function getTasks(config) {
 }
 
 /**
+ * Transform template config
+ * @param {Object} config
+ * @return {Object}
+ */
+function transformConfig(config) {
+  config.isJit = config.hasOwnProperty('template');
+
+  if (config.isJit) {
+    config.template.locals = extend(config.template.locals, [{
+      timestamp: Date.now(),
+      project: {
+        path: config.project.root,
+        name: config.project.name,
+        code: config.project.code
+      }
+    }]);
+  }
+
+  return config;
+}
+
+/**
+ * JIT middleware (config to files)
+ * @param {Object} config
+ * @return {Promise}
+ */
+function jitMiddleware(config) {
+  const cfg = transformConfig(config);
+
+  if (!cfg.isJit) {
+    return Promise.resolve(config);
+  }
+
+  const promises = Object.keys(cfg.template).map(it => {
+    let name = `${it}.tf`;
+    let data = { [it]: cfg.template[it] };
+
+    switch (it) {
+      case 'terraform':
+        name = 'backend.tf';
+        break;
+      case 'resource':
+        name = 'main.tf';
+        break;
+      case 'values':
+        name = `${cfg.cfgEnv === 'default' ? '' : 'workspace/'}${cfg.cfgEnv}.tfvars`;
+        data = cfg.template[it];
+        break;
+    }
+
+    return fse.outputJson(homePath('jit', cfg.hash, name), data, { spaces: 2 });
+  });
+
+  return Promise.all(promises).then(() => Promise.resolve(cfg));
+}
+
+/**
  * BladeRunner
  * @param {Object} config
  */
 function run(config) {
-  promiseSeries(getTasks(config), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})))
+  jitMiddleware(config)
+    .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
         delete lastResult.buffer;

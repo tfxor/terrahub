@@ -1,21 +1,10 @@
 'use strict';
 
-const os = require('os');
 const fse = require('fs-extra');
 const path = require('path');
 const Args = require('../src/helpers/args-parser');
 const Fetch = require('../src/helpers/fetch');
-const { extend } = require('./helpers/util');
-
-/**
- * Get home path
- * @param {String} suffix
- * @returns {*}
- * @private
- */
-function _homePath(...suffix) {
-  return path.join(os.homedir(), '.terrahub', ...suffix);
-}
+const { extend, homePath } = require('./helpers/util');
 
 /**
  * Get environment
@@ -41,7 +30,7 @@ function _isHelp(args) {
   return args.help || args.h || args._.includes('help') || false;
 }
 
-const cfgPath = _homePath('.terrahub.json');
+const cfgPath = homePath('.terrahub.json');
 const templates = path.join(__dirname, 'templates');
 const args = Args.parse(process.argv.slice(2));
 
@@ -75,14 +64,13 @@ const isDefault = cfg.env === 'default';
 module.exports = {
   args: args,
   fetch: new Fetch(apiBase, cfg.token),
-  homePath: _homePath,
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
   cfgPath: cfgPath,
   config: {
     api: cfg.api,
     env: cfg.env,
-    home: _homePath(),
+    home: homePath(),
     token: cfg.token,
     format: cfg.format,
     retryCount: cfg.retryCount,
