@@ -120,7 +120,11 @@ class Terraform {
     const result = [];
 
     this._tf.varFile.forEach(fileName => {
-      result.push(`-var-file='${path.join(this.getRoot(), fileName)}'`);
+      const varFile = path.join(this.getRoot(), fileName);
+
+      if (fs.existsSync(varFile)) {
+        result.push(`-var-file='${varFile}'`);
+      }
     });
 
     return result;
