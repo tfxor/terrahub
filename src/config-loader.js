@@ -33,7 +33,9 @@ class ConfigLoader {
    */
   _defaults() {
     return {
+      cfgEnv: config.env,
       project: this.getProjectConfig(),
+      terraform: {},
       dependsOn: [],
       children: [],
       hook: {},

@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const url = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
@@ -8,11 +9,9 @@ const logger = require('./logger');
 const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
-const { homePath, config, fetch } = require('../parameters');
-const { extend, spawner, exponentialBackoff } = require('../helpers/util');
-const ConfigLoader = require('../config-loader');
 const { execSync } = require('child_process');
-const url = require('url');
+const { config, fetch } = require('../parameters');
+const { extend, spawner, exponentialBackoff, homePath } = require('../helpers/util');
 
 class Terraform {
   /**
@@ -68,7 +67,9 @@ class Terraform {
    * @return {String}
    */
   getRoot() {
-    return path.join(this._config.project.root, this._config.root);
+    return this._config.isJit
+      ? homePath('jit', this._config.hash)
+      : path.join(this._config.project.root, this._config.root);
   }
 
   /**
@@ -76,13 +77,6 @@ class Terraform {
    */
   getBinary() {
     return homePath('terraform', this.getVersion(), 'terraform');
-  }
-
-  /**
-   * @return {String}
-   */
-  getResource() {
-    return this.getRoot();
   }
 
   /**
@@ -173,7 +167,7 @@ class Terraform {
    * @private
    */
   _checkResourceDir() {
-    return fse.ensureDir(this.getResource());
+    return fse.ensureDir(this.getRoot());
   }
 
   /**
@@ -496,7 +490,9 @@ class Terraform {
               return acc;
             }, {});
           }
-        });
+        }).catch(() => Promise.resolve({}));
+      } else {
+        return Promise.resolve({});
       }
     } catch (err) {
       return Promise.resolve({});

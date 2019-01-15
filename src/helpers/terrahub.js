@@ -2,8 +2,8 @@
 
 const path = require('path');
 const logger = require('./logger');
-const Dictionary = require('./dictionary');
 const Terraform = require('../helpers/terraform');
+const Dictionary = require('./dictionary');
 const { config, fetch } = require('../parameters');
 const { promiseSeries, toMd5, spawner } = require('../helpers/util');
 
@@ -157,7 +157,10 @@ class Terrahub {
    * @private
    */
   _spawn(binary, args, options = {}) {
-    return spawner(binary, args, Object.assign({
+    return spawner(
+      binary,
+      args,
+      Object.assign({
         cwd: path.join(this._config.project.root, this._config.root),
         shell: true
       }, options),

@@ -4,7 +4,7 @@ const os = require('os');
 const fse = require('fs-extra');
 const url = require('url');
 const download = require('download');
-const { homePath } = require('../parameters');
+const { homePath } = require('../helpers/util');
 
 /**
  * Terraform binaries downloader
