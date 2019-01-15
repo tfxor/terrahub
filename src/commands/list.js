@@ -7,9 +7,9 @@ const fse = require('fs-extra');
 const path = require('path');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
-const { toMd5 } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { fetch, homePath, config, templates } = require('../parameters');
+const { toMd5, homePath } = require('../helpers/util');
+const { fetch, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
   /**

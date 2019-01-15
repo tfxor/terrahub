@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const url = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
@@ -8,17 +9,20 @@ const logger = require('./logger');
 const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
-const { homePath, config } = require('../parameters');
-const { extend, spawner, exponentialBackoff } = require('../helpers/util');
+const { execSync } = require('child_process');
+const { config, fetch } = require('../parameters');
+const { extend, spawner, exponentialBackoff, homePath } = require('../helpers/util');
 
 class Terraform {
   /**
    * @param {Object} config
    */
   constructor(config) {
+    this.envVars = process.env;
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._metadata = new Metadata(this._config);
+
     this._showLogs = process.env.silent === 'false' && !process.env.format;
     this._isWorkspaceSupported = false;
   }
@@ -63,7 +67,9 @@ class Terraform {
    * @return {String}
    */
   getRoot() {
-    return path.join(this._config.project.root, this._config.root);
+    return this._config.isJit
+      ? homePath('jit', this._config.hash)
+      : path.join(this._config.project.root, this._config.root);
   }
 
   /**
@@ -71,13 +77,6 @@ class Terraform {
    */
   getBinary() {
     return homePath('terraform', this.getVersion(), 'terraform');
-  }
-
-  /**
-   * @return {String}
-   */
-  getResource() {
-    return this.getRoot();
   }
 
   /**
@@ -137,7 +136,18 @@ class Terraform {
     return this._checkTerraformBinary()
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
+      .then(() => this._fetchEnvironmentVariables())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
+  }
+
+  /**
+   * Fetch environment variables from api
+   * @return {Promise}
+   */
+  _fetchEnvironmentVariables() {
+    return this._getEnvVarsFromAPI().then(data => {
+      return Object.assign(this.envVars, data);
+    });
   }
 
   /**
@@ -157,7 +167,7 @@ class Terraform {
    * @private
    */
   _checkResourceDir() {
-    return fse.ensureDir(this.getResource());
+    return fse.ensureDir(this.getRoot());
   }
 
   /**
@@ -393,10 +403,9 @@ class Terraform {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
-
     return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
-      env: process.env,
+      env: this.envVars,
       shell: true
     });
   }
@@ -453,6 +462,41 @@ class Terraform {
    */
   _out(data) {
     return `[${this.getName()}] ${data.toString()}`;
+  }
+
+  /**
+   * Get Resources from TerraHub API
+   * @return {Promise|*}
+   */
+  _getEnvVarsFromAPI() {
+    if (!config.token) {
+      return Promise.resolve({});
+    }
+    try {
+      const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
+      const data = Buffer.from(urlGet).toString('utf-8');
+      const isUrl = !!url.parse(data).host;
+      // works for gitlab/github/bitbucket, add azure, google, amazon
+      const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
+      const sshData = /@([^.]*).*:(.*).*(?=\.)/;
+
+      const [ , provider, repo ] = isUrl ? data.match(urlData) : data.match(sshData);
+      if (repo && provider) {
+        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+          if (Object.keys(json.data).length) {
+            let test = JSON.parse(json.data.env_var);
+            return Object.keys(test).reduce((acc, key) => {
+              acc[key] = test[key].value;
+              return acc;
+            }, {});
+          }
+        }).catch(() => Promise.resolve({}));
+      } else {
+        return Promise.resolve({});
+      }
+    } catch (err) {
+      return Promise.resolve({});
+    }
   }
 }
 
