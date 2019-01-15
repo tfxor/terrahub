@@ -3,5 +3,4 @@ project:
   code: '59d5adf8'
 
 terraform:
-  varFile:
-    - 'default.tfvars'
+  varFile: ['default.tfvars']
