@@ -490,7 +490,9 @@ class Terraform {
               return acc;
             }, {});
           }
-        });
+        }).catch(() => Promise.resolve({}));
+      } else {
+        return Promise.resolve({});
       }
     } catch (err) {
       return Promise.resolve({});
