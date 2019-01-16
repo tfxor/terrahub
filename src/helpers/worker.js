@@ -38,11 +38,17 @@ function transformConfig(config) {
   config.isJit = config.hasOwnProperty('template');
 
   if (config.isJit) {
+    const componentPath = path.join(config.project.root, config.root);
+
+    if (!config.mapping.length) {
+      config.mapping.push(componentPath);
+    }
+
     config.template.locals = extend(config.template.locals, [{
       timestamp: Date.now(),
       component: {
         name: config.name,
-        path: path.join(config.project.root, config.root)
+        path: componentPath
       },
       project: {
         path: config.project.root,
@@ -89,14 +95,10 @@ function jitMiddleware(config) {
     return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
   });
 
-  const filterRegEx = /\.terrahub.*(json|yml|yaml)$/;
-  const componentPath = path.join(config.project.root, config.root);
-  const copyParams = {
-    overwrite: true,
-    filter: (src, dest) => !filterRegEx.test(src)
-  };
+  const src = path.join(config.project.root, config.root);
+  const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
-  return fse.copy(componentPath, tmpPath, copyParams)
+  return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
     .then(() => Promise.all(promises))
     .then(() => Promise.resolve(cfg));
 }

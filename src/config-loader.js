@@ -34,11 +34,12 @@ class ConfigLoader {
     return {
       cfgEnv: config.env,
       project: this.getProjectConfig(),
-      terraform: {},
-      dependsOn: [],
-      children: [],
       hook: {},
       build: {},
+      mapping: [],
+      children: [],
+      terraform: {},
+      dependsOn: [],
       env: { variables: {} }
     };
   }
