@@ -73,8 +73,8 @@ class Terrahub {
       if (options.skip) {
         return this._on({ status: Dictionary.REALTIME.SKIP })
           .then(res => {
-            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. 
-              Infrastructure is up-to-date.'`);
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
+              `'No changes. Infrastructure is up-to-date.'`);
             return res;
           });
       } else {
