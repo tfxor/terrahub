@@ -93,6 +93,15 @@ class S3Helper {
       );
     });
   }
+
+  /**
+   * Metadata bucket name
+   * @returns {String}
+   * @constructor
+   */
+  static get METADATA_BUCKET() {
+    return 'data-lake-terrahub-us-east-1';
+  }
 }
 
 module.exports = S3Helper;
