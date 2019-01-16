@@ -17,6 +17,7 @@ class ConfigLoader {
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
+    // @todo remove if ci.mapping moved to component.mapping
     this._projectCi = {};
     this._format = '.' + config.format;
 
@@ -35,11 +36,12 @@ class ConfigLoader {
     return {
       cfgEnv: config.env,
       project: this.getProjectConfig(),
-      terraform: {},
-      dependsOn: [],
-      children: [],
       hook: {},
       build: {},
+      mapping: [],
+      children: [],
+      terraform: {},
+      dependsOn: [],
       env: { variables: {} }
     };
   }
@@ -58,6 +60,7 @@ class ConfigLoader {
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+      // @todo remove if ci.mapping moved to component.mapping
       this._projectCi = Object.assign({}, this._rootConfig['ci']);
 
       ['project', 'ci'].forEach(it => delete this._rootConfig[it]);
@@ -118,6 +121,7 @@ class ConfigLoader {
 
   /**
    * Get Project CI mapping
+   * @todo remove if ci.mapping moved to component.mapping
    * @return {Object}
    */
   getProjectCi() {
@@ -228,6 +232,7 @@ class ConfigLoader {
 
   /**
    * Prepare CI data
+   * @todo remove if ci.mapping moved to component.mapping
    * @private
    */
   _handleProjectCi() {

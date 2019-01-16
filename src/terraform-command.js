@@ -2,7 +2,6 @@
 
 const os = require('os');
 const { join } = require('path');
-const { lstatSync } = require('fs');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
 const Args = require('../src/helpers/args-parser');
@@ -198,6 +197,7 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * Get Project CI mapping
+   * @todo remove if ci.mapping moved to component.mapping
    * @return {Object}
    */
   getProjectCi() {
@@ -234,6 +234,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     const config = super.getConfig();
+    // @todo remove if ci.mapping moved to component.mapping
     const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping || []) : [];
 
     const isAll = projectCiMapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList));
