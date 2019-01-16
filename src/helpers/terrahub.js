@@ -2,10 +2,10 @@
 
 const path = require('path');
 const logger = require('./logger');
-const Terraform = require('../helpers/terraform');
+const Terraform = require('./terraform');
 const Dictionary = require('./dictionary');
 const { config, fetch } = require('../parameters');
-const { promiseSeries, toMd5, spawner } = require('../helpers/util');
+const { promiseSeries, toMd5, spawner } = require('./util');
 
 class Terrahub {
   /**

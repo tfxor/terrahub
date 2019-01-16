@@ -2,9 +2,9 @@
 
 const fse = require('fs-extra');
 const cluster = require('cluster');
-const Terrahub = require('../helpers/terrahub');
+const Terrahub = require('./terrahub');
 const BuildHelper = require('./build-helper');
-const { promiseSeries, homePath, extend } = require('../helpers/util');
+const { promiseSeries, homePath, extend } = require('./util');
 
 /**
  * Parse terraform actions

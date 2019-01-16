@@ -11,7 +11,7 @@ const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../parameters');
-const { extend, spawner, exponentialBackoff, homePath } = require('../helpers/util');
+const { extend, spawner, exponentialBackoff, homePath } = require('./util');
 
 class Terraform {
   /**

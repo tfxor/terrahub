@@ -3,9 +3,9 @@
 const os = require('os');
 const { join } = require('path');
 const { lstatSync } = require('fs');
+const Args = require('./helpers/args-parser');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
-const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
 

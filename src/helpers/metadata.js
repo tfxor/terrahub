@@ -1,8 +1,8 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
-const { homePath } = require('../helpers/util');
+const fse = require('fs-extra');
+const { homePath } = require('./util');
 
 class Metadata {
   /**
