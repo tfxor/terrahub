@@ -18,9 +18,9 @@ class Terraform {
    * @param {Object} config
    */
   constructor(config) {
-    this.envVars = process.env;
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
+    this._envVars = process.env;
     this._metadata = new Metadata(this._config);
 
     this._showLogs = process.env.silent === 'false' && !process.env.format;
@@ -68,7 +68,7 @@ class Terraform {
    */
   getRoot() {
     return this._config.isJit
-      ? homePath('jit', this._config.hash)
+      ? homePath('cache/jit', this._config.hash)
       : path.join(this._config.project.root, this._config.root);
   }
 
@@ -150,7 +150,7 @@ class Terraform {
    */
   _fetchEnvironmentVariables() {
     return this._getEnvVarsFromAPI().then(data => {
-      return Object.assign(this.envVars, data);
+      return Object.assign(this._envVars, data);
     });
   }
 
@@ -409,7 +409,7 @@ class Terraform {
     }
     return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this.getRoot(),
-      env: this.envVars,
+      env: this._envVars,
       shell: true
     });
   }
