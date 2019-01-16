@@ -197,14 +197,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get Project CI mapping
-   * @return {Object}
-   */
-  getProjectCi() {
-    return this._configLoader.getProjectCi();
-  }
-
-  /**
    * @return {String[]}
    */
   getGitDiff() {
@@ -227,26 +219,22 @@ class TerraformCommand extends AbstractCommand {
       throw new Error('There are no changes between commits, commit and working tree, etc.');
     }
 
-    const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
-
-    if (!diffList.length) {
-      return [];
-    }
+    const diffList = stdout.toString().split(os.EOL).slice(0, -1);
 
     const config = super.getConfig();
-    const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping || []) : [];
+    const projectCiMapping = this.getProjectConfig().mapping || [];
 
-    const isAll = projectCiMapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList));
-
-    if (isAll) {
+    if (
+      projectCiMapping.some(dep => diffList.some(diff => diff.startsWith(dep)))
+    ) {
       return Object.keys(config).map(key => config[key].name);
     }
 
     return Object.keys(config).reduce((filtered, hash) => {
-      const cfg = config[hash];
+      const { mapping, name } = config[hash];
 
-      if ('mapping' in cfg && cfg.mapping.some(dep => diffList.some(diff => diff.includes(dep)))) {
-        filtered.push(cfg.name);
+      if (mapping && mapping.some(dep => diffList.some(diff => diff.startsWith(dep)))) {
+        filtered.push(name);
       }
 
       return filtered;
