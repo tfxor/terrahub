@@ -431,7 +431,7 @@ class TerraformCommand extends AbstractCommand {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
+      const issueDependencies = Object.keys(node.dependsOn).filter(it => !config.hasOwnProperty(it));
 
       issueDependencies.forEach(it => {
         const name = fullConfig[it].name;
@@ -453,13 +453,13 @@ class TerraformCommand extends AbstractCommand {
     const fullConfig = this.getExtendedConfig();
     const issues = [];
 
-    const keys = Object.keys(fullConfig).filter(key => !(key in config));
+    const keys = Object.keys(fullConfig).filter(key => !config.hasOwnProperty(key));
 
     keys.forEach(hash => {
       const depNode = fullConfig[hash];
       const dependsOn = depNode.dependsOn.map(path => toMd5(path));
 
-      const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
+      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it)).map(it => `'${fullConfig[it].name}'`).join(', ');
 
       if (issueNodes.length) {
         issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
