@@ -2,7 +2,7 @@
 
 const path = require('path');
 const logger = require('./logger');
-const { promiseSeries, spawner } = require('../helpers/util');
+const { promiseSeries, spawner } = require('./util');
 
 class BuildHelper {
   /**

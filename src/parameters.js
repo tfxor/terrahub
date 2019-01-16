@@ -1,9 +1,9 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
-const Args = require('../src/helpers/args-parser');
-const Fetch = require('../src/helpers/fetch');
+const fse = require('fs-extra');
+const Fetch = require('./helpers/fetch');
+const Args = require('./helpers/args-parser');
 const { extend, homePath } = require('./helpers/util');
 
 /**

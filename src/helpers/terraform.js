@@ -11,7 +11,7 @@ const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../parameters');
-const { extend, spawner, exponentialBackoff, homePath } = require('../helpers/util');
+const { extend, spawner, exponentialBackoff, homePath } = require('./util');
 
 class Terraform {
   /**
@@ -85,14 +85,7 @@ class Terraform {
    * @private
    */
   _var() {
-    const result = [];
-    const object = this._tf.var;
-
-    Object.keys(object).forEach(name => {
-      result.push(`-var='${name}=${object[name]}'`);
-    });
-
-    return result;
+    return Object.keys(this._tf.var).map(name => `-var='${name}=${this._tf.var[name]}'`);
   }
 
   /**
@@ -101,14 +94,7 @@ class Terraform {
    * @private
    */
   _backend() {
-    const result = [];
-    const object = this._tf.backend;
-
-    Object.keys(object).forEach(name => {
-      result.push(`-backend-config='${name}=${object[name]}'`);
-    });
-
-    return result;
+    return Object.keys(this._tf.backend).map(name => `-backend-config='${name}=${this._tf.backend[name]}'`);
   }
 
   /**
