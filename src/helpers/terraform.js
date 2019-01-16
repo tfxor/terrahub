@@ -103,7 +103,17 @@ class Terraform {
    * @private
    */
   _varFile() {
-    return this._tf.varFile.map(fileName => `-var-file='${path.join(this.getRoot(), fileName)}'`);
+    const result = [];
+
+    this._tf.varFile.forEach(fileName => {
+      const varFile = path.join(this.getRoot(), fileName);
+
+      if (fs.existsSync(varFile)) {
+        result.push(`-var-file='${varFile}'`);
+      }
+    });
+
+    return result;
   }
 
   /**
@@ -470,7 +480,9 @@ class Terraform {
               return acc;
             }, {});
           }
-        });
+        }).catch(() => Promise.resolve({}));
+      } else {
+        return Promise.resolve({});
       }
     } catch (err) {
       return Promise.resolve({});

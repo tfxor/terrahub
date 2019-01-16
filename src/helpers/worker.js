@@ -1,6 +1,7 @@
 'use strict';
 
 const fse = require('fs-extra');
+const path = require('path');
 const cluster = require('cluster');
 const Terrahub = require('./terrahub');
 const BuildHelper = require('./build-helper');
@@ -39,6 +40,10 @@ function transformConfig(config) {
   if (config.isJit) {
     config.template.locals = extend(config.template.locals, [{
       timestamp: Date.now(),
+      component: {
+        name: config.name,
+        path: path.join(config.project.root, config.root)
+      },
       project: {
         path: config.project.root,
         name: config.project.name,
@@ -57,12 +62,17 @@ function transformConfig(config) {
  */
 function jitMiddleware(config) {
   const cfg = transformConfig(config);
+  const tmpPath = homePath('cache/jit', cfg.hash);
 
   if (!cfg.isJit) {
     return Promise.resolve(config);
   }
 
   const promises = Object.keys(cfg.template).map(it => {
+    if (!cfg.template[it]) {
+      return Promise.resolve();
+    }
+
     let name = `${it}.tf`;
     let data = { [it]: cfg.template[it] };
 
@@ -76,10 +86,19 @@ function jitMiddleware(config) {
         break;
     }
 
-    return fse.outputJson(homePath('jit', cfg.hash, name), data, { spaces: 2 });
+    return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
   });
 
-  return Promise.all(promises).then(() => Promise.resolve(cfg));
+  const filterRegEx = /\.terrahub.*(json|yml|yaml)$/;
+  const componentPath = path.join(config.project.root, config.root);
+  const copyParams = {
+    overwrite: true,
+    filter: (src, dest) => !filterRegEx.test(src)
+  };
+
+  return fse.copy(componentPath, tmpPath, copyParams)
+    .then(() => Promise.all(promises))
+    .then(() => Promise.resolve(cfg));
 }
 
 /**
