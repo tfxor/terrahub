@@ -1,10 +1,10 @@
 'use strict';
 
 const fse = require('fs-extra');
-const Args = require('../src/helpers/args-parser');
-const { toMd5 } = require('../src/helpers/util');
+const { config } = require('./parameters');
+const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const { config, homePath } = require('./parameters');
+const { toMd5, homePath } = require('./helpers/util');
 
 /**
  * @abstract

@@ -2,9 +2,10 @@
 
 const path = require('path');
 const logger = require('./logger');
-const Terraform = require('../helpers/terraform');
+const Terraform = require('./terraform');
+const Dictionary = require('./dictionary');
 const { config, fetch } = require('../parameters');
-const { promiseSeries, toMd5, spawner } = require('../helpers/util');
+const { promiseSeries, toMd5, spawner } = require('./util');
 
 class Terrahub {
   /**
@@ -42,7 +43,7 @@ class Terrahub {
       payload.error = error.message.trim();
     }
 
-    if (payload.action === 'plan' && data.status === Terrahub.REALTIME.SUCCESS) {
+    if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
 
@@ -70,10 +71,10 @@ class Terrahub {
       }
 
       if (options.skip) {
-        return this._on({ status: Terrahub.REALTIME.SKIP })
+        return this._on({ status: Dictionary.REALTIME.SKIP })
           .then(res => {
-            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to 'No changes. 
-              Infrastructure is up-to-date.'`);
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
+              `'No changes. Infrastructure is up-to-date.'`);
             return res;
           });
       } else {
@@ -156,12 +157,15 @@ class Terrahub {
    * @private
    */
   _spawn(binary, args, options = {}) {
-    return spawner(binary, args, Object.assign({
-      cwd: path.join(this._config.project.root, this._config.root),
-      shell: true
-    }, options),
-    err => logger.error(`[${this._config.name}] ${err.toString()}`),
-    data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+    return spawner(
+      binary,
+      args,
+      Object.assign({
+        cwd: path.join(this._config.project.root, this._config.root),
+        shell: true
+      }, options),
+      err => logger.error(`[${this._config.name}] ${err.toString()}`),
+      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
     );
   }
 
@@ -193,13 +197,13 @@ class Terrahub {
    */
   _getTask() {
     return this._checkProject()
-      .then(() => this._on({ status: Terrahub.REALTIME.START }))
+      .then(() => this._on({ status: Dictionary.REALTIME.START }))
       .then(() => this._hook('before'))
       .then(() => this._terraform[this._action]())
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
       .then(data => this._on(data, null))
-      .catch(err => this._on({ status: Terrahub.REALTIME.ERROR }, err))
+      .catch(err => this._on({ status: Dictionary.REALTIME.ERROR }, err))
       .catch(err => {
         if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
           err = new Error('Internet connection issue');
@@ -289,20 +293,6 @@ class Terrahub {
    */
   static get METADATA_DOMAIN() {
     return 'https://data-lake-terrahub-us-east-1.s3.amazonaws.com';
-  }
-
-  /**
-   * @return {{START: number, SUCCESS: number, ERROR: number, SKIP: number, ABORT: number, TIMEOUT: number}}
-   */
-  static get REALTIME() {
-    return {
-      START: 0,
-      SUCCESS: 1,
-      ERROR: 2,
-      SKIP: 3,
-      ABORT: 4,
-      TIMEOUT: 5
-    };
   }
 }
 

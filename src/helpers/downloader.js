@@ -1,10 +1,10 @@
 'use strict';
 
 const os = require('os');
-const fse = require('fs-extra');
 const url = require('url');
+const fse = require('fs-extra');
 const download = require('download');
-const { homePath } = require('../parameters');
+const { homePath } = require('./util');
 
 /**
  * Terraform binaries downloader

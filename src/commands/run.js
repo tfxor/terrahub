@@ -29,7 +29,6 @@ class RunCommand extends TerraformCommand {
       printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-
     return this._getPromise()
       .then(answer => {
         if (answer) {
@@ -53,8 +52,7 @@ class RunCommand extends TerraformCommand {
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
 
-    return Promise.resolve()
-      .then(() => this._checkDependencies(config))
+    return this._checkDependencies(config)
       .then(() => {
         const actions = ['prepare', 'init', 'workspaceSelect'];
 
@@ -124,7 +122,7 @@ class RunCommand extends TerraformCommand {
         break;
     }
 
-    return this.checkDependencies(config, direction)
+    return this.checkDependencies(config, direction);
   }
 }
 
