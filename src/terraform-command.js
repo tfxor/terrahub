@@ -3,9 +3,9 @@
 const os = require('os');
 const { join } = require('path');
 const { lstatSync } = require('fs');
+const Args = require('./helpers/args-parser');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
-const Args = require('../src/helpers/args-parser');
 const AbstractCommand = require('./abstract-command');
 const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
 
@@ -197,14 +197,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get Project CI mapping
-   * @return {Object}
-   */
-  getProjectCi() {
-    return this._configLoader.getProjectCi();
-  }
-
-  /**
    * @return {String[]}
    */
   getGitDiff() {
@@ -227,26 +219,22 @@ class TerraformCommand extends AbstractCommand {
       throw new Error('There are no changes between commits, commit and working tree, etc.');
     }
 
-    const diffList = stdout.toString().split(os.EOL).slice(0, -1).map(it => join(this.getAppPath(), it));
-
-    if (!diffList.length) {
-      return [];
-    }
+    const diffList = stdout.toString().split(os.EOL).slice(0, -1);
 
     const config = super.getConfig();
-    const projectCiMapping = this.getProjectCi() ? (this.getProjectCi().mapping || []) : [];
+    const projectCiMapping = this.getProjectConfig().mapping || [];
 
-    const isAll = projectCiMapping.some(dep => this._compareCiMappingToGitDiff(dep, diffList));
-
-    if (isAll) {
+    if (
+      projectCiMapping.some(dep => diffList.some(diff => diff.startsWith(dep)))
+    ) {
       return Object.keys(config).map(key => config[key].name);
     }
 
     return Object.keys(config).reduce((filtered, hash) => {
-      const cfg = config[hash];
+      const { mapping, name } = config[hash];
 
-      if ('mapping' in cfg && cfg.mapping.some(dep => diffList.some(diff => diff.includes(dep)))) {
-        filtered.push(cfg.name);
+      if (mapping && mapping.some(dep => diffList.some(diff => diff.startsWith(dep)))) {
+        filtered.push(name);
       }
 
       return filtered;
@@ -431,7 +419,7 @@ class TerraformCommand extends AbstractCommand {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      const issueDependencies = Object.keys(node.dependsOn).filter(it => !(it in config));
+      const issueDependencies = Object.keys(node.dependsOn).filter(it => !config.hasOwnProperty(it));
 
       issueDependencies.forEach(it => {
         const name = fullConfig[it].name;
@@ -453,13 +441,13 @@ class TerraformCommand extends AbstractCommand {
     const fullConfig = this.getExtendedConfig();
     const issues = [];
 
-    const keys = Object.keys(fullConfig).filter(key => !(key in config));
+    const keys = Object.keys(fullConfig).filter(key => !config.hasOwnProperty(key));
 
     keys.forEach(hash => {
       const depNode = fullConfig[hash];
       const dependsOn = depNode.dependsOn.map(path => toMd5(path));
 
-      const issueNodes = dependsOn.filter(it => (it in config)).map(it => `'${fullConfig[it].name}'`).join(', ');
+      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it)).map(it => `'${fullConfig[it].name}'`).join(', ');
 
       if (issueNodes.length) {
         issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +

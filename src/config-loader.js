@@ -17,7 +17,6 @@ class ConfigLoader {
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
-    this._projectCi = {};
     this._format = '.' + config.format;
 
     /**
@@ -35,11 +34,12 @@ class ConfigLoader {
     return {
       cfgEnv: config.env,
       project: this.getProjectConfig(),
-      terraform: {},
-      dependsOn: [],
-      children: [],
       hook: {},
       build: {},
+      mapping: [],
+      children: [],
+      terraform: {},
+      dependsOn: [],
       env: { variables: {} }
     };
   }
@@ -58,9 +58,10 @@ class ConfigLoader {
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
-      this._projectCi = Object.assign({}, this._rootConfig['ci']);
 
-      ['project', 'ci'].forEach(it => delete this._rootConfig[it]);
+      this._handleProjectConfig();
+
+      delete this._rootConfig['project'];
     } else {
       this._rootPath = false;
       this._rootConfig = {};
@@ -117,14 +118,6 @@ class ConfigLoader {
   }
 
   /**
-   * Get Project CI mapping
-   * @return {Object}
-   */
-  getProjectCi() {
-    return this._projectCi;
-  }
-
-  /**
    * Get Project Format
    * @return {String}
    */
@@ -148,7 +141,6 @@ class ConfigLoader {
     if (!Object.keys(this._config).length) {
       this._handleRootConfig();
       this._handleComponentConfig();
-      this._handleProjectCi();
     }
 
     return this._config;
@@ -227,18 +219,6 @@ class ConfigLoader {
   }
 
   /**
-   * Prepare CI data
-   * @private
-   */
-  _handleProjectCi() {
-    if ('mapping' in this._projectCi) {
-      this._projectCi.mapping.forEach(
-        (it, index) => this._projectCi.mapping[index] = path.resolve(this.appPath(), it)
-      );
-    }
-  }
-
-  /**
    * Consolidate all components' config
    * @private
    */
@@ -276,7 +256,7 @@ class ConfigLoader {
         }
 
         config.mapping.forEach((dep, index) => {
-          config.mapping[index] = path.resolve(this._rootPath, componentPath, dep);
+          config.mapping[index] = path.join(componentPath, dep);
         });
       }
 
@@ -308,6 +288,24 @@ class ConfigLoader {
       errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
 
       throw new Error(errorMsg);
+    }
+  }
+
+  /**
+   * Process the project config data
+   * @private
+   */
+  _handleProjectConfig() {
+    if (this._projectConfig.hasOwnProperty('mapping')) {
+      const { mapping } = this._projectConfig;
+
+      if (!(mapping instanceof Array)) {
+        throw new Error(`Error in project's configuration! CI Mapping of the project must be an array!`);
+      }
+
+      mapping.forEach((dep, index) => {
+        mapping[index] = path.join(dep);
+      });
     }
   }
 

@@ -1,8 +1,8 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
-const { homePath } = require('../helpers/util');
+const fse = require('fs-extra');
+const { homePath } = require('./util');
 
 class Metadata {
   /**
@@ -34,7 +34,7 @@ class Metadata {
    */
   getRoot() {
     return this._cfg.isJit
-      ? homePath('jit', this._cfg.hash)
+      ? homePath('cache/jit', this._cfg.hash)
       : path.join(this._cfg.project.root, this._cfg.root);
   }
 

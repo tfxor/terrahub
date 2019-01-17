@@ -101,7 +101,7 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {Object} options
+   * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number }} options
    * @return {Promise}
    */
   runActions(actions, options) {
