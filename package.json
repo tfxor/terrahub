@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
   "main": "index.js",
   "preferGlobal": true,
