@@ -52,8 +52,7 @@ class RunCommand extends TerraformCommand {
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
 
-    return Promise.resolve()
-      .then(() => this._checkDependencies(config))
+    return this._checkDependencies(config)
       .then(() => {
         const actions = ['prepare', 'init', 'workspaceSelect'];
 

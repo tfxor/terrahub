@@ -1,10 +1,11 @@
 'use strict';
 
 const fse = require('fs-extra');
+const path = require('path');
 const cluster = require('cluster');
-const Terrahub = require('../helpers/terrahub');
+const Terrahub = require('./terrahub');
 const BuildHelper = require('./build-helper');
-const { promiseSeries, homePath, extend } = require('../helpers/util');
+const { promiseSeries, homePath, extend } = require('./util');
 
 /**
  * Parse terraform actions
@@ -37,8 +38,18 @@ function transformConfig(config) {
   config.isJit = config.hasOwnProperty('template');
 
   if (config.isJit) {
+    const componentPath = path.join(config.project.root, config.root);
+
+    if (!config.mapping.length) {
+      config.mapping.push(componentPath);
+    }
+
     config.template.locals = extend(config.template.locals, [{
       timestamp: Date.now(),
+      component: {
+        name: config.name,
+        path: componentPath
+      },
       project: {
         path: config.project.root,
         name: config.project.name,
@@ -57,12 +68,17 @@ function transformConfig(config) {
  */
 function jitMiddleware(config) {
   const cfg = transformConfig(config);
+  const tmpPath = homePath('cache/jit', cfg.hash);
 
   if (!cfg.isJit) {
     return Promise.resolve(config);
   }
 
   const promises = Object.keys(cfg.template).map(it => {
+    if (!cfg.template[it]) {
+      return Promise.resolve();
+    }
+
     let name = `${it}.tf`;
     let data = { [it]: cfg.template[it] };
 
@@ -76,10 +92,15 @@ function jitMiddleware(config) {
         break;
     }
 
-    return fse.outputJson(homePath('jit', cfg.hash, name), data, { spaces: 2 });
+    return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
   });
 
-  return Promise.all(promises).then(() => Promise.resolve(cfg));
+  const src = path.join(config.project.root, config.root);
+  const regEx = /\.terrahub.*(json|yml|yaml)$/;
+
+  return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
+    .then(() => Promise.all(promises))
+    .then(() => Promise.resolve(cfg));
 }
 
 /**
