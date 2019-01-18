@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const url = require('url');
+const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
@@ -465,7 +465,7 @@ class Terraform {
     try {
       const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
       const data = Buffer.from(urlGet).toString('utf-8');
-      const isUrl = !!url.parse(data).host;
+      const isUrl = !!URL.parse(data).host;
       // works for gitlab/github/bitbucket, add azure, google, amazon
       const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
       const sshData = /@([^.]*).*:(.*).*(?=\.)/;
