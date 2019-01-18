@@ -1,6 +1,7 @@
 'use strict';
 
 const URL = require('url');
+const logger = require('./logger');
 const fetch = require('node-fetch');
 const merge = require('lodash.mergewith');
 
@@ -68,11 +69,17 @@ class Fetch {
    * @private
    */
   _handleResponse(result) {
-    if (result.status === 403) {
-      return Promise.reject({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
-    }
-
     return result.json().then(json => {
+      logger.debug(JSON.stringify({
+        url: result.url,
+        status: result.status,
+        body: json
+      }, null, 2));
+
+      if (result.status === 403) {
+        return Promise.reject({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
+      }
+
       return result.ok && !json.hasOwnProperty('errorType') ? json : Promise.reject(json);
     });
   }
