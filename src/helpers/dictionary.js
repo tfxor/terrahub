@@ -3,14 +3,14 @@
 class Dictionary {
 
   /**
-   * @return {{START: number, SUCCESS: number, ERROR: number, SKIP: number, ABORT: number, TIMEOUT: number}}
+   * @return {{SUCCESS: number, ABORT: number, SKIP: number, START: number, ERROR: number, TIMEOUT: number}}
    */
   static get REALTIME() {
     return {
-      START: 0,
-      SUCCESS: 1,
-      ERROR: 2,
-      SKIP: 3,
+      SUCCESS: 0,
+      SKIP: 1,
+      START: 2,
+      ERROR: 3,
       ABORT: 4,
       TIMEOUT: 5
     };
