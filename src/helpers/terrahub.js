@@ -221,14 +221,7 @@ class Terrahub {
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
       .then(data => this._on(data, null))
-      .catch(err => this._on({ status: Dictionary.REALTIME.ERROR }, err))
-      .catch(err => {
-        if (['EAI_AGAIN', 'NetworkingError'].includes(err.code)) {
-          err = new Error('Internet connection issue');
-        }
-
-        throw err;
-      });
+      .catch(err => this._on({ status: Dictionary.REALTIME.ERROR }, err));
   }
 
   /**
