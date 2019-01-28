@@ -87,6 +87,7 @@ class Fetch {
           break;
 
         case 500:
+        case 504:
           error = new Error('Please retry. If this problem persists, ' +
             'report this issue here: github.com/TerraHubCorp/terrahub/issues.');
           break;
