@@ -220,13 +220,14 @@ function spawner(command, args, options, onStderr, onStdout) {
 
 /**
  * @param {Function<Promise>} promiseFunction
- * @param {Object} options
+ * @param {{ conditionFunction: Function<Boolean>?, maxRetries: Number?, intermediateAction: Function? }} options
  * @return {Promise}
  */
 function exponentialBackoff(promiseFunction, options) {
   const {
     conditionFunction = () => true,
-    maxRetries = 2
+    maxRetries = 2,
+    intermediateAction = () => {}
   } = options;
   let retries = 0;
 
@@ -241,7 +242,11 @@ function exponentialBackoff(promiseFunction, options) {
         return Promise.reject(error);
       }
 
-      return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => retry());
+      return setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
+        intermediateAction(retries, maxRetries);
+
+        return retry();
+      });
     });
   }
 

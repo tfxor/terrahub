@@ -57,11 +57,11 @@ class RunCommand extends TerraformCommand {
         const actions = ['prepare', 'init', 'workspaceSelect'];
 
         if (!this._isApply && !this._isDestroy) {
-          actions.push('plan');
-
           if (this._isBuild) {
             actions.push('build');
           }
+
+          actions.push('plan');
         }
 
         return distributor.runActions(actions, {
