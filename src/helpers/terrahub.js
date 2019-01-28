@@ -5,7 +5,7 @@ const logger = require('./logger');
 const Terraform = require('./terraform');
 const Dictionary = require('./dictionary');
 const { config, fetch } = require('../parameters');
-const { promiseSeries, toMd5, spawner } = require('./util');
+const { promiseSeries, toMd5, spawner, exponentialBackoff } = require('./util');
 
 class Terrahub {
   /**
@@ -67,7 +67,7 @@ class Terrahub {
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
-        return this._terraform[action]().catch(err => console.log(err));
+        return this._runTerraformCommand(action).catch(err => console.log(err));
       }
 
       if (options.skip) {
@@ -150,6 +150,24 @@ class Terrahub {
   }
 
   /**
+   * @param {String} command
+   * @return {Promise}
+   * @private
+   */
+  _runTerraformCommand(command) {
+    return exponentialBackoff(() => this._terraform[command](), {
+      conditionFunction: error => {
+        return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+      },
+      maxRetries: config.retryCount,
+      intermediateAction: (retries, maxRetries) => {
+        logger.warn(`[${this._config.name}] '${this._action}' failed. ` +
+          `Retrying using exponential backoff approach (${retries} out of ${maxRetries}).`);
+      }
+    });
+  }
+
+  /**
    * @param {String} binary
    * @param {String[]} args
    * @param {Object} options
@@ -199,7 +217,7 @@ class Terrahub {
     return this._checkProject()
       .then(() => this._on({ status: Dictionary.REALTIME.START }))
       .then(() => this._hook('before'))
-      .then(() => this._terraform[this._action]())
+      .then(() => this._runTerraformCommand(this._action))
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
       .then(data => this._on(data, null))

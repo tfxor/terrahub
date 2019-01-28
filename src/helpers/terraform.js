@@ -11,7 +11,7 @@ const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../parameters');
-const { extend, spawner, exponentialBackoff, homePath } = require('./util');
+const { extend, spawner, homePath } = require('./util');
 
 class Terraform {
   /**
@@ -185,11 +185,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    const promiseFunction = () => this.run('init',
-      ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
-
-    return exponentialBackoff(promiseFunction,
-      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
+    return this.run('init', ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -291,11 +287,7 @@ class Terraform {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
 
-    const promiseFunction = () => this.run('plan',
-      args.concat(this._varFile(), this._var(), this._optsToArgs(options)));
-
-    return exponentialBackoff(promiseFunction,
-      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
+    return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(buffer => {
         const metadata = {};
         const regex = /\s*Plan: ([0-9]+) to add, ([0-9]+) to change, ([0-9]+) to destroy\./;
@@ -335,11 +327,7 @@ class Terraform {
   apply() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
 
-    const promiseFunction = () => this
-      .run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()));
-
-    return exponentialBackoff(promiseFunction,
-      { conditionFunction: this._checkIgnoreError, maxRetries: config.retryCount })
+    return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent())
       .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -398,15 +386,6 @@ class Terraform {
       env: this._envVars,
       shell: true
     });
-  }
-
-  /**
-   * @param {Error} error
-   * @return {Boolean}
-   * @private
-   */
-  _checkIgnoreError(error) {
-    return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
   }
 
   /**
@@ -470,7 +449,7 @@ class Terraform {
       const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
       const sshData = /@([^.]*).*:(.*).*(?=\.)/;
 
-      const [ , provider, repo ] = isUrl ? data.match(urlData) : data.match(sshData);
+      const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
         return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
