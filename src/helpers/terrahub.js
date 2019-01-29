@@ -39,8 +39,8 @@ class Terrahub {
     };
 
     if (err) {
-      error = new Error(err.message || err || 'Unknown error');
-      payload.error = error.message.trim();
+      error = err instanceof Error ? err : new Error(err || 'Unknown error');
+      payload.error = error.message.trim() || 'Unknown error';
     }
 
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
