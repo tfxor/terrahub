@@ -149,14 +149,18 @@ class Terrahub {
     })).catch(error => {
       let originalMessage;
 
-      ['message', 'stderr'].reduce(key => {
-        if (error[key]) {
-          const trimmed = error[key].toString().trim();
-
-          if (trimmed) {
-            originalMessage = trimmed;
-          }
+      ['message', 'stderr'].find(key => {
+        if (!error[key]) {
+          return false;
         }
+
+        const trimmed = error[key].toString().trim();
+        if (!trimmed) {
+          return false;
+        }
+
+        originalMessage = trimmed;
+        return true;
       });
 
       if (originalMessage) {
