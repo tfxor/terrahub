@@ -163,13 +163,10 @@ class Terrahub {
         return true;
       });
 
-      if (originalMessage) {
-        error.message = this._addNameToMessage(
-          `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}`
-        );
-      } else {
-        error.message = this._addNameToMessage(`An unknown error occurred in hook ${this._action} ${hook} execution.`);
-      }
+      error.message = this._addNameToMessage(originalMessage ?
+        `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
+        `An unknown error occurred in hook ${this._action} ${hook} execution.`
+      );
 
       return Promise.reject(error);
     });
