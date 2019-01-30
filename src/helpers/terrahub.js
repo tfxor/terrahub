@@ -40,7 +40,7 @@ class Terrahub {
 
     if (err) {
       error = err instanceof Error ? err : new Error(err || 'Unknown error');
-      payload.error = error.message.trim() || 'Unknown error';
+      payload.error = error.message.trim();
     }
 
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
@@ -126,7 +126,7 @@ class Terrahub {
         args[0] = path.resolve(this._project.root, this._config.root, args[0]);
       }
 
-      logger.warn(`[${this._config.name}] Executing hook '${it}' ${hook} ${this._action} action.`);
+      logger.warn(this._addNameToMessage(`Executing hook '${it}' ${hook} ${this._action} action.`));
       let command;
       switch (extension) {
         case '.js':
@@ -161,8 +161,8 @@ class Terrahub {
       },
       maxRetries: config.retryCount,
       intermediateAction: (retries, maxRetries) => {
-        logger.warn(`[${this._config.name}] '${this._action}' failed. ` +
-          `Retrying using exponential backoff approach (${retries} out of ${maxRetries}).`);
+        logger.warn(this._addNameToMessage(`'${this._action}' failed. ` +
+          `Retrying using exponential backoff approach (${retries} out of ${maxRetries}).`));
       }
     });
   }
@@ -182,8 +182,8 @@ class Terrahub {
         cwd: path.join(this._config.project.root, this._config.root),
         shell: true
       }, options),
-      err => logger.error(`[${this._config.name}] ${err.toString()}`),
-      data => logger.raw(`[${this._config.name}] ${data.toString()}`)
+      err => logger.error(this._addNameToMessage(err.toString())),
+      data => logger.raw(this._addNameToMessage(data.toString()))
     );
   }
 
@@ -271,7 +271,7 @@ class Terrahub {
     };
 
     const promise = fetch.post(url, options).catch(error => {
-      error.message = `[${this._config.name}] Failed to trigger parse function`;
+      error.message = this._addNameToMessage('Failed to trigger parse function');
       logger.error(error);
 
       return Promise.resolve();
@@ -295,6 +295,15 @@ class Terrahub {
     };
 
     return fetch.request(url, options);
+  }
+
+  /**
+   * Add '[component_name] ' prefix to message
+   * @param {String} message
+   * @return {String}
+   */
+  _addNameToMessage(message) {
+    return `[${this._config.name}] ${message}`;
   }
 
   /**
