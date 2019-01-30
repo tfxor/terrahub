@@ -146,7 +146,29 @@ class Terrahub {
       }
 
       return () => this._spawn(command, args, { env: process.env }).then(() => Promise.resolve(res));
-    }));
+    })).catch(error => {
+      let originalMessage;
+
+      ['message', 'stderr'].reduce(key => {
+        if (error[key]) {
+          const trimmed = error[key].toString().trim();
+
+          if (trimmed) {
+            originalMessage = trimmed;
+          }
+        }
+      });
+
+      if (originalMessage) {
+        error.message = this._addNameToMessage(
+          `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}`
+        );
+      } else {
+        error.message = this._addNameToMessage(`An unknown error occurred in hook ${this._action} ${hook} execution.`);
+      }
+
+      return Promise.reject(error);
+    });
   }
 
   /**
