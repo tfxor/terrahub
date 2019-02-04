@@ -3,7 +3,7 @@
 const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { printConfigAsList, askForApprovement } = require('../helpers/util');
+const { printConfigAsList } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -83,18 +83,6 @@ class RunCommand extends TerraformCommand {
           planDestroy: true
         })
       );
-  }
-
-  /**
-   * @return {Promise}
-   * @private
-   */
-  _getPromise() {
-    if (this.getOption('auto-approve') || !(this.getOption('apply') || this.getOption('destroy'))) {
-      return Promise.resolve(true);
-    } else {
-      return askForApprovement(this.getConfigObject(), 'run', this.getProjectConfig());
-    }
   }
 
   /**

@@ -1,13 +1,11 @@
 'use strict';
 
 const os = require('os');
-const { join } = require('path');
-const { lstatSync } = require('fs');
+const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
 
 /**
  * @abstract
@@ -70,7 +68,7 @@ class TerraformCommand extends AbstractCommand {
       throw new Error('Configuration file not found. Either re-run the same command ' +
         'in project\'s root or initialize new project with `terrahub project`.');
     } else {
-      return askQuestion(`Global config is missing project ${missingData}. Please provide value` +
+      return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
         `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
       ).then(answer => {
 
@@ -103,7 +101,7 @@ class TerraformCommand extends AbstractCommand {
 
     Object.keys(config).forEach(hash => {
       // hash is required in distributor to remove components from dependency table
-      result[hash] = extend(config[hash], [cliParams, { hash: hash }]);
+      result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
     return result;
@@ -212,7 +210,7 @@ class TerraformCommand extends AbstractCommand {
     try {
       stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      throw handleGitDiffError(error, this.getAppPath());
+      throw Util.handleGitDiffError(error, this.getAppPath());
     }
 
     if (!stdout || !stdout.toString().length) {
@@ -241,6 +239,25 @@ class TerraformCommand extends AbstractCommand {
     }, []);
   }
 
+  /**
+   * @param {Object} config
+   * @param {Boolean} askApprovement
+   * @return {Promise}
+   */
+  printExecutionList(config, askApprovement = false) {
+    const { name: projectName } = this.getProjectConfig();
+    const { length } = Object.keys(config);
+
+    if (length > 5) {
+      Util.printListCommaSeparated(config, projectName);
+    } else {
+      Util.printListAsTree(config, projectName);
+    }
+
+    return askApprovement ?
+      Util.yesNoQuestion(`Do you want to perform \`${this.getName()}\` action? (Y/N) `) :
+      Promise.resolve(true);
+  }
 
   /**
    * @returns {Array}
@@ -277,10 +294,10 @@ class TerraformCommand extends AbstractCommand {
       const dependsOn = {};
 
       node.dependsOn.forEach(dep => {
-        const key = toMd5(dep);
+        const key = Util.toMd5(dep);
 
         if (!fullConfig[key]) {
-          const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
+          const dir = fullConfig[hash].dependsOn.find(it => Util.toMd5(it) === key);
 
           issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
         }
@@ -445,9 +462,10 @@ class TerraformCommand extends AbstractCommand {
 
     keys.forEach(hash => {
       const depNode = fullConfig[hash];
-      const dependsOn = depNode.dependsOn.map(path => toMd5(path));
+      const dependsOn = depNode.dependsOn.map(path => Util.toMd5(path));
 
-      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it)).map(it => `'${fullConfig[it].name}'`).join(', ');
+      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it))
+        .map(it => `'${fullConfig[it].name}'`).join(', ');
 
       if (issueNodes.length) {
         issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
