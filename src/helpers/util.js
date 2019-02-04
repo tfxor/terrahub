@@ -288,6 +288,20 @@ function printListAsTree(config, projectName) {
 }
 
 /**
+ * @param {Object|Array} config
+ * @param projectName
+ */
+function printListAuto(config, projectName) {
+  const { length } = Object.keys(config);
+
+  if (length > 5) {
+    printListCommaSeparated(config, projectName);
+  } else {
+    printListAsTree(config, projectName);
+  }
+}
+
+/**
  * @return {Number}
  */
 function physicalCpuCount() {
@@ -376,6 +390,7 @@ module.exports = {
   renderTwig,
   askQuestion,
   promiseSeries,
+  printListAuto,
   yesNoQuestion,
   isAwsNameValid,
   printListAsTree,

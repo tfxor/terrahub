@@ -240,23 +240,23 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} config
-   * @param {Boolean} askApprovement
+   * @param {Object|Array} config
+   * @param {Boolean} autoApprove
    * @return {Promise}
    */
-  printExecutionList(config, askApprovement = false) {
-    const { name: projectName } = this.getProjectConfig();
-    const { length } = Object.keys(config);
+  askForApprovement(config, autoApprove = false) {
+    Util.printListAuto(config, this.getProjectConfig().name);
 
-    if (length > 5) {
-      Util.printListCommaSeparated(config, projectName);
-    } else {
-      Util.printListAsTree(config, projectName);
+    const action = this.getName();
+
+    if (autoApprove) {
+      this.logger.log(`Option 'auto-approve' is enabled, therefore '${action}' ` +
+        `action is executed with no confirmation.`);
+
+      return Promise.resolve(true);
     }
 
-    return askApprovement ?
-      Util.yesNoQuestion(`Do you want to perform \`${this.getName()}\` action? (Y/N) `) :
-      Promise.resolve(true);
+    return Util.yesNoQuestion(`Do you want to perform '${action}' action? (Y/N) `);
   }
 
   /**

@@ -29,23 +29,35 @@ class RunCommand extends TerraformCommand {
       printConfigAsList(this.getConfigObject(), this.getProjectConfig());
       return Promise.resolve('Done');
     }
-    return this._getPromise()
-      .then(answer => {
-        if (answer) {
-          return this._runPhases();
-        } else {
-          return Promise.reject('Action aborted');
-        }
-      })
+
+    const config = this.getConfigObject();
+
+    return this._getPromise(config)
+      .then(answer => answer ? this._runPhases(config) : Promise.reject('Action aborted'))
       .then(() => Promise.resolve('Done'));
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _getPromise(config) {
+    return Promise.resolve().then(() => {
+      if (this._isApprovementRequired) {
+        return this.askForApprovement(config, this.getOption('auto-approve'));
+      }
+
+      this.warnExecutionStarted(config);
+      return Promise.resolve(true);
+    });
   }
 
   /**
    * @return {Promise}
    * @private
    */
-  _runPhases() {
-    const config = this.getConfigObject();
+  _runPhases(config) {
     const distributor = new Distributor(config);
 
     this._isApply = this.getOption('apply');
@@ -111,6 +123,14 @@ class RunCommand extends TerraformCommand {
     }
 
     return this.checkDependencies(config, direction);
+  }
+
+  /**
+   * @return {Boolean}
+   * @private
+   */
+  get _isApprovementRequired() {
+    return this.getOption('apply') || this.getOption('destroy');
   }
 }
 
