@@ -36,7 +36,7 @@ class TerraformCommand extends AbstractCommand {
   validate() {
     return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
       if (this._isComponentsCountZero()) {
-        return Promise.reject('No components defined in configuration file. '
+        throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
 
@@ -45,7 +45,7 @@ class TerraformCommand extends AbstractCommand {
       const nonExistingComponents = this._getNonExistingComponents();
 
       if (nonExistingComponents.length) {
-        return Promise.reject('Some of components were not found: ' + nonExistingComponents.join(', '));
+        throw new Error('Some of components were not found: ' + nonExistingComponents.join(', '));
       }
 
       return Promise.resolve();
@@ -62,29 +62,29 @@ class TerraformCommand extends AbstractCommand {
    */
   _checkProjectDataMissing() {
     const projectConfig = this._configLoader.getProjectConfig();
-    const missingData = this._getProjectDataMissing(projectConfig);
+    const missingData = ['root', 'name', 'code'].find(it => !projectConfig[it]);
 
-    if (missingData) {
-      return missingData === 'config' ?
-        Promise.reject('Configuration file not found. Either re-run the same command ' +
-          'in project\'s root or initialize new project with `terrahub project`.') :
-        askQuestion(`Global config is missing project ${missingData}. Please provide value 
-          (e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
-        ).then(answer => {
+    if (!missingData) {
+      return Promise.resolve();
+    } else if (missingData === 'root') {
+      throw new Error('Configuration file not found. Either re-run the same command ' +
+        'in project\'s root or initialize new project with `terrahub project`.');
+    } else {
+      return askQuestion(`Global config is missing project ${missingData}. Please provide value` +
+        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
+      ).then(answer => {
 
-          try {
-            this._configLoader.addToGlobalConfig(missingData, answer);
-          } catch (error) {
-            this.logger.debug(error);
-          }
+        try {
+          this._configLoader.addToGlobalConfig(missingData, answer);
+        } catch (error) {
+          this.logger.debug(error);
+        }
 
-          this._configLoader.updateRootConfig();
+        this._configLoader.updateRootConfig();
 
-          return this._checkProjectDataMissing();
-        });
+        return this._checkProjectDataMissing();
+      });
     }
-
-    return Promise.resolve();
   }
 
   /**
@@ -312,7 +312,7 @@ class TerraformCommand extends AbstractCommand {
     const cycle = this._getDependencyCycle(config);
 
     if (cycle.length) {
-      return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
+      throw new Error('There is a dependency cycle between the following components: ' + cycle.join(', '));
     }
 
     return Promise.resolve();
@@ -400,7 +400,7 @@ class TerraformCommand extends AbstractCommand {
       const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
       errorStrings.unshift('TerraHub failed because of the following issues:');
 
-      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+      throw new Error(errorStrings.join(os.EOL));
     }
 
     return this._checkDependencyCycle(config);
@@ -456,28 +456,6 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return issues;
-  }
-
-  /**
-   * Return name of the required field missing in project data
-   * @param {Object} projectConfig
-   * @return {String|null}
-   * @private
-   */
-  _getProjectDataMissing(projectConfig) {
-    if (!projectConfig.hasOwnProperty('root')) {
-      return 'config';
-    }
-
-    if (!projectConfig.hasOwnProperty('name')) {
-      return 'name';
-    }
-
-    if (!projectConfig.hasOwnProperty('code')) {
-      return 'code';
-    }
-
-    return null;
   }
 
   /**
