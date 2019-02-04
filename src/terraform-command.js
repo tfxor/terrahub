@@ -6,6 +6,7 @@ const Args = require('./helpers/args-parser');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
+const ListException = require('./exceptions/list-exception');
 
 /**
  * @abstract
@@ -321,10 +322,7 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      throw new Error(errorStrings.join(os.EOL));
+      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
     }
 
     return tree;
@@ -425,10 +423,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      throw new Error(errorStrings.join(os.EOL));
+      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
     }
 
     return this._checkDependencyCycle(config);
