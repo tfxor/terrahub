@@ -24,7 +24,7 @@ class DestroyCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return this.checkDependencies(config, Dictionary.DIRECTION.REVERSE)
-      .then(() => this.printExecutionList(config, !this.getOption('auto-approve')))
+      .then(() => this.askForApprovement(config, this.getOption('auto-approve')))
       .then(answer => answer ?
         distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
           silent: this.getOption('silent'),

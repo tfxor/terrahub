@@ -260,6 +260,17 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @param {Object|Array} config
+   */
+  warnExecutionStarted(config) {
+    Util.printListAuto(config, this.getProjectConfig().name);
+
+    const action = this.getName();
+
+    this.logger.log(`'${action}' action is executed for the listed components.`);
+  }
+
+  /**
    * @returns {Array}
    */
   getVarFile() {

@@ -24,7 +24,7 @@ class ApplyCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return this.checkDependencies(config)
-      .then(() => this.printExecutionList(config, !this.getOption('auto-approve') ))
+      .then(() => this.askForApprovement(config, this.getOption('auto-approve') ))
       .then(answer => answer ?
         distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
           silent: this.getOption('silent'),
