@@ -86,16 +86,16 @@ function renderTwig(srcFile, vars, outFile = false) {
     if (!fs.existsSync(srcFile)) {
       return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
     }
-
+    
     Twig.renderFile(srcFile, vars, (err, data) => {
       if (err) {
         return reject(err);
       }
-
+      
       if (!outFile) {
         return resolve(data);
       }
-
+      
       fse.outputFile(outFile, data, { encoding: 'utf8' }, err => {
         return err ? reject(err) : resolve();
       });

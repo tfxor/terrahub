@@ -4,6 +4,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
+const Worker = require('../helpers/worker.js');
 const ConfigLoader = require('../config-loader');
 const { templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
@@ -23,6 +24,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
+      .addOption('save', 's', 'Create terraform configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -36,6 +38,7 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
+    this._save = this.getOption('save');
 
     const projectFormat = this.getProjectFormat();
 
@@ -187,10 +190,11 @@ class ComponentCommand extends AbstractCommand {
 
     return Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
+        
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
         const srcFile = path.join(templatePath, file);
-
+        
         return twigReg.test(srcFile)
           ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
@@ -199,11 +203,18 @@ class ComponentCommand extends AbstractCommand {
       const outFile = path.join(directory, this._defaultFileName());
       const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
       let data = '';
-
+      
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
       return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+    }).then(() => {
+      if (this._template) {
+        return Worker.jitMiddleware()
+      } else {
+        const outFile = path.join(directory, this._defaultFileName());
+        return renderTwig(outFile, { name: name, code: code }, outFile);
+      }
     }).then(() => 'Done');
   }
 
