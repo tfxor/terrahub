@@ -257,7 +257,7 @@ class TerraformCommand extends AbstractCommand {
       return Promise.resolve(true);
     }
 
-    return Util.yesNoQuestion(`Do you want to perform '${action}' action? (Y/N) `);
+    return Util.yesNoQuestion(`Do you want to perform 'terrahub ${action}' action? (Y/N) `);
   }
 
   /**
@@ -268,7 +268,7 @@ class TerraformCommand extends AbstractCommand {
 
     const action = this.getName();
 
-    this.logger.log(`'${action}' action is executed for the listed components.`);
+    this.logger.log(`'terrahub ${action}' action is executed for above list of components.`);
   }
 
   /**
