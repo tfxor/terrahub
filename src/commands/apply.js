@@ -3,7 +3,6 @@
 const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { askForApprovement } = require('../helpers/util');
 
 class ApplyCommand extends TerraformCommand {
   /**
@@ -25,25 +24,13 @@ class ApplyCommand extends TerraformCommand {
     const distributor = new Distributor(config);
 
     return this.checkDependencies(config)
-      .then(() => this._getPromise())
+      .then(() => this.askForApprovement(config, this.getOption('auto-approve') ))
       .then(answer => answer ?
         distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.FORWARD
         }) : Promise.reject('Action aborted')
       ).then(() => Promise.resolve('Done'));
-  }
-
-  /**
-   * @return {Promise}
-   * @private
-   */
-  _getPromise() {
-    if (this.getOption('auto-approve')) {
-      return Promise.resolve(true);
-    } else {
-      return askForApprovement(this.getConfigObject(), 'apply', this.getProjectConfig());
-    }
   }
 }
 
