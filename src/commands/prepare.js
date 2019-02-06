@@ -3,7 +3,7 @@
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
 
-class PrepareTfCommand extends TerraformCommand {
+class PrepareCommand extends TerraformCommand {
   /**
    * Command configuration
    */
@@ -28,4 +28,4 @@ class PrepareTfCommand extends TerraformCommand {
   }
 }
 
-module.exports = PrepareTfCommand;
+module.exports = PrepareCommand;
