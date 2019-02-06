@@ -108,7 +108,6 @@ function jitMiddleware(config) {
  * @param {Object} config
  */
 function run(config) {
-  console.log(config)
   jitMiddleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {

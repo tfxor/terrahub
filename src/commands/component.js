@@ -195,8 +195,7 @@ class ComponentCommand extends AbstractCommand {
         
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
-        const srcFile = path.join(templatePath, file);
-        
+        const srcFile = path.join(templatePath, file);        
         return twigReg.test(srcFile)
           ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
@@ -204,8 +203,7 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
       const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-      let data = '';
-      
+      let data = '';      
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
@@ -214,14 +212,13 @@ class ComponentCommand extends AbstractCommand {
       const outFile = path.join(directory, this._defaultFileName());      
       return renderTwig(outFile, { name: name, code: code }, outFile);
     }).then(() => {
-      if (this._save) {
-        const tmpPath = homePath('cache/jit');
-        const arch = (new Downloader()).getOsArch();
-        const componentBinPath = `${commandsPath}/../../bin/${arch}`
-        return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
-      } else {
+      if (!this._save) {
         return Promise.resolve();
-      }
+      }      
+      const tmpPath = homePath('cache/jit');
+      const arch = (new Downloader()).getOsArch();
+      const componentBinPath = `${commandsPath}/../../bin/${arch}`
+      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
     }).then(() => 'Done');
   }
 
