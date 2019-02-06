@@ -149,6 +149,24 @@
       ]
     },
     {
+      "name": "prepare",
+      "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
+      "options": [
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
       "name": "component",
       "description": "create new or include existing terraform configuration into current terrahub project",
       "options": [
@@ -185,6 +203,12 @@
           "name": "delete",
           "shortcut": "D",
           "description": "Delete terrahub configuration files in the component folder",
+          "defaultValue": false
+        },
+        {
+          "name": "save",
+          "shortcut": "S",
+          "description": "Generation terraform configuration files in the component folder",
           "defaultValue": false
         },
         {

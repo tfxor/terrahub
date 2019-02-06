@@ -104,52 +104,11 @@ function jitMiddleware(config) {
 }
 
 /**
- * JIT middleware (save to files)
- * @param {Object} config
- * @return {Promise}
- */
-function jitMiddleware(config) {
-  const cfg = transformConfig(config);
-  const tmpPath = homePath('cache/jit', cfg.hash);
-
-  if (!cfg.isJit) {
-    return Promise.resolve(config);
-  }
-
-  const promises = Object.keys(cfg.template).map(it => {
-    if (!cfg.template[it]) {
-      return Promise.resolve();
-    }
-
-    let name = `${it}.tf`;
-    let data = { [it]: cfg.template[it] };
-
-    switch (it) {
-      case 'resource':
-        name = 'main.tf';
-        break;
-      case 'tfvars':
-        name = `${cfg.cfgEnv === 'default' ? '' : 'workspace/'}${cfg.cfgEnv}.tfvars`;
-        data = cfg.template[it];
-        break;
-    }
-
-    return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
-  });
-
-  const src = path.join(config.project.root, config.root);
-  const regEx = /\.terrahub.*(json|yml|yaml)$/;
-
-  return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
-    .then(() => Promise.all(promises))
-    .then(() => Promise.resolve(cfg));
-}
-
-/**
  * BladeRunner
  * @param {Object} config
  */
 function run(config) {
+  console.log(config)
   jitMiddleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {

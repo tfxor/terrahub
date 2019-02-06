@@ -2,12 +2,14 @@
 
 const fse = require('fs-extra');
 const path = require('path');
+const { homePath } = require('../helpers/util');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
-const Worker = require('../helpers/worker.js');
 const ConfigLoader = require('../config-loader');
 const { templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const Downloader = require('../helpers/downloader');
+const childProcess = require('child_process');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -24,7 +26,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
-      .addOption('save', 's', 'Create terraform configuration files in the component folder', Boolean, false)
+      .addOption('save', 'S', 'Generate terraform configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -209,11 +211,15 @@ class ComponentCommand extends AbstractCommand {
       }
       return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => {
-      if (this._template) {
-        return Worker.jitMiddleware()
+      const outFile = path.join(directory, this._defaultFileName());      
+      return renderTwig(outFile, { name: name, code: code }, outFile);
+    }).then(() => {
+      if (this._save) {
+        const tmpPath = homePath('cache/jit');
+        const arch = (new Downloader()).getOsArch();
+        return childProcess.execSync(`../../bin/${arch}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
       } else {
-        const outFile = path.join(directory, this._defaultFileName());
-        return renderTwig(outFile, { name: name, code: code }, outFile);
+        return Promise.resolve();
       }
     }).then(() => 'Done');
   }
