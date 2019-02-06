@@ -243,7 +243,7 @@ class Terrahub {
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this._upload(data))
       .then(res => this._hook('after', res))
-      .then(data => this._on(data, null))
+      .then(data => this._on(data))
       .catch(err => this._on({ status: Dictionary.REALTIME.ERROR }, err));
   }
 

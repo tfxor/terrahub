@@ -264,57 +264,41 @@ function setTimeoutPromise(timeout) {
 }
 
 /**
- * @param {Object} config
- * @param {String} action
- * @param {Object} projectConfig
- * @return {Promise}
+ * @param {Object|Array} config
+ * @param {String} projectName
  */
-function askForApprovement(config, action, projectConfig) {
-  const length = Object.keys(config).length;
-
-  if (length > 5) {
-    printConfigCommaSeparated(config, projectConfig);
-  } else {
-    printConfigAsList(config, projectConfig);
-  }
-
-  return yesNoQuestion(`Do you want to perform \`${action}\` action? (Y/N) `);
-}
-
-/**
- * @param {Object} config
- * @param {Array} projectConfig
- */
-function printConfigCommaSeparated(config, projectConfig) {
-  const { name } = projectConfig;
+function printListCommaSeparated(config, projectName) {
   const components = Object.keys(config).map(key => config[key].name).join(', ');
 
-  logger.log(`Project: ${name} | Component${components.length > 1 ? 's' : ''}: ${components}`);
+  logger.log(`Project: ${projectName} | Component${components.length > 1 ? 's' : ''}: ${components}`);
 }
 
 /**
- * @param {Object} config
- * @param {Array} projectConfig
+ * @param {Object|Array} config
+ * @param {Object} projectName
  */
-function printConfigAsList(config, projectConfig) {
-  const { name } = projectConfig;
-  const componentList = {};
+function printListAsTree(config, projectName) {
+  const componentList = arrayToObject(Object.keys(config).map(key => config[key].name));
 
-  if (config instanceof Array) {
-    config.map(key => {
-      componentList[key] = null;
-    });
-  } else if (config instanceof Object) {
-    Object.keys(config).forEach(key => {
-      componentList[config[key].name] = null;
-    });
-  }
-
-  logger.log(`Project: ${name}`);
+  logger.log(`Project: ${projectName}`);
 
   treeify.asLines(componentList, false, line => {
     logger.log(` ${line}`);
   });
+}
+
+/**
+ * @param {Object|Array} config
+ * @param projectName
+ */
+function printListAuto(config, projectName) {
+  const { length } = Object.keys(config);
+
+  if (length > 5) {
+    printListCommaSeparated(config, projectName);
+  } else {
+    printListAsTree(config, projectName);
+  }
 }
 
 /**
@@ -377,6 +361,21 @@ function handleGitDiffError(error, appPath) {
 }
 
 /**
+ * @param {Array} array
+ * @throws Error;
+ */
+function arrayToObject(array) {
+  if (!Array.isArray(array)) {
+    throw new Error('Specified value is not an array!');
+  }
+  const result = {};
+
+  array.forEach(val => { result[val] = null; });
+
+  return result;
+}
+
+/**
  * Public methods
  */
 module.exports = {
@@ -389,13 +388,14 @@ module.exports = {
   jsonToYaml,
   familyTree,
   renderTwig,
-  promiseSeries,
-  yesNoQuestion,
   askQuestion,
+  promiseSeries,
+  printListAuto,
+  yesNoQuestion,
   isAwsNameValid,
-  exponentialBackoff,
+  printListAsTree,
   physicalCpuCount,
-  printConfigAsList,
-  askForApprovement,
-  handleGitDiffError
+  handleGitDiffError,
+  exponentialBackoff,
+  printListCommaSeparated
 };
