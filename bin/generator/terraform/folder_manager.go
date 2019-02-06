@@ -1,4 +1,4 @@
-package proccesing
+package terraform
 
 import (
 	"fmt"
