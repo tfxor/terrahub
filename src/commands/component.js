@@ -2,11 +2,14 @@
 
 const fse = require('fs-extra');
 const path = require('path');
+const { homePath } = require('../helpers/util');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
 const ConfigLoader = require('../config-loader');
-const { templates } = require('../parameters');
+const { templates, commandsPath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
+const Downloader = require('../helpers/downloader');
+const childProcess = require('child_process');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -23,6 +26,7 @@ class ComponentCommand extends AbstractCommand {
       .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
+      .addOption('save', 'S', 'Generate terraform configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -36,6 +40,7 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
+    this._save = this.getOption('save');
 
     const projectFormat = this.getProjectFormat();
 
@@ -187,10 +192,10 @@ class ComponentCommand extends AbstractCommand {
 
     return Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
+        
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
-        const srcFile = path.join(templatePath, file);
-
+        const srcFile = path.join(templatePath, file);        
         return twigReg.test(srcFile)
           ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
@@ -198,12 +203,22 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
       const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-      let data = '';
-
+      let data = '';      
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
       return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+    }).then(() => {
+      const outFile = path.join(directory, this._defaultFileName());      
+      return renderTwig(outFile, { name: name, code: code }, outFile);
+    }).then(() => {
+      if (!this._save) {
+        return Promise.resolve();
+      }      
+      const tmpPath = homePath('cache/jit');
+      const arch = (new Downloader()).getOsArch();
+      const componentBinPath = `${commandsPath}/../../bin/${arch}`
+      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
     }).then(() => 'Done');
   }
 

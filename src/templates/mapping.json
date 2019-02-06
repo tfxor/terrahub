@@ -1,5 +1,6 @@
 {
   "aws_acm_certificate": "aws/acm_certificate",
+  "aws_acmpca_certificate_authority": "aws/acmpca_certificate_authority",
   "aws_acm_certificate_validation": "aws/acm_certificate_validation",
   "aws_alb": "aws/alb",
   "aws_alb_listener_certificate": "aws/alb_listener_certificate",
