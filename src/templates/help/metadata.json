@@ -150,7 +150,7 @@
     },
     {
       "name": "prepare",
-      "description": "build code used by terraform configuration (e.g. AWS Lambda, Google Functions)",
+      "description": "prepare terrafom json script",
       "options": [
         {
           "name": "include",
