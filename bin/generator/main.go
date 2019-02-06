@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"generator/proccesing"
+	"generator/terraform"
 )
 
 // VERSION is what is returned by the `-v` flag
@@ -40,13 +40,13 @@ func GenerationTemplates() {
 		destination = os.Args[2]
 	}
 	for _, provider := range providers {
-		downloaded := proccesing.DownloadFromGit(
+		downloaded := terraform.DownloadFromGit(
 			"https://github.com/terraform-providers/terraform-provider-" + provider + ".git")
 
 		if downloaded {
-			proccesing.DeleteFolder(destination + provider)
-			proccesing.Generation(provider, "./terraform-provider-"+provider+"/"+provider+"/", destination)
-			proccesing.DeleteFolder("./terraform-provider-" + provider)
+			terraform.DeleteFolder(destination + provider)
+			terraform.Generation(provider, "./terraform-provider-"+provider+"/"+provider+"/", destination)
+			terraform.DeleteFolder("./terraform-provider-" + provider)
 		}
 	}
 }
@@ -67,6 +67,6 @@ func ConvertToYml() {
 	if source == "" {
 		fmt.Println("The source path is not set!")
 	} else {
-		proccesing.ParsingTfFile(source, destination)
+		terraform.ParsingTfFile(source, destination)
 	}
 }
