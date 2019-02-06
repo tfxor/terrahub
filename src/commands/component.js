@@ -6,7 +6,7 @@ const { homePath } = require('../helpers/util');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
 const ConfigLoader = require('../config-loader');
-const { templates } = require('../parameters');
+const { templates, commandsPath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const Downloader = require('../helpers/downloader');
 const childProcess = require('child_process');
@@ -217,7 +217,8 @@ class ComponentCommand extends AbstractCommand {
       if (this._save) {
         const tmpPath = homePath('cache/jit');
         const arch = (new Downloader()).getOsArch();
-        return childProcess.execSync(`../../bin/${arch}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
+        const componentBinPath = `${commandsPath}/../../bin/${arch}`
+        return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
       } else {
         return Promise.resolve();
       }
