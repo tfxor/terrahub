@@ -14,7 +14,7 @@ Generation the templates
 
 ```sh
 $ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
-$ geerator [provider name] [destination path like ./templates/]
+$ generator [provider name] [destination path like ./templates/]
 ```
 
 ## Install Linux

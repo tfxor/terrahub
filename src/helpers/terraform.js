@@ -10,7 +10,7 @@ const Metadata = require('./metadata');
 const Dictionary = require('./dictionary');
 const Downloader = require('./downloader');
 const { execSync } = require('child_process');
-const { config, fetch } = require('../parameters');
+const { config, fetch, jitPath } = require('../parameters');
 const { extend, spawner, homePath } = require('./util');
 
 class Terraform {
@@ -68,7 +68,7 @@ class Terraform {
    */
   getRoot() {
     return this._config.isJit
-      ? homePath('cache/jit', this._config.hash)
+      ? homePath(jitPath, this._config.hash)
       : path.join(this._config.project.root, this._config.root);
   }
 

@@ -10,11 +10,11 @@ $ cd $GOPATH/src/component
 $ make linux | darwin | windows | all
 ```
 
-Generation the templates
+Generation the terraform scripts
 
 ```sh
 $ cd $GOPATH/src/component/../[YOUR OS ARCHITECTURE]/
-$ geerator [provider name] [destination path like ./templates/]
+$ component [cache jit full path] [component name] [component path]
 ```
 
 ## Install Linux

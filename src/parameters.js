@@ -67,11 +67,11 @@ module.exports = {
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
   cfgPath: cfgPath,
+  jitPath: 'cache/jit',
   config: {
     api: cfg.api,
     env: cfg.env,
     home: homePath(),
-    jit: 'cache/jit',
     token: cfg.token,
     format: cfg.format,
     retryCount: cfg.retryCount,
