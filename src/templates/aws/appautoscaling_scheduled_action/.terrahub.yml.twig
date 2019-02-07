@@ -6,23 +6,23 @@
     resource:
       aws_appautoscaling_scheduled_action:
         {{ name }}:
+          resource_id: '${var.{{ name }}_resource_id}'
           name: '${var.{{ name }}_name}'
           service_namespace: '${var.{{ name }}_service_namespace}'
-          resource_id: '${var.{{ name }}_resource_id}'
-          # scalable_dimension: ''
           # scalable_target_action: 
           #   -
           #     max_capacity: 0
           #     min_capacity: 0
           # schedule: ''
           # start_time: ''
+          # scalable_dimension: ''
           # end_time: ''
     variable:
+      {{ name }}_resource_id:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_service_namespace:
-        type: 'string'
-      {{ name }}_resource_id:
         type: 'string'
     output:
       id:

@@ -7,11 +7,11 @@
       google_compute_ssl_policy:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # project: ''
+          # min_tls_version: ''
+          # profile: ''
           # custom_features: []
           # description: ''
-          # min_tls_version: ''
-          # project: ''
-          # profile: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -22,11 +22,11 @@
         value: '${google_compute_ssl_policy.{{ name }}.id}'
       fingerprint:
         value: '${google_compute_ssl_policy.{{ name }}.fingerprint}'
-      self_link:
-        value: '${google_compute_ssl_policy.{{ name }}.self_link}'
-      creation_timestamp:
-        value: '${google_compute_ssl_policy.{{ name }}.creation_timestamp}'
-      enabled_features:
-        value: '${google_compute_ssl_policy.{{ name }}.enabled_features}'
       project:
         value: '${google_compute_ssl_policy.{{ name }}.project}'
+      enabled_features:
+        value: '${google_compute_ssl_policy.{{ name }}.enabled_features}'
+      creation_timestamp:
+        value: '${google_compute_ssl_policy.{{ name }}.creation_timestamp}'
+      self_link:
+        value: '${google_compute_ssl_policy.{{ name }}.self_link}'

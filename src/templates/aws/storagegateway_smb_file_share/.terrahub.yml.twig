@@ -6,23 +6,23 @@
     resource:
       aws_storagegateway_smb_file_share:
         {{ name }}:
-          role_arn: '${var.{{ name }}_role_arn}'
           gateway_arn: '${var.{{ name }}_gateway_arn}'
+          role_arn: '${var.{{ name }}_role_arn}'
           location_arn: '${var.{{ name }}_location_arn}'
-          # default_storage_class: ''
-          # authentication: ''
-          # read_only: false
-          # kms_encrypted: false
-          # object_acl: ''
           # requester_pays: false
-          # guess_mime_type_enabled: false
-          # invalid_user_list: []
+          # kms_encrypted: false
           # kms_key_arn: ''
+          # object_acl: ''
+          # authentication: ''
+          # guess_mime_type_enabled: false
           # valid_user_list: []
+          # default_storage_class: ''
+          # invalid_user_list: []
+          # read_only: false
     variable:
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_role_arn:
         type: 'string'
       {{ name }}_location_arn:
         type: 'string'
@@ -31,7 +31,7 @@
         value: '${aws_storagegateway_smb_file_share.{{ name }}.id}'
       thub_id:
         value: '${aws_storagegateway_smb_file_share.{{ name }}.id}'
-      arn:
-        value: '${aws_storagegateway_smb_file_share.{{ name }}.arn}'
       fileshare_id:
         value: '${aws_storagegateway_smb_file_share.{{ name }}.fileshare_id}'
+      arn:
+        value: '${aws_storagegateway_smb_file_share.{{ name }}.arn}'

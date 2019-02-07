@@ -6,23 +6,23 @@
     resource:
       google_compute_router_peer:
         {{ name }}:
-          router: '${var.{{ name }}_router}'
           interface: '${var.{{ name }}_interface}'
-          peer_asn: '${var.{{ name }}_peer_asn}'
           name: '${var.{{ name }}_name}'
+          router: '${var.{{ name }}_router}'
+          peer_asn: '${var.{{ name }}_peer_asn}'
           # peer_ip_address: ''
-          # advertised_route_priority: 0
           # project: ''
           # region: ''
+          # advertised_route_priority: 0
     variable:
-      {{ name }}_router:
-        type: 'string'
       {{ name }}_interface:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_router:
         type: 'string'
       {{ name }}_peer_asn:
         type: 'int'
-      {{ name }}_name:
-        type: 'string'
     output:
       id:
         value: '${google_compute_router_peer.{{ name }}.id}'

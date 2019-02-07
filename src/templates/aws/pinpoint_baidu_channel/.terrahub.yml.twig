@@ -6,16 +6,16 @@
     resource:
       aws_pinpoint_baidu_channel:
         {{ name }}:
+          api_key: '${var.{{ name }}_api_key}'
           secret_key: '${var.{{ name }}_secret_key}'
           application_id: '${var.{{ name }}_application_id}'
-          api_key: '${var.{{ name }}_api_key}'
           # enabled: false
     variable:
+      {{ name }}_api_key:
+        type: 'string'
       {{ name }}_secret_key:
         type: 'string'
       {{ name }}_application_id:
-        type: 'string'
-      {{ name }}_api_key:
         type: 'string'
     output:
       id:

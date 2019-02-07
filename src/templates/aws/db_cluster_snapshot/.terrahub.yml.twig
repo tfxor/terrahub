@@ -6,41 +6,41 @@
     resource:
       aws_db_cluster_snapshot:
         {{ name }}:
-          db_cluster_snapshot_identifier: '${var.{{ name }}_db_cluster_snapshot_identifier}'
           db_cluster_identifier: '${var.{{ name }}_db_cluster_identifier}'
+          db_cluster_snapshot_identifier: '${var.{{ name }}_db_cluster_snapshot_identifier}'
     variable:
-      {{ name }}_db_cluster_snapshot_identifier:
-        type: 'string'
       {{ name }}_db_cluster_identifier:
+        type: 'string'
+      {{ name }}_db_cluster_snapshot_identifier:
         type: 'string'
     output:
       id:
         value: '${aws_db_cluster_snapshot.{{ name }}.id}'
       thub_id:
         value: '${aws_db_cluster_snapshot.{{ name }}.id}'
-      engine_version:
-        value: '${aws_db_cluster_snapshot.{{ name }}.engine_version}'
-      vpc_id:
-        value: '${aws_db_cluster_snapshot.{{ name }}.vpc_id}'
-      license_model:
-        value: '${aws_db_cluster_snapshot.{{ name }}.license_model}'
-      status:
-        value: '${aws_db_cluster_snapshot.{{ name }}.status}'
       availability_zones:
         value: '${aws_db_cluster_snapshot.{{ name }}.availability_zones}'
-      storage_encrypted:
-        value: '${aws_db_cluster_snapshot.{{ name }}.storage_encrypted}'
       kms_key_id:
         value: '${aws_db_cluster_snapshot.{{ name }}.kms_key_id}'
-      snapshot_type:
-        value: '${aws_db_cluster_snapshot.{{ name }}.snapshot_type}'
+      status:
+        value: '${aws_db_cluster_snapshot.{{ name }}.status}'
+      vpc_id:
+        value: '${aws_db_cluster_snapshot.{{ name }}.vpc_id}'
+      engine:
+        value: '${aws_db_cluster_snapshot.{{ name }}.engine}'
+      license_model:
+        value: '${aws_db_cluster_snapshot.{{ name }}.license_model}'
       source_db_cluster_snapshot_arn:
         value: '${aws_db_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'
       allocated_storage:
         value: '${aws_db_cluster_snapshot.{{ name }}.allocated_storage}'
       db_cluster_snapshot_arn:
         value: '${aws_db_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
-      engine:
-        value: '${aws_db_cluster_snapshot.{{ name }}.engine}'
+      engine_version:
+        value: '${aws_db_cluster_snapshot.{{ name }}.engine_version}'
+      storage_encrypted:
+        value: '${aws_db_cluster_snapshot.{{ name }}.storage_encrypted}'
       port:
         value: '${aws_db_cluster_snapshot.{{ name }}.port}'
+      snapshot_type:
+        value: '${aws_db_cluster_snapshot.{{ name }}.snapshot_type}'

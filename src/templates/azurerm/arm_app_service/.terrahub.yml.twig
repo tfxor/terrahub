@@ -7,48 +7,48 @@
     resource:
       azurerm_arm_app_service:
         {{ name }}:
-          app_service_plan_id: '${var.{{ name }}_app_service_plan_id}'
           name: '${var.{{ name }}_name}'
-          # connection_string: 
-          #   name:''
-          #   value:''
-          #   type:''
+          app_service_plan_id: '${var.{{ name }}_app_service_plan_id}'
+          # client_cert_enabled: false
+          # enabled: false
           # app_settings: 
           #   '[TO_BE_REPLACED]': ''
+          # connection_string: 
+          #   value: ''
+          #   type: ''
+          #   name: ''
           # https_only: false
-          # enabled: false
+          # client_affinity_enabled: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # identity: 
           #   -
           #     type: ''
-          # client_affinity_enabled: false
-          # client_cert_enabled: false
     variable:
-      {{ name }}_app_service_plan_id:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_app_service_plan_id:
         type: 'string'
     output:
       id:
         value: '${azurerm_arm_app_service.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_app_service.{{ name }}.id}'
-      connection_string:
-        value: '${azurerm_arm_app_service.{{ name }}.connection_string}'
       app_settings:
         value: '${azurerm_arm_app_service.{{ name }}.app_settings}'
-      default_site_hostname:
-        value: '${azurerm_arm_app_service.{{ name }}.default_site_hostname}'
-      identity:
-        value: '${azurerm_arm_app_service.{{ name }}.identity}'
-      client_affinity_enabled:
-        value: '${azurerm_arm_app_service.{{ name }}.client_affinity_enabled}'
-      site_credential:
-        value: '${azurerm_arm_app_service.{{ name }}.site_credential}'
-      outbound_ip_addresses:
-        value: '${azurerm_arm_app_service.{{ name }}.outbound_ip_addresses}'
-      possible_outbound_ip_addresses:
-        value: '${azurerm_arm_app_service.{{ name }}.possible_outbound_ip_addresses}'
+      connection_string:
+        value: '${azurerm_arm_app_service.{{ name }}.connection_string}'
       source_control:
         value: '${azurerm_arm_app_service.{{ name }}.source_control}'
+      site_credential:
+        value: '${azurerm_arm_app_service.{{ name }}.site_credential}'
+      possible_outbound_ip_addresses:
+        value: '${azurerm_arm_app_service.{{ name }}.possible_outbound_ip_addresses}'
+      default_site_hostname:
+        value: '${azurerm_arm_app_service.{{ name }}.default_site_hostname}'
+      client_affinity_enabled:
+        value: '${azurerm_arm_app_service.{{ name }}.client_affinity_enabled}'
+      outbound_ip_addresses:
+        value: '${azurerm_arm_app_service.{{ name }}.outbound_ip_addresses}'
+      identity:
+        value: '${azurerm_arm_app_service.{{ name }}.identity}'

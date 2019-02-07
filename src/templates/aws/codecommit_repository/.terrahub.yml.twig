@@ -7,8 +7,8 @@
       aws_codecommit_repository:
         {{ name }}:
           repository_name: '${var.{{ name }}_repository_name}'
-          # description: ''
           # default_branch: ''
+          # description: ''
     variable:
       {{ name }}_repository_name:
         type: 'string'
@@ -17,11 +17,11 @@
         value: '${aws_codecommit_repository.{{ name }}.id}'
       thub_id:
         value: '${aws_codecommit_repository.{{ name }}.id}'
+      clone_url_ssh:
+        value: '${aws_codecommit_repository.{{ name }}.clone_url_ssh}'
       arn:
         value: '${aws_codecommit_repository.{{ name }}.arn}'
       repository_id:
         value: '${aws_codecommit_repository.{{ name }}.repository_id}'
       clone_url_http:
         value: '${aws_codecommit_repository.{{ name }}.clone_url_http}'
-      clone_url_ssh:
-        value: '${aws_codecommit_repository.{{ name }}.clone_url_ssh}'

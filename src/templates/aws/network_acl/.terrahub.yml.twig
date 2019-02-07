@@ -6,51 +6,51 @@
     resource:
       aws_network_acl:
         {{ name }}:
-          egress:
-            rule_no:0
-            protocol:''
-            from_port:0
-            to_port:0
-            action:''
-          #   cidr_block:''
-          #   ipv6_cidr_block:''
-          #   icmp_type:0
-          #   icmp_code:0
           vpc_id: '${var.{{ name }}_vpc_id}'
-          ingress:
-            to_port:0
-            protocol:''
-            from_port:0
-            action:''
-            rule_no:0
-          #   ipv6_cidr_block:''
-          #   cidr_block:''
-          #   icmp_type:0
-          #   icmp_code:0
-          # egress: 
-          #   rule_no:0
-          #   protocol:''
-          #   from_port:0
-          #   to_port:0
-          #   action:''
-          #   cidr_block:''
-          #   ipv6_cidr_block:''
-          #   icmp_type:0
-          #   icmp_code:0
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          ingress: 
+            protocol: ''
+            action: ''
+            from_port: 0
+            to_port: 0
+            rule_no: 0
+          #   icmp_code: 0
+          #   cidr_block: ''
+          #   ipv6_cidr_block: ''
+          #   icmp_type: 0
+          egress: 
+            from_port: 0
+            action: ''
+            protocol: ''
+            to_port: 0
+            rule_no: 0
+          #   cidr_block: ''
+          #   ipv6_cidr_block: ''
+          #   icmp_type: 0
+          #   icmp_code: 0
           # subnet_id: ''
           # subnet_ids: []
           # ingress: 
-          #   to_port:0
-          #   protocol:''
-          #   from_port:0
-          #   action:''
-          #   rule_no:0
-          #   ipv6_cidr_block:''
-          #   cidr_block:''
-          #   icmp_type:0
-          #   icmp_code:0
+          #   from_port: 0
+          #   to_port: 0
+          #   rule_no: 0
+          #   action: ''
+          #   protocol: ''
+          #   icmp_type: 0
+          #   cidr_block: ''
+          #   ipv6_cidr_block: ''
+          #   icmp_code: 0
+          # egress: 
+          #   from_port: 0
+          #   action: ''
+          #   to_port: 0
+          #   rule_no: 0
+          #   protocol: ''
+          #   icmp_type: 0
+          #   cidr_block: ''
+          #   ipv6_cidr_block: ''
+          #   icmp_code: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_vpc_id:
         type: 'string'
@@ -59,8 +59,6 @@
         value: '${aws_network_acl.{{ name }}.id}'
       thub_id:
         value: '${aws_network_acl.{{ name }}.id}'
-      egress:
-        value: '${aws_network_acl.{{ name }}.egress}'
       owner_id:
         value: '${aws_network_acl.{{ name }}.owner_id}'
       vpc_id:
@@ -71,3 +69,5 @@
         value: '${aws_network_acl.{{ name }}.subnet_ids}'
       ingress:
         value: '${aws_network_acl.{{ name }}.ingress}'
+      egress:
+        value: '${aws_network_acl.{{ name }}.egress}'

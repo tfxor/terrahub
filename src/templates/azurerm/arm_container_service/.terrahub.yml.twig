@@ -7,31 +7,31 @@
     resource:
       azurerm_arm_container_service:
         {{ name }}:
-          orchestration_platform: '${var.{{ name }}_orchestration_platform}'
           name: '${var.{{ name }}_name}'
-          master_profile:
-            dns_prefix:''
-          #   count:0
-          linux_profile:
-            admin_username:''
-            ssh_key:
-              key_data:''
-          agent_pool_profile:
-            vm_size:''
-            name:''
-            dns_prefix:''
-          #   count:0
-          diagnostics_profile:
-            enabled:false
-          # service_principal: 
-          #   client_id:''
-          #   client_secret:''
+          orchestration_platform: '${var.{{ name }}_orchestration_platform}'
+          master_profile: 
+            dns_prefix: ''
+          #   count: 0
+          linux_profile: 
+            admin_username: ''
+            ssh_key: 
+              key_data: ''
+          agent_pool_profile: 
+            name: ''
+            dns_prefix: ''
+            vm_size: ''
+          #   count: 0
+          diagnostics_profile: 
+            enabled: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # service_principal: 
+          #   client_id: ''
+          #   client_secret: ''
     variable:
-      {{ name }}_orchestration_platform:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_orchestration_platform:
         type: 'string'
     output:
       id:

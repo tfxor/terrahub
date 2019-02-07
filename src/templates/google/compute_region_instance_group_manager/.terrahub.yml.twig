@@ -6,11 +6,12 @@
     resource:
       google_compute_region_instance_group_manager:
         {{ name }}:
-          base_instance_name: '${var.{{ name }}_base_instance_name}'
           name: '${var.{{ name }}_name}'
+          base_instance_name: '${var.{{ name }}_base_instance_name}'
           region: '${var.{{ name }}_region}'
-          # distribution_policy_zones: []
-          # instance_template: ''
+          # named_port: 
+          #   name: ''
+          #   port: 0
           # version: 
           #   -
           #     name: ''
@@ -19,31 +20,30 @@
           #       -
           #         fixed: 0
           #         percent: 0
-          # wait_for_instances: false
           # auto_healing_policies: 
           #   -
           #     health_check: ''
           #     initial_delay_sec: 0
+          # description: ''
+          # target_pools: []
+          # target_size: 0
+          # wait_for_instances: false
+          # distribution_policy_zones: []
           # rolling_update_policy: 
           #   -
-          #     minimal_action: ''
           #     type: ''
+          #     minimal_action: ''
           #     max_surge_fixed: 0
           #     max_surge_percent: 0
           #     max_unavailable_fixed: 0
           #     max_unavailable_percent: 0
           #     min_ready_sec: 0
-          # description: ''
+          # instance_template: ''
           # project: ''
-          # target_pools: []
-          # target_size: 0
-          # named_port: 
-          #   name:''
-          #   port:0
     variable:
-      {{ name }}_base_instance_name:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_base_instance_name:
         type: 'string'
       {{ name }}_region:
         type: 'string'
@@ -52,19 +52,19 @@
         value: '${google_compute_region_instance_group_manager.{{ name }}.id}'
       thub_id:
         value: '${google_compute_region_instance_group_manager.{{ name }}.id}'
-      distribution_policy_zones:
-        value: '${google_compute_region_instance_group_manager.{{ name }}.distribution_policy_zones}'
       version:
         value: '${google_compute_region_instance_group_manager.{{ name }}.version}'
-      rolling_update_policy:
-        value: '${google_compute_region_instance_group_manager.{{ name }}.rolling_update_policy}'
       fingerprint:
         value: '${google_compute_region_instance_group_manager.{{ name }}.fingerprint}'
-      project:
-        value: '${google_compute_region_instance_group_manager.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_region_instance_group_manager.{{ name }}.self_link}'
       target_size:
         value: '${google_compute_region_instance_group_manager.{{ name }}.target_size}'
+      self_link:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.self_link}'
+      distribution_policy_zones:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.distribution_policy_zones}'
+      rolling_update_policy:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.rolling_update_policy}'
       instance_group:
         value: '${google_compute_region_instance_group_manager.{{ name }}.instance_group}'
+      project:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.project}'

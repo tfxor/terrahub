@@ -7,57 +7,57 @@
     resource:
       azurerm_arm_function_app:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           storage_connection_string: '${var.{{ name }}_storage_connection_string}'
           app_service_plan_id: '${var.{{ name }}_app_service_plan_id}'
+          name: '${var.{{ name }}_name}'
+          # enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # client_affinity_enabled: false
+          # site_config: 
+          #   -
+          #     always_on: false
+          #     use_32_bit_worker_process: false
+          #     websockets_enabled: false
+          #     linux_fx_version: ''
+          # identity: 
+          #   -
+          #     type: ''
+          # https_only: false
           # connection_string: 
           #   -
           #     name: ''
           #     value: ''
           #     type: ''
-          # client_affinity_enabled: false
-          # https_only: false
-          # enabled: false
           # version: ''
           # app_settings: 
           #   '[TO_BE_REPLACED]': ''
-          # identity: 
-          #   -
-          #     type: ''
           # enable_builtin_logging: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # site_config: 
-          #   -
-          #     use_32_bit_worker_process: false
-          #     websockets_enabled: false
-          #     linux_fx_version: ''
-          #     always_on: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_storage_connection_string:
         type: 'string'
       {{ name }}_app_service_plan_id:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${azurerm_arm_function_app.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_function_app.{{ name }}.id}'
+      default_hostname:
+        value: '${azurerm_arm_function_app.{{ name }}.default_hostname}'
+      client_affinity_enabled:
+        value: '${azurerm_arm_function_app.{{ name }}.client_affinity_enabled}'
+      site_config:
+        value: '${azurerm_arm_function_app.{{ name }}.site_config}'
+      identity:
+        value: '${azurerm_arm_function_app.{{ name }}.identity}'
+      outbound_ip_addresses:
+        value: '${azurerm_arm_function_app.{{ name }}.outbound_ip_addresses}'
       kind:
         value: '${azurerm_arm_function_app.{{ name }}.kind}'
       connection_string:
         value: '${azurerm_arm_function_app.{{ name }}.connection_string}'
-      outbound_ip_addresses:
-        value: '${azurerm_arm_function_app.{{ name }}.outbound_ip_addresses}'
       site_credential:
         value: '${azurerm_arm_function_app.{{ name }}.site_credential}'
-      client_affinity_enabled:
-        value: '${azurerm_arm_function_app.{{ name }}.client_affinity_enabled}'
-      identity:
-        value: '${azurerm_arm_function_app.{{ name }}.identity}'
-      default_hostname:
-        value: '${azurerm_arm_function_app.{{ name }}.default_hostname}'
-      site_config:
-        value: '${azurerm_arm_function_app.{{ name }}.site_config}'

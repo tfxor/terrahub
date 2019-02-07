@@ -7,8 +7,8 @@
       aws_emr_security_configuration:
         {{ name }}:
           configuration: '${var.{{ name }}_configuration}'
-          # name: ''
           # name_prefix: ''
+          # name: ''
     variable:
       {{ name }}_configuration:
         type: 'string'
@@ -17,7 +17,7 @@
         value: '${aws_emr_security_configuration.{{ name }}.id}'
       thub_id:
         value: '${aws_emr_security_configuration.{{ name }}.id}'
-      name:
-        value: '${aws_emr_security_configuration.{{ name }}.name}'
       creation_date:
         value: '${aws_emr_security_configuration.{{ name }}.creation_date}'
+      name:
+        value: '${aws_emr_security_configuration.{{ name }}.name}'

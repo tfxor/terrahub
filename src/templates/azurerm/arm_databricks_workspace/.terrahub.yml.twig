@@ -7,15 +7,15 @@
     resource:
       azurerm_arm_databricks_workspace:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           sku: '${var.{{ name }}_sku}'
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # managed_resource_group_name: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_sku:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

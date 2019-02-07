@@ -8,9 +8,9 @@
         {{ name }}:
           policy_arn: '${var.{{ name }}_policy_arn}'
           name: '${var.{{ name }}_name}'
-          # roles: []
           # groups: []
           # users: []
+          # roles: []
     variable:
       {{ name }}_policy_arn:
         type: 'string'

@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_container_group:
         {{ name }}:
-          container:
+          container: 
             -
               name: ''
               image: ''
@@ -16,8 +16,8 @@
           #     port: 0
           #     protocol: ''
           #     ports: 
-          #     port:0
-          #     protocol:''
+          #     port: 0
+          #     protocol: ''
           name: '${var.{{ name }}_name}'
           os_type: '${var.{{ name }}_os_type}'
           # restart_policy: ''

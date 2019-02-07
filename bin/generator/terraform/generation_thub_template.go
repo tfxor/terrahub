@@ -182,7 +182,7 @@ func ParsingRequestElement(param ElementParam) (string, string) {
 			"        type: '" + param.paramType + "'\n"
 	} else if param.haveParent == 1 && param.element["Elem"] != nil {
 		param.isRequest = true
-		paramRequests += "          " + param.valName + ":" + ParsingElementByType(param)
+		paramRequests += "          " + param.valName + ": " + ParsingElementByType(param)
 	} else {
 		paramRequests += ParsingElementByType(param)
 	}
@@ -216,7 +216,7 @@ func ParsingElementByType(param ElementParam) string {
 		startWith += "'" + param.valName + "': "
 	case "set":
 	    paramProc = SetSpaces(param.isRequest)
-		startWith += param.valName + ":"
+		startWith += param.valName + ": "
 	}
 	for j := 2; j <= param.haveParent; j++ {
 		paramProc += "  "

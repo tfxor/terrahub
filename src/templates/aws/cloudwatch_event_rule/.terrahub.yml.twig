@@ -6,19 +6,19 @@
     resource:
       aws_cloudwatch_event_rule:
         {{ name }}:
+          # description: ''
+          # role_arn: ''
+          # is_enabled: false
           # name: ''
           # name_prefix: ''
           # schedule_expression: ''
           # event_pattern: ''
-          # description: ''
-          # role_arn: ''
-          # is_enabled: false
     output:
       id:
         value: '${aws_cloudwatch_event_rule.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudwatch_event_rule.{{ name }}.id}'
-      name:
-        value: '${aws_cloudwatch_event_rule.{{ name }}.name}'
       arn:
         value: '${aws_cloudwatch_event_rule.{{ name }}.arn}'
+      name:
+        value: '${aws_cloudwatch_event_rule.{{ name }}.name}'

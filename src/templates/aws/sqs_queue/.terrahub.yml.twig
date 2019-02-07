@@ -6,29 +6,29 @@
     resource:
       aws_sqs_queue:
         {{ name }}:
+          # redrive_policy: ''
+          # kms_master_key_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+          # delay_seconds: 0
+          # kms_data_key_reuse_period_seconds: 0
+          # name: ''
           # max_message_size: 0
           # message_retention_seconds: 0
           # receive_wait_time_seconds: 0
-          # name: ''
-          # name_prefix: ''
-          # kms_master_key_id: ''
-          # delay_seconds: 0
-          # redrive_policy: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # visibility_timeout_seconds: 0
           # policy: ''
-          # kms_data_key_reuse_period_seconds: 0
+          # visibility_timeout_seconds: 0
     output:
       id:
         value: '${aws_sqs_queue.{{ name }}.id}'
       thub_id:
         value: '${aws_sqs_queue.{{ name }}.id}'
-      name:
-        value: '${aws_sqs_queue.{{ name }}.name}'
-      arn:
-        value: '${aws_sqs_queue.{{ name }}.arn}'
-      policy:
-        value: '${aws_sqs_queue.{{ name }}.policy}'
       kms_data_key_reuse_period_seconds:
         value: '${aws_sqs_queue.{{ name }}.kms_data_key_reuse_period_seconds}'
+      name:
+        value: '${aws_sqs_queue.{{ name }}.name}'
+      policy:
+        value: '${aws_sqs_queue.{{ name }}.policy}'
+      arn:
+        value: '${aws_sqs_queue.{{ name }}.arn}'

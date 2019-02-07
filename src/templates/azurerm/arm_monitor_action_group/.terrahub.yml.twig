@@ -9,6 +9,11 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           short_name: '${var.{{ name }}_short_name}'
+          # sms_receiver: 
+          #   -
+          #     name: ''
+          #     country_code: ''
+          #     phone_number: ''
           # webhook_receiver: 
           #   -
           #     name: ''
@@ -18,13 +23,8 @@
           # enabled: false
           # email_receiver: 
           #   -
-          #     name: ''
           #     email_address: ''
-          # sms_receiver: 
-          #   -
           #     name: ''
-          #     country_code: ''
-          #     phone_number: ''
     variable:
       {{ name }}_name:
         type: 'string'

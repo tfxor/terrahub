@@ -6,15 +6,15 @@
     resource:
       aws_ses_receipt_filter:
         {{ name }}:
+          cidr: '${var.{{ name }}_cidr}'
           policy: '${var.{{ name }}_policy}'
           name: '${var.{{ name }}_name}'
-          cidr: '${var.{{ name }}_cidr}'
     variable:
+      {{ name }}_cidr:
+        type: 'string'
       {{ name }}_policy:
         type: 'string'
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_cidr:
         type: 'string'
     output:
       id:

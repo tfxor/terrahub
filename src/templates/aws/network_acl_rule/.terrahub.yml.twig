@@ -7,25 +7,25 @@
       aws_network_acl_rule:
         {{ name }}:
           network_acl_id: '${var.{{ name }}_network_acl_id}'
+          rule_number: '${var.{{ name }}_rule_number}'
           protocol: '${var.{{ name }}_protocol}'
           rule_action: '${var.{{ name }}_rule_action}'
-          rule_number: '${var.{{ name }}_rule_number}'
+          # egress: false
           # cidr_block: ''
           # ipv6_cidr_block: ''
-          # to_port: 0
           # icmp_type: ''
-          # egress: false
-          # icmp_code: ''
           # from_port: 0
+          # to_port: 0
+          # icmp_code: ''
     variable:
       {{ name }}_network_acl_id:
         type: 'string'
+      {{ name }}_rule_number:
+        type: 'int'
       {{ name }}_protocol:
         type: 'string'
       {{ name }}_rule_action:
         type: 'string'
-      {{ name }}_rule_number:
-        type: 'int'
     output:
       id:
         value: '${aws_network_acl_rule.{{ name }}.id}'

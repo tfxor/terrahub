@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_shared_image_version:
         {{ name }}:
-          image_name: '${var.{{ name }}_image_name}'
-          managed_image_id: '${var.{{ name }}_managed_image_id}'
-          target_region:
-            name:''
-            regional_replica_count:0
-          name: '${var.{{ name }}_name}'
           gallery_name: '${var.{{ name }}_gallery_name}'
+          image_name: '${var.{{ name }}_image_name}'
+          target_region: 
+            name: ''
+            regional_replica_count: 0
+          name: '${var.{{ name }}_name}'
+          managed_image_id: '${var.{{ name }}_managed_image_id}'
           # exclude_from_latest: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_image_name:
+      {{ name }}_gallery_name:
         type: 'string'
-      {{ name }}_managed_image_id:
+      {{ name }}_image_name:
         type: 'string'
       {{ name }}_name:
         type: 'string'
-      {{ name }}_gallery_name:
+      {{ name }}_managed_image_id:
         type: 'string'
     output:
       id:

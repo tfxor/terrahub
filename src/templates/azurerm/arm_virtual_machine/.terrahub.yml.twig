@@ -7,45 +7,35 @@
     resource:
       azurerm_arm_virtual_machine:
         {{ name }}:
-          storage_os_disk:
+          name: '${var.{{ name }}_name}'
+          storage_os_disk: 
             -
-              create_option: ''
               name: ''
-          #     vhd_uri: ''
-          #     managed_disk_type: ''
-          #     caching: ''
+              create_option: ''
           #     os_type: ''
+          #     vhd_uri: ''
           #     managed_disk_id: ''
-          #     image_uri: ''
-          #     disk_size_gb: 0
           #     write_accelerator_enabled: false
+          #     managed_disk_type: ''
+          #     image_uri: ''
+          #     caching: ''
+          #     disk_size_gb: 0
           vm_size: '${var.{{ name }}_vm_size}'
           network_interface_ids: '${var.{{ name }}_network_interface_ids}'
-          name: '${var.{{ name }}_name}'
-          # os_profile_windows_config: 
-          #   timezone:''
-          #   winrm:
-          #     -
-          #       protocol: ''
-          #       certificate_url: ''
-          #   provision_vm_agent:false
-          #   enable_automatic_upgrades:false
-          # delete_os_disk_on_termination: false
-          # availability_set_id: ''
+          # identity: 
+          #   -
+          #     type: ''
+          #     identity_ids: 
+          #       -
           # storage_image_reference: 
-          #   offer:''
-          #   sku:''
-          #   version:''
-          #   id:''
-          #   publisher:''
-          # os_profile: 
-          #   admin_username:''
-          #   computer_name:''
-          #   admin_password:''
-          #   custom_data:''
+          #   offer: ''
+          #   sku: ''
+          #   version: ''
+          #   id: ''
+          #   publisher: ''
           # os_profile_linux_config: 
-          #   disable_password_authentication:false
-          #   ssh_keys:
+          #   disable_password_authentication: false
+          #   ssh_keys: 
           #     -
           #       path: ''
           #       key_data: ''
@@ -54,28 +44,39 @@
           #     name: ''
           #     publisher: ''
           #     product: ''
+          # availability_set_id: ''
+          # os_profile_windows_config: 
+          #   winrm: 
+          #     -
+          #       protocol: ''
+          #       certificate_url: ''
+          #   provision_vm_agent: false
+          #   enable_automatic_upgrades: false
+          #   timezone: ''
           # license_type: ''
+          # delete_os_disk_on_termination: false
           # storage_data_disk: 
           #   -
-          #     lun: 0
           #     create_option: ''
           #     name: ''
-          #     caching: ''
+          #     lun: 0
+          #     vhd_uri: ''
           #     managed_disk_id: ''
           #     managed_disk_type: ''
-          #     write_accelerator_enabled: false
-          #     vhd_uri: ''
+          #     caching: ''
           #     disk_size_gb: 0
+          #     write_accelerator_enabled: false
+          # os_profile: 
+          #   computer_name: ''
+          #   admin_username: ''
+          #   admin_password: ''
+          #   custom_data: ''
+          # primary_network_interface_id: ''
           # delete_data_disks_on_termination: false
           # boot_diagnostics: 
           #   -
           #     enabled: false
           #     storage_uri: ''
-          # identity: 
-          #   -
-          #     type: ''
-          #     identity_ids: 
-          #       -
           # os_profile_secrets: 
           #   -
           #     source_vault_id: ''
@@ -83,28 +84,27 @@
           #       -
           #         certificate_url: ''
           #         certificate_store: ''
-          # primary_network_interface_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_vm_size:
         type: 'string'
       {{ name }}_network_interface_ids:
         type: 'list'
-      {{ name }}_name:
-        type: 'string'
     output:
       id:
         value: '${azurerm_arm_virtual_machine.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_virtual_machine.{{ name }}.id}'
-      availability_set_id:
-        value: '${azurerm_arm_virtual_machine.{{ name }}.availability_set_id}'
+      identity:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.identity}'
       storage_image_reference:
         value: '${azurerm_arm_virtual_machine.{{ name }}.storage_image_reference}'
+      availability_set_id:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.availability_set_id}'
       license_type:
         value: '${azurerm_arm_virtual_machine.{{ name }}.license_type}'
       storage_data_disk:
         value: '${azurerm_arm_virtual_machine.{{ name }}.storage_data_disk}'
-      identity:
-        value: '${azurerm_arm_virtual_machine.{{ name }}.identity}'

@@ -7,15 +7,15 @@
       aws_docdb_cluster_parameter_group:
         {{ name }}:
           family: '${var.{{ name }}_family}'
-          # name: ''
-          # name_prefix: ''
           # description: ''
           # parameter: 
-          #   name:''
-          #   value:''
-          #   apply_method:''
+          #   name: ''
+          #   value: ''
+          #   apply_method: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # name_prefix: ''
     variable:
       {{ name }}_family:
         type: 'string'

@@ -6,9 +6,26 @@
     resource:
       aws_glue_crawler:
         {{ name }}:
-          role: '${var.{{ name }}_role}'
-          name: '${var.{{ name }}_name}'
           database_name: '${var.{{ name }}_database_name}'
+          name: '${var.{{ name }}_name}'
+          role: '${var.{{ name }}_role}'
+          # schedule: ''
+          # table_prefix: ''
+          # dynamodb_target: 
+          #   -
+          #     path: ''
+          # configuration: ''
+          # description: ''
+          # classifiers: []
+          # schema_change_policy: 
+          #   -
+          #     delete_behavior: ''
+          #     update_behavior: ''
+          # s3_target: 
+          #   -
+          #     path: ''
+          #     exclusions: 
+          #       -
           # jdbc_target: 
           #   -
           #     connection_name: ''
@@ -16,29 +33,12 @@
           #     exclusions: 
           #       -
           # security_configuration: ''
-          # description: ''
-          # schedule: ''
-          # classifiers: []
-          # schema_change_policy: 
-          #   -
-          #     delete_behavior: ''
-          #     update_behavior: ''
-          # dynamodb_target: 
-          #   -
-          #     path: ''
-          # table_prefix: ''
-          # s3_target: 
-          #   -
-          #     path: ''
-          #     exclusions: 
-          #       -
-          # configuration: ''
     variable:
-      {{ name }}_role:
+      {{ name }}_database_name:
         type: 'string'
       {{ name }}_name:
         type: 'string'
-      {{ name }}_database_name:
+      {{ name }}_role:
         type: 'string'
     output:
       id:

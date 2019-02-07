@@ -7,14 +7,14 @@
       aws_pinpoint_apns_voip_channel:
         {{ name }}:
           application_id: '${var.{{ name }}_application_id}'
+          # team_id: ''
+          # token_key_id: ''
           # enabled: false
-          # certificate: ''
           # default_authentication_method: ''
           # private_key: ''
-          # team_id: ''
           # token_key: ''
-          # token_key_id: ''
           # bundle_id: ''
+          # certificate: ''
     variable:
       {{ name }}_application_id:
         type: 'string'

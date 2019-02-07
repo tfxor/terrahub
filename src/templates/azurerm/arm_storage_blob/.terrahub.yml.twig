@@ -7,20 +7,20 @@
     resource:
       azurerm_arm_storage_blob:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           storage_account_name: '${var.{{ name }}_storage_account_name}'
+          name: '${var.{{ name }}_name}'
           storage_container_name: '${var.{{ name }}_storage_container_name}'
           # type: ''
-          # content_type: ''
+          # size: 0
           # source_uri: ''
           # parallelism: 0
           # attempts: 0
-          # size: 0
+          # content_type: ''
           # source: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_storage_account_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
       {{ name }}_storage_container_name:
         type: 'string'

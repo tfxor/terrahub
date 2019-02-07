@@ -7,8 +7,8 @@
       aws_dms_certificate:
         {{ name }}:
           certificate_id: '${var.{{ name }}_certificate_id}'
-          # certificate_wallet: ''
           # certificate_pem: ''
+          # certificate_wallet: ''
     variable:
       {{ name }}_certificate_id:
         type: 'string'

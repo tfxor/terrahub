@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_automation_credential:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           account_name: '${var.{{ name }}_account_name}'
           username: '${var.{{ name }}_username}'
           password: '${var.{{ name }}_password}'
+          name: '${var.{{ name }}_name}'
           # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_account_name:
         type: 'string'
       {{ name }}_username:
         type: 'string'
       {{ name }}_password:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

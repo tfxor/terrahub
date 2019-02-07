@@ -6,19 +6,19 @@
     resource:
       aws_pinpoint_email_channel:
         {{ name }}:
-          identity: '${var.{{ name }}_identity}'
-          role_arn: '${var.{{ name }}_role_arn}'
           application_id: '${var.{{ name }}_application_id}'
           from_address: '${var.{{ name }}_from_address}'
+          identity: '${var.{{ name }}_identity}'
+          role_arn: '${var.{{ name }}_role_arn}'
           # enabled: false
     variable:
-      {{ name }}_identity:
-        type: 'string'
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_application_id:
         type: 'string'
       {{ name }}_from_address:
+        type: 'string'
+      {{ name }}_identity:
+        type: 'string'
+      {{ name }}_role_arn:
         type: 'string'
     output:
       id:

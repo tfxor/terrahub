@@ -6,23 +6,23 @@
     resource:
       aws_waf_rate_based_rule:
         {{ name }}:
+          rate_limit: '${var.{{ name }}_rate_limit}'
           name: '${var.{{ name }}_name}'
           metric_name: '${var.{{ name }}_metric_name}'
           rate_key: '${var.{{ name }}_rate_key}'
-          rate_limit: '${var.{{ name }}_rate_limit}'
           # predicates: 
-          #   negated:false
-          #   data_id:''
-          #   type:''
+          #   negated: false
+          #   data_id: ''
+          #   type: ''
     variable:
+      {{ name }}_rate_limit:
+        type: 'int'
       {{ name }}_name:
         type: 'string'
       {{ name }}_metric_name:
         type: 'string'
       {{ name }}_rate_key:
         type: 'string'
-      {{ name }}_rate_limit:
-        type: 'int'
     output:
       id:
         value: '${aws_waf_rate_based_rule.{{ name }}.id}'

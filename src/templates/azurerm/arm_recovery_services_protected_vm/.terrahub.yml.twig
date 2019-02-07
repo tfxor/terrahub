@@ -7,17 +7,17 @@
     resource:
       azurerm_arm_recovery_services_protected_vm:
         {{ name }}:
-          recovery_vault_name: '${var.{{ name }}_recovery_vault_name}'
           source_vm_id: '${var.{{ name }}_source_vm_id}'
           backup_policy_id: '${var.{{ name }}_backup_policy_id}'
+          recovery_vault_name: '${var.{{ name }}_recovery_vault_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_recovery_vault_name:
-        type: 'string'
       {{ name }}_source_vm_id:
         type: 'string'
       {{ name }}_backup_policy_id:
+        type: 'string'
+      {{ name }}_recovery_vault_name:
         type: 'string'
     output:
       id:

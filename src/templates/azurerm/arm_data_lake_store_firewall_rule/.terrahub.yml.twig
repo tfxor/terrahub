@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_data_lake_store_firewall_rule:
         {{ name }}:
-          start_ip_address: '${var.{{ name }}_start_ip_address}'
           end_ip_address: '${var.{{ name }}_end_ip_address}'
           name: '${var.{{ name }}_name}'
           account_name: '${var.{{ name }}_account_name}'
+          start_ip_address: '${var.{{ name }}_start_ip_address}'
     variable:
-      {{ name }}_start_ip_address:
-        type: 'string'
       {{ name }}_end_ip_address:
         type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_account_name:
+        type: 'string'
+      {{ name }}_start_ip_address:
         type: 'string'
     output:
       id:

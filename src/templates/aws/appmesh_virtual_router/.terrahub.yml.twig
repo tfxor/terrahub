@@ -6,15 +6,15 @@
     resource:
       aws_appmesh_virtual_router:
         {{ name }}:
-          mesh_name: '${var.{{ name }}_mesh_name}'
-          spec:
+          spec: 
             -
               service_names: []
           name: '${var.{{ name }}_name}'
+          mesh_name: '${var.{{ name }}_mesh_name}'
     variable:
-      {{ name }}_mesh_name:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_mesh_name:
         type: 'string'
     output:
       id:

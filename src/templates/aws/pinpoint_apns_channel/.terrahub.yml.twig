@@ -7,13 +7,13 @@
       aws_pinpoint_apns_channel:
         {{ name }}:
           application_id: '${var.{{ name }}_application_id}'
+          # default_authentication_method: ''
           # enabled: false
+          # private_key: ''
+          # token_key: ''
           # token_key_id: ''
           # bundle_id: ''
           # certificate: ''
-          # token_key: ''
-          # default_authentication_method: ''
-          # private_key: ''
           # team_id: ''
     variable:
       {{ name }}_application_id:

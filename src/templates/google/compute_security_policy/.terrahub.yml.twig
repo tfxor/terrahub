@@ -7,17 +7,17 @@
       google_compute_security_policy:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # preview: false
-          # description: ''
-          # project: ''
           # rule: 
-          #   action:''
-          #   priority:0
-          #   match:
+          #   action: ''
+          #   priority: 0
+          #   match: 
           #     -
           #       config: 
           #           -
           #           src_ip_ranges: []
+          # preview: false
+          # description: ''
+          # project: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -26,11 +26,11 @@
         value: '${google_compute_security_policy.{{ name }}.id}'
       thub_id:
         value: '${google_compute_security_policy.{{ name }}.id}'
+      rule:
+        value: '${google_compute_security_policy.{{ name }}.rule}'
       fingerprint:
         value: '${google_compute_security_policy.{{ name }}.fingerprint}'
       self_link:
         value: '${google_compute_security_policy.{{ name }}.self_link}'
       project:
         value: '${google_compute_security_policy.{{ name }}.project}'
-      rule:
-        value: '${google_compute_security_policy.{{ name }}.rule}'

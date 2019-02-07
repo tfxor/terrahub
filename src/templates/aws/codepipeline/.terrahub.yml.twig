@@ -6,34 +6,34 @@
     resource:
       aws_codepipeline:
         {{ name }}:
-          stage:
-            -
-              action: 
-                -
-                  provider: ''
-                  version: ''
-                  name: ''
-                  owner: ''
-                  category: ''
-          #         input_artifacts: 
-          #           -
-          #         role_arn: ''
-          #         run_order: 0
-          #         configuration: 
-          #           '[TO_BE_REPLACED]': ''
-          #         output_artifacts: 
-          #           -
-              name: ''
           name: '${var.{{ name }}_name}'
           role_arn: '${var.{{ name }}_role_arn}'
-          artifact_store:
+          artifact_store: 
             -
               location: ''
               type: ''
           #     encryption_key: 
           #       -
-          #         type: ''
           #         id: ''
+          #         type: ''
+          stage: 
+            -
+              name: ''
+              action: 
+                -
+                  category: ''
+                  provider: ''
+                  owner: ''
+                  version: ''
+                  name: ''
+          #         input_artifacts: 
+          #           -
+          #         output_artifacts: 
+          #           -
+          #         configuration: 
+          #           '[TO_BE_REPLACED]': ''
+          #         role_arn: ''
+          #         run_order: 0
     variable:
       {{ name }}_name:
         type: 'string'

@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_sql_administrator:
         {{ name }}:
+          tenant_id: '${var.{{ name }}_tenant_id}'
           server_name: '${var.{{ name }}_server_name}'
           login: '${var.{{ name }}_login}'
           object_id: '${var.{{ name }}_object_id}'
-          tenant_id: '${var.{{ name }}_tenant_id}'
     variable:
+      {{ name }}_tenant_id:
+        type: 'string'
       {{ name }}_server_name:
         type: 'string'
       {{ name }}_login:
         type: 'string'
       {{ name }}_object_id:
-        type: 'string'
-      {{ name }}_tenant_id:
         type: 'string'
     output:
       id:

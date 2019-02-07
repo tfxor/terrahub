@@ -6,18 +6,18 @@
     resource:
       aws_cloudwatch_log_group:
         {{ name }}:
+          # name: ''
           # name_prefix: ''
           # retention_in_days: 0
           # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # name: ''
     output:
       id:
         value: '${aws_cloudwatch_log_group.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudwatch_log_group.{{ name }}.id}'
-      arn:
-        value: '${aws_cloudwatch_log_group.{{ name }}.arn}'
       name:
         value: '${aws_cloudwatch_log_group.{{ name }}.name}'
+      arn:
+        value: '${aws_cloudwatch_log_group.{{ name }}.arn}'

@@ -6,15 +6,15 @@
     resource:
       aws_directory_service_conditional_forwarder:
         {{ name }}:
+          directory_id: '${var.{{ name }}_directory_id}'
           dns_ips: '${var.{{ name }}_dns_ips}'
           remote_domain_name: '${var.{{ name }}_remote_domain_name}'
-          directory_id: '${var.{{ name }}_directory_id}'
     variable:
+      {{ name }}_directory_id:
+        type: 'string'
       {{ name }}_dns_ips:
         type: 'list'
       {{ name }}_remote_domain_name:
-        type: 'string'
-      {{ name }}_directory_id:
         type: 'string'
     output:
       id:

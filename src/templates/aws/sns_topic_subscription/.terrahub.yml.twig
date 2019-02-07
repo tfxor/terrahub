@@ -6,20 +6,20 @@
     resource:
       aws_sns_topic_subscription:
         {{ name }}:
-          endpoint: '${var.{{ name }}_endpoint}'
-          topic_arn: '${var.{{ name }}_topic_arn}'
           protocol: '${var.{{ name }}_protocol}'
-          # endpoint_auto_confirms: false
-          # filter_policy: ''
+          topic_arn: '${var.{{ name }}_topic_arn}'
+          endpoint: '${var.{{ name }}_endpoint}'
+          # confirmation_timeout_in_minutes: 0
           # delivery_policy: ''
           # raw_message_delivery: false
-          # confirmation_timeout_in_minutes: 0
+          # endpoint_auto_confirms: false
+          # filter_policy: ''
     variable:
-      {{ name }}_endpoint:
+      {{ name }}_protocol:
         type: 'string'
       {{ name }}_topic_arn:
         type: 'string'
-      {{ name }}_protocol:
+      {{ name }}_endpoint:
         type: 'string'
     output:
       id:

@@ -7,10 +7,10 @@
       aws_dax_parameter_group:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # parameters: 
-          #   name:''
-          #   value:''
           # description: ''
+          # parameters: 
+          #   name: ''
+          #   value: ''
     variable:
       {{ name }}_name:
         type: 'string'

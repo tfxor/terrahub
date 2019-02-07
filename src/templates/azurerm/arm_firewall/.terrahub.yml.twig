@@ -7,13 +7,13 @@
     resource:
       azurerm_arm_firewall:
         {{ name }}:
-          ip_configuration:
+          name: '${var.{{ name }}_name}'
+          ip_configuration: 
             -
               name: ''
               subnet_id: ''
-          #     internal_public_ip_address_id: ''
           #     public_ip_address_id: ''
-          name: '${var.{{ name }}_name}'
+          #     internal_public_ip_address_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:

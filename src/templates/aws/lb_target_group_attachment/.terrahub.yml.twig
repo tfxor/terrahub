@@ -8,8 +8,8 @@
         {{ name }}:
           target_group_arn: '${var.{{ name }}_target_group_arn}'
           target_id: '${var.{{ name }}_target_id}'
-          # availability_zone: ''
           # port: 0
+          # availability_zone: ''
     variable:
       {{ name }}_target_group_arn:
         type: 'string'

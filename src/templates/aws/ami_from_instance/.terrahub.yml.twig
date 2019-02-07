@@ -6,45 +6,45 @@
     resource:
       aws_ami_from_instance:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           source_instance_id: '${var.{{ name }}_source_instance_id}'
-          # ephemeral_block_device: 
-          # description: ''
-          # ebs_block_device: 
-          # snapshot_without_reboot: false
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # snapshot_without_reboot: false
+          # ebs_block_device: 
+          # ephemeral_block_device: 
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_source_instance_id:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_ami_from_instance.{{ name }}.id}'
       thub_id:
         value: '${aws_ami_from_instance.{{ name }}.id}'
-      ephemeral_block_device:
-        value: '${aws_ami_from_instance.{{ name }}.ephemeral_block_device}'
-      kernel_id:
-        value: '${aws_ami_from_instance.{{ name }}.kernel_id}'
+      ena_support:
+        value: '${aws_ami_from_instance.{{ name }}.ena_support}'
       ramdisk_id:
         value: '${aws_ami_from_instance.{{ name }}.ramdisk_id}'
+      root_snapshot_id:
+        value: '${aws_ami_from_instance.{{ name }}.root_snapshot_id}'
       architecture:
         value: '${aws_ami_from_instance.{{ name }}.architecture}'
       root_device_name:
         value: '${aws_ami_from_instance.{{ name }}.root_device_name}'
-      ebs_block_device:
-        value: '${aws_ami_from_instance.{{ name }}.ebs_block_device}'
-      ena_support:
-        value: '${aws_ami_from_instance.{{ name }}.ena_support}'
-      sriov_net_support:
-        value: '${aws_ami_from_instance.{{ name }}.sriov_net_support}'
       image_location:
         value: '${aws_ami_from_instance.{{ name }}.image_location}'
+      kernel_id:
+        value: '${aws_ami_from_instance.{{ name }}.kernel_id}'
       manage_ebs_snapshots:
         value: '${aws_ami_from_instance.{{ name }}.manage_ebs_snapshots}'
-      root_snapshot_id:
-        value: '${aws_ami_from_instance.{{ name }}.root_snapshot_id}'
+      sriov_net_support:
+        value: '${aws_ami_from_instance.{{ name }}.sriov_net_support}'
       virtualization_type:
         value: '${aws_ami_from_instance.{{ name }}.virtualization_type}'
+      ebs_block_device:
+        value: '${aws_ami_from_instance.{{ name }}.ebs_block_device}'
+      ephemeral_block_device:
+        value: '${aws_ami_from_instance.{{ name }}.ephemeral_block_device}'

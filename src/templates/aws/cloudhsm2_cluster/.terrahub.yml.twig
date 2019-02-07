@@ -6,16 +6,16 @@
     resource:
       aws_cloudhsm2_cluster:
         {{ name }}:
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
           hsm_type: '${var.{{ name }}_hsm_type}'
+          subnet_ids: '${var.{{ name }}_subnet_ids}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # source_backup_identifier: ''
     variable:
-      {{ name }}_subnet_ids:
-        type: 'set'
       {{ name }}_hsm_type:
         type: 'string'
+      {{ name }}_subnet_ids:
+        type: 'set'
     output:
       id:
         value: '${aws_cloudhsm2_cluster.{{ name }}.id}'

@@ -6,9 +6,7 @@
     resource:
       aws_appmesh_route:
         {{ name }}:
-          mesh_name: '${var.{{ name }}_mesh_name}'
-          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
-          spec:
+          spec: 
             -
               match: 
                 -
@@ -18,15 +16,17 @@
           #         action: 
           #           -
           #             weighted_target: 
-          #         virtual_node:''
-          #         weight:0
+          #         virtual_node: ''
+          #         weight: 0
           name: '${var.{{ name }}_name}'
+          mesh_name: '${var.{{ name }}_mesh_name}'
+          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
     variable:
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_mesh_name:
         type: 'string'
       {{ name }}_virtual_router_name:
-        type: 'string'
-      {{ name }}_name:
         type: 'string'
     output:
       id:

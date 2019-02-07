@@ -6,28 +6,28 @@
     resource:
       aws_appsync_graphql_api:
         {{ name }}:
-          authentication_type: '${var.{{ name }}_authentication_type}'
           name: '${var.{{ name }}_name}'
-          # openid_connect_config: 
-          #   -
-          #     issuer: ''
-          #     iat_ttl: 0
-          #     auth_ttl: 0
-          #     client_id: ''
-          # user_pool_config: 
-          #   -
-          #     default_action: ''
-          #     user_pool_id: ''
-          #     app_id_client_regex: ''
-          #     aws_region: ''
+          authentication_type: '${var.{{ name }}_authentication_type}'
           # log_config: 
           #   -
           #     cloudwatch_logs_role_arn: ''
           #     field_log_level: ''
+          # openid_connect_config: 
+          #   -
+          #     issuer: ''
+          #     auth_ttl: 0
+          #     client_id: ''
+          #     iat_ttl: 0
+          # user_pool_config: 
+          #   -
+          #     user_pool_id: ''
+          #     default_action: ''
+          #     app_id_client_regex: ''
+          #     aws_region: ''
     variable:
-      {{ name }}_authentication_type:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_authentication_type:
         type: 'string'
     output:
       id:

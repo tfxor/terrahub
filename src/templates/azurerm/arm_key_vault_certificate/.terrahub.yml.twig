@@ -7,30 +7,18 @@
     resource:
       azurerm_arm_key_vault_certificate:
         {{ name }}:
-          secret_properties:
+          secret_properties: 
             -
               content_type: ''
-          name: '${var.{{ name }}_name}'
-          vault_uri: '${var.{{ name }}_vault_uri}'
-          certificate_policy:
+          certificate_policy: 
             -
               issuer_parameters: 
                 -
                   name: ''
-          # x509_certificate_properties: 
-          #   -
-          #     key_usage: []
-          #     subject: ''
-          #     extended_key_usage: 
-          #       -
-          #     subject_alternative_names: 
-          #       -
-          #         emails: 
-          #           -
-          #         dns_names: 
-          #           -
-          #         upns: 
-          #           -
+          name: '${var.{{ name }}_name}'
+          vault_uri: '${var.{{ name }}_vault_uri}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # certificate: 
           #   -
           #     contents: ''
@@ -40,8 +28,20 @@
           #     action: 
           #       -
           #         action_type: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          # x509_certificate_properties: 
+          #   -
+          #     key_usage: []
+          #     subject: ''
+          #     subject_alternative_names: 
+          #       -
+          #         emails: 
+          #           -
+          #         dns_names: 
+          #           -
+          #         upns: 
+          #           -
+          #     extended_key_usage: 
+          #       -
     variable:
       {{ name }}_name:
         type: 'string'
@@ -52,13 +52,13 @@
         value: '${azurerm_arm_key_vault_certificate.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_key_vault_certificate.{{ name }}.id}'
-      x509_certificate_properties:
-        value: '${azurerm_arm_key_vault_certificate.{{ name }}.x509_certificate_properties}'
-      version:
-        value: '${azurerm_arm_key_vault_certificate.{{ name }}.version}'
-      certificate_data:
-        value: '${azurerm_arm_key_vault_certificate.{{ name }}.certificate_data}'
       secret_id:
         value: '${azurerm_arm_key_vault_certificate.{{ name }}.secret_id}'
+      certificate_data:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.certificate_data}'
       thumbprint:
         value: '${azurerm_arm_key_vault_certificate.{{ name }}.thumbprint}'
+      version:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.version}'
+      x509_certificate_properties:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.x509_certificate_properties}'

@@ -7,12 +7,12 @@
       aws_gamelift_game_session_queue:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # destinations: []
           # player_latency_policy: 
           #   -
           #     maximum_individual_player_latency_milliseconds: 0
           #     policy_duration_seconds: 0
           # timeout_in_seconds: 0
-          # destinations: []
     variable:
       {{ name }}_name:
         type: 'string'

@@ -7,23 +7,23 @@
     resource:
       azurerm_arm_policy_definition:
         {{ name }}:
-          policy_type: '${var.{{ name }}_policy_type}'
-          name: '${var.{{ name }}_name}'
-          mode: '${var.{{ name }}_mode}'
           display_name: '${var.{{ name }}_display_name}'
-          # management_group_id: ''
-          # description: ''
+          mode: '${var.{{ name }}_mode}'
+          name: '${var.{{ name }}_name}'
+          policy_type: '${var.{{ name }}_policy_type}'
           # policy_rule: ''
-          # metadata: ''
           # parameters: ''
+          # description: ''
+          # management_group_id: ''
+          # metadata: ''
     variable:
-      {{ name }}_policy_type:
-        type: 'string'
-      {{ name }}_name:
+      {{ name }}_display_name:
         type: 'string'
       {{ name }}_mode:
         type: 'string'
-      {{ name }}_display_name:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_policy_type:
         type: 'string'
     output:
       id:

@@ -6,26 +6,26 @@
     resource:
       aws_kms_key:
         {{ name }}:
-          # policy: ''
-          # deletion_window_in_days: 0
-          # description: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # key_usage: ''
           # is_enabled: false
           # enable_key_rotation: false
+          # deletion_window_in_days: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # key_usage: ''
+          # policy: ''
     output:
       id:
         value: '${aws_kms_key.{{ name }}.id}'
       thub_id:
         value: '${aws_kms_key.{{ name }}.id}'
-      policy:
-        value: '${aws_kms_key.{{ name }}.policy}'
-      arn:
-        value: '${aws_kms_key.{{ name }}.arn}'
       key_id:
         value: '${aws_kms_key.{{ name }}.key_id}'
       description:
         value: '${aws_kms_key.{{ name }}.description}'
       key_usage:
         value: '${aws_kms_key.{{ name }}.key_usage}'
+      arn:
+        value: '${aws_kms_key.{{ name }}.arn}'
+      policy:
+        value: '${aws_kms_key.{{ name }}.policy}'

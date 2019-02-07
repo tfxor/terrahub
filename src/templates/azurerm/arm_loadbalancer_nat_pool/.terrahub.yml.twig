@@ -7,27 +7,27 @@
     resource:
       azurerm_arm_loadbalancer_nat_pool:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          frontend_port_end: '${var.{{ name }}_frontend_port_end}'
-          backend_port: '${var.{{ name }}_backend_port}'
-          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
           loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
+          frontend_port_end: '${var.{{ name }}_frontend_port_end}'
+          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
+          name: '${var.{{ name }}_name}'
           protocol: '${var.{{ name }}_protocol}'
           frontend_port_start: '${var.{{ name }}_frontend_port_start}'
+          backend_port: '${var.{{ name }}_backend_port}'
     variable:
-      {{ name }}_name:
+      {{ name }}_loadbalancer_id:
         type: 'string'
       {{ name }}_frontend_port_end:
         type: 'int'
-      {{ name }}_backend_port:
-        type: 'int'
       {{ name }}_frontend_ip_configuration_name:
         type: 'string'
-      {{ name }}_loadbalancer_id:
+      {{ name }}_name:
         type: 'string'
       {{ name }}_protocol:
         type: 'string'
       {{ name }}_frontend_port_start:
+        type: 'int'
+      {{ name }}_backend_port:
         type: 'int'
     output:
       id:

@@ -6,41 +6,41 @@
     resource:
       aws_autoscaling_policy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          target_value: '${var.{{ name }}_target_value}'
           autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
+          target_value: '${var.{{ name }}_target_value}'
+          name: '${var.{{ name }}_name}'
+          # cooldown: 0
+          # step_adjustment: 
+          #   scaling_adjustment: 0
+          #   metric_interval_upper_bound: ''
+          #   metric_interval_lower_bound: ''
+          # disable_scale_in: false
           # adjustment_type: ''
           # estimated_instance_warmup: 0
-          # disable_scale_in: false
           # min_adjustment_magnitude: 0
-          # scaling_adjustment: 0
-          # step_adjustment: 
-          #   scaling_adjustment:0
-          #   metric_interval_lower_bound:''
-          #   metric_interval_upper_bound:''
+          # min_adjustment_step: 0
+          # policy_type: ''
           # metric_aggregation_type: ''
+          # scaling_adjustment: 0
           # target_tracking_configuration: 
           #   -
           #     predefined_metric_specification: 
           #       -
           #         predefined_metric_type: ''
           #         resource_label: ''
-          # policy_type: ''
-          # cooldown: 0
-          # min_adjustment_step: 0
     variable:
-      {{ name }}_name:
+      {{ name }}_autoscaling_group_name:
         type: 'string'
       {{ name }}_target_value:
         type: 'float'
-      {{ name }}_autoscaling_group_name:
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_autoscaling_policy.{{ name }}.id}'
       thub_id:
         value: '${aws_autoscaling_policy.{{ name }}.id}'
-      arn:
-        value: '${aws_autoscaling_policy.{{ name }}.arn}'
       metric_aggregation_type:
         value: '${aws_autoscaling_policy.{{ name }}.metric_aggregation_type}'
+      arn:
+        value: '${aws_autoscaling_policy.{{ name }}.arn}'

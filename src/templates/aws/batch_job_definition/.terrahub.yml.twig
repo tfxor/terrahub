@@ -6,21 +6,21 @@
     resource:
       aws_batch_job_definition:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
           name: '${var.{{ name }}_name}'
+          type: '${var.{{ name }}_type}'
+          # container_properties: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
           # retry_strategy: 
           #   -
           #     attempts: 0
           # timeout: 
           #   -
           #     attempt_duration_seconds: 0
-          # container_properties: ''
-          # parameters: 
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_type:
         type: 'string'
     output:
       id:

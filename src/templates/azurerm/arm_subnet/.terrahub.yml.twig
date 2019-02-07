@@ -7,27 +7,27 @@
     resource:
       azurerm_arm_subnet:
         {{ name }}:
+          address_prefix: '${var.{{ name }}_address_prefix}'
           name: '${var.{{ name }}_name}'
           virtual_network_name: '${var.{{ name }}_virtual_network_name}'
-          address_prefix: '${var.{{ name }}_address_prefix}'
           # network_security_group_id: ''
           # route_table_id: ''
           # ip_configurations: []
           # service_endpoints: []
           # delegation: 
           #   -
-          #     name: ''
           #     service_delegation: 
           #       -
           #         name: ''
           #         actions: 
           #           -
+          #     name: ''
     variable:
+      {{ name }}_address_prefix:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_virtual_network_name:
-        type: 'string'
-      {{ name }}_address_prefix:
         type: 'string'
     output:
       id:

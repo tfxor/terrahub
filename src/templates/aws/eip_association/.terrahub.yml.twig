@@ -6,24 +6,24 @@
     resource:
       aws_eip_association:
         {{ name }}:
-          # allow_reassociation: false
-          # instance_id: ''
-          # network_interface_id: ''
           # private_ip_address: ''
           # public_ip: ''
           # allocation_id: ''
+          # allow_reassociation: false
+          # instance_id: ''
+          # network_interface_id: ''
     output:
       id:
         value: '${aws_eip_association.{{ name }}.id}'
       thub_id:
         value: '${aws_eip_association.{{ name }}.id}'
-      instance_id:
-        value: '${aws_eip_association.{{ name }}.instance_id}'
-      network_interface_id:
-        value: '${aws_eip_association.{{ name }}.network_interface_id}'
       private_ip_address:
         value: '${aws_eip_association.{{ name }}.private_ip_address}'
       public_ip:
         value: '${aws_eip_association.{{ name }}.public_ip}'
       allocation_id:
         value: '${aws_eip_association.{{ name }}.allocation_id}'
+      instance_id:
+        value: '${aws_eip_association.{{ name }}.instance_id}'
+      network_interface_id:
+        value: '${aws_eip_association.{{ name }}.network_interface_id}'

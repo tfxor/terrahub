@@ -7,8 +7,8 @@
       google_usage_export_bucket:
         {{ name }}:
           bucket_name: '${var.{{ name }}_bucket_name}'
-          # prefix: ''
           # project: ''
+          # prefix: ''
     variable:
       {{ name }}_bucket_name:
         type: 'string'

@@ -9,8 +9,10 @@
           name: '${var.{{ name }}_name}'
           # targets: 
           #   -
-          #     values: []
           #     key: ''
+          #     values: []
+          # instance_id: ''
+          # document_version: ''
           # parameters: 
           #   '[TO_BE_REPLACED]': ''
           # schedule_expression: ''
@@ -19,8 +21,6 @@
           #     s3_bucket_name: ''
           #     s3_key_prefix: ''
           # association_name: ''
-          # instance_id: ''
-          # document_version: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -31,9 +31,9 @@
         value: '${aws_ssm_association.{{ name }}.id}'
       targets:
         value: '${aws_ssm_association.{{ name }}.targets}'
-      parameters:
-        value: '${aws_ssm_association.{{ name }}.parameters}'
       association_id:
         value: '${aws_ssm_association.{{ name }}.association_id}'
       document_version:
         value: '${aws_ssm_association.{{ name }}.document_version}'
+      parameters:
+        value: '${aws_ssm_association.{{ name }}.parameters}'

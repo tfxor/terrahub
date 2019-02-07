@@ -8,21 +8,21 @@
         {{ name }}:
           key: '${var.{{ name }}_key}'
           bucket: '${var.{{ name }}_bucket}'
-          # content: ''
-          # content_base64: ''
-          # storage_class: ''
-          # content_language: ''
-          # content_disposition: ''
-          # content_type: ''
+          # cache_control: ''
+          # content_encoding: ''
           # source: ''
-          # server_side_encryption: ''
-          # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # website_redirect: ''
-          # cache_control: ''
-          # content_encoding: ''
+          # content_type: ''
+          # content: ''
+          # content_base64: ''
+          # storage_class: ''
+          # server_side_encryption: ''
+          # kms_key_id: ''
           # etag: ''
+          # content_disposition: ''
+          # content_language: ''
     variable:
       {{ name }}_key:
         type: 'string'
@@ -33,13 +33,13 @@
         value: '${aws_s3_bucket_object.{{ name }}.id}'
       thub_id:
         value: '${aws_s3_bucket_object.{{ name }}.id}'
-      storage_class:
-        value: '${aws_s3_bucket_object.{{ name }}.storage_class}'
-      version_id:
-        value: '${aws_s3_bucket_object.{{ name }}.version_id}'
       content_type:
         value: '${aws_s3_bucket_object.{{ name }}.content_type}'
+      storage_class:
+        value: '${aws_s3_bucket_object.{{ name }}.storage_class}'
       server_side_encryption:
         value: '${aws_s3_bucket_object.{{ name }}.server_side_encryption}'
       etag:
         value: '${aws_s3_bucket_object.{{ name }}.etag}'
+      version_id:
+        value: '${aws_s3_bucket_object.{{ name }}.version_id}'

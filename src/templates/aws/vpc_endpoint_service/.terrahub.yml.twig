@@ -19,17 +19,17 @@
         value: '${aws_vpc_endpoint_service.{{ name }}.id}'
       thub_id:
         value: '${aws_vpc_endpoint_service.{{ name }}.id}'
+      service_type:
+        value: '${aws_vpc_endpoint_service.{{ name }}.service_type}'
+      state:
+        value: '${aws_vpc_endpoint_service.{{ name }}.state}'
+      service_name:
+        value: '${aws_vpc_endpoint_service.{{ name }}.service_name}'
       availability_zones:
         value: '${aws_vpc_endpoint_service.{{ name }}.availability_zones}'
       private_dns_name:
         value: '${aws_vpc_endpoint_service.{{ name }}.private_dns_name}'
       base_endpoint_dns_names:
         value: '${aws_vpc_endpoint_service.{{ name }}.base_endpoint_dns_names}'
-      service_name:
-        value: '${aws_vpc_endpoint_service.{{ name }}.service_name}'
-      service_type:
-        value: '${aws_vpc_endpoint_service.{{ name }}.service_type}'
       allowed_principals:
         value: '${aws_vpc_endpoint_service.{{ name }}.allowed_principals}'
-      state:
-        value: '${aws_vpc_endpoint_service.{{ name }}.state}'

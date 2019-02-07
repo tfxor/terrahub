@@ -8,25 +8,25 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           password: '${var.{{ name }}_password}'
-          # description: ''
           # connect_settings: 
           #   -
           #     customer_username: ''
           #     customer_dns_ips: []
           #     subnet_ids: []
           #     vpc_id: ''
+          # edition: ''
           # short_name: ''
-          # vpc_settings: 
-          #   -
-          #     vpc_id: ''
-          #     subnet_ids: []
-          # enable_sso: false
+          # type: ''
           # size: ''
           # alias: ''
+          # description: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # type: ''
-          # edition: ''
+          # vpc_settings: 
+          #   -
+          #     subnet_ids: []
+          #     vpc_id: ''
+          # enable_sso: false
     variable:
       {{ name }}_name:
         type: 'string'
@@ -37,10 +37,12 @@
         value: '${aws_directory_service_directory.{{ name }}.id}'
       thub_id:
         value: '${aws_directory_service_directory.{{ name }}.id}'
-      access_url:
-        value: '${aws_directory_service_directory.{{ name }}.access_url}'
+      edition:
+        value: '${aws_directory_service_directory.{{ name }}.edition}'
       short_name:
         value: '${aws_directory_service_directory.{{ name }}.short_name}'
+      access_url:
+        value: '${aws_directory_service_directory.{{ name }}.access_url}'
       dns_ip_addresses:
         value: '${aws_directory_service_directory.{{ name }}.dns_ip_addresses}'
       security_group_id:
@@ -49,5 +51,3 @@
         value: '${aws_directory_service_directory.{{ name }}.size}'
       alias:
         value: '${aws_directory_service_directory.{{ name }}.alias}'
-      edition:
-        value: '${aws_directory_service_directory.{{ name }}.edition}'

@@ -6,12 +6,12 @@
     resource:
       aws_main_route_table_association:
         {{ name }}:
-          vpc_id: '${var.{{ name }}_vpc_id}'
           route_table_id: '${var.{{ name }}_route_table_id}'
+          vpc_id: '${var.{{ name }}_vpc_id}'
     variable:
-      {{ name }}_vpc_id:
-        type: 'string'
       {{ name }}_route_table_id:
+        type: 'string'
+      {{ name }}_vpc_id:
         type: 'string'
     output:
       id:

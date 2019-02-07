@@ -8,30 +8,30 @@
         {{ name }}:
           input_bucket: '${var.{{ name }}_input_bucket}'
           role: '${var.{{ name }}_role}'
+          # thumbnail_config_permissions: 
+          #   grantee_type: ''
+          #   access: 
+          #     -
+          #   grantee: ''
+          # aws_kms_key_arn: ''
           # name: ''
           # notifications: 
-          #   progressing:''
-          #   warning:''
-          #   completed:''
-          #   error:''
-          # aws_kms_key_arn: ''
-          # content_config: 
-          #   bucket:''
-          #   storage_class:''
-          # content_config_permissions: 
-          #   grantee_type:''
-          #   access:
-          #     -
-          #   grantee:''
+          #   completed: ''
+          #   error: ''
+          #   progressing: ''
+          #   warning: ''
           # output_bucket: ''
           # thumbnail_config: 
-          #   bucket:''
-          #   storage_class:''
-          # thumbnail_config_permissions: 
-          #   access:
+          #   bucket: ''
+          #   storage_class: ''
+          # content_config: 
+          #   bucket: ''
+          #   storage_class: ''
+          # content_config_permissions: 
+          #   access: 
           #     -
-          #   grantee:''
-          #   grantee_type:''
+          #   grantee: ''
+          #   grantee_type: ''
     variable:
       {{ name }}_input_bucket:
         type: 'string'
@@ -46,9 +46,9 @@
         value: '${aws_elastic_transcoder_pipeline.{{ name }}.arn}'
       name:
         value: '${aws_elastic_transcoder_pipeline.{{ name }}.name}'
-      content_config:
-        value: '${aws_elastic_transcoder_pipeline.{{ name }}.content_config}'
       output_bucket:
         value: '${aws_elastic_transcoder_pipeline.{{ name }}.output_bucket}'
       thumbnail_config:
         value: '${aws_elastic_transcoder_pipeline.{{ name }}.thumbnail_config}'
+      content_config:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.content_config}'

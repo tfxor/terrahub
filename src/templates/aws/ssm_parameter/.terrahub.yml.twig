@@ -9,13 +9,13 @@
           name: '${var.{{ name }}_name}'
           type: '${var.{{ name }}_type}'
           value: '${var.{{ name }}_value}'
+          # arn: ''
+          # key_id: ''
+          # allowed_pattern: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # key_id: ''
-          # overwrite: false
-          # allowed_pattern: ''
           # description: ''
-          # arn: ''
+          # overwrite: false
     variable:
       {{ name }}_name:
         type: 'string'
@@ -28,7 +28,7 @@
         value: '${aws_ssm_parameter.{{ name }}.id}'
       thub_id:
         value: '${aws_ssm_parameter.{{ name }}.id}'
-      key_id:
-        value: '${aws_ssm_parameter.{{ name }}.key_id}'
       arn:
         value: '${aws_ssm_parameter.{{ name }}.arn}'
+      key_id:
+        value: '${aws_ssm_parameter.{{ name }}.key_id}'

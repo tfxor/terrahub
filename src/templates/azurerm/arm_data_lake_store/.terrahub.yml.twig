@@ -8,13 +8,13 @@
       azurerm_arm_data_lake_store:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # encryption_state: ''
-          # firewall_state: ''
           # firewall_allow_azure_ips: ''
-          # tier: ''
-          # encryption_type: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # tier: ''
+          # encryption_state: ''
+          # encryption_type: ''
+          # firewall_state: ''
     variable:
       {{ name }}_name:
         type: 'string'

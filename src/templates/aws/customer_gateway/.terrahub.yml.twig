@@ -6,18 +6,18 @@
     resource:
       aws_customer_gateway:
         {{ name }}:
-          bgp_asn: '${var.{{ name }}_bgp_asn}'
           ip_address: '${var.{{ name }}_ip_address}'
           type: '${var.{{ name }}_type}'
+          bgp_asn: '${var.{{ name }}_bgp_asn}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_bgp_asn:
-        type: 'int'
       {{ name }}_ip_address:
         type: 'string'
       {{ name }}_type:
         type: 'string'
+      {{ name }}_bgp_asn:
+        type: 'int'
     output:
       id:
         value: '${aws_customer_gateway.{{ name }}.id}'

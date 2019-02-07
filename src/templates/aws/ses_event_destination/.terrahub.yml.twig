@@ -10,15 +10,15 @@
           configuration_set_name: '${var.{{ name }}_configuration_set_name}'
           matching_types: '${var.{{ name }}_matching_types}'
           # kinesis_destination: 
-          #   stream_arn:''
-          #   role_arn:''
+          #   role_arn: ''
+          #   stream_arn: ''
           # sns_destination: 
-          #   topic_arn:''
+          #   topic_arn: ''
           # enabled: false
           # cloudwatch_destination: 
-          #   default_value:''
-          #   dimension_name:''
-          #   value_source:''
+          #   value_source: ''
+          #   default_value: ''
+          #   dimension_name: ''
     variable:
       {{ name }}_name:
         type: 'string'

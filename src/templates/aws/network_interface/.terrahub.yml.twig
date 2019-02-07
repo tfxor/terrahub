@@ -7,16 +7,16 @@
       aws_network_interface:
         {{ name }}:
           subnet_id: '${var.{{ name }}_subnet_id}'
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # private_ip: ''
           # private_ips_count: 0
+          # security_groups: []
           # source_dest_check: false
           # attachment: 
-          #   device_index:0
-          #   instance:''
+          #   instance: ''
+          #   device_index: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # private_ips: []
-          # security_groups: []
           # description: ''
     variable:
       {{ name }}_subnet_id:
@@ -30,11 +30,11 @@
         value: '${aws_network_interface.{{ name }}.private_ip}'
       private_ips_count:
         value: '${aws_network_interface.{{ name }}.private_ips_count}'
+      security_groups:
+        value: '${aws_network_interface.{{ name }}.security_groups}'
       attachment:
         value: '${aws_network_interface.{{ name }}.attachment}'
       private_dns_name:
         value: '${aws_network_interface.{{ name }}.private_dns_name}'
       private_ips:
         value: '${aws_network_interface.{{ name }}.private_ips}'
-      security_groups:
-        value: '${aws_network_interface.{{ name }}.security_groups}'

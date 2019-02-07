@@ -6,20 +6,20 @@
     resource:
       aws_elastic_beanstalk_application_version:
         {{ name }}:
-          key: '${var.{{ name }}_key}'
-          name: '${var.{{ name }}_name}'
           application: '${var.{{ name }}_application}'
           bucket: '${var.{{ name }}_bucket}'
-          # force_delete: false
+          key: '${var.{{ name }}_key}'
+          name: '${var.{{ name }}_name}'
           # description: ''
+          # force_delete: false
     variable:
-      {{ name }}_key:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_application:
         type: 'string'
       {{ name }}_bucket:
+        type: 'string'
+      {{ name }}_key:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

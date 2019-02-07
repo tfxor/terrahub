@@ -6,37 +6,23 @@
     resource:
       google_compute_instance_template:
         {{ name }}:
-          disk:
+          disk: 
             -
+          #     device_name: ''
+          #     disk_type: ''
+          #     interface: ''
+          #     mode: ''
+          #     source: ''
+          #     type: ''
+          #     auto_delete: false
+          #     boot: false
+          #     disk_name: ''
+          #     disk_size_gb: 0
+          #     source_image: ''
           #     disk_encryption_key: 
           #       -
           #         kms_key_self_link: ''
-          #     auto_delete: false
-          #     boot: false
-          #     disk_size_gb: 0
-          #     interface: ''
-          #     source: ''
-          #     type: ''
-          #     device_name: ''
-          #     disk_name: ''
-          #     disk_type: ''
-          #     source_image: ''
-          #     mode: ''
           machine_type: '${var.{{ name }}_machine_type}'
-          # name_prefix: ''
-          # description: ''
-          # metadata: 
-          #   '[TO_BE_REPLACED]': ''
-          # network_interface: 
-          #   -
-          #     access_config: 
-          #       -
-          #         nat_ip: ''
-          #         network_tier: ''
-          #     network: ''
-          #     network_ip: ''
-          #     subnetwork: ''
-          #     subnetwork_project: ''
           # scheduling: 
           #   -
           #     preemptible: false
@@ -44,25 +30,39 @@
           #     on_host_maintenance: ''
           # labels: 
           #   '[TO_BE_REPLACED]': ''
-          # min_cpu_platform: ''
+          # description: ''
+          # metadata: 
+          #   '[TO_BE_REPLACED]': ''
+          # can_ip_forward: false
+          # instance_description: ''
           # metadata_startup_script: ''
+          # network_interface: 
+          #   -
+          #     network: ''
+          #     network_ip: ''
+          #     subnetwork: ''
+          #     subnetwork_project: ''
+          #     access_config: 
+          #       -
+          #         nat_ip: ''
+          #         network_tier: ''
           # project: ''
+          # name_prefix: ''
+          # automatic_restart: false
+          # service_account: 
+          #   -
+          #     scopes: []
+          #     email: ''
           # guest_accelerator: 
           #   -
           #     count: 0
           #     type: ''
           # tags: []
-          # automatic_restart: false
-          # can_ip_forward: false
+          # on_host_maintenance: ''
+          # name: ''
           # address: ''
           # region: ''
-          # service_account: 
-          #   -
-          #     scopes: []
-          #     email: ''
-          # name: ''
-          # instance_description: ''
-          # on_host_maintenance: ''
+          # min_cpu_platform: ''
     variable:
       {{ name }}_machine_type:
         type: 'string'
@@ -71,21 +71,21 @@
         value: '${google_compute_instance_template.{{ name }}.id}'
       thub_id:
         value: '${google_compute_instance_template.{{ name }}.id}'
-      name_prefix:
-        value: '${google_compute_instance_template.{{ name }}.name_prefix}'
       scheduling:
         value: '${google_compute_instance_template.{{ name }}.scheduling}'
-      tags_fingerprint:
-        value: '${google_compute_instance_template.{{ name }}.tags_fingerprint}'
-      project:
-        value: '${google_compute_instance_template.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_instance_template.{{ name }}.self_link}'
       metadata_fingerprint:
         value: '${google_compute_instance_template.{{ name }}.metadata_fingerprint}'
+      project:
+        value: '${google_compute_instance_template.{{ name }}.project}'
+      name_prefix:
+        value: '${google_compute_instance_template.{{ name }}.name_prefix}'
+      tags_fingerprint:
+        value: '${google_compute_instance_template.{{ name }}.tags_fingerprint}'
+      name:
+        value: '${google_compute_instance_template.{{ name }}.name}'
       address:
         value: '${google_compute_instance_template.{{ name }}.address}'
       region:
         value: '${google_compute_instance_template.{{ name }}.region}'
-      name:
-        value: '${google_compute_instance_template.{{ name }}.name}'
+      self_link:
+        value: '${google_compute_instance_template.{{ name }}.self_link}'

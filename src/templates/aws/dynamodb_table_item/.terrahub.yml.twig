@@ -6,16 +6,16 @@
     resource:
       aws_dynamodb_table_item:
         {{ name }}:
+          table_name: '${var.{{ name }}_table_name}'
           hash_key: '${var.{{ name }}_hash_key}'
           item: '${var.{{ name }}_item}'
-          table_name: '${var.{{ name }}_table_name}'
           # range_key: ''
     variable:
+      {{ name }}_table_name:
+        type: 'string'
       {{ name }}_hash_key:
         type: 'string'
       {{ name }}_item:
-        type: 'string'
-      {{ name }}_table_name:
         type: 'string'
     output:
       id:

@@ -7,11 +7,11 @@
       google_compute_network:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # description: ''
-          # routing_mode: ''
           # ipv4_range: ''
           # project: ''
           # auto_create_subnetworks: false
+          # description: ''
+          # routing_mode: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -20,11 +20,11 @@
         value: '${google_compute_network.{{ name }}.id}'
       thub_id:
         value: '${google_compute_network.{{ name }}.id}'
-      routing_mode:
-        value: '${google_compute_network.{{ name }}.routing_mode}'
       gateway_ipv4:
         value: '${google_compute_network.{{ name }}.gateway_ipv4}'
       project:
         value: '${google_compute_network.{{ name }}.project}'
       self_link:
         value: '${google_compute_network.{{ name }}.self_link}'
+      routing_mode:
+        value: '${google_compute_network.{{ name }}.routing_mode}'

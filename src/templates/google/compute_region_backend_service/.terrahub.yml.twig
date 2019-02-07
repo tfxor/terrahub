@@ -6,36 +6,36 @@
     resource:
       google_compute_region_backend_service:
         {{ name }}:
-          health_checks: '${var.{{ name }}_health_checks}'
           name: '${var.{{ name }}_name}'
+          health_checks: '${var.{{ name }}_health_checks}'
+          # session_affinity: ''
+          # timeout_sec: 0
+          # description: ''
+          # region: ''
           # project: ''
           # protocol: ''
-          # session_affinity: ''
-          # region: ''
           # connection_draining_timeout_sec: 0
-          # description: ''
-          # timeout_sec: 0
     variable:
-      {{ name }}_health_checks:
-        type: 'set'
       {{ name }}_name:
         type: 'string'
+      {{ name }}_health_checks:
+        type: 'set'
     output:
       id:
         value: '${google_compute_region_backend_service.{{ name }}.id}'
       thub_id:
         value: '${google_compute_region_backend_service.{{ name }}.id}'
-      project:
-        value: '${google_compute_region_backend_service.{{ name }}.project}'
-      protocol:
-        value: '${google_compute_region_backend_service.{{ name }}.protocol}'
-      session_affinity:
-        value: '${google_compute_region_backend_service.{{ name }}.session_affinity}'
-      region:
-        value: '${google_compute_region_backend_service.{{ name }}.region}'
       fingerprint:
         value: '${google_compute_region_backend_service.{{ name }}.fingerprint}'
+      session_affinity:
+        value: '${google_compute_region_backend_service.{{ name }}.session_affinity}'
       self_link:
         value: '${google_compute_region_backend_service.{{ name }}.self_link}'
       timeout_sec:
         value: '${google_compute_region_backend_service.{{ name }}.timeout_sec}'
+      region:
+        value: '${google_compute_region_backend_service.{{ name }}.region}'
+      project:
+        value: '${google_compute_region_backend_service.{{ name }}.project}'
+      protocol:
+        value: '${google_compute_region_backend_service.{{ name }}.protocol}'

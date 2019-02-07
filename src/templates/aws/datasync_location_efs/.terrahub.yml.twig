@@ -6,7 +6,7 @@
     resource:
       aws_datasync_location_efs:
         {{ name }}:
-          ec2_config:
+          ec2_config: 
             -
               security_group_arns: []
               subnet_arn: ''
@@ -22,7 +22,7 @@
         value: '${aws_datasync_location_efs.{{ name }}.id}'
       thub_id:
         value: '${aws_datasync_location_efs.{{ name }}.id}'
-      uri:
-        value: '${aws_datasync_location_efs.{{ name }}.uri}'
       arn:
         value: '${aws_datasync_location_efs.{{ name }}.arn}'
+      uri:
+        value: '${aws_datasync_location_efs.{{ name }}.uri}'

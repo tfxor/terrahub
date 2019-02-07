@@ -9,29 +9,30 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           account_name: '${var.{{ name }}_account_name}'
-          storage_image_reference:
+          vm_size: '${var.{{ name }}_vm_size}'
+          node_agent_sku_id: '${var.{{ name }}_node_agent_sku_id}'
+          storage_image_reference: 
             -
+              publisher: ''
               offer: ''
               sku: ''
               version: ''
-              publisher: ''
           #     id: ''
-          vm_size: '${var.{{ name }}_vm_size}'
-          node_agent_sku_id: '${var.{{ name }}_node_agent_sku_id}'
-          # max_tasks_per_node: 0
+          # stop_pending_resize_operation: false
+          # display_name: ''
           # fixed_scale: 
           #   -
+          #     resize_timeout: ''
           #     target_dedicated_nodes: 0
           #     target_low_priority_nodes: 0
-          #     resize_timeout: ''
+          # max_tasks_per_node: 0
           # auto_scale: 
           #   -
           #     formula: ''
           #     evaluation_interval: ''
-          # stop_pending_resize_operation: false
-          # display_name: ''
           # start_task: 
           #   -
+          #     command_line: ''
           #     user_identity: 
           #       -
           #         user_name: ''
@@ -39,7 +40,6 @@
           #           -
           #             elevation_level: ''
           #             scope: ''
-          #     command_line: ''
           #     max_task_retry_count: 0
           #     wait_for_success: false
           #     environment: 

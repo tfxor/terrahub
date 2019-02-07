@@ -6,14 +6,14 @@
     resource:
       aws_codecommit_trigger:
         {{ name }}:
-          repository_name: '${var.{{ name }}_repository_name}'
-          trigger:
-            events:[]
-            name:''
-            destination_arn:''
-          #   custom_data:''
-          #   branches:
+          trigger: 
+            name: ''
+            destination_arn: ''
+            events: []
+          #   custom_data: ''
+          #   branches: 
           #     -
+          repository_name: '${var.{{ name }}_repository_name}'
     variable:
       {{ name }}_repository_name:
         type: 'string'

@@ -6,31 +6,31 @@
     resource:
       google_dataproc_job:
         {{ name }}:
-          placement:
+          placement: 
             -
               cluster_name: ''
-          # scheduling: 
-          #   -
-          #     max_failures_per_hour: 0
-          # project: ''
+          # region: ''
           # reference: 
           #   -
           #     job_id: ''
-          # region: ''
           # labels: 
           #   '[TO_BE_REPLACED]': ''
+          # project: ''
+          # scheduling: 
+          #   -
+          #     max_failures_per_hour: 0
     output:
       id:
         value: '${google_dataproc_job.{{ name }}.id}'
       thub_id:
         value: '${google_dataproc_job.{{ name }}.id}'
-      driver_output_resource_uri:
-        value: '${google_dataproc_job.{{ name }}.driver_output_resource_uri}'
-      project:
-        value: '${google_dataproc_job.{{ name }}.project}'
-      reference:
-        value: '${google_dataproc_job.{{ name }}.reference}'
-      status:
-        value: '${google_dataproc_job.{{ name }}.status}'
       driver_controls_files_uri:
         value: '${google_dataproc_job.{{ name }}.driver_controls_files_uri}'
+      reference:
+        value: '${google_dataproc_job.{{ name }}.reference}'
+      project:
+        value: '${google_dataproc_job.{{ name }}.project}'
+      status:
+        value: '${google_dataproc_job.{{ name }}.status}'
+      driver_output_resource_uri:
+        value: '${google_dataproc_job.{{ name }}.driver_output_resource_uri}'

@@ -7,32 +7,32 @@
     resource:
       azurerm_arm_key_vault_key:
         {{ name }}:
-          vault_uri: '${var.{{ name }}_vault_uri}'
-          key_size: '${var.{{ name }}_key_size}'
-          name: '${var.{{ name }}_name}'
           key_opts: '${var.{{ name }}_key_opts}'
           key_type: '${var.{{ name }}_key_type}'
+          key_size: '${var.{{ name }}_key_size}'
+          name: '${var.{{ name }}_name}'
+          vault_uri: '${var.{{ name }}_vault_uri}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_vault_uri:
+      {{ name }}_key_opts:
+        type: 'list'
+      {{ name }}_key_type:
         type: 'string'
       {{ name }}_key_size:
         type: 'int'
       {{ name }}_name:
         type: 'string'
-      {{ name }}_key_opts:
-        type: 'list'
-      {{ name }}_key_type:
+      {{ name }}_vault_uri:
         type: 'string'
     output:
       id:
         value: '${azurerm_arm_key_vault_key.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_key_vault_key.{{ name }}.id}'
-      version:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.version}'
       n:
         value: '${azurerm_arm_key_vault_key.{{ name }}.n}'
       e:
         value: '${azurerm_arm_key_vault_key.{{ name }}.e}'
+      version:
+        value: '${azurerm_arm_key_vault_key.{{ name }}.version}'

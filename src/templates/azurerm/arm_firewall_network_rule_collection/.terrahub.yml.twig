@@ -7,25 +7,25 @@
     resource:
       azurerm_arm_firewall_network_rule_collection:
         {{ name }}:
+          rule: 
+            source_addresses: []
+            destination_addresses: []
+            destination_ports: []
+            protocols: []
+            name: ''
+          #   description: ''
+          name: '${var.{{ name }}_name}'
           azure_firewall_name: '${var.{{ name }}_azure_firewall_name}'
           priority: '${var.{{ name }}_priority}'
           action: '${var.{{ name }}_action}'
-          rule:
-            destination_addresses:[]
-            destination_ports:[]
-            protocols:[]
-            name:''
-            source_addresses:[]
-          #   description:''
-          name: '${var.{{ name }}_name}'
     variable:
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_azure_firewall_name:
         type: 'string'
       {{ name }}_priority:
         type: 'int'
       {{ name }}_action:
-        type: 'string'
-      {{ name }}_name:
         type: 'string'
     output:
       id:

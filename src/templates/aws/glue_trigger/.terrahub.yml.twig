@@ -6,12 +6,12 @@
     resource:
       aws_glue_trigger:
         {{ name }}:
-          actions:
+          actions: 
             -
               job_name: ''
-          #     timeout: 0
           #     arguments: 
           #       '[TO_BE_REPLACED]': ''
+          #     timeout: 0
           name: '${var.{{ name }}_name}'
           type: '${var.{{ name }}_type}'
           # description: ''

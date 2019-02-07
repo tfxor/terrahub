@@ -6,22 +6,22 @@
     resource:
       google_compute_subnetwork:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           ip_cidr_range: '${var.{{ name }}_ip_cidr_range}'
+          name: '${var.{{ name }}_name}'
           network: '${var.{{ name }}_network}'
+          # private_ip_google_access: false
+          # project: ''
           # description: ''
           # enable_flow_logs: false
-          # private_ip_google_access: false
           # region: ''
-          # project: ''
           # secondary_ip_range: 
           #   -
           #     ip_cidr_range: ''
           #     range_name: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_ip_cidr_range:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
       {{ name }}_network:
         type: 'string'
@@ -30,17 +30,17 @@
         value: '${google_compute_subnetwork.{{ name }}.id}'
       thub_id:
         value: '${google_compute_subnetwork.{{ name }}.id}'
-      region:
-        value: '${google_compute_subnetwork.{{ name }}.region}'
+      self_link:
+        value: '${google_compute_subnetwork.{{ name }}.self_link}'
+      creation_timestamp:
+        value: '${google_compute_subnetwork.{{ name }}.creation_timestamp}'
       gateway_address:
         value: '${google_compute_subnetwork.{{ name }}.gateway_address}'
       project:
         value: '${google_compute_subnetwork.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_subnetwork.{{ name }}.self_link}'
+      region:
+        value: '${google_compute_subnetwork.{{ name }}.region}'
       secondary_ip_range:
         value: '${google_compute_subnetwork.{{ name }}.secondary_ip_range}'
-      creation_timestamp:
-        value: '${google_compute_subnetwork.{{ name }}.creation_timestamp}'
       fingerprint:
         value: '${google_compute_subnetwork.{{ name }}.fingerprint}'

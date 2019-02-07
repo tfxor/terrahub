@@ -8,44 +8,44 @@
         {{ name }}:
           rule_set_name: '${var.{{ name }}_rule_set_name}'
           name: '${var.{{ name }}_name}'
-          # lambda_action: 
-          #   position:0
-          #   function_arn:''
-          #   invocation_type:''
-          #   topic_arn:''
           # stop_action: 
-          #   position:0
-          #   scope:''
-          #   topic_arn:''
+          #   position: 0
+          #   scope: ''
+          #   topic_arn: ''
+          # scan_enabled: false
+          # after: ''
+          # lambda_action: 
+          #   function_arn: ''
+          #   position: 0
+          #   invocation_type: ''
+          #   topic_arn: ''
+          # enabled: false
           # recipients: []
           # add_header_action: 
-          #   header_value:''
-          #   position:0
-          #   header_name:''
-          # workmail_action: 
-          #   organization_arn:''
-          #   position:0
-          #   topic_arn:''
-          # enabled: false
-          # scan_enabled: false
-          # tls_policy: ''
-          # after: ''
+          #   header_name: ''
+          #   header_value: ''
+          #   position: 0
           # bounce_action: 
-          #   message:''
-          #   sender:''
-          #   smtp_reply_code:''
-          #   position:0
-          #   status_code:''
-          #   topic_arn:''
-          # s3_action: 
-          #   position:0
-          #   bucket_name:''
-          #   kms_key_arn:''
-          #   object_key_prefix:''
-          #   topic_arn:''
+          #   message: ''
+          #   sender: ''
+          #   smtp_reply_code: ''
+          #   position: 0
+          #   status_code: ''
+          #   topic_arn: ''
           # sns_action: 
-          #   topic_arn:''
-          #   position:0
+          #   topic_arn: ''
+          #   position: 0
+          # workmail_action: 
+          #   position: 0
+          #   organization_arn: ''
+          #   topic_arn: ''
+          # s3_action: 
+          #   bucket_name: ''
+          #   position: 0
+          #   kms_key_arn: ''
+          #   object_key_prefix: ''
+          #   topic_arn: ''
+          # tls_policy: ''
     variable:
       {{ name }}_rule_set_name:
         type: 'string'
@@ -56,9 +56,9 @@
         value: '${aws_ses_receipt_rule.{{ name }}.id}'
       thub_id:
         value: '${aws_ses_receipt_rule.{{ name }}.id}'
-      enabled:
-        value: '${aws_ses_receipt_rule.{{ name }}.enabled}'
       scan_enabled:
         value: '${aws_ses_receipt_rule.{{ name }}.scan_enabled}'
+      enabled:
+        value: '${aws_ses_receipt_rule.{{ name }}.enabled}'
       tls_policy:
         value: '${aws_ses_receipt_rule.{{ name }}.tls_policy}'

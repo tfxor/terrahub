@@ -7,13 +7,13 @@
       aws_pinpoint_apns_voip_sandbox_channel:
         {{ name }}:
           application_id: '${var.{{ name }}_application_id}'
-          # enabled: false
-          # private_key: ''
           # bundle_id: ''
           # certificate: ''
           # default_authentication_method: ''
-          # team_id: ''
+          # private_key: ''
           # token_key: ''
+          # enabled: false
+          # team_id: ''
           # token_key_id: ''
     variable:
       {{ name }}_application_id:

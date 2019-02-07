@@ -7,41 +7,41 @@
       google_storage_bucket:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # storage_class: ''
-          # website: 
+          # encryption: 
           #   -
-          #     main_page_suffix: ''
-          #     not_found_page: ''
-          # labels: 
-          #   '[TO_BE_REPLACED]': ''
-          # predefined_acl: ''
-          # versioning: 
-          #   -
-          #     enabled: false
-          # cors: 
-          #   -
-          #     response_header: 
-          #       -
-          #     max_age_seconds: 0
-          #     origin: 
-          #       -
-          #     method: 
-          #       -
+          #     default_kms_key_name: ''
           # logging: 
           #   -
           #     log_bucket: ''
           #     log_object_prefix: ''
           # requester_pays: false
+          # predefined_acl: ''
+          # versioning: 
+          #   -
+          #     enabled: false
           # force_destroy: false
+          # cors: 
+          #   -
+          #     origin: 
+          #       -
+          #     method: 
+          #       -
+          #     response_header: 
+          #       -
+          #     max_age_seconds: 0
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
           # project: ''
+          # storage_class: ''
           # lifecycle_rule: 
           #   -
           #     action: 
-          #     type:''
-          #     storage_class:''
-          # encryption: 
+          #     type: ''
+          #     storage_class: ''
+          # website: 
           #   -
-          #     default_kms_key_name: ''
+          #     main_page_suffix: ''
+          #     not_found_page: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -50,9 +50,9 @@
         value: '${google_storage_bucket.{{ name }}.id}'
       thub_id:
         value: '${google_storage_bucket.{{ name }}.id}'
-      url:
-        value: '${google_storage_bucket.{{ name }}.url}'
       self_link:
         value: '${google_storage_bucket.{{ name }}.self_link}'
       project:
         value: '${google_storage_bucket.{{ name }}.project}'
+      url:
+        value: '${google_storage_bucket.{{ name }}.url}'

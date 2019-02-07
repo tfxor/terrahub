@@ -10,10 +10,10 @@
           name: '${var.{{ name }}_name}'
           loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
           port: '${var.{{ name }}_port}'
-          # interval_in_seconds: 0
-          # number_of_probes: 0
-          # protocol: ''
           # request_path: ''
+          # interval_in_seconds: 0
+          # protocol: ''
+          # number_of_probes: 0
     variable:
       {{ name }}_name:
         type: 'string'
@@ -26,7 +26,7 @@
         value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
-      protocol:
-        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.protocol}'
       load_balancer_rules:
         value: '${azurerm_arm_loadbalancer_probe.{{ name }}.load_balancer_rules}'
+      protocol:
+        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.protocol}'

@@ -6,19 +6,19 @@
     resource:
       aws_api_gateway_documentation_part:
         {{ name }}:
-          location:
+          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          location: 
             -
               type: ''
-          #     path: ''
-          #     status_code: ''
           #     method: ''
           #     name: ''
+          #     path: ''
+          #     status_code: ''
           properties: '${var.{{ name }}_properties}'
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
     variable:
-      {{ name }}_properties:
-        type: 'string'
       {{ name }}_rest_api_id:
+        type: 'string'
+      {{ name }}_properties:
         type: 'string'
     output:
       id:

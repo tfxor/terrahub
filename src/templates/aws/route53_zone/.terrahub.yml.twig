@@ -7,16 +7,16 @@
       aws_route53_zone:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # comment: ''
-          # delegation_set_id: ''
+          # vpc_id: ''
+          # vpc_region: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # force_destroy: false
+          # comment: ''
           # vpc: 
-          #   vpc_id:''
-          #   vpc_region:''
-          # vpc_id: ''
-          # vpc_region: ''
+          #   vpc_id: ''
+          #   vpc_region: ''
+          # delegation_set_id: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -25,13 +25,13 @@
         value: '${aws_route53_zone.{{ name }}.id}'
       thub_id:
         value: '${aws_route53_zone.{{ name }}.id}'
-      zone_id:
-        value: '${aws_route53_zone.{{ name }}.zone_id}'
-      name_servers:
-        value: '${aws_route53_zone.{{ name }}.name_servers}'
-      vpc:
-        value: '${aws_route53_zone.{{ name }}.vpc}'
       vpc_id:
         value: '${aws_route53_zone.{{ name }}.vpc_id}'
       vpc_region:
         value: '${aws_route53_zone.{{ name }}.vpc_region}'
+      name_servers:
+        value: '${aws_route53_zone.{{ name }}.name_servers}'
+      vpc:
+        value: '${aws_route53_zone.{{ name }}.vpc}'
+      zone_id:
+        value: '${aws_route53_zone.{{ name }}.zone_id}'

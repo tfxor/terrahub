@@ -6,12 +6,12 @@
     resource:
       aws_ssm_maintenance_window_target:
         {{ name }}:
-          targets:
+          window_id: '${var.{{ name }}_window_id}'
+          resource_type: '${var.{{ name }}_resource_type}'
+          targets: 
             -
               key: ''
               values: []
-          window_id: '${var.{{ name }}_window_id}'
-          resource_type: '${var.{{ name }}_resource_type}'
           # owner_information: ''
     variable:
       {{ name }}_window_id:

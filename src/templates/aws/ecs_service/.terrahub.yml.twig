@@ -6,51 +6,51 @@
     resource:
       aws_ecs_service:
         {{ name }}:
-          task_definition: '${var.{{ name }}_task_definition}'
           name: '${var.{{ name }}_name}'
+          task_definition: '${var.{{ name }}_task_definition}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # cluster: ''
           # enable_ecs_managed_tags: false
-          # platform_version: ''
-          # scheduling_strategy: ''
-          # placement_strategy: []
+          # health_check_grace_period_seconds: 0
           # ordered_placement_strategy: 
           #   -
           #     type: ''
           #     field: ''
-          # iam_role: ''
+          # launch_type: ''
+          # scheduling_strategy: ''
+          # deployment_maximum_percent: 0
           # deployment_minimum_healthy_percent: 0
           # network_configuration: 
           #   -
           #     subnets: []
-          #     security_groups: 
           #     assign_public_ip: false
+          #     security_groups: 
           # placement_constraints: 
-          #   type:''
-          #   expression:''
+          #   type: ''
+          #   expression: ''
           # desired_count: 0
-          # launch_type: ''
+          # iam_role: ''
+          # load_balancer: 
+          #   container_name: ''
+          #   container_port: 0
+          #   elb_name: ''
+          #   target_group_arn: ''
+          # placement_strategy: []
+          # propagate_tags: ''
+          # service_registries: 
+          #   registry_arn: ''
+          #   port: 0
+          #   container_name: ''
+          #   container_port: 0
+          # platform_version: ''
           # deployment_controller: 
           #   -
           #     type: ''
-          # deployment_maximum_percent: 0
-          # load_balancer: 
-          #   container_name:''
-          #   container_port:0
-          #   elb_name:''
-          #   target_group_arn:''
-          # service_registries: 
-          #   registry_arn:''
-          #   container_name:''
-          #   container_port:0
-          #   port:0
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # health_check_grace_period_seconds: 0
-          # propagate_tags: ''
     variable:
-      {{ name }}_task_definition:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_task_definition:
         type: 'string'
     output:
       id:
@@ -59,7 +59,7 @@
         value: '${aws_ecs_service.{{ name }}.id}'
       cluster:
         value: '${aws_ecs_service.{{ name }}.cluster}'
-      platform_version:
-        value: '${aws_ecs_service.{{ name }}.platform_version}'
       iam_role:
         value: '${aws_ecs_service.{{ name }}.iam_role}'
+      platform_version:
+        value: '${aws_ecs_service.{{ name }}.platform_version}'

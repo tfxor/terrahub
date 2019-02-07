@@ -7,22 +7,22 @@
     resource:
       azurerm_arm_dns_caa_record:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           zone_name: '${var.{{ name }}_zone_name}'
-          record:
-            flags:0
-            tag:''
-            value:''
+          record: 
+            tag: ''
+            value: ''
+            flags: 0
           ttl: '${var.{{ name }}_ttl}'
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_zone_name:
         type: 'string'
       {{ name }}_ttl:
         type: 'int'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${azurerm_arm_dns_caa_record.{{ name }}.id}'

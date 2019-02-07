@@ -7,19 +7,13 @@
     resource:
       azurerm_arm_monitor_metric_alertrule:
         {{ name }}:
-          threshold: '${var.{{ name }}_threshold}'
-          name: '${var.{{ name }}_name}'
-          resource_id: '${var.{{ name }}_resource_id}'
           metric_name: '${var.{{ name }}_metric_name}'
-          period: '${var.{{ name }}_period}'
-          operator: '${var.{{ name }}_operator}'
           aggregation: '${var.{{ name }}_aggregation}'
-          # description: ''
-          # email_action: 
-          #   -
-          #     send_to_service_owners: false
-          #     custom_emails: 
-          #       -
+          name: '${var.{{ name }}_name}'
+          operator: '${var.{{ name }}_operator}'
+          period: '${var.{{ name }}_period}'
+          resource_id: '${var.{{ name }}_resource_id}'
+          threshold: '${var.{{ name }}_threshold}'
           # webhook_action: 
           #   -
           #     service_uri: ''
@@ -28,31 +22,37 @@
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # enabled: false
+          # email_action: 
+          #   -
+          #     send_to_service_owners: false
+          #     custom_emails: 
+          #       -
+          # description: ''
     variable:
-      {{ name }}_threshold:
-        type: 'float'
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_resource_id:
-        type: 'string'
       {{ name }}_metric_name:
-        type: 'string'
-      {{ name }}_period:
-        type: 'string'
-      {{ name }}_operator:
         type: 'string'
       {{ name }}_aggregation:
         type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_operator:
+        type: 'string'
+      {{ name }}_period:
+        type: 'string'
+      {{ name }}_resource_id:
+        type: 'string'
+      {{ name }}_threshold:
+        type: 'float'
     output:
       id:
         value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.id}'
-      description:
-        value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.description}'
-      email_action:
-        value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.email_action}'
       webhook_action:
         value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.webhook_action}'
       tags:
         value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.tags}'
+      email_action:
+        value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.email_action}'
+      description:
+        value: '${azurerm_arm_monitor_metric_alertrule.{{ name }}.description}'

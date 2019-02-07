@@ -7,27 +7,27 @@
     resource:
       azurerm_arm_cognitive_account:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           kind: '${var.{{ name }}_kind}'
-          sku:
+          name: '${var.{{ name }}_name}'
+          sku: 
             -
               name: ''
               tier: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_kind:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${azurerm_arm_cognitive_account.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_cognitive_account.{{ name }}.id}'
+      endpoint:
+        value: '${azurerm_arm_cognitive_account.{{ name }}.endpoint}'
       primary_access_key:
         value: '${azurerm_arm_cognitive_account.{{ name }}.primary_access_key}'
       secondary_access_key:
         value: '${azurerm_arm_cognitive_account.{{ name }}.secondary_access_key}'
-      endpoint:
-        value: '${azurerm_arm_cognitive_account.{{ name }}.endpoint}'

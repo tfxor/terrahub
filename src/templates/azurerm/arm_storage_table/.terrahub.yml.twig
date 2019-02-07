@@ -7,12 +7,12 @@
     resource:
       azurerm_arm_storage_table:
         {{ name }}:
-          storage_account_name: '${var.{{ name }}_storage_account_name}'
           name: '${var.{{ name }}_name}'
+          storage_account_name: '${var.{{ name }}_storage_account_name}'
     variable:
-      {{ name }}_storage_account_name:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_storage_account_name:
         type: 'string'
     output:
       id:

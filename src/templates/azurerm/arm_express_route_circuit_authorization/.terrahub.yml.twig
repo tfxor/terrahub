@@ -7,12 +7,12 @@
     resource:
       azurerm_arm_express_route_circuit_authorization:
         {{ name }}:
-          express_route_circuit_name: '${var.{{ name }}_express_route_circuit_name}'
           name: '${var.{{ name }}_name}'
+          express_route_circuit_name: '${var.{{ name }}_express_route_circuit_name}'
     variable:
-      {{ name }}_express_route_circuit_name:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_express_route_circuit_name:
         type: 'string'
     output:
       id:

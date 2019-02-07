@@ -9,17 +9,17 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           scope: '${var.{{ name }}_scope}'
-          permissions:
+          permissions: 
             -
+          #     data_actions: 
           #     not_data_actions: 
           #     actions: 
           #       -
           #     not_actions: 
           #       -
-          #     data_actions: 
           assignable_scopes: '${var.{{ name }}_assignable_scopes}'
-          # description: ''
           # role_definition_id: ''
+          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'

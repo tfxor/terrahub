@@ -6,71 +6,71 @@
     resource:
       aws_iot_topic_rule:
         {{ name }}:
+          name: '${var.{{ name }}_name}'
           sql_version: '${var.{{ name }}_sql_version}'
           enabled: '${var.{{ name }}_enabled}'
           sql: '${var.{{ name }}_sql}'
-          name: '${var.{{ name }}_name}'
-          # elasticsearch: 
-          #   index:''
-          #   role_arn:''
-          #   type:''
-          #   endpoint:''
-          #   id:''
-          # sqs: 
-          #   queue_url:''
-          #   role_arn:''
-          #   use_base64:false
-          # cloudwatch_metric: 
-          #   metric_unit:''
-          #   metric_value:''
-          #   role_arn:''
-          #   metric_name:''
-          #   metric_namespace:''
-          #   metric_timestamp:''
-          # firehose: 
-          #   delivery_stream_name:''
-          #   role_arn:''
-          #   separator:''
           # republish: 
-          #   role_arn:''
-          #   topic:''
-          # s3: 
-          #   bucket_name:''
-          #   key:''
-          #   role_arn:''
-          # cloudwatch_alarm: 
-          #   alarm_name:''
-          #   role_arn:''
-          #   state_reason:''
-          #   state_value:''
-          # kinesis: 
-          #   stream_name:''
-          #   role_arn:''
-          #   partition_key:''
-          # description: ''
-          # sns: 
-          #   target_arn:''
-          #   role_arn:''
+          #   role_arn: ''
+          #   topic: ''
           # dynamodb: 
-          #   range_key_field:''
-          #   range_key_value:''
-          #   role_arn:''
-          #   table_name:''
-          #   hash_key_field:''
-          #   hash_key_value:''
-          #   hash_key_type:''
-          #   range_key_type:''
-          #   payload_field:''
+          #   role_arn: ''
+          #   hash_key_field: ''
+          #   hash_key_value: ''
+          #   range_key_field: ''
+          #   range_key_value: ''
+          #   table_name: ''
+          #   range_key_type: ''
+          #   hash_key_type: ''
+          #   payload_field: ''
+          # kinesis: 
+          #   stream_name: ''
+          #   role_arn: ''
+          #   partition_key: ''
+          # cloudwatch_alarm: 
+          #   alarm_name: ''
+          #   role_arn: ''
+          #   state_reason: ''
+          #   state_value: ''
+          # elasticsearch: 
+          #   endpoint: ''
+          #   id: ''
+          #   index: ''
+          #   role_arn: ''
+          #   type: ''
+          # firehose: 
+          #   delivery_stream_name: ''
+          #   role_arn: ''
+          #   separator: ''
+          # s3: 
+          #   bucket_name: ''
+          #   key: ''
+          #   role_arn: ''
+          # sns: 
+          #   target_arn: ''
+          #   role_arn: ''
+          # sqs: 
+          #   queue_url: ''
+          #   role_arn: ''
+          #   use_base64: false
+          # description: ''
+          # cloudwatch_metric: 
+          #   metric_name: ''
+          #   metric_namespace: ''
+          #   metric_unit: ''
+          #   metric_value: ''
+          #   role_arn: ''
+          #   metric_timestamp: ''
           # lambda: 
-          #   function_arn:''
+          #   function_arn: ''
     variable:
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_sql_version:
         type: 'string'
       {{ name }}_enabled:
         type: 'bool'
       {{ name }}_sql:
-        type: 'string'
-      {{ name }}_name:
         type: 'string'
     output:
       id:

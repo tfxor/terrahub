@@ -6,28 +6,28 @@
     resource:
       aws_secretsmanager_secret:
         {{ name }}:
-          # description: ''
-          # name_prefix: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # rotation_lambda_arn: ''
           # rotation_rules: 
           #   -
           #     automatically_after_days: 0
-          # kms_key_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # name: ''
-          # policy: ''
+          # name_prefix: ''
           # recovery_window_in_days: 0
+          # description: ''
+          # kms_key_id: ''
+          # policy: ''
     output:
       id:
         value: '${aws_secretsmanager_secret.{{ name }}.id}'
       thub_id:
         value: '${aws_secretsmanager_secret.{{ name }}.id}'
-      name_prefix:
-        value: '${aws_secretsmanager_secret.{{ name }}.name_prefix}'
       arn:
         value: '${aws_secretsmanager_secret.{{ name }}.arn}'
       name:
         value: '${aws_secretsmanager_secret.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_secretsmanager_secret.{{ name }}.name_prefix}'
       rotation_enabled:
         value: '${aws_secretsmanager_secret.{{ name }}.rotation_enabled}'

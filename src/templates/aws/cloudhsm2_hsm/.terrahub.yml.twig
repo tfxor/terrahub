@@ -7,9 +7,9 @@
       aws_cloudhsm2_hsm:
         {{ name }}:
           cluster_id: '${var.{{ name }}_cluster_id}'
-          # subnet_id: ''
           # availability_zone: ''
           # ip_address: ''
+          # subnet_id: ''
     variable:
       {{ name }}_cluster_id:
         type: 'string'
@@ -18,8 +18,6 @@
         value: '${aws_cloudhsm2_hsm.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudhsm2_hsm.{{ name }}.id}'
-      subnet_id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.subnet_id}'
       availability_zone:
         value: '${aws_cloudhsm2_hsm.{{ name }}.availability_zone}'
       ip_address:
@@ -30,3 +28,5 @@
         value: '${aws_cloudhsm2_hsm.{{ name }}.hsm_state}'
       hsm_eni_id:
         value: '${aws_cloudhsm2_hsm.{{ name }}.hsm_eni_id}'
+      subnet_id:
+        value: '${aws_cloudhsm2_hsm.{{ name }}.subnet_id}'

@@ -6,42 +6,42 @@
     resource:
       aws_dms_endpoint:
         {{ name }}:
-          endpoint_id: '${var.{{ name }}_endpoint_id}'
           endpoint_type: '${var.{{ name }}_endpoint_type}'
+          endpoint_id: '${var.{{ name }}_endpoint_id}'
           engine_name: '${var.{{ name }}_engine_name}'
-          # extra_connection_attributes: ''
-          # kms_key_arn: ''
-          # port: 0
-          # server_name: ''
-          # username: ''
-          # database_name: ''
-          # service_access_role: ''
           # s3_settings: 
           #   -
-          #     bucket_name: ''
-          #     compression_type: ''
           #     service_access_role_arn: ''
           #     external_table_definition: ''
           #     csv_row_delimiter: ''
           #     csv_delimiter: ''
           #     bucket_folder: ''
+          #     bucket_name: ''
+          #     compression_type: ''
+          # kms_key_arn: ''
+          # server_name: ''
           # ssl_mode: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # certificate_arn: ''
+          # database_name: ''
+          # username: ''
           # mongodb_settings: 
           #   -
-          #     auth_type: ''
           #     auth_mechanism: ''
           #     nesting_level: ''
           #     extract_doc_id: ''
           #     docs_to_investigate: ''
           #     auth_source: ''
-          # certificate_arn: ''
+          #     auth_type: ''
+          # service_access_role: ''
+          # extra_connection_attributes: ''
           # password: ''
+          # port: 0
     variable:
-      {{ name }}_endpoint_id:
-        type: 'string'
       {{ name }}_endpoint_type:
+        type: 'string'
+      {{ name }}_endpoint_id:
         type: 'string'
       {{ name }}_engine_name:
         type: 'string'
@@ -50,13 +50,13 @@
         value: '${aws_dms_endpoint.{{ name }}.id}'
       thub_id:
         value: '${aws_dms_endpoint.{{ name }}.id}'
-      extra_connection_attributes:
-        value: '${aws_dms_endpoint.{{ name }}.extra_connection_attributes}'
       kms_key_arn:
         value: '${aws_dms_endpoint.{{ name }}.kms_key_arn}'
-      endpoint_arn:
-        value: '${aws_dms_endpoint.{{ name }}.endpoint_arn}'
       ssl_mode:
         value: '${aws_dms_endpoint.{{ name }}.ssl_mode}'
       certificate_arn:
         value: '${aws_dms_endpoint.{{ name }}.certificate_arn}'
+      endpoint_arn:
+        value: '${aws_dms_endpoint.{{ name }}.endpoint_arn}'
+      extra_connection_attributes:
+        value: '${aws_dms_endpoint.{{ name }}.extra_connection_attributes}'

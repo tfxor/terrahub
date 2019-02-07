@@ -7,19 +7,19 @@
       aws_worklink_fleet:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # network: 
+          #   -
+          #     security_group_ids: []
+          #     subnet_ids: []
+          #     vpc_id: ''
           # optimize_for_end_user_location: false
+          # display_name: ''
           # audit_stream_arn: ''
+          # device_ca_certificate: ''
           # identity_provider: 
           #   -
           #     type: ''
           #     saml_metadata: ''
-          # display_name: ''
-          # network: 
-          #   -
-          #     vpc_id: ''
-          #     security_group_ids: []
-          #     subnet_ids: []
-          # device_ca_certificate: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -32,7 +32,7 @@
         value: '${aws_worklink_fleet.{{ name }}.arn}'
       company_code:
         value: '${aws_worklink_fleet.{{ name }}.company_code}'
-      created_time:
-        value: '${aws_worklink_fleet.{{ name }}.created_time}'
       last_updated_time:
         value: '${aws_worklink_fleet.{{ name }}.last_updated_time}'
+      created_time:
+        value: '${aws_worklink_fleet.{{ name }}.created_time}'

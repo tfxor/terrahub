@@ -6,14 +6,14 @@
     resource:
       aws_waf_web_acl:
         {{ name }}:
+          rule_id: '${var.{{ name }}_rule_id}'
           name: '${var.{{ name }}_name}'
-          default_action:
-            type:''
+          default_action: 
+            type: ''
           metric_name: '${var.{{ name }}_metric_name}'
           priority: '${var.{{ name }}_priority}'
-          rule_id: '${var.{{ name }}_rule_id}'
           # rules: 
-          #   action:
+          #   action: 
           #     -
           #       type: ''
           # override_action: 
@@ -21,14 +21,14 @@
           #     type: ''
           # type: ''
     variable:
+      {{ name }}_rule_id:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_metric_name:
         type: 'string'
       {{ name }}_priority:
         type: 'int'
-      {{ name }}_rule_id:
-        type: 'string'
     output:
       id:
         value: '${aws_waf_web_acl.{{ name }}.id}'

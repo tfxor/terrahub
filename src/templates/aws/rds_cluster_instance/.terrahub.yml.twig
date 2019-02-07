@@ -6,73 +6,73 @@
     resource:
       aws_rds_cluster_instance:
         {{ name }}:
-          instance_class: '${var.{{ name }}_instance_class}'
           cluster_identifier: '${var.{{ name }}_cluster_identifier}'
-          # publicly_accessible: false
+          instance_class: '${var.{{ name }}_instance_class}'
+          # performance_insights_enabled: false
+          # performance_insights_kms_key_id: ''
+          # db_subnet_group_name: ''
           # db_parameter_group_name: ''
+          # monitoring_role_arn: ''
           # monitoring_interval: 0
           # availability_zone: ''
-          # engine: ''
+          # identifier_prefix: ''
+          # auto_minor_version_upgrade: false
+          # promotion_tier: 0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # auto_minor_version_upgrade: false
           # preferred_maintenance_window: ''
           # copy_tags_to_snapshot: false
-          # apply_immediately: false
           # engine_version: ''
-          # preferred_backup_window: ''
-          # promotion_tier: 0
           # identifier: ''
-          # db_subnet_group_name: ''
-          # performance_insights_enabled: false
-          # identifier_prefix: ''
-          # monitoring_role_arn: ''
-          # performance_insights_kms_key_id: ''
+          # engine: ''
+          # apply_immediately: false
+          # preferred_backup_window: ''
+          # publicly_accessible: false
     variable:
-      {{ name }}_instance_class:
-        type: 'string'
       {{ name }}_cluster_identifier:
+        type: 'string'
+      {{ name }}_instance_class:
         type: 'string'
     output:
       id:
         value: '${aws_rds_cluster_instance.{{ name }}.id}'
       thub_id:
         value: '${aws_rds_cluster_instance.{{ name }}.id}'
-      db_parameter_group_name:
-        value: '${aws_rds_cluster_instance.{{ name }}.db_parameter_group_name}'
-      dbi_resource_id:
-        value: '${aws_rds_cluster_instance.{{ name }}.dbi_resource_id}'
-      availability_zone:
-        value: '${aws_rds_cluster_instance.{{ name }}.availability_zone}'
-      storage_encrypted:
-        value: '${aws_rds_cluster_instance.{{ name }}.storage_encrypted}'
-      preferred_maintenance_window:
-        value: '${aws_rds_cluster_instance.{{ name }}.preferred_maintenance_window}'
-      apply_immediately:
-        value: '${aws_rds_cluster_instance.{{ name }}.apply_immediately}'
-      kms_key_id:
-        value: '${aws_rds_cluster_instance.{{ name }}.kms_key_id}'
-      engine_version:
-        value: '${aws_rds_cluster_instance.{{ name }}.engine_version}'
-      preferred_backup_window:
-        value: '${aws_rds_cluster_instance.{{ name }}.preferred_backup_window}'
-      identifier:
-        value: '${aws_rds_cluster_instance.{{ name }}.identifier}'
-      db_subnet_group_name:
-        value: '${aws_rds_cluster_instance.{{ name }}.db_subnet_group_name}'
       performance_insights_enabled:
         value: '${aws_rds_cluster_instance.{{ name }}.performance_insights_enabled}'
-      arn:
-        value: '${aws_rds_cluster_instance.{{ name }}.arn}'
-      identifier_prefix:
-        value: '${aws_rds_cluster_instance.{{ name }}.identifier_prefix}'
-      endpoint:
-        value: '${aws_rds_cluster_instance.{{ name }}.endpoint}'
-      port:
-        value: '${aws_rds_cluster_instance.{{ name }}.port}'
-      writer:
-        value: '${aws_rds_cluster_instance.{{ name }}.writer}'
-      monitoring_role_arn:
-        value: '${aws_rds_cluster_instance.{{ name }}.monitoring_role_arn}'
       performance_insights_kms_key_id:
         value: '${aws_rds_cluster_instance.{{ name }}.performance_insights_kms_key_id}'
+      db_subnet_group_name:
+        value: '${aws_rds_cluster_instance.{{ name }}.db_subnet_group_name}'
+      db_parameter_group_name:
+        value: '${aws_rds_cluster_instance.{{ name }}.db_parameter_group_name}'
+      monitoring_role_arn:
+        value: '${aws_rds_cluster_instance.{{ name }}.monitoring_role_arn}'
+      availability_zone:
+        value: '${aws_rds_cluster_instance.{{ name }}.availability_zone}'
+      identifier_prefix:
+        value: '${aws_rds_cluster_instance.{{ name }}.identifier_prefix}'
+      arn:
+        value: '${aws_rds_cluster_instance.{{ name }}.arn}'
+      preferred_maintenance_window:
+        value: '${aws_rds_cluster_instance.{{ name }}.preferred_maintenance_window}'
+      engine_version:
+        value: '${aws_rds_cluster_instance.{{ name }}.engine_version}'
+      kms_key_id:
+        value: '${aws_rds_cluster_instance.{{ name }}.kms_key_id}'
+      identifier:
+        value: '${aws_rds_cluster_instance.{{ name }}.identifier}'
+      endpoint:
+        value: '${aws_rds_cluster_instance.{{ name }}.endpoint}'
+      writer:
+        value: '${aws_rds_cluster_instance.{{ name }}.writer}'
+      apply_immediately:
+        value: '${aws_rds_cluster_instance.{{ name }}.apply_immediately}'
+      storage_encrypted:
+        value: '${aws_rds_cluster_instance.{{ name }}.storage_encrypted}'
+      preferred_backup_window:
+        value: '${aws_rds_cluster_instance.{{ name }}.preferred_backup_window}'
+      port:
+        value: '${aws_rds_cluster_instance.{{ name }}.port}'
+      dbi_resource_id:
+        value: '${aws_rds_cluster_instance.{{ name }}.dbi_resource_id}'

@@ -6,12 +6,12 @@
     resource:
       aws_gamelift_alias:
         {{ name }}:
-          routing_strategy:
+          name: '${var.{{ name }}_name}'
+          routing_strategy: 
             -
               type: ''
           #     fleet_id: ''
           #     message: ''
-          name: '${var.{{ name }}_name}'
           # description: ''
     variable:
       {{ name }}_name:

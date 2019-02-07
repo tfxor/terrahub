@@ -7,25 +7,25 @@
       aws_route53_health_check:
         {{ name }}:
           type: '${var.{{ name }}_type}'
-          # enable_sni: false
-          # regions: []
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # ip_address: ''
-          # measure_latency: false
-          # failure_threshold: 0
-          # port: 0
-          # fqdn: ''
-          # invert_healthcheck: false
-          # child_healthchecks: []
-          # child_health_threshold: 0
-          # reference_name: ''
-          # request_interval: 0
           # cloudwatch_alarm_name: ''
           # cloudwatch_alarm_region: ''
           # insufficient_data_health_status: ''
+          # enable_sni: false
+          # failure_threshold: 0
+          # request_interval: 0
+          # ip_address: ''
+          # child_health_threshold: 0
+          # fqdn: ''
           # resource_path: ''
+          # reference_name: ''
+          # invert_healthcheck: false
           # search_string: ''
+          # measure_latency: false
+          # port: 0
+          # child_healthchecks: []
+          # regions: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_type:
         type: 'string'

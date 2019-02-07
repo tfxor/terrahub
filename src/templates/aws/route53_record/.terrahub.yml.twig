@@ -6,41 +6,41 @@
     resource:
       aws_route53_record:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          zone_id: '${var.{{ name }}_zone_id}'
           type: '${var.{{ name }}_type}'
-          # records: []
-          # allow_overwrite: false
-          # set_identifier: ''
-          # alias: 
-          #   zone_id:''
-          #   name:''
-          #   evaluate_target_health:false
-          # failover: ''
+          zone_id: '${var.{{ name }}_zone_id}'
+          name: '${var.{{ name }}_name}'
           # failover_routing_policy: 
           #   -
           #     type: ''
           # latency_routing_policy: 
           #   -
           #     region: ''
-          # multivalue_answer_routing_policy: false
-          # ttl: 0
-          # weight: 0
           # geolocation_routing_policy: 
           #   -
           #     continent: ''
           #     country: ''
           #     subdivision: ''
-          # health_check_id: ''
+          # ttl: 0
+          # weight: 0
+          # multivalue_answer_routing_policy: false
+          # allow_overwrite: false
           # weighted_routing_policy: 
           #   -
           #     weight: 0
+          # set_identifier: ''
+          # alias: 
+          #   zone_id: ''
+          #   name: ''
+          #   evaluate_target_health: false
+          # failover: ''
+          # health_check_id: ''
+          # records: []
     variable:
-      {{ name }}_name:
+      {{ name }}_type:
         type: 'string'
       {{ name }}_zone_id:
         type: 'string'
-      {{ name }}_type:
+      {{ name }}_name:
         type: 'string'
     output:
       id:

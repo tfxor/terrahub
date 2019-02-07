@@ -6,27 +6,27 @@
     resource:
       aws_api_gateway_method_settings:
         {{ name }}:
+          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          stage_name: '${var.{{ name }}_stage_name}'
           method_path: '${var.{{ name }}_method_path}'
-          settings:
+          settings: 
             -
-          #     metrics_enabled: false
           #     throttling_burst_limit: 0
           #     cache_ttl_in_seconds: 0
           #     require_authorization_for_cache_control: false
+          #     cache_data_encrypted: false
           #     unauthorized_cache_control_header_strategy: ''
+          #     metrics_enabled: false
           #     logging_level: ''
           #     data_trace_enabled: false
           #     throttling_rate_limit: ''
           #     caching_enabled: false
-          #     cache_data_encrypted: false
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
-          stage_name: '${var.{{ name }}_stage_name}'
     variable:
-      {{ name }}_method_path:
-        type: 'string'
       {{ name }}_rest_api_id:
         type: 'string'
       {{ name }}_stage_name:
+        type: 'string'
+      {{ name }}_method_path:
         type: 'string'
     output:
       id:

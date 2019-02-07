@@ -7,10 +7,10 @@
       aws_ssm_activation:
         {{ name }}:
           iam_role: '${var.{{ name }}_iam_role}'
-          # description: ''
-          # expiration_date: ''
           # registration_limit: 0
           # name: ''
+          # description: ''
+          # expiration_date: ''
     variable:
       {{ name }}_iam_role:
         type: 'string'
@@ -19,9 +19,9 @@
         value: '${aws_ssm_activation.{{ name }}.id}'
       thub_id:
         value: '${aws_ssm_activation.{{ name }}.id}'
-      expired:
-        value: '${aws_ssm_activation.{{ name }}.expired}'
       registration_count:
         value: '${aws_ssm_activation.{{ name }}.registration_count}'
       activation_code:
         value: '${aws_ssm_activation.{{ name }}.activation_code}'
+      expired:
+        value: '${aws_ssm_activation.{{ name }}.expired}'

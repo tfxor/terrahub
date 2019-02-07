@@ -7,11 +7,11 @@
       aws_docdb_subnet_group:
         {{ name }}:
           subnet_ids: '${var.{{ name }}_subnet_ids}'
-          # name_prefix: ''
-          # description: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
+          # name_prefix: ''
+          # description: ''
     variable:
       {{ name }}_subnet_ids:
         type: 'set'
@@ -20,9 +20,9 @@
         value: '${aws_docdb_subnet_group.{{ name }}.id}'
       thub_id:
         value: '${aws_docdb_subnet_group.{{ name }}.id}'
-      name_prefix:
-        value: '${aws_docdb_subnet_group.{{ name }}.name_prefix}'
       arn:
         value: '${aws_docdb_subnet_group.{{ name }}.arn}'
       name:
         value: '${aws_docdb_subnet_group.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_docdb_subnet_group.{{ name }}.name_prefix}'

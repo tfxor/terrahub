@@ -9,7 +9,7 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           scopes: '${var.{{ name }}_scopes}'
-          criteria:
+          criteria: 
             -
               metric_namespace: ''
               metric_name: ''
@@ -18,21 +18,21 @@
               threshold: ''
           #     dimension: 
           #       -
-          #         values: []
           #         name: ''
           #         operator: ''
-          # severity: 0
-          # action: 
-          #   action_group_id:''
-          #   webhook_properties:
-          #     '[TO_BE_REPLACED]': ''
+          #         values: []
           # auto_mitigate: false
-          # enabled: false
-          # frequency: ''
+          # severity: 0
           # window_size: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # action: 
+          #   action_group_id: ''
+          #   webhook_properties: 
+          #     '[TO_BE_REPLACED]': ''
+          # frequency: ''
           # description: ''
+          # enabled: false
     variable:
       {{ name }}_name:
         type: 'string'

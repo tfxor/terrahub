@@ -16,17 +16,17 @@
         value: '${google_service_account_key.{{ name }}.id}'
       thub_id:
         value: '${google_service_account_key.{{ name }}.id}'
-      private_key_encrypted:
-        value: '${google_service_account_key.{{ name }}.private_key_encrypted}'
-      private_key_fingerprint:
-        value: '${google_service_account_key.{{ name }}.private_key_fingerprint}'
       name:
         value: '${google_service_account_key.{{ name }}.name}'
-      valid_before:
-        value: '${google_service_account_key.{{ name }}.valid_before}'
       public_key:
         value: '${google_service_account_key.{{ name }}.public_key}'
-      private_key:
-        value: '${google_service_account_key.{{ name }}.private_key}'
+      valid_before:
+        value: '${google_service_account_key.{{ name }}.valid_before}'
+      private_key_encrypted:
+        value: '${google_service_account_key.{{ name }}.private_key_encrypted}'
       valid_after:
         value: '${google_service_account_key.{{ name }}.valid_after}'
+      private_key_fingerprint:
+        value: '${google_service_account_key.{{ name }}.private_key_fingerprint}'
+      private_key:
+        value: '${google_service_account_key.{{ name }}.private_key}'

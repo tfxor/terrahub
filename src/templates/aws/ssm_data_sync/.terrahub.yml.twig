@@ -6,14 +6,14 @@
     resource:
       aws_ssm_data_sync:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          s3_destination:
+          s3_destination: 
             -
               bucket_name: ''
               region: ''
           #     kms_key_arn: ''
           #     prefix: ''
           #     sync_format: ''
+          name: '${var.{{ name }}_name}'
     variable:
       {{ name }}_name:
         type: 'string'

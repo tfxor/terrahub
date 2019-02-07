@@ -8,9 +8,9 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           instance: '${var.{{ name }}_instance}'
-          # project: ''
           # charset: ''
           # collation: ''
+          # project: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -21,11 +21,11 @@
         value: '${google_sql_database.{{ name }}.id}'
       thub_id:
         value: '${google_sql_database.{{ name }}.id}'
-      project:
-        value: '${google_sql_database.{{ name }}.project}'
       self_link:
         value: '${google_sql_database.{{ name }}.self_link}'
       charset:
         value: '${google_sql_database.{{ name }}.charset}'
       collation:
         value: '${google_sql_database.{{ name }}.collation}'
+      project:
+        value: '${google_sql_database.{{ name }}.project}'

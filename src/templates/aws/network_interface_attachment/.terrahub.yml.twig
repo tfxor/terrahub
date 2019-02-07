@@ -6,16 +6,16 @@
     resource:
       aws_network_interface_attachment:
         {{ name }}:
+          device_index: '${var.{{ name }}_device_index}'
           instance_id: '${var.{{ name }}_instance_id}'
           network_interface_id: '${var.{{ name }}_network_interface_id}'
-          device_index: '${var.{{ name }}_device_index}'
     variable:
+      {{ name }}_device_index:
+        type: 'int'
       {{ name }}_instance_id:
         type: 'string'
       {{ name }}_network_interface_id:
         type: 'string'
-      {{ name }}_device_index:
-        type: 'int'
     output:
       id:
         value: '${aws_network_interface_attachment.{{ name }}.id}'

@@ -7,9 +7,9 @@
       aws_vpc_peering_connection_accepter:
         {{ name }}:
           vpc_peering_connection_id: '${var.{{ name }}_vpc_peering_connection_id}'
-          # auto_accept: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # auto_accept: false
     variable:
       {{ name }}_vpc_peering_connection_id:
         type: 'string'
@@ -18,15 +18,15 @@
         value: '${aws_vpc_peering_connection_accepter.{{ name }}.id}'
       thub_id:
         value: '${aws_vpc_peering_connection_accepter.{{ name }}.id}'
-      peer_vpc_id:
-        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_vpc_id}'
-      peer_owner_id:
-        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_owner_id}'
       vpc_peering_connection_id:
         value: '${aws_vpc_peering_connection_accepter.{{ name }}.vpc_peering_connection_id}'
+      peer_vpc_id:
+        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_vpc_id}'
+      peer_region:
+        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_region}'
       accept_status:
         value: '${aws_vpc_peering_connection_accepter.{{ name }}.accept_status}'
       vpc_id:
         value: '${aws_vpc_peering_connection_accepter.{{ name }}.vpc_id}'
-      peer_region:
-        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_region}'
+      peer_owner_id:
+        value: '${aws_vpc_peering_connection_accepter.{{ name }}.peer_owner_id}'

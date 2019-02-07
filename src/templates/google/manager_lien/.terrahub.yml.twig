@@ -6,19 +6,19 @@
     resource:
       google_manager_lien:
         {{ name }}:
+          origin: '${var.{{ name }}_origin}'
           parent: '${var.{{ name }}_parent}'
           reason: '${var.{{ name }}_reason}'
           restrictions: '${var.{{ name }}_restrictions}'
-          origin: '${var.{{ name }}_origin}'
     variable:
+      {{ name }}_origin:
+        type: 'string'
       {{ name }}_parent:
         type: 'string'
       {{ name }}_reason:
         type: 'string'
       {{ name }}_restrictions:
         type: 'list'
-      {{ name }}_origin:
-        type: 'string'
     output:
       id:
         value: '${google_manager_lien.{{ name }}.id}'

@@ -6,16 +6,16 @@
     resource:
       aws_elasticache_parameter_group:
         {{ name }}:
-          family: '${var.{{ name }}_family}'
           name: '${var.{{ name }}_name}'
+          family: '${var.{{ name }}_family}'
           # description: ''
           # parameter: 
-          #   name:''
-          #   value:''
+          #   name: ''
+          #   value: ''
     variable:
-      {{ name }}_family:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_family:
         type: 'string'
     output:
       id:

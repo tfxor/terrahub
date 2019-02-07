@@ -6,13 +6,13 @@
     resource:
       aws_route53_zone_association:
         {{ name }}:
-          zone_id: '${var.{{ name }}_zone_id}'
           vpc_id: '${var.{{ name }}_vpc_id}'
+          zone_id: '${var.{{ name }}_zone_id}'
           # vpc_region: ''
     variable:
-      {{ name }}_zone_id:
-        type: 'string'
       {{ name }}_vpc_id:
+        type: 'string'
+      {{ name }}_zone_id:
         type: 'string'
     output:
       id:

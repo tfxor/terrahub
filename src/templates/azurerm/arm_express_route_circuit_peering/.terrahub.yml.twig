@@ -7,37 +7,37 @@
     resource:
       azurerm_arm_express_route_circuit_peering:
         {{ name }}:
-          express_route_circuit_name: '${var.{{ name }}_express_route_circuit_name}'
           primary_peer_address_prefix: '${var.{{ name }}_primary_peer_address_prefix}'
-          peering_type: '${var.{{ name }}_peering_type}'
-          secondary_peer_address_prefix: '${var.{{ name }}_secondary_peer_address_prefix}'
           vlan_id: '${var.{{ name }}_vlan_id}'
+          peering_type: '${var.{{ name }}_peering_type}'
+          express_route_circuit_name: '${var.{{ name }}_express_route_circuit_name}'
+          secondary_peer_address_prefix: '${var.{{ name }}_secondary_peer_address_prefix}'
           # shared_key: ''
           # peer_asn: 0
           # microsoft_peering_config: 
           #   -
           #     advertised_public_prefixes: []
     variable:
-      {{ name }}_express_route_circuit_name:
-        type: 'string'
       {{ name }}_primary_peer_address_prefix:
-        type: 'string'
-      {{ name }}_peering_type:
-        type: 'string'
-      {{ name }}_secondary_peer_address_prefix:
         type: 'string'
       {{ name }}_vlan_id:
         type: 'int'
+      {{ name }}_peering_type:
+        type: 'string'
+      {{ name }}_express_route_circuit_name:
+        type: 'string'
+      {{ name }}_secondary_peer_address_prefix:
+        type: 'string'
     output:
       id:
         value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.id}'
-      azure_asn:
-        value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.azure_asn}'
       secondary_azure_port:
         value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.secondary_azure_port}'
       peer_asn:
         value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.peer_asn}'
+      azure_asn:
+        value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.azure_asn}'
       primary_azure_port:
         value: '${azurerm_arm_express_route_circuit_peering.{{ name }}.primary_azure_port}'

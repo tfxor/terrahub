@@ -16,8 +16,6 @@
         value: '${aws_iam_access_key.{{ name }}.id}'
       thub_id:
         value: '${aws_iam_access_key.{{ name }}.id}'
-      encrypted_secret:
-        value: '${aws_iam_access_key.{{ name }}.encrypted_secret}'
       status:
         value: '${aws_iam_access_key.{{ name }}.status}'
       secret:
@@ -26,3 +24,5 @@
         value: '${aws_iam_access_key.{{ name }}.ses_smtp_password}'
       key_fingerprint:
         value: '${aws_iam_access_key.{{ name }}.key_fingerprint}'
+      encrypted_secret:
+        value: '${aws_iam_access_key.{{ name }}.encrypted_secret}'

@@ -7,24 +7,24 @@
       aws_security_group_rule:
         {{ name }}:
           type: '${var.{{ name }}_type}'
-          from_port: '${var.{{ name }}_from_port}'
-          protocol: '${var.{{ name }}_protocol}'
           to_port: '${var.{{ name }}_to_port}'
+          protocol: '${var.{{ name }}_protocol}'
+          from_port: '${var.{{ name }}_from_port}'
           security_group_id: '${var.{{ name }}_security_group_id}'
+          # description: ''
           # cidr_blocks: []
           # ipv6_cidr_blocks: []
           # source_security_group_id: ''
-          # self: false
-          # description: ''
           # prefix_list_ids: []
+          # self: false
     variable:
       {{ name }}_type:
         type: 'string'
-      {{ name }}_from_port:
+      {{ name }}_to_port:
         type: 'int'
       {{ name }}_protocol:
         type: 'string'
-      {{ name }}_to_port:
+      {{ name }}_from_port:
         type: 'int'
       {{ name }}_security_group_id:
         type: 'string'

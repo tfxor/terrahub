@@ -6,16 +6,16 @@
     resource:
       aws_iam_group_membership:
         {{ name }}:
-          group: '${var.{{ name }}_group}'
           name: '${var.{{ name }}_name}'
           users: '${var.{{ name }}_users}'
+          group: '${var.{{ name }}_group}'
     variable:
-      {{ name }}_group:
-        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_users:
         type: 'set'
+      {{ name }}_group:
+        type: 'string'
     output:
       id:
         value: '${aws_iam_group_membership.{{ name }}.id}'

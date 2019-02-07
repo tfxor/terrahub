@@ -6,14 +6,14 @@
     resource:
       aws_api_gateway_base_path_mapping:
         {{ name }}:
-          domain_name: '${var.{{ name }}_domain_name}'
           api_id: '${var.{{ name }}_api_id}'
+          domain_name: '${var.{{ name }}_domain_name}'
           # base_path: ''
           # stage_name: ''
     variable:
-      {{ name }}_domain_name:
-        type: 'string'
       {{ name }}_api_id:
+        type: 'string'
+      {{ name }}_domain_name:
         type: 'string'
     output:
       id:

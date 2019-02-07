@@ -6,23 +6,23 @@
     resource:
       aws_glue_job:
         {{ name }}:
-          command:
+          command: 
             -
               script_location: ''
           #     name: ''
           name: '${var.{{ name }}_name}'
           role_arn: '${var.{{ name }}_role_arn}'
           # allocated_capacity: 0
+          # description: ''
+          # security_configuration: ''
           # connections: []
           # default_arguments: 
           #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # max_retries: 0
-          # timeout: 0
           # execution_property: 
           #   -
           #     max_concurrent_runs: 0
-          # security_configuration: ''
+          # max_retries: 0
+          # timeout: 0
     variable:
       {{ name }}_name:
         type: 'string'

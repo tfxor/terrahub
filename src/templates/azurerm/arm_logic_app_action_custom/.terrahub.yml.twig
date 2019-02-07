@@ -7,15 +7,15 @@
     resource:
       azurerm_arm_logic_app_action_custom:
         {{ name }}:
+          body: '${var.{{ name }}_body}'
           name: '${var.{{ name }}_name}'
           logic_app_id: '${var.{{ name }}_logic_app_id}'
-          body: '${var.{{ name }}_body}'
     variable:
+      {{ name }}_body:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_logic_app_id:
-        type: 'string'
-      {{ name }}_body:
         type: 'string'
     output:
       id:

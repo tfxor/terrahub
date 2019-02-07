@@ -7,15 +7,15 @@
       aws_storagegateway_nfs_file_share:
         {{ name }}:
           client_list: '${var.{{ name }}_client_list}'
-          location_arn: '${var.{{ name }}_location_arn}'
           role_arn: '${var.{{ name }}_role_arn}'
           gateway_arn: '${var.{{ name }}_gateway_arn}'
-          # kms_encrypted: false
-          # default_storage_class: ''
+          location_arn: '${var.{{ name }}_location_arn}'
+          # guess_mime_type_enabled: false
           # kms_key_arn: ''
           # read_only: false
+          # requester_pays: false
           # squash: ''
-          # guess_mime_type_enabled: false
+          # kms_encrypted: false
           # nfs_file_share_defaults: 
           #   -
           #     directory_mode: ''
@@ -23,22 +23,22 @@
           #     group_id: 0
           #     owner_id: 0
           # object_acl: ''
-          # requester_pays: false
+          # default_storage_class: ''
     variable:
       {{ name }}_client_list:
         type: 'set'
-      {{ name }}_location_arn:
-        type: 'string'
       {{ name }}_role_arn:
         type: 'string'
       {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_location_arn:
         type: 'string'
     output:
       id:
         value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
       thub_id:
         value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
-      fileshare_id:
-        value: '${aws_storagegateway_nfs_file_share.{{ name }}.fileshare_id}'
       arn:
         value: '${aws_storagegateway_nfs_file_share.{{ name }}.arn}'
+      fileshare_id:
+        value: '${aws_storagegateway_nfs_file_share.{{ name }}.fileshare_id}'

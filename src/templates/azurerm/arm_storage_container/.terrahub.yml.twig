@@ -7,13 +7,13 @@
     resource:
       azurerm_arm_storage_container:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           storage_account_name: '${var.{{ name }}_storage_account_name}'
+          name: '${var.{{ name }}_name}'
           # container_access_type: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_storage_account_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

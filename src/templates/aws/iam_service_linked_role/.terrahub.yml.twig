@@ -7,8 +7,8 @@
       aws_iam_service_linked_role:
         {{ name }}:
           aws_service_name: '${var.{{ name }}_aws_service_name}'
-          # description: ''
           # custom_suffix: ''
+          # description: ''
     variable:
       {{ name }}_aws_service_name:
         type: 'string'

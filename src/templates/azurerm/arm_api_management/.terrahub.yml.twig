@@ -7,16 +7,14 @@
     resource:
       azurerm_arm_api_management:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           publisher_name: '${var.{{ name }}_publisher_name}'
+          name: '${var.{{ name }}_name}'
           publisher_email: '${var.{{ name }}_publisher_email}'
-          sku:
+          sku: 
             -
               name: ''
               capacity: 0
-          # identity: 
-          #   -
-          #     type: ''
+          # notification_sender_email: ''
           # additional_location: 
           #   -
           # certificate: 
@@ -24,32 +22,34 @@
           #     encoded_certificate: ''
           #     certificate_password: ''
           #     store_name: ''
-          # security: 
-          #   -
-          #     disable_frontend_tls11: false
-          #     disable_backend_ssl30: false
-          #     disable_backend_tls10: false
-          #     disable_backend_tls11: false
-          #     disable_triple_des_chipers: false
-          #     disable_frontend_ssl30: false
-          #     disable_frontend_tls10: false
           # hostname_configuration: 
           #   -
+          #     management: 
+          #       -
           #     portal: 
           #       -
           #     proxy: 
           #       -
           #     scm: 
           #       -
-          #     management: 
-          #       -
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # notification_sender_email: ''
+          # identity: 
+          #   -
+          #     type: ''
+          # security: 
+          #   -
+          #     disable_triple_des_chipers: false
+          #     disable_frontend_ssl30: false
+          #     disable_frontend_tls10: false
+          #     disable_frontend_tls11: false
+          #     disable_backend_ssl30: false
+          #     disable_backend_tls10: false
+          #     disable_backend_tls11: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_publisher_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
       {{ name }}_publisher_email:
         type: 'string'
@@ -58,21 +58,21 @@
         value: '${azurerm_arm_api_management.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_api_management.{{ name }}.id}'
-      security:
-        value: '${azurerm_arm_api_management.{{ name }}.security}'
+      notification_sender_email:
+        value: '${azurerm_arm_api_management.{{ name }}.notification_sender_email}'
       hostname_configuration:
         value: '${azurerm_arm_api_management.{{ name }}.hostname_configuration}'
       gateway_regional_url:
         value: '${azurerm_arm_api_management.{{ name }}.gateway_regional_url}'
-      management_api_url:
-        value: '${azurerm_arm_api_management.{{ name }}.management_api_url}'
-      gateway_url:
-        value: '${azurerm_arm_api_management.{{ name }}.gateway_url}'
       portal_url:
         value: '${azurerm_arm_api_management.{{ name }}.portal_url}'
-      public_ip_addresses:
-        value: '${azurerm_arm_api_management.{{ name }}.public_ip_addresses}'
-      notification_sender_email:
-        value: '${azurerm_arm_api_management.{{ name }}.notification_sender_email}'
+      gateway_url:
+        value: '${azurerm_arm_api_management.{{ name }}.gateway_url}'
       scm_url:
         value: '${azurerm_arm_api_management.{{ name }}.scm_url}'
+      public_ip_addresses:
+        value: '${azurerm_arm_api_management.{{ name }}.public_ip_addresses}'
+      security:
+        value: '${azurerm_arm_api_management.{{ name }}.security}'
+      management_api_url:
+        value: '${azurerm_arm_api_management.{{ name }}.management_api_url}'

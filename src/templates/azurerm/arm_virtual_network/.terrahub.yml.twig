@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_virtual_network:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           address_space: '${var.{{ name }}_address_space}'
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # subnet: 
-          #   address_prefix:''
-          #   name:''
-          #   security_group:''
-          # dns_servers: []
           # ddos_protection_plan: 
           #   -
           #     id: ''
           #     enable: false
+          # dns_servers: []
+          # subnet: 
+          #   address_prefix: ''
+          #   name: ''
+          #   security_group: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_address_space:
         type: 'list'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${azurerm_arm_virtual_network.{{ name }}.id}'

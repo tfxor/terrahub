@@ -9,6 +9,8 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           namespace_name: '${var.{{ name }}_namespace_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # apns_credential: 
           #   -
           #     application_mode: ''
@@ -19,8 +21,6 @@
           # gcm_credential: 
           #   -
           #     api_key: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
         type: 'string'

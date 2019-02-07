@@ -8,21 +8,21 @@
       azurerm_arm_mssql_elasticpool:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          sku:
+          per_database_settings: 
+            -
+              min_capacity: ''
+              max_capacity: ''
+          server_name: '${var.{{ name }}_server_name}'
+          sku: 
             -
               name: ''
               capacity: 0
               tier: ''
           #     family: ''
-          server_name: '${var.{{ name }}_server_name}'
-          per_database_settings:
-            -
-              min_capacity: ''
-              max_capacity: ''
-          # max_size_bytes: 0
-          # max_size_gb: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # max_size_bytes: 0
+          # max_size_gb: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -35,9 +35,9 @@
         value: '${azurerm_arm_mssql_elasticpool.{{ name }}.id}'
       elastic_pool_properties:
         value: '${azurerm_arm_mssql_elasticpool.{{ name }}.elastic_pool_properties}'
+      zone_redundant:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.zone_redundant}'
       max_size_bytes:
         value: '${azurerm_arm_mssql_elasticpool.{{ name }}.max_size_bytes}'
       max_size_gb:
         value: '${azurerm_arm_mssql_elasticpool.{{ name }}.max_size_gb}'
-      zone_redundant:
-        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.zone_redundant}'

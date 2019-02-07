@@ -7,29 +7,29 @@
       aws_elasticache_cluster:
         {{ name }}:
           cluster_id: '${var.{{ name }}_cluster_id}'
-          # num_cache_nodes: 0
-          # port: 0
-          # snapshot_name: ''
           # availability_zones: []
-          # az_mode: ''
-          # engine: ''
-          # apply_immediately: false
-          # notification_topic_arn: ''
-          # security_group_names: []
-          # security_group_ids: []
+          # num_cache_nodes: 0
+          # snapshot_retention_limit: 0
           # snapshot_window: ''
-          # parameter_group_name: ''
+          # notification_topic_arn: ''
+          # security_group_ids: []
+          # apply_immediately: false
+          # engine_version: ''
+          # port: 0
+          # snapshot_arns: []
+          # availability_zone: ''
+          # maintenance_window: ''
+          # node_type: ''
           # preferred_availability_zones: []
           # replication_group_id: ''
-          # snapshot_arns: []
-          # snapshot_retention_limit: 0
+          # security_group_names: []
+          # snapshot_name: ''
+          # az_mode: ''
+          # engine: ''
+          # parameter_group_name: ''
           # subnet_group_name: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # availability_zone: ''
-          # engine_version: ''
-          # maintenance_window: ''
-          # node_type: ''
     variable:
       {{ name }}_cluster_id:
         type: 'string'
@@ -40,35 +40,35 @@
         value: '${aws_elasticache_cluster.{{ name }}.id}'
       num_cache_nodes:
         value: '${aws_elasticache_cluster.{{ name }}.num_cache_nodes}'
-      az_mode:
-        value: '${aws_elasticache_cluster.{{ name }}.az_mode}'
-      cache_nodes:
-        value: '${aws_elasticache_cluster.{{ name }}.cache_nodes}'
-      cluster_address:
-        value: '${aws_elasticache_cluster.{{ name }}.cluster_address}'
-      engine:
-        value: '${aws_elasticache_cluster.{{ name }}.engine}'
-      apply_immediately:
-        value: '${aws_elasticache_cluster.{{ name }}.apply_immediately}'
-      security_group_names:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_names}'
-      security_group_ids:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_ids}'
       snapshot_window:
         value: '${aws_elasticache_cluster.{{ name }}.snapshot_window}'
-      parameter_group_name:
-        value: '${aws_elasticache_cluster.{{ name }}.parameter_group_name}'
-      replication_group_id:
-        value: '${aws_elasticache_cluster.{{ name }}.replication_group_id}'
-      subnet_group_name:
-        value: '${aws_elasticache_cluster.{{ name }}.subnet_group_name}'
-      availability_zone:
-        value: '${aws_elasticache_cluster.{{ name }}.availability_zone}'
+      security_group_ids:
+        value: '${aws_elasticache_cluster.{{ name }}.security_group_ids}'
+      apply_immediately:
+        value: '${aws_elasticache_cluster.{{ name }}.apply_immediately}'
       configuration_endpoint:
         value: '${aws_elasticache_cluster.{{ name }}.configuration_endpoint}'
       engine_version:
         value: '${aws_elasticache_cluster.{{ name }}.engine_version}'
+      availability_zone:
+        value: '${aws_elasticache_cluster.{{ name }}.availability_zone}'
+      cluster_address:
+        value: '${aws_elasticache_cluster.{{ name }}.cluster_address}'
       maintenance_window:
         value: '${aws_elasticache_cluster.{{ name }}.maintenance_window}'
       node_type:
         value: '${aws_elasticache_cluster.{{ name }}.node_type}'
+      replication_group_id:
+        value: '${aws_elasticache_cluster.{{ name }}.replication_group_id}'
+      security_group_names:
+        value: '${aws_elasticache_cluster.{{ name }}.security_group_names}'
+      az_mode:
+        value: '${aws_elasticache_cluster.{{ name }}.az_mode}'
+      cache_nodes:
+        value: '${aws_elasticache_cluster.{{ name }}.cache_nodes}'
+      engine:
+        value: '${aws_elasticache_cluster.{{ name }}.engine}'
+      parameter_group_name:
+        value: '${aws_elasticache_cluster.{{ name }}.parameter_group_name}'
+      subnet_group_name:
+        value: '${aws_elasticache_cluster.{{ name }}.subnet_group_name}'

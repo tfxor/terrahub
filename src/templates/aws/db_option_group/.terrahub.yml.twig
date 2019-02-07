@@ -8,15 +8,15 @@
         {{ name }}:
           engine_name: '${var.{{ name }}_engine_name}'
           major_engine_version: '${var.{{ name }}_major_engine_version}'
-          # name: ''
-          # option_group_description: ''
           # option: 
-          #   option_name:''
-          #   option_settings:
-          #     value:''
-          #     name:''
+          #   option_name: ''
+          #   option_settings: 
+          #     value: ''
+          #     name: ''
+          # option_group_description: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # name: ''
           # name_prefix: ''
     variable:
       {{ name }}_engine_name:
@@ -28,9 +28,9 @@
         value: '${aws_db_option_group.{{ name }}.id}'
       thub_id:
         value: '${aws_db_option_group.{{ name }}.id}'
-      name:
-        value: '${aws_db_option_group.{{ name }}.name}'
       arn:
         value: '${aws_db_option_group.{{ name }}.arn}'
+      name:
+        value: '${aws_db_option_group.{{ name }}.name}'
       name_prefix:
         value: '${aws_db_option_group.{{ name }}.name_prefix}'

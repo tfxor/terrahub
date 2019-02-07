@@ -7,19 +7,19 @@
       google_compute_image:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # disk_size_gb: 0
-          # family: ''
-          # raw_disk: 
-          #   -
-          #     source: ''
-          #     container_type: ''
-          #     sha1: ''
-          # source_disk: ''
-          # project: ''
           # description: ''
+          # disk_size_gb: 0
+          # source_disk: ''
           # labels: 
           #   '[TO_BE_REPLACED]': ''
           # licenses: []
+          # raw_disk: 
+          #   -
+          #     source: ''
+          #     sha1: ''
+          #     container_type: ''
+          # project: ''
+          # family: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -30,15 +30,15 @@
         value: '${google_compute_image.{{ name }}.id}'
       disk_size_gb:
         value: '${google_compute_image.{{ name }}.disk_size_gb}'
-      self_link:
-        value: '${google_compute_image.{{ name }}.self_link}'
-      creation_timestamp:
-        value: '${google_compute_image.{{ name }}.creation_timestamp}'
       label_fingerprint:
         value: '${google_compute_image.{{ name }}.label_fingerprint}'
-      project:
-        value: '${google_compute_image.{{ name }}.project}'
       licenses:
         value: '${google_compute_image.{{ name }}.licenses}'
       archive_size_bytes:
         value: '${google_compute_image.{{ name }}.archive_size_bytes}'
+      creation_timestamp:
+        value: '${google_compute_image.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_image.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_image.{{ name }}.self_link}'

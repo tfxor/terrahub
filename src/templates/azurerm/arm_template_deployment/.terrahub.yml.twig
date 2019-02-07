@@ -7,16 +7,16 @@
     resource:
       azurerm_arm_template_deployment:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           deployment_mode: '${var.{{ name }}_deployment_mode}'
+          name: '${var.{{ name }}_name}'
           # template_body: ''
           # parameters: 
           #   '[TO_BE_REPLACED]': ''
           # parameters_body: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_deployment_mode:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

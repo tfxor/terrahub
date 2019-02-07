@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_relay_namespace:
         {{ name }}:
-          sku:
+          sku: 
             -
               name: ''
           name: '${var.{{ name }}_name}'
@@ -25,9 +25,9 @@
         value: '${azurerm_arm_relay_namespace.{{ name }}.metric_id}'
       primary_connection_string:
         value: '${azurerm_arm_relay_namespace.{{ name }}.primary_connection_string}'
-      secondary_connection_string:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.secondary_connection_string}'
       primary_key:
         value: '${azurerm_arm_relay_namespace.{{ name }}.primary_key}'
+      secondary_connection_string:
+        value: '${azurerm_arm_relay_namespace.{{ name }}.secondary_connection_string}'
       secondary_key:
         value: '${azurerm_arm_relay_namespace.{{ name }}.secondary_key}'

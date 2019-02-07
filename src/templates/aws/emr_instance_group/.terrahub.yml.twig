@@ -8,14 +8,14 @@
         {{ name }}:
           cluster_id: '${var.{{ name }}_cluster_id}'
           instance_type: '${var.{{ name }}_instance_type}'
-          # instance_count: 0
-          # name: ''
           # ebs_optimized: false
           # ebs_config: 
-          #   size:0
-          #   type:''
-          #   iops:0
-          #   volumes_per_instance:0
+          #   size: 0
+          #   type: ''
+          #   iops: 0
+          #   volumes_per_instance: 0
+          # instance_count: 0
+          # name: ''
     variable:
       {{ name }}_cluster_id:
         type: 'string'

@@ -6,15 +6,10 @@
     resource:
       aws_lb_listener_rule:
         {{ name }}:
-          condition:
-          #   values:
-          #     -
-          #   field:''
           listener_arn: '${var.{{ name }}_listener_arn}'
-          action:
+          action: 
             -
               type: ''
-          #     order: 0
           #     target_group_arn: ''
           #     redirect: 
           #       -
@@ -24,6 +19,11 @@
           #         port: ''
           #         protocol: ''
           #         query: ''
+          #     order: 0
+          condition: 
+          #   field: ''
+          #   values: 
+          #     -
           # priority: 0
           # authenticate_cognito: []
           # authenticate_oidc: []

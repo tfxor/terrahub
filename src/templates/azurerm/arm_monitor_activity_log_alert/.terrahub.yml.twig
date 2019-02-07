@@ -8,27 +8,27 @@
       azurerm_arm_monitor_activity_log_alert:
         {{ name }}:
           scopes: '${var.{{ name }}_scopes}'
-          name: '${var.{{ name }}_name}'
-          criteria:
+          criteria: 
             -
               category: ''
-          #     resource_provider: ''
-          #     sub_status: ''
-          #     operation_name: ''
           #     resource_type: ''
           #     resource_group: ''
           #     resource_id: ''
           #     status: ''
           #     caller: ''
           #     level: ''
-          # description: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          #     resource_provider: ''
+          #     operation_name: ''
+          #     sub_status: ''
+          name: '${var.{{ name }}_name}'
           # action: 
-          #   action_group_id:''
-          #   webhook_properties:
+          #   action_group_id: ''
+          #   webhook_properties: 
           #     '[TO_BE_REPLACED]': ''
           # enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
     variable:
       {{ name }}_scopes:
         type: 'set'

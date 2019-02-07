@@ -6,8 +6,9 @@
     resource:
       google_compute_region_autoscaler:
         {{ name }}:
+          name: '${var.{{ name }}_name}'
           target: '${var.{{ name }}_target}'
-          autoscaling_policy:
+          autoscaling_policy: 
             -
               max_replicas: 0
               min_replicas: 0
@@ -15,30 +16,29 @@
           #     cpu_utilization: 
           #       -
           #         target: ''
-          name: '${var.{{ name }}_name}'
-          # project: ''
           # metric: 
           #   -
-          #     type: ''
           #     name: ''
           #     target: ''
+          #     type: ''
           # description: ''
           # region: ''
+          # project: ''
     variable:
-      {{ name }}_target:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_target:
         type: 'string'
     output:
       id:
         value: '${google_compute_region_autoscaler.{{ name }}.id}'
       thub_id:
         value: '${google_compute_region_autoscaler.{{ name }}.id}'
-      project:
-        value: '${google_compute_region_autoscaler.{{ name }}.project}'
-      region:
-        value: '${google_compute_region_autoscaler.{{ name }}.region}'
       creation_timestamp:
         value: '${google_compute_region_autoscaler.{{ name }}.creation_timestamp}'
+      region:
+        value: '${google_compute_region_autoscaler.{{ name }}.region}'
+      project:
+        value: '${google_compute_region_autoscaler.{{ name }}.project}'
       self_link:
         value: '${google_compute_region_autoscaler.{{ name }}.self_link}'

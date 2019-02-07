@@ -8,20 +8,20 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           replica_zones: '${var.{{ name }}_replica_zones}'
-          # description: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
           # region: ''
-          # size: 0
-          # snapshot: ''
-          # type: ''
+          # project: ''
           # disk_encryption_key: 
           #   -
           #     raw_key: ''
-          # labels: 
-          #   '[TO_BE_REPLACED]': ''
+          # size: 0
           # source_snapshot_encryption_key: 
           #   -
           #     raw_key: ''
-          # project: ''
+          # type: ''
+          # description: ''
+          # snapshot: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -34,21 +34,21 @@
         value: '${google_compute_region_disk.{{ name }}.id}'
       region:
         value: '${google_compute_region_disk.{{ name }}.region}'
-      size:
-        value: '${google_compute_region_disk.{{ name }}.size}'
-      last_attach_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.last_attach_timestamp}'
-      last_detach_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.last_detach_timestamp}'
-      self_link:
-        value: '${google_compute_region_disk.{{ name }}.self_link}'
-      creation_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.creation_timestamp}'
-      label_fingerprint:
-        value: '${google_compute_region_disk.{{ name }}.label_fingerprint}'
-      users:
-        value: '${google_compute_region_disk.{{ name }}.users}'
       source_snapshot_id:
         value: '${google_compute_region_disk.{{ name }}.source_snapshot_id}'
       project:
         value: '${google_compute_region_disk.{{ name }}.project}'
+      size:
+        value: '${google_compute_region_disk.{{ name }}.size}'
+      last_detach_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.last_detach_timestamp}'
+      creation_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.creation_timestamp}'
+      users:
+        value: '${google_compute_region_disk.{{ name }}.users}'
+      label_fingerprint:
+        value: '${google_compute_region_disk.{{ name }}.label_fingerprint}'
+      last_attach_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.last_attach_timestamp}'
+      self_link:
+        value: '${google_compute_region_disk.{{ name }}.self_link}'

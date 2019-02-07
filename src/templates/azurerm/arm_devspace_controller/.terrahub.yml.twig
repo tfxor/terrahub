@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_devspace_controller:
         {{ name }}:
-          target_container_host_credentials_base64: '${var.{{ name }}_target_container_host_credentials_base64}'
-          name: '${var.{{ name }}_name}'
-          sku:
+          sku: 
             -
               name: ''
               tier: ''
-          host_suffix: '${var.{{ name }}_host_suffix}'
           target_container_host_resource_id: '${var.{{ name }}_target_container_host_resource_id}'
+          target_container_host_credentials_base64: '${var.{{ name }}_target_container_host_credentials_base64}'
+          name: '${var.{{ name }}_name}'
+          host_suffix: '${var.{{ name }}_host_suffix}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
+      {{ name }}_target_container_host_resource_id:
+        type: 'string'
       {{ name }}_target_container_host_credentials_base64:
         type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_host_suffix:
-        type: 'string'
-      {{ name }}_target_container_host_resource_id:
         type: 'string'
     output:
       id:

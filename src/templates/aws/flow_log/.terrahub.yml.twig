@@ -7,13 +7,13 @@
       aws_flow_log:
         {{ name }}:
           traffic_type: '${var.{{ name }}_traffic_type}'
+          # log_group_name: ''
+          # vpc_id: ''
           # subnet_id: ''
           # eni_id: ''
           # iam_role_arn: ''
           # log_destination: ''
           # log_destination_type: ''
-          # log_group_name: ''
-          # vpc_id: ''
     variable:
       {{ name }}_traffic_type:
         type: 'string'
@@ -22,7 +22,7 @@
         value: '${aws_flow_log.{{ name }}.id}'
       thub_id:
         value: '${aws_flow_log.{{ name }}.id}'
-      log_destination:
-        value: '${aws_flow_log.{{ name }}.log_destination}'
       log_group_name:
         value: '${aws_flow_log.{{ name }}.log_group_name}'
+      log_destination:
+        value: '${aws_flow_log.{{ name }}.log_destination}'

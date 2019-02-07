@@ -6,20 +6,16 @@
     resource:
       aws_iam_instance_profile:
         {{ name }}:
+          # name: ''
+          # name_prefix: ''
           # path: ''
           # roles: []
           # role: ''
-          # name: ''
-          # name_prefix: ''
     output:
       id:
         value: '${aws_iam_instance_profile.{{ name }}.id}'
       thub_id:
         value: '${aws_iam_instance_profile.{{ name }}.id}'
-      roles:
-        value: '${aws_iam_instance_profile.{{ name }}.roles}'
-      role:
-        value: '${aws_iam_instance_profile.{{ name }}.role}'
       arn:
         value: '${aws_iam_instance_profile.{{ name }}.arn}'
       create_date:
@@ -28,3 +24,7 @@
         value: '${aws_iam_instance_profile.{{ name }}.unique_id}'
       name:
         value: '${aws_iam_instance_profile.{{ name }}.name}'
+      roles:
+        value: '${aws_iam_instance_profile.{{ name }}.roles}'
+      role:
+        value: '${aws_iam_instance_profile.{{ name }}.role}'

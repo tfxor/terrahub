@@ -6,65 +6,49 @@
     resource:
       aws_launch_template:
         {{ name }}:
-          # security_group_names: []
-          # name_prefix: ''
-          # description: ''
-          # placement: 
+          # network_interfaces: 
           #   -
-          #     tenancy: ''
-          #     affinity: ''
-          #     availability_zone: ''
-          #     group_name: ''
-          #     host_id: ''
-          #     spread_domain: ''
-          # instance_market_options: 
-          #   -
-          #     market_type: ''
-          #     spot_options: 
-          #       -
-          #         valid_until: ''
-          #         block_duration_minutes: 0
-          #         instance_interruption_behavior: ''
-          #         max_price: ''
-          #         spot_instance_type: ''
-          # name: ''
-          # capacity_reservation_specification: 
-          #   -
-          #     capacity_reservation_preference: ''
-          #     capacity_reservation_target: 
-          #       -
-          #         capacity_reservation_id: ''
+          #     subnet_id: ''
+          #     delete_on_termination: false
+          #     description: ''
+          #     device_index: 0
+          #     ipv6_addresses: 
+          #     private_ip_address: ''
+          #     ipv4_addresses: 
+          #     ipv4_address_count: 0
+          #     associate_public_ip_address: false
+          #     security_groups: 
+          #     ipv6_address_count: 0
+          #     network_interface_id: ''
           # credit_specification: 
           #   -
           #     cpu_credits: ''
-          # iam_instance_profile: 
-          #   -
-          #     arn: ''
-          #     name: ''
-          # disable_api_termination: false
+          # ebs_optimized: ''
+          # instance_initiated_shutdown_behavior: ''
+          # ram_disk_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # image_id: ''
           # elastic_gpu_specifications: 
           #   -
           #     type: ''
-          # ram_disk_id: ''
+          # instance_market_options: 
+          #   -
+          #     spot_options: 
+          #       -
+          #         instance_interruption_behavior: ''
+          #         max_price: ''
+          #         spot_instance_type: ''
+          #         valid_until: ''
+          #         block_duration_minutes: 0
+          #     market_type: ''
+          # instance_type: ''
+          # kernel_id: ''
           # monitoring: 
           #   -
           #     enabled: false
-          # ebs_optimized: ''
-          # instance_type: ''
-          # kernel_id: ''
-          # tag_specifications: 
-          #   -
-          #     resource_type: ''
-          #     tags: 
-          #       '[TO_BE_REPLACED]': ''
-          # image_id: ''
-          # key_name: ''
-          # license_specification: 
-          #   license_configuration_arn:''
-          # vpc_security_group_ids: []
-          # user_data: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
           # block_device_mappings: 
           #   -
           #     device_name: ''
@@ -72,38 +56,54 @@
           #     virtual_name: ''
           #     ebs: 
           #       -
-          #         encrypted: ''
           #         iops: 0
           #         kms_key_id: ''
           #         snapshot_id: ''
           #         volume_size: 0
           #         volume_type: ''
           #         delete_on_termination: ''
-          # instance_initiated_shutdown_behavior: ''
-          # network_interfaces: 
+          #         encrypted: ''
+          # placement: 
           #   -
-          #     ipv4_address_count: 0
-          #     subnet_id: ''
-          #     associate_public_ip_address: false
-          #     description: ''
-          #     device_index: 0
-          #     security_groups: 
-          #     ipv6_addresses: 
-          #     private_ip_address: ''
-          #     delete_on_termination: false
-          #     ipv6_address_count: 0
-          #     network_interface_id: ''
-          #     ipv4_addresses: 
+          #     spread_domain: ''
+          #     tenancy: ''
+          #     affinity: ''
+          #     availability_zone: ''
+          #     group_name: ''
+          #     host_id: ''
+          # disable_api_termination: false
+          # iam_instance_profile: 
+          #   -
+          #     arn: ''
+          #     name: ''
+          # vpc_security_group_ids: []
+          # tag_specifications: 
+          #   -
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+          #     resource_type: ''
+          # key_name: ''
+          # license_specification: 
+          #   license_configuration_arn: ''
+          # description: ''
+          # capacity_reservation_specification: 
+          #   -
+          #     capacity_reservation_preference: ''
+          #     capacity_reservation_target: 
+          #       -
+          #         capacity_reservation_id: ''
+          # user_data: ''
+          # security_group_names: []
     output:
       id:
         value: '${aws_launch_template.{{ name }}.id}'
       thub_id:
         value: '${aws_launch_template.{{ name }}.id}'
-      arn:
-        value: '${aws_launch_template.{{ name }}.arn}'
       name:
         value: '${aws_launch_template.{{ name }}.name}'
-      latest_version:
-        value: '${aws_launch_template.{{ name }}.latest_version}'
+      arn:
+        value: '${aws_launch_template.{{ name }}.arn}'
       default_version:
         value: '${aws_launch_template.{{ name }}.default_version}'
+      latest_version:
+        value: '${aws_launch_template.{{ name }}.latest_version}'

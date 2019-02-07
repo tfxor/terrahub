@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_app_service_plan:
         {{ name }}:
-          sku:
+          name: '${var.{{ name }}_name}'
+          sku: 
             -
               tier: ''
               size: ''
           #     capacity: 0
-          name: '${var.{{ name }}_name}'
-          # kind: ''
+          # reserved: false
           # properties: []
           # app_service_environment_id: ''
+          # kind: ''
+          # per_site_scaling: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # per_site_scaling: false
-          # reserved: false
     variable:
       {{ name }}_name:
         type: 'string'
@@ -28,13 +28,13 @@
         value: '${azurerm_arm_app_service_plan.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_app_service_plan.{{ name }}.id}'
+      reserved:
+        value: '${azurerm_arm_app_service_plan.{{ name }}.reserved}'
+      maximum_number_of_workers:
+        value: '${azurerm_arm_app_service_plan.{{ name }}.maximum_number_of_workers}'
       properties:
         value: '${azurerm_arm_app_service_plan.{{ name }}.properties}'
       app_service_environment_id:
         value: '${azurerm_arm_app_service_plan.{{ name }}.app_service_environment_id}'
-      maximum_number_of_workers:
-        value: '${azurerm_arm_app_service_plan.{{ name }}.maximum_number_of_workers}'
       per_site_scaling:
         value: '${azurerm_arm_app_service_plan.{{ name }}.per_site_scaling}'
-      reserved:
-        value: '${azurerm_arm_app_service_plan.{{ name }}.reserved}'

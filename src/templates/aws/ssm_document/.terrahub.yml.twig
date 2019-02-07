@@ -6,20 +6,20 @@
     resource:
       aws_ssm_document:
         {{ name }}:
-          document_type: '${var.{{ name }}_document_type}'
           name: '${var.{{ name }}_name}'
+          document_type: '${var.{{ name }}_document_type}'
           content: '${var.{{ name }}_content}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # permissions: 
           #   '[TO_BE_REPLACED]': ''
           #   'type': ''
           #   'account_ids': ''
           # document_format: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_document_type:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_document_type:
         type: 'string'
       {{ name }}_content:
         type: 'string'
@@ -28,27 +28,27 @@
         value: '${aws_ssm_document.{{ name }}.id}'
       thub_id:
         value: '${aws_ssm_document.{{ name }}.id}'
-      hash:
-        value: '${aws_ssm_document.{{ name }}.hash}'
       status:
         value: '${aws_ssm_document.{{ name }}.status}'
-      parameter:
-        value: '${aws_ssm_document.{{ name }}.parameter}'
-      created_date:
-        value: '${aws_ssm_document.{{ name }}.created_date}'
-      hash_type:
-        value: '${aws_ssm_document.{{ name }}.hash_type}'
       schema_version:
         value: '${aws_ssm_document.{{ name }}.schema_version}'
+      created_date:
+        value: '${aws_ssm_document.{{ name }}.created_date}'
       latest_version:
         value: '${aws_ssm_document.{{ name }}.latest_version}'
-      owner:
-        value: '${aws_ssm_document.{{ name }}.owner}'
       platform_types:
         value: '${aws_ssm_document.{{ name }}.platform_types}'
-      arn:
-        value: '${aws_ssm_document.{{ name }}.arn}'
       description:
         value: '${aws_ssm_document.{{ name }}.description}'
+      hash:
+        value: '${aws_ssm_document.{{ name }}.hash}'
+      hash_type:
+        value: '${aws_ssm_document.{{ name }}.hash_type}'
+      parameter:
+        value: '${aws_ssm_document.{{ name }}.parameter}'
+      arn:
+        value: '${aws_ssm_document.{{ name }}.arn}'
       default_version:
         value: '${aws_ssm_document.{{ name }}.default_version}'
+      owner:
+        value: '${aws_ssm_document.{{ name }}.owner}'

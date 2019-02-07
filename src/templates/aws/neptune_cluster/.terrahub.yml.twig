@@ -6,63 +6,63 @@
     resource:
       aws_neptune_cluster:
         {{ name }}:
-          # iam_database_authentication_enabled: false
-          # snapshot_identifier: ''
-          # cluster_identifier: ''
-          # preferred_maintenance_window: ''
-          # replication_source_identifier: ''
-          # engine: ''
           # neptune_subnet_group_name: ''
-          # neptune_cluster_parameter_group_name: ''
-          # skip_final_snapshot: false
+          # port: 0
+          # preferred_backup_window: ''
+          # engine: ''
+          # kms_key_arn: ''
+          # preferred_maintenance_window: ''
+          # storage_encrypted: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # backup_retention_period: 0
-          # kms_key_arn: ''
-          # port: 0
-          # storage_encrypted: false
-          # apply_immediately: false
-          # availability_zones: []
-          # cluster_identifier_prefix: ''
           # vpc_security_group_ids: []
-          # engine_version: ''
-          # preferred_backup_window: ''
-          # final_snapshot_identifier: ''
+          # cluster_identifier: ''
+          # iam_database_authentication_enabled: false
+          # replication_source_identifier: ''
+          # availability_zones: []
+          # snapshot_identifier: ''
           # iam_roles: []
+          # skip_final_snapshot: false
+          # backup_retention_period: 0
+          # cluster_identifier_prefix: ''
+          # engine_version: ''
+          # neptune_cluster_parameter_group_name: ''
+          # apply_immediately: false
+          # final_snapshot_identifier: ''
     output:
       id:
         value: '${aws_neptune_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_neptune_cluster.{{ name }}.id}'
-      endpoint:
-        value: '${aws_neptune_cluster.{{ name }}.endpoint}'
-      cluster_identifier:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier}'
-      cluster_members:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_members}'
-      reader_endpoint:
-        value: '${aws_neptune_cluster.{{ name }}.reader_endpoint}'
-      preferred_maintenance_window:
-        value: '${aws_neptune_cluster.{{ name }}.preferred_maintenance_window}'
       neptune_subnet_group_name:
         value: '${aws_neptune_cluster.{{ name }}.neptune_subnet_group_name}'
-      cluster_resource_id:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_resource_id}'
+      preferred_backup_window:
+        value: '${aws_neptune_cluster.{{ name }}.preferred_backup_window}'
+      reader_endpoint:
+        value: '${aws_neptune_cluster.{{ name }}.reader_endpoint}'
       hosted_zone_id:
         value: '${aws_neptune_cluster.{{ name }}.hosted_zone_id}'
       kms_key_arn:
         value: '${aws_neptune_cluster.{{ name }}.kms_key_arn}'
-      apply_immediately:
-        value: '${aws_neptune_cluster.{{ name }}.apply_immediately}'
-      availability_zones:
-        value: '${aws_neptune_cluster.{{ name }}.availability_zones}'
-      cluster_identifier_prefix:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier_prefix}'
+      preferred_maintenance_window:
+        value: '${aws_neptune_cluster.{{ name }}.preferred_maintenance_window}'
       vpc_security_group_ids:
         value: '${aws_neptune_cluster.{{ name }}.vpc_security_group_ids}'
-      engine_version:
-        value: '${aws_neptune_cluster.{{ name }}.engine_version}'
-      preferred_backup_window:
-        value: '${aws_neptune_cluster.{{ name }}.preferred_backup_window}'
+      cluster_identifier:
+        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier}'
+      endpoint:
+        value: '${aws_neptune_cluster.{{ name }}.endpoint}'
+      availability_zones:
+        value: '${aws_neptune_cluster.{{ name }}.availability_zones}'
       arn:
         value: '${aws_neptune_cluster.{{ name }}.arn}'
+      cluster_resource_id:
+        value: '${aws_neptune_cluster.{{ name }}.cluster_resource_id}'
+      cluster_identifier_prefix:
+        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier_prefix}'
+      engine_version:
+        value: '${aws_neptune_cluster.{{ name }}.engine_version}'
+      apply_immediately:
+        value: '${aws_neptune_cluster.{{ name }}.apply_immediately}'
+      cluster_members:
+        value: '${aws_neptune_cluster.{{ name }}.cluster_members}'

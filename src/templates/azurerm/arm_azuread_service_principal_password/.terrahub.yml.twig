@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_azuread_service_principal_password:
         {{ name }}:
-          end_date: '${var.{{ name }}_end_date}'
           service_principal_id: '${var.{{ name }}_service_principal_id}'
           value: '${var.{{ name }}_value}'
-          # start_date: ''
+          end_date: '${var.{{ name }}_end_date}'
           # key_id: ''
+          # start_date: ''
     variable:
-      {{ name }}_end_date:
-        type: 'string'
       {{ name }}_service_principal_id:
         type: 'string'
       {{ name }}_value:
+        type: 'string'
+      {{ name }}_end_date:
         type: 'string'
     output:
       id:
         value: '${azurerm_arm_azuread_service_principal_password.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_azuread_service_principal_password.{{ name }}.id}'
-      start_date:
-        value: '${azurerm_arm_azuread_service_principal_password.{{ name }}.start_date}'
       key_id:
         value: '${azurerm_arm_azuread_service_principal_password.{{ name }}.key_id}'
+      start_date:
+        value: '${azurerm_arm_azuread_service_principal_password.{{ name }}.start_date}'

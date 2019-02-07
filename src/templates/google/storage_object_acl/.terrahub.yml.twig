@@ -6,14 +6,14 @@
     resource:
       google_storage_object_acl:
         {{ name }}:
-          object: '${var.{{ name }}_object}'
           bucket: '${var.{{ name }}_bucket}'
+          object: '${var.{{ name }}_object}'
           # predefined_acl: ''
           # role_entity: []
     variable:
-      {{ name }}_object:
-        type: 'string'
       {{ name }}_bucket:
+        type: 'string'
+      {{ name }}_object:
         type: 'string'
     output:
       id:

@@ -9,11 +9,11 @@
           name: '${var.{{ name }}_name}'
           role_arn: '${var.{{ name }}_role_arn}'
           instance_type: '${var.{{ name }}_instance_type}'
-          # subnet_id: ''
-          # security_groups: []
           # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # subnet_id: ''
+          # security_groups: []
     variable:
       {{ name }}_name:
         type: 'string'
@@ -26,7 +26,7 @@
         value: '${aws_sagemaker_notebook_instance.{{ name }}.id}'
       thub_id:
         value: '${aws_sagemaker_notebook_instance.{{ name }}.id}'
-      security_groups:
-        value: '${aws_sagemaker_notebook_instance.{{ name }}.security_groups}'
       arn:
         value: '${aws_sagemaker_notebook_instance.{{ name }}.arn}'
+      security_groups:
+        value: '${aws_sagemaker_notebook_instance.{{ name }}.security_groups}'

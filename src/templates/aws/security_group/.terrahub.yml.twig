@@ -6,53 +6,53 @@
     resource:
       aws_security_group:
         {{ name }}:
-          # name: ''
-          # name_prefix: ''
-          # description: ''
-          # ingress: 
-          #   to_port:0
-          #   protocol:''
-          #   from_port:0
-          #   security_groups:
-          #   self:false
-          #   description:''
-          #   cidr_blocks:
-          #     -
-          #   ipv6_cidr_blocks:
-          #     -
-          #   prefix_list_ids:
-          #     -
-          # egress: 
-          #   from_port:0
-          #   protocol:''
-          #   to_port:0
-          #   security_groups:
-          #   self:false
-          #   cidr_blocks:
-          #     -
-          #   ipv6_cidr_blocks:
-          #     -
-          #   prefix_list_ids:
-          #     -
-          #   description:''
-          # vpc_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # revoke_rules_on_delete: false
+          # name_prefix: ''
+          # vpc_id: ''
+          # egress: 
+          #   from_port: 0
+          #   to_port: 0
+          #   protocol: ''
+          #   description: ''
+          #   prefix_list_ids: 
+          #     -
+          #   security_groups: 
+          #   self: false
+          #   cidr_blocks: 
+          #     -
+          #   ipv6_cidr_blocks: 
+          #     -
+          # name: ''
+          # description: ''
+          # ingress: 
+          #   from_port: 0
+          #   to_port: 0
+          #   protocol: ''
+          #   ipv6_cidr_blocks: 
+          #     -
+          #   security_groups: 
+          #   self: false
+          #   cidr_blocks: 
+          #     -
+          #   prefix_list_ids: 
+          #     -
+          #   description: ''
     output:
       id:
         value: '${aws_security_group.{{ name }}.id}'
       thub_id:
         value: '${aws_security_group.{{ name }}.id}'
-      name:
-        value: '${aws_security_group.{{ name }}.name}'
-      ingress:
-        value: '${aws_security_group.{{ name }}.ingress}'
-      egress:
-        value: '${aws_security_group.{{ name }}.egress}'
       vpc_id:
         value: '${aws_security_group.{{ name }}.vpc_id}'
+      egress:
+        value: '${aws_security_group.{{ name }}.egress}'
       arn:
         value: '${aws_security_group.{{ name }}.arn}'
       owner_id:
         value: '${aws_security_group.{{ name }}.owner_id}'
+      name:
+        value: '${aws_security_group.{{ name }}.name}'
+      ingress:
+        value: '${aws_security_group.{{ name }}.ingress}'

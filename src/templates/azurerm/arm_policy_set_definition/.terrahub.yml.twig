@@ -7,20 +7,20 @@
     resource:
       azurerm_arm_policy_set_definition:
         {{ name }}:
+          policy_type: '${var.{{ name }}_policy_type}'
           display_name: '${var.{{ name }}_display_name}'
           name: '${var.{{ name }}_name}'
-          policy_type: '${var.{{ name }}_policy_type}'
+          # management_group_id: ''
           # description: ''
           # metadata: ''
           # parameters: ''
           # policy_definitions: ''
-          # management_group_id: ''
     variable:
+      {{ name }}_policy_type:
+        type: 'string'
       {{ name }}_display_name:
         type: 'string'
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_policy_type:
         type: 'string'
     output:
       id:

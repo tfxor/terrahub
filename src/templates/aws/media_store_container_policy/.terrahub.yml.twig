@@ -6,12 +6,12 @@
     resource:
       aws_media_store_container_policy:
         {{ name }}:
-          container_name: '${var.{{ name }}_container_name}'
           policy: '${var.{{ name }}_policy}'
+          container_name: '${var.{{ name }}_container_name}'
     variable:
-      {{ name }}_container_name:
-        type: 'string'
       {{ name }}_policy:
+        type: 'string'
+      {{ name }}_container_name:
         type: 'string'
     output:
       id:

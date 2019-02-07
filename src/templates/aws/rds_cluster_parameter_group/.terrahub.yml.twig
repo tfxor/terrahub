@@ -7,15 +7,15 @@
       aws_rds_cluster_parameter_group:
         {{ name }}:
           family: '${var.{{ name }}_family}'
-          # name_prefix: ''
-          # description: ''
           # parameter: 
-          #   name:''
-          #   value:''
-          #   apply_method:''
+          #   name: ''
+          #   value: ''
+          #   apply_method: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
+          # name_prefix: ''
+          # description: ''
     variable:
       {{ name }}_family:
         type: 'string'
@@ -24,9 +24,9 @@
         value: '${aws_rds_cluster_parameter_group.{{ name }}.id}'
       thub_id:
         value: '${aws_rds_cluster_parameter_group.{{ name }}.id}'
-      name_prefix:
-        value: '${aws_rds_cluster_parameter_group.{{ name }}.name_prefix}'
       arn:
         value: '${aws_rds_cluster_parameter_group.{{ name }}.arn}'
       name:
         value: '${aws_rds_cluster_parameter_group.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_rds_cluster_parameter_group.{{ name }}.name_prefix}'

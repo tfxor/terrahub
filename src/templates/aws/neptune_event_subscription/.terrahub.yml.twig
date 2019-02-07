@@ -7,14 +7,14 @@
       aws_neptune_event_subscription:
         {{ name }}:
           sns_topic_arn: '${var.{{ name }}_sns_topic_arn}'
-          # name: ''
-          # source_type: ''
           # enabled: false
-          # name_prefix: ''
-          # event_categories: []
-          # source_ids: []
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # source_ids: []
+          # source_type: ''
+          # event_categories: []
+          # name: ''
+          # name_prefix: ''
     variable:
       {{ name }}_sns_topic_arn:
         type: 'string'
@@ -25,9 +25,9 @@
         value: '${aws_neptune_event_subscription.{{ name }}.id}'
       arn:
         value: '${aws_neptune_event_subscription.{{ name }}.arn}'
-      name:
-        value: '${aws_neptune_event_subscription.{{ name }}.name}'
       customer_aws_id:
         value: '${aws_neptune_event_subscription.{{ name }}.customer_aws_id}'
+      name:
+        value: '${aws_neptune_event_subscription.{{ name }}.name}'
       name_prefix:
         value: '${aws_neptune_event_subscription.{{ name }}.name_prefix}'

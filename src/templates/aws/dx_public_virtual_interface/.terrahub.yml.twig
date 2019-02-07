@@ -6,30 +6,30 @@
     resource:
       aws_dx_public_virtual_interface:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          address_family: '${var.{{ name }}_address_family}'
-          connection_id: '${var.{{ name }}_connection_id}'
           vlan: '${var.{{ name }}_vlan}'
           bgp_asn: '${var.{{ name }}_bgp_asn}'
+          address_family: '${var.{{ name }}_address_family}'
           route_filter_prefixes: '${var.{{ name }}_route_filter_prefixes}'
-          # amazon_address: ''
-          # bgp_auth_key: ''
-          # customer_address: ''
+          connection_id: '${var.{{ name }}_connection_id}'
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # bgp_auth_key: ''
+          # customer_address: ''
+          # amazon_address: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_address_family:
-        type: 'string'
-      {{ name }}_connection_id:
-        type: 'string'
       {{ name }}_vlan:
         type: 'int'
       {{ name }}_bgp_asn:
         type: 'int'
+      {{ name }}_address_family:
+        type: 'string'
       {{ name }}_route_filter_prefixes:
         type: 'set'
+      {{ name }}_connection_id:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${aws_dx_public_virtual_interface.{{ name }}.id}'
@@ -37,9 +37,9 @@
         value: '${aws_dx_public_virtual_interface.{{ name }}.id}'
       arn:
         value: '${aws_dx_public_virtual_interface.{{ name }}.arn}'
-      amazon_address:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.amazon_address}'
       bgp_auth_key:
         value: '${aws_dx_public_virtual_interface.{{ name }}.bgp_auth_key}'
       customer_address:
         value: '${aws_dx_public_virtual_interface.{{ name }}.customer_address}'
+      amazon_address:
+        value: '${aws_dx_public_virtual_interface.{{ name }}.amazon_address}'

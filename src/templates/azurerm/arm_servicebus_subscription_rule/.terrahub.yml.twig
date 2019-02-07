@@ -8,28 +8,28 @@
       azurerm_arm_servicebus_subscription_rule:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          topic_name: '${var.{{ name }}_topic_name}'
           namespace_name: '${var.{{ name }}_namespace_name}'
+          topic_name: '${var.{{ name }}_topic_name}'
           subscription_name: '${var.{{ name }}_subscription_name}'
           filter_type: '${var.{{ name }}_filter_type}'
           # action: ''
           # correlation_filter: 
           #   -
+          #     reply_to: ''
+          #     label: ''
+          #     session_id: ''
           #     reply_to_session_id: ''
           #     content_type: ''
           #     correlation_id: ''
           #     message_id: ''
           #     to: ''
-          #     reply_to: ''
-          #     label: ''
-          #     session_id: ''
           # sql_filter: ''
     variable:
       {{ name }}_name:
         type: 'string'
-      {{ name }}_topic_name:
-        type: 'string'
       {{ name }}_namespace_name:
+        type: 'string'
+      {{ name }}_topic_name:
         type: 'string'
       {{ name }}_subscription_name:
         type: 'string'

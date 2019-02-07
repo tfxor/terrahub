@@ -6,18 +6,18 @@
     resource:
       aws_organizations_organization:
         {{ name }}:
-          # feature_set: ''
           # aws_service_access_principals: []
+          # feature_set: ''
     output:
       id:
         value: '${aws_organizations_organization.{{ name }}.id}'
       thub_id:
         value: '${aws_organizations_organization.{{ name }}.id}'
+      master_account_id:
+        value: '${aws_organizations_organization.{{ name }}.master_account_id}'
       arn:
         value: '${aws_organizations_organization.{{ name }}.arn}'
       master_account_arn:
         value: '${aws_organizations_organization.{{ name }}.master_account_arn}'
       master_account_email:
         value: '${aws_organizations_organization.{{ name }}.master_account_email}'
-      master_account_id:
-        value: '${aws_organizations_organization.{{ name }}.master_account_id}'

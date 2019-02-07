@@ -9,12 +9,12 @@
           service_name: '${var.{{ name }}_service_name}'
           vpc_id: '${var.{{ name }}_vpc_id}'
           # auto_accept: false
-          # route_table_ids: []
-          # vpc_endpoint_type: ''
-          # private_dns_enabled: false
           # policy: ''
-          # subnet_ids: []
+          # private_dns_enabled: false
+          # route_table_ids: []
           # security_group_ids: []
+          # vpc_endpoint_type: ''
+          # subnet_ids: []
     variable:
       {{ name }}_service_name:
         type: 'string'
@@ -25,21 +25,21 @@
         value: '${aws_vpc_endpoint.{{ name }}.id}'
       thub_id:
         value: '${aws_vpc_endpoint.{{ name }}.id}'
-      route_table_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.route_table_ids}'
-      prefix_list_id:
-        value: '${aws_vpc_endpoint.{{ name }}.prefix_list_id}'
-      cidr_blocks:
-        value: '${aws_vpc_endpoint.{{ name }}.cidr_blocks}'
-      dns_entry:
-        value: '${aws_vpc_endpoint.{{ name }}.dns_entry}'
-      state:
-        value: '${aws_vpc_endpoint.{{ name }}.state}'
-      network_interface_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.network_interface_ids}'
       policy:
         value: '${aws_vpc_endpoint.{{ name }}.policy}'
-      subnet_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.subnet_ids}'
+      prefix_list_id:
+        value: '${aws_vpc_endpoint.{{ name }}.prefix_list_id}'
+      dns_entry:
+        value: '${aws_vpc_endpoint.{{ name }}.dns_entry}'
+      route_table_ids:
+        value: '${aws_vpc_endpoint.{{ name }}.route_table_ids}'
       security_group_ids:
         value: '${aws_vpc_endpoint.{{ name }}.security_group_ids}'
+      state:
+        value: '${aws_vpc_endpoint.{{ name }}.state}'
+      cidr_blocks:
+        value: '${aws_vpc_endpoint.{{ name }}.cidr_blocks}'
+      network_interface_ids:
+        value: '${aws_vpc_endpoint.{{ name }}.network_interface_ids}'
+      subnet_ids:
+        value: '${aws_vpc_endpoint.{{ name }}.subnet_ids}'

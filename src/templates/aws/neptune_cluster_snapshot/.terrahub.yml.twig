@@ -20,27 +20,27 @@
         value: '${aws_neptune_cluster_snapshot.{{ name }}.id}'
       availability_zones:
         value: '${aws_neptune_cluster_snapshot.{{ name }}.availability_zones}'
-      db_cluster_snapshot_arn:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
-      port:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.port}'
-      storage_encrypted:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.storage_encrypted}'
-      license_model:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.license_model}'
-      status:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.status}'
       engine:
         value: '${aws_neptune_cluster_snapshot.{{ name }}.engine}'
-      engine_version:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine_version}'
-      kms_key_id:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.kms_key_id}'
+      db_cluster_snapshot_arn:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
       snapshot_type:
         value: '${aws_neptune_cluster_snapshot.{{ name }}.snapshot_type}'
-      allocated_storage:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.allocated_storage}'
+      kms_key_id:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.kms_key_id}'
+      license_model:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.license_model}'
       source_db_cluster_snapshot_arn:
         value: '${aws_neptune_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'
+      status:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.status}'
+      storage_encrypted:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.storage_encrypted}'
       vpc_id:
         value: '${aws_neptune_cluster_snapshot.{{ name }}.vpc_id}'
+      allocated_storage:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.allocated_storage}'
+      engine_version:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine_version}'
+      port:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.port}'

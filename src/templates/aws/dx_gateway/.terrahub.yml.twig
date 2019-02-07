@@ -6,12 +6,12 @@
     resource:
       aws_dx_gateway:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           amazon_side_asn: '${var.{{ name }}_amazon_side_asn}'
+          name: '${var.{{ name }}_name}'
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_amazon_side_asn:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

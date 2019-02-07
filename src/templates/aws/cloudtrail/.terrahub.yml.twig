@@ -8,26 +8,26 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           s3_bucket_name: '${var.{{ name }}_s3_bucket_name}'
-          # sns_topic_name: ''
+          # cloud_watch_logs_role_arn: ''
+          # enable_log_file_validation: false
           # cloud_watch_logs_group_arn: ''
-          # is_organization_trail: false
-          # kms_key_id: ''
+          # sns_topic_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enable_logging: false
+          # s3_key_prefix: ''
+          # include_global_service_events: false
+          # is_multi_region_trail: false
           # event_selector: 
           #   -
-          #     read_write_type: ''
           #     include_management_events: false
           #     data_resource: 
           #       -
           #         type: ''
           #         values: []
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # cloud_watch_logs_role_arn: ''
-          # is_multi_region_trail: false
-          # enable_logging: false
-          # s3_key_prefix: ''
-          # include_global_service_events: false
-          # enable_log_file_validation: false
+          #     read_write_type: ''
+          # is_organization_trail: false
+          # kms_key_id: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -38,7 +38,7 @@
         value: '${aws_cloudtrail.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudtrail.{{ name }}.id}'
-      arn:
-        value: '${aws_cloudtrail.{{ name }}.arn}'
       home_region:
         value: '${aws_cloudtrail.{{ name }}.home_region}'
+      arn:
+        value: '${aws_cloudtrail.{{ name }}.arn}'

@@ -6,15 +6,14 @@
     resource:
       aws_config_config_rule:
         {{ name }}:
-          source:
+          source: 
             -
               owner: ''
           #     source_detail: 
-          #     maximum_execution_frequency:''
-          #     message_type:''
-          #     event_source:''
+          #     message_type: ''
+          #     event_source: ''
+          #     maximum_execution_frequency: ''
           name: '${var.{{ name }}_name}'
-          # description: ''
           # input_parameters: ''
           # maximum_execution_frequency: ''
           # scope: 
@@ -23,6 +22,7 @@
           #     compliance_resource_types: 
           #     tag_key: ''
           #     tag_value: ''
+          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'

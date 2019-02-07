@@ -6,25 +6,25 @@
     resource:
       aws_s3_bucket_inventory:
         {{ name }}:
-          destination:
+          schedule: 
+            -
+              frequency: ''
+          included_object_versions: '${var.{{ name }}_included_object_versions}'
+          bucket: '${var.{{ name }}_bucket}'
+          name: '${var.{{ name }}_name}'
+          destination: 
             -
               bucket: 
                 -
                   format: ''
                   bucket_arn: ''
-          #         prefix: ''
           #         encryption: 
           #           -
           #             sse_kms: 
           #               -
           #                 key_id: ''
           #         account_id: ''
-          schedule:
-            -
-              frequency: ''
-          included_object_versions: '${var.{{ name }}_included_object_versions}'
-          bucket: '${var.{{ name }}_bucket}'
-          name: '${var.{{ name }}_name}'
+          #         prefix: ''
           # optional_fields: []
           # filter: 
           #   -

@@ -7,12 +7,12 @@
     resource:
       azurerm_arm_subnet_route_table_association:
         {{ name }}:
-          subnet_id: '${var.{{ name }}_subnet_id}'
           route_table_id: '${var.{{ name }}_route_table_id}'
+          subnet_id: '${var.{{ name }}_subnet_id}'
     variable:
-      {{ name }}_subnet_id:
-        type: 'string'
       {{ name }}_route_table_id:
+        type: 'string'
+      {{ name }}_subnet_id:
         type: 'string'
     output:
       id:

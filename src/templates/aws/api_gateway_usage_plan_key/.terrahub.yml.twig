@@ -6,15 +6,15 @@
     resource:
       aws_api_gateway_usage_plan_key:
         {{ name }}:
-          key_id: '${var.{{ name }}_key_id}'
           key_type: '${var.{{ name }}_key_type}'
           usage_plan_id: '${var.{{ name }}_usage_plan_id}'
+          key_id: '${var.{{ name }}_key_id}'
     variable:
-      {{ name }}_key_id:
-        type: 'string'
       {{ name }}_key_type:
         type: 'string'
       {{ name }}_usage_plan_id:
+        type: 'string'
+      {{ name }}_key_id:
         type: 'string'
     output:
       id:

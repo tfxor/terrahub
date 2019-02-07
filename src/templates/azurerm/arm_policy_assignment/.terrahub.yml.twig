@@ -8,21 +8,21 @@
       azurerm_arm_policy_assignment:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          scope: '${var.{{ name }}_scope}'
           policy_definition_id: '${var.{{ name }}_policy_definition_id}'
-          # identity: 
-          #   -
-          #     type: ''
+          scope: '${var.{{ name }}_scope}'
+          # display_name: ''
           # parameters: ''
           # not_scopes: []
           # description: ''
-          # display_name: ''
+          # identity: 
+          #   -
+          #     type: ''
     variable:
       {{ name }}_name:
         type: 'string'
-      {{ name }}_scope:
-        type: 'string'
       {{ name }}_policy_definition_id:
+        type: 'string'
+      {{ name }}_scope:
         type: 'string'
     output:
       id:

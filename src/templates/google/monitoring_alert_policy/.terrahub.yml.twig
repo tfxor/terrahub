@@ -7,7 +7,8 @@
       google_monitoring_alert_policy:
         {{ name }}:
           display_name: '${var.{{ name }}_display_name}'
-          conditions:
+          combiner: '${var.{{ name }}_combiner}'
+          conditions: 
             -
               display_name: ''
           #     condition_absent: 
@@ -15,16 +16,13 @@
           #         duration: ''
           #         aggregations: 
           #           -
+          #             alignment_period: ''
+          #             cross_series_reducer: ''
           #             group_by_fields: 
           #               -
           #             per_series_aligner: ''
-          #             alignment_period: ''
-          #             cross_series_reducer: ''
-          combiner: '${var.{{ name }}_combiner}'
-          # documentation: 
-          #   -
-          #     content: ''
-          #     mime_type: ''
+          # denominator_filter: ''
+          # filter: ''
           # condition_threshold: 
           #   -
           #     comparison: ''
@@ -37,16 +35,18 @@
           #           -
           #         per_series_aligner: ''
           # threshold_value: ''
+          # documentation: 
+          #   -
+          #     content: ''
+          #     mime_type: ''
+          # enabled: false
+          # notification_channels: []
           # trigger: 
           #   -
           #     count: 0
           #     percent: ''
-          # notification_channels: []
           # labels: []
           # project: ''
-          # denominator_filter: ''
-          # filter: ''
-          # enabled: false
     variable:
       {{ name }}_display_name:
         type: 'string'
@@ -57,9 +57,9 @@
         value: '${google_monitoring_alert_policy.{{ name }}.id}'
       thub_id:
         value: '${google_monitoring_alert_policy.{{ name }}.id}'
-      creation_record:
-        value: '${google_monitoring_alert_policy.{{ name }}.creation_record}'
       name:
         value: '${google_monitoring_alert_policy.{{ name }}.name}'
+      creation_record:
+        value: '${google_monitoring_alert_policy.{{ name }}.creation_record}'
       project:
         value: '${google_monitoring_alert_policy.{{ name }}.project}'

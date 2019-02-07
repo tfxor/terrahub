@@ -8,8 +8,9 @@
         {{ name }}:
           description: '${var.{{ name }}_description}'
           execution_role_arn: '${var.{{ name }}_execution_role_arn}'
-          policy_details:
+          policy_details: 
             -
+              resource_types: []
               schedule: 
                 -
                   create_rule: 
@@ -19,7 +20,6 @@
           #             times: 
           #               -
           #         copy_tags: false
-              resource_types: []
           #     tags_to_add: 
           #       '[TO_BE_REPLACED]': ''
           target_tags: '${var.{{ name }}_target_tags}'

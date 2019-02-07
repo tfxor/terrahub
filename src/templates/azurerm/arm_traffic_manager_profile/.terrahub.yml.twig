@@ -7,15 +7,15 @@
     resource:
       azurerm_arm_traffic_manager_profile:
         {{ name }}:
+          monitor_config: 
+            protocol: ''
+            port: 0
+          #   path: ''
+          dns_config: 
+            relative_name: ''
+            ttl: 0
           traffic_routing_method: '${var.{{ name }}_traffic_routing_method}'
-          monitor_config:
-            protocol:''
-            port:0
-          #   path:''
           name: '${var.{{ name }}_name}'
-          dns_config:
-            relative_name:''
-            ttl:0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # profile_status: ''

@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_logic_app_trigger_recurrence:
         {{ name }}:
+          interval: '${var.{{ name }}_interval}'
           name: '${var.{{ name }}_name}'
           logic_app_id: '${var.{{ name }}_logic_app_id}'
           frequency: '${var.{{ name }}_frequency}'
-          interval: '${var.{{ name }}_interval}'
     variable:
+      {{ name }}_interval:
+        type: 'int'
       {{ name }}_name:
         type: 'string'
       {{ name }}_logic_app_id:
         type: 'string'
       {{ name }}_frequency:
         type: 'string'
-      {{ name }}_interval:
-        type: 'int'
     output:
       id:
         value: '${azurerm_arm_logic_app_trigger_recurrence.{{ name }}.id}'

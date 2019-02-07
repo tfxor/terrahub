@@ -9,11 +9,11 @@
           bucket: '${var.{{ name }}_bucket}'
           # topic: 
           #   -
-          #     topic_arn: ''
           #     events: []
+          #     topic_arn: ''
+          #     id: ''
           #     filter_prefix: ''
           #     filter_suffix: ''
-          #     id: ''
           # queue: 
           #   -
           #     events: []
@@ -24,10 +24,10 @@
           # lambda_function: 
           #   -
           #     events: []
+          #     lambda_function_arn: ''
           #     id: ''
           #     filter_prefix: ''
           #     filter_suffix: ''
-          #     lambda_function_arn: ''
     variable:
       {{ name }}_bucket:
         type: 'string'

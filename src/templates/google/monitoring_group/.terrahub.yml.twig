@@ -6,15 +6,15 @@
     resource:
       google_monitoring_group:
         {{ name }}:
-          display_name: '${var.{{ name }}_display_name}'
           filter: '${var.{{ name }}_filter}'
+          display_name: '${var.{{ name }}_display_name}'
           # is_cluster: false
           # parent_name: ''
           # project: ''
     variable:
-      {{ name }}_display_name:
-        type: 'string'
       {{ name }}_filter:
+        type: 'string'
+      {{ name }}_display_name:
         type: 'string'
     output:
       id:

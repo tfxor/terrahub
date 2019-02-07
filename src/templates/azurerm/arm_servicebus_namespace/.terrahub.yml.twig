@@ -9,9 +9,9 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           sku: '${var.{{ name }}_sku}'
+          # capacity: 0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # capacity: 0
     variable:
       {{ name }}_name:
         type: 'string'
@@ -22,11 +22,11 @@
         value: '${azurerm_arm_servicebus_namespace.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_servicebus_namespace.{{ name }}.id}'
-      default_secondary_key:
-        value: '${azurerm_arm_servicebus_namespace.{{ name }}.default_secondary_key}'
       default_primary_connection_string:
         value: '${azurerm_arm_servicebus_namespace.{{ name }}.default_primary_connection_string}'
       default_secondary_connection_string:
         value: '${azurerm_arm_servicebus_namespace.{{ name }}.default_secondary_connection_string}'
       default_primary_key:
         value: '${azurerm_arm_servicebus_namespace.{{ name }}.default_primary_key}'
+      default_secondary_key:
+        value: '${azurerm_arm_servicebus_namespace.{{ name }}.default_secondary_key}'

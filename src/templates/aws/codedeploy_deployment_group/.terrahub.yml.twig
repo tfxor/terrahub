@@ -6,71 +6,71 @@
     resource:
       aws_codedeploy_deployment_group:
         {{ name }}:
-          app_name: '${var.{{ name }}_app_name}'
           deployment_group_name: '${var.{{ name }}_deployment_group_name}'
+          app_name: '${var.{{ name }}_app_name}'
           service_role_arn: '${var.{{ name }}_service_role_arn}'
-          # terminate_blue_instances_on_deployment_success: 
-          #   -
-          #     termination_wait_time_in_minutes: 0
-          #     action: ''
-          # test_traffic_route: 
-          #   -
-          #     listener_arns: []
-          # ec2_tag_set: 
-          #   ec2_tag_filter:
-          #     key:''
-          #     type:''
-          #     value:''
-          # on_premises_instance_tag_filter: 
-          #   key:''
-          #   type:''
-          #   value:''
+          # deployment_config_name: ''
           # alarm_configuration: 
           #   -
-          #     ignore_poll_alarm_failure: false
           #     alarms: 
           #     enabled: false
-          # target_group_pair_info: 
+          #     ignore_poll_alarm_failure: false
+          # load_balancer_info: 
           #   -
-          #     prod_traffic_route: 
-          #       -
-          #         listener_arns: []
-          # ecs_service: 
+          #     elb_info: 
+          #     name: ''
+          # auto_rollback_configuration: 
           #   -
-          #     service_name: ''
-          #     cluster_name: ''
+          #     enabled: false
+          #     events: 
           # trigger_configuration: 
-          #   trigger_name:''
-          #   trigger_target_arn:''
-          #   trigger_events:[]
+          #   trigger_events: []
+          #   trigger_name: ''
+          #   trigger_target_arn: ''
           # blue_green_deployment_config: 
           #   -
           #     deployment_ready_option: 
           #       -
           #         action_on_timeout: ''
           #         wait_time_in_minutes: 0
-          # load_balancer_info: 
+          # test_traffic_route: 
           #   -
-          #     elb_info: 
-          #     name:''
-          # auto_rollback_configuration: 
-          #   -
-          #     enabled: false
-          #     events: 
-          # deployment_config_name: ''
+          #     listener_arns: []
+          # on_premises_instance_tag_filter: 
+          #   key: ''
+          #   type: ''
+          #   value: ''
           # deployment_style: 
           #   -
           #     deployment_option: ''
           #     deployment_type: ''
           # autoscaling_groups: []
           # ec2_tag_filter: 
-          #   key:''
-          #   type:''
-          #   value:''
+          #   type: ''
+          #   value: ''
+          #   key: ''
+          # ecs_service: 
+          #   -
+          #     cluster_name: ''
+          #     service_name: ''
+          # terminate_blue_instances_on_deployment_success: 
+          #   -
+          #     action: ''
+          #     termination_wait_time_in_minutes: 0
+          # target_group_pair_info: 
+          #   -
+          #     prod_traffic_route: 
+          #       -
+          #         listener_arns: []
+          # ec2_tag_set: 
+          #   ec2_tag_filter: 
+          #     key: ''
+          #     type: ''
+          #     value: ''
     variable:
-      {{ name }}_app_name:
-        type: 'string'
       {{ name }}_deployment_group_name:
+        type: 'string'
+      {{ name }}_app_name:
         type: 'string'
       {{ name }}_service_role_arn:
         type: 'string'
@@ -79,9 +79,9 @@
         value: '${aws_codedeploy_deployment_group.{{ name }}.id}'
       thub_id:
         value: '${aws_codedeploy_deployment_group.{{ name }}.id}'
-      blue_green_deployment_config:
-        value: '${aws_codedeploy_deployment_group.{{ name }}.blue_green_deployment_config}'
       load_balancer_info:
         value: '${aws_codedeploy_deployment_group.{{ name }}.load_balancer_info}'
+      blue_green_deployment_config:
+        value: '${aws_codedeploy_deployment_group.{{ name }}.blue_green_deployment_config}'
       deployment_style:
         value: '${aws_codedeploy_deployment_group.{{ name }}.deployment_style}'

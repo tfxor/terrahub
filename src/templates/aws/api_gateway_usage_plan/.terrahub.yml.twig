@@ -7,16 +7,16 @@
       aws_api_gateway_usage_plan:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # quota_settings: 
+          #   limit: 0
+          #   period: ''
+          # throttle_settings: 
+          # product_code: ''
           # description: ''
           # api_stages: 
           #   -
           #     api_id: ''
           #     stage: ''
-          # quota_settings: 
-          #   limit:0
-          #   period:''
-          # throttle_settings: 
-          # product_code: ''
     variable:
       {{ name }}_name:
         type: 'string'

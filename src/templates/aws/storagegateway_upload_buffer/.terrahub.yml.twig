@@ -6,12 +6,12 @@
     resource:
       aws_storagegateway_upload_buffer:
         {{ name }}:
-          gateway_arn: '${var.{{ name }}_gateway_arn}'
           disk_id: '${var.{{ name }}_disk_id}'
+          gateway_arn: '${var.{{ name }}_gateway_arn}'
     variable:
-      {{ name }}_gateway_arn:
-        type: 'string'
       {{ name }}_disk_id:
+        type: 'string'
+      {{ name }}_gateway_arn:
         type: 'string'
     output:
       id:

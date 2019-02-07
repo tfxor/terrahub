@@ -7,34 +7,34 @@
     resource:
       azurerm_arm_mysql_server:
         {{ name }}:
+          name: '${var.{{ name }}_name}'
+          ssl_enforcement: '${var.{{ name }}_ssl_enforcement}'
+          sku: 
+            -
+              tier: ''
+              family: ''
+              name: ''
+              capacity: 0
           administrator_login: '${var.{{ name }}_administrator_login}'
           administrator_login_password: '${var.{{ name }}_administrator_login_password}'
-          storage_profile:
+          version: '${var.{{ name }}_version}'
+          storage_profile: 
             -
               storage_mb: 0
           #     backup_retention_days: 0
           #     geo_redundant_backup: ''
-          name: '${var.{{ name }}_name}'
-          version: '${var.{{ name }}_version}'
-          ssl_enforcement: '${var.{{ name }}_ssl_enforcement}'
-          sku:
-            -
-              name: ''
-              capacity: 0
-              tier: ''
-              family: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_ssl_enforcement:
+        type: 'string'
       {{ name }}_administrator_login:
         type: 'string'
       {{ name }}_administrator_login_password:
         type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_version:
-        type: 'string'
-      {{ name }}_ssl_enforcement:
         type: 'string'
     output:
       id:

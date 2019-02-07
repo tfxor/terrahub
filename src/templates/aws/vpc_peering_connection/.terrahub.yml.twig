@@ -8,11 +8,11 @@
         {{ name }}:
           vpc_id: '${var.{{ name }}_vpc_id}'
           peer_vpc_id: '${var.{{ name }}_peer_vpc_id}'
-          # auto_accept: false
+          # peer_region: ''
+          # peer_owner_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # peer_owner_id: ''
-          # peer_region: ''
+          # auto_accept: false
     variable:
       {{ name }}_vpc_id:
         type: 'string'
@@ -25,7 +25,7 @@
         value: '${aws_vpc_peering_connection.{{ name }}.id}'
       accept_status:
         value: '${aws_vpc_peering_connection.{{ name }}.accept_status}'
-      peer_owner_id:
-        value: '${aws_vpc_peering_connection.{{ name }}.peer_owner_id}'
       peer_region:
         value: '${aws_vpc_peering_connection.{{ name }}.peer_region}'
+      peer_owner_id:
+        value: '${aws_vpc_peering_connection.{{ name }}.peer_owner_id}'

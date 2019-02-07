@@ -7,13 +7,13 @@
       aws_globalaccelerator_accelerator:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # ip_address_type: ''
           # enabled: false
           # attributes: 
           #   -
           #     flow_logs_enabled: false
           #     flow_logs_s3_bucket: ''
           #     flow_logs_s3_prefix: ''
-          # ip_address_type: ''
     variable:
       {{ name }}_name:
         type: 'string'

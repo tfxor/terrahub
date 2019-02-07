@@ -7,9 +7,9 @@
       aws_backup_vault:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # kms_key_arn: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # kms_key_arn: ''
     variable:
       {{ name }}_name:
         type: 'string'

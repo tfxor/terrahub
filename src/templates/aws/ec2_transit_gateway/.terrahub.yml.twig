@@ -6,15 +6,15 @@
     resource:
       aws_ec2_transit_gateway:
         {{ name }}:
-          # default_route_table_association: ''
+          # amazon_side_asn: 0
           # description: ''
+          # dns_support: ''
+          # default_route_table_association: ''
+          # default_route_table_propagation: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # vpn_ecmp_support: ''
-          # dns_support: ''
-          # amazon_side_asn: 0
           # auto_accept_shared_attachments: ''
-          # default_route_table_propagation: ''
     output:
       id:
         value: '${aws_ec2_transit_gateway.{{ name }}.id}'

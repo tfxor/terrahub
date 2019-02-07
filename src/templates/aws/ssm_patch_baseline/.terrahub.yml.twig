@@ -7,8 +7,6 @@
       aws_ssm_patch_baseline:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # rejected_patches: []
-          # operating_system: ''
           # approved_patches_compliance_level: ''
           # description: ''
           # global_filter: 
@@ -17,14 +15,16 @@
           #     values: []
           # approval_rule: 
           #   -
+          #     approve_after_days: 0
           #     patch_filter: 
           #       -
           #         key: ''
           #         values: []
-          #     approve_after_days: 0
           #     compliance_level: ''
           #     enable_non_security: false
           # approved_patches: []
+          # rejected_patches: []
+          # operating_system: ''
     variable:
       {{ name }}_name:
         type: 'string'

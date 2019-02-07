@@ -8,19 +8,20 @@
         {{ name }}:
           rule: '${var.{{ name }}_rule}'
           arn: '${var.{{ name }}_arn}'
-          # role_arn: ''
-          # run_command_targets: 
-          #   -
-          #     key: ''
-          #     values: []
           # input_transformer: 
           #   -
           #     input_template: ''
           #     input_paths: 
           #       '[TO_BE_REPLACED]': ''
-          # target_id: ''
-          # input: ''
           # input_path: ''
+          # role_arn: ''
+          # run_command_targets: 
+          #   -
+          #     key: ''
+          #     values: []
+          # sqs_target: 
+          #   -
+          #     message_group_id: ''
           # ecs_target: 
           #   -
           #     group: ''
@@ -28,20 +29,19 @@
           #     network_configuration: 
           #       -
           #         subnets: []
-          #         security_groups: 
           #         assign_public_ip: false
+          #         security_groups: 
           # batch_target: 
           #   -
-          #     job_definition: ''
           #     job_name: ''
+          #     job_definition: ''
           #     array_size: 0
           #     job_attempts: 0
           # kinesis_target: 
           #   -
           #     partition_key_path: ''
-          # sqs_target: 
-          #   -
-          #     message_group_id: ''
+          # target_id: ''
+          # input: ''
     variable:
       {{ name }}_rule:
         type: 'string'

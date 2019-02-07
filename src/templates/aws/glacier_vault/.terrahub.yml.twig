@@ -7,13 +7,13 @@
       aws_glacier_vault:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # access_policy: ''
           # notification: 
           #   -
           #     events: []
           #     sns_topic: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # access_policy: ''
     variable:
       {{ name }}_name:
         type: 'string'

@@ -7,15 +7,15 @@
       aws_route:
         {{ name }}:
           route_table_id: '${var.{{ name }}_route_table_id}'
+          # destination_ipv6_cidr_block: ''
+          # network_interface_id: ''
+          # transit_gateway_id: ''
+          # vpc_peering_connection_id: ''
+          # instance_id: ''
           # gateway_id: ''
           # egress_only_gateway_id: ''
           # nat_gateway_id: ''
           # destination_cidr_block: ''
-          # destination_ipv6_cidr_block: ''
-          # instance_id: ''
-          # network_interface_id: ''
-          # transit_gateway_id: ''
-          # vpc_peering_connection_id: ''
     variable:
       {{ name }}_route_table_id:
         type: 'string'
@@ -24,21 +24,21 @@
         value: '${aws_route.{{ name }}.id}'
       thub_id:
         value: '${aws_route.{{ name }}.id}'
+      network_interface_id:
+        value: '${aws_route.{{ name }}.network_interface_id}'
+      instance_id:
+        value: '${aws_route.{{ name }}.instance_id}'
       gateway_id:
         value: '${aws_route.{{ name }}.gateway_id}'
       egress_only_gateway_id:
         value: '${aws_route.{{ name }}.egress_only_gateway_id}'
       nat_gateway_id:
         value: '${aws_route.{{ name }}.nat_gateway_id}'
-      instance_id:
-        value: '${aws_route.{{ name }}.instance_id}'
-      network_interface_id:
-        value: '${aws_route.{{ name }}.network_interface_id}'
-      destination_prefix_list_id:
-        value: '${aws_route.{{ name }}.destination_prefix_list_id}'
       instance_owner_id:
         value: '${aws_route.{{ name }}.instance_owner_id}'
       origin:
         value: '${aws_route.{{ name }}.origin}'
       state:
         value: '${aws_route.{{ name }}.state}'
+      destination_prefix_list_id:
+        value: '${aws_route.{{ name }}.destination_prefix_list_id}'

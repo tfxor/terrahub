@@ -7,14 +7,14 @@
     resource:
       azurerm_arm_application_insights:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           application_type: '${var.{{ name }}_application_type}'
+          name: '${var.{{ name }}_name}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_application_type:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

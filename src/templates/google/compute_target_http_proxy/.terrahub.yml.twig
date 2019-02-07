@@ -8,8 +8,8 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           url_map: '${var.{{ name }}_url_map}'
-          # description: ''
           # project: ''
+          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -20,11 +20,11 @@
         value: '${google_compute_target_http_proxy.{{ name }}.id}'
       thub_id:
         value: '${google_compute_target_http_proxy.{{ name }}.id}'
+      project:
+        value: '${google_compute_target_http_proxy.{{ name }}.project}'
       self_link:
         value: '${google_compute_target_http_proxy.{{ name }}.self_link}'
       creation_timestamp:
         value: '${google_compute_target_http_proxy.{{ name }}.creation_timestamp}'
       proxy_id:
         value: '${google_compute_target_http_proxy.{{ name }}.proxy_id}'
-      project:
-        value: '${google_compute_target_http_proxy.{{ name }}.project}'

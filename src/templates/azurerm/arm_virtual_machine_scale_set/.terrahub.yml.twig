@@ -7,104 +7,104 @@
     resource:
       azurerm_arm_virtual_machine_scale_set:
         {{ name }}:
-          network_profile:
-            name:''
-            primary:false
-          #   accelerated_networking:false
-          #   ip_forwarding:false
-          #   network_security_group_id:''
-          #   dns_settings:
-          #     -
-          #       dns_servers: []
-          upgrade_policy_mode: '${var.{{ name }}_upgrade_policy_mode}'
-          os_profile:
+          os_profile: 
             -
               computer_name_prefix: ''
               admin_username: ''
-          #     admin_password: ''
           #     custom_data: ''
+          #     admin_password: ''
+          upgrade_policy_mode: '${var.{{ name }}_upgrade_policy_mode}'
+          network_profile: 
+            name: ''
+            primary: false
+          #   accelerated_networking: false
+          #   ip_forwarding: false
+          #   network_security_group_id: ''
+          #   dns_settings: 
+          #     -
+          #       dns_servers: []
           name: '${var.{{ name }}_name}'
-          sku:
+          sku: 
             -
-              name: ''
               capacity: 0
+              name: ''
           #     tier: ''
-          storage_profile_os_disk:
-            create_option:''
-          #   name:''
-          #   image:''
-          #   vhd_containers:
-          #   managed_disk_type:''
-          #   caching:''
-          #   os_type:''
-          # storage_profile_data_disk: 
-          #   -
-          #     create_option: ''
-          #     lun: 0
-          #     caching: ''
-          #     disk_size_gb: 0
-          #     managed_disk_type: ''
-          # overprovision: false
-          # os_profile_linux_config: 
-          #   disable_password_authentication:false
-          #   ssh_keys:
-          #     -
-          #       path: ''
-          #       key_data: ''
-          # os_profile_windows_config: 
-          #   provision_vm_agent:false
-          #   enable_automatic_upgrades:false
-          #   winrm:
-          #     -
-          #       protocol: ''
-          #       certificate_url: ''
+          storage_profile_os_disk: 
+            create_option: ''
+          #   image: ''
+          #   vhd_containers: 
+          #   managed_disk_type: ''
+          #   caching: ''
+          #   os_type: ''
+          #   name: ''
+          # health_probe_id: ''
+          # automatic_os_upgrade: false
           # rolling_upgrade_policy: 
           #   -
-          #     max_batch_instance_percent: 0
-          #     max_unhealthy_instance_percent: 0
           #     max_unhealthy_upgraded_instance_percent: 0
           #     pause_time_between_batches: ''
-          # single_placement_group: false
-          # os_profile_secrets: 
-          #   source_vault_id:''
-          #   vault_certificates:
-          #     -
-          #       certificate_url: ''
-          #       certificate_store: ''
-          # license_type: ''
-          # eviction_policy: ''
-          # storage_profile_image_reference: 
-          #   id:''
-          #   publisher:''
-          #   offer:''
-          #   sku:''
-          #   version:''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # priority: ''
-          # plan: 
-          #   name:''
-          #   publisher:''
-          #   product:''
+          #     max_batch_instance_percent: 0
+          #     max_unhealthy_instance_percent: 0
           # boot_diagnostics: 
           #   -
           #     storage_uri: ''
           #     enabled: false
           # extension: 
-          #   type:''
-          #   type_handler_version:''
-          #   name:''
-          #   publisher:''
-          #   auto_upgrade_minor_version:false
-          #   settings:''
-          #   protected_settings:''
+          #   name: ''
+          #   publisher: ''
+          #   type: ''
+          #   type_handler_version: ''
+          #   settings: ''
+          #   protected_settings: ''
+          #   auto_upgrade_minor_version: false
           # identity: 
           #   -
           #     type: ''
           #     identity_ids: 
           #       -
-          # health_probe_id: ''
-          # automatic_os_upgrade: false
+          # storage_profile_data_disk: 
+          #   -
+          #     lun: 0
+          #     create_option: ''
+          #     caching: ''
+          #     disk_size_gb: 0
+          #     managed_disk_type: ''
+          # overprovision: false
+          # priority: ''
+          # eviction_policy: ''
+          # os_profile_windows_config: 
+          #   enable_automatic_upgrades: false
+          #   winrm: 
+          #     -
+          #       protocol: ''
+          #       certificate_url: ''
+          #   provision_vm_agent: false
+          # license_type: ''
+          # os_profile_linux_config: 
+          #   disable_password_authentication: false
+          #   ssh_keys: 
+          #     -
+          #       path: ''
+          #       key_data: ''
+          # plan: 
+          #   product: ''
+          #   name: ''
+          #   publisher: ''
+          # single_placement_group: false
+          # os_profile_secrets: 
+          #   source_vault_id: ''
+          #   vault_certificates: 
+          #     -
+          #       certificate_url: ''
+          #       certificate_store: ''
+          # storage_profile_image_reference: 
+          #   id: ''
+          #   publisher: ''
+          #   offer: ''
+          #   sku: ''
+          #   version: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_upgrade_policy_mode:
         type: 'string'
@@ -115,11 +115,11 @@
         value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.id}'
-      os_profile_linux_config:
-        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.os_profile_linux_config}'
-      license_type:
-        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.license_type}'
-      storage_profile_image_reference:
-        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.storage_profile_image_reference}'
       identity:
         value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.identity}'
+      license_type:
+        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.license_type}'
+      os_profile_linux_config:
+        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.os_profile_linux_config}'
+      storage_profile_image_reference:
+        value: '${azurerm_arm_virtual_machine_scale_set.{{ name }}.storage_profile_image_reference}'

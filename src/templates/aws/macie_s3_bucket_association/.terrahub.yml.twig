@@ -7,12 +7,12 @@
       aws_macie_s3_bucket_association:
         {{ name }}:
           bucket_name: '${var.{{ name }}_bucket_name}'
-          # classification_type: 
-          #   -
-          #     continuous: ''
-          #     one_time: ''
           # prefix: ''
           # member_account_id: ''
+          # classification_type: 
+          #   -
+          #     one_time: ''
+          #     continuous: ''
     variable:
       {{ name }}_bucket_name:
         type: 'string'

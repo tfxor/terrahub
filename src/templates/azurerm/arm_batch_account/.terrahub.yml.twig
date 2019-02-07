@@ -8,10 +8,10 @@
       azurerm_arm_batch_account:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # storage_account_id: ''
           # pool_allocation_mode: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # storage_account_id: ''
     variable:
       {{ name }}_name:
         type: 'string'

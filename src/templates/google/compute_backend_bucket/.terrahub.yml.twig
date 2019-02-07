@@ -8,9 +8,9 @@
         {{ name }}:
           bucket_name: '${var.{{ name }}_bucket_name}'
           name: '${var.{{ name }}_name}'
-          # project: ''
           # description: ''
           # enable_cdn: false
+          # project: ''
     variable:
       {{ name }}_bucket_name:
         type: 'string'
@@ -21,9 +21,9 @@
         value: '${google_compute_backend_bucket.{{ name }}.id}'
       thub_id:
         value: '${google_compute_backend_bucket.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_backend_bucket.{{ name }}.creation_timestamp}'
       project:
         value: '${google_compute_backend_bucket.{{ name }}.project}'
       self_link:
         value: '${google_compute_backend_bucket.{{ name }}.self_link}'
-      creation_timestamp:
-        value: '${google_compute_backend_bucket.{{ name }}.creation_timestamp}'

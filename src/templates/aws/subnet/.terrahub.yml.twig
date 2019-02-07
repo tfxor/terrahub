@@ -8,13 +8,13 @@
         {{ name }}:
           vpc_id: '${var.{{ name }}_vpc_id}'
           cidr_block: '${var.{{ name }}_cidr_block}'
+          # assign_ipv6_address_on_creation: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # ipv6_cidr_block: ''
-          # availability_zone: ''
           # availability_zone_id: ''
           # map_public_ip_on_launch: false
-          # assign_ipv6_address_on_creation: false
+          # availability_zone: ''
     variable:
       {{ name }}_vpc_id:
         type: 'string'
@@ -25,15 +25,15 @@
         value: '${aws_subnet.{{ name }}.id}'
       thub_id:
         value: '${aws_subnet.{{ name }}.id}'
-      owner_id:
-        value: '${aws_subnet.{{ name }}.owner_id}'
-      ipv6_cidr_block:
-        value: '${aws_subnet.{{ name }}.ipv6_cidr_block}'
-      availability_zone:
-        value: '${aws_subnet.{{ name }}.availability_zone}'
-      availability_zone_id:
-        value: '${aws_subnet.{{ name }}.availability_zone_id}'
-      ipv6_cidr_block_association_id:
-        value: '${aws_subnet.{{ name }}.ipv6_cidr_block_association_id}'
       arn:
         value: '${aws_subnet.{{ name }}.arn}'
+      ipv6_cidr_block:
+        value: '${aws_subnet.{{ name }}.ipv6_cidr_block}'
+      availability_zone_id:
+        value: '${aws_subnet.{{ name }}.availability_zone_id}'
+      availability_zone:
+        value: '${aws_subnet.{{ name }}.availability_zone}'
+      ipv6_cidr_block_association_id:
+        value: '${aws_subnet.{{ name }}.ipv6_cidr_block_association_id}'
+      owner_id:
+        value: '${aws_subnet.{{ name }}.owner_id}'

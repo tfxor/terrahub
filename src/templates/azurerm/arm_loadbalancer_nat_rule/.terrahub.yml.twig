@@ -7,26 +7,26 @@
     resource:
       azurerm_arm_loadbalancer_nat_rule:
         {{ name }}:
-          protocol: '${var.{{ name }}_protocol}'
-          frontend_port: '${var.{{ name }}_frontend_port}'
           backend_port: '${var.{{ name }}_backend_port}'
+          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
           name: '${var.{{ name }}_name}'
           loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
-          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
+          protocol: '${var.{{ name }}_protocol}'
+          frontend_port: '${var.{{ name }}_frontend_port}'
           # enable_floating_ip: false
     variable:
-      {{ name }}_protocol:
-        type: 'string'
-      {{ name }}_frontend_port:
-        type: 'int'
       {{ name }}_backend_port:
         type: 'int'
+      {{ name }}_frontend_ip_configuration_name:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_loadbalancer_id:
         type: 'string'
-      {{ name }}_frontend_ip_configuration_name:
+      {{ name }}_protocol:
         type: 'string'
+      {{ name }}_frontend_port:
+        type: 'int'
     output:
       id:
         value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.id}'
@@ -34,7 +34,7 @@
         value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.id}'
       enable_floating_ip:
         value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.enable_floating_ip}'
-      frontend_ip_configuration_id:
-        value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.frontend_ip_configuration_id}'
       backend_ip_configuration_id:
         value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.backend_ip_configuration_id}'
+      frontend_ip_configuration_id:
+        value: '${azurerm_arm_loadbalancer_nat_rule.{{ name }}.frontend_ip_configuration_id}'

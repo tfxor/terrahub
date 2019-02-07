@@ -6,12 +6,12 @@
     resource:
       aws_ecr_repository_policy:
         {{ name }}:
-          policy: '${var.{{ name }}_policy}'
           repository: '${var.{{ name }}_repository}'
+          policy: '${var.{{ name }}_policy}'
     variable:
-      {{ name }}_policy:
-        type: 'string'
       {{ name }}_repository:
+        type: 'string'
+      {{ name }}_policy:
         type: 'string'
     output:
       id:

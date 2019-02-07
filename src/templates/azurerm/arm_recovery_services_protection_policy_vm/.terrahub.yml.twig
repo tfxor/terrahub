@@ -9,11 +9,18 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           recovery_vault_name: '${var.{{ name }}_recovery_vault_name}'
-          backup:
+          backup: 
             -
               frequency: ''
               time: ''
           #     weekdays: 
+          # retention_daily: 
+          #   -
+          #     count: 0
+          # retention_weekly: 
+          #   -
+          #     count: 0
+          #     weekdays: []
           # retention_yearly: 
           #   -
           #     count: 0
@@ -23,18 +30,11 @@
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # timezone: ''
-          # retention_weekly: 
-          #   -
-          #     count: 0
-          #     weekdays: []
-          # retention_daily: 
-          #   -
-          #     count: 0
           # retention_monthly: 
           #   -
-          #     count: 0
           #     weeks: []
           #     weekdays: []
+          #     count: 0
     variable:
       {{ name }}_name:
         type: 'string'

@@ -8,29 +8,29 @@
         {{ name }}:
           family: '${var.{{ name }}_family}'
           container_definitions: '${var.{{ name }}_container_definitions}'
-          # placement_constraints: 
-          #   type:''
-          #   expression:''
-          # ipc_mode: ''
-          # pid_mode: ''
-          # cpu: ''
-          # execution_role_arn: ''
-          # network_mode: ''
-          # task_role_arn: ''
           # memory: ''
           # volume: 
-          #   name:''
-          #   host_path:''
-          #   docker_volume_configuration:
+          #   name: ''
+          #   docker_volume_configuration: 
           #     -
+          #       autoprovision: false
           #       driver: ''
           #       driver_opts: 
           #           '[TO_BE_REPLACED]': ''
           #       labels: 
           #           '[TO_BE_REPLACED]': ''
           #       scope: ''
-          #       autoprovision: false
+          #   host_path: ''
           # requires_compatibilities: []
+          # ipc_mode: ''
+          # placement_constraints: 
+          #   type: ''
+          #   expression: ''
+          # cpu: ''
+          # task_role_arn: ''
+          # execution_role_arn: ''
+          # network_mode: ''
+          # pid_mode: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
@@ -43,9 +43,9 @@
         value: '${aws_ecs_task_definition.{{ name }}.id}'
       thub_id:
         value: '${aws_ecs_task_definition.{{ name }}.id}'
-      arn:
-        value: '${aws_ecs_task_definition.{{ name }}.arn}'
-      network_mode:
-        value: '${aws_ecs_task_definition.{{ name }}.network_mode}'
       revision:
         value: '${aws_ecs_task_definition.{{ name }}.revision}'
+      network_mode:
+        value: '${aws_ecs_task_definition.{{ name }}.network_mode}'
+      arn:
+        value: '${aws_ecs_task_definition.{{ name }}.arn}'

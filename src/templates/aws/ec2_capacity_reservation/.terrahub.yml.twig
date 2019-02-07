@@ -8,24 +8,24 @@
         {{ name }}:
           instance_count: '${var.{{ name }}_instance_count}'
           instance_type: '${var.{{ name }}_instance_type}'
-          availability_zone: '${var.{{ name }}_availability_zone}'
           instance_platform: '${var.{{ name }}_instance_platform}'
+          availability_zone: '${var.{{ name }}_availability_zone}'
+          # ebs_optimized: false
           # ephemeral_storage: false
           # instance_match_criteria: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # ebs_optimized: false
+          # tenancy: ''
           # end_date: ''
           # end_date_type: ''
-          # tenancy: ''
     variable:
       {{ name }}_instance_count:
         type: 'int'
       {{ name }}_instance_type:
         type: 'string'
-      {{ name }}_availability_zone:
-        type: 'string'
       {{ name }}_instance_platform:
+        type: 'string'
+      {{ name }}_availability_zone:
         type: 'string'
     output:
       id:

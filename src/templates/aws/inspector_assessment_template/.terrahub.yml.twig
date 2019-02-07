@@ -6,19 +6,19 @@
     resource:
       aws_inspector_assessment_template:
         {{ name }}:
-          rules_package_arns: '${var.{{ name }}_rules_package_arns}'
           name: '${var.{{ name }}_name}'
           target_arn: '${var.{{ name }}_target_arn}'
           duration: '${var.{{ name }}_duration}'
+          rules_package_arns: '${var.{{ name }}_rules_package_arns}'
     variable:
-      {{ name }}_rules_package_arns:
-        type: 'set'
       {{ name }}_name:
         type: 'string'
       {{ name }}_target_arn:
         type: 'string'
       {{ name }}_duration:
         type: 'int'
+      {{ name }}_rules_package_arns:
+        type: 'set'
     output:
       id:
         value: '${aws_inspector_assessment_template.{{ name }}.id}'

@@ -6,23 +6,23 @@
     resource:
       aws_sns_platform_application:
         {{ name }}:
-          platform: '${var.{{ name }}_platform}'
-          platform_credential: '${var.{{ name }}_platform_credential}'
           name: '${var.{{ name }}_name}'
-          # event_endpoint_updated_topic_arn: ''
-          # failure_feedback_role_arn: ''
+          platform_credential: '${var.{{ name }}_platform_credential}'
+          platform: '${var.{{ name }}_platform}'
+          # success_feedback_sample_rate: ''
           # event_delivery_failure_topic_arn: ''
-          # event_endpoint_created_topic_arn: ''
           # event_endpoint_deleted_topic_arn: ''
           # platform_principal: ''
           # success_feedback_role_arn: ''
-          # success_feedback_sample_rate: ''
+          # event_endpoint_created_topic_arn: ''
+          # event_endpoint_updated_topic_arn: ''
+          # failure_feedback_role_arn: ''
     variable:
-      {{ name }}_platform:
+      {{ name }}_name:
         type: 'string'
       {{ name }}_platform_credential:
         type: 'string'
-      {{ name }}_name:
+      {{ name }}_platform:
         type: 'string'
     output:
       id:

@@ -6,25 +6,25 @@
     resource:
       aws_ec2_client_vpn_endpoint:
         {{ name }}:
-          authentication_options:
-            -
-              type: ''
-          #     active_directory_id: ''
-          #     root_certificate_chain_arn: ''
-          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
           server_certificate_arn: '${var.{{ name }}_server_certificate_arn}'
-          connection_log_options:
+          connection_log_options: 
             -
               enabled: false
           #     cloudwatch_log_group: ''
           #     cloudwatch_log_stream: ''
-          # transport_protocol: ''
+          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
+          authentication_options: 
+            -
+              type: ''
+          #     active_directory_id: ''
+          #     root_certificate_chain_arn: ''
           # description: ''
           # dns_servers: []
+          # transport_protocol: ''
     variable:
-      {{ name }}_client_cidr_block:
-        type: 'string'
       {{ name }}_server_certificate_arn:
+        type: 'string'
+      {{ name }}_client_cidr_block:
         type: 'string'
     output:
       id:

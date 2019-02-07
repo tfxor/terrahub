@@ -6,27 +6,27 @@
     resource:
       aws_dax_cluster:
         {{ name }}:
-          node_type: '${var.{{ name }}_node_type}'
           replication_factor: '${var.{{ name }}_replication_factor}'
+          node_type: '${var.{{ name }}_node_type}'
           cluster_name: '${var.{{ name }}_cluster_name}'
           iam_role_arn: '${var.{{ name }}_iam_role_arn}'
+          # parameter_group_name: ''
+          # security_group_ids: []
+          # availability_zones: []
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # security_group_ids: []
+          # notification_topic_arn: ''
           # server_side_encryption: 
           #   -
           #     enabled: false
-          # notification_topic_arn: ''
-          # parameter_group_name: ''
-          # maintenance_window: ''
           # description: ''
-          # availability_zones: []
+          # maintenance_window: ''
           # subnet_group_name: ''
     variable:
-      {{ name }}_node_type:
-        type: 'string'
       {{ name }}_replication_factor:
         type: 'int'
+      {{ name }}_node_type:
+        type: 'string'
       {{ name }}_cluster_name:
         type: 'string'
       {{ name }}_iam_role_arn:
@@ -36,21 +36,21 @@
         value: '${aws_dax_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_dax_cluster.{{ name }}.id}'
-      security_group_ids:
-        value: '${aws_dax_cluster.{{ name }}.security_group_ids}'
-      configuration_endpoint:
-        value: '${aws_dax_cluster.{{ name }}.configuration_endpoint}'
-      nodes:
-        value: '${aws_dax_cluster.{{ name }}.nodes}'
       parameter_group_name:
         value: '${aws_dax_cluster.{{ name }}.parameter_group_name}'
-      maintenance_window:
-        value: '${aws_dax_cluster.{{ name }}.maintenance_window}'
+      security_group_ids:
+        value: '${aws_dax_cluster.{{ name }}.security_group_ids}'
+      cluster_address:
+        value: '${aws_dax_cluster.{{ name }}.cluster_address}'
+      nodes:
+        value: '${aws_dax_cluster.{{ name }}.nodes}'
+      configuration_endpoint:
+        value: '${aws_dax_cluster.{{ name }}.configuration_endpoint}'
       arn:
         value: '${aws_dax_cluster.{{ name }}.arn}'
+      maintenance_window:
+        value: '${aws_dax_cluster.{{ name }}.maintenance_window}'
       subnet_group_name:
         value: '${aws_dax_cluster.{{ name }}.subnet_group_name}'
       port:
         value: '${aws_dax_cluster.{{ name }}.port}'
-      cluster_address:
-        value: '${aws_dax_cluster.{{ name }}.cluster_address}'

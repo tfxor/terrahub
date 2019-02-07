@@ -6,22 +6,22 @@
     resource:
       aws_cognito_identity_provider:
         {{ name }}:
+          provider_details: '${var.{{ name }}_provider_details}'
           provider_name: '${var.{{ name }}_provider_name}'
           provider_type: '${var.{{ name }}_provider_type}'
           user_pool_id: '${var.{{ name }}_user_pool_id}'
-          provider_details: '${var.{{ name }}_provider_details}'
           # attribute_mapping: 
           #   '[TO_BE_REPLACED]': ''
           # idp_identifiers: []
     variable:
+      {{ name }}_provider_details:
+        type: 'map'
       {{ name }}_provider_name:
         type: 'string'
       {{ name }}_provider_type:
         type: 'string'
       {{ name }}_user_pool_id:
         type: 'string'
-      {{ name }}_provider_details:
-        type: 'map'
     output:
       id:
         value: '${aws_cognito_identity_provider.{{ name }}.id}'

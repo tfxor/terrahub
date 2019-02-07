@@ -6,18 +6,18 @@
     resource:
       aws_load_balancer_policy:
         {{ name }}:
-          load_balancer_name: '${var.{{ name }}_load_balancer_name}'
           policy_name: '${var.{{ name }}_policy_name}'
           policy_type_name: '${var.{{ name }}_policy_type_name}'
+          load_balancer_name: '${var.{{ name }}_load_balancer_name}'
           # policy_attribute: 
-          #   name:''
-          #   value:''
+          #   name: ''
+          #   value: ''
     variable:
-      {{ name }}_load_balancer_name:
-        type: 'string'
       {{ name }}_policy_name:
         type: 'string'
       {{ name }}_policy_type_name:
+        type: 'string'
+      {{ name }}_load_balancer_name:
         type: 'string'
     output:
       id:

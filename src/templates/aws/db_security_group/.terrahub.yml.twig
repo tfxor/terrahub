@@ -7,14 +7,14 @@
       aws_db_security_group:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          ingress:
-          #   cidr:''
-          #   security_group_name:''
-          #   security_group_id:''
-          #   security_group_owner_id:''
-          # description: ''
+          ingress: 
+          #   security_group_id: ''
+          #   security_group_owner_id: ''
+          #   cidr: ''
+          #   security_group_name: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'

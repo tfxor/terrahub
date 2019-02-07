@@ -6,41 +6,41 @@
     resource:
       aws_dynamodb_table:
         {{ name }}:
+          attribute: 
+            name: ''
+            type: ''
           hash_key: '${var.{{ name }}_hash_key}'
           name: '${var.{{ name }}_name}'
-          attribute:
-            name:''
-            type:''
-          # write_capacity: 0
-          # read_capacity: 0
-          # global_secondary_index: 
-          #   hash_key:''
-          #   projection_type:''
-          #   name:''
-          #   read_capacity:0
-          #   range_key:''
-          #   non_key_attributes:
-          #     -
-          #   write_capacity:0
-          # stream_view_type: ''
-          # billing_mode: ''
           # ttl: 
-          #   attribute_name:''
-          #   enabled:false
-          # local_secondary_index: 
-          #   projection_type:''
-          #   name:''
-          #   range_key:''
-          #   non_key_attributes:
-          #     -
+          #   enabled: false
+          #   attribute_name: ''
+          # billing_mode: ''
+          # read_capacity: 0
           # server_side_encryption: 
           #   -
           #     enabled: false
           # point_in_time_recovery: 
           #   -
           #     enabled: false
-          # range_key: ''
           # stream_enabled: false
+          # global_secondary_index: 
+          #   name: ''
+          #   hash_key: ''
+          #   projection_type: ''
+          #   non_key_attributes: 
+          #     -
+          #   write_capacity: 0
+          #   read_capacity: 0
+          #   range_key: ''
+          # range_key: ''
+          # write_capacity: 0
+          # local_secondary_index: 
+          #   projection_type: ''
+          #   name: ''
+          #   range_key: ''
+          #   non_key_attributes: 
+          #     -
+          # stream_view_type: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
@@ -53,15 +53,15 @@
         value: '${aws_dynamodb_table.{{ name }}.id}'
       thub_id:
         value: '${aws_dynamodb_table.{{ name }}.id}'
-      stream_view_type:
-        value: '${aws_dynamodb_table.{{ name }}.stream_view_type}'
-      stream_arn:
-        value: '${aws_dynamodb_table.{{ name }}.stream_arn}'
-      stream_label:
-        value: '${aws_dynamodb_table.{{ name }}.stream_label}'
       server_side_encryption:
         value: '${aws_dynamodb_table.{{ name }}.server_side_encryption}'
       point_in_time_recovery:
         value: '${aws_dynamodb_table.{{ name }}.point_in_time_recovery}'
+      stream_label:
+        value: '${aws_dynamodb_table.{{ name }}.stream_label}'
+      stream_arn:
+        value: '${aws_dynamodb_table.{{ name }}.stream_arn}'
+      stream_view_type:
+        value: '${aws_dynamodb_table.{{ name }}.stream_view_type}'
       arn:
         value: '${aws_dynamodb_table.{{ name }}.arn}'

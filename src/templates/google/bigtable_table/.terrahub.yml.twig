@@ -6,16 +6,16 @@
     resource:
       google_bigtable_table:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           instance_name: '${var.{{ name }}_instance_name}'
+          name: '${var.{{ name }}_name}'
           # column_family: 
-          #   family:''
+          #   family: ''
           # split_keys: []
           # project: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_instance_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

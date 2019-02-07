@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_notification_hub_namespace:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          sku:
+          sku: 
             -
               name: ''
           namespace_type: '${var.{{ name }}_namespace_type}'
+          name: '${var.{{ name }}_name}'
           # enabled: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_namespace_type:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

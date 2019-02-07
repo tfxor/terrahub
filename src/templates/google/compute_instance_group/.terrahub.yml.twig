@@ -7,15 +7,15 @@
       google_compute_instance_group:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # project: ''
           # zone: ''
-          # description: ''
-          # instances: []
+          # network: ''
+          # project: ''
           # named_port: 
           #   -
           #     name: ''
           #     port: 0
-          # network: ''
+          # description: ''
+          # instances: []
     variable:
       {{ name }}_name:
         type: 'string'
@@ -24,15 +24,15 @@
         value: '${google_compute_instance_group.{{ name }}.id}'
       thub_id:
         value: '${google_compute_instance_group.{{ name }}.id}'
-      project:
-        value: '${google_compute_instance_group.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_instance_group.{{ name }}.self_link}'
       size:
         value: '${google_compute_instance_group.{{ name }}.size}'
       zone:
         value: '${google_compute_instance_group.{{ name }}.zone}'
-      instances:
-        value: '${google_compute_instance_group.{{ name }}.instances}'
       network:
         value: '${google_compute_instance_group.{{ name }}.network}'
+      project:
+        value: '${google_compute_instance_group.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_instance_group.{{ name }}.self_link}'
+      instances:
+        value: '${google_compute_instance_group.{{ name }}.instances}'

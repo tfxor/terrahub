@@ -8,11 +8,11 @@
         {{ name }}:
           private_key: '${var.{{ name }}_private_key}'
           certificate_body: '${var.{{ name }}_certificate_body}'
+          # certificate_chain: ''
+          # path: ''
           # name: ''
           # name_prefix: ''
           # arn: ''
-          # certificate_chain: ''
-          # path: ''
     variable:
       {{ name }}_private_key:
         type: 'string'

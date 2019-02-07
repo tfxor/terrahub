@@ -6,10 +6,18 @@
     resource:
       google_cloud_build_trigger:
         {{ name }}:
-          # disabled: ''
           # included_files: []
           # substitutions: 
           #   '[TO_BE_REPLACED]': ''
+          # ignored_files: []
+          # trigger_template: 
+          #   -
+          #     tag_name: ''
+          #     branch_name: ''
+          #     commit_sha: ''
+          #     dir: ''
+          #     project_id: ''
+          #     repo_name: ''
           # build: 
           #   -
           #     images: 
@@ -20,16 +28,8 @@
           #           -
           #         name: ''
           # description: ''
+          # disabled: ''
           # filename: ''
-          # ignored_files: []
-          # trigger_template: 
-          #   -
-          #     dir: ''
-          #     project_id: ''
-          #     repo_name: ''
-          #     tag_name: ''
-          #     branch_name: ''
-          #     commit_sha: ''
           # project: ''
     output:
       id:

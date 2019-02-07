@@ -9,10 +9,10 @@
           source_region: '${var.{{ name }}_source_region}'
           source_snapshot_id: '${var.{{ name }}_source_snapshot_id}'
           # description: ''
+          # encrypted: false
           # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # encrypted: false
     variable:
       {{ name }}_source_region:
         type: 'string'
@@ -23,13 +23,13 @@
         value: '${aws_ebs_snapshot_copy.{{ name }}.id}'
       thub_id:
         value: '${aws_ebs_snapshot_copy.{{ name }}.id}'
-      volume_size:
-        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_size}'
-      volume_id:
-        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_id}'
       owner_id:
         value: '${aws_ebs_snapshot_copy.{{ name }}.owner_id}'
       owner_alias:
         value: '${aws_ebs_snapshot_copy.{{ name }}.owner_alias}'
+      volume_id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_id}'
       data_encryption_key_id:
         value: '${aws_ebs_snapshot_copy.{{ name }}.data_encryption_key_id}'
+      volume_size:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_size}'

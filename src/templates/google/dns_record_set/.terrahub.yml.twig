@@ -6,22 +6,22 @@
     resource:
       google_dns_record_set:
         {{ name }}:
+          managed_zone: '${var.{{ name }}_managed_zone}'
+          name: '${var.{{ name }}_name}'
           rrdatas: '${var.{{ name }}_rrdatas}'
           ttl: '${var.{{ name }}_ttl}'
           type: '${var.{{ name }}_type}'
-          managed_zone: '${var.{{ name }}_managed_zone}'
-          name: '${var.{{ name }}_name}'
           # project: ''
     variable:
+      {{ name }}_managed_zone:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_rrdatas:
         type: 'list'
       {{ name }}_ttl:
         type: 'int'
       {{ name }}_type:
-        type: 'string'
-      {{ name }}_managed_zone:
-        type: 'string'
-      {{ name }}_name:
         type: 'string'
     output:
       id:

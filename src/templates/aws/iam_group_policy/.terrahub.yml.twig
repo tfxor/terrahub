@@ -6,14 +6,14 @@
     resource:
       aws_iam_group_policy:
         {{ name }}:
-          policy: '${var.{{ name }}_policy}'
           group: '${var.{{ name }}_group}'
+          policy: '${var.{{ name }}_policy}'
           # name: ''
           # name_prefix: ''
     variable:
-      {{ name }}_policy:
-        type: 'string'
       {{ name }}_group:
+        type: 'string'
+      {{ name }}_policy:
         type: 'string'
     output:
       id:

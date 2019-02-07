@@ -10,27 +10,27 @@
           account_replication_type: '${var.{{ name }}_account_replication_type}'
           name: '${var.{{ name }}_name}'
           account_tier: '${var.{{ name }}_account_tier}'
-          # account_type: ''
           # custom_domain: 
           #   -
           #     name: ''
           #     use_subdomain: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # account_kind: ''
-          # enable_file_encryption: false
-          # enable_blob_encryption: false
+          # enable_https_traffic_only: false
           # identity: 
           #   -
           #     type: ''
-          # access_tier: ''
-          # account_encryption_source: ''
-          # enable_https_traffic_only: false
+          # enable_blob_encryption: false
           # network_rules: 
           #   -
           #     bypass: 
           #     ip_rules: 
           #     virtual_network_subnet_ids: 
+          # account_encryption_source: ''
+          # account_kind: ''
+          # account_type: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # access_tier: ''
+          # enable_file_encryption: false
     variable:
       {{ name }}_account_replication_type:
         type: 'string'
@@ -43,41 +43,41 @@
         value: '${azurerm_arm_storage_account.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_storage_account.{{ name }}.id}'
-      account_type:
-        value: '${azurerm_arm_storage_account.{{ name }}.account_type}'
+      secondary_table_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_table_endpoint}'
+      secondary_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_connection_string}'
+      secondary_blob_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_endpoint}'
+      primary_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_connection_string}'
+      secondary_location:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_location}'
+      identity:
+        value: '${azurerm_arm_storage_account.{{ name }}.identity}'
+      secondary_queue_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_queue_endpoint}'
+      primary_blob_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_connection_string}'
+      secondary_blob_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_connection_string}'
       primary_blob_endpoint:
         value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_endpoint}'
+      primary_queue_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_queue_endpoint}'
+      primary_table_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_table_endpoint}'
+      primary_access_key:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_access_key}'
+      account_type:
+        value: '${azurerm_arm_storage_account.{{ name }}.account_type}'
+      primary_location:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_location}'
       primary_file_endpoint:
         value: '${azurerm_arm_storage_account.{{ name }}.primary_file_endpoint}'
       tags:
         value: '${azurerm_arm_storage_account.{{ name }}.tags}'
-      primary_access_key:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_access_key}'
-      secondary_access_key:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_access_key}'
-      primary_blob_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_connection_string}'
-      secondary_table_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_table_endpoint}'
-      secondary_blob_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_endpoint}'
-      secondary_blob_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_connection_string}'
-      identity:
-        value: '${azurerm_arm_storage_account.{{ name }}.identity}'
-      primary_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_connection_string}'
       access_tier:
         value: '${azurerm_arm_storage_account.{{ name }}.access_tier}'
-      primary_queue_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_queue_endpoint}'
-      secondary_queue_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_queue_endpoint}'
-      secondary_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_connection_string}'
-      primary_table_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_table_endpoint}'
-      primary_location:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_location}'
-      secondary_location:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_location}'
+      secondary_access_key:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_access_key}'

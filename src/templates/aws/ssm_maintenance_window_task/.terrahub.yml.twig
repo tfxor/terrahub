@@ -6,18 +6,19 @@
     resource:
       aws_ssm_maintenance_window_task:
         {{ name }}:
+          window_id: '${var.{{ name }}_window_id}'
+          max_concurrency: '${var.{{ name }}_max_concurrency}'
           max_errors: '${var.{{ name }}_max_errors}'
           task_type: '${var.{{ name }}_task_type}'
+          task_arn: '${var.{{ name }}_task_arn}'
           service_role_arn: '${var.{{ name }}_service_role_arn}'
-          targets:
+          targets: 
             -
               key: ''
               values: []
-          window_id: '${var.{{ name }}_window_id}'
-          max_concurrency: '${var.{{ name }}_max_concurrency}'
-          task_arn: '${var.{{ name }}_task_arn}'
-          # name: ''
           # description: ''
+          # name: ''
+          # priority: 0
           # logging_info: 
           #   -
           #     s3_bucket_name: ''
@@ -27,19 +28,18 @@
           #   -
           #     name: ''
           #     values: []
-          # priority: 0
     variable:
-      {{ name }}_max_errors:
-        type: 'string'
-      {{ name }}_task_type:
-        type: 'string'
-      {{ name }}_service_role_arn:
-        type: 'string'
       {{ name }}_window_id:
         type: 'string'
       {{ name }}_max_concurrency:
         type: 'string'
+      {{ name }}_max_errors:
+        type: 'string'
+      {{ name }}_task_type:
+        type: 'string'
       {{ name }}_task_arn:
+        type: 'string'
+      {{ name }}_service_role_arn:
         type: 'string'
     output:
       id:

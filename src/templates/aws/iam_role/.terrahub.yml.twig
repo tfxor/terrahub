@@ -8,14 +8,14 @@
         {{ name }}:
           assume_role_policy: '${var.{{ name }}_assume_role_policy}'
           # max_session_duration: 0
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # force_detach_policies: false
           # name: ''
           # name_prefix: ''
-          # path: ''
           # permissions_boundary: ''
+          # force_detach_policies: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # path: ''
+          # description: ''
     variable:
       {{ name }}_assume_role_policy:
         type: 'string'

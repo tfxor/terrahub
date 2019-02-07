@@ -6,52 +6,52 @@
     resource:
       google_compute_snapshot:
         {{ name }}:
-          source_disk: '${var.{{ name }}_source_disk}'
           name: '${var.{{ name }}_name}'
+          source_disk: '${var.{{ name }}_source_disk}'
           # snapshot_encryption_key: 
           #   -
           #     raw_key: ''
           # source_disk_encryption_key: 
           #   -
           #     raw_key: ''
+          # source_disk_encryption_key_raw: ''
+          # zone: ''
+          # project: ''
           # snapshot_encryption_key_raw: ''
+          # description: ''
           # labels: 
           #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # zone: ''
-          # source_disk_encryption_key_raw: ''
-          # project: ''
     variable:
-      {{ name }}_source_disk:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_source_disk:
         type: 'string'
     output:
       id:
         value: '${google_compute_snapshot.{{ name }}.id}'
       thub_id:
         value: '${google_compute_snapshot.{{ name }}.id}'
+      self_link:
+        value: '${google_compute_snapshot.{{ name }}.self_link}'
       disk_size_gb:
         value: '${google_compute_snapshot.{{ name }}.disk_size_gb}'
+      storage_bytes:
+        value: '${google_compute_snapshot.{{ name }}.storage_bytes}'
+      zone:
+        value: '${google_compute_snapshot.{{ name }}.zone}'
+      licenses:
+        value: '${google_compute_snapshot.{{ name }}.licenses}'
+      snapshot_id:
+        value: '${google_compute_snapshot.{{ name }}.snapshot_id}'
+      project:
+        value: '${google_compute_snapshot.{{ name }}.project}'
       source_disk_encryption_key_sha256:
         value: '${google_compute_snapshot.{{ name }}.source_disk_encryption_key_sha256}'
       label_fingerprint:
         value: '${google_compute_snapshot.{{ name }}.label_fingerprint}'
-      snapshot_encryption_key_sha256:
-        value: '${google_compute_snapshot.{{ name }}.snapshot_encryption_key_sha256}'
-      self_link:
-        value: '${google_compute_snapshot.{{ name }}.self_link}'
       creation_timestamp:
         value: '${google_compute_snapshot.{{ name }}.creation_timestamp}'
-      zone:
-        value: '${google_compute_snapshot.{{ name }}.zone}'
       source_disk_link:
         value: '${google_compute_snapshot.{{ name }}.source_disk_link}'
-      snapshot_id:
-        value: '${google_compute_snapshot.{{ name }}.snapshot_id}'
-      storage_bytes:
-        value: '${google_compute_snapshot.{{ name }}.storage_bytes}'
-      project:
-        value: '${google_compute_snapshot.{{ name }}.project}'
-      licenses:
-        value: '${google_compute_snapshot.{{ name }}.licenses}'
+      snapshot_encryption_key_sha256:
+        value: '${google_compute_snapshot.{{ name }}.snapshot_encryption_key_sha256}'

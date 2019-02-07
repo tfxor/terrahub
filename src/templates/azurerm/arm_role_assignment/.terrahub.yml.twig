@@ -9,9 +9,9 @@
         {{ name }}:
           scope: '${var.{{ name }}_scope}'
           principal_id: '${var.{{ name }}_principal_id}'
+          # name: ''
           # role_definition_id: ''
           # role_definition_name: ''
-          # name: ''
     variable:
       {{ name }}_scope:
         type: 'string'
@@ -22,9 +22,9 @@
         value: '${azurerm_arm_role_assignment.{{ name }}.id}'
       thub_id:
         value: '${azurerm_arm_role_assignment.{{ name }}.id}'
+      name:
+        value: '${azurerm_arm_role_assignment.{{ name }}.name}'
       role_definition_id:
         value: '${azurerm_arm_role_assignment.{{ name }}.role_definition_id}'
       role_definition_name:
         value: '${azurerm_arm_role_assignment.{{ name }}.role_definition_name}'
-      name:
-        value: '${azurerm_arm_role_assignment.{{ name }}.name}'

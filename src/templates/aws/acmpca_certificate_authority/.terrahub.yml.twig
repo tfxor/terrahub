@@ -6,55 +6,55 @@
     resource:
       aws_acmpca_certificate_authority:
         {{ name }}:
-          certificate_authority_configuration:
+          certificate_authority_configuration: 
             -
               key_algorithm: ''
               signing_algorithm: ''
               subject: 
                 -
           #         given_name: ''
-          #         locality: ''
           #         organizational_unit: ''
-          #         pseudonym: ''
-          #         surname: ''
-          #         country: ''
-          #         generation_qualifier: ''
-          #         initials: ''
-          #         organization: ''
-          #         state: ''
           #         title: ''
           #         common_name: ''
+          #         country: ''
           #         distinguished_name_qualifier: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # type: ''
+          #         generation_qualifier: ''
+          #         state: ''
+          #         surname: ''
+          #         initials: ''
+          #         locality: ''
+          #         organization: ''
+          #         pseudonym: ''
           # revocation_configuration: 
           #   -
           #     crl_configuration: 
           #       -
           #         expiration_in_days: 0
+          #         s3_bucket_name: ''
           #         custom_cname: ''
           #         enabled: false
-          #         s3_bucket_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # type: ''
           # enabled: false
     output:
       id:
         value: '${aws_acmpca_certificate_authority.{{ name }}.id}'
       thub_id:
         value: '${aws_acmpca_certificate_authority.{{ name }}.id}'
-      status:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.status}'
-      arn:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.arn}'
       certificate:
         value: '${aws_acmpca_certificate_authority.{{ name }}.certificate}'
-      not_before:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.not_before}'
       certificate_chain:
         value: '${aws_acmpca_certificate_authority.{{ name }}.certificate_chain}'
       certificate_signing_request:
         value: '${aws_acmpca_certificate_authority.{{ name }}.certificate_signing_request}'
       not_after:
         value: '${aws_acmpca_certificate_authority.{{ name }}.not_after}'
+      not_before:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.not_before}'
       serial:
         value: '${aws_acmpca_certificate_authority.{{ name }}.serial}'
+      status:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.status}'
+      arn:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.arn}'

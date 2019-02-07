@@ -7,14 +7,28 @@
       google_compute_health_check:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # tcp_health_check: 
+          # description: ''
+          # unhealthy_threshold: 0
+          # ssl_health_check: 
           #   -
-          #     request: ''
-          #     response: ''
           #     port: 0
           #     proxy_header: ''
-          # description: ''
+          #     request: ''
+          #     response: ''
+          # tcp_health_check: 
+          #   -
+          #     port: 0
+          #     proxy_header: ''
+          #     request: ''
+          #     response: ''
           # http_health_check: 
+          #   -
+          #     host: ''
+          #     port: 0
+          #     proxy_header: ''
+          #     request_path: ''
+          #     response: ''
+          # https_health_check: 
           #   -
           #     response: ''
           #     host: ''
@@ -23,22 +37,8 @@
           #     request_path: ''
           # project: ''
           # check_interval_sec: 0
-          # timeout_sec: 0
-          # unhealthy_threshold: 0
-          # ssl_health_check: 
-          #   -
-          #     port: 0
-          #     proxy_header: ''
-          #     request: ''
-          #     response: ''
           # healthy_threshold: 0
-          # https_health_check: 
-          #   -
-          #     host: ''
-          #     port: 0
-          #     proxy_header: ''
-          #     request_path: ''
-          #     response: ''
+          # timeout_sec: 0
     variable:
       {{ name }}_name:
         type: 'string'

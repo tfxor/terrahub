@@ -6,33 +6,32 @@
     resource:
       google_monitoring_uptime_check_config:
         {{ name }}:
-          timeout: '${var.{{ name }}_timeout}'
           display_name: '${var.{{ name }}_display_name}'
-          # period: ''
-          # selected_regions: []
-          # project: ''
+          timeout: '${var.{{ name }}_timeout}'
+          # tcp_check: 
+          #   -
+          #     port: 0
           # content_matchers: 
           #   -
           #     content: ''
+          # http_check: 
+          #   -
+          #     auth_info: 
+          #       -
+          #         username: ''
+          #         password: ''
           # is_internal: false
           # monitored_resource: 
           #   -
           #     labels: 
           #       '[TO_BE_REPLACED]': ''
           #     type: ''
+          # period: ''
           # resource_group: 
           #   -
           #     group_id: ''
           #     resource_type: ''
-          # tcp_check: 
-          #   -
-          #     port: 0
-          # http_check: 
-          #   -
-          #     auth_info: 
-          #       -
-          #         password: ''
-          #         username: ''
+          # project: ''
           # internal_checkers: 
           #   -
           #     name: ''
@@ -40,10 +39,11 @@
           #     peer_project_id: ''
           #     display_name: ''
           #     gcp_zone: ''
+          # selected_regions: []
     variable:
-      {{ name }}_timeout:
-        type: 'string'
       {{ name }}_display_name:
+        type: 'string'
+      {{ name }}_timeout:
         type: 'string'
     output:
       id:

@@ -6,25 +6,25 @@
     resource:
       aws_codepipeline_webhook:
         {{ name }}:
+          filter: 
+            json_path: ''
+            match_equals: ''
+          name: '${var.{{ name }}_name}'
           target_action: '${var.{{ name }}_target_action}'
           target_pipeline: '${var.{{ name }}_target_pipeline}'
           authentication: '${var.{{ name }}_authentication}'
-          filter:
-            json_path:''
-            match_equals:''
-          name: '${var.{{ name }}_name}'
           # authentication_configuration: 
           #   -
           #     secret_token: ''
           #     allowed_ip_range: ''
     variable:
+      {{ name }}_name:
+        type: 'string'
       {{ name }}_target_action:
         type: 'string'
       {{ name }}_target_pipeline:
         type: 'string'
       {{ name }}_authentication:
-        type: 'string'
-      {{ name }}_name:
         type: 'string'
     output:
       id:

@@ -6,14 +6,22 @@
     resource:
       aws_gamelift_fleet:
         {{ name }}:
-          build_id: '${var.{{ name }}_build_id}'
-          ec2_instance_type: '${var.{{ name }}_ec2_instance_type}'
           name: '${var.{{ name }}_name}'
+          ec2_instance_type: '${var.{{ name }}_ec2_instance_type}'
+          build_id: '${var.{{ name }}_build_id}'
           # metric_groups: []
+          # new_game_session_protection_policy: ''
           # resource_creation_limit_policy: 
           #   -
           #     new_game_sessions_per_creator: 0
           #     policy_period_in_minutes: 0
+          # description: ''
+          # ec2_inbound_permission: 
+          #   -
+          #     from_port: 0
+          #     ip_range: ''
+          #     protocol: ''
+          #     to_port: 0
           # runtime_configuration: 
           #   -
           #     game_session_activation_timeout_seconds: 0
@@ -23,20 +31,12 @@
           #         concurrent_executions: 0
           #         launch_path: ''
           #         parameters: ''
-          # description: ''
-          # ec2_inbound_permission: 
-          #   -
-          #     from_port: 0
-          #     ip_range: ''
-          #     protocol: ''
-          #     to_port: 0
-          # new_game_session_protection_policy: ''
     variable:
-      {{ name }}_build_id:
+      {{ name }}_name:
         type: 'string'
       {{ name }}_ec2_instance_type:
         type: 'string'
-      {{ name }}_name:
+      {{ name }}_build_id:
         type: 'string'
     output:
       id:

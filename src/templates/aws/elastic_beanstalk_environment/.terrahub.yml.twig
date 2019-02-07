@@ -6,53 +6,53 @@
     resource:
       aws_elastic_beanstalk_environment:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           application: '${var.{{ name }}_application}'
-          # solution_stack_name: ''
-          # poll_interval: ''
-          # cname_prefix: ''
-          # tier: ''
+          name: '${var.{{ name }}_name}'
           # platform_arn: ''
-          # version_label: ''
-          # template_name: ''
-          # setting: 
-          # wait_for_ready_timeout: ''
           # description: ''
+          # template_name: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # version_label: ''
+          # tier: ''
+          # poll_interval: ''
+          # cname_prefix: ''
+          # setting: 
+          # solution_stack_name: ''
+          # wait_for_ready_timeout: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_application:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_elastic_beanstalk_environment.{{ name }}.id}'
       thub_id:
         value: '${aws_elastic_beanstalk_environment.{{ name }}.id}'
-      launch_configurations:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.launch_configurations}'
-      load_balancers:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.load_balancers}'
-      arn:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.arn}'
-      all_settings:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.all_settings}'
-      solution_stack_name:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.solution_stack_name}'
-      cname_prefix:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.cname_prefix}'
-      platform_arn:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.platform_arn}'
-      version_label:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.version_label}'
-      queues:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.queues}'
-      autoscaling_groups:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.autoscaling_groups}'
-      instances:
-        value: '${aws_elastic_beanstalk_environment.{{ name }}.instances}'
       cname:
         value: '${aws_elastic_beanstalk_environment.{{ name }}.cname}'
+      all_settings:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.all_settings}'
+      platform_arn:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.platform_arn}'
+      instances:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.instances}'
+      load_balancers:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.load_balancers}'
+      queues:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.queues}'
+      arn:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.arn}'
+      version_label:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.version_label}'
+      autoscaling_groups:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.autoscaling_groups}'
       triggers:
         value: '${aws_elastic_beanstalk_environment.{{ name }}.triggers}'
+      cname_prefix:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.cname_prefix}'
+      solution_stack_name:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.solution_stack_name}'
+      launch_configurations:
+        value: '${aws_elastic_beanstalk_environment.{{ name }}.launch_configurations}'

@@ -7,10 +7,8 @@
     resource:
       azurerm_arm_scheduler_job_collection:
         {{ name }}:
-          sku: '${var.{{ name }}_sku}'
           name: '${var.{{ name }}_name}'
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          sku: '${var.{{ name }}_sku}'
           # state: ''
           # quota: 
           #   -
@@ -18,10 +16,12 @@
           #     max_job_count: 0
           #     max_retry_interval: 0
           #     max_recurrence_interval: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_sku:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_sku:
         type: 'string'
     output:
       id:

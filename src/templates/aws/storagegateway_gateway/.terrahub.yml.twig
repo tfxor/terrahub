@@ -6,34 +6,34 @@
     resource:
       aws_storagegateway_gateway:
         {{ name }}:
-          gateway_name: '${var.{{ name }}_gateway_name}'
           gateway_timezone: '${var.{{ name }}_gateway_timezone}'
+          gateway_name: '${var.{{ name }}_gateway_name}'
           # gateway_ip_address: ''
-          # gateway_type: ''
+          # medium_changer_type: ''
           # smb_active_directory_settings: 
           #   -
           #     domain_name: ''
           #     password: ''
           #     username: ''
-          # tape_drive_type: ''
-          # activation_key: ''
-          # medium_changer_type: ''
           # smb_guest_password: ''
+          # activation_key: ''
+          # gateway_type: ''
+          # tape_drive_type: ''
     variable:
-      {{ name }}_gateway_name:
-        type: 'string'
       {{ name }}_gateway_timezone:
+        type: 'string'
+      {{ name }}_gateway_name:
         type: 'string'
     output:
       id:
         value: '${aws_storagegateway_gateway.{{ name }}.id}'
       thub_id:
         value: '${aws_storagegateway_gateway.{{ name }}.id}'
-      gateway_id:
-        value: '${aws_storagegateway_gateway.{{ name }}.gateway_id}'
       gateway_ip_address:
         value: '${aws_storagegateway_gateway.{{ name }}.gateway_ip_address}'
-      arn:
-        value: '${aws_storagegateway_gateway.{{ name }}.arn}'
+      gateway_id:
+        value: '${aws_storagegateway_gateway.{{ name }}.gateway_id}'
       activation_key:
         value: '${aws_storagegateway_gateway.{{ name }}.activation_key}'
+      arn:
+        value: '${aws_storagegateway_gateway.{{ name }}.arn}'

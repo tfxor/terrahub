@@ -8,13 +8,13 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           # backup_pool: ''
-          # description: ''
-          # instances: []
-          # session_affinity: ''
           # failover_ratio: ''
           # health_checks: []
-          # project: ''
           # region: ''
+          # session_affinity: ''
+          # description: ''
+          # instances: []
+          # project: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -23,11 +23,11 @@
         value: '${google_compute_target_pool.{{ name }}.id}'
       thub_id:
         value: '${google_compute_target_pool.{{ name }}.id}'
-      instances:
-        value: '${google_compute_target_pool.{{ name }}.instances}'
       self_link:
         value: '${google_compute_target_pool.{{ name }}.self_link}'
-      project:
-        value: '${google_compute_target_pool.{{ name }}.project}'
       region:
         value: '${google_compute_target_pool.{{ name }}.region}'
+      instances:
+        value: '${google_compute_target_pool.{{ name }}.instances}'
+      project:
+        value: '${google_compute_target_pool.{{ name }}.project}'

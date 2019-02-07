@@ -7,16 +7,16 @@
     resource:
       azurerm_arm_key_vault_access_policy:
         {{ name }}:
-          vault_name: '${var.{{ name }}_vault_name}'
           tenant_id: '${var.{{ name }}_tenant_id}'
           object_id: '${var.{{ name }}_object_id}'
+          vault_name: '${var.{{ name }}_vault_name}'
           # application_id: ''
     variable:
-      {{ name }}_vault_name:
-        type: 'string'
       {{ name }}_tenant_id:
         type: 'string'
       {{ name }}_object_id:
+        type: 'string'
+      {{ name }}_vault_name:
         type: 'string'
     output:
       id:

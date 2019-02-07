@@ -6,21 +6,21 @@
     resource:
       aws_guardduty_threatintelset:
         {{ name }}:
-          format: '${var.{{ name }}_format}'
-          location: '${var.{{ name }}_location}'
           activate: '${var.{{ name }}_activate}'
           detector_id: '${var.{{ name }}_detector_id}'
           name: '${var.{{ name }}_name}'
+          format: '${var.{{ name }}_format}'
+          location: '${var.{{ name }}_location}'
     variable:
-      {{ name }}_format:
-        type: 'string'
-      {{ name }}_location:
-        type: 'string'
       {{ name }}_activate:
         type: 'bool'
       {{ name }}_detector_id:
         type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_format:
+        type: 'string'
+      {{ name }}_location:
         type: 'string'
     output:
       id:

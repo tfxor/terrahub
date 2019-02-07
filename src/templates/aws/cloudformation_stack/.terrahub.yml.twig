@@ -7,20 +7,20 @@
       aws_cloudformation_stack:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # template_body: ''
+          # disable_rollback: false
+          # notification_arns: []
+          # template_url: ''
+          # iam_role_arn: ''
           # policy_body: ''
-          # parameters: 
-          #   '[TO_BE_REPLACED]': ''
+          # timeout_in_minutes: 0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # iam_role_arn: ''
           # capabilities: []
-          # notification_arns: []
           # on_failure: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
           # policy_url: ''
-          # timeout_in_minutes: 0
-          # template_body: ''
-          # template_url: ''
-          # disable_rollback: false
     variable:
       {{ name }}_name:
         type: 'string'
@@ -29,11 +29,11 @@
         value: '${aws_cloudformation_stack.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudformation_stack.{{ name }}.id}'
+      template_body:
+        value: '${aws_cloudformation_stack.{{ name }}.template_body}'
+      outputs:
+        value: '${aws_cloudformation_stack.{{ name }}.outputs}'
       policy_body:
         value: '${aws_cloudformation_stack.{{ name }}.policy_body}'
       parameters:
         value: '${aws_cloudformation_stack.{{ name }}.parameters}'
-      outputs:
-        value: '${aws_cloudformation_stack.{{ name }}.outputs}'
-      template_body:
-        value: '${aws_cloudformation_stack.{{ name }}.template_body}'

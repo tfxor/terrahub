@@ -8,60 +8,60 @@
         {{ name }}:
           instance_type: '${var.{{ name }}_instance_type}'
           ami: '${var.{{ name }}_ami}'
-          # monitoring: false
-          # host_id: ''
-          # volume_tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # get_password_data: false
-          # security_groups: []
+          # private_ip: ''
           # vpc_security_group_ids: []
-          # ipv6_address_count: 0
-          # block_device: 
-          #   '[TO_BE_REPLACED]': ''
-          # key_name: ''
-          # network_interface: 
-          #   network_interface_id:''
-          #   device_index:0
-          #   delete_on_termination:false
-          # iam_instance_profile: ''
+          # instance_initiated_shutdown_behavior: ''
           # subnet_id: ''
-          # ebs_block_device: 
-          #   device_name:''
-          #   delete_on_termination:false
-          #   encrypted:false
-          #   iops:0
-          #   snapshot_id:''
-          #   volume_size:0
-          #   volume_type:''
+          # tenancy: ''
+          # iam_instance_profile: ''
+          # host_id: ''
+          # key_name: ''
           # credit_specification: 
           #   -
           #     cpu_credits: ''
           # placement_group: ''
+          # volume_tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # block_device: 
+          #   '[TO_BE_REPLACED]': ''
+          # ebs_block_device: 
+          #   device_name: ''
+          #   snapshot_id: ''
+          #   volume_size: 0
+          #   volume_type: ''
+          #   delete_on_termination: false
+          #   encrypted: false
+          #   iops: 0
+          # network_interface: 
+          #   network_interface_id: ''
+          #   device_index: 0
+          #   delete_on_termination: false
+          # ebs_optimized: false
+          # monitoring: false
           # cpu_threads_per_core: 0
-          # source_dest_check: false
-          # ipv6_addresses: []
-          # tenancy: ''
-          # cpu_core_count: 0
-          # ephemeral_block_device: 
-          #   device_name:''
-          #   virtual_name:''
-          #   no_device:false
-          # associate_public_ip_address: false
-          # user_data: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # root_block_device: 
           #   -
+          #     delete_on_termination: false
           #     iops: 0
           #     volume_size: 0
           #     volume_type: ''
-          #     delete_on_termination: false
-          # availability_zone: ''
-          # private_ip: ''
-          # instance_initiated_shutdown_behavior: ''
-          # disable_api_termination: false
           # user_data_base64: ''
-          # ebs_optimized: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          # availability_zone: ''
+          # get_password_data: false
+          # source_dest_check: false
+          # user_data: ''
+          # associate_public_ip_address: false
+          # cpu_core_count: 0
+          # disable_api_termination: false
+          # ipv6_addresses: []
+          # ipv6_address_count: 0
+          # ephemeral_block_device: 
+          #   device_name: ''
+          #   virtual_name: ''
+          #   no_device: false
+          # security_groups: []
     variable:
       {{ name }}_instance_type:
         type: 'string'
@@ -72,55 +72,55 @@
         value: '${aws_instance.{{ name }}.id}'
       thub_id:
         value: '${aws_instance.{{ name }}.id}'
-      host_id:
-        value: '${aws_instance.{{ name }}.host_id}'
-      security_groups:
-        value: '${aws_instance.{{ name }}.security_groups}'
-      vpc_security_group_ids:
-        value: '${aws_instance.{{ name }}.vpc_security_group_ids}'
-      ipv6_address_count:
-        value: '${aws_instance.{{ name }}.ipv6_address_count}'
-      key_name:
-        value: '${aws_instance.{{ name }}.key_name}'
-      network_interface:
-        value: '${aws_instance.{{ name }}.network_interface}'
-      subnet_id:
-        value: '${aws_instance.{{ name }}.subnet_id}'
-      primary_network_interface_id:
-        value: '${aws_instance.{{ name }}.primary_network_interface_id}'
-      private_dns:
-        value: '${aws_instance.{{ name }}.private_dns}'
-      ebs_block_device:
-        value: '${aws_instance.{{ name }}.ebs_block_device}'
-      placement_group:
-        value: '${aws_instance.{{ name }}.placement_group}'
-      password_data:
-        value: '${aws_instance.{{ name }}.password_data}'
-      cpu_threads_per_core:
-        value: '${aws_instance.{{ name }}.cpu_threads_per_core}'
-      ipv6_addresses:
-        value: '${aws_instance.{{ name }}.ipv6_addresses}'
-      public_dns:
-        value: '${aws_instance.{{ name }}.public_dns}'
-      public_ip:
-        value: '${aws_instance.{{ name }}.public_ip}'
-      tenancy:
-        value: '${aws_instance.{{ name }}.tenancy}'
-      cpu_core_count:
-        value: '${aws_instance.{{ name }}.cpu_core_count}'
-      ephemeral_block_device:
-        value: '${aws_instance.{{ name }}.ephemeral_block_device}'
-      arn:
-        value: '${aws_instance.{{ name }}.arn}'
-      associate_public_ip_address:
-        value: '${aws_instance.{{ name }}.associate_public_ip_address}'
-      root_block_device:
-        value: '${aws_instance.{{ name }}.root_block_device}'
-      availability_zone:
-        value: '${aws_instance.{{ name }}.availability_zone}'
       private_ip:
         value: '${aws_instance.{{ name }}.private_ip}'
-      instance_state:
-        value: '${aws_instance.{{ name }}.instance_state}'
+      vpc_security_group_ids:
+        value: '${aws_instance.{{ name }}.vpc_security_group_ids}'
       network_interface_id:
         value: '${aws_instance.{{ name }}.network_interface_id}'
+      public_ip:
+        value: '${aws_instance.{{ name }}.public_ip}'
+      instance_state:
+        value: '${aws_instance.{{ name }}.instance_state}'
+      subnet_id:
+        value: '${aws_instance.{{ name }}.subnet_id}'
+      tenancy:
+        value: '${aws_instance.{{ name }}.tenancy}'
+      host_id:
+        value: '${aws_instance.{{ name }}.host_id}'
+      key_name:
+        value: '${aws_instance.{{ name }}.key_name}'
+      public_dns:
+        value: '${aws_instance.{{ name }}.public_dns}'
+      arn:
+        value: '${aws_instance.{{ name }}.arn}'
+      placement_group:
+        value: '${aws_instance.{{ name }}.placement_group}'
+      ebs_block_device:
+        value: '${aws_instance.{{ name }}.ebs_block_device}'
+      network_interface:
+        value: '${aws_instance.{{ name }}.network_interface}'
+      cpu_threads_per_core:
+        value: '${aws_instance.{{ name }}.cpu_threads_per_core}'
+      root_block_device:
+        value: '${aws_instance.{{ name }}.root_block_device}'
+      password_data:
+        value: '${aws_instance.{{ name }}.password_data}'
+      availability_zone:
+        value: '${aws_instance.{{ name }}.availability_zone}'
+      primary_network_interface_id:
+        value: '${aws_instance.{{ name }}.primary_network_interface_id}'
+      associate_public_ip_address:
+        value: '${aws_instance.{{ name }}.associate_public_ip_address}'
+      cpu_core_count:
+        value: '${aws_instance.{{ name }}.cpu_core_count}'
+      ipv6_addresses:
+        value: '${aws_instance.{{ name }}.ipv6_addresses}'
+      ipv6_address_count:
+        value: '${aws_instance.{{ name }}.ipv6_address_count}'
+      ephemeral_block_device:
+        value: '${aws_instance.{{ name }}.ephemeral_block_device}'
+      security_groups:
+        value: '${aws_instance.{{ name }}.security_groups}'
+      private_dns:
+        value: '${aws_instance.{{ name }}.private_dns}'

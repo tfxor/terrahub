@@ -7,21 +7,18 @@
     resource:
       azurerm_arm_autoscale_setting:
         {{ name }}:
-          profile:
+          name: '${var.{{ name }}_name}'
+          target_resource_id: '${var.{{ name }}_target_resource_id}'
+          profile: 
             -
               name: ''
               capacity: 
                 -
-                  default: 0
                   minimum: 0
                   maximum: 0
-          name: '${var.{{ name }}_name}'
-          target_resource_id: '${var.{{ name }}_target_resource_id}'
-          # fixed_date: 
-          #   -
-          #     start: ''
-          #     end: ''
-          #     timezone: ''
+                  default: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # recurrence: 
           #   -
           #     days: []
@@ -38,9 +35,12 @@
           #         send_to_subscription_co_administrator: false
           #         custom_emails: 
           #           -
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # enabled: false
+          # fixed_date: 
+          #   -
+          #     start: ''
+          #     end: ''
+          #     timezone: ''
     variable:
       {{ name }}_name:
         type: 'string'

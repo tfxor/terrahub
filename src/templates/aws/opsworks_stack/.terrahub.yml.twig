@@ -6,42 +6,42 @@
     resource:
       aws_opsworks_stack:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           region: '${var.{{ name }}_region}'
           service_role_arn: '${var.{{ name }}_service_role_arn}'
+          name: '${var.{{ name }}_name}'
           default_instance_profile_arn: '${var.{{ name }}_default_instance_profile_arn}'
-          # default_root_device_type: ''
-          # default_subnet_id: ''
-          # use_custom_cookbooks: false
           # custom_cookbooks_source: 
           #   -
-          #     type: ''
           #     url: ''
-          #     revision: ''
-          #     ssh_key: ''
+          #     type: ''
           #     username: ''
           #     password: ''
+          #     revision: ''
+          #     ssh_key: ''
+          # default_root_device_type: ''
+          # default_ssh_key_name: ''
+          # default_subnet_id: ''
+          # hostname_theme: ''
+          # use_custom_cookbooks: false
+          # configuration_manager_version: ''
           # default_availability_zone: ''
-          # vpc_id: ''
-          # configuration_manager_name: ''
           # default_os: ''
+          # vpc_id: ''
+          # agent_version: ''
+          # custom_json: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # use_opsworks_security_groups: false
-          # manage_berkshelf: false
-          # custom_json: ''
-          # default_ssh_key_name: ''
-          # configuration_manager_version: ''
-          # berkshelf_version: ''
-          # hostname_theme: ''
-          # agent_version: ''
           # color: ''
+          # configuration_manager_name: ''
+          # manage_berkshelf: false
+          # berkshelf_version: ''
+          # use_opsworks_security_groups: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_region:
         type: 'string'
       {{ name }}_service_role_arn:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
       {{ name }}_default_instance_profile_arn:
         type: 'string'
@@ -50,17 +50,17 @@
         value: '${aws_opsworks_stack.{{ name }}.id}'
       thub_id:
         value: '${aws_opsworks_stack.{{ name }}.id}'
-      default_subnet_id:
-        value: '${aws_opsworks_stack.{{ name }}.default_subnet_id}'
       custom_cookbooks_source:
         value: '${aws_opsworks_stack.{{ name }}.custom_cookbooks_source}'
+      default_subnet_id:
+        value: '${aws_opsworks_stack.{{ name }}.default_subnet_id}'
+      arn:
+        value: '${aws_opsworks_stack.{{ name }}.arn}'
       default_availability_zone:
         value: '${aws_opsworks_stack.{{ name }}.default_availability_zone}'
       vpc_id:
         value: '${aws_opsworks_stack.{{ name }}.vpc_id}'
-      stack_endpoint:
-        value: '${aws_opsworks_stack.{{ name }}.stack_endpoint}'
       agent_version:
         value: '${aws_opsworks_stack.{{ name }}.agent_version}'
-      arn:
-        value: '${aws_opsworks_stack.{{ name }}.arn}'
+      stack_endpoint:
+        value: '${aws_opsworks_stack.{{ name }}.stack_endpoint}'

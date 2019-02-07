@@ -7,8 +7,8 @@
       aws_dynamodb_global_table:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          replica:
-            region_name:''
+          replica: 
+            region_name: ''
     variable:
       {{ name }}_name:
         type: 'string'

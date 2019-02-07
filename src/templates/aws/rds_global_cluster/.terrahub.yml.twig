@@ -7,11 +7,11 @@
       aws_rds_global_cluster:
         {{ name }}:
           global_cluster_identifier: '${var.{{ name }}_global_cluster_identifier}'
-          # storage_encrypted: false
           # database_name: ''
           # deletion_protection: false
           # engine: ''
           # engine_version: ''
+          # storage_encrypted: false
     variable:
       {{ name }}_global_cluster_identifier:
         type: 'string'

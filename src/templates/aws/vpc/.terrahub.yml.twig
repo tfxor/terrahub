@@ -7,14 +7,14 @@
       aws_vpc:
         {{ name }}:
           cidr_block: '${var.{{ name }}_cidr_block}'
+          # instance_tenancy: ''
           # enable_dns_hostnames: false
+          # enable_dns_support: false
+          # enable_classiclink_dns_support: false
           # enable_classiclink: false
           # assign_generated_ipv6_cidr_block: false
-          # enable_dns_support: false
-          # instance_tenancy: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # enable_classiclink_dns_support: false
     variable:
       {{ name }}_cidr_block:
         type: 'string'
@@ -23,27 +23,27 @@
         value: '${aws_vpc.{{ name }}.id}'
       thub_id:
         value: '${aws_vpc.{{ name }}.id}'
-      enable_dns_hostnames:
-        value: '${aws_vpc.{{ name }}.enable_dns_hostnames}'
-      enable_classiclink:
-        value: '${aws_vpc.{{ name }}.enable_classiclink}'
       main_route_table_id:
         value: '${aws_vpc.{{ name }}.main_route_table_id}'
-      dhcp_options_id:
-        value: '${aws_vpc.{{ name }}.dhcp_options_id}'
       default_route_table_id:
         value: '${aws_vpc.{{ name }}.default_route_table_id}'
-      arn:
-        value: '${aws_vpc.{{ name }}.arn}'
-      ipv6_association_id:
-        value: '${aws_vpc.{{ name }}.ipv6_association_id}'
-      owner_id:
-        value: '${aws_vpc.{{ name }}.owner_id}'
-      enable_classiclink_dns_support:
-        value: '${aws_vpc.{{ name }}.enable_classiclink_dns_support}'
-      default_network_acl_id:
-        value: '${aws_vpc.{{ name }}.default_network_acl_id}'
-      default_security_group_id:
-        value: '${aws_vpc.{{ name }}.default_security_group_id}'
       ipv6_cidr_block:
         value: '${aws_vpc.{{ name }}.ipv6_cidr_block}'
+      owner_id:
+        value: '${aws_vpc.{{ name }}.owner_id}'
+      ipv6_association_id:
+        value: '${aws_vpc.{{ name }}.ipv6_association_id}'
+      arn:
+        value: '${aws_vpc.{{ name }}.arn}'
+      enable_dns_hostnames:
+        value: '${aws_vpc.{{ name }}.enable_dns_hostnames}'
+      enable_classiclink_dns_support:
+        value: '${aws_vpc.{{ name }}.enable_classiclink_dns_support}'
+      default_security_group_id:
+        value: '${aws_vpc.{{ name }}.default_security_group_id}'
+      enable_classiclink:
+        value: '${aws_vpc.{{ name }}.enable_classiclink}'
+      default_network_acl_id:
+        value: '${aws_vpc.{{ name }}.default_network_acl_id}'
+      dhcp_options_id:
+        value: '${aws_vpc.{{ name }}.dhcp_options_id}'
