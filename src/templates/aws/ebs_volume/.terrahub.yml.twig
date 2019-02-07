@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ebs_volume:
+        {{ name }}:
+          availability_zone: '${var.{{ name }}_availability_zone}'
+          # encrypted: false
+          # iops: 0
+          # size: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # kms_key_id: ''
+          # snapshot_id: ''
+          # type: ''
+    variable:
+      {{ name }}_availability_zone:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ebs_volume.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ebs_volume.{{ name }}.id}'
+      encrypted:
+        value: '${aws_ebs_volume.{{ name }}.encrypted}'
+      iops:
+        value: '${aws_ebs_volume.{{ name }}.iops}'
+      size:
+        value: '${aws_ebs_volume.{{ name }}.size}'
+      arn:
+        value: '${aws_ebs_volume.{{ name }}.arn}'
+      kms_key_id:
+        value: '${aws_ebs_volume.{{ name }}.kms_key_id}'
+      snapshot_id:
+        value: '${aws_ebs_volume.{{ name }}.snapshot_id}'
+      type:
+        value: '${aws_ebs_volume.{{ name }}.type}'

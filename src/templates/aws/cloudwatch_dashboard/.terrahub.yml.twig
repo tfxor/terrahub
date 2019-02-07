@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudwatch_dashboard:
+        {{ name }}:
+          dashboard_body: '${var.{{ name }}_dashboard_body}'
+          dashboard_name: '${var.{{ name }}_dashboard_name}'
+    variable:
+      {{ name }}_dashboard_body:
+        type: 'string'
+      {{ name }}_dashboard_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudwatch_dashboard.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudwatch_dashboard.{{ name }}.id}'
+      dashboard_arn:
+        value: '${aws_cloudwatch_dashboard.{{ name }}.dashboard_arn}'

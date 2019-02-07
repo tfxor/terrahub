@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_health_check:
+        {{ name }}:
+          type: '${var.{{ name }}_type}'
+          # enable_sni: false
+          # regions: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # ip_address: ''
+          # measure_latency: false
+          # failure_threshold: 0
+          # port: 0
+          # fqdn: ''
+          # invert_healthcheck: false
+          # child_healthchecks: []
+          # child_health_threshold: 0
+          # reference_name: ''
+          # request_interval: 0
+          # cloudwatch_alarm_name: ''
+          # cloudwatch_alarm_region: ''
+          # insufficient_data_health_status: ''
+          # resource_path: ''
+          # search_string: ''
+    variable:
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route53_health_check.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route53_health_check.{{ name }}.id}'
+      enable_sni:
+        value: '${aws_route53_health_check.{{ name }}.enable_sni}'

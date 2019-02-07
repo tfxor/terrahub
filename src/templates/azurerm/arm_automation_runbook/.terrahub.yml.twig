@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_automation_runbook:
+        {{ name }}:
+          log_progress: '${var.{{ name }}_log_progress}'
+          log_verbose: '${var.{{ name }}_log_verbose}'
+          publish_content_link:
+            -
+              uri: ''
+          #     hash: 
+          #       -
+          #         algorithm: ''
+          #         value: ''
+          #     version: ''
+          account_name: '${var.{{ name }}_account_name}'
+          runbook_type: '${var.{{ name }}_runbook_type}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # content: ''
+    variable:
+      {{ name }}_log_progress:
+        type: 'bool'
+      {{ name }}_log_verbose:
+        type: 'bool'
+      {{ name }}_account_name:
+        type: 'string'
+      {{ name }}_runbook_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_automation_runbook.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_automation_runbook.{{ name }}.id}'
+      content:
+        value: '${azurerm_arm_automation_runbook.{{ name }}.content}'

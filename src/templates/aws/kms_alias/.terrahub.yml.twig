@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_kms_alias:
+        {{ name }}:
+          target_key_id: '${var.{{ name }}_target_key_id}'
+          # name: ''
+          # name_prefix: ''
+    variable:
+      {{ name }}_target_key_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_kms_alias.{{ name }}.id}'
+      thub_id:
+        value: '${aws_kms_alias.{{ name }}.id}'
+      arn:
+        value: '${aws_kms_alias.{{ name }}.arn}'
+      target_key_arn:
+        value: '${aws_kms_alias.{{ name }}.target_key_arn}'

@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_datasync_location_s3:
+        {{ name }}:
+          s3_config:
+            -
+              bucket_access_role_arn: ''
+          subdirectory: '${var.{{ name }}_subdirectory}'
+          s3_bucket_arn: '${var.{{ name }}_s3_bucket_arn}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_subdirectory:
+        type: 'string'
+      {{ name }}_s3_bucket_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_datasync_location_s3.{{ name }}.id}'
+      thub_id:
+        value: '${aws_datasync_location_s3.{{ name }}.id}'
+      uri:
+        value: '${aws_datasync_location_s3.{{ name }}.uri}'
+      arn:
+        value: '${aws_datasync_location_s3.{{ name }}.arn}'

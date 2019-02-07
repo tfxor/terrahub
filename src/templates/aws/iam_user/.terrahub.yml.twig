@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_user:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # path: ''
+          # permissions_boundary: ''
+          # force_destroy: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_user.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_user.{{ name }}.id}'
+      arn:
+        value: '${aws_iam_user.{{ name }}.arn}'
+      unique_id:
+        value: '${aws_iam_user.{{ name }}.unique_id}'

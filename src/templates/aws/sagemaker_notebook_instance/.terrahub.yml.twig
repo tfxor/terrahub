@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sagemaker_notebook_instance:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          role_arn: '${var.{{ name }}_role_arn}'
+          instance_type: '${var.{{ name }}_instance_type}'
+          # subnet_id: ''
+          # security_groups: []
+          # kms_key_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_instance_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_sagemaker_notebook_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sagemaker_notebook_instance.{{ name }}.id}'
+      security_groups:
+        value: '${aws_sagemaker_notebook_instance.{{ name }}.security_groups}'
+      arn:
+        value: '${aws_sagemaker_notebook_instance.{{ name }}.arn}'

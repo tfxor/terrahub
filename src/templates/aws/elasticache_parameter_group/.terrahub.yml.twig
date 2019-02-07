@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elasticache_parameter_group:
+        {{ name }}:
+          family: '${var.{{ name }}_family}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # parameter: 
+          #   name:''
+          #   value:''
+    variable:
+      {{ name }}_family:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elasticache_parameter_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elasticache_parameter_group.{{ name }}.id}'

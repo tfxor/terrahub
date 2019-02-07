@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_acm_certificate:
+        {{ name }}:
+          # certificate_chain: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # certificate_body: ''
+          # private_key: ''
+          # domain_name: ''
+          # subject_alternative_names: []
+          # validation_method: ''
+    output:
+      id:
+        value: '${aws_acm_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${aws_acm_certificate.{{ name }}.id}'
+      arn:
+        value: '${aws_acm_certificate.{{ name }}.arn}'
+      domain_validation_options:
+        value: '${aws_acm_certificate.{{ name }}.domain_validation_options}'
+      domain_name:
+        value: '${aws_acm_certificate.{{ name }}.domain_name}'
+      subject_alternative_names:
+        value: '${aws_acm_certificate.{{ name }}.subject_alternative_names}'
+      validation_method:
+        value: '${aws_acm_certificate.{{ name }}.validation_method}'
+      validation_emails:
+        value: '${aws_acm_certificate.{{ name }}.validation_emails}'

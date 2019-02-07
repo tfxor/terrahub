@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_macie_s3_bucket_association:
+        {{ name }}:
+          bucket_name: '${var.{{ name }}_bucket_name}'
+          # classification_type: 
+          #   -
+          #     continuous: ''
+          #     one_time: ''
+          # prefix: ''
+          # member_account_id: ''
+    variable:
+      {{ name }}_bucket_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_macie_s3_bucket_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_macie_s3_bucket_association.{{ name }}.id}'
+      classification_type:
+        value: '${aws_macie_s3_bucket_association.{{ name }}.classification_type}'

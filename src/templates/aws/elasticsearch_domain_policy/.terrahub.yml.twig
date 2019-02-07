@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elasticsearch_domain_policy:
+        {{ name }}:
+          domain_name: '${var.{{ name }}_domain_name}'
+          access_policies: '${var.{{ name }}_access_policies}'
+    variable:
+      {{ name }}_domain_name:
+        type: 'string'
+      {{ name }}_access_policies:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elasticsearch_domain_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elasticsearch_domain_policy.{{ name }}.id}'

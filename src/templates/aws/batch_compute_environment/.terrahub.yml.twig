@@ -1,0 +1,50 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_batch_compute_environment:
+        {{ name }}:
+          compute_environment_name: '${var.{{ name }}_compute_environment_name}'
+          service_role: '${var.{{ name }}_service_role}'
+          type: '${var.{{ name }}_type}'
+          # state: ''
+          # compute_resources: 
+          #   -
+          #     security_group_ids: []
+          #     subnets: []
+          #     instance_type: []
+          #     type: ''
+          #     instance_role: ''
+          #     max_vcpus: 0
+          #     min_vcpus: 0
+          #     spot_iam_fleet_role: ''
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+          #     bid_percentage: 0
+          #     ec2_key_pair: ''
+          #     image_id: ''
+          #     desired_vcpus: 0
+    variable:
+      {{ name }}_compute_environment_name:
+        type: 'string'
+      {{ name }}_service_role:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_batch_compute_environment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_batch_compute_environment.{{ name }}.id}'
+      status:
+        value: '${aws_batch_compute_environment.{{ name }}.status}'
+      arn:
+        value: '${aws_batch_compute_environment.{{ name }}.arn}'
+      ecc_cluster_arn:
+        value: '${aws_batch_compute_environment.{{ name }}.ecc_cluster_arn}'
+      ecs_cluster_arn:
+        value: '${aws_batch_compute_environment.{{ name }}.ecs_cluster_arn}'
+      status_reason:
+        value: '${aws_batch_compute_environment.{{ name }}.status_reason}'

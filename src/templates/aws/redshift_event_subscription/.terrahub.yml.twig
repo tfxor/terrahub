@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_redshift_event_subscription:
+        {{ name }}:
+          sns_topic_arn: '${var.{{ name }}_sns_topic_arn}'
+          name: '${var.{{ name }}_name}'
+          # event_categories: []
+          # source_ids: []
+          # enabled: false
+          # severity: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # source_type: ''
+    variable:
+      {{ name }}_sns_topic_arn:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_redshift_event_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_redshift_event_subscription.{{ name }}.id}'
+      status:
+        value: '${aws_redshift_event_subscription.{{ name }}.status}'
+      customer_aws_id:
+        value: '${aws_redshift_event_subscription.{{ name }}.customer_aws_id}'

@@ -1,0 +1,68 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_instance_group_manager:
+        {{ name }}:
+          base_instance_name: '${var.{{ name }}_base_instance_name}'
+          name: '${var.{{ name }}_name}'
+          # target_pools: []
+          # target_size: 0
+          # rolling_update_policy: 
+          #   -
+          #     type: ''
+          #     minimal_action: ''
+          #     max_surge_fixed: 0
+          #     max_surge_percent: 0
+          #     max_unavailable_fixed: 0
+          #     max_unavailable_percent: 0
+          #     min_ready_sec: 0
+          # description: ''
+          # project: ''
+          # update_strategy: ''
+          # wait_for_instances: false
+          # instance_template: ''
+          # zone: ''
+          # auto_healing_policies: 
+          #   -
+          #     health_check: ''
+          #     initial_delay_sec: 0
+          # version: 
+          #   -
+          #     name: ''
+          #     instance_template: ''
+          #     target_size: 
+          #       -
+          #         percent: 0
+          #         fixed: 0
+          # named_port: 
+          #   name:''
+          #   port:0
+    variable:
+      {{ name }}_base_instance_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_instance_group_manager.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_instance_group_manager.{{ name }}.id}'
+      target_size:
+        value: '${google_compute_instance_group_manager.{{ name }}.target_size}'
+      rolling_update_policy:
+        value: '${google_compute_instance_group_manager.{{ name }}.rolling_update_policy}'
+      instance_group:
+        value: '${google_compute_instance_group_manager.{{ name }}.instance_group}'
+      project:
+        value: '${google_compute_instance_group_manager.{{ name }}.project}'
+      zone:
+        value: '${google_compute_instance_group_manager.{{ name }}.zone}'
+      fingerprint:
+        value: '${google_compute_instance_group_manager.{{ name }}.fingerprint}'
+      version:
+        value: '${google_compute_instance_group_manager.{{ name }}.version}'
+      self_link:
+        value: '${google_compute_instance_group_manager.{{ name }}.self_link}'

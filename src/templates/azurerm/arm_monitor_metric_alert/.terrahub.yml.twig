@@ -1,0 +1,45 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_metric_alert:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          scopes: '${var.{{ name }}_scopes}'
+          criteria:
+            -
+              metric_namespace: ''
+              metric_name: ''
+              aggregation: ''
+              operator: ''
+              threshold: ''
+          #     dimension: 
+          #       -
+          #         values: []
+          #         name: ''
+          #         operator: ''
+          # severity: 0
+          # action: 
+          #   action_group_id:''
+          #   webhook_properties:
+          #     '[TO_BE_REPLACED]': ''
+          # auto_mitigate: false
+          # enabled: false
+          # frequency: ''
+          # window_size: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_scopes:
+        type: 'set'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_metric_alert.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_metric_alert.{{ name }}.id}'

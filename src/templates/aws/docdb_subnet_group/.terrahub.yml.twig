@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_docdb_subnet_group:
+        {{ name }}:
+          subnet_ids: '${var.{{ name }}_subnet_ids}'
+          # name_prefix: ''
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+    variable:
+      {{ name }}_subnet_ids:
+        type: 'set'
+    output:
+      id:
+        value: '${aws_docdb_subnet_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_docdb_subnet_group.{{ name }}.id}'
+      name_prefix:
+        value: '${aws_docdb_subnet_group.{{ name }}.name_prefix}'
+      arn:
+        value: '${aws_docdb_subnet_group.{{ name }}.arn}'
+      name:
+        value: '${aws_docdb_subnet_group.{{ name }}.name}'

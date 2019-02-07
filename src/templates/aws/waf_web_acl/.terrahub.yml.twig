@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_waf_web_acl:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          default_action:
+            type:''
+          metric_name: '${var.{{ name }}_metric_name}'
+          priority: '${var.{{ name }}_priority}'
+          rule_id: '${var.{{ name }}_rule_id}'
+          # rules: 
+          #   action:
+          #     -
+          #       type: ''
+          # override_action: 
+          #   -
+          #     type: ''
+          # type: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_metric_name:
+        type: 'string'
+      {{ name }}_priority:
+        type: 'int'
+      {{ name }}_rule_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_waf_web_acl.{{ name }}.id}'
+      thub_id:
+        value: '${aws_waf_web_acl.{{ name }}.id}'

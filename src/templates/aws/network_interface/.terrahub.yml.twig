@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_network_interface:
+        {{ name }}:
+          subnet_id: '${var.{{ name }}_subnet_id}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # private_ip: ''
+          # private_ips_count: 0
+          # source_dest_check: false
+          # attachment: 
+          #   device_index:0
+          #   instance:''
+          # private_ips: []
+          # security_groups: []
+          # description: ''
+    variable:
+      {{ name }}_subnet_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_network_interface.{{ name }}.id}'
+      thub_id:
+        value: '${aws_network_interface.{{ name }}.id}'
+      private_ip:
+        value: '${aws_network_interface.{{ name }}.private_ip}'
+      private_ips_count:
+        value: '${aws_network_interface.{{ name }}.private_ips_count}'
+      attachment:
+        value: '${aws_network_interface.{{ name }}.attachment}'
+      private_dns_name:
+        value: '${aws_network_interface.{{ name }}.private_dns_name}'
+      private_ips:
+        value: '${aws_network_interface.{{ name }}.private_ips}'
+      security_groups:
+        value: '${aws_network_interface.{{ name }}.security_groups}'

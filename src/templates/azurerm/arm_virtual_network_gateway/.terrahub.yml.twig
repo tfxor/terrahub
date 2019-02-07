@@ -1,0 +1,56 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_network_gateway:
+        {{ name }}:
+          type: '${var.{{ name }}_type}'
+          sku: '${var.{{ name }}_sku}'
+          name: '${var.{{ name }}_name}'
+          ip_configuration:
+            -
+              subnet_id: ''
+          #     name: ''
+          #     private_ip_address_allocation: ''
+          #     public_ip_address_id: ''
+          # active_active: false
+          # vpn_client_protocols: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enable_bgp: false
+          # radius_server_address: ''
+          # default_local_network_gateway_id: ''
+          # radius_server_secret: ''
+          # bgp_settings: 
+          #   -
+          #     peering_address: ''
+          #     peer_weight: 0
+          #     asn: 0
+          # vpn_type: ''
+          # vpn_client_configuration: 
+          #   -
+          #     address_space: []
+          #     root_certificate: 
+          #     name:''
+          #     public_cert_data:''
+    variable:
+      {{ name }}_type:
+        type: 'string'
+      {{ name }}_sku:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_network_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_network_gateway.{{ name }}.id}'
+      active_active:
+        value: '${azurerm_arm_virtual_network_gateway.{{ name }}.active_active}'
+      enable_bgp:
+        value: '${azurerm_arm_virtual_network_gateway.{{ name }}.enable_bgp}'
+      bgp_settings:
+        value: '${azurerm_arm_virtual_network_gateway.{{ name }}.bgp_settings}'

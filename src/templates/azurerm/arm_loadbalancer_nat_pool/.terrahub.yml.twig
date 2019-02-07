@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_loadbalancer_nat_pool:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          frontend_port_end: '${var.{{ name }}_frontend_port_end}'
+          backend_port: '${var.{{ name }}_backend_port}'
+          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
+          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
+          protocol: '${var.{{ name }}_protocol}'
+          frontend_port_start: '${var.{{ name }}_frontend_port_start}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_frontend_port_end:
+        type: 'int'
+      {{ name }}_backend_port:
+        type: 'int'
+      {{ name }}_frontend_ip_configuration_name:
+        type: 'string'
+      {{ name }}_loadbalancer_id:
+        type: 'string'
+      {{ name }}_protocol:
+        type: 'string'
+      {{ name }}_frontend_port_start:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_loadbalancer_nat_pool.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_loadbalancer_nat_pool.{{ name }}.id}'
+      frontend_ip_configuration_id:
+        value: '${azurerm_arm_loadbalancer_nat_pool.{{ name }}.frontend_ip_configuration_id}'

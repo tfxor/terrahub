@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cognito_user_pool_client:
+        {{ name }}:
+          user_pool_id: '${var.{{ name }}_user_pool_id}'
+          name: '${var.{{ name }}_name}'
+          # explicit_auth_flows: []
+          # refresh_token_validity: 0
+          # default_redirect_uri: ''
+          # write_attributes: []
+          # allowed_oauth_flows: []
+          # allowed_oauth_flows_user_pool_client: false
+          # supported_identity_providers: []
+          # generate_secret: false
+          # read_attributes: []
+          # allowed_oauth_scopes: []
+          # callback_urls: []
+          # logout_urls: []
+    variable:
+      {{ name }}_user_pool_id:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cognito_user_pool_client.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cognito_user_pool_client.{{ name }}.id}'
+      client_secret:
+        value: '${aws_cognito_user_pool_client.{{ name }}.client_secret}'

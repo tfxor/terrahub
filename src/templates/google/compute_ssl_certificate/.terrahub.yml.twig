@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_ssl_certificate:
+        {{ name }}:
+          certificate: '${var.{{ name }}_certificate}'
+          private_key: '${var.{{ name }}_private_key}'
+          # name_prefix: ''
+          # description: ''
+          # name: ''
+          # project: ''
+    variable:
+      {{ name }}_certificate:
+        type: 'string'
+      {{ name }}_private_key:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_ssl_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_ssl_certificate.{{ name }}.id}'
+      name_prefix:
+        value: '${google_compute_ssl_certificate.{{ name }}.name_prefix}'
+      self_link:
+        value: '${google_compute_ssl_certificate.{{ name }}.self_link}'
+      name:
+        value: '${google_compute_ssl_certificate.{{ name }}.name}'
+      creation_timestamp:
+        value: '${google_compute_ssl_certificate.{{ name }}.creation_timestamp}'
+      certificate_id:
+        value: '${google_compute_ssl_certificate.{{ name }}.certificate_id}'
+      project:
+        value: '${google_compute_ssl_certificate.{{ name }}.project}'

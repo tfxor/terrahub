@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_efs_mount_target:
+        {{ name }}:
+          file_system_id: '${var.{{ name }}_file_system_id}'
+          subnet_id: '${var.{{ name }}_subnet_id}'
+          # ip_address: ''
+          # security_groups: []
+    variable:
+      {{ name }}_file_system_id:
+        type: 'string'
+      {{ name }}_subnet_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_efs_mount_target.{{ name }}.id}'
+      thub_id:
+        value: '${aws_efs_mount_target.{{ name }}.id}'
+      ip_address:
+        value: '${aws_efs_mount_target.{{ name }}.ip_address}'
+      security_groups:
+        value: '${aws_efs_mount_target.{{ name }}.security_groups}'
+      network_interface_id:
+        value: '${aws_efs_mount_target.{{ name }}.network_interface_id}'
+      dns_name:
+        value: '${aws_efs_mount_target.{{ name }}.dns_name}'
+      file_system_arn:
+        value: '${aws_efs_mount_target.{{ name }}.file_system_arn}'

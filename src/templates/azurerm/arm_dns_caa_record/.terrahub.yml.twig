@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_dns_caa_record:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          zone_name: '${var.{{ name }}_zone_name}'
+          record:
+            flags:0
+            tag:''
+            value:''
+          ttl: '${var.{{ name }}_ttl}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_zone_name:
+        type: 'string'
+      {{ name }}_ttl:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_dns_caa_record.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_dns_caa_record.{{ name }}.id}'

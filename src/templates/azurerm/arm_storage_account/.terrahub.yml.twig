@@ -1,0 +1,83 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_storage_account:
+        {{ name }}:
+          account_replication_type: '${var.{{ name }}_account_replication_type}'
+          name: '${var.{{ name }}_name}'
+          account_tier: '${var.{{ name }}_account_tier}'
+          # account_type: ''
+          # custom_domain: 
+          #   -
+          #     name: ''
+          #     use_subdomain: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # account_kind: ''
+          # enable_file_encryption: false
+          # enable_blob_encryption: false
+          # identity: 
+          #   -
+          #     type: ''
+          # access_tier: ''
+          # account_encryption_source: ''
+          # enable_https_traffic_only: false
+          # network_rules: 
+          #   -
+          #     bypass: 
+          #     ip_rules: 
+          #     virtual_network_subnet_ids: 
+    variable:
+      {{ name }}_account_replication_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_account_tier:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_storage_account.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_storage_account.{{ name }}.id}'
+      account_type:
+        value: '${azurerm_arm_storage_account.{{ name }}.account_type}'
+      primary_blob_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_endpoint}'
+      primary_file_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_file_endpoint}'
+      tags:
+        value: '${azurerm_arm_storage_account.{{ name }}.tags}'
+      primary_access_key:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_access_key}'
+      secondary_access_key:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_access_key}'
+      primary_blob_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_connection_string}'
+      secondary_table_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_table_endpoint}'
+      secondary_blob_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_endpoint}'
+      secondary_blob_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_connection_string}'
+      identity:
+        value: '${azurerm_arm_storage_account.{{ name }}.identity}'
+      primary_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_connection_string}'
+      access_tier:
+        value: '${azurerm_arm_storage_account.{{ name }}.access_tier}'
+      primary_queue_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_queue_endpoint}'
+      secondary_queue_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_queue_endpoint}'
+      secondary_connection_string:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_connection_string}'
+      primary_table_endpoint:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_table_endpoint}'
+      primary_location:
+        value: '${azurerm_arm_storage_account.{{ name }}.primary_location}'
+      secondary_location:
+        value: '${azurerm_arm_storage_account.{{ name }}.secondary_location}'

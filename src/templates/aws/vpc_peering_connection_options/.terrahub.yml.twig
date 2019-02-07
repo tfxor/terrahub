@@ -1,0 +1,17 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpc_peering_connection_options:
+        {{ name }}:
+          vpc_peering_connection_id: '${var.{{ name }}_vpc_peering_connection_id}'
+    variable:
+      {{ name }}_vpc_peering_connection_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpc_peering_connection_options.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpc_peering_connection_options.{{ name }}.id}'

@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glue_job:
+        {{ name }}:
+          command:
+            -
+              script_location: ''
+          #     name: ''
+          name: '${var.{{ name }}_name}'
+          role_arn: '${var.{{ name }}_role_arn}'
+          # allocated_capacity: 0
+          # connections: []
+          # default_arguments: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # max_retries: 0
+          # timeout: 0
+          # execution_property: 
+          #   -
+          #     max_concurrent_runs: 0
+          # security_configuration: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glue_job.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glue_job.{{ name }}.id}'
+      execution_property:
+        value: '${aws_glue_job.{{ name }}.execution_property}'

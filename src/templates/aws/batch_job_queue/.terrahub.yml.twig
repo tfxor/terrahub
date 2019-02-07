@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_batch_job_queue:
+        {{ name }}:
+          compute_environments: '${var.{{ name }}_compute_environments}'
+          name: '${var.{{ name }}_name}'
+          priority: '${var.{{ name }}_priority}'
+          state: '${var.{{ name }}_state}'
+    variable:
+      {{ name }}_compute_environments:
+        type: 'list'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_priority:
+        type: 'int'
+      {{ name }}_state:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_batch_job_queue.{{ name }}.id}'
+      thub_id:
+        value: '${aws_batch_job_queue.{{ name }}.id}'
+      arn:
+        value: '${aws_batch_job_queue.{{ name }}.arn}'

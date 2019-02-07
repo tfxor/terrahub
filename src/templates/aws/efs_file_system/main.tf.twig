@@ -1,7 +1,0 @@
-resource "aws_efs_file_system" "{{ name }}" {
-  creation_token   = "${var.efs_file_system_creation_token}"
-  performance_mode = "${var.efs_file_system_performance_mode}"
-  encrypted        = "${var.efs_file_system_encrypted}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

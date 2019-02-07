@@ -1,0 +1,54 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elastic_transcoder_pipeline:
+        {{ name }}:
+          input_bucket: '${var.{{ name }}_input_bucket}'
+          role: '${var.{{ name }}_role}'
+          # name: ''
+          # notifications: 
+          #   progressing:''
+          #   warning:''
+          #   completed:''
+          #   error:''
+          # aws_kms_key_arn: ''
+          # content_config: 
+          #   bucket:''
+          #   storage_class:''
+          # content_config_permissions: 
+          #   grantee_type:''
+          #   access:
+          #     -
+          #   grantee:''
+          # output_bucket: ''
+          # thumbnail_config: 
+          #   bucket:''
+          #   storage_class:''
+          # thumbnail_config_permissions: 
+          #   access:
+          #     -
+          #   grantee:''
+          #   grantee_type:''
+    variable:
+      {{ name }}_input_bucket:
+        type: 'string'
+      {{ name }}_role:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.id}'
+      arn:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.arn}'
+      name:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.name}'
+      content_config:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.content_config}'
+      output_bucket:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.output_bucket}'
+      thumbnail_config:
+        value: '${aws_elastic_transcoder_pipeline.{{ name }}.thumbnail_config}'

@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_inspector_assessment_target:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # resource_group_arn: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_inspector_assessment_target.{{ name }}.id}'
+      thub_id:
+        value: '${aws_inspector_assessment_target.{{ name }}.id}'
+      arn:
+        value: '${aws_inspector_assessment_target.{{ name }}.arn}'

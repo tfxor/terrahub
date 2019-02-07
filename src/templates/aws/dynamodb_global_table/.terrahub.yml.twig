@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dynamodb_global_table:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          replica:
+            region_name:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dynamodb_global_table.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dynamodb_global_table.{{ name }}.id}'
+      arn:
+        value: '${aws_dynamodb_global_table.{{ name }}.arn}'

@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_usage_export_bucket:
+        {{ name }}:
+          bucket_name: '${var.{{ name }}_bucket_name}'
+          # prefix: ''
+          # project: ''
+    variable:
+      {{ name }}_bucket_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_usage_export_bucket.{{ name }}.id}'
+      thub_id:
+        value: '${google_usage_export_bucket.{{ name }}.id}'
+      project:
+        value: '${google_usage_export_bucket.{{ name }}.project}'

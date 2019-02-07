@@ -1,0 +1,65 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_monitoring_alert_policy:
+        {{ name }}:
+          display_name: '${var.{{ name }}_display_name}'
+          conditions:
+            -
+              display_name: ''
+          #     condition_absent: 
+          #       -
+          #         duration: ''
+          #         aggregations: 
+          #           -
+          #             group_by_fields: 
+          #               -
+          #             per_series_aligner: ''
+          #             alignment_period: ''
+          #             cross_series_reducer: ''
+          combiner: '${var.{{ name }}_combiner}'
+          # documentation: 
+          #   -
+          #     content: ''
+          #     mime_type: ''
+          # condition_threshold: 
+          #   -
+          #     comparison: ''
+          #     duration: ''
+          #     aggregations: 
+          #       -
+          #         alignment_period: ''
+          #         cross_series_reducer: ''
+          #         group_by_fields: 
+          #           -
+          #         per_series_aligner: ''
+          # threshold_value: ''
+          # trigger: 
+          #   -
+          #     count: 0
+          #     percent: ''
+          # notification_channels: []
+          # labels: []
+          # project: ''
+          # denominator_filter: ''
+          # filter: ''
+          # enabled: false
+    variable:
+      {{ name }}_display_name:
+        type: 'string'
+      {{ name }}_combiner:
+        type: 'string'
+    output:
+      id:
+        value: '${google_monitoring_alert_policy.{{ name }}.id}'
+      thub_id:
+        value: '${google_monitoring_alert_policy.{{ name }}.id}'
+      creation_record:
+        value: '${google_monitoring_alert_policy.{{ name }}.creation_record}'
+      name:
+        value: '${google_monitoring_alert_policy.{{ name }}.name}'
+      project:
+        value: '${google_monitoring_alert_policy.{{ name }}.project}'

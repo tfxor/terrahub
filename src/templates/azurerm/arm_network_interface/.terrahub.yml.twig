@@ -1,0 +1,58 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_network_interface:
+        {{ name }}:
+          ip_configuration:
+            -
+              name: ''
+              private_ip_address_allocation: ''
+          #     private_ip_address_version: ''
+          #     application_gateway_backend_address_pools_ids: []
+          #     application_security_group_ids: []
+          #     subnet_id: ''
+          #     private_ip_address: ''
+          #     public_ip_address_id: ''
+          #     load_balancer_backend_address_pools_ids: []
+          #     load_balancer_inbound_nat_rules_ids: []
+          #     primary: false
+          name: '${var.{{ name }}_name}'
+          # mac_address: ''
+          # internal_fqdn: ''
+          # enable_ip_forwarding: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # dns_servers: []
+          # applied_dns_servers: []
+          # virtual_machine_id: ''
+          # internal_dns_name_label: ''
+          # enable_accelerated_networking: false
+          # network_security_group_id: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_network_interface.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_network_interface.{{ name }}.id}'
+      mac_address:
+        value: '${azurerm_arm_network_interface.{{ name }}.mac_address}'
+      internal_fqdn:
+        value: '${azurerm_arm_network_interface.{{ name }}.internal_fqdn}'
+      dns_servers:
+        value: '${azurerm_arm_network_interface.{{ name }}.dns_servers}'
+      applied_dns_servers:
+        value: '${azurerm_arm_network_interface.{{ name }}.applied_dns_servers}'
+      private_ip_addresses:
+        value: '${azurerm_arm_network_interface.{{ name }}.private_ip_addresses}'
+      virtual_machine_id:
+        value: '${azurerm_arm_network_interface.{{ name }}.virtual_machine_id}'
+      internal_dns_name_label:
+        value: '${azurerm_arm_network_interface.{{ name }}.internal_dns_name_label}'
+      private_ip_address:
+        value: '${azurerm_arm_network_interface.{{ name }}.private_ip_address}'

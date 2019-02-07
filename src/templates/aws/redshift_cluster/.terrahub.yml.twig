@@ -1,0 +1,100 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_redshift_cluster:
+        {{ name }}:
+          node_type: '${var.{{ name }}_node_type}'
+          cluster_identifier: '${var.{{ name }}_cluster_identifier}'
+          # master_password: ''
+          # cluster_security_groups: []
+          # endpoint: ''
+          # cluster_public_key: ''
+          # bucket_name: ''
+          # owner_account: ''
+          # cluster_type: ''
+          # vpc_security_group_ids: []
+          # enable_logging: false
+          # encrypted: false
+          # final_snapshot_identifier: ''
+          # snapshot_copy: 
+          #   -
+          #     destination_region: ''
+          #     retention_period: 0
+          #     grant_name: ''
+          # logging: 
+          #   -
+          #     enable: false
+          #     bucket_name: ''
+          #     s3_key_prefix: ''
+          # port: 0
+          # allow_version_upgrade: false
+          # cluster_revision_number: ''
+          # automated_snapshot_retention_period: 0
+          # enhanced_vpc_routing: false
+          # snapshot_cluster_identifier: ''
+          # database_name: ''
+          # master_username: ''
+          # availability_zone: ''
+          # cluster_version: ''
+          # elastic_ip: ''
+          # s3_key_prefix: ''
+          # preferred_maintenance_window: ''
+          # cluster_parameter_group_name: ''
+          # number_of_nodes: 0
+          # kms_key_id: ''
+          # iam_roles: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # cluster_subnet_group_name: ''
+          # publicly_accessible: false
+          # skip_final_snapshot: false
+          # snapshot_identifier: ''
+    variable:
+      {{ name }}_node_type:
+        type: 'string'
+      {{ name }}_cluster_identifier:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_redshift_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_redshift_cluster.{{ name }}.id}'
+      cluster_security_groups:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_security_groups}'
+      endpoint:
+        value: '${aws_redshift_cluster.{{ name }}.endpoint}'
+      cluster_public_key:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_public_key}'
+      bucket_name:
+        value: '${aws_redshift_cluster.{{ name }}.bucket_name}'
+      cluster_type:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_type}'
+      vpc_security_group_ids:
+        value: '${aws_redshift_cluster.{{ name }}.vpc_security_group_ids}'
+      enable_logging:
+        value: '${aws_redshift_cluster.{{ name }}.enable_logging}'
+      dns_name:
+        value: '${aws_redshift_cluster.{{ name }}.dns_name}'
+      cluster_revision_number:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_revision_number}'
+      enhanced_vpc_routing:
+        value: '${aws_redshift_cluster.{{ name }}.enhanced_vpc_routing}'
+      database_name:
+        value: '${aws_redshift_cluster.{{ name }}.database_name}'
+      availability_zone:
+        value: '${aws_redshift_cluster.{{ name }}.availability_zone}'
+      s3_key_prefix:
+        value: '${aws_redshift_cluster.{{ name }}.s3_key_prefix}'
+      preferred_maintenance_window:
+        value: '${aws_redshift_cluster.{{ name }}.preferred_maintenance_window}'
+      cluster_parameter_group_name:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_parameter_group_name}'
+      kms_key_id:
+        value: '${aws_redshift_cluster.{{ name }}.kms_key_id}'
+      iam_roles:
+        value: '${aws_redshift_cluster.{{ name }}.iam_roles}'
+      cluster_subnet_group_name:
+        value: '${aws_redshift_cluster.{{ name }}.cluster_subnet_group_name}'

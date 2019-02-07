@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_gamelift_alias:
+        {{ name }}:
+          routing_strategy:
+            -
+              type: ''
+          #     fleet_id: ''
+          #     message: ''
+          name: '${var.{{ name }}_name}'
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_gamelift_alias.{{ name }}.id}'
+      thub_id:
+        value: '${aws_gamelift_alias.{{ name }}.id}'
+      arn:
+        value: '${aws_gamelift_alias.{{ name }}.arn}'

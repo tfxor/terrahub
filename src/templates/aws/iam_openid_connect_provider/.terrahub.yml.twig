@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_openid_connect_provider:
+        {{ name }}:
+          url: '${var.{{ name }}_url}'
+          client_id_list: '${var.{{ name }}_client_id_list}'
+          thumbprint_list: '${var.{{ name }}_thumbprint_list}'
+    variable:
+      {{ name }}_url:
+        type: 'string'
+      {{ name }}_client_id_list:
+        type: 'list'
+      {{ name }}_thumbprint_list:
+        type: 'list'
+    output:
+      id:
+        value: '${aws_iam_openid_connect_provider.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_openid_connect_provider.{{ name }}.id}'
+      url:
+        value: '${aws_iam_openid_connect_provider.{{ name }}.url}'
+      arn:
+        value: '${aws_iam_openid_connect_provider.{{ name }}.arn}'

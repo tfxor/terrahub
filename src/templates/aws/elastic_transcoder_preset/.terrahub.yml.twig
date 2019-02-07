@@ -1,0 +1,72 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elastic_transcoder_preset:
+        {{ name }}:
+          container: '${var.{{ name }}_container}'
+          # video_watermarks: 
+          #   id:''
+          #   max_height:''
+          #   opacity:''
+          #   vertical_align:''
+          #   horizontal_align:''
+          #   horizontal_offset:''
+          #   target:''
+          #   vertical_offset:''
+          #   max_width:''
+          #   sizing_policy:''
+          # audio: 
+          #   audio_packing_mode:''
+          #   bit_rate:''
+          #   channels:''
+          #   codec:''
+          #   sample_rate:''
+          # audio_codec_options: 
+          #   bit_order:''
+          #   profile:''
+          #   signed:''
+          #   bit_depth:''
+          # type: ''
+          # video: 
+          #   aspect_ratio:''
+          #   codec:''
+          #   fixed_gop:''
+          #   max_frame_rate:''
+          #   max_height:''
+          #   max_width:''
+          #   resolution:''
+          #   bit_rate:''
+          #   display_aspect_ratio:''
+          #   frame_rate:''
+          #   keyframes_max_dist:''
+          #   padding_policy:''
+          # description: ''
+          # name: ''
+          # thumbnails: 
+          #   interval:''
+          #   max_height:''
+          #   max_width:''
+          #   padding_policy:''
+          #   resolution:''
+          #   sizing_policy:''
+          #   aspect_ratio:''
+          #   format:''
+          # video_codec_options: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_container:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
+      type:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.type}'
+      arn:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.arn}'
+      name:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.name}'

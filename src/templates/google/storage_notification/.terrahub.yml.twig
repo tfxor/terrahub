@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_storage_notification:
+        {{ name }}:
+          bucket: '${var.{{ name }}_bucket}'
+          payload_format: '${var.{{ name }}_payload_format}'
+          topic: '${var.{{ name }}_topic}'
+          # event_types: []
+          # object_name_prefix: ''
+          # custom_attributes: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_bucket:
+        type: 'string'
+      {{ name }}_payload_format:
+        type: 'string'
+      {{ name }}_topic:
+        type: 'string'
+    output:
+      id:
+        value: '${google_storage_notification.{{ name }}.id}'
+      thub_id:
+        value: '${google_storage_notification.{{ name }}.id}'
+      self_link:
+        value: '${google_storage_notification.{{ name }}.self_link}'

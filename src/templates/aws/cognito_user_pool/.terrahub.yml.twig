@@ -1,0 +1,103 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cognito_user_pool:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # username_attributes: []
+          # lambda_config: 
+          #   -
+          #     pre_sign_up: ''
+          #     verify_auth_challenge_response: ''
+          #     create_auth_challenge: ''
+          #     pre_authentication: ''
+          #     post_authentication: ''
+          #     post_confirmation: ''
+          #     pre_token_generation: ''
+          #     user_migration: ''
+          #     custom_message: ''
+          #     define_auth_challenge: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # device_configuration: 
+          #   -
+          #     device_only_remembered_on_user_prompt: false
+          #     challenge_required_on_new_device: false
+          # mfa_configuration: ''
+          # schema: 
+          #   attribute_data_type:''
+          #   name:''
+          #   number_attribute_constraints:
+          #     -
+          #       min_value: ''
+          #       max_value: ''
+          #   developer_only_attribute:false
+          #   mutable:false
+          # sms_authentication_message: ''
+          # email_configuration: 
+          #   -
+          #     source_arn: ''
+          #     reply_to_email_address: ''
+          # email_verification_subject: ''
+          # sms_configuration: 
+          #   -
+          #     sns_caller_arn: ''
+          #     external_id: ''
+          # verification_message_template: 
+          #   -
+          #     default_email_option: ''
+          #     email_message: ''
+          #     email_message_by_link: ''
+          #     email_subject: ''
+          #     email_subject_by_link: ''
+          #     sms_message: ''
+          # auto_verified_attributes: []
+          # email_verification_message: ''
+          # password_policy: 
+          #   -
+          #     minimum_length: 0
+          #     require_lowercase: false
+          #     require_numbers: false
+          #     require_symbols: false
+          #     require_uppercase: false
+          # sms_verification_message: ''
+          # admin_create_user_config: 
+          #   -
+          #     allow_admin_create_user_only: false
+          #     invite_message_template: 
+          #       -
+          #         email_message: ''
+          #         email_subject: ''
+          #         sms_message: ''
+          # alias_attributes: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cognito_user_pool.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cognito_user_pool.{{ name }}.id}'
+      lambda_config:
+        value: '${aws_cognito_user_pool.{{ name }}.lambda_config}'
+      endpoint:
+        value: '${aws_cognito_user_pool.{{ name }}.endpoint}'
+      last_modified_date:
+        value: '${aws_cognito_user_pool.{{ name }}.last_modified_date}'
+      email_verification_subject:
+        value: '${aws_cognito_user_pool.{{ name }}.email_verification_subject}'
+      verification_message_template:
+        value: '${aws_cognito_user_pool.{{ name }}.verification_message_template}'
+      arn:
+        value: '${aws_cognito_user_pool.{{ name }}.arn}'
+      creation_date:
+        value: '${aws_cognito_user_pool.{{ name }}.creation_date}'
+      email_verification_message:
+        value: '${aws_cognito_user_pool.{{ name }}.email_verification_message}'
+      password_policy:
+        value: '${aws_cognito_user_pool.{{ name }}.password_policy}'
+      admin_create_user_config:
+        value: '${aws_cognito_user_pool.{{ name }}.admin_create_user_config}'

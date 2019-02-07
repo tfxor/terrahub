@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codedeploy_app:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # compute_platform: ''
+          # unique_id: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codedeploy_app.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codedeploy_app.{{ name }}.id}'
+      unique_id:
+        value: '${aws_codedeploy_app.{{ name }}.unique_id}'

@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_gcm_channel:
+        {{ name }}:
+          application_id: '${var.{{ name }}_application_id}'
+          api_key: '${var.{{ name }}_api_key}'
+          # enabled: false
+    variable:
+      {{ name }}_application_id:
+        type: 'string'
+      {{ name }}_api_key:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_gcm_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_gcm_channel.{{ name }}.id}'

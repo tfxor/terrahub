@@ -1,7 +1,0 @@
-resource "aws_load_balancer_policy" "{{ name }}" {
-  load_balancer_name = "${var.lb_policy_lb_name}"
-  policy_name        = "${var.lb_policy_name}"
-  policy_type_name   = "${var.lb_policy_type_name}"
-
-  policy_attribute = "${var.lb_policy_attribute}"
-}

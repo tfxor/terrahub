@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ssm_maintenance_window:
+        {{ name }}:
+          cutoff: '${var.{{ name }}_cutoff}'
+          name: '${var.{{ name }}_name}'
+          schedule: '${var.{{ name }}_schedule}'
+          duration: '${var.{{ name }}_duration}'
+          # enabled: false
+          # end_date: ''
+          # start_date: ''
+          # schedule_timezone: ''
+          # allow_unassociated_targets: false
+    variable:
+      {{ name }}_cutoff:
+        type: 'int'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_schedule:
+        type: 'string'
+      {{ name }}_duration:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_ssm_maintenance_window.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ssm_maintenance_window.{{ name }}.id}'

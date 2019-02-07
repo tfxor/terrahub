@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_log_analytics_workspace:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          sku: '${var.{{ name }}_sku}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # retention_in_days: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_sku:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.id}'
+      workspace_id:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.workspace_id}'
+      secondary_shared_key:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.secondary_shared_key}'
+      retention_in_days:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.retention_in_days}'
+      portal_url:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.portal_url}'
+      primary_shared_key:
+        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.primary_shared_key}'

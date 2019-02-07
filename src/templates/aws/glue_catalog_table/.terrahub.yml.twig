@@ -1,0 +1,69 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glue_catalog_table:
+        {{ name }}:
+          database_name: '${var.{{ name }}_database_name}'
+          name: '${var.{{ name }}_name}'
+          # owner: ''
+          # partition_keys: 
+          #   -
+          #     name: ''
+          #     comment: ''
+          #     type: ''
+          # retention: 0
+          # number_of_buckets: 0
+          # sort_columns: 
+          #   -
+          #     column: ''
+          #     sort_order: 0
+          # view_expanded_text: ''
+          # catalog_id: ''
+          # description: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # storage_descriptor: 
+          #   -
+          #     bucket_columns: 
+          #       -
+          #     columns: 
+          #       -
+          #         name: ''
+          #         comment: ''
+          #         type: ''
+          # input_format: ''
+          # output_format: ''
+          # ser_de_info: 
+          #   -
+          #     name: ''
+          #     parameters: 
+          #       '[TO_BE_REPLACED]': ''
+          #     serialization_library: ''
+          # view_original_text: ''
+          # compressed: false
+          # location: ''
+          # skewed_info: 
+          #   -
+          #     skewed_column_names: 
+          #       -
+          #     skewed_column_values: 
+          #       -
+          #     skewed_column_value_location_maps: 
+          #       '[TO_BE_REPLACED]': ''
+          # stored_as_sub_directories: false
+          # table_type: ''
+    variable:
+      {{ name }}_database_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glue_catalog_table.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glue_catalog_table.{{ name }}.id}'
+      catalog_id:
+        value: '${aws_glue_catalog_table.{{ name }}.catalog_id}'

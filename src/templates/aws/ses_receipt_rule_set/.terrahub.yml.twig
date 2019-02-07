@@ -1,0 +1,17 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_receipt_rule_set:
+        {{ name }}:
+          rule_set_name: '${var.{{ name }}_rule_set_name}'
+    variable:
+      {{ name }}_rule_set_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ses_receipt_rule_set.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_receipt_rule_set.{{ name }}.id}'

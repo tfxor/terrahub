@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_express_route_circuit_authorization:
+        {{ name }}:
+          express_route_circuit_name: '${var.{{ name }}_express_route_circuit_name}'
+          name: '${var.{{ name }}_name}'
+    variable:
+      {{ name }}_express_route_circuit_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_express_route_circuit_authorization.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_express_route_circuit_authorization.{{ name }}.id}'
+      authorization_key:
+        value: '${azurerm_arm_express_route_circuit_authorization.{{ name }}.authorization_key}'
+      authorization_use_status:
+        value: '${azurerm_arm_express_route_circuit_authorization.{{ name }}.authorization_use_status}'

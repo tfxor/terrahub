@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpn_gateway_route_propagation:
+        {{ name }}:
+          vpn_gateway_id: '${var.{{ name }}_vpn_gateway_id}'
+          route_table_id: '${var.{{ name }}_route_table_id}'
+    variable:
+      {{ name }}_vpn_gateway_id:
+        type: 'string'
+      {{ name }}_route_table_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpn_gateway_route_propagation.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpn_gateway_route_propagation.{{ name }}.id}'

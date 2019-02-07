@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_user_ssh_key:
+        {{ name }}:
+          username: '${var.{{ name }}_username}'
+          public_key: '${var.{{ name }}_public_key}'
+          encoding: '${var.{{ name }}_encoding}'
+          # status: ''
+    variable:
+      {{ name }}_username:
+        type: 'string'
+      {{ name }}_public_key:
+        type: 'string'
+      {{ name }}_encoding:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_user_ssh_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_user_ssh_key.{{ name }}.id}'
+      fingerprint:
+        value: '${aws_iam_user_ssh_key.{{ name }}.fingerprint}'
+      status:
+        value: '${aws_iam_user_ssh_key.{{ name }}.status}'
+      ssh_public_key_id:
+        value: '${aws_iam_user_ssh_key.{{ name }}.ssh_public_key_id}'

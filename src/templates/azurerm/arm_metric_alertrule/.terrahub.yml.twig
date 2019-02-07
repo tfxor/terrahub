@@ -1,0 +1,58 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_metric_alertrule:
+        {{ name }}:
+          resource_id: '${var.{{ name }}_resource_id}'
+          operator: '${var.{{ name }}_operator}'
+          aggregation: '${var.{{ name }}_aggregation}'
+          name: '${var.{{ name }}_name}'
+          period: '${var.{{ name }}_period}'
+          metric_name: '${var.{{ name }}_metric_name}'
+          threshold: '${var.{{ name }}_threshold}'
+          # email_action: 
+          #   -
+          #     send_to_service_owners: false
+          #     custom_emails: 
+          #       -
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # enabled: false
+          # webhook_action: 
+          #   -
+          #     service_uri: ''
+          #     properties: 
+          #       '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_resource_id:
+        type: 'string'
+      {{ name }}_operator:
+        type: 'string'
+      {{ name }}_aggregation:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_period:
+        type: 'string'
+      {{ name }}_metric_name:
+        type: 'string'
+      {{ name }}_threshold:
+        type: 'float'
+    output:
+      id:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.id}'
+      email_action:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.email_action}'
+      tags:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.tags}'
+      description:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.description}'
+      webhook_action:
+        value: '${azurerm_arm_metric_alertrule.{{ name }}.webhook_action}'

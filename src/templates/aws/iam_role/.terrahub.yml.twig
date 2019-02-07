@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_role:
+        {{ name }}:
+          assume_role_policy: '${var.{{ name }}_assume_role_policy}'
+          # max_session_duration: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # force_detach_policies: false
+          # name: ''
+          # name_prefix: ''
+          # path: ''
+          # permissions_boundary: ''
+    variable:
+      {{ name }}_assume_role_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_role.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_role.{{ name }}.id}'
+      arn:
+        value: '${aws_iam_role.{{ name }}.arn}'
+      unique_id:
+        value: '${aws_iam_role.{{ name }}.unique_id}'
+      name:
+        value: '${aws_iam_role.{{ name }}.name}'
+      create_date:
+        value: '${aws_iam_role.{{ name }}.create_date}'

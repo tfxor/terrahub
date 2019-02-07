@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudwatch_event_permission:
+        {{ name }}:
+          principal: '${var.{{ name }}_principal}'
+          statement_id: '${var.{{ name }}_statement_id}'
+          # action: ''
+          # condition: 
+          #   -
+          #     key: ''
+          #     type: ''
+          #     value: ''
+    variable:
+      {{ name }}_principal:
+        type: 'string'
+      {{ name }}_statement_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudwatch_event_permission.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudwatch_event_permission.{{ name }}.id}'

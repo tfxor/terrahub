@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_emr_instance_group:
+        {{ name }}:
+          cluster_id: '${var.{{ name }}_cluster_id}'
+          instance_type: '${var.{{ name }}_instance_type}'
+          # instance_count: 0
+          # name: ''
+          # ebs_optimized: false
+          # ebs_config: 
+          #   size:0
+          #   type:''
+          #   iops:0
+          #   volumes_per_instance:0
+    variable:
+      {{ name }}_cluster_id:
+        type: 'string'
+      {{ name }}_instance_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_emr_instance_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_emr_instance_group.{{ name }}.id}'
+      running_instance_count:
+        value: '${aws_emr_instance_group.{{ name }}.running_instance_count}'
+      status:
+        value: '${aws_emr_instance_group.{{ name }}.status}'

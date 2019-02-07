@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_backup_vault:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # kms_key_arn: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_backup_vault.{{ name }}.id}'
+      thub_id:
+        value: '${aws_backup_vault.{{ name }}.id}'
+      kms_key_arn:
+        value: '${aws_backup_vault.{{ name }}.kms_key_arn}'
+      arn:
+        value: '${aws_backup_vault.{{ name }}.arn}'
+      recovery_points:
+        value: '${aws_backup_vault.{{ name }}.recovery_points}'

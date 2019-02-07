@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_search_service:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          sku: '${var.{{ name }}_sku}'
+          # partition_count: 0
+          # replica_count: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_sku:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_search_service.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_search_service.{{ name }}.id}'
+      partition_count:
+        value: '${azurerm_arm_search_service.{{ name }}.partition_count}'
+      primary_key:
+        value: '${azurerm_arm_search_service.{{ name }}.primary_key}'
+      replica_count:
+        value: '${azurerm_arm_search_service.{{ name }}.replica_count}'
+      secondary_key:
+        value: '${azurerm_arm_search_service.{{ name }}.secondary_key}'

@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_neptune_cluster_snapshot:
+        {{ name }}:
+          db_cluster_identifier: '${var.{{ name }}_db_cluster_identifier}'
+          db_cluster_snapshot_identifier: '${var.{{ name }}_db_cluster_snapshot_identifier}'
+    variable:
+      {{ name }}_db_cluster_identifier:
+        type: 'string'
+      {{ name }}_db_cluster_snapshot_identifier:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.id}'
+      thub_id:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.id}'
+      availability_zones:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.availability_zones}'
+      db_cluster_snapshot_arn:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
+      port:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.port}'
+      storage_encrypted:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.storage_encrypted}'
+      license_model:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.license_model}'
+      status:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.status}'
+      engine:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine}'
+      engine_version:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine_version}'
+      kms_key_id:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.kms_key_id}'
+      snapshot_type:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.snapshot_type}'
+      allocated_storage:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.allocated_storage}'
+      source_db_cluster_snapshot_arn:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'
+      vpc_id:
+        value: '${aws_neptune_cluster_snapshot.{{ name }}.vpc_id}'

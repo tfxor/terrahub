@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cognito_user_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          user_pool_id: '${var.{{ name }}_user_pool_id}'
+          # description: ''
+          # precedence: 0
+          # role_arn: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_user_pool_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cognito_user_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cognito_user_group.{{ name }}.id}'

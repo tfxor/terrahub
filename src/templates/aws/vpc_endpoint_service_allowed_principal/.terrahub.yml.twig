@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpc_endpoint_service_allowed_principal:
+        {{ name }}:
+          vpc_endpoint_service_id: '${var.{{ name }}_vpc_endpoint_service_id}'
+          principal_arn: '${var.{{ name }}_principal_arn}'
+    variable:
+      {{ name }}_vpc_endpoint_service_id:
+        type: 'string'
+      {{ name }}_principal_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpc_endpoint_service_allowed_principal.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpc_endpoint_service_allowed_principal.{{ name }}.id}'

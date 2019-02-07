@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_target_pool:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # backup_pool: ''
+          # description: ''
+          # instances: []
+          # session_affinity: ''
+          # failover_ratio: ''
+          # health_checks: []
+          # project: ''
+          # region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_target_pool.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_target_pool.{{ name }}.id}'
+      instances:
+        value: '${google_compute_target_pool.{{ name }}.instances}'
+      self_link:
+        value: '${google_compute_target_pool.{{ name }}.self_link}'
+      project:
+        value: '${google_compute_target_pool.{{ name }}.project}'
+      region:
+        value: '${google_compute_target_pool.{{ name }}.region}'

@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_spanner_instance:
+        {{ name }}:
+          config: '${var.{{ name }}_config}'
+          display_name: '${var.{{ name }}_display_name}'
+          # project: ''
+          # name: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # num_nodes: 0
+    variable:
+      {{ name }}_config:
+        type: 'string'
+      {{ name }}_display_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_spanner_instance.{{ name }}.id}'
+      thub_id:
+        value: '${google_spanner_instance.{{ name }}.id}'
+      state:
+        value: '${google_spanner_instance.{{ name }}.state}'
+      project:
+        value: '${google_spanner_instance.{{ name }}.project}'
+      name:
+        value: '${google_spanner_instance.{{ name }}.name}'

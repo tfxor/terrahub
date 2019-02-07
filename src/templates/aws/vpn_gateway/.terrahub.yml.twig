@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpn_gateway:
+        {{ name }}:
+          # availability_zone: ''
+          # amazon_side_asn: ''
+          # vpc_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    output:
+      id:
+        value: '${aws_vpn_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpn_gateway.{{ name }}.id}'
+      amazon_side_asn:
+        value: '${aws_vpn_gateway.{{ name }}.amazon_side_asn}'
+      vpc_id:
+        value: '${aws_vpn_gateway.{{ name }}.vpc_id}'

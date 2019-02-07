@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_signalr_service:
+        {{ name }}:
+          sku:
+            -
+              name: ''
+              capacity: 0
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_signalr_service.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_signalr_service.{{ name }}.id}'
+      public_port:
+        value: '${azurerm_arm_signalr_service.{{ name }}.public_port}'
+      server_port:
+        value: '${azurerm_arm_signalr_service.{{ name }}.server_port}'
+      primary_connection_string:
+        value: '${azurerm_arm_signalr_service.{{ name }}.primary_connection_string}'
+      hostname:
+        value: '${azurerm_arm_signalr_service.{{ name }}.hostname}'
+      ip_address:
+        value: '${azurerm_arm_signalr_service.{{ name }}.ip_address}'
+      primary_access_key:
+        value: '${azurerm_arm_signalr_service.{{ name }}.primary_access_key}'
+      secondary_access_key:
+        value: '${azurerm_arm_signalr_service.{{ name }}.secondary_access_key}'
+      secondary_connection_string:
+        value: '${azurerm_arm_signalr_service.{{ name }}.secondary_connection_string}'

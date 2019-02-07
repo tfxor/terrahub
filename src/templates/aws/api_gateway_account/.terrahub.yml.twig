@@ -1,0 +1,16 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_account:
+        {{ name }}:
+          # cloudwatch_role_arn: ''
+    output:
+      id:
+        value: '${aws_api_gateway_account.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_account.{{ name }}.id}'
+      throttle_settings:
+        value: '${aws_api_gateway_account.{{ name }}.throttle_settings}'

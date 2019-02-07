@@ -1,0 +1,110 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_machine:
+        {{ name }}:
+          storage_os_disk:
+            -
+              create_option: ''
+              name: ''
+          #     vhd_uri: ''
+          #     managed_disk_type: ''
+          #     caching: ''
+          #     os_type: ''
+          #     managed_disk_id: ''
+          #     image_uri: ''
+          #     disk_size_gb: 0
+          #     write_accelerator_enabled: false
+          vm_size: '${var.{{ name }}_vm_size}'
+          network_interface_ids: '${var.{{ name }}_network_interface_ids}'
+          name: '${var.{{ name }}_name}'
+          # os_profile_windows_config: 
+          #   timezone:''
+          #   winrm:
+          #     -
+          #       protocol: ''
+          #       certificate_url: ''
+          #   provision_vm_agent:false
+          #   enable_automatic_upgrades:false
+          # delete_os_disk_on_termination: false
+          # availability_set_id: ''
+          # storage_image_reference: 
+          #   offer:''
+          #   sku:''
+          #   version:''
+          #   id:''
+          #   publisher:''
+          # os_profile: 
+          #   admin_username:''
+          #   computer_name:''
+          #   admin_password:''
+          #   custom_data:''
+          # os_profile_linux_config: 
+          #   disable_password_authentication:false
+          #   ssh_keys:
+          #     -
+          #       path: ''
+          #       key_data: ''
+          # plan: 
+          #   -
+          #     name: ''
+          #     publisher: ''
+          #     product: ''
+          # license_type: ''
+          # storage_data_disk: 
+          #   -
+          #     lun: 0
+          #     create_option: ''
+          #     name: ''
+          #     caching: ''
+          #     managed_disk_id: ''
+          #     managed_disk_type: ''
+          #     write_accelerator_enabled: false
+          #     vhd_uri: ''
+          #     disk_size_gb: 0
+          # delete_data_disks_on_termination: false
+          # boot_diagnostics: 
+          #   -
+          #     enabled: false
+          #     storage_uri: ''
+          # identity: 
+          #   -
+          #     type: ''
+          #     identity_ids: 
+          #       -
+          # os_profile_secrets: 
+          #   -
+          #     source_vault_id: ''
+          #     vault_certificates: 
+          #       -
+          #         certificate_url: ''
+          #         certificate_store: ''
+          # primary_network_interface_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_vm_size:
+        type: 'string'
+      {{ name }}_network_interface_ids:
+        type: 'list'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.id}'
+      availability_set_id:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.availability_set_id}'
+      storage_image_reference:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.storage_image_reference}'
+      license_type:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.license_type}'
+      storage_data_disk:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.storage_data_disk}'
+      identity:
+        value: '${azurerm_arm_virtual_machine.{{ name }}.identity}'

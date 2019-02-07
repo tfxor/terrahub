@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_apns_voip_channel:
+        {{ name }}:
+          application_id: '${var.{{ name }}_application_id}'
+          # enabled: false
+          # certificate: ''
+          # default_authentication_method: ''
+          # private_key: ''
+          # team_id: ''
+          # token_key: ''
+          # token_key_id: ''
+          # bundle_id: ''
+    variable:
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_apns_voip_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_apns_voip_channel.{{ name }}.id}'

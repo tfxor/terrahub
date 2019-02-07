@@ -57,10 +57,9 @@ func PrepareJSON(terrahubComponent string) string {
 		os.Exit(1)
 	}
 	sha := string(cmdOut)
-	re := regexp.MustCompile(`(?m)hash: \'.+?\' }`)
+	re := regexp.MustCompile(`(?m).+?✅`)
 	for _, match := range re.FindAllString(sha, -1) {
-		match = strings.Replace(match,"hash: '","",-1)
-		match = strings.Replace(match,"' }","",-1)
+		match = strings.Replace(match,"✅","",-1)
 		return match
 	}
 	return ""

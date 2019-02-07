@@ -1,0 +1,56 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_iothub:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          sku:
+            -
+              name: ''
+              tier: ''
+              capacity: 0
+          # endpoint: 
+          #   -
+          #     type: ''
+          #     connection_string: ''
+          #     name: ''
+          #     encoding: ''
+          #     file_name_format: ''
+          #     batch_frequency_in_seconds: 0
+          #     max_chunk_size_in_bytes: 0
+          #     container_name: ''
+          # route: 
+          #   -
+          #     endpoint_names: []
+          #     enabled: false
+          #     name: ''
+          #     source: ''
+          #     condition: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_iothub.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_iothub.{{ name }}.id}'
+      event_hub_operations_path:
+        value: '${azurerm_arm_iothub.{{ name }}.event_hub_operations_path}'
+      type:
+        value: '${azurerm_arm_iothub.{{ name }}.type}'
+      event_hub_events_endpoint:
+        value: '${azurerm_arm_iothub.{{ name }}.event_hub_events_endpoint}'
+      shared_access_policy:
+        value: '${azurerm_arm_iothub.{{ name }}.shared_access_policy}'
+      hostname:
+        value: '${azurerm_arm_iothub.{{ name }}.hostname}'
+      event_hub_operations_endpoint:
+        value: '${azurerm_arm_iothub.{{ name }}.event_hub_operations_endpoint}'
+      event_hub_events_path:
+        value: '${azurerm_arm_iothub.{{ name }}.event_hub_events_path}'

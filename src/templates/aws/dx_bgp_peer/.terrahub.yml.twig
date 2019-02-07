@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_bgp_peer:
+        {{ name }}:
+          address_family: '${var.{{ name }}_address_family}'
+          bgp_asn: '${var.{{ name }}_bgp_asn}'
+          virtual_interface_id: '${var.{{ name }}_virtual_interface_id}'
+          # bgp_auth_key: ''
+          # customer_address: ''
+          # amazon_address: ''
+    variable:
+      {{ name }}_address_family:
+        type: 'string'
+      {{ name }}_bgp_asn:
+        type: 'int'
+      {{ name }}_virtual_interface_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_bgp_peer.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_bgp_peer.{{ name }}.id}'
+      bgp_auth_key:
+        value: '${aws_dx_bgp_peer.{{ name }}.bgp_auth_key}'
+      customer_address:
+        value: '${aws_dx_bgp_peer.{{ name }}.customer_address}'
+      bgp_status:
+        value: '${aws_dx_bgp_peer.{{ name }}.bgp_status}'
+      amazon_address:
+        value: '${aws_dx_bgp_peer.{{ name }}.amazon_address}'

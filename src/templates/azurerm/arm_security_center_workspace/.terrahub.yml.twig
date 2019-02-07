@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_security_center_workspace:
+        {{ name }}:
+          scope: '${var.{{ name }}_scope}'
+          workspace_id: '${var.{{ name }}_workspace_id}'
+    variable:
+      {{ name }}_scope:
+        type: 'string'
+      {{ name }}_workspace_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_security_center_workspace.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_security_center_workspace.{{ name }}.id}'

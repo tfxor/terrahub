@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_router_nat:
+        {{ name }}:
+          router: '${var.{{ name }}_router}'
+          nat_ip_allocate_option: '${var.{{ name }}_nat_ip_allocate_option}'
+          name: '${var.{{ name }}_name}'
+          # nat_ips: []
+          # subnetwork: 
+          # icmp_idle_timeout_sec: 0
+          # tcp_transitory_idle_timeout_sec: 0
+          # source_subnetwork_ip_ranges_to_nat: ''
+          # min_ports_per_vm: 0
+          # udp_idle_timeout_sec: 0
+          # tcp_established_idle_timeout_sec: 0
+          # project: ''
+          # region: ''
+    variable:
+      {{ name }}_router:
+        type: 'string'
+      {{ name }}_nat_ip_allocate_option:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_router_nat.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_router_nat.{{ name }}.id}'
+      project:
+        value: '${google_compute_router_nat.{{ name }}.project}'
+      region:
+        value: '${google_compute_router_nat.{{ name }}.region}'

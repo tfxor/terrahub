@@ -1,0 +1,53 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_gamelift_fleet:
+        {{ name }}:
+          build_id: '${var.{{ name }}_build_id}'
+          ec2_instance_type: '${var.{{ name }}_ec2_instance_type}'
+          name: '${var.{{ name }}_name}'
+          # metric_groups: []
+          # resource_creation_limit_policy: 
+          #   -
+          #     new_game_sessions_per_creator: 0
+          #     policy_period_in_minutes: 0
+          # runtime_configuration: 
+          #   -
+          #     game_session_activation_timeout_seconds: 0
+          #     max_concurrent_game_session_activations: 0
+          #     server_process: 
+          #       -
+          #         concurrent_executions: 0
+          #         launch_path: ''
+          #         parameters: ''
+          # description: ''
+          # ec2_inbound_permission: 
+          #   -
+          #     from_port: 0
+          #     ip_range: ''
+          #     protocol: ''
+          #     to_port: 0
+          # new_game_session_protection_policy: ''
+    variable:
+      {{ name }}_build_id:
+        type: 'string'
+      {{ name }}_ec2_instance_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_gamelift_fleet.{{ name }}.id}'
+      thub_id:
+        value: '${aws_gamelift_fleet.{{ name }}.id}'
+      metric_groups:
+        value: '${aws_gamelift_fleet.{{ name }}.metric_groups}'
+      log_paths:
+        value: '${aws_gamelift_fleet.{{ name }}.log_paths}'
+      operating_system:
+        value: '${aws_gamelift_fleet.{{ name }}.operating_system}'
+      arn:
+        value: '${aws_gamelift_fleet.{{ name }}.arn}'

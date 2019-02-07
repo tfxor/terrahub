@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_organizations_policy_attachment:
+        {{ name }}:
+          policy_id: '${var.{{ name }}_policy_id}'
+          target_id: '${var.{{ name }}_target_id}'
+    variable:
+      {{ name }}_policy_id:
+        type: 'string'
+      {{ name }}_target_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_organizations_policy_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_organizations_policy_attachment.{{ name }}.id}'

@@ -1,0 +1,48 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_loadbalancer_rule:
+        {{ name }}:
+          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
+          frontend_port: '${var.{{ name }}_frontend_port}'
+          name: '${var.{{ name }}_name}'
+          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
+          protocol: '${var.{{ name }}_protocol}'
+          backend_port: '${var.{{ name }}_backend_port}'
+          # backend_address_pool_id: ''
+          # load_distribution: ''
+          # enable_floating_ip: false
+          # idle_timeout_in_minutes: 0
+          # probe_id: ''
+    variable:
+      {{ name }}_frontend_ip_configuration_name:
+        type: 'string'
+      {{ name }}_frontend_port:
+        type: 'int'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_loadbalancer_id:
+        type: 'string'
+      {{ name }}_protocol:
+        type: 'string'
+      {{ name }}_backend_port:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.id}'
+      frontend_ip_configuration_id:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.frontend_ip_configuration_id}'
+      backend_address_pool_id:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.backend_address_pool_id}'
+      load_distribution:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.load_distribution}'
+      idle_timeout_in_minutes:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.idle_timeout_in_minutes}'
+      probe_id:
+        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.probe_id}'

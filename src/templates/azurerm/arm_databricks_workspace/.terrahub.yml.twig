@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_databricks_workspace:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          sku: '${var.{{ name }}_sku}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # managed_resource_group_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_sku:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_databricks_workspace.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_databricks_workspace.{{ name }}.id}'
+      managed_resource_group_name:
+        value: '${azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_name}'
+      managed_resource_group_id:
+        value: '${azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_id}'

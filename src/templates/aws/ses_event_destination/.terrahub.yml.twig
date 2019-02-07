@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_event_destination:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          configuration_set_name: '${var.{{ name }}_configuration_set_name}'
+          matching_types: '${var.{{ name }}_matching_types}'
+          # kinesis_destination: 
+          #   stream_arn:''
+          #   role_arn:''
+          # sns_destination: 
+          #   topic_arn:''
+          # enabled: false
+          # cloudwatch_destination: 
+          #   default_value:''
+          #   dimension_name:''
+          #   value_source:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_configuration_set_name:
+        type: 'string'
+      {{ name }}_matching_types:
+        type: 'set'
+    output:
+      id:
+        value: '${aws_ses_event_destination.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_event_destination.{{ name }}.id}'

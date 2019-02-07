@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_transfer_ssh_key:
+        {{ name }}:
+          body: '${var.{{ name }}_body}'
+          server_id: '${var.{{ name }}_server_id}'
+          user_name: '${var.{{ name }}_user_name}'
+    variable:
+      {{ name }}_body:
+        type: 'string'
+      {{ name }}_server_id:
+        type: 'string'
+      {{ name }}_user_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_transfer_ssh_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_transfer_ssh_key.{{ name }}.id}'

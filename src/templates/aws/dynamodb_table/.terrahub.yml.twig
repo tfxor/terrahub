@@ -1,0 +1,67 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dynamodb_table:
+        {{ name }}:
+          hash_key: '${var.{{ name }}_hash_key}'
+          name: '${var.{{ name }}_name}'
+          attribute:
+            name:''
+            type:''
+          # write_capacity: 0
+          # read_capacity: 0
+          # global_secondary_index: 
+          #   hash_key:''
+          #   projection_type:''
+          #   name:''
+          #   read_capacity:0
+          #   range_key:''
+          #   non_key_attributes:
+          #     -
+          #   write_capacity:0
+          # stream_view_type: ''
+          # billing_mode: ''
+          # ttl: 
+          #   attribute_name:''
+          #   enabled:false
+          # local_secondary_index: 
+          #   projection_type:''
+          #   name:''
+          #   range_key:''
+          #   non_key_attributes:
+          #     -
+          # server_side_encryption: 
+          #   -
+          #     enabled: false
+          # point_in_time_recovery: 
+          #   -
+          #     enabled: false
+          # range_key: ''
+          # stream_enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_hash_key:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dynamodb_table.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dynamodb_table.{{ name }}.id}'
+      stream_view_type:
+        value: '${aws_dynamodb_table.{{ name }}.stream_view_type}'
+      stream_arn:
+        value: '${aws_dynamodb_table.{{ name }}.stream_arn}'
+      stream_label:
+        value: '${aws_dynamodb_table.{{ name }}.stream_label}'
+      server_side_encryption:
+        value: '${aws_dynamodb_table.{{ name }}.server_side_encryption}'
+      point_in_time_recovery:
+        value: '${aws_dynamodb_table.{{ name }}.point_in_time_recovery}'
+      arn:
+        value: '${aws_dynamodb_table.{{ name }}.arn}'

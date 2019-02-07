@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_image:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # source_virtual_machine_id: ''
+          # os_disk: 
+          #   -
+          #     os_state: ''
+          #     managed_disk_id: ''
+          #     blob_uri: ''
+          #     caching: ''
+          #     size_gb: 0
+          #     os_type: ''
+          # data_disk: 
+          #   -
+          #     lun: 0
+          #     managed_disk_id: ''
+          #     blob_uri: ''
+          #     caching: ''
+          #     size_gb: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_image.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_image.{{ name }}.id}'

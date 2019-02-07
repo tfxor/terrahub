@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_appmesh_virtual_node:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          mesh_name: '${var.{{ name }}_mesh_name}'
+          spec:
+            -
+          #     backends: 
+          #     listener: 
+          #     port_mapping:
+          #       -
+          #         port: 0
+          #         protocol: ''
+          # service_discovery: 
+          #   -
+          #     dns: 
+          #       -
+          #         service_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_mesh_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_appmesh_virtual_node.{{ name }}.id}'
+      thub_id:
+        value: '${aws_appmesh_virtual_node.{{ name }}.id}'
+      arn:
+        value: '${aws_appmesh_virtual_node.{{ name }}.arn}'
+      created_date:
+        value: '${aws_appmesh_virtual_node.{{ name }}.created_date}'
+      last_updated_date:
+        value: '${aws_appmesh_virtual_node.{{ name }}.last_updated_date}'

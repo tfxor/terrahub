@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_attached_disk:
+        {{ name }}:
+          disk: '${var.{{ name }}_disk}'
+          instance: '${var.{{ name }}_instance}'
+          # mode: ''
+          # project: ''
+          # zone: ''
+          # device_name: ''
+    variable:
+      {{ name }}_disk:
+        type: 'string'
+      {{ name }}_instance:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_attached_disk.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_attached_disk.{{ name }}.id}'
+      project:
+        value: '${google_compute_attached_disk.{{ name }}.project}'
+      zone:
+        value: '${google_compute_attached_disk.{{ name }}.zone}'
+      device_name:
+        value: '${google_compute_attached_disk.{{ name }}.device_name}'

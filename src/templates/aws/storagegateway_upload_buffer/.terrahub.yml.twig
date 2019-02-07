@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_storagegateway_upload_buffer:
+        {{ name }}:
+          gateway_arn: '${var.{{ name }}_gateway_arn}'
+          disk_id: '${var.{{ name }}_disk_id}'
+    variable:
+      {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_disk_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_storagegateway_upload_buffer.{{ name }}.id}'
+      thub_id:
+        value: '${aws_storagegateway_upload_buffer.{{ name }}.id}'

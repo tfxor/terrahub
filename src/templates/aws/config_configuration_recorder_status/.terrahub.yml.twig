@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_config_configuration_recorder_status:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          is_enabled: '${var.{{ name }}_is_enabled}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_is_enabled:
+        type: 'bool'
+    output:
+      id:
+        value: '${aws_config_configuration_recorder_status.{{ name }}.id}'
+      thub_id:
+        value: '${aws_config_configuration_recorder_status.{{ name }}.id}'

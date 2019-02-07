@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_logic_app_trigger_http_request:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          logic_app_id: '${var.{{ name }}_logic_app_id}'
+          schema: '${var.{{ name }}_schema}'
+          # relative_path: ''
+          # method: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_logic_app_id:
+        type: 'string'
+      {{ name }}_schema:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_logic_app_trigger_http_request.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_logic_app_trigger_http_request.{{ name }}.id}'

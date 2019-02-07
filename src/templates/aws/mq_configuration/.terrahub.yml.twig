@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_mq_configuration:
+        {{ name }}:
+          engine_version: '${var.{{ name }}_engine_version}'
+          name: '${var.{{ name }}_name}'
+          data: '${var.{{ name }}_data}'
+          engine_type: '${var.{{ name }}_engine_type}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_engine_version:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_data:
+        type: 'string'
+      {{ name }}_engine_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_mq_configuration.{{ name }}.id}'
+      thub_id:
+        value: '${aws_mq_configuration.{{ name }}.id}'
+      latest_revision:
+        value: '${aws_mq_configuration.{{ name }}.latest_revision}'
+      arn:
+        value: '${aws_mq_configuration.{{ name }}.arn}'

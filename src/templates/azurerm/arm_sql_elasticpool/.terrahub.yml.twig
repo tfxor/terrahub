@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_sql_elasticpool:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          edition: '${var.{{ name }}_edition}'
+          server_name: '${var.{{ name }}_server_name}'
+          dtu: '${var.{{ name }}_dtu}'
+          # db_dtu_max: 0
+          # pool_size: 0
+          # db_dtu_min: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_edition:
+        type: 'string'
+      {{ name }}_server_name:
+        type: 'string'
+      {{ name }}_dtu:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.id}'
+      creation_date:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.creation_date}'
+      db_dtu_max:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_max}'
+      pool_size:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.pool_size}'
+      db_dtu_min:
+        value: '${azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_min}'

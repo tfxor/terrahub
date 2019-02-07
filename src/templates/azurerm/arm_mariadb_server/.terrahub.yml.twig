@@ -1,0 +1,45 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_mariadb_server:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          version: '${var.{{ name }}_version}'
+          storage_profile:
+            -
+              storage_mb: 0
+          #     backup_retention_days: 0
+          #     geo_redundant_backup: ''
+          ssl_enforcement: '${var.{{ name }}_ssl_enforcement}'
+          sku:
+            -
+              name: ''
+              capacity: 0
+              tier: ''
+              family: ''
+          administrator_login: '${var.{{ name }}_administrator_login}'
+          administrator_login_password: '${var.{{ name }}_administrator_login_password}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_version:
+        type: 'string'
+      {{ name }}_ssl_enforcement:
+        type: 'string'
+      {{ name }}_administrator_login:
+        type: 'string'
+      {{ name }}_administrator_login_password:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_mariadb_server.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_mariadb_server.{{ name }}.id}'
+      fqdn:
+        value: '${azurerm_arm_mariadb_server.{{ name }}.fqdn}'

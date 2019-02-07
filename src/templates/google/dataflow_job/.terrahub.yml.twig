@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_dataflow_job:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          temp_gcs_location: '${var.{{ name }}_temp_gcs_location}'
+          template_gcs_path: '${var.{{ name }}_template_gcs_path}'
+          # region: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # zone: ''
+          # max_workers: 0
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_temp_gcs_location:
+        type: 'string'
+      {{ name }}_template_gcs_path:
+        type: 'string'
+    output:
+      id:
+        value: '${google_dataflow_job.{{ name }}.id}'
+      thub_id:
+        value: '${google_dataflow_job.{{ name }}.id}'
+      state:
+        value: '${google_dataflow_job.{{ name }}.state}'

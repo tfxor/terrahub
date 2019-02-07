@@ -1,0 +1,82 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_service_fabric_cluster:
+        {{ name }}:
+          reliability_level: '${var.{{ name }}_reliability_level}'
+          management_endpoint: '${var.{{ name }}_management_endpoint}'
+          vm_image: '${var.{{ name }}_vm_image}'
+          name: '${var.{{ name }}_name}'
+          node_type:
+            -
+              name: ''
+              instance_count: 0
+              is_primary: false
+              client_endpoint_port: 0
+              http_endpoint_port: 0
+          #     durability_level: ''
+          #     application_ports: 
+          #       -
+          #         start_port: 0
+          #         end_port: 0
+          #     reverse_proxy_endpoint_port: 0
+          upgrade_mode: '${var.{{ name }}_upgrade_mode}'
+          # azure_active_directory: 
+          #   -
+          #     client_application_id: ''
+          #     tenant_id: ''
+          #     cluster_application_id: ''
+          # certificate: 
+          #   -
+          #     thumbprint: ''
+          #     x509_store_name: ''
+          #     thumbprint_secondary: ''
+          # add_on_features: []
+          # client_certificate_thumbprint: 
+          #   -
+          #     thumbprint: ''
+          #     is_admin: false
+          # reverse_proxy_certificate: 
+          #   -
+          #     thumbprint: ''
+          #     x509_store_name: ''
+          #     thumbprint_secondary: ''
+          # fabric_settings: 
+          #   -
+          #     name: ''
+          #     parameters: 
+          #       '[TO_BE_REPLACED]': ''
+          # diagnostics_config: 
+          #   -
+          #     storage_account_name: ''
+          #     protected_account_key_name: ''
+          #     blob_endpoint: ''
+          #     queue_endpoint: ''
+          #     table_endpoint: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # cluster_code_version: ''
+    variable:
+      {{ name }}_reliability_level:
+        type: 'string'
+      {{ name }}_management_endpoint:
+        type: 'string'
+      {{ name }}_vm_image:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_upgrade_mode:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.id}'
+      cluster_endpoint:
+        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.cluster_endpoint}'
+      cluster_code_version:
+        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.cluster_code_version}'

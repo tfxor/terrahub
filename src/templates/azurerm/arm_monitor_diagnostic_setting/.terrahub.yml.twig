@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_diagnostic_setting:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          target_resource_id: '${var.{{ name }}_target_resource_id}'
+          # eventhub_name: ''
+          # eventhub_authorization_rule_id: ''
+          # log_analytics_workspace_id: ''
+          # storage_account_id: ''
+          # log: 
+          #   category:''
+          #   retention_policy:
+          #     -
+          #       enabled: false
+          #       days: 0
+          #   enabled:false
+          # metric: 
+          #   category:''
+          #   retention_policy:
+          #     -
+          #       enabled: false
+          #       days: 0
+          #   enabled:false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_target_resource_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_diagnostic_setting.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_diagnostic_setting.{{ name }}.id}'

@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lightsail_key_pair:
+        {{ name }}:
+          # public_key: ''
+          # pgp_key: ''
+          # name_prefix: ''
+          # name: ''
+    output:
+      id:
+        value: '${aws_lightsail_key_pair.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lightsail_key_pair.{{ name }}.id}'
+      public_key:
+        value: '${aws_lightsail_key_pair.{{ name }}.public_key}'
+      encrypted_private_key:
+        value: '${aws_lightsail_key_pair.{{ name }}.encrypted_private_key}'
+      arn:
+        value: '${aws_lightsail_key_pair.{{ name }}.arn}'
+      fingerprint:
+        value: '${aws_lightsail_key_pair.{{ name }}.fingerprint}'
+      private_key:
+        value: '${aws_lightsail_key_pair.{{ name }}.private_key}'
+      encrypted_fingerprint:
+        value: '${aws_lightsail_key_pair.{{ name }}.encrypted_fingerprint}'
+      name:
+        value: '${aws_lightsail_key_pair.{{ name }}.name}'

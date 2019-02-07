@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudwatch_log_destination_policy:
+        {{ name }}:
+          destination_name: '${var.{{ name }}_destination_name}'
+          access_policy: '${var.{{ name }}_access_policy}'
+    variable:
+      {{ name }}_destination_name:
+        type: 'string'
+      {{ name }}_access_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudwatch_log_destination_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudwatch_log_destination_policy.{{ name }}.id}'

@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_batch_account:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # storage_account_id: ''
+          # pool_allocation_mode: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_batch_account.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_batch_account.{{ name }}.id}'
+      storage_account_id:
+        value: '${azurerm_arm_batch_account.{{ name }}.storage_account_id}'

@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_eventhub_namespace:
+        {{ name }}:
+          sku: '${var.{{ name }}_sku}'
+          name: '${var.{{ name }}_name}'
+          # capacity: 0
+          # maximum_throughput_units: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # kafka_enabled: false
+          # auto_inflate_enabled: false
+    variable:
+      {{ name }}_sku:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.id}'
+      maximum_throughput_units:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.maximum_throughput_units}'
+      default_primary_connection_string:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_primary_connection_string}'
+      default_secondary_connection_string:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_connection_string}'
+      default_primary_key:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_primary_key}'
+      default_secondary_key:
+        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_key}'

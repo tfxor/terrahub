@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_licensemanager_association:
+        {{ name }}:
+          resource_arn: '${var.{{ name }}_resource_arn}'
+          license_configuration_arn: '${var.{{ name }}_license_configuration_arn}'
+    variable:
+      {{ name }}_resource_arn:
+        type: 'string'
+      {{ name }}_license_configuration_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_licensemanager_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_licensemanager_association.{{ name }}.id}'

@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_secretsmanager_secret_version:
+        {{ name }}:
+          secret_id: '${var.{{ name }}_secret_id}'
+          # version_stages: []
+          # secret_string: ''
+          # secret_binary: ''
+    variable:
+      {{ name }}_secret_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_secretsmanager_secret_version.{{ name }}.id}'
+      thub_id:
+        value: '${aws_secretsmanager_secret_version.{{ name }}.id}'
+      version_stages:
+        value: '${aws_secretsmanager_secret_version.{{ name }}.version_stages}'
+      arn:
+        value: '${aws_secretsmanager_secret_version.{{ name }}.arn}'
+      version_id:
+        value: '${aws_secretsmanager_secret_version.{{ name }}.version_id}'

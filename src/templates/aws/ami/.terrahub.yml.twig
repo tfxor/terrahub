@@ -1,0 +1,49 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ami:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # ebs_block_device: 
+          #   device_name:''
+          #   iops:0
+          #   snapshot_id:''
+          #   volume_size:0
+          #   volume_type:''
+          #   delete_on_termination:false
+          #   encrypted:false
+          # kernel_id: ''
+          # architecture: ''
+          # ena_support: false
+          # ephemeral_block_device: 
+          #   device_name:''
+          #   virtual_name:''
+          # ramdisk_id: ''
+          # image_location: ''
+          # virtualization_type: ''
+          # root_device_name: ''
+          # sriov_net_support: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ami.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ami.{{ name }}.id}'
+      ebs_block_device:
+        value: '${aws_ami.{{ name }}.ebs_block_device}'
+      root_snapshot_id:
+        value: '${aws_ami.{{ name }}.root_snapshot_id}'
+      ephemeral_block_device:
+        value: '${aws_ami.{{ name }}.ephemeral_block_device}'
+      image_location:
+        value: '${aws_ami.{{ name }}.image_location}'
+      manage_ebs_snapshots:
+        value: '${aws_ami.{{ name }}.manage_ebs_snapshots}'

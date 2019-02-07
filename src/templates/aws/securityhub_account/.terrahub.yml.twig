@@ -1,0 +1,13 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_securityhub_account:
+        {{ name }}:
+    output:
+      id:
+        value: '${aws_securityhub_account.{{ name }}.id}'
+      thub_id:
+        value: '${aws_securityhub_account.{{ name }}.id}'

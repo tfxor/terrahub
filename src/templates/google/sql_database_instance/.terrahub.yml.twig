@@ -1,0 +1,95 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_sql_database_instance:
+        {{ name }}:
+          settings:
+            -
+              tier: ''
+          #     authorized_gae_applications: 
+          #       -
+          #     availability_type: ''
+          #     backup_configuration: 
+          #       -
+          #         enabled: false
+          #         start_time: ''
+          #         binary_log_enabled: false
+          #     activation_policy: ''
+          # disk_size: 0
+          # master_instance_name: ''
+          # project: ''
+          # maintenance_window: 
+          #   -
+          #     day: 0
+          #     hour: 0
+          #     update_track: ''
+          # replica_configuration: 
+          #   -
+          #     dump_file_path: ''
+          #     ssl_cipher: ''
+          #     verify_server_certificate: false
+          #     username: ''
+          #     ca_certificate: ''
+          #     client_certificate: ''
+          #     client_key: ''
+          #     connect_retry_interval: 0
+          #     failover_target: false
+          #     master_heartbeat_period: 0
+          #     password: ''
+          # disk_autoresize: false
+          # ip_configuration: 
+          #   -
+          #     authorized_networks: 
+          #     ipv4_enabled: false
+          #     require_ssl: false
+          #     private_network: ''
+          # region: ''
+          # disk_type: ''
+          # replication_type: ''
+          # database_version: ''
+          # name: ''
+          # location_preference: 
+          #   -
+          #     follow_gae_application: ''
+          #     zone: ''
+          # pricing_plan: ''
+          # user_labels: 
+          #   '[TO_BE_REPLACED]': ''
+    output:
+      id:
+        value: '${google_sql_database_instance.{{ name }}.id}'
+      thub_id:
+        value: '${google_sql_database_instance.{{ name }}.id}'
+      disk_size:
+        value: '${google_sql_database_instance.{{ name }}.disk_size}'
+      master_instance_name:
+        value: '${google_sql_database_instance.{{ name }}.master_instance_name}'
+      project:
+        value: '${google_sql_database_instance.{{ name }}.project}'
+      replica_configuration:
+        value: '${google_sql_database_instance.{{ name }}.replica_configuration}'
+      server_ca_cert:
+        value: '${google_sql_database_instance.{{ name }}.server_ca_cert}'
+      self_link:
+        value: '${google_sql_database_instance.{{ name }}.self_link}'
+      ip_configuration:
+        value: '${google_sql_database_instance.{{ name }}.ip_configuration}'
+      first_ip_address:
+        value: '${google_sql_database_instance.{{ name }}.first_ip_address}'
+      region:
+        value: '${google_sql_database_instance.{{ name }}.region}'
+      disk_type:
+        value: '${google_sql_database_instance.{{ name }}.disk_type}'
+      connection_name:
+        value: '${google_sql_database_instance.{{ name }}.connection_name}'
+      ip_address:
+        value: '${google_sql_database_instance.{{ name }}.ip_address}'
+      name:
+        value: '${google_sql_database_instance.{{ name }}.name}'
+      service_account_email_address:
+        value: '${google_sql_database_instance.{{ name }}.service_account_email_address}'
+      location_preference:
+        value: '${google_sql_database_instance.{{ name }}.location_preference}'

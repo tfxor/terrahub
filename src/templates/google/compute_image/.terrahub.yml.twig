@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_image:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # disk_size_gb: 0
+          # family: ''
+          # raw_disk: 
+          #   -
+          #     source: ''
+          #     container_type: ''
+          #     sha1: ''
+          # source_disk: ''
+          # project: ''
+          # description: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # licenses: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_image.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_image.{{ name }}.id}'
+      disk_size_gb:
+        value: '${google_compute_image.{{ name }}.disk_size_gb}'
+      self_link:
+        value: '${google_compute_image.{{ name }}.self_link}'
+      creation_timestamp:
+        value: '${google_compute_image.{{ name }}.creation_timestamp}'
+      label_fingerprint:
+        value: '${google_compute_image.{{ name }}.label_fingerprint}'
+      project:
+        value: '${google_compute_image.{{ name }}.project}'
+      licenses:
+        value: '${google_compute_image.{{ name }}.licenses}'
+      archive_size_bytes:
+        value: '${google_compute_image.{{ name }}.archive_size_bytes}'

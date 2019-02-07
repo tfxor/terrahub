@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_integration_response:
+        {{ name }}:
+          status_code: '${var.{{ name }}_status_code}'
+          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          resource_id: '${var.{{ name }}_resource_id}'
+          http_method: '${var.{{ name }}_http_method}'
+          # selection_pattern: ''
+          # response_parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # response_templates: 
+          #   '[TO_BE_REPLACED]': ''
+          # response_parameters_in_json: ''
+          # content_handling: ''
+    variable:
+      {{ name }}_status_code:
+        type: 'string'
+      {{ name }}_rest_api_id:
+        type: 'string'
+      {{ name }}_resource_id:
+        type: 'string'
+      {{ name }}_http_method:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_api_gateway_integration_response.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_integration_response.{{ name }}.id}'

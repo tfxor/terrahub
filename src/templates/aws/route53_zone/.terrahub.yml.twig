@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_zone:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # comment: ''
+          # delegation_set_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # force_destroy: false
+          # vpc: 
+          #   vpc_id:''
+          #   vpc_region:''
+          # vpc_id: ''
+          # vpc_region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route53_zone.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route53_zone.{{ name }}.id}'
+      zone_id:
+        value: '${aws_route53_zone.{{ name }}.zone_id}'
+      name_servers:
+        value: '${aws_route53_zone.{{ name }}.name_servers}'
+      vpc:
+        value: '${aws_route53_zone.{{ name }}.vpc}'
+      vpc_id:
+        value: '${aws_route53_zone.{{ name }}.vpc_id}'
+      vpc_region:
+        value: '${aws_route53_zone.{{ name }}.vpc_region}'

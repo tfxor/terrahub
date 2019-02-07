@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudhsm2_cluster:
+        {{ name }}:
+          subnet_ids: '${var.{{ name }}_subnet_ids}'
+          hsm_type: '${var.{{ name }}_hsm_type}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # source_backup_identifier: ''
+    variable:
+      {{ name }}_subnet_ids:
+        type: 'set'
+      {{ name }}_hsm_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
+      security_group_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.security_group_id}'
+      cluster_state:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_state}'
+      source_backup_identifier:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.source_backup_identifier}'
+      cluster_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_id}'
+      vpc_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.vpc_id}'
+      cluster_certificates:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_certificates}'

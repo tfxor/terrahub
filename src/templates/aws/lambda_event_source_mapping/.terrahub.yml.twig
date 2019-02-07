@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lambda_event_source_mapping:
+        {{ name }}:
+          event_source_arn: '${var.{{ name }}_event_source_arn}'
+          function_name: '${var.{{ name }}_function_name}'
+          # starting_position_timestamp: ''
+          # starting_position: ''
+          # batch_size: 0
+          # enabled: false
+    variable:
+      {{ name }}_event_source_arn:
+        type: 'string'
+      {{ name }}_function_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.id}'
+      state:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.state}'
+      function_arn:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.function_arn}'
+      last_modified:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.last_modified}'
+      uuid:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.uuid}'
+      last_processing_result:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.last_processing_result}'
+      state_transition_reason:
+        value: '${aws_lambda_event_source_mapping.{{ name }}.state_transition_reason}'

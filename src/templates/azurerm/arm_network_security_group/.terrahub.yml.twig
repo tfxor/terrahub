@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_network_security_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # security_rule: 
+          #   protocol:''
+          #   access:''
+          #   priority:0
+          #   direction:''
+          #   name:''
+          #   source_port_ranges:
+          #   destination_application_security_group_ids:
+          #   description:''
+          #   destination_port_ranges:
+          #   destination_address_prefix:''
+          #   destination_address_prefixes:
+          #   source_address_prefix:''
+          #   source_address_prefixes:
+          #   source_port_range:''
+          #   destination_port_range:''
+          #   source_application_security_group_ids:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_network_security_group.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_network_security_group.{{ name }}.id}'
+      security_rule:
+        value: '${azurerm_arm_network_security_group.{{ name }}.security_rule}'

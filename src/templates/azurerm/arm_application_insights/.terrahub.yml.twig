@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_application_insights:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          application_type: '${var.{{ name }}_application_type}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_application_type:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_application_insights.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_application_insights.{{ name }}.id}'
+      app_id:
+        value: '${azurerm_arm_application_insights.{{ name }}.app_id}'
+      instrumentation_key:
+        value: '${azurerm_arm_application_insights.{{ name }}.instrumentation_key}'

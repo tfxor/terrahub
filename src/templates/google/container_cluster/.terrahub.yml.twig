@@ -1,0 +1,131 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_container_cluster:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # master_auth: 
+          #   -
+          #     password: ''
+          #     username: ''
+          #     client_certificate_config: []
+          # network_policy: 
+          #   -
+          #     enabled: false
+          # region: ''
+          # ip_allocation_policy: 
+          #   -
+          #     cluster_ipv4_cidr_block: ''
+          #     services_ipv4_cidr_block: ''
+          #     cluster_secondary_range_name: ''
+          #     services_secondary_range_name: ''
+          #     create_subnetwork: false
+          #     subnetwork_name: ''
+          # resource_labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # kubernetes_dashboard: 
+          #   -
+          #     disabled: false
+          # enable_binary_authorization: false
+          # logging_service: ''
+          # min_master_version: ''
+          # project: ''
+          # additional_zones: []
+          # addons_config: 
+          #   -
+          #     http_load_balancing: 
+          #       -
+          #         disabled: false
+          # pod_security_policy_config: 
+          #   -
+          #     enabled: false
+          # private_cluster: false
+          # network_policy_config: 
+          #   -
+          #     disabled: false
+          # node_version: ''
+          # zone: ''
+          # enable_legacy_abac: false
+          # description: ''
+          # initial_node_count: 0
+          # maintenance_policy: 
+          #   -
+          #     daily_maintenance_window: 
+          #       -
+          #         start_time: ''
+          # master_authorized_networks_config: 
+          #   -
+          # network: ''
+          # node_pool: 
+          #   -
+          # remove_default_node_pool: false
+          # private_cluster_config: 
+          #   -
+          #     enable_private_endpoint: false
+          #     enable_private_nodes: false
+          #     master_ipv4_cidr_block: ''
+          # cluster_ipv4_cidr: ''
+          # enable_tpu: false
+          # monitoring_service: ''
+          # subnetwork: ''
+          # master_ipv4_cidr_block: ''
+          # enable_kubernetes_alpha: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_container_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${google_container_cluster.{{ name }}.id}'
+      master_auth:
+        value: '${google_container_cluster.{{ name }}.master_auth}'
+      network_policy:
+        value: '${google_container_cluster.{{ name }}.network_policy}'
+      endpoint:
+        value: '${google_container_cluster.{{ name }}.endpoint}'
+      region:
+        value: '${google_container_cluster.{{ name }}.region}'
+      cluster_autoscaling:
+        value: '${google_container_cluster.{{ name }}.cluster_autoscaling}'
+      kubernetes_dashboard:
+        value: '${google_container_cluster.{{ name }}.kubernetes_dashboard}'
+      enable_binary_authorization:
+        value: '${google_container_cluster.{{ name }}.enable_binary_authorization}'
+      logging_service:
+        value: '${google_container_cluster.{{ name }}.logging_service}'
+      project:
+        value: '${google_container_cluster.{{ name }}.project}'
+      additional_zones:
+        value: '${google_container_cluster.{{ name }}.additional_zones}'
+      addons_config:
+        value: '${google_container_cluster.{{ name }}.addons_config}'
+      private_cluster:
+        value: '${google_container_cluster.{{ name }}.private_cluster}'
+      network_policy_config:
+        value: '${google_container_cluster.{{ name }}.network_policy_config}'
+      node_version:
+        value: '${google_container_cluster.{{ name }}.node_version}'
+      master_version:
+        value: '${google_container_cluster.{{ name }}.master_version}'
+      zone:
+        value: '${google_container_cluster.{{ name }}.zone}'
+      node_pool:
+        value: '${google_container_cluster.{{ name }}.node_pool}'
+      private_cluster_config:
+        value: '${google_container_cluster.{{ name }}.private_cluster_config}'
+      cluster_ipv4_cidr:
+        value: '${google_container_cluster.{{ name }}.cluster_ipv4_cidr}'
+      enable_tpu:
+        value: '${google_container_cluster.{{ name }}.enable_tpu}'
+      monitoring_service:
+        value: '${google_container_cluster.{{ name }}.monitoring_service}'
+      subnetwork:
+        value: '${google_container_cluster.{{ name }}.subnetwork}'
+      instance_group_urls:
+        value: '${google_container_cluster.{{ name }}.instance_group_urls}'
+      master_ipv4_cidr_block:
+        value: '${google_container_cluster.{{ name }}.master_ipv4_cidr_block}'

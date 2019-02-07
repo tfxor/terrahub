@@ -1,0 +1,58 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_storage_bucket:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # storage_class: ''
+          # website: 
+          #   -
+          #     main_page_suffix: ''
+          #     not_found_page: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # predefined_acl: ''
+          # versioning: 
+          #   -
+          #     enabled: false
+          # cors: 
+          #   -
+          #     response_header: 
+          #       -
+          #     max_age_seconds: 0
+          #     origin: 
+          #       -
+          #     method: 
+          #       -
+          # logging: 
+          #   -
+          #     log_bucket: ''
+          #     log_object_prefix: ''
+          # requester_pays: false
+          # force_destroy: false
+          # project: ''
+          # lifecycle_rule: 
+          #   -
+          #     action: 
+          #     type:''
+          #     storage_class:''
+          # encryption: 
+          #   -
+          #     default_kms_key_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_storage_bucket.{{ name }}.id}'
+      thub_id:
+        value: '${google_storage_bucket.{{ name }}.id}'
+      url:
+        value: '${google_storage_bucket.{{ name }}.url}'
+      self_link:
+        value: '${google_storage_bucket.{{ name }}.self_link}'
+      project:
+        value: '${google_storage_bucket.{{ name }}.project}'

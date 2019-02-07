@@ -1,0 +1,55 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_opsworks_application:
+        {{ name }}:
+          type: '${var.{{ name }}_type}'
+          name: '${var.{{ name }}_name}'
+          stack_id: '${var.{{ name }}_stack_id}'
+          # rails_env: ''
+          # description: ''
+          # document_root: ''
+          # auto_bundle_on_deploy: ''
+          # aws_flow_ruby_settings: ''
+          # data_source_arn: ''
+          # domains: []
+          # app_source: 
+          #   -
+          #     type: ''
+          #     password: ''
+          #     revision: ''
+          #     ssh_key: ''
+          #     url: ''
+          #     username: ''
+          # enable_ssl: false
+          # ssl_configuration: 
+          #   -
+          #     certificate: ''
+          #     private_key: ''
+          #     chain: ''
+          # short_name: ''
+          # data_source_type: ''
+          # data_source_database_name: ''
+          # environment: 
+          #   key:''
+          #   value:''
+          #   secure:false
+    variable:
+      {{ name }}_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_stack_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_opsworks_application.{{ name }}.id}'
+      thub_id:
+        value: '${aws_opsworks_application.{{ name }}.id}'
+      app_source:
+        value: '${aws_opsworks_application.{{ name }}.app_source}'
+      short_name:
+        value: '${aws_opsworks_application.{{ name }}.short_name}'

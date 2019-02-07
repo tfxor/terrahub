@@ -1,0 +1,16 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_delegation_set:
+        {{ name }}:
+          # reference_name: ''
+    output:
+      id:
+        value: '${aws_route53_delegation_set.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route53_delegation_set.{{ name }}.id}'
+      name_servers:
+        value: '${aws_route53_delegation_set.{{ name }}.name_servers}'

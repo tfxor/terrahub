@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_subnet:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          virtual_network_name: '${var.{{ name }}_virtual_network_name}'
+          address_prefix: '${var.{{ name }}_address_prefix}'
+          # network_security_group_id: ''
+          # route_table_id: ''
+          # ip_configurations: []
+          # service_endpoints: []
+          # delegation: 
+          #   -
+          #     name: ''
+          #     service_delegation: 
+          #       -
+          #         name: ''
+          #         actions: 
+          #           -
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_virtual_network_name:
+        type: 'string'
+      {{ name }}_address_prefix:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_subnet.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_subnet.{{ name }}.id}'
+      ip_configurations:
+        value: '${azurerm_arm_subnet.{{ name }}.ip_configurations}'

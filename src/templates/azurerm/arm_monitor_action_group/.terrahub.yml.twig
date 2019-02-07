@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_action_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          short_name: '${var.{{ name }}_short_name}'
+          # webhook_receiver: 
+          #   -
+          #     name: ''
+          #     service_uri: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enabled: false
+          # email_receiver: 
+          #   -
+          #     name: ''
+          #     email_address: ''
+          # sms_receiver: 
+          #   -
+          #     name: ''
+          #     country_code: ''
+          #     phone_number: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_short_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_action_group.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_action_group.{{ name }}.id}'

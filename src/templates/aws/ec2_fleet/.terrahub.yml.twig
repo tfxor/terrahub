@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_fleet:
+        {{ name }}:
+          launch_template_config:
+            -
+              launch_template_specification: 
+                -
+                  version: ''
+          #         launch_template_id: ''
+          #         launch_template_name: ''
+          target_capacity_specification:
+            -
+              default_target_capacity_type: ''
+              total_target_capacity: 0
+          #     on_demand_target_capacity: 0
+          #     spot_target_capacity: 0
+          # type: ''
+          # excess_capacity_termination_policy: ''
+          # spot_options: 
+          #   -
+          #     allocation_strategy: ''
+          #     instance_interruption_behavior: ''
+          #     instance_pools_to_use_count: 0
+          # terminate_instances: false
+          # on_demand_options: 
+          #   -
+          #     allocation_strategy: ''
+          # replace_unhealthy_instances: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # terminate_instances_with_expiration: false
+    output:
+      id:
+        value: '${aws_ec2_fleet.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_fleet.{{ name }}.id}'

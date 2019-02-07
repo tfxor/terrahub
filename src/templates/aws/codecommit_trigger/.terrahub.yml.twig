@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codecommit_trigger:
+        {{ name }}:
+          repository_name: '${var.{{ name }}_repository_name}'
+          trigger:
+            events:[]
+            name:''
+            destination_arn:''
+          #   custom_data:''
+          #   branches:
+          #     -
+    variable:
+      {{ name }}_repository_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codecommit_trigger.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codecommit_trigger.{{ name }}.id}'
+      configuration_id:
+        value: '${aws_codecommit_trigger.{{ name }}.configuration_id}'

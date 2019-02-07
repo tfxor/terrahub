@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dlm_lifecycle_policy:
+        {{ name }}:
+          description: '${var.{{ name }}_description}'
+          execution_role_arn: '${var.{{ name }}_execution_role_arn}'
+          policy_details:
+            -
+              schedule: 
+                -
+                  create_rule: 
+                    -
+                      interval: 0
+          #             interval_unit: ''
+          #             times: 
+          #               -
+          #         copy_tags: false
+              resource_types: []
+          #     tags_to_add: 
+          #       '[TO_BE_REPLACED]': ''
+          target_tags: '${var.{{ name }}_target_tags}'
+          # state: ''
+    variable:
+      {{ name }}_description:
+        type: 'string'
+      {{ name }}_execution_role_arn:
+        type: 'string'
+      {{ name }}_target_tags:
+        type: 'map'
+    output:
+      id:
+        value: '${aws_dlm_lifecycle_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dlm_lifecycle_policy.{{ name }}.id}'

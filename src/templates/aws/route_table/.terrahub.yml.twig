@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route_table:
+        {{ name }}:
+          vpc_id: '${var.{{ name }}_vpc_id}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # propagating_vgws: []
+          # route: 
+          #   egress_only_gateway_id:''
+          #   gateway_id:''
+          #   instance_id:''
+          #   transit_gateway_id:''
+          #   vpc_peering_connection_id:''
+          #   cidr_block:''
+          #   ipv6_cidr_block:''
+          #   nat_gateway_id:''
+          #   network_interface_id:''
+    variable:
+      {{ name }}_vpc_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route_table.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route_table.{{ name }}.id}'
+      propagating_vgws:
+        value: '${aws_route_table.{{ name }}.propagating_vgws}'
+      route:
+        value: '${aws_route_table.{{ name }}.route}'
+      owner_id:
+        value: '${aws_route_table.{{ name }}.owner_id}'

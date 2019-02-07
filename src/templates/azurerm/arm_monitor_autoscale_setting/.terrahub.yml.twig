@@ -1,0 +1,53 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_autoscale_setting:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          target_resource_id: '${var.{{ name }}_target_resource_id}'
+          profile:
+            -
+              name: ''
+              capacity: 
+                -
+                  minimum: 0
+                  maximum: 0
+                  default: 0
+          # enabled: false
+          # fixed_date: 
+          #   -
+          #     start: ''
+          #     end: ''
+          #     timezone: ''
+          # recurrence: 
+          #   -
+          #     days: []
+          #     hours: 
+          #       -
+          #     minutes: 
+          #       -
+          #     timezone: ''
+          # notification: 
+          #   -
+          #     email: 
+          #       -
+          #         send_to_subscription_administrator: false
+          #         send_to_subscription_co_administrator: false
+          #         custom_emails: 
+          #           -
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_target_resource_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_autoscale_setting.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_autoscale_setting.{{ name }}.id}'

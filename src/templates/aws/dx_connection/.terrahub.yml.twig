@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_connection:
+        {{ name }}:
+          location: '${var.{{ name }}_location}'
+          name: '${var.{{ name }}_name}'
+          bandwidth: '${var.{{ name }}_bandwidth}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_location:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_bandwidth:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_connection.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_connection.{{ name }}.id}'
+      jumbo_frame_capable:
+        value: '${aws_dx_connection.{{ name }}.jumbo_frame_capable}'
+      arn:
+        value: '${aws_dx_connection.{{ name }}.arn}'

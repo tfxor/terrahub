@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_snapshot:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          create_option: '${var.{{ name }}_create_option}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # source_uri: ''
+          # storage_account_id: ''
+          # disk_size_gb: 0
+          # source_resource_id: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_create_option:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_snapshot.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_snapshot.{{ name }}.id}'
+      disk_size_gb:
+        value: '${azurerm_arm_snapshot.{{ name }}.disk_size_gb}'

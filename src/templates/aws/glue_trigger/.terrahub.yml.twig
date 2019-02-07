@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glue_trigger:
+        {{ name }}:
+          actions:
+            -
+              job_name: ''
+          #     timeout: 0
+          #     arguments: 
+          #       '[TO_BE_REPLACED]': ''
+          name: '${var.{{ name }}_name}'
+          type: '${var.{{ name }}_type}'
+          # description: ''
+          # enabled: false
+          # predicate: 
+          #   -
+          #     conditions: 
+          #       -
+          #         job_name: ''
+          #         state: ''
+          #         logical_operator: ''
+          # schedule: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glue_trigger.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glue_trigger.{{ name }}.id}'

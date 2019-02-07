@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpc_endpoint_connection_notification:
+        {{ name }}:
+          connection_events: '${var.{{ name }}_connection_events}'
+          connection_notification_arn: '${var.{{ name }}_connection_notification_arn}'
+          # vpc_endpoint_service_id: ''
+          # vpc_endpoint_id: ''
+    variable:
+      {{ name }}_connection_events:
+        type: 'set'
+      {{ name }}_connection_notification_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpc_endpoint_connection_notification.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpc_endpoint_connection_notification.{{ name }}.id}'
+      state:
+        value: '${aws_vpc_endpoint_connection_notification.{{ name }}.state}'
+      notification_type:
+        value: '${aws_vpc_endpoint_connection_notification.{{ name }}.notification_type}'

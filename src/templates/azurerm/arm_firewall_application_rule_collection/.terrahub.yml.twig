@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_firewall_application_rule_collection:
+        {{ name }}:
+          priority: '${var.{{ name }}_priority}'
+          action: '${var.{{ name }}_action}'
+          rule:
+            -
+              name: ''
+              source_addresses: []
+          #     description: ''
+          #     fqdn_tags: 
+          #     target_fqdns: 
+          #     protocol: 
+          #       -
+          #         type: ''
+          #         port: 0
+          name: '${var.{{ name }}_name}'
+          azure_firewall_name: '${var.{{ name }}_azure_firewall_name}'
+    variable:
+      {{ name }}_priority:
+        type: 'int'
+      {{ name }}_action:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_azure_firewall_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_firewall_application_rule_collection.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_firewall_application_rule_collection.{{ name }}.id}'

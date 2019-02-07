@@ -1,0 +1,19 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_devicefarm_project:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_devicefarm_project.{{ name }}.id}'
+      thub_id:
+        value: '${aws_devicefarm_project.{{ name }}.id}'
+      arn:
+        value: '${aws_devicefarm_project.{{ name }}.arn}'

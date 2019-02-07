@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iot_policy_attachment:
+        {{ name }}:
+          policy: '${var.{{ name }}_policy}'
+          target: '${var.{{ name }}_target}'
+    variable:
+      {{ name }}_policy:
+        type: 'string'
+      {{ name }}_target:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iot_policy_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iot_policy_attachment.{{ name }}.id}'

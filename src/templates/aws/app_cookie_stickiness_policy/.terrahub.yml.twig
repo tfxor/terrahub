@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_app_cookie_stickiness_policy:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          load_balancer: '${var.{{ name }}_load_balancer}'
+          lb_port: '${var.{{ name }}_lb_port}'
+          cookie_name: '${var.{{ name }}_cookie_name}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_load_balancer:
+        type: 'string'
+      {{ name }}_lb_port:
+        type: 'int'
+      {{ name }}_cookie_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_app_cookie_stickiness_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_app_cookie_stickiness_policy.{{ name }}.id}'

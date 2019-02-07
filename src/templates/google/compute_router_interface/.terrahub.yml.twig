@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_router_interface:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          router: '${var.{{ name }}_router}'
+          vpn_tunnel: '${var.{{ name }}_vpn_tunnel}'
+          # ip_range: ''
+          # project: ''
+          # region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_router:
+        type: 'string'
+      {{ name }}_vpn_tunnel:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_router_interface.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_router_interface.{{ name }}.id}'
+      project:
+        value: '${google_compute_router_interface.{{ name }}.project}'
+      region:
+        value: '${google_compute_router_interface.{{ name }}.region}'

@@ -1,0 +1,55 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_redis_instance:
+        {{ name }}:
+          memory_size_gb: '${var.{{ name }}_memory_size_gb}'
+          name: '${var.{{ name }}_name}'
+          # location_id: ''
+          # tier: ''
+          # project: ''
+          # authorized_network: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # alternative_location_id: ''
+          # redis_configs: 
+          #   '[TO_BE_REPLACED]': ''
+          # redis_version: ''
+          # region: ''
+          # reserved_ip_range: ''
+          # display_name: ''
+    variable:
+      {{ name }}_memory_size_gb:
+        type: 'int'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_redis_instance.{{ name }}.id}'
+      thub_id:
+        value: '${google_redis_instance.{{ name }}.id}'
+      port:
+        value: '${google_redis_instance.{{ name }}.port}'
+      location_id:
+        value: '${google_redis_instance.{{ name }}.location_id}'
+      current_location_id:
+        value: '${google_redis_instance.{{ name }}.current_location_id}'
+      project:
+        value: '${google_redis_instance.{{ name }}.project}'
+      authorized_network:
+        value: '${google_redis_instance.{{ name }}.authorized_network}'
+      create_time:
+        value: '${google_redis_instance.{{ name }}.create_time}'
+      alternative_location_id:
+        value: '${google_redis_instance.{{ name }}.alternative_location_id}'
+      redis_version:
+        value: '${google_redis_instance.{{ name }}.redis_version}'
+      region:
+        value: '${google_redis_instance.{{ name }}.region}'
+      reserved_ip_range:
+        value: '${google_redis_instance.{{ name }}.reserved_ip_range}'
+      host:
+        value: '${google_redis_instance.{{ name }}.host}'

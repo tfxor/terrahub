@@ -1,0 +1,112 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_instance:
+        {{ name }}:
+          boot_disk:
+            -
+          #     auto_delete: false
+          #     device_name: ''
+          #     disk_encryption_key_raw: ''
+          #     initialize_params: 
+          #       -
+          #         size: 0
+          #         type: ''
+          #         image: ''
+          machine_type: '${var.{{ name }}_machine_type}'
+          name: '${var.{{ name }}_name}'
+          network_interface:
+            -
+          #     subnetwork_project: ''
+          #     network_ip: ''
+          #     access_config: 
+          #       -
+          #         nat_ip: ''
+          #         network_tier: ''
+          #         public_ptr_domain_name: ''
+          #     network: ''
+          #     subnetwork: ''
+          # metadata: 
+          #   '[TO_BE_REPLACED]': ''
+          # service_account: 
+          #   -
+          #     scopes: []
+          #     email: ''
+          # scratch_disk: 
+          #   -
+          #     interface: ''
+          # can_ip_forward: false
+          # attached_disk: 
+          #   -
+          #     source: ''
+          #     device_name: ''
+          #     mode: ''
+          #     disk_encryption_key_raw: ''
+          # deletion_protection: false
+          # min_cpu_platform: ''
+          # address: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # project: ''
+          # allow_stopping_for_update: false
+          # description: ''
+          # disk: 
+          #   -
+          #     disk_encryption_key_raw: ''
+          #     image: ''
+          #     type: ''
+          #     scratch: false
+          #     auto_delete: false
+          #     size: 0
+          #     disk: ''
+          #     device_name: ''
+          # guest_accelerator: 
+          #   -
+          #     type: ''
+          #     count: 0
+          # metadata_startup_script: ''
+          # zone: ''
+          # hostname: ''
+          # scheduling: 
+          #   -
+          #     on_host_maintenance: ''
+          #     automatic_restart: false
+          #     preemptible: false
+          # tags: []
+    variable:
+      {{ name }}_machine_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_instance.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_instance.{{ name }}.id}'
+      cpu_platform:
+        value: '${google_compute_instance.{{ name }}.cpu_platform}'
+      label_fingerprint:
+        value: '${google_compute_instance.{{ name }}.label_fingerprint}'
+      tags_fingerprint:
+        value: '${google_compute_instance.{{ name }}.tags_fingerprint}'
+      metadata_fingerprint:
+        value: '${google_compute_instance.{{ name }}.metadata_fingerprint}'
+      address:
+        value: '${google_compute_instance.{{ name }}.address}'
+      create_timeout:
+        value: '${google_compute_instance.{{ name }}.create_timeout}'
+      project:
+        value: '${google_compute_instance.{{ name }}.project}'
+      instance_id:
+        value: '${google_compute_instance.{{ name }}.instance_id}'
+      guest_accelerator:
+        value: '${google_compute_instance.{{ name }}.guest_accelerator}'
+      zone:
+        value: '${google_compute_instance.{{ name }}.zone}'
+      scheduling:
+        value: '${google_compute_instance.{{ name }}.scheduling}'
+      self_link:
+        value: '${google_compute_instance.{{ name }}.self_link}'

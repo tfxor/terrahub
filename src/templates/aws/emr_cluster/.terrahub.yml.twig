@@ -1,0 +1,99 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_emr_cluster:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          release_label: '${var.{{ name }}_release_label}'
+          service_role: '${var.{{ name }}_service_role}'
+          # kerberos_attributes: 
+          #   -
+          #     kdc_admin_password: ''
+          #     realm: ''
+          #     ad_domain_join_password: ''
+          #     ad_domain_join_user: ''
+          #     cross_realm_trust_principal_password: ''
+          # configurations: ''
+          # custom_ami_id: ''
+          # core_instance_type: ''
+          # core_instance_count: 0
+          # ec2_attributes: 
+          #   -
+          #     instance_profile: ''
+          #     additional_slave_security_groups: ''
+          #     emr_managed_master_security_group: ''
+          #     emr_managed_slave_security_group: ''
+          #     service_access_security_group: ''
+          #     key_name: ''
+          #     subnet_id: ''
+          #     additional_master_security_groups: ''
+          # instance_group: 
+          #   bid_price:''
+          #   ebs_config:
+          #     size:0
+          #     type:''
+          #     iops:0
+          #     volumes_per_instance:0
+          # autoscaling_role: ''
+          # applications: []
+          # keep_job_flow_alive_when_no_steps: false
+          # step: 
+          #   -
+          #     action_on_failure: ''
+          #     hadoop_jar_step: 
+          #       -
+          #         jar: ''
+          #         args: 
+          #           -
+          #         main_class: ''
+          #         properties: 
+          #           '[TO_BE_REPLACED]': ''
+          # master_instance_type: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # scale_down_behavior: ''
+          # log_uri: ''
+          # security_configuration: ''
+          # visible_to_all_users: false
+          # additional_info: ''
+          # bootstrap_action: 
+          #   name:''
+          #   path:''
+          #   args:
+          #     -
+          # configurations_json: ''
+          # termination_protection: false
+          # ebs_root_volume_size: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_release_label:
+        type: 'string'
+      {{ name }}_service_role:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_emr_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_emr_cluster.{{ name }}.id}'
+      core_instance_type:
+        value: '${aws_emr_cluster.{{ name }}.core_instance_type}'
+      instance_group:
+        value: '${aws_emr_cluster.{{ name }}.instance_group}'
+      keep_job_flow_alive_when_no_steps:
+        value: '${aws_emr_cluster.{{ name }}.keep_job_flow_alive_when_no_steps}'
+      step:
+        value: '${aws_emr_cluster.{{ name }}.step}'
+      master_instance_type:
+        value: '${aws_emr_cluster.{{ name }}.master_instance_type}'
+      scale_down_behavior:
+        value: '${aws_emr_cluster.{{ name }}.scale_down_behavior}'
+      cluster_state:
+        value: '${aws_emr_cluster.{{ name }}.cluster_state}'
+      termination_protection:
+        value: '${aws_emr_cluster.{{ name }}.termination_protection}'
+      master_public_dns:
+        value: '${aws_emr_cluster.{{ name }}.master_public_dns}'

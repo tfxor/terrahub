@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_mariadb_database:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          server_name: '${var.{{ name }}_server_name}'
+          charset: '${var.{{ name }}_charset}'
+          collation: '${var.{{ name }}_collation}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_server_name:
+        type: 'string'
+      {{ name }}_charset:
+        type: 'string'
+      {{ name }}_collation:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_mariadb_database.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_mariadb_database.{{ name }}.id}'

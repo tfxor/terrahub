@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_key_vault:
+        {{ name }}:
+          tenant_id: '${var.{{ name }}_tenant_id}'
+          name: '${var.{{ name }}_name}'
+          sku:
+            -
+              name: ''
+          # access_policy: 
+          #   -
+          #     tenant_id: ''
+          #     object_id: ''
+          #     application_id: ''
+          # enabled_for_template_deployment: false
+          # network_acls: 
+          #   -
+          #     bypass: ''
+          #     default_action: ''
+          #     ip_rules: 
+          #     virtual_network_subnet_ids: 
+          # enabled_for_deployment: false
+          # enabled_for_disk_encryption: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_tenant_id:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_key_vault.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_key_vault.{{ name }}.id}'
+      access_policy:
+        value: '${azurerm_arm_key_vault.{{ name }}.access_policy}'
+      vault_uri:
+        value: '${azurerm_arm_key_vault.{{ name }}.vault_uri}'

@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_user_policy_attachment:
+        {{ name }}:
+          user: '${var.{{ name }}_user}'
+          policy_arn: '${var.{{ name }}_policy_arn}'
+    variable:
+      {{ name }}_user:
+        type: 'string'
+      {{ name }}_policy_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_user_policy_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_user_policy_attachment.{{ name }}.id}'

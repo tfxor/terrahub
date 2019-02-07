@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_wafregional_xss_match_set:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # xss_match_tuple: 
+          #   field_to_match:
+          #     type:''
+          #     data:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_wafregional_xss_match_set.{{ name }}.id}'
+      thub_id:
+        value: '${aws_wafregional_xss_match_set.{{ name }}.id}'

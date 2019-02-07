@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_globalaccelerator_accelerator:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # enabled: false
+          # attributes: 
+          #   -
+          #     flow_logs_enabled: false
+          #     flow_logs_s3_bucket: ''
+          #     flow_logs_s3_prefix: ''
+          # ip_address_type: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_globalaccelerator_accelerator.{{ name }}.id}'
+      thub_id:
+        value: '${aws_globalaccelerator_accelerator.{{ name }}.id}'
+      ip_sets:
+        value: '${aws_globalaccelerator_accelerator.{{ name }}.ip_sets}'

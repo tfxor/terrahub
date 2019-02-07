@@ -1,0 +1,133 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_application_gateway:
+        {{ name }}:
+          resource_group_name: '${var.{{ name }}_resource_group_name}'
+          backend_http_settings:
+            -
+              name: ''
+              port: 0
+              protocol: ''
+              cookie_based_affinity: ''
+          #     authentication_certificate: 
+          #       -
+          #         name: ''
+          #     pick_host_name_from_backend_address: false
+          #     request_timeout: 0
+          frontend_ip_configuration:
+            -
+              name: ''
+          #     subnet_id: ''
+          #     private_ip_address: ''
+          #     public_ip_address_id: ''
+          #     private_ip_address_allocation: ''
+          frontend_port:
+            -
+              name: ''
+              port: 0
+          name: '${var.{{ name }}_name}'
+          gateway_ip_configuration:
+            -
+              name: ''
+              subnet_id: ''
+          http_listener:
+            -
+              name: ''
+              protocol: ''
+              frontend_ip_configuration_name: ''
+              frontend_port_name: ''
+          #     custom_error_configuration: 
+          #       -
+          #         status_code: ''
+          #         custom_error_page_url: ''
+          #     host_name: ''
+          #     ssl_certificate_name: ''
+          #     require_sni: false
+          sku:
+            -
+              name: ''
+              tier: ''
+              capacity: 0
+          backend_address_pool:
+            -
+              name: ''
+          #     fqdns: 
+          #       -
+          #     ip_addresses: 
+          #       -
+          #     fqdn_list: []
+          #     ip_address_list: []
+          request_routing_rule:
+            -
+              http_listener_name: ''
+              name: ''
+              rule_type: ''
+          #     url_path_map_name: ''
+          #     backend_address_pool_name: ''
+          #     backend_http_settings_name: ''
+          # url_path_map: 
+          #   -
+          #     name: ''
+          #     default_backend_address_pool_name: ''
+          #     default_backend_http_settings_name: ''
+          #     path_rule: 
+          #       -
+          #         backend_http_settings_name: ''
+          #         name: ''
+          #         paths: []
+          #         backend_address_pool_name: ''
+          # custom_error_configuration: 
+          #   -
+          #     status_code: ''
+          #     custom_error_page_url: ''
+          # authentication_certificate: 
+          #   -
+          #     name: ''
+          #     data: ''
+          # disabled_ssl_protocols: []
+          # enable_http2: false
+          # ssl_certificate: 
+          #   -
+          #     name: ''
+          #     data: ''
+          #     password: ''
+          # waf_configuration: 
+          #   -
+          #     enabled: false
+          #     firewall_mode: ''
+          #     rule_set_version: ''
+          #     file_upload_limit_mb: 0
+          #     rule_set_type: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # probe: 
+          #   -
+          #     protocol: ''
+          #     path: ''
+          #     interval: 0
+          #     timeout: 0
+          #     unhealthy_threshold: 0
+          #     name: ''
+          #     match: 
+          #       -
+          #         body: ''
+          #         status_code: 
+          #           -
+          #     host: ''
+          #     pick_host_name_from_backend_http_settings: false
+          #     minimum_servers: 0
+    variable:
+      {{ name }}_resource_group_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_application_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_application_gateway.{{ name }}.id}'

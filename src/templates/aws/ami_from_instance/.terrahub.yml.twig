@@ -1,0 +1,50 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ami_from_instance:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          source_instance_id: '${var.{{ name }}_source_instance_id}'
+          # ephemeral_block_device: 
+          # description: ''
+          # ebs_block_device: 
+          # snapshot_without_reboot: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_source_instance_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ami_from_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ami_from_instance.{{ name }}.id}'
+      ephemeral_block_device:
+        value: '${aws_ami_from_instance.{{ name }}.ephemeral_block_device}'
+      kernel_id:
+        value: '${aws_ami_from_instance.{{ name }}.kernel_id}'
+      ramdisk_id:
+        value: '${aws_ami_from_instance.{{ name }}.ramdisk_id}'
+      architecture:
+        value: '${aws_ami_from_instance.{{ name }}.architecture}'
+      root_device_name:
+        value: '${aws_ami_from_instance.{{ name }}.root_device_name}'
+      ebs_block_device:
+        value: '${aws_ami_from_instance.{{ name }}.ebs_block_device}'
+      ena_support:
+        value: '${aws_ami_from_instance.{{ name }}.ena_support}'
+      sriov_net_support:
+        value: '${aws_ami_from_instance.{{ name }}.sriov_net_support}'
+      image_location:
+        value: '${aws_ami_from_instance.{{ name }}.image_location}'
+      manage_ebs_snapshots:
+        value: '${aws_ami_from_instance.{{ name }}.manage_ebs_snapshots}'
+      root_snapshot_id:
+        value: '${aws_ami_from_instance.{{ name }}.root_snapshot_id}'
+      virtualization_type:
+        value: '${aws_ami_from_instance.{{ name }}.virtualization_type}'

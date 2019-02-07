@@ -215,6 +215,7 @@ class ComponentCommand extends AbstractCommand {
       if (!this._save) {
         return Promise.resolve();
       }      
+      
       const tmpPath = homePath('cache/jit');
       const arch = (new Downloader()).getOsArch();
       const componentBinPath = `${commandsPath}/../../bin/${arch}`
@@ -259,8 +260,10 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _getTemplatePath() {
-    const mapping = require(templates.mapping);
-    const templateDir = path.join(path.dirname(templates.mapping), mapping[this._template]);
+    const keys = this._template.split('_');
+    const provider = keys.shift();
+    const resourceName = this._template.replace(provider + '_', '')
+    const templateDir = path.join(path.dirname(templates.path), provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);

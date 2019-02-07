@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_licensemanager_license_configuration:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          license_counting_type: '${var.{{ name }}_license_counting_type}'
+          # license_rules: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # license_count: 0
+          # license_count_hard_limit: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_license_counting_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_licensemanager_license_configuration.{{ name }}.id}'
+      thub_id:
+        value: '${aws_licensemanager_license_configuration.{{ name }}.id}'

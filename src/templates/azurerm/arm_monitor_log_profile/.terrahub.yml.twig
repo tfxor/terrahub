@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_log_profile:
+        {{ name }}:
+          retention_policy:
+            -
+              enabled: false
+          #     days: 0
+          name: '${var.{{ name }}_name}'
+          locations: '${var.{{ name }}_locations}'
+          categories: '${var.{{ name }}_categories}'
+          # storage_account_id: ''
+          # servicebus_rule_id: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_locations:
+        type: 'set'
+      {{ name }}_categories:
+        type: 'set'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_log_profile.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_log_profile.{{ name }}.id}'

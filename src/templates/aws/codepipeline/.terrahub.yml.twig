@@ -1,0 +1,48 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codepipeline:
+        {{ name }}:
+          stage:
+            -
+              action: 
+                -
+                  provider: ''
+                  version: ''
+                  name: ''
+                  owner: ''
+                  category: ''
+          #         input_artifacts: 
+          #           -
+          #         role_arn: ''
+          #         run_order: 0
+          #         configuration: 
+          #           '[TO_BE_REPLACED]': ''
+          #         output_artifacts: 
+          #           -
+              name: ''
+          name: '${var.{{ name }}_name}'
+          role_arn: '${var.{{ name }}_role_arn}'
+          artifact_store:
+            -
+              location: ''
+              type: ''
+          #     encryption_key: 
+          #       -
+          #         type: ''
+          #         id: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codepipeline.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codepipeline.{{ name }}.id}'
+      arn:
+        value: '${aws_codepipeline.{{ name }}.arn}'

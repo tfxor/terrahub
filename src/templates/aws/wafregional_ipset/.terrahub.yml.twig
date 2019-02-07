@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_wafregional_ipset:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # ip_set_descriptor: 
+          #   type:''
+          #   value:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_wafregional_ipset.{{ name }}.id}'
+      thub_id:
+        value: '${aws_wafregional_ipset.{{ name }}.id}'
+      arn:
+        value: '${aws_wafregional_ipset.{{ name }}.arn}'

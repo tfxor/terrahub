@@ -1,0 +1,59 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_cosmos_db_account:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          offer_type: '${var.{{ name }}_offer_type}'
+          consistency_policy:
+            -
+              consistency_level: ''
+          #     max_interval_in_seconds: 0
+          #     max_staleness_prefix: 0
+          # failover_policy: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # ip_range_filter: ''
+          # kind: ''
+          # geo_location: 
+          #   failover_priority:0
+          #   prefix:''
+          # is_virtual_network_filter_enabled: false
+          # enable_multiple_write_locations: false
+          # enable_automatic_failover: false
+          # capabilities: 
+          #   name:''
+          # virtual_network_rule: 
+          #   id:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_offer_type:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.id}'
+      primary_master_key:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.primary_master_key}'
+      secondary_master_key:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.secondary_master_key}'
+      connection_strings:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.connection_strings}'
+      read_endpoints:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.read_endpoints}'
+      geo_location:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.geo_location}'
+      write_endpoints:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.write_endpoints}'
+      primary_readonly_master_key:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.primary_readonly_master_key}'
+      secondary_readonly_master_key:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.secondary_readonly_master_key}'
+      endpoint:
+        value: '${azurerm_arm_cosmos_db_account.{{ name }}.endpoint}'

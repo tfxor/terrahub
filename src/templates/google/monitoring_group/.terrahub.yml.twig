@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_monitoring_group:
+        {{ name }}:
+          display_name: '${var.{{ name }}_display_name}'
+          filter: '${var.{{ name }}_filter}'
+          # is_cluster: false
+          # parent_name: ''
+          # project: ''
+    variable:
+      {{ name }}_display_name:
+        type: 'string'
+      {{ name }}_filter:
+        type: 'string'
+    output:
+      id:
+        value: '${google_monitoring_group.{{ name }}.id}'
+      thub_id:
+        value: '${google_monitoring_group.{{ name }}.id}'
+      name:
+        value: '${google_monitoring_group.{{ name }}.name}'
+      project:
+        value: '${google_monitoring_group.{{ name }}.project}'

@@ -1,6 +1,0 @@
-resource "aws_network_interface" "{{ name }}" {
-  subnet_id       = "${var.network_interface_subnet_id}"
-  security_groups = ["${var.network_interface_security_groups}"]
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

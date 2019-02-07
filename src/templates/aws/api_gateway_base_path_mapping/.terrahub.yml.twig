@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_base_path_mapping:
+        {{ name }}:
+          domain_name: '${var.{{ name }}_domain_name}'
+          api_id: '${var.{{ name }}_api_id}'
+          # base_path: ''
+          # stage_name: ''
+    variable:
+      {{ name }}_domain_name:
+        type: 'string'
+      {{ name }}_api_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_api_gateway_base_path_mapping.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_base_path_mapping.{{ name }}.id}'

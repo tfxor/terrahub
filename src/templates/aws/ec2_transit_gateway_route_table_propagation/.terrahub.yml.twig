@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_transit_gateway_route_table_propagation:
+        {{ name }}:
+          transit_gateway_attachment_id: '${var.{{ name }}_transit_gateway_attachment_id}'
+          transit_gateway_route_table_id: '${var.{{ name }}_transit_gateway_route_table_id}'
+    variable:
+      {{ name }}_transit_gateway_attachment_id:
+        type: 'string'
+      {{ name }}_transit_gateway_route_table_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ec2_transit_gateway_route_table_propagation.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_transit_gateway_route_table_propagation.{{ name }}.id}'
+      resource_id:
+        value: '${aws_ec2_transit_gateway_route_table_propagation.{{ name }}.resource_id}'
+      resource_type:
+        value: '${aws_ec2_transit_gateway_route_table_propagation.{{ name }}.resource_type}'

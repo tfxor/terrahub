@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glacier_vault:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # access_policy: ''
+          # notification: 
+          #   -
+          #     events: []
+          #     sns_topic: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glacier_vault.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glacier_vault.{{ name }}.id}'
+      location:
+        value: '${aws_glacier_vault.{{ name }}.location}'
+      arn:
+        value: '${aws_glacier_vault.{{ name }}.arn}'

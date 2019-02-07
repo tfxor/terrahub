@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_zone_association:
+        {{ name }}:
+          zone_id: '${var.{{ name }}_zone_id}'
+          vpc_id: '${var.{{ name }}_vpc_id}'
+          # vpc_region: ''
+    variable:
+      {{ name }}_zone_id:
+        type: 'string'
+      {{ name }}_vpc_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route53_zone_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route53_zone_association.{{ name }}.id}'
+      vpc_region:
+        value: '${aws_route53_zone_association.{{ name }}.vpc_region}'

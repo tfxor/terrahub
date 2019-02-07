@@ -1,8 +1,0 @@
-resource "aws_glue_classifier" "{{ name }}" {
-  name = "${var.glue_classifier_name}"
-  grok_classifier {
-    classification  = "${var.glue_classifier_classification}"
-    custom_patterns = "${var.glue_classifier_custom_patterns}"
-    grok_pattern    = "${var.glue_classifier_grok_pattern}"
-  }
-}

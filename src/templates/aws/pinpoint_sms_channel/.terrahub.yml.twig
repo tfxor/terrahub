@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_sms_channel:
+        {{ name }}:
+          application_id: '${var.{{ name }}_application_id}'
+          # enabled: false
+          # sender_id: ''
+          # short_code: ''
+    variable:
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_sms_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_sms_channel.{{ name }}.id}'
+      promotional_messages_per_second:
+        value: '${aws_pinpoint_sms_channel.{{ name }}.promotional_messages_per_second}'
+      transactional_messages_per_second:
+        value: '${aws_pinpoint_sms_channel.{{ name }}.transactional_messages_per_second}'

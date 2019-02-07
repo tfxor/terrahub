@@ -1,0 +1,51 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_record:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          zone_id: '${var.{{ name }}_zone_id}'
+          type: '${var.{{ name }}_type}'
+          # records: []
+          # allow_overwrite: false
+          # set_identifier: ''
+          # alias: 
+          #   zone_id:''
+          #   name:''
+          #   evaluate_target_health:false
+          # failover: ''
+          # failover_routing_policy: 
+          #   -
+          #     type: ''
+          # latency_routing_policy: 
+          #   -
+          #     region: ''
+          # multivalue_answer_routing_policy: false
+          # ttl: 0
+          # weight: 0
+          # geolocation_routing_policy: 
+          #   -
+          #     continent: ''
+          #     country: ''
+          #     subdivision: ''
+          # health_check_id: ''
+          # weighted_routing_policy: 
+          #   -
+          #     weight: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_zone_id:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route53_record.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route53_record.{{ name }}.id}'
+      fqdn:
+        value: '${aws_route53_record.{{ name }}.fqdn}'

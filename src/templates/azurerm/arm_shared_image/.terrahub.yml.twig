@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_shared_image:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          gallery_name: '${var.{{ name }}_gallery_name}'
+          os_type: '${var.{{ name }}_os_type}'
+          identifier:
+            -
+              sku: ''
+              publisher: ''
+              offer: ''
+          # privacy_statement_uri: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # eula: ''
+          # release_note_uri: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_gallery_name:
+        type: 'string'
+      {{ name }}_os_type:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_shared_image.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_shared_image.{{ name }}.id}'

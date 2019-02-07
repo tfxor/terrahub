@@ -1,0 +1,86 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_spot_fleet_request:
+        {{ name }}:
+          target_capacity: '${var.{{ name }}_target_capacity}'
+          ami: '${var.{{ name }}_ami}'
+          iam_fleet_role: '${var.{{ name }}_iam_fleet_role}'
+          launch_specification:
+          #   vpc_security_group_ids:
+          #   associate_public_ip_address:false
+          #   ebs_block_device:
+          #     device_name:''
+          #     encrypted:false
+          #     iops:0
+          #     snapshot_id:''
+          #     volume_size:0
+          #     volume_type:''
+          #     delete_on_termination:false
+          instance_type: '${var.{{ name }}_instance_type}'
+          # key_name: ''
+          # user_data: ''
+          # excess_capacity_termination_policy: ''
+          # wait_for_fulfillment: false
+          # iam_instance_profile: ''
+          # instance_interruption_behaviour: ''
+          # spot_price: ''
+          # weighted_capacity: ''
+          # load_balancers: []
+          # root_block_device: 
+          #   delete_on_termination:false
+          #   iops:0
+          #   volume_size:0
+          #   volume_type:''
+          # placement_group: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # terminate_instances_with_expiration: false
+          # valid_from: ''
+          # monitoring: false
+          # subnet_id: ''
+          # fleet_type: ''
+          # target_group_arns: []
+          # iam_instance_profile_arn: ''
+          # availability_zone: ''
+          # valid_until: ''
+          # ebs_optimized: false
+          # instance_pools_to_use_count: 0
+          # replace_unhealthy_instances: false
+          # placement_tenancy: ''
+          # allocation_strategy: ''
+    variable:
+      {{ name }}_target_capacity:
+        type: 'int'
+      {{ name }}_ami:
+        type: 'string'
+      {{ name }}_iam_fleet_role:
+        type: 'string'
+      {{ name }}_instance_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_spot_fleet_request.{{ name }}.id}'
+      thub_id:
+        value: '${aws_spot_fleet_request.{{ name }}.id}'
+      client_token:
+        value: '${aws_spot_fleet_request.{{ name }}.client_token}'
+      key_name:
+        value: '${aws_spot_fleet_request.{{ name }}.key_name}'
+      spot_request_state:
+        value: '${aws_spot_fleet_request.{{ name }}.spot_request_state}'
+      load_balancers:
+        value: '${aws_spot_fleet_request.{{ name }}.load_balancers}'
+      root_block_device:
+        value: '${aws_spot_fleet_request.{{ name }}.root_block_device}'
+      placement_group:
+        value: '${aws_spot_fleet_request.{{ name }}.placement_group}'
+      subnet_id:
+        value: '${aws_spot_fleet_request.{{ name }}.subnet_id}'
+      target_group_arns:
+        value: '${aws_spot_fleet_request.{{ name }}.target_group_arns}'
+      availability_zone:
+        value: '${aws_spot_fleet_request.{{ name }}.availability_zone}'

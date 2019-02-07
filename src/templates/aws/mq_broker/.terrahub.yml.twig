@@ -1,0 +1,64 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_mq_broker:
+        {{ name }}:
+          engine_version: '${var.{{ name }}_engine_version}'
+          broker_name: '${var.{{ name }}_broker_name}'
+          host_instance_type: '${var.{{ name }}_host_instance_type}'
+          engine_type: '${var.{{ name }}_engine_type}'
+          security_groups: '${var.{{ name }}_security_groups}'
+          user:
+            password:''
+            username:''
+          #   groups:
+          #   console_access:false
+          # publicly_accessible: false
+          # configuration: 
+          #   -
+          #     id: ''
+          #     revision: 0
+          # subnet_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # logs: 
+          #   -
+          #     general: false
+          #     audit: false
+          # maintenance_window_start_time: 
+          #   -
+          #     day_of_week: ''
+          #     time_of_day: ''
+          #     time_zone: ''
+          # apply_immediately: false
+          # deployment_mode: ''
+          # auto_minor_version_upgrade: false
+    variable:
+      {{ name }}_engine_version:
+        type: 'string'
+      {{ name }}_broker_name:
+        type: 'string'
+      {{ name }}_host_instance_type:
+        type: 'string'
+      {{ name }}_engine_type:
+        type: 'string'
+      {{ name }}_security_groups:
+        type: 'set'
+    output:
+      id:
+        value: '${aws_mq_broker.{{ name }}.id}'
+      thub_id:
+        value: '${aws_mq_broker.{{ name }}.id}'
+      configuration:
+        value: '${aws_mq_broker.{{ name }}.configuration}'
+      subnet_ids:
+        value: '${aws_mq_broker.{{ name }}.subnet_ids}'
+      maintenance_window_start_time:
+        value: '${aws_mq_broker.{{ name }}.maintenance_window_start_time}'
+      arn:
+        value: '${aws_mq_broker.{{ name }}.arn}'
+      instances:
+        value: '${aws_mq_broker.{{ name }}.instances}'

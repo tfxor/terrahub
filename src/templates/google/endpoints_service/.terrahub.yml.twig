@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_endpoints_service:
+        {{ name }}:
+          service_name: '${var.{{ name }}_service_name}'
+          # openapi_config: ''
+          # grpc_config: ''
+          # project: ''
+          # protoc_output: ''
+          # protoc_output_base64: ''
+    variable:
+      {{ name }}_service_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_endpoints_service.{{ name }}.id}'
+      thub_id:
+        value: '${google_endpoints_service.{{ name }}.id}'
+      endpoints:
+        value: '${google_endpoints_service.{{ name }}.endpoints}'
+      project:
+        value: '${google_endpoints_service.{{ name }}.project}'
+      dns_address:
+        value: '${google_endpoints_service.{{ name }}.dns_address}'
+      protoc_output:
+        value: '${google_endpoints_service.{{ name }}.protoc_output}'
+      config_id:
+        value: '${google_endpoints_service.{{ name }}.config_id}'
+      apis:
+        value: '${google_endpoints_service.{{ name }}.apis}'

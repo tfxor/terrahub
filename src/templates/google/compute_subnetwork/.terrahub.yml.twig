@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_subnetwork:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          ip_cidr_range: '${var.{{ name }}_ip_cidr_range}'
+          network: '${var.{{ name }}_network}'
+          # description: ''
+          # enable_flow_logs: false
+          # private_ip_google_access: false
+          # region: ''
+          # project: ''
+          # secondary_ip_range: 
+          #   -
+          #     ip_cidr_range: ''
+          #     range_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_ip_cidr_range:
+        type: 'string'
+      {{ name }}_network:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_subnetwork.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_subnetwork.{{ name }}.id}'
+      region:
+        value: '${google_compute_subnetwork.{{ name }}.region}'
+      gateway_address:
+        value: '${google_compute_subnetwork.{{ name }}.gateway_address}'
+      project:
+        value: '${google_compute_subnetwork.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_subnetwork.{{ name }}.self_link}'
+      secondary_ip_range:
+        value: '${google_compute_subnetwork.{{ name }}.secondary_ip_range}'
+      creation_timestamp:
+        value: '${google_compute_subnetwork.{{ name }}.creation_timestamp}'
+      fingerprint:
+        value: '${google_compute_subnetwork.{{ name }}.fingerprint}'

@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_autoscaling_schedule:
+        {{ name }}:
+          scheduled_action_name: '${var.{{ name }}_scheduled_action_name}'
+          autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
+          # recurrence: ''
+          # max_size: 0
+          # desired_capacity: 0
+          # start_time: ''
+          # end_time: ''
+          # min_size: 0
+    variable:
+      {{ name }}_scheduled_action_name:
+        type: 'string'
+      {{ name }}_autoscaling_group_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_autoscaling_schedule.{{ name }}.id}'
+      thub_id:
+        value: '${aws_autoscaling_schedule.{{ name }}.id}'
+      recurrence:
+        value: '${aws_autoscaling_schedule.{{ name }}.recurrence}'
+      max_size:
+        value: '${aws_autoscaling_schedule.{{ name }}.max_size}'
+      desired_capacity:
+        value: '${aws_autoscaling_schedule.{{ name }}.desired_capacity}'
+      arn:
+        value: '${aws_autoscaling_schedule.{{ name }}.arn}'
+      start_time:
+        value: '${aws_autoscaling_schedule.{{ name }}.start_time}'
+      end_time:
+        value: '${aws_autoscaling_schedule.{{ name }}.end_time}'
+      min_size:
+        value: '${aws_autoscaling_schedule.{{ name }}.min_size}'

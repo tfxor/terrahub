@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_policy_definition:
+        {{ name }}:
+          policy_type: '${var.{{ name }}_policy_type}'
+          name: '${var.{{ name }}_name}'
+          mode: '${var.{{ name }}_mode}'
+          display_name: '${var.{{ name }}_display_name}'
+          # management_group_id: ''
+          # description: ''
+          # policy_rule: ''
+          # metadata: ''
+          # parameters: ''
+    variable:
+      {{ name }}_policy_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_mode:
+        type: 'string'
+      {{ name }}_display_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_policy_definition.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_policy_definition.{{ name }}.id}'

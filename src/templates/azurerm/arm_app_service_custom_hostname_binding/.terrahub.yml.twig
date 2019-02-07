@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_app_service_custom_hostname_binding:
+        {{ name }}:
+          hostname: '${var.{{ name }}_hostname}'
+          app_service_name: '${var.{{ name }}_app_service_name}'
+    variable:
+      {{ name }}_hostname:
+        type: 'string'
+      {{ name }}_app_service_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_app_service_custom_hostname_binding.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_app_service_custom_hostname_binding.{{ name }}.id}'

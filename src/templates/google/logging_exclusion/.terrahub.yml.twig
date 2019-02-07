@@ -1,0 +1,13 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_logging_exclusion:
+        {{ name }}:
+    output:
+      id:
+        value: '${google_logging_exclusion.{{ name }}.id}'
+      thub_id:
+        value: '${google_logging_exclusion.{{ name }}.id}'

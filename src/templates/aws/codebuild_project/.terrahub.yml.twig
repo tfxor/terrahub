@@ -1,0 +1,69 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codebuild_project:
+        {{ name }}:
+          environment:
+            compute_type:''
+          #   environment_variable:
+          #     -
+          #       name: ''
+          #       value: ''
+          #       type: ''
+          service_role: '${var.{{ name }}_service_role}'
+          name: '${var.{{ name }}_name}'
+          artifacts:
+            type:''
+          #   name:''
+          #   encryption_disabled:false
+          #   location:''
+          #   namespace_type:''
+          #   packaging:''
+          #   path:''
+          # badge_enabled: false
+          # cache: 
+          #   -
+          #     type: ''
+          #     location: ''
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # encryption_key: ''
+          # build_timeout: 0
+          # vpc_config: 
+          #   -
+          #     vpc_id: ''
+          #     subnets: []
+          #     security_group_ids: []
+          # secondary_artifacts: 
+          #   artifact_identifier:''
+          #   type:''
+          #   path:''
+          #   name:''
+          #   encryption_disabled:false
+          #   location:''
+          #   namespace_type:''
+          #   packaging:''
+          # secondary_sources: 
+          # timeout: 0
+    variable:
+      {{ name }}_service_role:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codebuild_project.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codebuild_project.{{ name }}.id}'
+      arn:
+        value: '${aws_codebuild_project.{{ name }}.arn}'
+      description:
+        value: '${aws_codebuild_project.{{ name }}.description}'
+      encryption_key:
+        value: '${aws_codebuild_project.{{ name }}.encryption_key}'
+      badge_url:
+        value: '${aws_codebuild_project.{{ name }}.badge_url}'

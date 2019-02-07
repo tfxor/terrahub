@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_appsync_graphql_api:
+        {{ name }}:
+          authentication_type: '${var.{{ name }}_authentication_type}'
+          name: '${var.{{ name }}_name}'
+          # openid_connect_config: 
+          #   -
+          #     issuer: ''
+          #     iat_ttl: 0
+          #     auth_ttl: 0
+          #     client_id: ''
+          # user_pool_config: 
+          #   -
+          #     default_action: ''
+          #     user_pool_id: ''
+          #     app_id_client_regex: ''
+          #     aws_region: ''
+          # log_config: 
+          #   -
+          #     cloudwatch_logs_role_arn: ''
+          #     field_log_level: ''
+    variable:
+      {{ name }}_authentication_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_appsync_graphql_api.{{ name }}.id}'
+      thub_id:
+        value: '${aws_appsync_graphql_api.{{ name }}.id}'
+      arn:
+        value: '${aws_appsync_graphql_api.{{ name }}.arn}'
+      uris:
+        value: '${aws_appsync_graphql_api.{{ name }}.uris}'

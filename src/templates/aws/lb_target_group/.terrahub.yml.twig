@@ -1,0 +1,49 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lb_target_group:
+        {{ name }}:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+          # health_check: 
+          #   -
+          #     unhealthy_threshold: 0
+          #     interval: 0
+          #     path: ''
+          #     port: ''
+          #     protocol: ''
+          #     timeout: 0
+          #     healthy_threshold: 0
+          #     matcher: ''
+          # stickiness: 
+          #   -
+          #     type: ''
+          #     enabled: false
+          #     cookie_duration: 0
+          # name: ''
+          # port: 0
+          # slow_start: 0
+          # target_type: ''
+          # protocol: ''
+          # vpc_id: ''
+          # deregistration_delay: 0
+          # proxy_protocol_v2: false
+    output:
+      id:
+        value: '${aws_lb_target_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lb_target_group.{{ name }}.id}'
+      arn:
+        value: '${aws_lb_target_group.{{ name }}.arn}'
+      arn_suffix:
+        value: '${aws_lb_target_group.{{ name }}.arn_suffix}'
+      health_check:
+        value: '${aws_lb_target_group.{{ name }}.health_check}'
+      stickiness:
+        value: '${aws_lb_target_group.{{ name }}.stickiness}'
+      name:
+        value: '${aws_lb_target_group.{{ name }}.name}'

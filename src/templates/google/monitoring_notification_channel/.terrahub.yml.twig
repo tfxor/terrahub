@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_monitoring_notification_channel:
+        {{ name }}:
+          display_name: '${var.{{ name }}_display_name}'
+          type: '${var.{{ name }}_type}'
+          # description: ''
+          # user_labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # enabled: false
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # project: ''
+    variable:
+      {{ name }}_display_name:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${google_monitoring_notification_channel.{{ name }}.id}'
+      thub_id:
+        value: '${google_monitoring_notification_channel.{{ name }}.id}'
+      name:
+        value: '${google_monitoring_notification_channel.{{ name }}.name}'
+      verification_status:
+        value: '${google_monitoring_notification_channel.{{ name }}.verification_status}'
+      project:
+        value: '${google_monitoring_notification_channel.{{ name }}.project}'

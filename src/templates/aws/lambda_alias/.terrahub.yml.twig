@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lambda_alias:
+        {{ name }}:
+          function_version: '${var.{{ name }}_function_version}'
+          name: '${var.{{ name }}_name}'
+          function_name: '${var.{{ name }}_function_name}'
+          # routing_config: 
+          #   -
+          #     additional_version_weights: 
+          #       '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_function_version:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_function_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lambda_alias.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lambda_alias.{{ name }}.id}'
+      arn:
+        value: '${aws_lambda_alias.{{ name }}.arn}'
+      invoke_arn:
+        value: '${aws_lambda_alias.{{ name }}.invoke_arn}'

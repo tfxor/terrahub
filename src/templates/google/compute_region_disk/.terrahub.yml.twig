@@ -1,0 +1,54 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_region_disk:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          replica_zones: '${var.{{ name }}_replica_zones}'
+          # description: ''
+          # region: ''
+          # size: 0
+          # snapshot: ''
+          # type: ''
+          # disk_encryption_key: 
+          #   -
+          #     raw_key: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # source_snapshot_encryption_key: 
+          #   -
+          #     raw_key: ''
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_replica_zones:
+        type: 'list'
+    output:
+      id:
+        value: '${google_compute_region_disk.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_region_disk.{{ name }}.id}'
+      region:
+        value: '${google_compute_region_disk.{{ name }}.region}'
+      size:
+        value: '${google_compute_region_disk.{{ name }}.size}'
+      last_attach_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.last_attach_timestamp}'
+      last_detach_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.last_detach_timestamp}'
+      self_link:
+        value: '${google_compute_region_disk.{{ name }}.self_link}'
+      creation_timestamp:
+        value: '${google_compute_region_disk.{{ name }}.creation_timestamp}'
+      label_fingerprint:
+        value: '${google_compute_region_disk.{{ name }}.label_fingerprint}'
+      users:
+        value: '${google_compute_region_disk.{{ name }}.users}'
+      source_snapshot_id:
+        value: '${google_compute_region_disk.{{ name }}.source_snapshot_id}'
+      project:
+        value: '${google_compute_region_disk.{{ name }}.project}'

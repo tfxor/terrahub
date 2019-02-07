@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_storagegateway_gateway:
+        {{ name }}:
+          gateway_name: '${var.{{ name }}_gateway_name}'
+          gateway_timezone: '${var.{{ name }}_gateway_timezone}'
+          # gateway_ip_address: ''
+          # gateway_type: ''
+          # smb_active_directory_settings: 
+          #   -
+          #     domain_name: ''
+          #     password: ''
+          #     username: ''
+          # tape_drive_type: ''
+          # activation_key: ''
+          # medium_changer_type: ''
+          # smb_guest_password: ''
+    variable:
+      {{ name }}_gateway_name:
+        type: 'string'
+      {{ name }}_gateway_timezone:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_storagegateway_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${aws_storagegateway_gateway.{{ name }}.id}'
+      gateway_id:
+        value: '${aws_storagegateway_gateway.{{ name }}.gateway_id}'
+      gateway_ip_address:
+        value: '${aws_storagegateway_gateway.{{ name }}.gateway_ip_address}'
+      arn:
+        value: '${aws_storagegateway_gateway.{{ name }}.arn}'
+      activation_key:
+        value: '${aws_storagegateway_gateway.{{ name }}.activation_key}'

@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_eip:
+        {{ name }}:
+          # instance: ''
+          # network_interface: ''
+          # vpc: false
+          # public_ipv4_pool: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # associate_with_private_ip: ''
+    output:
+      id:
+        value: '${aws_eip.{{ name }}.id}'
+      thub_id:
+        value: '${aws_eip.{{ name }}.id}'
+      instance:
+        value: '${aws_eip.{{ name }}.instance}'
+      network_interface:
+        value: '${aws_eip.{{ name }}.network_interface}'
+      allocation_id:
+        value: '${aws_eip.{{ name }}.allocation_id}'
+      association_id:
+        value: '${aws_eip.{{ name }}.association_id}'
+      domain:
+        value: '${aws_eip.{{ name }}.domain}'
+      public_ip:
+        value: '${aws_eip.{{ name }}.public_ip}'
+      private_ip:
+        value: '${aws_eip.{{ name }}.private_ip}'
+      vpc:
+        value: '${aws_eip.{{ name }}.vpc}'
+      public_ipv4_pool:
+        value: '${aws_eip.{{ name }}.public_ipv4_pool}'

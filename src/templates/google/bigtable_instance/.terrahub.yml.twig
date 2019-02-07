@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_bigtable_instance:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          cluster:
+            cluster_id:''
+            zone:''
+          #   num_nodes:0
+          #   storage_type:''
+          # display_name: ''
+          # cluster_id: ''
+          # storage_type: ''
+          # instance_type: ''
+          # project: ''
+          # zone: ''
+          # num_nodes: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_bigtable_instance.{{ name }}.id}'
+      thub_id:
+        value: '${google_bigtable_instance.{{ name }}.id}'
+      display_name:
+        value: '${google_bigtable_instance.{{ name }}.display_name}'
+      cluster_id:
+        value: '${google_bigtable_instance.{{ name }}.cluster_id}'
+      storage_type:
+        value: '${google_bigtable_instance.{{ name }}.storage_type}'
+      project:
+        value: '${google_bigtable_instance.{{ name }}.project}'
+      zone:
+        value: '${google_bigtable_instance.{{ name }}.zone}'
+      num_nodes:
+        value: '${google_bigtable_instance.{{ name }}.num_nodes}'

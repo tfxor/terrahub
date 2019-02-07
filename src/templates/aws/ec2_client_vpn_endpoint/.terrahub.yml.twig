@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_client_vpn_endpoint:
+        {{ name }}:
+          authentication_options:
+            -
+              type: ''
+          #     active_directory_id: ''
+          #     root_certificate_chain_arn: ''
+          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
+          server_certificate_arn: '${var.{{ name }}_server_certificate_arn}'
+          connection_log_options:
+            -
+              enabled: false
+          #     cloudwatch_log_group: ''
+          #     cloudwatch_log_stream: ''
+          # transport_protocol: ''
+          # description: ''
+          # dns_servers: []
+    variable:
+      {{ name }}_client_cidr_block:
+        type: 'string'
+      {{ name }}_server_certificate_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.id}'
+      dns_name:
+        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.dns_name}'
+      status:
+        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.status}'

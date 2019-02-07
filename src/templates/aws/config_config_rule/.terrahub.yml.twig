@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_config_config_rule:
+        {{ name }}:
+          source:
+            -
+              owner: ''
+          #     source_detail: 
+          #     maximum_execution_frequency:''
+          #     message_type:''
+          #     event_source:''
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # input_parameters: ''
+          # maximum_execution_frequency: ''
+          # scope: 
+          #   -
+          #     compliance_resource_id: ''
+          #     compliance_resource_types: 
+          #     tag_key: ''
+          #     tag_value: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_config_config_rule.{{ name }}.id}'
+      thub_id:
+        value: '${aws_config_config_rule.{{ name }}.id}'
+      rule_id:
+        value: '${aws_config_config_rule.{{ name }}.rule_id}'
+      arn:
+        value: '${aws_config_config_rule.{{ name }}.arn}'

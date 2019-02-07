@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_security_policy:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # preview: false
+          # description: ''
+          # project: ''
+          # rule: 
+          #   action:''
+          #   priority:0
+          #   match:
+          #     -
+          #       config: 
+          #           -
+          #           src_ip_ranges: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_security_policy.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_security_policy.{{ name }}.id}'
+      fingerprint:
+        value: '${google_compute_security_policy.{{ name }}.fingerprint}'
+      self_link:
+        value: '${google_compute_security_policy.{{ name }}.self_link}'
+      project:
+        value: '${google_compute_security_policy.{{ name }}.project}'
+      rule:
+        value: '${google_compute_security_policy.{{ name }}.rule}'

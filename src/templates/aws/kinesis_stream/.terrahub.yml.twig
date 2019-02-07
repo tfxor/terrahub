@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_kinesis_stream:
+        {{ name }}:
+          shard_count: '${var.{{ name }}_shard_count}'
+          name: '${var.{{ name }}_name}'
+          # retention_period: 0
+          # shard_level_metrics: []
+          # encryption_type: ''
+          # kms_key_id: ''
+          # arn: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_shard_count:
+        type: 'int'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_kinesis_stream.{{ name }}.id}'
+      thub_id:
+        value: '${aws_kinesis_stream.{{ name }}.id}'
+      arn:
+        value: '${aws_kinesis_stream.{{ name }}.arn}'

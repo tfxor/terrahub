@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_servicebus_topic:
+        {{ name }}:
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          name: '${var.{{ name }}_name}'
+          # support_ordering: false
+          # max_size_in_megabytes: 0
+          # requires_duplicate_detection: false
+          # status: ''
+          # default_message_ttl: ''
+          # enable_batched_operations: false
+          # auto_delete_on_idle: ''
+          # enable_partitioning: false
+          # enable_filtering_messages_before_publishing: false
+          # duplicate_detection_history_time_window: ''
+          # enable_express: false
+    variable:
+      {{ name }}_namespace_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.id}'
+      max_size_in_megabytes:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.max_size_in_megabytes}'
+      default_message_ttl:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.default_message_ttl}'
+      auto_delete_on_idle:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.auto_delete_on_idle}'
+      duplicate_detection_history_time_window:
+        value: '${azurerm_arm_servicebus_topic.{{ name }}.duplicate_detection_history_time_window}'

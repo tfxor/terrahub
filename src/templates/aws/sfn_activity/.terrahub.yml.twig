@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sfn_activity:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_sfn_activity.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sfn_activity.{{ name }}.id}'
+      creation_date:
+        value: '${aws_sfn_activity.{{ name }}.creation_date}'

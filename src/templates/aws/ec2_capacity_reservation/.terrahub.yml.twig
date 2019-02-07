@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_capacity_reservation:
+        {{ name }}:
+          instance_count: '${var.{{ name }}_instance_count}'
+          instance_type: '${var.{{ name }}_instance_type}'
+          availability_zone: '${var.{{ name }}_availability_zone}'
+          instance_platform: '${var.{{ name }}_instance_platform}'
+          # ephemeral_storage: false
+          # instance_match_criteria: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # ebs_optimized: false
+          # end_date: ''
+          # end_date_type: ''
+          # tenancy: ''
+    variable:
+      {{ name }}_instance_count:
+        type: 'int'
+      {{ name }}_instance_type:
+        type: 'string'
+      {{ name }}_availability_zone:
+        type: 'string'
+      {{ name }}_instance_platform:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ec2_capacity_reservation.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_capacity_reservation.{{ name }}.id}'

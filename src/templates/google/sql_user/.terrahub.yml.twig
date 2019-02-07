@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_sql_user:
+        {{ name }}:
+          instance: '${var.{{ name }}_instance}'
+          name: '${var.{{ name }}_name}'
+          # project: ''
+          # host: ''
+          # password: ''
+    variable:
+      {{ name }}_instance:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_sql_user.{{ name }}.id}'
+      thub_id:
+        value: '${google_sql_user.{{ name }}.id}'
+      project:
+        value: '${google_sql_user.{{ name }}.project}'

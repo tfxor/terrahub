@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_notification_hub_authorization_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          notification_hub_name: '${var.{{ name }}_notification_hub_name}'
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          # listen: false
+          # manage: false
+          # send: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_notification_hub_name:
+        type: 'string'
+      {{ name }}_namespace_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_notification_hub_authorization_rule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_notification_hub_authorization_rule.{{ name }}.id}'
+      primary_access_key:
+        value: '${azurerm_arm_notification_hub_authorization_rule.{{ name }}.primary_access_key}'
+      secondary_access_key:
+        value: '${azurerm_arm_notification_hub_authorization_rule.{{ name }}.secondary_access_key}'

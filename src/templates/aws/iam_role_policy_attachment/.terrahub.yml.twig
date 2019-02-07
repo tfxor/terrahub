@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_role_policy_attachment:
+        {{ name }}:
+          role: '${var.{{ name }}_role}'
+          policy_arn: '${var.{{ name }}_policy_arn}'
+    variable:
+      {{ name }}_role:
+        type: 'string'
+      {{ name }}_policy_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_role_policy_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_role_policy_attachment.{{ name }}.id}'

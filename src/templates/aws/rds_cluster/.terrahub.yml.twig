@@ -1,0 +1,104 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_rds_cluster:
+        {{ name }}:
+          # final_snapshot_identifier: ''
+          # snapshot_identifier: ''
+          # deletion_protection: false
+          # global_cluster_identifier: ''
+          # scaling_configuration: 
+          #   -
+          #     min_capacity: 0
+          #     seconds_until_auto_pause: 0
+          #     auto_pause: false
+          #     max_capacity: 0
+          # iam_roles: []
+          # iam_database_authentication_enabled: false
+          # backup_retention_period: 0
+          # replication_source_identifier: ''
+          # cluster_identifier: ''
+          # cluster_identifier_prefix: ''
+          # master_password: ''
+          # source_region: ''
+          # backtrack_window: 0
+          # engine: ''
+          # apply_immediately: false
+          # kms_key_id: ''
+          # enabled_cloudwatch_logs_exports: []
+          # engine_version: ''
+          # s3_import: 
+          #   -
+          #     source_engine_version: ''
+          #     bucket_name: ''
+          #     bucket_prefix: ''
+          #     ingestion_role: ''
+          #     source_engine: ''
+          #     bucket_prefix: ''
+          # port: 0
+          # vpc_security_group_ids: []
+          # preferred_backup_window: ''
+          # preferred_maintenance_window: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # availability_zones: []
+          # cluster_members: []
+          # db_subnet_group_name: ''
+          # master_username: ''
+          # engine_mode: ''
+          # storage_encrypted: false
+          # skip_final_snapshot: false
+          # database_name: ''
+          # db_cluster_parameter_group_name: ''
+    output:
+      id:
+        value: '${aws_rds_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_rds_cluster.{{ name }}.id}'
+      snapshot_identifier:
+        value: '${aws_rds_cluster.{{ name }}.snapshot_identifier}'
+      cluster_resource_id:
+        value: '${aws_rds_cluster.{{ name }}.cluster_resource_id}'
+      hosted_zone_id:
+        value: '${aws_rds_cluster.{{ name }}.hosted_zone_id}'
+      cluster_identifier:
+        value: '${aws_rds_cluster.{{ name }}.cluster_identifier}'
+      cluster_identifier_prefix:
+        value: '${aws_rds_cluster.{{ name }}.cluster_identifier_prefix}'
+      reader_endpoint:
+        value: '${aws_rds_cluster.{{ name }}.reader_endpoint}'
+      apply_immediately:
+        value: '${aws_rds_cluster.{{ name }}.apply_immediately}'
+      kms_key_id:
+        value: '${aws_rds_cluster.{{ name }}.kms_key_id}'
+      enabled_cloudwatch_logs_exports:
+        value: '${aws_rds_cluster.{{ name }}.enabled_cloudwatch_logs_exports}'
+      engine_version:
+        value: '${aws_rds_cluster.{{ name }}.engine_version}'
+      port:
+        value: '${aws_rds_cluster.{{ name }}.port}'
+      vpc_security_group_ids:
+        value: '${aws_rds_cluster.{{ name }}.vpc_security_group_ids}'
+      preferred_backup_window:
+        value: '${aws_rds_cluster.{{ name }}.preferred_backup_window}'
+      preferred_maintenance_window:
+        value: '${aws_rds_cluster.{{ name }}.preferred_maintenance_window}'
+      availability_zones:
+        value: '${aws_rds_cluster.{{ name }}.availability_zones}'
+      cluster_members:
+        value: '${aws_rds_cluster.{{ name }}.cluster_members}'
+      db_subnet_group_name:
+        value: '${aws_rds_cluster.{{ name }}.db_subnet_group_name}'
+      master_username:
+        value: '${aws_rds_cluster.{{ name }}.master_username}'
+      endpoint:
+        value: '${aws_rds_cluster.{{ name }}.endpoint}'
+      arn:
+        value: '${aws_rds_cluster.{{ name }}.arn}'
+      database_name:
+        value: '${aws_rds_cluster.{{ name }}.database_name}'
+      db_cluster_parameter_group_name:
+        value: '${aws_rds_cluster.{{ name }}.db_cluster_parameter_group_name}'

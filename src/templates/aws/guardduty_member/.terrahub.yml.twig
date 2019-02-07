@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_guardduty_member:
+        {{ name }}:
+          account_id: '${var.{{ name }}_account_id}'
+          detector_id: '${var.{{ name }}_detector_id}'
+          email: '${var.{{ name }}_email}'
+          # invite: false
+          # disable_email_notification: false
+          # invitation_message: ''
+    variable:
+      {{ name }}_account_id:
+        type: 'string'
+      {{ name }}_detector_id:
+        type: 'string'
+      {{ name }}_email:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_guardduty_member.{{ name }}.id}'
+      thub_id:
+        value: '${aws_guardduty_member.{{ name }}.id}'
+      relationship_status:
+        value: '${aws_guardduty_member.{{ name }}.relationship_status}'

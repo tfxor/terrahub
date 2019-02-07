@@ -1,0 +1,61 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_bigquery_table:
+        {{ name }}:
+          table_id: '${var.{{ name }}_table_id}'
+          dataset_id: '${var.{{ name }}_dataset_id}'
+          # project: ''
+          # friendly_name: ''
+          # schema: ''
+          # description: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # expiration_time: 0
+          # view: 
+          #   -
+          #     query: ''
+          #     use_legacy_sql: false
+          # time_partitioning: 
+          #   -
+          #     type: ''
+          #     expiration_ms: 0
+          #     field: ''
+          #     require_partition_filter: false
+    variable:
+      {{ name }}_table_id:
+        type: 'string'
+      {{ name }}_dataset_id:
+        type: 'string'
+    output:
+      id:
+        value: '${google_bigquery_table.{{ name }}.id}'
+      thub_id:
+        value: '${google_bigquery_table.{{ name }}.id}'
+      num_bytes:
+        value: '${google_bigquery_table.{{ name }}.num_bytes}'
+      project:
+        value: '${google_bigquery_table.{{ name }}.project}'
+      creation_time:
+        value: '${google_bigquery_table.{{ name }}.creation_time}'
+      etag:
+        value: '${google_bigquery_table.{{ name }}.etag}'
+      last_modified_time:
+        value: '${google_bigquery_table.{{ name }}.last_modified_time}'
+      schema:
+        value: '${google_bigquery_table.{{ name }}.schema}'
+      num_rows:
+        value: '${google_bigquery_table.{{ name }}.num_rows}'
+      self_link:
+        value: '${google_bigquery_table.{{ name }}.self_link}'
+      type:
+        value: '${google_bigquery_table.{{ name }}.type}'
+      expiration_time:
+        value: '${google_bigquery_table.{{ name }}.expiration_time}'
+      location:
+        value: '${google_bigquery_table.{{ name }}.location}'
+      num_long_term_bytes:
+        value: '${google_bigquery_table.{{ name }}.num_long_term_bytes}'

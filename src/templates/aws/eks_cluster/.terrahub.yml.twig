@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_eks_cluster:
+        {{ name }}:
+          role_arn: '${var.{{ name }}_role_arn}'
+          vpc_config:
+            -
+              subnet_ids: []
+          #     security_group_ids: 
+          name: '${var.{{ name }}_name}'
+          # version: ''
+    variable:
+      {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_eks_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_eks_cluster.{{ name }}.id}'
+      certificate_authority:
+        value: '${aws_eks_cluster.{{ name }}.certificate_authority}'
+      endpoint:
+        value: '${aws_eks_cluster.{{ name }}.endpoint}'
+      version:
+        value: '${aws_eks_cluster.{{ name }}.version}'
+      arn:
+        value: '${aws_eks_cluster.{{ name }}.arn}'
+      platform_version:
+        value: '${aws_eks_cluster.{{ name }}.platform_version}'
+      created_at:
+        value: '${aws_eks_cluster.{{ name }}.created_at}'

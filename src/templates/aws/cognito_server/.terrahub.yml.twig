@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cognito_server:
+        {{ name }}:
+          identifier: '${var.{{ name }}_identifier}'
+          name: '${var.{{ name }}_name}'
+          user_pool_id: '${var.{{ name }}_user_pool_id}'
+          # scope: 
+          #   scope_description:''
+          #   scope_name:''
+    variable:
+      {{ name }}_identifier:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_user_pool_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cognito_server.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cognito_server.{{ name }}.id}'
+      scope_identifiers:
+        value: '${aws_cognito_server.{{ name }}.scope_identifiers}'

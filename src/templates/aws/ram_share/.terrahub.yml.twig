@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ram_share:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # allow_external_principals: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ram_share.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ram_share.{{ name }}.id}'

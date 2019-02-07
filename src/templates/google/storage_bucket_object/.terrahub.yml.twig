@@ -1,0 +1,42 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_storage_bucket_object:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          bucket: '${var.{{ name }}_bucket}'
+          # content_encoding: ''
+          # cache_control: ''
+          # content: ''
+          # detect_md5hash: ''
+          # content_disposition: ''
+          # content_language: ''
+          # content_type: ''
+          # predefined_acl: ''
+          # source: ''
+          # storage_class: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${google_storage_bucket_object.{{ name }}.id}'
+      thub_id:
+        value: '${google_storage_bucket_object.{{ name }}.id}'
+      crc32c:
+        value: '${google_storage_bucket_object.{{ name }}.crc32c}'
+      md5hash:
+        value: '${google_storage_bucket_object.{{ name }}.md5hash}'
+      output_name:
+        value: '${google_storage_bucket_object.{{ name }}.output_name}'
+      self_link:
+        value: '${google_storage_bucket_object.{{ name }}.self_link}'
+      content_type:
+        value: '${google_storage_bucket_object.{{ name }}.content_type}'
+      storage_class:
+        value: '${google_storage_bucket_object.{{ name }}.storage_class}'

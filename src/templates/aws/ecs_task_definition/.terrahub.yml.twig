@@ -1,0 +1,51 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ecs_task_definition:
+        {{ name }}:
+          family: '${var.{{ name }}_family}'
+          container_definitions: '${var.{{ name }}_container_definitions}'
+          # placement_constraints: 
+          #   type:''
+          #   expression:''
+          # ipc_mode: ''
+          # pid_mode: ''
+          # cpu: ''
+          # execution_role_arn: ''
+          # network_mode: ''
+          # task_role_arn: ''
+          # memory: ''
+          # volume: 
+          #   name:''
+          #   host_path:''
+          #   docker_volume_configuration:
+          #     -
+          #       driver: ''
+          #       driver_opts: 
+          #           '[TO_BE_REPLACED]': ''
+          #       labels: 
+          #           '[TO_BE_REPLACED]': ''
+          #       scope: ''
+          #       autoprovision: false
+          # requires_compatibilities: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_family:
+        type: 'string'
+      {{ name }}_container_definitions:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ecs_task_definition.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ecs_task_definition.{{ name }}.id}'
+      arn:
+        value: '${aws_ecs_task_definition.{{ name }}.arn}'
+      network_mode:
+        value: '${aws_ecs_task_definition.{{ name }}.network_mode}'
+      revision:
+        value: '${aws_ecs_task_definition.{{ name }}.revision}'

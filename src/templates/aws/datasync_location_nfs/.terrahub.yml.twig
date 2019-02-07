@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_datasync_location_nfs:
+        {{ name }}:
+          on_prem_config:
+            -
+              agent_arns: []
+          server_hostname: '${var.{{ name }}_server_hostname}'
+          subdirectory: '${var.{{ name }}_subdirectory}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_server_hostname:
+        type: 'string'
+      {{ name }}_subdirectory:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_datasync_location_nfs.{{ name }}.id}'
+      thub_id:
+        value: '${aws_datasync_location_nfs.{{ name }}.id}'
+      uri:
+        value: '${aws_datasync_location_nfs.{{ name }}.uri}'
+      arn:
+        value: '${aws_datasync_location_nfs.{{ name }}.arn}'

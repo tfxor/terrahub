@@ -1,0 +1,76 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elasticache_replication_group:
+        {{ name }}:
+          replication_group_description: '${var.{{ name }}_replication_group_description}'
+          replication_group_id: '${var.{{ name }}_replication_group_id}'
+          # apply_immediately: false
+          # number_cache_clusters: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # snapshot_name: ''
+          # engine_version: ''
+          # parameter_group_name: ''
+          # security_group_names: []
+          # engine: ''
+          # notification_topic_arn: ''
+          # security_group_ids: []
+          # snapshot_window: ''
+          # availability_zones: []
+          # maintenance_window: ''
+          # port: 0
+          # snapshot_arns: []
+          # subnet_group_name: ''
+          # at_rest_encryption_enabled: false
+          # auth_token: ''
+          # auto_minor_version_upgrade: false
+          # automatic_failover_enabled: false
+          # cluster_mode: 
+          #   -
+          #     replicas_per_node_group: 0
+          #     num_node_groups: 0
+          # node_type: ''
+          # snapshot_retention_limit: 0
+          # transit_encryption_enabled: false
+    variable:
+      {{ name }}_replication_group_description:
+        type: 'string'
+      {{ name }}_replication_group_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elasticache_replication_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elasticache_replication_group.{{ name }}.id}'
+      apply_immediately:
+        value: '${aws_elasticache_replication_group.{{ name }}.apply_immediately}'
+      number_cache_clusters:
+        value: '${aws_elasticache_replication_group.{{ name }}.number_cache_clusters}'
+      primary_endpoint_address:
+        value: '${aws_elasticache_replication_group.{{ name }}.primary_endpoint_address}'
+      engine_version:
+        value: '${aws_elasticache_replication_group.{{ name }}.engine_version}'
+      parameter_group_name:
+        value: '${aws_elasticache_replication_group.{{ name }}.parameter_group_name}'
+      security_group_names:
+        value: '${aws_elasticache_replication_group.{{ name }}.security_group_names}'
+      security_group_ids:
+        value: '${aws_elasticache_replication_group.{{ name }}.security_group_ids}'
+      snapshot_window:
+        value: '${aws_elasticache_replication_group.{{ name }}.snapshot_window}'
+      maintenance_window:
+        value: '${aws_elasticache_replication_group.{{ name }}.maintenance_window}'
+      member_clusters:
+        value: '${aws_elasticache_replication_group.{{ name }}.member_clusters}'
+      subnet_group_name:
+        value: '${aws_elasticache_replication_group.{{ name }}.subnet_group_name}'
+      cluster_mode:
+        value: '${aws_elasticache_replication_group.{{ name }}.cluster_mode}'
+      configuration_endpoint_address:
+        value: '${aws_elasticache_replication_group.{{ name }}.configuration_endpoint_address}'
+      node_type:
+        value: '${aws_elasticache_replication_group.{{ name }}.node_type}'

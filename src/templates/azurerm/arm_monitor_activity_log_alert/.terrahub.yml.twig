@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_monitor_activity_log_alert:
+        {{ name }}:
+          scopes: '${var.{{ name }}_scopes}'
+          name: '${var.{{ name }}_name}'
+          criteria:
+            -
+              category: ''
+          #     resource_provider: ''
+          #     sub_status: ''
+          #     operation_name: ''
+          #     resource_type: ''
+          #     resource_group: ''
+          #     resource_id: ''
+          #     status: ''
+          #     caller: ''
+          #     level: ''
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # action: 
+          #   action_group_id:''
+          #   webhook_properties:
+          #     '[TO_BE_REPLACED]': ''
+          # enabled: false
+    variable:
+      {{ name }}_scopes:
+        type: 'set'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_monitor_activity_log_alert.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_monitor_activity_log_alert.{{ name }}.id}'

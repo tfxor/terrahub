@@ -1,0 +1,45 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_s3_bucket_object:
+        {{ name }}:
+          key: '${var.{{ name }}_key}'
+          bucket: '${var.{{ name }}_bucket}'
+          # content: ''
+          # content_base64: ''
+          # storage_class: ''
+          # content_language: ''
+          # content_disposition: ''
+          # content_type: ''
+          # source: ''
+          # server_side_encryption: ''
+          # kms_key_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # website_redirect: ''
+          # cache_control: ''
+          # content_encoding: ''
+          # etag: ''
+    variable:
+      {{ name }}_key:
+        type: 'string'
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_s3_bucket_object.{{ name }}.id}'
+      thub_id:
+        value: '${aws_s3_bucket_object.{{ name }}.id}'
+      storage_class:
+        value: '${aws_s3_bucket_object.{{ name }}.storage_class}'
+      version_id:
+        value: '${aws_s3_bucket_object.{{ name }}.version_id}'
+      content_type:
+        value: '${aws_s3_bucket_object.{{ name }}.content_type}'
+      server_side_encryption:
+        value: '${aws_s3_bucket_object.{{ name }}.server_side_encryption}'
+      etag:
+        value: '${aws_s3_bucket_object.{{ name }}.etag}'

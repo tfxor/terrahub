@@ -1,0 +1,17 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_shared_vpc_host_project:
+        {{ name }}:
+          project: '${var.{{ name }}_project}'
+    variable:
+      {{ name }}_project:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_shared_vpc_host_project.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_shared_vpc_host_project.{{ name }}.id}'

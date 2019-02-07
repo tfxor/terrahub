@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_https_health_check:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # port: 0
+          # unhealthy_threshold: 0
+          # project: ''
+          # check_interval_sec: 0
+          # healthy_threshold: 0
+          # host: ''
+          # request_path: ''
+          # timeout_sec: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_https_health_check.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_https_health_check.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_https_health_check.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_https_health_check.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_https_health_check.{{ name }}.self_link}'

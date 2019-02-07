@@ -1,0 +1,63 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_disk:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # source_snapshot_encryption_key: 
+          #   -
+          #     kms_key_self_link: ''
+          #     raw_key: ''
+          # disk_encryption_key_raw: ''
+          # image: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # size: 0
+          # snapshot: ''
+          # project: ''
+          # description: ''
+          # disk_encryption_key: 
+          #   -
+          #     kms_key_self_link: ''
+          #     raw_key: ''
+          # source_image_encryption_key: 
+          #   -
+          #     kms_key_self_link: ''
+          #     raw_key: ''
+          # type: ''
+          # zone: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_disk.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_disk.{{ name }}.id}'
+      self_link:
+        value: '${google_compute_disk.{{ name }}.self_link}'
+      users:
+        value: '${google_compute_disk.{{ name }}.users}'
+      size:
+        value: '${google_compute_disk.{{ name }}.size}'
+      project:
+        value: '${google_compute_disk.{{ name }}.project}'
+      last_detach_timestamp:
+        value: '${google_compute_disk.{{ name }}.last_detach_timestamp}'
+      disk_encryption_key_sha256:
+        value: '${google_compute_disk.{{ name }}.disk_encryption_key_sha256}'
+      label_fingerprint:
+        value: '${google_compute_disk.{{ name }}.label_fingerprint}'
+      last_attach_timestamp:
+        value: '${google_compute_disk.{{ name }}.last_attach_timestamp}'
+      source_image_id:
+        value: '${google_compute_disk.{{ name }}.source_image_id}'
+      source_snapshot_id:
+        value: '${google_compute_disk.{{ name }}.source_snapshot_id}'
+      zone:
+        value: '${google_compute_disk.{{ name }}.zone}'
+      creation_timestamp:
+        value: '${google_compute_disk.{{ name }}.creation_timestamp}'

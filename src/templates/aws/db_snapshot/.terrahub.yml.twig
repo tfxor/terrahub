@@ -1,0 +1,56 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_db_snapshot:
+        {{ name }}:
+          db_snapshot_identifier: '${var.{{ name }}_db_snapshot_identifier}'
+          db_instance_identifier: '${var.{{ name }}_db_instance_identifier}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_db_snapshot_identifier:
+        type: 'string'
+      {{ name }}_db_instance_identifier:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_db_snapshot.{{ name }}.id}'
+      thub_id:
+        value: '${aws_db_snapshot.{{ name }}.id}'
+      engine:
+        value: '${aws_db_snapshot.{{ name }}.engine}'
+      port:
+        value: '${aws_db_snapshot.{{ name }}.port}'
+      status:
+        value: '${aws_db_snapshot.{{ name }}.status}'
+      option_group_name:
+        value: '${aws_db_snapshot.{{ name }}.option_group_name}'
+      storage_type:
+        value: '${aws_db_snapshot.{{ name }}.storage_type}'
+      allocated_storage:
+        value: '${aws_db_snapshot.{{ name }}.allocated_storage}'
+      engine_version:
+        value: '${aws_db_snapshot.{{ name }}.engine_version}'
+      license_model:
+        value: '${aws_db_snapshot.{{ name }}.license_model}'
+      encrypted:
+        value: '${aws_db_snapshot.{{ name }}.encrypted}'
+      iops:
+        value: '${aws_db_snapshot.{{ name }}.iops}'
+      source_db_snapshot_identifier:
+        value: '${aws_db_snapshot.{{ name }}.source_db_snapshot_identifier}'
+      snapshot_type:
+        value: '${aws_db_snapshot.{{ name }}.snapshot_type}'
+      availability_zone:
+        value: '${aws_db_snapshot.{{ name }}.availability_zone}'
+      db_snapshot_arn:
+        value: '${aws_db_snapshot.{{ name }}.db_snapshot_arn}'
+      kms_key_id:
+        value: '${aws_db_snapshot.{{ name }}.kms_key_id}'
+      source_region:
+        value: '${aws_db_snapshot.{{ name }}.source_region}'
+      vpc_id:
+        value: '${aws_db_snapshot.{{ name }}.vpc_id}'

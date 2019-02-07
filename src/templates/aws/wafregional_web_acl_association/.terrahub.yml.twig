@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_wafregional_web_acl_association:
+        {{ name }}:
+          resource_arn: '${var.{{ name }}_resource_arn}'
+          web_acl_id: '${var.{{ name }}_web_acl_id}'
+    variable:
+      {{ name }}_resource_arn:
+        type: 'string'
+      {{ name }}_web_acl_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_wafregional_web_acl_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_wafregional_web_acl_association.{{ name }}.id}'

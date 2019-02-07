@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_scheduler_job:
+        {{ name }}:
+          storage_account_name: '${var.{{ name }}_storage_account_name}'
+          storage_queue_name: '${var.{{ name }}_storage_queue_name}'
+          sas_token: '${var.{{ name }}_sas_token}'
+          message: '${var.{{ name }}_message}'
+    variable:
+      {{ name }}_storage_account_name:
+        type: 'string'
+      {{ name }}_storage_queue_name:
+        type: 'string'
+      {{ name }}_sas_token:
+        type: 'string'
+      {{ name }}_message:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_scheduler_job.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_scheduler_job.{{ name }}.id}'

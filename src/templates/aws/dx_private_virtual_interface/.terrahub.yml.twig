@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_private_virtual_interface:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          vlan: '${var.{{ name }}_vlan}'
+          address_family: '${var.{{ name }}_address_family}'
+          connection_id: '${var.{{ name }}_connection_id}'
+          bgp_asn: '${var.{{ name }}_bgp_asn}'
+          # vpn_gateway_id: ''
+          # amazon_address: ''
+          # customer_address: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # dx_gateway_id: ''
+          # bgp_auth_key: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_vlan:
+        type: 'int'
+      {{ name }}_address_family:
+        type: 'string'
+      {{ name }}_connection_id:
+        type: 'string'
+      {{ name }}_bgp_asn:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
+      amazon_address:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.amazon_address}'
+      customer_address:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.customer_address}'
+      arn:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.arn}'
+      bgp_auth_key:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.bgp_auth_key}'
+      jumbo_frame_capable:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.jumbo_frame_capable}'

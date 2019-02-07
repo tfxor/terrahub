@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_wafregional_rate_based_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          metric_name: '${var.{{ name }}_metric_name}'
+          rate_key: '${var.{{ name }}_rate_key}'
+          rate_limit: '${var.{{ name }}_rate_limit}'
+          # predicate: 
+          #   negated:false
+          #   data_id:''
+          #   type:''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_metric_name:
+        type: 'string'
+      {{ name }}_rate_key:
+        type: 'string'
+      {{ name }}_rate_limit:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_wafregional_rate_based_rule.{{ name }}.id}'
+      thub_id:
+        value: '${aws_wafregional_rate_based_rule.{{ name }}.id}'

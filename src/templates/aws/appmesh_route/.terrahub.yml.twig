@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_appmesh_route:
+        {{ name }}:
+          mesh_name: '${var.{{ name }}_mesh_name}'
+          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
+          spec:
+            -
+              match: 
+                -
+                  prefix: ''
+          #     http_route: 
+          #       -
+          #         action: 
+          #           -
+          #             weighted_target: 
+          #         virtual_node:''
+          #         weight:0
+          name: '${var.{{ name }}_name}'
+    variable:
+      {{ name }}_mesh_name:
+        type: 'string'
+      {{ name }}_virtual_router_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_appmesh_route.{{ name }}.id}'
+      thub_id:
+        value: '${aws_appmesh_route.{{ name }}.id}'
+      arn:
+        value: '${aws_appmesh_route.{{ name }}.arn}'
+      created_date:
+        value: '${aws_appmesh_route.{{ name }}.created_date}'
+      last_updated_date:
+        value: '${aws_appmesh_route.{{ name }}.last_updated_date}'

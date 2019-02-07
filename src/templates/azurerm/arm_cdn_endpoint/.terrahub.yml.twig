@@ -1,0 +1,52 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_cdn_endpoint:
+        {{ name }}:
+          profile_name: '${var.{{ name }}_profile_name}'
+          name: '${var.{{ name }}_name}'
+          origin:
+            name:''
+            host_name:''
+          #   http_port:0
+          #   https_port:0
+          # origin_path: ''
+          # querystring_caching_behaviour: ''
+          # optimization_type: ''
+          # is_https_allowed: false
+          # geo_filter: 
+          #   -
+          #     action: ''
+          #     country_codes: []
+          #     relative_path: ''
+          # origin_host_header: ''
+          # is_compression_enabled: false
+          # probe_path: ''
+          # is_http_allowed: false
+          # content_types_to_compress: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_profile_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.id}'
+      origin_path:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.origin_path}'
+      host_name:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.host_name}'
+      origin_host_header:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.origin_host_header}'
+      probe_path:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.probe_path}'
+      content_types_to_compress:
+        value: '${azurerm_arm_cdn_endpoint.{{ name }}.content_types_to_compress}'

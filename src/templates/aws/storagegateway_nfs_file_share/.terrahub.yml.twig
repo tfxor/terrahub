@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_storagegateway_nfs_file_share:
+        {{ name }}:
+          client_list: '${var.{{ name }}_client_list}'
+          location_arn: '${var.{{ name }}_location_arn}'
+          role_arn: '${var.{{ name }}_role_arn}'
+          gateway_arn: '${var.{{ name }}_gateway_arn}'
+          # kms_encrypted: false
+          # default_storage_class: ''
+          # kms_key_arn: ''
+          # read_only: false
+          # squash: ''
+          # guess_mime_type_enabled: false
+          # nfs_file_share_defaults: 
+          #   -
+          #     directory_mode: ''
+          #     file_mode: ''
+          #     group_id: 0
+          #     owner_id: 0
+          # object_acl: ''
+          # requester_pays: false
+    variable:
+      {{ name }}_client_list:
+        type: 'set'
+      {{ name }}_location_arn:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_gateway_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
+      thub_id:
+        value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
+      fileshare_id:
+        value: '${aws_storagegateway_nfs_file_share.{{ name }}.fileshare_id}'
+      arn:
+        value: '${aws_storagegateway_nfs_file_share.{{ name }}.arn}'

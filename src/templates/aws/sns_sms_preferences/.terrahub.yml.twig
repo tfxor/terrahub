@@ -1,0 +1,19 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sns_sms_preferences:
+        {{ name }}:
+          # default_sms_type: ''
+          # usage_report_s3_bucket: ''
+          # monthly_spend_limit: ''
+          # delivery_status_iam_role_arn: ''
+          # delivery_status_success_sampling_rate: ''
+          # default_sender_id: ''
+    output:
+      id:
+        value: '${aws_sns_sms_preferences.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sns_sms_preferences.{{ name }}.id}'

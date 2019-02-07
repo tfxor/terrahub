@@ -1,0 +1,54 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lb:
+        {{ name }}:
+          # internal: false
+          # load_balancer_type: ''
+          # subnets: []
+          # idle_timeout: 0
+          # enable_http2: false
+          # name: ''
+          # security_groups: []
+          # subnet_mapping: 
+          #   subnet_id:''
+          #   allocation_id:''
+          # enable_deletion_protection: false
+          # enable_cross_zone_load_balancing: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+          # access_logs: []
+          # ip_address_type: ''
+    output:
+      id:
+        value: '${aws_lb.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lb.{{ name }}.id}'
+      internal:
+        value: '${aws_lb.{{ name }}.internal}'
+      subnets:
+        value: '${aws_lb.{{ name }}.subnets}'
+      arn_suffix:
+        value: '${aws_lb.{{ name }}.arn_suffix}'
+      zone_id:
+        value: '${aws_lb.{{ name }}.zone_id}'
+      name:
+        value: '${aws_lb.{{ name }}.name}'
+      security_groups:
+        value: '${aws_lb.{{ name }}.security_groups}'
+      subnet_mapping:
+        value: '${aws_lb.{{ name }}.subnet_mapping}'
+      dns_name:
+        value: '${aws_lb.{{ name }}.dns_name}'
+      arn:
+        value: '${aws_lb.{{ name }}.arn}'
+      access_logs:
+        value: '${aws_lb.{{ name }}.access_logs}'
+      ip_address_type:
+        value: '${aws_lb.{{ name }}.ip_address_type}'
+      vpc_id:
+        value: '${aws_lb.{{ name }}.vpc_id}'

@@ -1,0 +1,114 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #     key: 'path/to/terraform.tfstate'
+    resource:
+      aws_kinesis_firehose_delivery_stream:
+        {{ name }}:
+          output_format_configuration:
+            -
+              serializer: 
+                -
+          #         orc_ser_de: 
+          #           -
+          #             block_size_bytes: 0
+          #             bloom_filter_columns: 
+          #               -
+          #             enable_padding: false
+          #             format_version: ''
+          #             row_index_stride: 0
+          #             bloom_filter_false_positive_probability: ''
+          #             compression: ''
+          #             dictionary_key_threshold: ''
+          #             padding_tolerance: ''
+          #             stripe_size_bytes: 0
+          name: '${var.{{ name }}_name}'
+          destination: '${var.{{ name }}_destination}'
+          schema_configuration:
+            -
+              database_name: ''
+              role_arn: ''
+              table_name: ''
+          #     region: ''
+          #     version_id: ''
+          #     catalog_id: ''
+          role_arn: '${var.{{ name }}_role_arn}'
+          # destination_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # kinesis_source_configuration: 
+          #   -
+          #     kinesis_stream_arn: ''
+          #     role_arn: ''
+          # extended_s3_configuration: 
+          #   -
+          #     bucket_arn: ''
+          #     data_format_conversion_configuration: 
+          #       -
+          #         input_format_configuration: 
+          #           -
+          #             deserializer: 
+          #               -
+          #                 hive_json_ser_de: 
+          #                   -
+          #                     timestamp_formats: 
+          #                       -
+          #         enabled: false
+          #     buffer_size: 0
+          #     buffer_interval: 0
+          #     compression_format: ''
+          # redshift_configuration: 
+          #   -
+          #     role_arn: ''
+          #     cluster_jdbcurl: ''
+          #     username: ''
+          #     password: ''
+          #     data_table_name: ''
+          #     copy_options: ''
+          #     s3_backup_mode: ''
+          #     retry_duration: 0
+          #     data_table_columns: ''
+          # error_output_prefix: ''
+          # splunk_configuration: 
+          #   -
+          #     hec_token: ''
+          #     hec_endpoint: ''
+          #     hec_endpoint_type: ''
+          #     s3_backup_mode: ''
+          #     retry_duration: 0
+          #     hec_acknowledgment_timeout: 0
+          # version_id: ''
+          # prefix: ''
+          # s3_backup_mode: ''
+          # kms_key_arn: ''
+          # elasticsearch_configuration: 
+          #   -
+          #     role_arn: ''
+          #     domain_arn: ''
+          #     index_name: ''
+          #     buffering_size: 0
+          #     index_rotation_period: ''
+          #     retry_duration: 0
+          #     s3_backup_mode: ''
+          #     type_name: ''
+          #     buffering_interval: 0
+          # arn: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_destination:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_kinesis_firehose_delivery_stream.{{ name }}.id}'
+      thub_id:
+        value: '${aws_kinesis_firehose_delivery_stream.{{ name }}.id}'
+      destination_id:
+        value: '${aws_kinesis_firehose_delivery_stream.{{ name }}.destination_id}'
+      version_id:
+        value: '${aws_kinesis_firehose_delivery_stream.{{ name }}.version_id}'
+      arn:
+        value: '${aws_kinesis_firehose_delivery_stream.{{ name }}.arn}'
