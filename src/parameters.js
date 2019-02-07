@@ -71,6 +71,7 @@ module.exports = {
     api: cfg.api,
     env: cfg.env,
     home: homePath(),
+    jit: 'cache/jit',
     token: cfg.token,
     format: cfg.format,
     retryCount: cfg.retryCount,

@@ -9,7 +9,7 @@ const ConfigLoader = require('../config-loader');
 const { templates, commandsPath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const Downloader = require('../helpers/downloader');
-const childProcess = require('child_process');
+const { exec } = require('child-process-promise');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -192,10 +192,10 @@ class ComponentCommand extends AbstractCommand {
 
     return Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
-        
+
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
-        const srcFile = path.join(templatePath, file);        
+        const srcFile = path.join(templatePath, file);
         return twigReg.test(srcFile)
           ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
@@ -203,23 +203,28 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
       const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-      let data = '';      
+      let data = '';
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
       return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => {
-      const outFile = path.join(directory, this._defaultFileName());      
+      const outFile = path.join(directory, this._defaultFileName());
       return renderTwig(outFile, { name: name, code: code }, outFile);
     }).then(() => {
       if (!this._save) {
         return Promise.resolve();
-      }      
-      
+      }
+
       const tmpPath = homePath('cache/jit');
       const arch = (new Downloader()).getOsArch();
-      const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
+      const componentBinPath = `${commandsPath}/../../bin/${arch}`;
+
+      const projectPath = this.getAppPath();
+      const terraform = new Terraform({ root: directory, project: { root: projectPath } });
+
+      return terraform.prepare()
+        .then(() => exec(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' }));
     }).then(() => 'Done');
   }
 
@@ -262,7 +267,7 @@ class ComponentCommand extends AbstractCommand {
   _getTemplatePath() {
     const keys = this._template.split('_');
     const provider = keys.shift();
-    const resourceName = this._template.replace(provider + '_', '')
+    const resourceName = this._template.replace(provider + '_', '');
     const templateDir = path.join(path.dirname(templates.path), provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
