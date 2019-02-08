@@ -98,6 +98,14 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
+    /**
+     * @param {String} command
+     * @return {String}
+     */
+    function exec(command) {
+      return childProcess.execSync(command, { encoding: 'utf8' });
+    }
+
     const configPath = this._getConfigPath(name);
     if (!configPath) {
       return Promise.resolve();
@@ -106,7 +114,7 @@ class ComponentCommand extends AbstractCommand {
     const arch = (new Downloader()).getOsArch();
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
 
-    return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
+    return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`);
   }
 
   /**
