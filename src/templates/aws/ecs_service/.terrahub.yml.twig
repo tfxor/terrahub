@@ -2,51 +2,53 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ecs_service:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           task_definition: '${var.{{ name }}_task_definition}'
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # cluster: ''
           # enable_ecs_managed_tags: false
-          # health_check_grace_period_seconds: 0
-          # ordered_placement_strategy: 
-          #   -
-          #     type: ''
-          #     field: ''
           # launch_type: ''
-          # scheduling_strategy: ''
-          # deployment_maximum_percent: 0
-          # deployment_minimum_healthy_percent: 0
-          # network_configuration: 
-          #   -
-          #     subnets: []
-          #     assign_public_ip: false
-          #     security_groups: 
-          # placement_constraints: 
-          #   type: ''
-          #   expression: ''
+          # placement_strategy: []
           # desired_count: 0
+          # platform_version: ''
+          # scheduling_strategy: ''
           # iam_role: ''
           # load_balancer: 
           #   container_name: ''
           #   container_port: 0
           #   elb_name: ''
           #   target_group_arn: ''
-          # placement_strategy: []
-          # propagate_tags: ''
-          # service_registries: 
-          #   registry_arn: ''
-          #   port: 0
-          #   container_name: ''
-          #   container_port: 0
-          # platform_version: ''
+          # placement_constraints: 
+          #   type: ''
+          #   expression: ''
+          # health_check_grace_period_seconds: 0
           # deployment_controller: 
           #   -
           #     type: ''
+          # deployment_maximum_percent: 0
+          # deployment_minimum_healthy_percent: 0
+          # network_configuration: 
+          #   -
+          #     subnets: []
+          #     security_groups: 
+          #     assign_public_ip: false
+          # service_registries: 
+          #   registry_arn: ''
+          #   container_name: ''
+          #   container_port: 0
+          #   port: 0
+          # ordered_placement_strategy: 
+          #   -
+          #     type: ''
+          #     field: ''
+          # propagate_tags: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -59,7 +61,7 @@
         value: '${aws_ecs_service.{{ name }}.id}'
       cluster:
         value: '${aws_ecs_service.{{ name }}.cluster}'
-      iam_role:
-        value: '${aws_ecs_service.{{ name }}.iam_role}'
       platform_version:
         value: '${aws_ecs_service.{{ name }}.platform_version}'
+      iam_role:
+        value: '${aws_ecs_service.{{ name }}.iam_role}'

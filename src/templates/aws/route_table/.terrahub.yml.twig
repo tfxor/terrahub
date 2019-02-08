@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_route_table:
         {{ name }}:
@@ -11,15 +13,15 @@
           #   '[TO_BE_REPLACED]': ''
           # propagating_vgws: []
           # route: 
+          #   instance_id: ''
           #   transit_gateway_id: ''
-          #   network_interface_id: ''
-          #   egress_only_gateway_id: ''
+          #   vpc_peering_connection_id: ''
+          #   ipv6_cidr_block: ''
           #   gateway_id: ''
           #   nat_gateway_id: ''
-          #   vpc_peering_connection_id: ''
+          #   network_interface_id: ''
           #   cidr_block: ''
-          #   ipv6_cidr_block: ''
-          #   instance_id: ''
+          #   egress_only_gateway_id: ''
     variable:
       {{ name }}_vpc_id:
         type: 'string'

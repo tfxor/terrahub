@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_rds_cluster_parameter_group:
         {{ name }}:
           family: '${var.{{ name }}_family}'
-          # parameter: 
-          #   name: ''
-          #   value: ''
-          #   apply_method: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
           # name_prefix: ''
           # description: ''
+          # parameter: 
+          #   name: ''
+          #   value: ''
+          #   apply_method: ''
     variable:
       {{ name }}_family:
         type: 'string'

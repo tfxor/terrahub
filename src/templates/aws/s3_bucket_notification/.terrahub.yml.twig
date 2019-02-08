@@ -2,32 +2,34 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_s3_bucket_notification:
         {{ name }}:
           bucket: '${var.{{ name }}_bucket}'
           # topic: 
           #   -
-          #     events: []
           #     topic_arn: ''
-          #     id: ''
+          #     events: []
           #     filter_prefix: ''
           #     filter_suffix: ''
+          #     id: ''
           # queue: 
           #   -
-          #     events: []
           #     queue_arn: ''
+          #     events: []
           #     id: ''
           #     filter_prefix: ''
           #     filter_suffix: ''
           # lambda_function: 
           #   -
           #     events: []
-          #     lambda_function_arn: ''
           #     id: ''
           #     filter_prefix: ''
           #     filter_suffix: ''
+          #     lambda_function_arn: ''
     variable:
       {{ name }}_bucket:
         type: 'string'

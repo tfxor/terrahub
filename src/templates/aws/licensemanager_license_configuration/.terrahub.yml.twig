@@ -2,18 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_licensemanager_license_configuration:
         {{ name }}:
           license_counting_type: '${var.{{ name }}_license_counting_type}'
           name: '${var.{{ name }}_name}'
-          # license_rules: []
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # description: ''
           # license_count: 0
           # license_count_hard_limit: false
+          # license_rules: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_license_counting_type:
         type: 'string'

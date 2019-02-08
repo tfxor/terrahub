@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_transfer_user:
         {{ name }}:
           role: '${var.{{ name }}_role}'
           server_id: '${var.{{ name }}_server_id}'
           user_name: '${var.{{ name }}_user_name}'
+          # home_directory: ''
           # policy: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # home_directory: ''
     variable:
       {{ name }}_role:
         type: 'string'

@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ses_template:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # text: ''
           # html: ''
           # subject: ''
-          # text: ''
     variable:
       {{ name }}_name:
         type: 'string'

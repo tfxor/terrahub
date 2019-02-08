@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_dms_replication_subnet_group:
         {{ name }}:
@@ -23,7 +25,7 @@
         value: '${aws_dms_replication_subnet_group.{{ name }}.id}'
       thub_id:
         value: '${aws_dms_replication_subnet_group.{{ name }}.id}'
-      replication_subnet_group_arn:
-        value: '${aws_dms_replication_subnet_group.{{ name }}.replication_subnet_group_arn}'
       vpc_id:
         value: '${aws_dms_replication_subnet_group.{{ name }}.vpc_id}'
+      replication_subnet_group_arn:
+        value: '${aws_dms_replication_subnet_group.{{ name }}.replication_subnet_group_arn}'

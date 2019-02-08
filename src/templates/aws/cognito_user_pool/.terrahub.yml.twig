@@ -2,31 +2,50 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cognito_user_pool:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # mfa_configuration: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # email_configuration: 
+          #   -
+          #     reply_to_email_address: ''
+          #     source_arn: ''
+          # email_verification_subject: ''
+          # email_verification_message: ''
           # alias_attributes: []
+          # device_configuration: 
+          #   -
+          #     challenge_required_on_new_device: false
+          #     device_only_remembered_on_user_prompt: false
+          # sms_verification_message: ''
           # schema: 
-          #   name: ''
           #   attribute_data_type: ''
+          #   name: ''
           #   developer_only_attribute: false
           #   mutable: false
           #   number_attribute_constraints: 
           #     -
           #       min_value: ''
           #       max_value: ''
-          # sms_verification_message: ''
-          # email_verification_subject: ''
-          # email_verification_message: ''
-          # mfa_configuration: ''
           # sms_authentication_message: ''
           # sms_configuration: 
           #   -
-          #     sns_caller_arn: ''
           #     external_id: ''
-          # username_attributes: []
+          #     sns_caller_arn: ''
+          # verification_message_template: 
+          #   -
+          #     default_email_option: ''
+          #     email_message: ''
+          #     email_message_by_link: ''
+          #     email_subject: ''
+          #     email_subject_by_link: ''
+          #     sms_message: ''
           # admin_create_user_config: 
           #   -
           #     allow_admin_create_user_only: false
@@ -35,44 +54,27 @@
           #         email_message: ''
           #         email_subject: ''
           #         sms_message: ''
+          # auto_verified_attributes: []
           # lambda_config: 
           #   -
-          #     define_auth_challenge: ''
           #     pre_token_generation: ''
-          #     user_migration: ''
           #     verify_auth_challenge_response: ''
           #     create_auth_challenge: ''
-          #     post_authentication: ''
           #     post_confirmation: ''
+          #     post_authentication: ''
           #     pre_authentication: ''
           #     pre_sign_up: ''
+          #     user_migration: ''
           #     custom_message: ''
+          #     define_auth_challenge: ''
           # password_policy: 
           #   -
-          #     require_uppercase: false
-          #     minimum_length: 0
           #     require_lowercase: false
           #     require_numbers: false
           #     require_symbols: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # verification_message_template: 
-          #   -
-          #     sms_message: ''
-          #     default_email_option: ''
-          #     email_message: ''
-          #     email_message_by_link: ''
-          #     email_subject: ''
-          #     email_subject_by_link: ''
-          # auto_verified_attributes: []
-          # device_configuration: 
-          #   -
-          #     device_only_remembered_on_user_prompt: false
-          #     challenge_required_on_new_device: false
-          # email_configuration: 
-          #   -
-          #     reply_to_email_address: ''
-          #     source_arn: ''
+          #     require_uppercase: false
+          #     minimum_length: 0
+          # username_attributes: []
     variable:
       {{ name }}_name:
         type: 'string'
@@ -81,23 +83,23 @@
         value: '${aws_cognito_user_pool.{{ name }}.id}'
       thub_id:
         value: '${aws_cognito_user_pool.{{ name }}.id}'
-      arn:
-        value: '${aws_cognito_user_pool.{{ name }}.arn}'
       email_verification_subject:
         value: '${aws_cognito_user_pool.{{ name }}.email_verification_subject}'
       email_verification_message:
         value: '${aws_cognito_user_pool.{{ name }}.email_verification_message}'
-      last_modified_date:
-        value: '${aws_cognito_user_pool.{{ name }}.last_modified_date}'
-      admin_create_user_config:
-        value: '${aws_cognito_user_pool.{{ name }}.admin_create_user_config}'
-      creation_date:
-        value: '${aws_cognito_user_pool.{{ name }}.creation_date}'
-      lambda_config:
-        value: '${aws_cognito_user_pool.{{ name }}.lambda_config}'
       endpoint:
         value: '${aws_cognito_user_pool.{{ name }}.endpoint}'
-      password_policy:
-        value: '${aws_cognito_user_pool.{{ name }}.password_policy}'
+      creation_date:
+        value: '${aws_cognito_user_pool.{{ name }}.creation_date}'
       verification_message_template:
         value: '${aws_cognito_user_pool.{{ name }}.verification_message_template}'
+      admin_create_user_config:
+        value: '${aws_cognito_user_pool.{{ name }}.admin_create_user_config}'
+      arn:
+        value: '${aws_cognito_user_pool.{{ name }}.arn}'
+      lambda_config:
+        value: '${aws_cognito_user_pool.{{ name }}.lambda_config}'
+      last_modified_date:
+        value: '${aws_cognito_user_pool.{{ name }}.last_modified_date}'
+      password_policy:
+        value: '${aws_cognito_user_pool.{{ name }}.password_policy}'

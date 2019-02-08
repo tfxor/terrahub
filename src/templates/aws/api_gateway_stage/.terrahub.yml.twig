@@ -2,27 +2,29 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_stage:
         {{ name }}:
           rest_api_id: '${var.{{ name }}_rest_api_id}'
           stage_name: '${var.{{ name }}_stage_name}'
           deployment_id: '${var.{{ name }}_deployment_id}'
+          # cache_cluster_enabled: false
+          # description: ''
+          # xray_tracing_enabled: false
+          # variables: 
+          #   '[TO_BE_REPLACED]': ''
           # access_log_settings: 
           #   -
           #     destination_arn: ''
           #     format: ''
-          # xray_tracing_enabled: false
-          # cache_cluster_enabled: false
+          # documentation_version: ''
+          # cache_cluster_size: ''
           # client_certificate_id: ''
-          # variables: 
-          #   '[TO_BE_REPLACED]': ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # cache_cluster_size: ''
-          # description: ''
-          # documentation_version: ''
     variable:
       {{ name }}_rest_api_id:
         type: 'string'

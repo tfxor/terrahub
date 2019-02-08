@@ -2,15 +2,17 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cloudhsm2_cluster:
         {{ name }}:
           hsm_type: '${var.{{ name }}_hsm_type}'
           subnet_ids: '${var.{{ name }}_subnet_ids}'
+          # source_backup_identifier: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # source_backup_identifier: ''
     variable:
       {{ name }}_hsm_type:
         type: 'string'
@@ -21,15 +23,15 @@
         value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
-      security_group_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.security_group_id}'
-      cluster_state:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_state}'
       source_backup_identifier:
         value: '${aws_cloudhsm2_cluster.{{ name }}.source_backup_identifier}'
-      cluster_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_id}'
       vpc_id:
         value: '${aws_cloudhsm2_cluster.{{ name }}.vpc_id}'
       cluster_certificates:
         value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_certificates}'
+      cluster_state:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_state}'
+      cluster_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_id}'
+      security_group_id:
+        value: '${aws_cloudhsm2_cluster.{{ name }}.security_group_id}'

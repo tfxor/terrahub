@@ -2,15 +2,17 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appmesh_virtual_router:
         {{ name }}:
+          name: '${var.{{ name }}_name}'
+          mesh_name: '${var.{{ name }}_mesh_name}'
           spec: 
             -
               service_names: []
-          name: '${var.{{ name }}_name}'
-          mesh_name: '${var.{{ name }}_mesh_name}'
     variable:
       {{ name }}_name:
         type: 'string'
@@ -21,9 +23,9 @@
         value: '${aws_appmesh_virtual_router.{{ name }}.id}'
       thub_id:
         value: '${aws_appmesh_virtual_router.{{ name }}.id}'
+      last_updated_date:
+        value: '${aws_appmesh_virtual_router.{{ name }}.last_updated_date}'
       arn:
         value: '${aws_appmesh_virtual_router.{{ name }}.arn}'
       created_date:
         value: '${aws_appmesh_virtual_router.{{ name }}.created_date}'
-      last_updated_date:
-        value: '${aws_appmesh_virtual_router.{{ name }}.last_updated_date}'

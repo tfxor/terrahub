@@ -2,19 +2,15 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_gamelift_fleet:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           ec2_instance_type: '${var.{{ name }}_ec2_instance_type}'
+          name: '${var.{{ name }}_name}'
           build_id: '${var.{{ name }}_build_id}'
-          # metric_groups: []
-          # new_game_session_protection_policy: ''
-          # resource_creation_limit_policy: 
-          #   -
-          #     new_game_sessions_per_creator: 0
-          #     policy_period_in_minutes: 0
           # description: ''
           # ec2_inbound_permission: 
           #   -
@@ -22,6 +18,12 @@
           #     ip_range: ''
           #     protocol: ''
           #     to_port: 0
+          # metric_groups: []
+          # new_game_session_protection_policy: ''
+          # resource_creation_limit_policy: 
+          #   -
+          #     new_game_sessions_per_creator: 0
+          #     policy_period_in_minutes: 0
           # runtime_configuration: 
           #   -
           #     game_session_activation_timeout_seconds: 0
@@ -32,9 +34,9 @@
           #         launch_path: ''
           #         parameters: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_ec2_instance_type:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
       {{ name }}_build_id:
         type: 'string'
@@ -43,11 +45,11 @@
         value: '${aws_gamelift_fleet.{{ name }}.id}'
       thub_id:
         value: '${aws_gamelift_fleet.{{ name }}.id}'
-      metric_groups:
-        value: '${aws_gamelift_fleet.{{ name }}.metric_groups}'
-      log_paths:
-        value: '${aws_gamelift_fleet.{{ name }}.log_paths}'
       operating_system:
         value: '${aws_gamelift_fleet.{{ name }}.operating_system}'
       arn:
         value: '${aws_gamelift_fleet.{{ name }}.arn}'
+      log_paths:
+        value: '${aws_gamelift_fleet.{{ name }}.log_paths}'
+      metric_groups:
+        value: '${aws_gamelift_fleet.{{ name }}.metric_groups}'

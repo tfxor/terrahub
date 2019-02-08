@@ -2,22 +2,24 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_pinpoint_app:
         {{ name }}:
-          # limits: 
-          #   -
-          #     daily: 0
-          #     maximum_duration: 0
-          #     messages_per_second: 0
-          #     total: 0
           # quiet_time: 
           #   -
           #     end: ''
           #     start: ''
           # name: ''
           # name_prefix: ''
+          # limits: 
+          #   -
+          #     daily: 0
+          #     maximum_duration: 0
+          #     messages_per_second: 0
+          #     total: 0
     output:
       id:
         value: '${aws_pinpoint_app.{{ name }}.id}'

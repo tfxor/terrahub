@@ -2,35 +2,37 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_kms_grant:
         {{ name }}:
           key_id: '${var.{{ name }}_key_id}'
-          grantee_principal: '${var.{{ name }}_grantee_principal}'
           operations: '${var.{{ name }}_operations}'
+          grantee_principal: '${var.{{ name }}_grantee_principal}'
+          # grant_creation_tokens: []
+          # retiring_principal: ''
           # constraints: 
-          #   encryption_context_subset: 
-          #     '[TO_BE_REPLACED]': ''
           #   encryption_context_equals: 
           #     '[TO_BE_REPLACED]': ''
+          #   encryption_context_subset: 
+          #     '[TO_BE_REPLACED]': ''
           # retire_on_delete: false
-          # grant_creation_tokens: []
           # name: ''
-          # retiring_principal: ''
     variable:
       {{ name }}_key_id:
         type: 'string'
-      {{ name }}_grantee_principal:
-        type: 'string'
       {{ name }}_operations:
         type: 'set'
+      {{ name }}_grantee_principal:
+        type: 'string'
     output:
       id:
         value: '${aws_kms_grant.{{ name }}.id}'
       thub_id:
         value: '${aws_kms_grant.{{ name }}.id}'
-      grant_id:
-        value: '${aws_kms_grant.{{ name }}.grant_id}'
       grant_token:
         value: '${aws_kms_grant.{{ name }}.grant_token}'
+      grant_id:
+        value: '${aws_kms_grant.{{ name }}.grant_id}'

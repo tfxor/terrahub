@@ -2,31 +2,33 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_datasync_task:
         {{ name }}:
-          source_location_arn: '${var.{{ name }}_source_location_arn}'
           destination_location_arn: '${var.{{ name }}_destination_location_arn}'
+          source_location_arn: '${var.{{ name }}_source_location_arn}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # cloudwatch_log_group_arn: ''
           # name: ''
           # options: 
           #   -
-          #     atime: ''
-          #     gid: ''
-          #     mtime: ''
-          #     preserve_devices: ''
-          #     verify_mode: ''
-          #     bytes_per_second: 0
-          #     posix_permissions: ''
           #     preserve_deleted_files: ''
+          #     preserve_devices: ''
+          #     atime: ''
+          #     bytes_per_second: 0
+          #     mtime: ''
+          #     posix_permissions: ''
+          #     gid: ''
           #     uid: ''
+          #     verify_mode: ''
     variable:
-      {{ name }}_source_location_arn:
-        type: 'string'
       {{ name }}_destination_location_arn:
+        type: 'string'
+      {{ name }}_source_location_arn:
         type: 'string'
     output:
       id:

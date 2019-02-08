@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_athena_named_query:
         {{ name }}:
+          query: '${var.{{ name }}_query}'
           database: '${var.{{ name }}_database}'
           name: '${var.{{ name }}_name}'
-          query: '${var.{{ name }}_query}'
           # description: ''
     variable:
+      {{ name }}_query:
+        type: 'string'
       {{ name }}_database:
         type: 'string'
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_query:
         type: 'string'
     output:
       id:

@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_db_security_group:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           ingress: 
-          #   security_group_id: ''
           #   security_group_owner_id: ''
           #   cidr: ''
           #   security_group_name: ''
+          #   security_group_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''

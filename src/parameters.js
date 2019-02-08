@@ -67,7 +67,7 @@ module.exports = {
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
   cfgPath: cfgPath,
-  jitPath: 'cache/jit',
+  jitPath: path.join('cache', 'jit'),
   config: {
     api: cfg.api,
     env: cfg.env,

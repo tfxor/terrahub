@@ -2,11 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_codebuild_project:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          environment: 
+            compute_type: ''
+          #   environment_variable: 
+          #     -
+          #       value: ''
+          #       name: ''
+          #       type: ''
           artifacts: 
             type: ''
           #   packaging: ''
@@ -15,40 +24,33 @@
           #   encryption_disabled: false
           #   location: ''
           #   namespace_type: ''
-          environment: 
-            compute_type: ''
-          #   environment_variable: 
-          #     -
-          #       name: ''
-          #       value: ''
-          #       type: ''
           service_role: '${var.{{ name }}_service_role}'
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # encryption_key: ''
-          # badge_enabled: false
-          # cache: 
-          #   -
-          #     type: ''
-          #     location: ''
-          # secondary_sources: 
           # secondary_artifacts: 
           #   artifact_identifier: ''
           #   type: ''
+          #   location: ''
+          #   namespace_type: ''
           #   packaging: ''
           #   path: ''
           #   name: ''
           #   encryption_disabled: false
-          #   location: ''
-          #   namespace_type: ''
-          # timeout: 0
-          # build_timeout: 0
+          # cache: 
+          #   -
+          #     type: ''
+          #     location: ''
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # vpc_config: 
           #   -
           #     vpc_id: ''
           #     subnets: []
           #     security_group_ids: []
+          # build_timeout: 0
+          # secondary_sources: 
+          # badge_enabled: false
+          # timeout: 0
+          # encryption_key: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -59,11 +61,11 @@
         value: '${aws_codebuild_project.{{ name }}.id}'
       thub_id:
         value: '${aws_codebuild_project.{{ name }}.id}'
-      description:
-        value: '${aws_codebuild_project.{{ name }}.description}'
-      encryption_key:
-        value: '${aws_codebuild_project.{{ name }}.encryption_key}'
-      arn:
-        value: '${aws_codebuild_project.{{ name }}.arn}'
       badge_url:
         value: '${aws_codebuild_project.{{ name }}.badge_url}'
+      description:
+        value: '${aws_codebuild_project.{{ name }}.description}'
+      arn:
+        value: '${aws_codebuild_project.{{ name }}.arn}'
+      encryption_key:
+        value: '${aws_codebuild_project.{{ name }}.encryption_key}'

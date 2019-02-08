@@ -2,32 +2,34 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_dms_replication_task:
         {{ name }}:
-          migration_type: '${var.{{ name }}_migration_type}'
-          replication_task_id: '${var.{{ name }}_replication_task_id}'
-          table_mappings: '${var.{{ name }}_table_mappings}'
-          target_endpoint_arn: '${var.{{ name }}_target_endpoint_arn}'
-          replication_instance_arn: '${var.{{ name }}_replication_instance_arn}'
           source_endpoint_arn: '${var.{{ name }}_source_endpoint_arn}'
-          # cdc_start_time: ''
+          table_mappings: '${var.{{ name }}_table_mappings}'
+          migration_type: '${var.{{ name }}_migration_type}'
+          replication_instance_arn: '${var.{{ name }}_replication_instance_arn}'
+          replication_task_id: '${var.{{ name }}_replication_task_id}'
+          target_endpoint_arn: '${var.{{ name }}_target_endpoint_arn}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # cdc_start_time: ''
           # replication_task_settings: ''
     variable:
-      {{ name }}_migration_type:
-        type: 'string'
-      {{ name }}_replication_task_id:
+      {{ name }}_source_endpoint_arn:
         type: 'string'
       {{ name }}_table_mappings:
         type: 'string'
-      {{ name }}_target_endpoint_arn:
+      {{ name }}_migration_type:
         type: 'string'
       {{ name }}_replication_instance_arn:
         type: 'string'
-      {{ name }}_source_endpoint_arn:
+      {{ name }}_replication_task_id:
+        type: 'string'
+      {{ name }}_target_endpoint_arn:
         type: 'string'
     output:
       id:

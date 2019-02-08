@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_lb_listener_rule:
         {{ name }}:
@@ -10,6 +12,7 @@
           action: 
             -
               type: ''
+          #     order: 0
           #     target_group_arn: ''
           #     redirect: 
           #       -
@@ -19,7 +22,6 @@
           #         port: ''
           #         protocol: ''
           #         query: ''
-          #     order: 0
           condition: 
           #   field: ''
           #   values: 

@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cognito_identity_pool:
         {{ name }}:
           identity_pool_name: '${var.{{ name }}_identity_pool_name}'
-          # openid_connect_provider_arns: []
-          # saml_provider_arns: []
-          # supported_login_providers: 
-          #   '[TO_BE_REPLACED]': ''
           # cognito_identity_providers: 
           #   client_id: ''
           #   provider_name: ''
           #   server_side_token_check: false
           # developer_provider_name: ''
           # allow_unauthenticated_identities: false
+          # openid_connect_provider_arns: []
+          # saml_provider_arns: []
+          # supported_login_providers: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_identity_pool_name:
         type: 'string'

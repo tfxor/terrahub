@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_vpc_peering_connection:
         {{ name }}:
           vpc_id: '${var.{{ name }}_vpc_id}'
           peer_vpc_id: '${var.{{ name }}_peer_vpc_id}'
-          # peer_region: ''
           # peer_owner_id: ''
+          # auto_accept: false
+          # peer_region: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # auto_accept: false
     variable:
       {{ name }}_vpc_id:
         type: 'string'
@@ -23,9 +25,9 @@
         value: '${aws_vpc_peering_connection.{{ name }}.id}'
       thub_id:
         value: '${aws_vpc_peering_connection.{{ name }}.id}'
-      accept_status:
-        value: '${aws_vpc_peering_connection.{{ name }}.accept_status}'
-      peer_region:
-        value: '${aws_vpc_peering_connection.{{ name }}.peer_region}'
       peer_owner_id:
         value: '${aws_vpc_peering_connection.{{ name }}.peer_owner_id}'
+      peer_region:
+        value: '${aws_vpc_peering_connection.{{ name }}.peer_region}'
+      accept_status:
+        value: '${aws_vpc_peering_connection.{{ name }}.accept_status}'

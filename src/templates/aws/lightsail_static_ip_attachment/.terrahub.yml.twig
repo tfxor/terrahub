@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_lightsail_static_ip_attachment:
         {{ name }}:
-          static_ip_name: '${var.{{ name }}_static_ip_name}'
           instance_name: '${var.{{ name }}_instance_name}'
+          static_ip_name: '${var.{{ name }}_static_ip_name}'
     variable:
-      {{ name }}_static_ip_name:
-        type: 'string'
       {{ name }}_instance_name:
+        type: 'string'
+      {{ name }}_static_ip_name:
         type: 'string'
     output:
       id:

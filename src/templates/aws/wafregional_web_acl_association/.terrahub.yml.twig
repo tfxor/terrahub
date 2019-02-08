@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_wafregional_web_acl_association:
         {{ name }}:
-          resource_arn: '${var.{{ name }}_resource_arn}'
           web_acl_id: '${var.{{ name }}_web_acl_id}'
+          resource_arn: '${var.{{ name }}_resource_arn}'
     variable:
-      {{ name }}_resource_arn:
-        type: 'string'
       {{ name }}_web_acl_id:
+        type: 'string'
+      {{ name }}_resource_arn:
         type: 'string'
     output:
       id:

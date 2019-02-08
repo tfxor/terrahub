@@ -2,14 +2,12 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_s3_bucket_inventory:
         {{ name }}:
-          schedule: 
-            -
-              frequency: ''
-          included_object_versions: '${var.{{ name }}_included_object_versions}'
           bucket: '${var.{{ name }}_bucket}'
           name: '${var.{{ name }}_name}'
           destination: 
@@ -18,23 +16,27 @@
                 -
                   format: ''
                   bucket_arn: ''
+          #         account_id: ''
+          #         prefix: ''
           #         encryption: 
           #           -
           #             sse_kms: 
           #               -
           #                 key_id: ''
-          #         account_id: ''
-          #         prefix: ''
-          # optional_fields: []
+          schedule: 
+            -
+              frequency: ''
+          included_object_versions: '${var.{{ name }}_included_object_versions}'
           # filter: 
           #   -
           #     prefix: ''
+          # optional_fields: []
     variable:
-      {{ name }}_included_object_versions:
-        type: 'string'
       {{ name }}_bucket:
         type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_included_object_versions:
         type: 'string'
     output:
       id:

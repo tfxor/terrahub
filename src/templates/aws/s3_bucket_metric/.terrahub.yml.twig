@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_s3_bucket_metric:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
           name: '${var.{{ name }}_name}'
+          bucket: '${var.{{ name }}_bucket}'
           # filter: 
           #   -
           #     prefix: ''
           #     tags: 
           #       '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_bucket:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_bucket:
         type: 'string'
     output:
       id:

@@ -2,10 +2,15 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appmesh_route:
         {{ name }}:
+          name: '${var.{{ name }}_name}'
+          mesh_name: '${var.{{ name }}_mesh_name}'
+          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
           spec: 
             -
               match: 
@@ -18,9 +23,6 @@
           #             weighted_target: 
           #         virtual_node: ''
           #         weight: 0
-          name: '${var.{{ name }}_name}'
-          mesh_name: '${var.{{ name }}_mesh_name}'
-          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
     variable:
       {{ name }}_name:
         type: 'string'

@@ -2,24 +2,26 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_autoscaling_lifecycle_hook:
         {{ name }}:
+          lifecycle_transition: '${var.{{ name }}_lifecycle_transition}'
           name: '${var.{{ name }}_name}'
           autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
-          lifecycle_transition: '${var.{{ name }}_lifecycle_transition}'
-          # default_result: ''
           # heartbeat_timeout: 0
           # notification_metadata: ''
           # notification_target_arn: ''
           # role_arn: ''
+          # default_result: ''
     variable:
+      {{ name }}_lifecycle_transition:
+        type: 'string'
       {{ name }}_name:
         type: 'string'
       {{ name }}_autoscaling_group_name:
-        type: 'string'
-      {{ name }}_lifecycle_transition:
         type: 'string'
     output:
       id:

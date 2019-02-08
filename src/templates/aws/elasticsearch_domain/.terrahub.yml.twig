@@ -2,13 +2,41 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_elasticsearch_domain:
         {{ name }}:
           domain_name: '${var.{{ name }}_domain_name}'
+          # log_publishing_options: 
+          #   log_type: ''
+          #   cloudwatch_log_group_arn: ''
+          #   enabled: false
+          # cognito_options: []
+          # access_policies: ''
+          # encrypt_at_rest: 
+          #   -
+          #     enabled: false
+          #     kms_key_id: ''
+          # vpc_options: 
+          #   -
+          #     security_group_ids: 
+          #     subnet_ids: 
+          # ebs_options: 
+          #   -
+          #     ebs_enabled: false
+          #     iops: 0
+          #     volume_size: 0
+          #     volume_type: ''
+          # snapshot_options: 
+          #   -
+          #     automated_snapshot_start_hour: 0
           # advanced_options: 
           #   '[TO_BE_REPLACED]': ''
+          # node_to_node_encryption: 
+          #   -
+          #     enabled: false
           # cluster_config: 
           #   -
           #     zone_awareness_enabled: false
@@ -17,35 +45,9 @@
           #     dedicated_master_type: ''
           #     instance_count: 0
           #     instance_type: ''
-          # log_publishing_options: 
-          #   log_type: ''
-          #   cloudwatch_log_group_arn: ''
-          #   enabled: false
-          # access_policies: ''
-          # encrypt_at_rest: 
-          #   -
-          #     enabled: false
-          #     kms_key_id: ''
+          # elasticsearch_version: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # snapshot_options: 
-          #   -
-          #     automated_snapshot_start_hour: 0
-          # vpc_options: 
-          #   -
-          #     security_group_ids: 
-          #     subnet_ids: 
-          # cognito_options: []
-          # node_to_node_encryption: 
-          #   -
-          #     enabled: false
-          # elasticsearch_version: ''
-          # ebs_options: 
-          #   -
-          #     ebs_enabled: false
-          #     iops: 0
-          #     volume_size: 0
-          #     volume_type: ''
     variable:
       {{ name }}_domain_name:
         type: 'string'
@@ -54,23 +56,23 @@
         value: '${aws_elasticsearch_domain.{{ name }}.id}'
       thub_id:
         value: '${aws_elasticsearch_domain.{{ name }}.id}'
-      advanced_options:
-        value: '${aws_elasticsearch_domain.{{ name }}.advanced_options}'
-      cluster_config:
-        value: '${aws_elasticsearch_domain.{{ name }}.cluster_config}'
-      access_policies:
-        value: '${aws_elasticsearch_domain.{{ name }}.access_policies}'
-      encrypt_at_rest:
-        value: '${aws_elasticsearch_domain.{{ name }}.encrypt_at_rest}'
-      arn:
-        value: '${aws_elasticsearch_domain.{{ name }}.arn}'
-      endpoint:
-        value: '${aws_elasticsearch_domain.{{ name }}.endpoint}'
-      node_to_node_encryption:
-        value: '${aws_elasticsearch_domain.{{ name }}.node_to_node_encryption}'
       domain_id:
         value: '${aws_elasticsearch_domain.{{ name }}.domain_id}'
+      endpoint:
+        value: '${aws_elasticsearch_domain.{{ name }}.endpoint}'
       kibana_endpoint:
         value: '${aws_elasticsearch_domain.{{ name }}.kibana_endpoint}'
+      access_policies:
+        value: '${aws_elasticsearch_domain.{{ name }}.access_policies}'
+      arn:
+        value: '${aws_elasticsearch_domain.{{ name }}.arn}'
+      encrypt_at_rest:
+        value: '${aws_elasticsearch_domain.{{ name }}.encrypt_at_rest}'
       ebs_options:
         value: '${aws_elasticsearch_domain.{{ name }}.ebs_options}'
+      advanced_options:
+        value: '${aws_elasticsearch_domain.{{ name }}.advanced_options}'
+      node_to_node_encryption:
+        value: '${aws_elasticsearch_domain.{{ name }}.node_to_node_encryption}'
+      cluster_config:
+        value: '${aws_elasticsearch_domain.{{ name }}.cluster_config}'

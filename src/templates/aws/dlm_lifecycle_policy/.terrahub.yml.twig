@@ -2,10 +2,13 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_dlm_lifecycle_policy:
         {{ name }}:
+          target_tags: '${var.{{ name }}_target_tags}'
           description: '${var.{{ name }}_description}'
           execution_role_arn: '${var.{{ name }}_execution_role_arn}'
           policy_details: 
@@ -22,15 +25,14 @@
           #         copy_tags: false
           #     tags_to_add: 
           #       '[TO_BE_REPLACED]': ''
-          target_tags: '${var.{{ name }}_target_tags}'
           # state: ''
     variable:
+      {{ name }}_target_tags:
+        type: 'map'
       {{ name }}_description:
         type: 'string'
       {{ name }}_execution_role_arn:
         type: 'string'
-      {{ name }}_target_tags:
-        type: 'map'
     output:
       id:
         value: '${aws_dlm_lifecycle_policy.{{ name }}.id}'

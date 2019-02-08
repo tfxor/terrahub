@@ -2,18 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_vpc_link:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           target_arns: '${var.{{ name }}_target_arns}'
+          name: '${var.{{ name }}_name}'
           # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_target_arns:
         type: 'set'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${aws_api_gateway_vpc_link.{{ name }}.id}'

@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sfn_state_machine:
         {{ name }}:
-          role_arn: '${var.{{ name }}_role_arn}'
           definition: '${var.{{ name }}_definition}'
           name: '${var.{{ name }}_name}'
+          role_arn: '${var.{{ name }}_role_arn}'
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_definition:
         type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_role_arn:
         type: 'string'
     output:
       id:

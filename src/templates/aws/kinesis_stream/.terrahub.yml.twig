@@ -2,19 +2,21 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_kinesis_stream:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           shard_count: '${var.{{ name }}_shard_count}'
+          # shard_level_metrics: []
+          # encryption_type: ''
+          # kms_key_id: ''
           # arn: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # retention_period: 0
-          # shard_level_metrics: []
-          # encryption_type: ''
-          # kms_key_id: ''
     variable:
       {{ name }}_name:
         type: 'string'

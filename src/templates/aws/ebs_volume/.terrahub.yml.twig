@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ebs_volume:
         {{ name }}:
           availability_zone: '${var.{{ name }}_availability_zone}'
-          # iops: 0
-          # snapshot_id: ''
           # encrypted: false
-          # kms_key_id: ''
+          # iops: 0
           # size: 0
+          # snapshot_id: ''
           # type: ''
+          # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
@@ -23,17 +25,17 @@
         value: '${aws_ebs_volume.{{ name }}.id}'
       thub_id:
         value: '${aws_ebs_volume.{{ name }}.id}'
-      arn:
-        value: '${aws_ebs_volume.{{ name }}.arn}'
-      iops:
-        value: '${aws_ebs_volume.{{ name }}.iops}'
-      snapshot_id:
-        value: '${aws_ebs_volume.{{ name }}.snapshot_id}'
       encrypted:
         value: '${aws_ebs_volume.{{ name }}.encrypted}'
-      kms_key_id:
-        value: '${aws_ebs_volume.{{ name }}.kms_key_id}'
+      iops:
+        value: '${aws_ebs_volume.{{ name }}.iops}'
       size:
         value: '${aws_ebs_volume.{{ name }}.size}'
+      snapshot_id:
+        value: '${aws_ebs_volume.{{ name }}.snapshot_id}'
       type:
         value: '${aws_ebs_volume.{{ name }}.type}'
+      arn:
+        value: '${aws_ebs_volume.{{ name }}.arn}'
+      kms_key_id:
+        value: '${aws_ebs_volume.{{ name }}.kms_key_id}'

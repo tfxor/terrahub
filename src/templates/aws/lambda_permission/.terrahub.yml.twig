@@ -2,25 +2,27 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_lambda_permission:
         {{ name }}:
-          action: '${var.{{ name }}_action}'
           function_name: '${var.{{ name }}_function_name}'
           principal: '${var.{{ name }}_principal}'
-          # event_source_token: ''
-          # source_account: ''
+          action: '${var.{{ name }}_action}'
           # statement_id: ''
-          # qualifier: ''
-          # source_arn: ''
           # statement_id_prefix: ''
+          # event_source_token: ''
+          # source_arn: ''
+          # qualifier: ''
+          # source_account: ''
     variable:
-      {{ name }}_action:
-        type: 'string'
       {{ name }}_function_name:
         type: 'string'
       {{ name }}_principal:
+        type: 'string'
+      {{ name }}_action:
         type: 'string'
     output:
       id:

@@ -2,15 +2,17 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_policy:
         {{ name }}:
           policy: '${var.{{ name }}_policy}'
+          # name: ''
           # name_prefix: ''
           # description: ''
           # path: ''
-          # name: ''
     variable:
       {{ name }}_policy:
         type: 'string'
@@ -19,7 +21,7 @@
         value: '${aws_iam_policy.{{ name }}.id}'
       thub_id:
         value: '${aws_iam_policy.{{ name }}.id}'
-      arn:
-        value: '${aws_iam_policy.{{ name }}.arn}'
       name:
         value: '${aws_iam_policy.{{ name }}.name}'
+      arn:
+        value: '${aws_iam_policy.{{ name }}.arn}'

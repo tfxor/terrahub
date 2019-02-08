@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_vpc_dhcp_options:
         {{ name }}:
-          # domain_name: ''
-          # domain_name_servers: []
           # ntp_servers: []
           # netbios_node_type: ''
           # netbios_name_servers: []
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # domain_name: ''
+          # domain_name_servers: []
     output:
       id:
         value: '${aws_vpc_dhcp_options.{{ name }}.id}'

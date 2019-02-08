@@ -2,28 +2,30 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_network_acl_rule:
         {{ name }}:
           network_acl_id: '${var.{{ name }}_network_acl_id}'
-          rule_number: '${var.{{ name }}_rule_number}'
           protocol: '${var.{{ name }}_protocol}'
+          rule_number: '${var.{{ name }}_rule_number}'
           rule_action: '${var.{{ name }}_rule_action}'
           # egress: false
-          # cidr_block: ''
           # ipv6_cidr_block: ''
-          # icmp_type: ''
-          # from_port: 0
           # to_port: 0
+          # icmp_type: ''
           # icmp_code: ''
+          # cidr_block: ''
+          # from_port: 0
     variable:
       {{ name }}_network_acl_id:
         type: 'string'
-      {{ name }}_rule_number:
-        type: 'int'
       {{ name }}_protocol:
         type: 'string'
+      {{ name }}_rule_number:
+        type: 'int'
       {{ name }}_rule_action:
         type: 'string'
     output:

@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_user_login_profile:
         {{ name }}:
           user: '${var.{{ name }}_user}'
           pgp_key: '${var.{{ name }}_pgp_key}'
-          # password_reset_required: false
           # password_length: 0
+          # password_reset_required: false
     variable:
       {{ name }}_user:
         type: 'string'

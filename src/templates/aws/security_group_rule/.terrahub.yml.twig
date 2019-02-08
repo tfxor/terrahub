@@ -2,30 +2,32 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_security_group_rule:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
           to_port: '${var.{{ name }}_to_port}'
-          protocol: '${var.{{ name }}_protocol}'
+          type: '${var.{{ name }}_type}'
           from_port: '${var.{{ name }}_from_port}'
+          protocol: '${var.{{ name }}_protocol}'
           security_group_id: '${var.{{ name }}_security_group_id}'
+          # source_security_group_id: ''
+          # self: false
           # description: ''
           # cidr_blocks: []
           # ipv6_cidr_blocks: []
-          # source_security_group_id: ''
           # prefix_list_ids: []
-          # self: false
     variable:
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_to_port:
         type: 'int'
-      {{ name }}_protocol:
+      {{ name }}_type:
         type: 'string'
       {{ name }}_from_port:
         type: 'int'
+      {{ name }}_protocol:
+        type: 'string'
       {{ name }}_security_group_id:
         type: 'string'
     output:

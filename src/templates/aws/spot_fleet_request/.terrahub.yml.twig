@@ -2,64 +2,66 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_spot_fleet_request:
         {{ name }}:
           ami: '${var.{{ name }}_ami}'
-          instance_type: '${var.{{ name }}_instance_type}'
-          target_capacity: '${var.{{ name }}_target_capacity}'
           launch_specification: 
           #   vpc_security_group_ids: 
           #   associate_public_ip_address: false
           #   ebs_block_device: 
           #     device_name: ''
-          #     snapshot_id: ''
-          #     volume_size: 0
-          #     volume_type: ''
           #     delete_on_termination: false
           #     encrypted: false
           #     iops: 0
+          #     snapshot_id: ''
+          #     volume_size: 0
+          #     volume_type: ''
+          target_capacity: '${var.{{ name }}_target_capacity}'
           iam_fleet_role: '${var.{{ name }}_iam_fleet_role}'
-          # placement_tenancy: ''
-          # instance_interruption_behaviour: ''
-          # ebs_optimized: false
+          instance_type: '${var.{{ name }}_instance_type}'
           # placement_group: ''
-          # valid_from: ''
-          # spot_price: ''
           # weighted_capacity: ''
-          # subnet_id: ''
-          # availability_zone: ''
-          # load_balancers: []
+          # valid_until: ''
+          # fleet_type: ''
+          # spot_price: ''
+          # ebs_optimized: false
+          # iam_instance_profile: ''
+          # instance_interruption_behaviour: ''
+          # excess_capacity_termination_policy: ''
+          # valid_from: ''
           # target_group_arns: []
           # root_block_device: 
-          #   iops: 0
           #   volume_size: 0
           #   volume_type: ''
           #   delete_on_termination: false
+          #   iops: 0
           # key_name: ''
+          # subnet_id: ''
+          # availability_zone: ''
+          # user_data: ''
+          # allocation_strategy: ''
+          # terminate_instances_with_expiration: false
+          # replace_unhealthy_instances: false
+          # iam_instance_profile_arn: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # fleet_type: ''
-          # allocation_strategy: ''
+          # instance_pools_to_use_count: 0
           # wait_for_fulfillment: false
           # monitoring: false
-          # user_data: ''
-          # terminate_instances_with_expiration: false
-          # iam_instance_profile: ''
-          # iam_instance_profile_arn: ''
-          # replace_unhealthy_instances: false
-          # instance_pools_to_use_count: 0
-          # excess_capacity_termination_policy: ''
-          # valid_until: ''
+          # placement_tenancy: ''
+          # load_balancers: []
     variable:
       {{ name }}_ami:
-        type: 'string'
-      {{ name }}_instance_type:
         type: 'string'
       {{ name }}_target_capacity:
         type: 'int'
       {{ name }}_iam_fleet_role:
+        type: 'string'
+      {{ name }}_instance_type:
         type: 'string'
     output:
       id:
@@ -68,19 +70,19 @@
         value: '${aws_spot_fleet_request.{{ name }}.id}'
       placement_group:
         value: '${aws_spot_fleet_request.{{ name }}.placement_group}'
-      subnet_id:
-        value: '${aws_spot_fleet_request.{{ name }}.subnet_id}'
-      availability_zone:
-        value: '${aws_spot_fleet_request.{{ name }}.availability_zone}'
-      load_balancers:
-        value: '${aws_spot_fleet_request.{{ name }}.load_balancers}'
       target_group_arns:
         value: '${aws_spot_fleet_request.{{ name }}.target_group_arns}'
       root_block_device:
         value: '${aws_spot_fleet_request.{{ name }}.root_block_device}'
       key_name:
         value: '${aws_spot_fleet_request.{{ name }}.key_name}'
+      subnet_id:
+        value: '${aws_spot_fleet_request.{{ name }}.subnet_id}'
+      availability_zone:
+        value: '${aws_spot_fleet_request.{{ name }}.availability_zone}'
       spot_request_state:
         value: '${aws_spot_fleet_request.{{ name }}.spot_request_state}'
       client_token:
         value: '${aws_spot_fleet_request.{{ name }}.client_token}'
+      load_balancers:
+        value: '${aws_spot_fleet_request.{{ name }}.load_balancers}'

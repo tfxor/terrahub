@@ -2,26 +2,25 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cloudwatch_event_target:
         {{ name }}:
           rule: '${var.{{ name }}_rule}'
           arn: '${var.{{ name }}_arn}'
-          # input_transformer: 
-          #   -
-          #     input_template: ''
-          #     input_paths: 
-          #       '[TO_BE_REPLACED]': ''
+          # target_id: ''
           # input_path: ''
+          # sqs_target: 
+          #   -
+          #     message_group_id: ''
+          # input: ''
           # role_arn: ''
           # run_command_targets: 
           #   -
           #     key: ''
           #     values: []
-          # sqs_target: 
-          #   -
-          #     message_group_id: ''
           # ecs_target: 
           #   -
           #     group: ''
@@ -33,15 +32,18 @@
           #         security_groups: 
           # batch_target: 
           #   -
-          #     job_name: ''
           #     job_definition: ''
+          #     job_name: ''
           #     array_size: 0
           #     job_attempts: 0
           # kinesis_target: 
           #   -
           #     partition_key_path: ''
-          # target_id: ''
-          # input: ''
+          # input_transformer: 
+          #   -
+          #     input_template: ''
+          #     input_paths: 
+          #       '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_rule:
         type: 'string'

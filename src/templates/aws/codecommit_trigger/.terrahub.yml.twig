@@ -2,18 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_codecommit_trigger:
         {{ name }}:
+          repository_name: '${var.{{ name }}_repository_name}'
           trigger: 
+            events: []
             name: ''
             destination_arn: ''
-            events: []
-          #   custom_data: ''
           #   branches: 
           #     -
-          repository_name: '${var.{{ name }}_repository_name}'
+          #   custom_data: ''
     variable:
       {{ name }}_repository_name:
         type: 'string'

@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_storagegateway_working_storage:
         {{ name }}:
-          disk_id: '${var.{{ name }}_disk_id}'
           gateway_arn: '${var.{{ name }}_gateway_arn}'
+          disk_id: '${var.{{ name }}_disk_id}'
     variable:
-      {{ name }}_disk_id:
-        type: 'string'
       {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_disk_id:
         type: 'string'
     output:
       id:

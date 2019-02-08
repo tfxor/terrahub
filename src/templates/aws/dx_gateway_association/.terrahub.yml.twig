@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_dx_gateway_association:
         {{ name }}:
-          dx_gateway_id: '${var.{{ name }}_dx_gateway_id}'
           vpn_gateway_id: '${var.{{ name }}_vpn_gateway_id}'
+          dx_gateway_id: '${var.{{ name }}_dx_gateway_id}'
     variable:
-      {{ name }}_dx_gateway_id:
-        type: 'string'
       {{ name }}_vpn_gateway_id:
+        type: 'string'
+      {{ name }}_dx_gateway_id:
         type: 'string'
     output:
       id:

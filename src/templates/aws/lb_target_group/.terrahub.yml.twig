@@ -2,21 +2,12 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_lb_target_group:
         {{ name }}:
-          # protocol: ''
-          # vpc_id: ''
-          # deregistration_delay: 0
-          # name: ''
-          # name_prefix: ''
-          # port: 0
-          # slow_start: 0
-          # target_type: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # proxy_protocol_v2: false
           # stickiness: 
           #   -
           #     type: ''
@@ -24,26 +15,37 @@
           #     cookie_duration: 0
           # health_check: 
           #   -
-          #     path: ''
-          #     port: ''
           #     protocol: ''
           #     timeout: 0
           #     healthy_threshold: 0
           #     matcher: ''
           #     unhealthy_threshold: 0
           #     interval: 0
+          #     path: ''
+          #     port: ''
+          # protocol: ''
+          # slow_start: 0
+          # port: 0
+          # vpc_id: ''
+          # deregistration_delay: 0
+          # proxy_protocol_v2: false
+          # name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # target_type: ''
+          # name_prefix: ''
     output:
       id:
         value: '${aws_lb_target_group.{{ name }}.id}'
       thub_id:
         value: '${aws_lb_target_group.{{ name }}.id}'
-      arn:
-        value: '${aws_lb_target_group.{{ name }}.arn}'
-      name:
-        value: '${aws_lb_target_group.{{ name }}.name}'
-      arn_suffix:
-        value: '${aws_lb_target_group.{{ name }}.arn_suffix}'
       stickiness:
         value: '${aws_lb_target_group.{{ name }}.stickiness}'
       health_check:
         value: '${aws_lb_target_group.{{ name }}.health_check}'
+      arn_suffix:
+        value: '${aws_lb_target_group.{{ name }}.arn_suffix}'
+      name:
+        value: '${aws_lb_target_group.{{ name }}.name}'
+      arn:
+        value: '${aws_lb_target_group.{{ name }}.arn}'

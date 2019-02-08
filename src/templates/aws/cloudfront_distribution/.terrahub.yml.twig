@@ -2,32 +2,12 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cloudfront_distribution:
         {{ name }}:
-          enabled: '${var.{{ name }}_enabled}'
-          viewer_certificate: 
-          #   acm_certificate_arn: ''
-          #   cloudfront_default_certificate: false
-          #   iam_certificate_id: ''
-          #   minimum_protocol_version: ''
-          #   ssl_support_method: ''
-          restrictions: 
-            geo_restriction: 
-              restriction_type: ''
-          #     locations: 
-          #       -
-          origin: 
-          #   custom_origin_config: 
-          #     origin_protocol_policy: ''
-          #     origin_ssl_protocols: []
-          #     http_port: 0
-          #     https_port: 0
-          #     origin_keepalive_timeout: 0
-          #     origin_read_timeout: 0
-          path_pattern: '${var.{{ name }}_path_pattern}'
-          viewer_protocol_policy: '${var.{{ name }}_viewer_protocol_policy}'
           default_cache_behavior: 
             allowed_methods: []
             cached_methods: []
@@ -39,59 +19,81 @@
           #   compress: false
           #   default_ttl: 0
           #   field_level_encryption_id: ''
+          restrictions: 
+            geo_restriction: 
+              restriction_type: ''
+          #     locations: 
+          #       -
+          enabled: '${var.{{ name }}_enabled}'
           target_origin_id: '${var.{{ name }}_target_origin_id}'
+          origin: 
+          #   custom_origin_config: 
+          #     http_port: 0
+          #     https_port: 0
+          #     origin_protocol_policy: ''
+          #     origin_ssl_protocols: []
+          #     origin_keepalive_timeout: 0
+          #     origin_read_timeout: 0
+          path_pattern: '${var.{{ name }}_path_pattern}'
+          viewer_protocol_policy: '${var.{{ name }}_viewer_protocol_policy}'
           origin_id: '${var.{{ name }}_origin_id}'
+          viewer_certificate: 
+          #   acm_certificate_arn: ''
+          #   cloudfront_default_certificate: false
+          #   iam_certificate_id: ''
+          #   minimum_protocol_version: ''
+          #   ssl_support_method: ''
           # origin_path: ''
-          # retain_on_delete: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # default_root_object: ''
           # web_acl_id: ''
-          # custom_error_response: 
-          #   error_code: 0
-          #   error_caching_min_ttl: 0
-          #   response_code: 0
-          #   response_page_path: ''
-          # price_class: ''
-          # trusted_signers: []
           # comment: ''
-          # http_version: ''
-          # logging_config: 
-          #   bucket: ''
-          #   include_cookies: false
-          #   prefix: ''
           # s3_origin_config: 
           #   origin_access_identity: ''
-          # min_ttl: 0
-          # is_ipv6_enabled: false
-          # lambda_function_association: 
-          #   event_type: ''
-          #   lambda_arn: ''
-          #   include_body: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # smooth_streaming: false
-          # max_ttl: 0
-          # aliases: []
           # ordered_cache_behavior: 
           #   -
+          #     allowed_methods: []
+          #     cached_methods: []
           #     forwarded_values: 
           #     cookies: 
           #       forward: ''
           #       whitelisted_names: 
           #         -
-          #     allowed_methods: []
-          #     cached_methods: []
-          #     field_level_encryption_id: ''
           #     compress: false
           #     default_ttl: 0
+          #     field_level_encryption_id: ''
+          # trusted_signers: []
+          # custom_error_response: 
+          #   error_code: 0
+          #   error_caching_min_ttl: 0
+          #   response_code: 0
+          #   response_page_path: ''
+          # retain_on_delete: false
+          # max_ttl: 0
           # cache_behavior: []
+          # default_root_object: ''
+          # http_version: ''
+          # price_class: ''
+          # is_ipv6_enabled: false
+          # min_ttl: 0
+          # lambda_function_association: 
+          #   lambda_arn: ''
+          #   event_type: ''
+          #   include_body: false
+          # logging_config: 
+          #   bucket: ''
+          #   include_cookies: false
+          #   prefix: ''
+          # aliases: []
     variable:
       {{ name }}_enabled:
         type: 'bool'
+      {{ name }}_target_origin_id:
+        type: 'string'
       {{ name }}_path_pattern:
         type: 'string'
       {{ name }}_viewer_protocol_policy:
-        type: 'string'
-      {{ name }}_target_origin_id:
         type: 'string'
       {{ name }}_origin_id:
         type: 'string'
@@ -100,21 +102,21 @@
         value: '${aws_cloudfront_distribution.{{ name }}.id}'
       thub_id:
         value: '${aws_cloudfront_distribution.{{ name }}.id}'
-      active_trusted_signers:
-        value: '${aws_cloudfront_distribution.{{ name }}.active_trusted_signers}'
-      last_modified_time:
-        value: '${aws_cloudfront_distribution.{{ name }}.last_modified_time}'
-      etag:
-        value: '${aws_cloudfront_distribution.{{ name }}.etag}'
-      caller_reference:
-        value: '${aws_cloudfront_distribution.{{ name }}.caller_reference}'
       in_progress_validation_batches:
         value: '${aws_cloudfront_distribution.{{ name }}.in_progress_validation_batches}'
       hosted_zone_id:
         value: '${aws_cloudfront_distribution.{{ name }}.hosted_zone_id}'
+      active_trusted_signers:
+        value: '${aws_cloudfront_distribution.{{ name }}.active_trusted_signers}'
+      last_modified_time:
+        value: '${aws_cloudfront_distribution.{{ name }}.last_modified_time}'
+      arn:
+        value: '${aws_cloudfront_distribution.{{ name }}.arn}'
+      caller_reference:
+        value: '${aws_cloudfront_distribution.{{ name }}.caller_reference}'
       status:
         value: '${aws_cloudfront_distribution.{{ name }}.status}'
       domain_name:
         value: '${aws_cloudfront_distribution.{{ name }}.domain_name}'
-      arn:
-        value: '${aws_cloudfront_distribution.{{ name }}.arn}'
+      etag:
+        value: '${aws_cloudfront_distribution.{{ name }}.etag}'

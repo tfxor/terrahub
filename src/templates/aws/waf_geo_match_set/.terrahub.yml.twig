@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_waf_geo_match_set:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           # geo_match_constraint: 
-          #   type: ''
           #   value: ''
+          #   type: ''
     variable:
       {{ name }}_name:
         type: 'string'

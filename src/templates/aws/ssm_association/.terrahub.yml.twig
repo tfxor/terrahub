@@ -2,25 +2,27 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ssm_association:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # targets: 
-          #   -
-          #     key: ''
-          #     values: []
-          # instance_id: ''
           # document_version: ''
           # parameters: 
           #   '[TO_BE_REPLACED]': ''
           # schedule_expression: ''
+          # association_name: ''
+          # instance_id: ''
           # output_location: 
           #   -
           #     s3_bucket_name: ''
           #     s3_key_prefix: ''
-          # association_name: ''
+          # targets: 
+          #   -
+          #     values: []
+          #     key: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -29,11 +31,11 @@
         value: '${aws_ssm_association.{{ name }}.id}'
       thub_id:
         value: '${aws_ssm_association.{{ name }}.id}'
-      targets:
-        value: '${aws_ssm_association.{{ name }}.targets}'
-      association_id:
-        value: '${aws_ssm_association.{{ name }}.association_id}'
       document_version:
         value: '${aws_ssm_association.{{ name }}.document_version}'
       parameters:
         value: '${aws_ssm_association.{{ name }}.parameters}'
+      association_id:
+        value: '${aws_ssm_association.{{ name }}.association_id}'
+      targets:
+        value: '${aws_ssm_association.{{ name }}.targets}'

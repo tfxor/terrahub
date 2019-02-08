@@ -2,28 +2,37 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_launch_configuration:
         {{ name }}:
           image_id: '${var.{{ name }}_image_id}'
           instance_type: '${var.{{ name }}_instance_type}'
-          # vpc_classic_link_id: ''
           # ephemeral_block_device: 
           #   device_name: ''
           #   virtual_name: ''
-          # name_prefix: ''
           # iam_instance_profile: ''
+          # vpc_classic_link_id: ''
+          # spot_price: ''
+          # placement_tenancy: ''
           # enable_monitoring: false
           # ebs_block_device: 
           #   device_name: ''
-          #   volume_size: 0
           #   volume_type: ''
           #   encrypted: false
           #   delete_on_termination: false
           #   no_device: false
           #   iops: 0
           #   snapshot_id: ''
+          #   volume_size: 0
+          # key_name: ''
+          # security_groups: []
+          # name_prefix: ''
+          # vpc_classic_link_security_groups: []
+          # associate_public_ip_address: false
+          # ebs_optimized: false
           # root_block_device: 
           #   -
           #     delete_on_termination: false
@@ -31,15 +40,8 @@
           #     volume_size: 0
           #     volume_type: ''
           # name: ''
-          # vpc_classic_link_security_groups: []
-          # key_name: ''
-          # user_data_base64: ''
-          # security_groups: []
-          # spot_price: ''
-          # ebs_optimized: false
-          # placement_tenancy: ''
           # user_data: ''
-          # associate_public_ip_address: false
+          # user_data_base64: ''
     variable:
       {{ name }}_image_id:
         type: 'string'
@@ -52,11 +54,11 @@
         value: '${aws_launch_configuration.{{ name }}.id}'
       ebs_block_device:
         value: '${aws_launch_configuration.{{ name }}.ebs_block_device}'
-      root_block_device:
-        value: '${aws_launch_configuration.{{ name }}.root_block_device}'
-      name:
-        value: '${aws_launch_configuration.{{ name }}.name}'
       key_name:
         value: '${aws_launch_configuration.{{ name }}.key_name}'
       ebs_optimized:
         value: '${aws_launch_configuration.{{ name }}.ebs_optimized}'
+      root_block_device:
+        value: '${aws_launch_configuration.{{ name }}.root_block_device}'
+      name:
+        value: '${aws_launch_configuration.{{ name }}.name}'

@@ -2,12 +2,13 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ssm_patch_baseline:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # approved_patches_compliance_level: ''
           # description: ''
           # global_filter: 
           #   -
@@ -25,6 +26,7 @@
           # approved_patches: []
           # rejected_patches: []
           # operating_system: ''
+          # approved_patches_compliance_level: ''
     variable:
       {{ name }}_name:
         type: 'string'

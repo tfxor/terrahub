@@ -2,37 +2,39 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_eip:
         {{ name }}:
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # vpc: false
-          # instance: ''
           # associate_with_private_ip: ''
           # public_ipv4_pool: ''
+          # vpc: false
+          # instance: ''
           # network_interface: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     output:
       id:
         value: '${aws_eip.{{ name }}.id}'
       thub_id:
         value: '${aws_eip.{{ name }}.id}'
-      association_id:
-        value: '${aws_eip.{{ name }}.association_id}'
-      domain:
-        value: '${aws_eip.{{ name }}.domain}'
-      vpc:
-        value: '${aws_eip.{{ name }}.vpc}'
-      instance:
-        value: '${aws_eip.{{ name }}.instance}'
-      public_ip:
-        value: '${aws_eip.{{ name }}.public_ip}'
       private_ip:
         value: '${aws_eip.{{ name }}.private_ip}'
       public_ipv4_pool:
         value: '${aws_eip.{{ name }}.public_ipv4_pool}'
-      network_interface:
-        value: '${aws_eip.{{ name }}.network_interface}'
+      vpc:
+        value: '${aws_eip.{{ name }}.vpc}'
+      instance:
+        value: '${aws_eip.{{ name }}.instance}'
       allocation_id:
         value: '${aws_eip.{{ name }}.allocation_id}'
+      public_ip:
+        value: '${aws_eip.{{ name }}.public_ip}'
+      network_interface:
+        value: '${aws_eip.{{ name }}.network_interface}'
+      association_id:
+        value: '${aws_eip.{{ name }}.association_id}'
+      domain:
+        value: '${aws_eip.{{ name }}.domain}'

@@ -2,36 +2,38 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cloudtrail:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           s3_bucket_name: '${var.{{ name }}_s3_bucket_name}'
-          # cloud_watch_logs_role_arn: ''
-          # enable_log_file_validation: false
-          # cloud_watch_logs_group_arn: ''
+          name: '${var.{{ name }}_name}'
+          # enable_logging: false
+          # s3_key_prefix: ''
+          # is_multi_region_trail: false
           # sns_topic_name: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # enable_logging: false
-          # s3_key_prefix: ''
+          # cloud_watch_logs_role_arn: ''
+          # cloud_watch_logs_group_arn: ''
           # include_global_service_events: false
-          # is_multi_region_trail: false
+          # is_organization_trail: false
+          # kms_key_id: ''
           # event_selector: 
           #   -
-          #     include_management_events: false
           #     data_resource: 
           #       -
           #         type: ''
           #         values: []
           #     read_write_type: ''
-          # is_organization_trail: false
-          # kms_key_id: ''
+          #     include_management_events: false
+          # enable_log_file_validation: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_s3_bucket_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

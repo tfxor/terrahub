@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_gamelift_alias:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           routing_strategy: 
             -
               type: ''
           #     fleet_id: ''
           #     message: ''
+          name: '${var.{{ name }}_name}'
           # description: ''
     variable:
       {{ name }}_name:

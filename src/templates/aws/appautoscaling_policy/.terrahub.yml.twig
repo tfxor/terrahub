@@ -2,15 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appautoscaling_policy:
         {{ name }}:
-          scalable_dimension: '${var.{{ name }}_scalable_dimension}'
+          name: '${var.{{ name }}_name}'
+          service_namespace: '${var.{{ name }}_service_namespace}'
           target_value: '${var.{{ name }}_target_value}'
           resource_id: '${var.{{ name }}_resource_id}'
-          service_namespace: '${var.{{ name }}_service_namespace}'
-          name: '${var.{{ name }}_name}'
+          scalable_dimension: '${var.{{ name }}_scalable_dimension}'
+          # scale_in_cooldown: 0
+          # scale_out_cooldown: 0
+          # policy_type: ''
           # step_scaling_policy_configuration: 
           #   -
           #     cooldown: 0
@@ -21,6 +26,12 @@
           #     metric_interval_upper_bound: ''
           #     metric_interval_lower_bound: ''
           #     adjustment_type: ''
+          # step_adjustment: []
+          # min_adjustment_magnitude: 0
+          # predefined_metric_specification: 
+          #   -
+          #     predefined_metric_type: ''
+          #     resource_label: ''
           # target_tracking_scaling_policy_configuration: 
           #   -
           #     customized_metric_specification: 
@@ -28,29 +39,20 @@
           #         dimensions: 
           #       name: ''
           #       value: ''
-          # metric_aggregation_type: ''
-          # min_adjustment_magnitude: 0
-          # scale_in_cooldown: 0
-          # scale_out_cooldown: 0
-          # policy_type: ''
-          # alarms: []
           # adjustment_type: ''
-          # predefined_metric_specification: 
-          #   -
-          #     predefined_metric_type: ''
-          #     resource_label: ''
-          # step_adjustment: []
           # cooldown: 0
+          # metric_aggregation_type: ''
+          # alarms: []
     variable:
-      {{ name }}_scalable_dimension:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_service_namespace:
         type: 'string'
       {{ name }}_target_value:
         type: 'float'
       {{ name }}_resource_id:
         type: 'string'
-      {{ name }}_service_namespace:
-        type: 'string'
-      {{ name }}_name:
+      {{ name }}_scalable_dimension:
         type: 'string'
     output:
       id:

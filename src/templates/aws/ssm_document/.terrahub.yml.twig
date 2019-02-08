@@ -2,53 +2,55 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ssm_document:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          document_type: '${var.{{ name }}_document_type}'
           content: '${var.{{ name }}_content}'
+          document_type: '${var.{{ name }}_document_type}'
+          name: '${var.{{ name }}_name}'
+          # document_format: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # permissions: 
           #   '[TO_BE_REPLACED]': ''
           #   'type': ''
           #   'account_ids': ''
-          # document_format: ''
     variable:
-      {{ name }}_name:
+      {{ name }}_content:
         type: 'string'
       {{ name }}_document_type:
         type: 'string'
-      {{ name }}_content:
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_ssm_document.{{ name }}.id}'
       thub_id:
         value: '${aws_ssm_document.{{ name }}.id}'
-      status:
-        value: '${aws_ssm_document.{{ name }}.status}'
-      schema_version:
-        value: '${aws_ssm_document.{{ name }}.schema_version}'
-      created_date:
-        value: '${aws_ssm_document.{{ name }}.created_date}'
-      latest_version:
-        value: '${aws_ssm_document.{{ name }}.latest_version}'
-      platform_types:
-        value: '${aws_ssm_document.{{ name }}.platform_types}'
-      description:
-        value: '${aws_ssm_document.{{ name }}.description}'
-      hash:
-        value: '${aws_ssm_document.{{ name }}.hash}'
       hash_type:
         value: '${aws_ssm_document.{{ name }}.hash_type}'
       parameter:
         value: '${aws_ssm_document.{{ name }}.parameter}'
+      schema_version:
+        value: '${aws_ssm_document.{{ name }}.schema_version}'
+      created_date:
+        value: '${aws_ssm_document.{{ name }}.created_date}'
+      status:
+        value: '${aws_ssm_document.{{ name }}.status}'
+      latest_version:
+        value: '${aws_ssm_document.{{ name }}.latest_version}'
       arn:
         value: '${aws_ssm_document.{{ name }}.arn}'
+      hash:
+        value: '${aws_ssm_document.{{ name }}.hash}'
+      platform_types:
+        value: '${aws_ssm_document.{{ name }}.platform_types}'
       default_version:
         value: '${aws_ssm_document.{{ name }}.default_version}'
+      description:
+        value: '${aws_ssm_document.{{ name }}.description}'
       owner:
         value: '${aws_ssm_document.{{ name }}.owner}'

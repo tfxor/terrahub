@@ -2,19 +2,21 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_efs_file_system:
         {{ name }}:
-          # throughput_mode: ''
           # creation_token: ''
-          # encrypted: false
+          # performance_mode: ''
           # provisioned_throughput_in_mibps: ''
+          # reference_name: ''
+          # encrypted: false
+          # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # reference_name: ''
-          # performance_mode: ''
-          # kms_key_id: ''
+          # throughput_mode: ''
     output:
       id:
         value: '${aws_efs_file_system.{{ name }}.id}'
@@ -24,12 +26,12 @@
         value: '${aws_efs_file_system.{{ name }}.arn}'
       creation_token:
         value: '${aws_efs_file_system.{{ name }}.creation_token}'
-      encrypted:
-        value: '${aws_efs_file_system.{{ name }}.encrypted}'
-      reference_name:
-        value: '${aws_efs_file_system.{{ name }}.reference_name}'
       performance_mode:
         value: '${aws_efs_file_system.{{ name }}.performance_mode}'
+      reference_name:
+        value: '${aws_efs_file_system.{{ name }}.reference_name}'
+      encrypted:
+        value: '${aws_efs_file_system.{{ name }}.encrypted}'
       kms_key_id:
         value: '${aws_efs_file_system.{{ name }}.kms_key_id}'
       dns_name:

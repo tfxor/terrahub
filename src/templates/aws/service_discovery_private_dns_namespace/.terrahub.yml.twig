@@ -2,24 +2,26 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_service_discovery_private_dns_namespace:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           vpc: '${var.{{ name }}_vpc}'
+          name: '${var.{{ name }}_name}'
           # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_vpc:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_service_discovery_private_dns_namespace.{{ name }}.id}'
       thub_id:
         value: '${aws_service_discovery_private_dns_namespace.{{ name }}.id}'
-      hosted_zone:
-        value: '${aws_service_discovery_private_dns_namespace.{{ name }}.hosted_zone}'
       arn:
         value: '${aws_service_discovery_private_dns_namespace.{{ name }}.arn}'
+      hosted_zone:
+        value: '${aws_service_discovery_private_dns_namespace.{{ name }}.hosted_zone}'

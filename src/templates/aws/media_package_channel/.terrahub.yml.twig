@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_media_package_channel:
         {{ name }}:
@@ -16,7 +18,7 @@
         value: '${aws_media_package_channel.{{ name }}.id}'
       thub_id:
         value: '${aws_media_package_channel.{{ name }}.id}'
-      arn:
-        value: '${aws_media_package_channel.{{ name }}.arn}'
       hls_ingest:
         value: '${aws_media_package_channel.{{ name }}.hls_ingest}'
+      arn:
+        value: '${aws_media_package_channel.{{ name }}.arn}'

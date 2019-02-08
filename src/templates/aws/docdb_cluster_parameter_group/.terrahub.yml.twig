@@ -2,11 +2,14 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_docdb_cluster_parameter_group:
         {{ name }}:
           family: '${var.{{ name }}_family}'
+          # name_prefix: ''
           # description: ''
           # parameter: 
           #   name: ''
@@ -15,7 +18,6 @@
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
-          # name_prefix: ''
     variable:
       {{ name }}_family:
         type: 'string'
@@ -24,9 +26,9 @@
         value: '${aws_docdb_cluster_parameter_group.{{ name }}.id}'
       thub_id:
         value: '${aws_docdb_cluster_parameter_group.{{ name }}.id}'
+      name_prefix:
+        value: '${aws_docdb_cluster_parameter_group.{{ name }}.name_prefix}'
       arn:
         value: '${aws_docdb_cluster_parameter_group.{{ name }}.arn}'
       name:
         value: '${aws_docdb_cluster_parameter_group.{{ name }}.name}'
-      name_prefix:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.name_prefix}'

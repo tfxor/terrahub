@@ -2,29 +2,28 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ses_receipt_rule:
         {{ name }}:
           rule_set_name: '${var.{{ name }}_rule_set_name}'
           name: '${var.{{ name }}_name}'
           # stop_action: 
-          #   position: 0
           #   scope: ''
+          #   position: 0
           #   topic_arn: ''
-          # scan_enabled: false
+          # workmail_action: 
+          #   organization_arn: ''
+          #   position: 0
+          #   topic_arn: ''
+          # sns_action: 
+          #   topic_arn: ''
+          #   position: 0
           # after: ''
-          # lambda_action: 
-          #   function_arn: ''
-          #   position: 0
-          #   invocation_type: ''
-          #   topic_arn: ''
-          # enabled: false
-          # recipients: []
-          # add_header_action: 
-          #   header_name: ''
-          #   header_value: ''
-          #   position: 0
+          # scan_enabled: false
+          # tls_policy: ''
           # bounce_action: 
           #   message: ''
           #   sender: ''
@@ -32,20 +31,23 @@
           #   position: 0
           #   status_code: ''
           #   topic_arn: ''
-          # sns_action: 
-          #   topic_arn: ''
+          # recipients: []
+          # add_header_action: 
+          #   header_name: ''
+          #   header_value: ''
           #   position: 0
-          # workmail_action: 
+          # enabled: false
+          # lambda_action: 
+          #   function_arn: ''
           #   position: 0
-          #   organization_arn: ''
+          #   invocation_type: ''
           #   topic_arn: ''
           # s3_action: 
-          #   bucket_name: ''
           #   position: 0
-          #   kms_key_arn: ''
+          #   bucket_name: ''
           #   object_key_prefix: ''
           #   topic_arn: ''
-          # tls_policy: ''
+          #   kms_key_arn: ''
     variable:
       {{ name }}_rule_set_name:
         type: 'string'
@@ -58,7 +60,7 @@
         value: '${aws_ses_receipt_rule.{{ name }}.id}'
       scan_enabled:
         value: '${aws_ses_receipt_rule.{{ name }}.scan_enabled}'
-      enabled:
-        value: '${aws_ses_receipt_rule.{{ name }}.enabled}'
       tls_policy:
         value: '${aws_ses_receipt_rule.{{ name }}.tls_policy}'
+      enabled:
+        value: '${aws_ses_receipt_rule.{{ name }}.enabled}'

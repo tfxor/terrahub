@@ -2,25 +2,27 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ec2_client_vpn_endpoint:
         {{ name }}:
           server_certificate_arn: '${var.{{ name }}_server_certificate_arn}'
-          connection_log_options: 
-            -
-              enabled: false
-          #     cloudwatch_log_group: ''
-          #     cloudwatch_log_stream: ''
-          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
           authentication_options: 
             -
               type: ''
           #     active_directory_id: ''
           #     root_certificate_chain_arn: ''
+          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
+          connection_log_options: 
+            -
+              enabled: false
+          #     cloudwatch_log_group: ''
+          #     cloudwatch_log_stream: ''
           # description: ''
-          # dns_servers: []
           # transport_protocol: ''
+          # dns_servers: []
     variable:
       {{ name }}_server_certificate_arn:
         type: 'string'

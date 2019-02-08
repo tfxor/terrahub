@@ -2,31 +2,33 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_directory_service_directory:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           password: '${var.{{ name }}_password}'
+          # type: ''
+          # alias: ''
+          # enable_sso: false
+          # short_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # edition: ''
+          # size: ''
           # connect_settings: 
           #   -
           #     customer_username: ''
           #     customer_dns_ips: []
           #     subnet_ids: []
           #     vpc_id: ''
-          # edition: ''
-          # short_name: ''
-          # type: ''
-          # size: ''
-          # alias: ''
           # description: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
           # vpc_settings: 
           #   -
           #     subnet_ids: []
           #     vpc_id: ''
-          # enable_sso: false
     variable:
       {{ name }}_name:
         type: 'string'
@@ -37,17 +39,17 @@
         value: '${aws_directory_service_directory.{{ name }}.id}'
       thub_id:
         value: '${aws_directory_service_directory.{{ name }}.id}'
-      edition:
-        value: '${aws_directory_service_directory.{{ name }}.edition}'
-      short_name:
-        value: '${aws_directory_service_directory.{{ name }}.short_name}'
       access_url:
         value: '${aws_directory_service_directory.{{ name }}.access_url}'
-      dns_ip_addresses:
-        value: '${aws_directory_service_directory.{{ name }}.dns_ip_addresses}'
-      security_group_id:
-        value: '${aws_directory_service_directory.{{ name }}.security_group_id}'
-      size:
-        value: '${aws_directory_service_directory.{{ name }}.size}'
       alias:
         value: '${aws_directory_service_directory.{{ name }}.alias}'
+      security_group_id:
+        value: '${aws_directory_service_directory.{{ name }}.security_group_id}'
+      short_name:
+        value: '${aws_directory_service_directory.{{ name }}.short_name}'
+      dns_ip_addresses:
+        value: '${aws_directory_service_directory.{{ name }}.dns_ip_addresses}'
+      edition:
+        value: '${aws_directory_service_directory.{{ name }}.edition}'
+      size:
+        value: '${aws_directory_service_directory.{{ name }}.size}'

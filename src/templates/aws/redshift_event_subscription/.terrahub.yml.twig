@@ -2,30 +2,32 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_redshift_event_subscription:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           sns_topic_arn: '${var.{{ name }}_sns_topic_arn}'
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # event_categories: []
           # source_ids: []
           # source_type: ''
           # enabled: false
           # severity: ''
-          # event_categories: []
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_sns_topic_arn:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:
         value: '${aws_redshift_event_subscription.{{ name }}.id}'
       thub_id:
         value: '${aws_redshift_event_subscription.{{ name }}.id}'
-      status:
-        value: '${aws_redshift_event_subscription.{{ name }}.status}'
       customer_aws_id:
         value: '${aws_redshift_event_subscription.{{ name }}.customer_aws_id}'
+      status:
+        value: '${aws_redshift_event_subscription.{{ name }}.status}'

@@ -2,58 +2,54 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iot_topic_rule:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           sql_version: '${var.{{ name }}_sql_version}'
           enabled: '${var.{{ name }}_enabled}'
           sql: '${var.{{ name }}_sql}'
-          # republish: 
-          #   role_arn: ''
-          #   topic: ''
-          # dynamodb: 
-          #   role_arn: ''
-          #   hash_key_field: ''
-          #   hash_key_value: ''
-          #   range_key_field: ''
-          #   range_key_value: ''
-          #   table_name: ''
-          #   range_key_type: ''
-          #   hash_key_type: ''
-          #   payload_field: ''
-          # kinesis: 
-          #   stream_name: ''
-          #   role_arn: ''
-          #   partition_key: ''
-          # cloudwatch_alarm: 
-          #   alarm_name: ''
-          #   role_arn: ''
-          #   state_reason: ''
-          #   state_value: ''
-          # elasticsearch: 
-          #   endpoint: ''
-          #   id: ''
-          #   index: ''
-          #   role_arn: ''
-          #   type: ''
-          # firehose: 
-          #   delivery_stream_name: ''
-          #   role_arn: ''
-          #   separator: ''
+          name: '${var.{{ name }}_name}'
           # s3: 
           #   bucket_name: ''
           #   key: ''
           #   role_arn: ''
+          # elasticsearch: 
+          #   index: ''
+          #   role_arn: ''
+          #   type: ''
+          #   endpoint: ''
+          #   id: ''
+          # republish: 
+          #   role_arn: ''
+          #   topic: ''
+          # dynamodb: 
+          #   hash_key_field: ''
+          #   range_key_field: ''
+          #   role_arn: ''
+          #   hash_key_value: ''
+          #   range_key_value: ''
+          #   table_name: ''
+          #   payload_field: ''
+          #   range_key_type: ''
+          #   hash_key_type: ''
+          # description: ''
+          # cloudwatch_alarm: 
+          #   role_arn: ''
+          #   state_reason: ''
+          #   state_value: ''
+          #   alarm_name: ''
+          # kinesis: 
+          #   role_arn: ''
+          #   stream_name: ''
+          #   partition_key: ''
+          # lambda: 
+          #   function_arn: ''
           # sns: 
           #   target_arn: ''
           #   role_arn: ''
-          # sqs: 
-          #   queue_url: ''
-          #   role_arn: ''
-          #   use_base64: false
-          # description: ''
           # cloudwatch_metric: 
           #   metric_name: ''
           #   metric_namespace: ''
@@ -61,16 +57,22 @@
           #   metric_value: ''
           #   role_arn: ''
           #   metric_timestamp: ''
-          # lambda: 
-          #   function_arn: ''
+          # firehose: 
+          #   delivery_stream_name: ''
+          #   role_arn: ''
+          #   separator: ''
+          # sqs: 
+          #   use_base64: false
+          #   queue_url: ''
+          #   role_arn: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_sql_version:
         type: 'string'
       {{ name }}_enabled:
         type: 'bool'
       {{ name }}_sql:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

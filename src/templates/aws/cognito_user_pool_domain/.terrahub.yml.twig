@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cognito_user_pool_domain:
         {{ name }}:
@@ -19,11 +21,11 @@
         value: '${aws_cognito_user_pool_domain.{{ name }}.id}'
       thub_id:
         value: '${aws_cognito_user_pool_domain.{{ name }}.id}'
-      aws_account_id:
-        value: '${aws_cognito_user_pool_domain.{{ name }}.aws_account_id}'
       cloudfront_distribution_arn:
         value: '${aws_cognito_user_pool_domain.{{ name }}.cloudfront_distribution_arn}'
       s3_bucket:
         value: '${aws_cognito_user_pool_domain.{{ name }}.s3_bucket}'
       version:
         value: '${aws_cognito_user_pool_domain.{{ name }}.version}'
+      aws_account_id:
+        value: '${aws_cognito_user_pool_domain.{{ name }}.aws_account_id}'

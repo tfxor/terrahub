@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_deployment:
         {{ name }}:
@@ -22,9 +24,9 @@
         value: '${aws_api_gateway_deployment.{{ name }}.id}'
       thub_id:
         value: '${aws_api_gateway_deployment.{{ name }}.id}'
-      created_date:
-        value: '${aws_api_gateway_deployment.{{ name }}.created_date}'
       invoke_url:
         value: '${aws_api_gateway_deployment.{{ name }}.invoke_url}'
       execution_arn:
         value: '${aws_api_gateway_deployment.{{ name }}.execution_arn}'
+      created_date:
+        value: '${aws_api_gateway_deployment.{{ name }}.created_date}'

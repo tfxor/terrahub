@@ -2,27 +2,29 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sns_platform_application:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          platform_credential: '${var.{{ name }}_platform_credential}'
           platform: '${var.{{ name }}_platform}'
+          platform_credential: '${var.{{ name }}_platform_credential}'
+          # failure_feedback_role_arn: ''
+          # success_feedback_role_arn: ''
           # success_feedback_sample_rate: ''
           # event_delivery_failure_topic_arn: ''
-          # event_endpoint_deleted_topic_arn: ''
-          # platform_principal: ''
-          # success_feedback_role_arn: ''
           # event_endpoint_created_topic_arn: ''
+          # event_endpoint_deleted_topic_arn: ''
           # event_endpoint_updated_topic_arn: ''
-          # failure_feedback_role_arn: ''
+          # platform_principal: ''
     variable:
       {{ name }}_name:
         type: 'string'
-      {{ name }}_platform_credential:
-        type: 'string'
       {{ name }}_platform:
+        type: 'string'
+      {{ name }}_platform_credential:
         type: 'string'
     output:
       id:

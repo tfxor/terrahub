@@ -2,23 +2,25 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_codedeploy_deployment_config:
         {{ name }}:
           deployment_config_name: '${var.{{ name }}_deployment_config_name}'
-          # compute_platform: ''
           # minimum_healthy_hosts: 
           #   -
-          #     value: 0
           #     type: ''
+          #     value: 0
           # traffic_routing_config: 
           #   -
           #     type: ''
           #     time_based_canary: 
           #       -
-          #         percentage: 0
           #         interval: 0
+          #         percentage: 0
+          # compute_platform: ''
     variable:
       {{ name }}_deployment_config_name:
         type: 'string'

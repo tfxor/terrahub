@@ -2,27 +2,29 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_glue_connection:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           connection_properties: '${var.{{ name }}_connection_properties}'
+          name: '${var.{{ name }}_name}'
+          # connection_type: ''
+          # description: ''
           # match_criteria: []
           # physical_connection_requirements: 
           #   -
+          #     availability_zone: ''
           #     security_group_id_list: 
           #       -
           #     subnet_id: ''
-          #     availability_zone: ''
           # catalog_id: ''
-          # connection_type: ''
-          # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_connection_properties:
         type: 'map'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${aws_glue_connection.{{ name }}.id}'

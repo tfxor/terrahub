@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_waf_rate_based_rule:
         {{ name }}:
@@ -11,9 +13,9 @@
           metric_name: '${var.{{ name }}_metric_name}'
           rate_key: '${var.{{ name }}_rate_key}'
           # predicates: 
-          #   negated: false
           #   data_id: ''
           #   type: ''
+          #   negated: false
     variable:
       {{ name }}_rate_limit:
         type: 'int'

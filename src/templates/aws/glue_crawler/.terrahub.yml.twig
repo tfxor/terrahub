@@ -2,43 +2,45 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_glue_crawler:
         {{ name }}:
-          database_name: '${var.{{ name }}_database_name}'
-          name: '${var.{{ name }}_name}'
           role: '${var.{{ name }}_role}'
-          # schedule: ''
-          # table_prefix: ''
-          # dynamodb_target: 
-          #   -
-          #     path: ''
-          # configuration: ''
-          # description: ''
-          # classifiers: []
-          # schema_change_policy: 
-          #   -
-          #     delete_behavior: ''
-          #     update_behavior: ''
+          name: '${var.{{ name }}_name}'
+          database_name: '${var.{{ name }}_database_name}'
           # s3_target: 
           #   -
           #     path: ''
           #     exclusions: 
           #       -
+          # dynamodb_target: 
+          #   -
+          #     path: ''
+          # description: ''
+          # table_prefix: ''
+          # schedule: ''
+          # classifiers: []
+          # schema_change_policy: 
+          #   -
+          #     delete_behavior: ''
+          #     update_behavior: ''
           # jdbc_target: 
           #   -
           #     connection_name: ''
           #     path: ''
           #     exclusions: 
           #       -
+          # configuration: ''
           # security_configuration: ''
     variable:
-      {{ name }}_database_name:
+      {{ name }}_role:
         type: 'string'
       {{ name }}_name:
         type: 'string'
-      {{ name }}_role:
+      {{ name }}_database_name:
         type: 'string'
     output:
       id:

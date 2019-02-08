@@ -2,29 +2,31 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_integration_response:
         {{ name }}:
           rest_api_id: '${var.{{ name }}_rest_api_id}'
+          status_code: '${var.{{ name }}_status_code}'
           resource_id: '${var.{{ name }}_resource_id}'
           http_method: '${var.{{ name }}_http_method}'
-          status_code: '${var.{{ name }}_status_code}'
           # content_handling: ''
+          # response_parameters_in_json: ''
           # selection_pattern: ''
           # response_templates: 
           #   '[TO_BE_REPLACED]': ''
           # response_parameters: 
           #   '[TO_BE_REPLACED]': ''
-          # response_parameters_in_json: ''
     variable:
       {{ name }}_rest_api_id:
+        type: 'string'
+      {{ name }}_status_code:
         type: 'string'
       {{ name }}_resource_id:
         type: 'string'
       {{ name }}_http_method:
-        type: 'string'
-      {{ name }}_status_code:
         type: 'string'
     output:
       id:

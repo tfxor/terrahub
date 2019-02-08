@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_api_key:
         {{ name }}:
@@ -19,9 +21,9 @@
         value: '${aws_api_gateway_api_key.{{ name }}.id}'
       thub_id:
         value: '${aws_api_gateway_api_key.{{ name }}.id}'
-      value:
-        value: '${aws_api_gateway_api_key.{{ name }}.value}'
       created_date:
         value: '${aws_api_gateway_api_key.{{ name }}.created_date}'
       last_updated_date:
         value: '${aws_api_gateway_api_key.{{ name }}.last_updated_date}'
+      value:
+        value: '${aws_api_gateway_api_key.{{ name }}.value}'

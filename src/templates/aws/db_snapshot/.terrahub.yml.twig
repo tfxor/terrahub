@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_db_snapshot:
         {{ name }}:
@@ -20,37 +22,37 @@
         value: '${aws_db_snapshot.{{ name }}.id}'
       thub_id:
         value: '${aws_db_snapshot.{{ name }}.id}'
+      engine_version:
+        value: '${aws_db_snapshot.{{ name }}.engine_version}'
+      iops:
+        value: '${aws_db_snapshot.{{ name }}.iops}'
+      license_model:
+        value: '${aws_db_snapshot.{{ name }}.license_model}'
+      status:
+        value: '${aws_db_snapshot.{{ name }}.status}'
+      vpc_id:
+        value: '${aws_db_snapshot.{{ name }}.vpc_id}'
+      availability_zone:
+        value: '${aws_db_snapshot.{{ name }}.availability_zone}'
+      encrypted:
+        value: '${aws_db_snapshot.{{ name }}.encrypted}'
+      engine:
+        value: '${aws_db_snapshot.{{ name }}.engine}'
+      port:
+        value: '${aws_db_snapshot.{{ name }}.port}'
+      storage_type:
+        value: '${aws_db_snapshot.{{ name }}.storage_type}'
+      allocated_storage:
+        value: '${aws_db_snapshot.{{ name }}.allocated_storage}'
+      kms_key_id:
+        value: '${aws_db_snapshot.{{ name }}.kms_key_id}'
+      option_group_name:
+        value: '${aws_db_snapshot.{{ name }}.option_group_name}'
       source_region:
         value: '${aws_db_snapshot.{{ name }}.source_region}'
       db_snapshot_arn:
         value: '${aws_db_snapshot.{{ name }}.db_snapshot_arn}'
-      encrypted:
-        value: '${aws_db_snapshot.{{ name }}.encrypted}'
       source_db_snapshot_identifier:
         value: '${aws_db_snapshot.{{ name }}.source_db_snapshot_identifier}'
-      engine:
-        value: '${aws_db_snapshot.{{ name }}.engine}'
-      option_group_name:
-        value: '${aws_db_snapshot.{{ name }}.option_group_name}'
-      port:
-        value: '${aws_db_snapshot.{{ name }}.port}'
       snapshot_type:
         value: '${aws_db_snapshot.{{ name }}.snapshot_type}'
-      allocated_storage:
-        value: '${aws_db_snapshot.{{ name }}.allocated_storage}'
-      availability_zone:
-        value: '${aws_db_snapshot.{{ name }}.availability_zone}'
-      engine_version:
-        value: '${aws_db_snapshot.{{ name }}.engine_version}'
-      license_model:
-        value: '${aws_db_snapshot.{{ name }}.license_model}'
-      storage_type:
-        value: '${aws_db_snapshot.{{ name }}.storage_type}'
-      vpc_id:
-        value: '${aws_db_snapshot.{{ name }}.vpc_id}'
-      iops:
-        value: '${aws_db_snapshot.{{ name }}.iops}'
-      kms_key_id:
-        value: '${aws_db_snapshot.{{ name }}.kms_key_id}'
-      status:
-        value: '${aws_db_snapshot.{{ name }}.status}'

@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_pinpoint_sms_channel:
         {{ name }}:
           application_id: '${var.{{ name }}_application_id}'
+          # short_code: ''
           # enabled: false
           # sender_id: ''
-          # short_code: ''
     variable:
       {{ name }}_application_id:
         type: 'string'

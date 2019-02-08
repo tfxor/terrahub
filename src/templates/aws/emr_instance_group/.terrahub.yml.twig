@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_emr_instance_group:
         {{ name }}:
           cluster_id: '${var.{{ name }}_cluster_id}'
           instance_type: '${var.{{ name }}_instance_type}'
+          # instance_count: 0
+          # name: ''
           # ebs_optimized: false
           # ebs_config: 
           #   size: 0
           #   type: ''
           #   iops: 0
           #   volumes_per_instance: 0
-          # instance_count: 0
-          # name: ''
     variable:
       {{ name }}_cluster_id:
         type: 'string'

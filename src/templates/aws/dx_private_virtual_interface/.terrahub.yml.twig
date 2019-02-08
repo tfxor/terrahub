@@ -2,45 +2,47 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_dx_private_virtual_interface:
         {{ name }}:
-          address_family: '${var.{{ name }}_address_family}'
           bgp_asn: '${var.{{ name }}_bgp_asn}'
           connection_id: '${var.{{ name }}_connection_id}'
-          name: '${var.{{ name }}_name}'
+          address_family: '${var.{{ name }}_address_family}'
           vlan: '${var.{{ name }}_vlan}'
-          # vpn_gateway_id: ''
+          name: '${var.{{ name }}_name}'
+          # dx_gateway_id: ''
+          # bgp_auth_key: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # bgp_auth_key: ''
-          # dx_gateway_id: ''
+          # vpn_gateway_id: ''
           # customer_address: ''
           # amazon_address: ''
     variable:
-      {{ name }}_address_family:
-        type: 'string'
       {{ name }}_bgp_asn:
         type: 'int'
       {{ name }}_connection_id:
         type: 'string'
-      {{ name }}_name:
+      {{ name }}_address_family:
         type: 'string'
       {{ name }}_vlan:
         type: 'int'
+      {{ name }}_name:
+        type: 'string'
     output:
       id:
         value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
       thub_id:
         value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
-      bgp_auth_key:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.bgp_auth_key}'
       jumbo_frame_capable:
         value: '${aws_dx_private_virtual_interface.{{ name }}.jumbo_frame_capable}'
-      arn:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.arn}'
+      bgp_auth_key:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.bgp_auth_key}'
       customer_address:
         value: '${aws_dx_private_virtual_interface.{{ name }}.customer_address}'
       amazon_address:
         value: '${aws_dx_private_virtual_interface.{{ name }}.amazon_address}'
+      arn:
+        value: '${aws_dx_private_virtual_interface.{{ name }}.arn}'

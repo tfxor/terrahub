@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cloud9_environment_ec2:
         {{ name }}:
-          instance_type: '${var.{{ name }}_instance_type}'
           name: '${var.{{ name }}_name}'
+          instance_type: '${var.{{ name }}_instance_type}'
           # automatic_stop_time_minutes: 0
           # description: ''
           # owner_arn: ''
           # subnet_id: ''
     variable:
-      {{ name }}_instance_type:
-        type: 'string'
       {{ name }}_name:
+        type: 'string'
+      {{ name }}_instance_type:
         type: 'string'
     output:
       id:

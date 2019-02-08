@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_kms_alias:
         {{ name }}:
@@ -17,7 +19,7 @@
         value: '${aws_kms_alias.{{ name }}.id}'
       thub_id:
         value: '${aws_kms_alias.{{ name }}.id}'
-      arn:
-        value: '${aws_kms_alias.{{ name }}.arn}'
       target_key_arn:
         value: '${aws_kms_alias.{{ name }}.target_key_arn}'
+      arn:
+        value: '${aws_kms_alias.{{ name }}.arn}'

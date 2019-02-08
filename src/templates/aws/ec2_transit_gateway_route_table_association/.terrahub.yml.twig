@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ec2_transit_gateway_route_table_association:
         {{ name }}:
@@ -18,7 +20,7 @@
         value: '${aws_ec2_transit_gateway_route_table_association.{{ name }}.id}'
       thub_id:
         value: '${aws_ec2_transit_gateway_route_table_association.{{ name }}.id}'
-      resource_id:
-        value: '${aws_ec2_transit_gateway_route_table_association.{{ name }}.resource_id}'
       resource_type:
         value: '${aws_ec2_transit_gateway_route_table_association.{{ name }}.resource_type}'
+      resource_id:
+        value: '${aws_ec2_transit_gateway_route_table_association.{{ name }}.resource_id}'

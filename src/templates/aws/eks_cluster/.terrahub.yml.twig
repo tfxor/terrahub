@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_eks_cluster:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          role_arn: '${var.{{ name }}_role_arn}'
           vpc_config: 
             -
               subnet_ids: []
           #     security_group_ids: 
-          role_arn: '${var.{{ name }}_role_arn}'
           # version: ''
     variable:
       {{ name }}_name:
@@ -23,8 +25,6 @@
         value: '${aws_eks_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_eks_cluster.{{ name }}.id}'
-      created_at:
-        value: '${aws_eks_cluster.{{ name }}.created_at}'
       platform_version:
         value: '${aws_eks_cluster.{{ name }}.platform_version}'
       arn:
@@ -33,5 +33,7 @@
         value: '${aws_eks_cluster.{{ name }}.certificate_authority}'
       version:
         value: '${aws_eks_cluster.{{ name }}.version}'
+      created_at:
+        value: '${aws_eks_cluster.{{ name }}.created_at}'
       endpoint:
         value: '${aws_eks_cluster.{{ name }}.endpoint}'

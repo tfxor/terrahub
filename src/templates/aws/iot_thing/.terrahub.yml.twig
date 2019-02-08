@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iot_thing:
         {{ name }}:
           name: '${var.{{ name }}_name}'
+          # thing_type_name: ''
           # attributes: 
           #   '[TO_BE_REPLACED]': ''
-          # thing_type_name: ''
     variable:
       {{ name }}_name:
         type: 'string'

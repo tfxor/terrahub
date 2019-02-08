@@ -2,14 +2,16 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ram_share:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # allow_external_principals: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # allow_external_principals: false
     variable:
       {{ name }}_name:
         type: 'string'

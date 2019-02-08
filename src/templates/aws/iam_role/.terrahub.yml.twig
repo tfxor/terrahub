@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_role:
         {{ name }}:
           assume_role_policy: '${var.{{ name }}_assume_role_policy}'
           # max_session_duration: 0
           # name: ''
-          # name_prefix: ''
           # permissions_boundary: ''
           # force_detach_policies: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
           # path: ''
           # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_assume_role_policy:
         type: 'string'
@@ -24,11 +26,11 @@
         value: '${aws_iam_role.{{ name }}.id}'
       thub_id:
         value: '${aws_iam_role.{{ name }}.id}'
-      arn:
-        value: '${aws_iam_role.{{ name }}.arn}'
+      create_date:
+        value: '${aws_iam_role.{{ name }}.create_date}'
       unique_id:
         value: '${aws_iam_role.{{ name }}.unique_id}'
       name:
         value: '${aws_iam_role.{{ name }}.name}'
-      create_date:
-        value: '${aws_iam_role.{{ name }}.create_date}'
+      arn:
+        value: '${aws_iam_role.{{ name }}.arn}'

@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_waf_rule:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           metric_name: '${var.{{ name }}_metric_name}'
           # predicates: 
+          #   type: ''
           #   negated: false
           #   data_id: ''
-          #   type: ''
     variable:
       {{ name }}_name:
         type: 'string'

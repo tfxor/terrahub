@@ -2,33 +2,35 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sqs_queue:
         {{ name }}:
-          # redrive_policy: ''
           # kms_master_key_id: ''
+          # name_prefix: ''
+          # receive_wait_time_seconds: 0
+          # visibility_timeout_seconds: 0
+          # name: ''
+          # policy: ''
+          # redrive_policy: ''
+          # kms_data_key_reuse_period_seconds: 0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # name_prefix: ''
           # delay_seconds: 0
-          # kms_data_key_reuse_period_seconds: 0
-          # name: ''
           # max_message_size: 0
           # message_retention_seconds: 0
-          # receive_wait_time_seconds: 0
-          # policy: ''
-          # visibility_timeout_seconds: 0
     output:
       id:
         value: '${aws_sqs_queue.{{ name }}.id}'
       thub_id:
         value: '${aws_sqs_queue.{{ name }}.id}'
-      kms_data_key_reuse_period_seconds:
-        value: '${aws_sqs_queue.{{ name }}.kms_data_key_reuse_period_seconds}'
+      arn:
+        value: '${aws_sqs_queue.{{ name }}.arn}'
       name:
         value: '${aws_sqs_queue.{{ name }}.name}'
       policy:
         value: '${aws_sqs_queue.{{ name }}.policy}'
-      arn:
-        value: '${aws_sqs_queue.{{ name }}.arn}'
+      kms_data_key_reuse_period_seconds:
+        value: '${aws_sqs_queue.{{ name }}.kms_data_key_reuse_period_seconds}'

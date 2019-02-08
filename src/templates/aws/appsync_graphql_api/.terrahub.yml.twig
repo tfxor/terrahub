@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appsync_graphql_api:
         {{ name }}:
@@ -10,8 +12,8 @@
           authentication_type: '${var.{{ name }}_authentication_type}'
           # log_config: 
           #   -
-          #     cloudwatch_logs_role_arn: ''
           #     field_log_level: ''
+          #     cloudwatch_logs_role_arn: ''
           # openid_connect_config: 
           #   -
           #     issuer: ''
@@ -20,8 +22,8 @@
           #     iat_ttl: 0
           # user_pool_config: 
           #   -
-          #     user_pool_id: ''
           #     default_action: ''
+          #     user_pool_id: ''
           #     app_id_client_regex: ''
           #     aws_region: ''
     variable:

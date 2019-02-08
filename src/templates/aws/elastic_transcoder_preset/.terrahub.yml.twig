@@ -2,26 +2,47 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_elastic_transcoder_preset:
         {{ name }}:
           container: '${var.{{ name }}_container}'
-          # audio: 
-          #   channels: ''
-          #   codec: ''
-          #   sample_rate: ''
-          #   audio_packing_mode: ''
+          # name: ''
+          # type: ''
+          # video: 
+          #   display_aspect_ratio: ''
+          #   keyframes_max_dist: ''
+          #   padding_policy: ''
+          #   resolution: ''
+          #   max_height: ''
+          #   max_width: ''
+          #   aspect_ratio: ''
           #   bit_rate: ''
+          #   codec: ''
+          #   fixed_gop: ''
+          #   frame_rate: ''
+          #   max_frame_rate: ''
+          # video_watermarks: 
+          #   max_height: ''
+          #   vertical_align: ''
+          #   vertical_offset: ''
+          #   horizontal_align: ''
+          #   id: ''
+          #   max_width: ''
+          #   opacity: ''
+          #   sizing_policy: ''
+          #   target: ''
+          #   horizontal_offset: ''
           # audio_codec_options: 
           #   bit_depth: ''
           #   bit_order: ''
           #   profile: ''
           #   signed: ''
           # description: ''
-          # type: ''
-          # name: ''
           # thumbnails: 
+          #   aspect_ratio: ''
           #   format: ''
           #   interval: ''
           #   max_height: ''
@@ -29,33 +50,14 @@
           #   padding_policy: ''
           #   resolution: ''
           #   sizing_policy: ''
-          #   aspect_ratio: ''
-          # video: 
-          #   max_frame_rate: ''
-          #   max_height: ''
-          #   bit_rate: ''
-          #   frame_rate: ''
-          #   display_aspect_ratio: ''
-          #   fixed_gop: ''
-          #   keyframes_max_dist: ''
-          #   max_width: ''
-          #   padding_policy: ''
-          #   resolution: ''
-          #   aspect_ratio: ''
-          #   codec: ''
-          # video_watermarks: 
-          #   id: ''
-          #   max_width: ''
-          #   max_height: ''
-          #   opacity: ''
-          #   sizing_policy: ''
-          #   target: ''
-          #   vertical_align: ''
-          #   vertical_offset: ''
-          #   horizontal_align: ''
-          #   horizontal_offset: ''
           # video_codec_options: 
           #   '[TO_BE_REPLACED]': ''
+          # audio: 
+          #   codec: ''
+          #   sample_rate: ''
+          #   audio_packing_mode: ''
+          #   bit_rate: ''
+          #   channels: ''
     variable:
       {{ name }}_container:
         type: 'string'
@@ -64,9 +66,9 @@
         value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
       thub_id:
         value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
-      arn:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.arn}'
-      type:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.type}'
       name:
         value: '${aws_elastic_transcoder_preset.{{ name }}.name}'
+      type:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.type}'
+      arn:
+        value: '${aws_elastic_transcoder_preset.{{ name }}.arn}'

@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_method_response:
         {{ name }}:
@@ -10,11 +12,11 @@
           resource_id: '${var.{{ name }}_resource_id}'
           http_method: '${var.{{ name }}_http_method}'
           status_code: '${var.{{ name }}_status_code}'
-          # response_parameters_in_json: ''
           # response_models: 
           #   '[TO_BE_REPLACED]': ''
           # response_parameters: 
           #   '[TO_BE_REPLACED]': ''
+          # response_parameters_in_json: ''
     variable:
       {{ name }}_rest_api_id:
         type: 'string'

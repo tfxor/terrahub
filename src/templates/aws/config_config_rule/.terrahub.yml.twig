@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_config_config_rule:
         {{ name }}:
@@ -10,10 +12,11 @@
             -
               owner: ''
           #     source_detail: 
-          #     message_type: ''
           #     event_source: ''
           #     maximum_execution_frequency: ''
+          #     message_type: ''
           name: '${var.{{ name }}_name}'
+          # description: ''
           # input_parameters: ''
           # maximum_execution_frequency: ''
           # scope: 
@@ -22,7 +25,6 @@
           #     compliance_resource_types: 
           #     tag_key: ''
           #     tag_value: ''
-          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -31,7 +33,7 @@
         value: '${aws_config_config_rule.{{ name }}.id}'
       thub_id:
         value: '${aws_config_config_rule.{{ name }}.id}'
-      rule_id:
-        value: '${aws_config_config_rule.{{ name }}.rule_id}'
       arn:
         value: '${aws_config_config_rule.{{ name }}.arn}'
+      rule_id:
+        value: '${aws_config_config_rule.{{ name }}.rule_id}'

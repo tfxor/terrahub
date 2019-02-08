@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_user_group_membership:
         {{ name }}:
-          groups: '${var.{{ name }}_groups}'
           user: '${var.{{ name }}_user}'
+          groups: '${var.{{ name }}_groups}'
     variable:
-      {{ name }}_groups:
-        type: 'set'
       {{ name }}_user:
         type: 'string'
+      {{ name }}_groups:
+        type: 'set'
     output:
       id:
         value: '${aws_iam_user_group_membership.{{ name }}.id}'

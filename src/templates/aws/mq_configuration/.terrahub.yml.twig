@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_mq_configuration:
         {{ name }}:
@@ -27,7 +29,7 @@
         value: '${aws_mq_configuration.{{ name }}.id}'
       thub_id:
         value: '${aws_mq_configuration.{{ name }}.id}'
-      latest_revision:
-        value: '${aws_mq_configuration.{{ name }}.latest_revision}'
       arn:
         value: '${aws_mq_configuration.{{ name }}.arn}'
+      latest_revision:
+        value: '${aws_mq_configuration.{{ name }}.latest_revision}'

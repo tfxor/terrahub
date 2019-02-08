@@ -2,19 +2,21 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_resource:
         {{ name }}:
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
           parent_id: '${var.{{ name }}_parent_id}'
           path_part: '${var.{{ name }}_path_part}'
+          rest_api_id: '${var.{{ name }}_rest_api_id}'
     variable:
-      {{ name }}_rest_api_id:
-        type: 'string'
       {{ name }}_parent_id:
         type: 'string'
       {{ name }}_path_part:
+        type: 'string'
+      {{ name }}_rest_api_id:
         type: 'string'
     output:
       id:

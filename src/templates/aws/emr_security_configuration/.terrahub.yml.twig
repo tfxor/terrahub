@@ -2,13 +2,15 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_emr_security_configuration:
         {{ name }}:
           configuration: '${var.{{ name }}_configuration}'
-          # name_prefix: ''
           # name: ''
+          # name_prefix: ''
     variable:
       {{ name }}_configuration:
         type: 'string'

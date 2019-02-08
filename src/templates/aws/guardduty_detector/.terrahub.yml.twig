@@ -2,12 +2,14 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_guardduty_detector:
         {{ name }}:
-          # enable: false
           # finding_publishing_frequency: ''
+          # enable: false
     output:
       id:
         value: '${aws_guardduty_detector.{{ name }}.id}'

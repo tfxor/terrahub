@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_elasticache_parameter_group:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           family: '${var.{{ name }}_family}'
-          # description: ''
           # parameter: 
           #   name: ''
           #   value: ''
+          # description: ''
     variable:
       {{ name }}_name:
         type: 'string'

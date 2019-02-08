@@ -2,26 +2,28 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ssm_parameter:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          type: '${var.{{ name }}_type}'
           value: '${var.{{ name }}_value}'
+          type: '${var.{{ name }}_type}'
           # arn: ''
           # key_id: ''
-          # allowed_pattern: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''
           # overwrite: false
+          # allowed_pattern: ''
     variable:
       {{ name }}_name:
         type: 'string'
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_value:
+        type: 'string'
+      {{ name }}_type:
         type: 'string'
     output:
       id:

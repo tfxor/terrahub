@@ -2,20 +2,22 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appautoscaling_scheduled_action:
         {{ name }}:
           resource_id: '${var.{{ name }}_resource_id}'
           name: '${var.{{ name }}_name}'
           service_namespace: '${var.{{ name }}_service_namespace}'
+          # scalable_dimension: ''
           # scalable_target_action: 
           #   -
           #     max_capacity: 0
           #     min_capacity: 0
           # schedule: ''
           # start_time: ''
-          # scalable_dimension: ''
           # end_time: ''
     variable:
       {{ name }}_resource_id:

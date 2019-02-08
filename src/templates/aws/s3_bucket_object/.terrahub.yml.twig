@@ -2,44 +2,46 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_s3_bucket_object:
         {{ name }}:
-          key: '${var.{{ name }}_key}'
           bucket: '${var.{{ name }}_bucket}'
-          # cache_control: ''
-          # content_encoding: ''
-          # source: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # website_redirect: ''
-          # content_type: ''
+          key: '${var.{{ name }}_key}'
           # content: ''
-          # content_base64: ''
-          # storage_class: ''
-          # server_side_encryption: ''
           # kms_key_id: ''
           # etag: ''
           # content_disposition: ''
+          # content_encoding: ''
+          # content_type: ''
+          # storage_class: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # content_language: ''
+          # source: ''
+          # content_base64: ''
+          # website_redirect: ''
+          # cache_control: ''
+          # server_side_encryption: ''
     variable:
-      {{ name }}_key:
-        type: 'string'
       {{ name }}_bucket:
+        type: 'string'
+      {{ name }}_key:
         type: 'string'
     output:
       id:
         value: '${aws_s3_bucket_object.{{ name }}.id}'
       thub_id:
         value: '${aws_s3_bucket_object.{{ name }}.id}'
+      etag:
+        value: '${aws_s3_bucket_object.{{ name }}.etag}'
       content_type:
         value: '${aws_s3_bucket_object.{{ name }}.content_type}'
       storage_class:
         value: '${aws_s3_bucket_object.{{ name }}.storage_class}'
-      server_side_encryption:
-        value: '${aws_s3_bucket_object.{{ name }}.server_side_encryption}'
-      etag:
-        value: '${aws_s3_bucket_object.{{ name }}.etag}'
       version_id:
         value: '${aws_s3_bucket_object.{{ name }}.version_id}'
+      server_side_encryption:
+        value: '${aws_s3_bucket_object.{{ name }}.server_side_encryption}'

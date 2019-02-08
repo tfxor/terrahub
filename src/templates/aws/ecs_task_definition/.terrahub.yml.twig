@@ -2,34 +2,36 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ecs_task_definition:
         {{ name }}:
           family: '${var.{{ name }}_family}'
           container_definitions: '${var.{{ name }}_container_definitions}'
-          # memory: ''
           # volume: 
           #   name: ''
+          #   host_path: ''
           #   docker_volume_configuration: 
           #     -
-          #       autoprovision: false
           #       driver: ''
           #       driver_opts: 
           #           '[TO_BE_REPLACED]': ''
           #       labels: 
           #           '[TO_BE_REPLACED]': ''
           #       scope: ''
-          #   host_path: ''
-          # requires_compatibilities: []
-          # ipc_mode: ''
+          #       autoprovision: false
           # placement_constraints: 
           #   type: ''
           #   expression: ''
-          # cpu: ''
-          # task_role_arn: ''
           # execution_role_arn: ''
+          # memory: ''
+          # ipc_mode: ''
+          # task_role_arn: ''
           # network_mode: ''
+          # requires_compatibilities: []
+          # cpu: ''
           # pid_mode: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''

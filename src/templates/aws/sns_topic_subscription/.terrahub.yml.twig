@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sns_topic_subscription:
         {{ name }}:
           protocol: '${var.{{ name }}_protocol}'
           topic_arn: '${var.{{ name }}_topic_arn}'
           endpoint: '${var.{{ name }}_endpoint}'
+          # endpoint_auto_confirms: false
+          # raw_message_delivery: false
           # confirmation_timeout_in_minutes: 0
           # delivery_policy: ''
-          # raw_message_delivery: false
-          # endpoint_auto_confirms: false
           # filter_policy: ''
     variable:
       {{ name }}_protocol:

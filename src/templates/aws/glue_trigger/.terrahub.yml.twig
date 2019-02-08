@@ -2,10 +2,13 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_glue_trigger:
         {{ name }}:
+          type: '${var.{{ name }}_type}'
           actions: 
             -
               job_name: ''
@@ -13,7 +16,7 @@
           #       '[TO_BE_REPLACED]': ''
           #     timeout: 0
           name: '${var.{{ name }}_name}'
-          type: '${var.{{ name }}_type}'
+          # schedule: ''
           # description: ''
           # enabled: false
           # predicate: 
@@ -23,11 +26,10 @@
           #         job_name: ''
           #         state: ''
           #         logical_operator: ''
-          # schedule: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_type:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

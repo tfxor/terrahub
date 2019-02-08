@@ -2,18 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sagemaker_notebook_instance:
         {{ name }}:
           name: '${var.{{ name }}_name}'
           role_arn: '${var.{{ name }}_role_arn}'
           instance_type: '${var.{{ name }}_instance_type}'
-          # kms_key_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
           # subnet_id: ''
           # security_groups: []
+          # kms_key_id: ''
     variable:
       {{ name }}_name:
         type: 'string'

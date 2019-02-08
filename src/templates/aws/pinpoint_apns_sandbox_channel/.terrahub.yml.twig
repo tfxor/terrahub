@@ -2,19 +2,21 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_pinpoint_apns_sandbox_channel:
         {{ name }}:
           application_id: '${var.{{ name }}_application_id}'
+          # token_key_id: ''
           # certificate: ''
           # default_authentication_method: ''
-          # token_key_id: ''
-          # bundle_id: ''
           # enabled: false
           # private_key: ''
           # team_id: ''
           # token_key: ''
+          # bundle_id: ''
     variable:
       {{ name }}_application_id:
         type: 'string'

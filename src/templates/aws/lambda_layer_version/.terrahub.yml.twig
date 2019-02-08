@@ -2,19 +2,21 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_lambda_layer_version:
         {{ name }}:
           layer_name: '${var.{{ name }}_layer_name}'
-          # description: ''
           # filename: ''
-          # s3_key: ''
-          # compatible_runtimes: []
-          # s3_bucket: ''
-          # license_info: ''
           # s3_object_version: ''
           # source_code_hash: ''
+          # license_info: ''
+          # s3_bucket: ''
+          # description: ''
+          # s3_key: ''
+          # compatible_runtimes: []
     variable:
       {{ name }}_layer_name:
         type: 'string'
@@ -23,15 +25,15 @@
         value: '${aws_lambda_layer_version.{{ name }}.id}'
       thub_id:
         value: '${aws_lambda_layer_version.{{ name }}.id}'
-      version:
-        value: '${aws_lambda_layer_version.{{ name }}.version}'
-      created_date:
-        value: '${aws_lambda_layer_version.{{ name }}.created_date}'
-      layer_arn:
-        value: '${aws_lambda_layer_version.{{ name }}.layer_arn}'
       source_code_size:
         value: '${aws_lambda_layer_version.{{ name }}.source_code_size}'
-      arn:
-        value: '${aws_lambda_layer_version.{{ name }}.arn}'
+      layer_arn:
+        value: '${aws_lambda_layer_version.{{ name }}.layer_arn}'
+      created_date:
+        value: '${aws_lambda_layer_version.{{ name }}.created_date}'
       source_code_hash:
         value: '${aws_lambda_layer_version.{{ name }}.source_code_hash}'
+      version:
+        value: '${aws_lambda_layer_version.{{ name }}.version}'
+      arn:
+        value: '${aws_lambda_layer_version.{{ name }}.arn}'

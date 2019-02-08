@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_domain_name:
         {{ name }}:
           domain_name: '${var.{{ name }}_domain_name}'
+          # certificate_name: ''
           # certificate_private_key: ''
           # certificate_body: ''
           # certificate_chain: ''
-          # certificate_name: ''
           # endpoint_configuration: 
           #   -
           #     types: []
-          # regional_certificate_name: ''
-          # certificate_arn: ''
           # regional_certificate_arn: ''
+          # certificate_arn: ''
+          # regional_certificate_name: ''
     variable:
       {{ name }}_domain_name:
         type: 'string'
@@ -25,15 +27,15 @@
         value: '${aws_api_gateway_domain_name.{{ name }}.id}'
       thub_id:
         value: '${aws_api_gateway_domain_name.{{ name }}.id}'
-      cloudfront_zone_id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_zone_id}'
       regional_domain_name:
         value: '${aws_api_gateway_domain_name.{{ name }}.regional_domain_name}'
-      regional_zone_id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.regional_zone_id}'
-      cloudfront_domain_name:
-        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_domain_name}'
-      endpoint_configuration:
-        value: '${aws_api_gateway_domain_name.{{ name }}.endpoint_configuration}'
       certificate_upload_date:
         value: '${aws_api_gateway_domain_name.{{ name }}.certificate_upload_date}'
+      endpoint_configuration:
+        value: '${aws_api_gateway_domain_name.{{ name }}.endpoint_configuration}'
+      cloudfront_domain_name:
+        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_domain_name}'
+      cloudfront_zone_id:
+        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_zone_id}'
+      regional_zone_id:
+        value: '${aws_api_gateway_domain_name.{{ name }}.regional_zone_id}'

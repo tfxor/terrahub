@@ -2,36 +2,38 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_sns_topic:
         {{ name }}:
-          # name_prefix: ''
+          # policy: ''
           # application_success_feedback_role_arn: ''
           # application_success_feedback_sample_rate: 0
-          # display_name: ''
-          # http_failure_feedback_role_arn: ''
-          # kms_master_key_id: ''
-          # lambda_success_feedback_role_arn: ''
-          # name: ''
-          # policy: ''
-          # delivery_policy: ''
-          # application_failure_feedback_role_arn: ''
           # http_success_feedback_sample_rate: 0
+          # kms_master_key_id: ''
           # lambda_success_feedback_sample_rate: 0
+          # name_prefix: ''
+          # display_name: ''
           # sqs_success_feedback_role_arn: ''
           # sqs_success_feedback_sample_rate: 0
-          # http_success_feedback_role_arn: ''
+          # name: ''
+          # http_failure_feedback_role_arn: ''
           # lambda_failure_feedback_role_arn: ''
+          # delivery_policy: ''
+          # application_failure_feedback_role_arn: ''
           # sqs_failure_feedback_role_arn: ''
+          # http_success_feedback_role_arn: ''
+          # lambda_success_feedback_role_arn: ''
     output:
       id:
         value: '${aws_sns_topic.{{ name }}.id}'
       thub_id:
         value: '${aws_sns_topic.{{ name }}.id}'
-      name:
-        value: '${aws_sns_topic.{{ name }}.name}'
       policy:
         value: '${aws_sns_topic.{{ name }}.policy}'
       arn:
         value: '${aws_sns_topic.{{ name }}.arn}'
+      name:
+        value: '${aws_sns_topic.{{ name }}.name}'

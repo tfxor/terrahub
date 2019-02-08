@@ -2,26 +2,28 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appautoscaling_target:
         {{ name }}:
+          scalable_dimension: '${var.{{ name }}_scalable_dimension}'
+          service_namespace: '${var.{{ name }}_service_namespace}'
           max_capacity: '${var.{{ name }}_max_capacity}'
           min_capacity: '${var.{{ name }}_min_capacity}'
           resource_id: '${var.{{ name }}_resource_id}'
-          scalable_dimension: '${var.{{ name }}_scalable_dimension}'
-          service_namespace: '${var.{{ name }}_service_namespace}'
           # role_arn: ''
     variable:
+      {{ name }}_scalable_dimension:
+        type: 'string'
+      {{ name }}_service_namespace:
+        type: 'string'
       {{ name }}_max_capacity:
         type: 'int'
       {{ name }}_min_capacity:
         type: 'int'
       {{ name }}_resource_id:
-        type: 'string'
-      {{ name }}_scalable_dimension:
-        type: 'string'
-      {{ name }}_service_namespace:
         type: 'string'
     output:
       id:

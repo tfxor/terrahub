@@ -2,17 +2,19 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_config_configuration_recorder:
         {{ name }}:
           role_arn: '${var.{{ name }}_role_arn}'
-          # name: ''
           # recording_group: 
           #   -
-          #     all_supported: false
           #     include_global_resource_types: false
           #     resource_types: 
+          #     all_supported: false
+          # name: ''
     variable:
       {{ name }}_role_arn:
         type: 'string'

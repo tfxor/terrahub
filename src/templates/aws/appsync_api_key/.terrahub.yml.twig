@@ -2,13 +2,15 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_appsync_api_key:
         {{ name }}:
           api_id: '${var.{{ name }}_api_id}'
-          # expires: ''
           # description: ''
+          # expires: ''
     variable:
       {{ name }}_api_id:
         type: 'string'

@@ -2,12 +2,32 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_glue_catalog_table:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
           database_name: '${var.{{ name }}_database_name}'
+          name: '${var.{{ name }}_name}'
+          # location: ''
+          # catalog_id: ''
+          # description: ''
+          # retention: 0
+          # input_format: ''
+          # ser_de_info: 
+          #   -
+          #     name: ''
+          #     parameters: 
+          #       '[TO_BE_REPLACED]': ''
+          #     serialization_library: ''
+          # view_expanded_text: ''
+          # owner: ''
+          # partition_keys: 
+          #   -
+          #     name: ''
+          #     comment: ''
+          #     type: ''
           # storage_descriptor: 
           #   -
           #     bucket_columns: 
@@ -17,48 +37,30 @@
           #         name: ''
           #         comment: ''
           #         type: ''
+          # number_of_buckets: 0
+          # table_type: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
           # compressed: false
-          # ser_de_info: 
-          #   -
-          #     name: ''
-          #     parameters: 
-          #       '[TO_BE_REPLACED]': ''
-          #     serialization_library: ''
+          # output_format: ''
           # skewed_info: 
           #   -
+          #     skewed_column_value_location_maps: 
+          #       '[TO_BE_REPLACED]': ''
           #     skewed_column_names: 
           #       -
           #     skewed_column_values: 
           #       -
-          #     skewed_column_value_location_maps: 
-          #       '[TO_BE_REPLACED]': ''
-          # parameters: 
-          #   '[TO_BE_REPLACED]': ''
           # sort_columns: 
           #   -
           #     column: ''
           #     sort_order: 0
           # stored_as_sub_directories: false
-          # table_type: ''
-          # view_expanded_text: ''
-          # number_of_buckets: 0
-          # catalog_id: ''
-          # owner: ''
-          # partition_keys: 
-          #   -
-          #     name: ''
-          #     type: ''
-          #     comment: ''
-          # retention: 0
-          # input_format: ''
-          # location: ''
-          # output_format: ''
           # view_original_text: ''
-          # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_database_name:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

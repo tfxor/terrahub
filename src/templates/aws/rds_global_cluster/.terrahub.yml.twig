@@ -2,16 +2,18 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_rds_global_cluster:
         {{ name }}:
           global_cluster_identifier: '${var.{{ name }}_global_cluster_identifier}'
-          # database_name: ''
           # deletion_protection: false
           # engine: ''
           # engine_version: ''
           # storage_encrypted: false
+          # database_name: ''
     variable:
       {{ name }}_global_cluster_identifier:
         type: 'string'
@@ -20,9 +22,9 @@
         value: '${aws_rds_global_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_rds_global_cluster.{{ name }}.id}'
-      arn:
-        value: '${aws_rds_global_cluster.{{ name }}.arn}'
       engine_version:
         value: '${aws_rds_global_cluster.{{ name }}.engine_version}'
       global_cluster_resource_id:
         value: '${aws_rds_global_cluster.{{ name }}.global_cluster_resource_id}'
+      arn:
+        value: '${aws_rds_global_cluster.{{ name }}.arn}'

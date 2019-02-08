@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_instance_profile:
         {{ name }}:
@@ -16,15 +18,15 @@
         value: '${aws_iam_instance_profile.{{ name }}.id}'
       thub_id:
         value: '${aws_iam_instance_profile.{{ name }}.id}'
-      arn:
-        value: '${aws_iam_instance_profile.{{ name }}.arn}'
-      create_date:
-        value: '${aws_iam_instance_profile.{{ name }}.create_date}'
-      unique_id:
-        value: '${aws_iam_instance_profile.{{ name }}.unique_id}'
       name:
         value: '${aws_iam_instance_profile.{{ name }}.name}'
       roles:
         value: '${aws_iam_instance_profile.{{ name }}.roles}'
       role:
         value: '${aws_iam_instance_profile.{{ name }}.role}'
+      arn:
+        value: '${aws_iam_instance_profile.{{ name }}.arn}'
+      create_date:
+        value: '${aws_iam_instance_profile.{{ name }}.create_date}'
+      unique_id:
+        value: '${aws_iam_instance_profile.{{ name }}.unique_id}'

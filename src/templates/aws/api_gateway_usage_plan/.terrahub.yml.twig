@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_usage_plan:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # quota_settings: 
-          #   limit: 0
-          #   period: ''
-          # throttle_settings: 
-          # product_code: ''
           # description: ''
           # api_stages: 
           #   -
-          #     api_id: ''
           #     stage: ''
+          #     api_id: ''
+          # quota_settings: 
+          #   period: ''
+          #   limit: 0
+          # throttle_settings: 
+          # product_code: ''
     variable:
       {{ name }}_name:
         type: 'string'

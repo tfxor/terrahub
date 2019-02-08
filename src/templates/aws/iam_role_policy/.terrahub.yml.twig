@@ -2,18 +2,20 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_role_policy:
         {{ name }}:
-          role: '${var.{{ name }}_role}'
           policy: '${var.{{ name }}_policy}'
+          role: '${var.{{ name }}_role}'
           # name: ''
           # name_prefix: ''
     variable:
-      {{ name }}_role:
-        type: 'string'
       {{ name }}_policy:
+        type: 'string'
+      {{ name }}_role:
         type: 'string'
     output:
       id:

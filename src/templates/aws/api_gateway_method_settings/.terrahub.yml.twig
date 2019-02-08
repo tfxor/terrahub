@@ -2,7 +2,9 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_api_gateway_method_settings:
         {{ name }}:
@@ -11,16 +13,16 @@
           method_path: '${var.{{ name }}_method_path}'
           settings: 
             -
-          #     throttling_burst_limit: 0
-          #     cache_ttl_in_seconds: 0
-          #     require_authorization_for_cache_control: false
-          #     cache_data_encrypted: false
-          #     unauthorized_cache_control_header_strategy: ''
           #     metrics_enabled: false
-          #     logging_level: ''
           #     data_trace_enabled: false
-          #     throttling_rate_limit: ''
+          #     throttling_burst_limit: 0
           #     caching_enabled: false
+          #     cache_ttl_in_seconds: 0
+          #     cache_data_encrypted: false
+          #     logging_level: ''
+          #     throttling_rate_limit: ''
+          #     require_authorization_for_cache_control: false
+          #     unauthorized_cache_control_header_strategy: ''
     variable:
       {{ name }}_rest_api_id:
         type: 'string'

@@ -2,40 +2,42 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_elasticache_replication_group:
         {{ name }}:
           replication_group_description: '${var.{{ name }}_replication_group_description}'
           replication_group_id: '${var.{{ name }}_replication_group_id}'
-          # maintenance_window: ''
           # security_group_ids: []
-          # snapshot_name: ''
-          # subnet_group_name: ''
-          # security_group_names: []
-          # transit_encryption_enabled: false
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # snapshot_arns: []
-          # auto_minor_version_upgrade: false
-          # automatic_failover_enabled: false
           # availability_zones: []
-          # notification_topic_arn: ''
-          # parameter_group_name: ''
-          # apply_immediately: false
+          # snapshot_window: ''
+          # transit_encryption_enabled: false
+          # at_rest_encryption_enabled: false
           # auth_token: ''
+          # security_group_names: []
+          # apply_immediately: false
+          # auto_minor_version_upgrade: false
           # cluster_mode: 
           #   -
           #     replicas_per_node_group: 0
           #     num_node_groups: 0
-          # engine: ''
           # engine_version: ''
           # port: 0
-          # at_rest_encryption_enabled: false
-          # number_cache_clusters: 0
-          # snapshot_window: ''
-          # node_type: ''
           # snapshot_retention_limit: 0
+          # subnet_group_name: ''
+          # maintenance_window: ''
+          # node_type: ''
+          # snapshot_arns: []
+          # snapshot_name: ''
+          # notification_topic_arn: ''
+          # parameter_group_name: ''
+          # automatic_failover_enabled: false
+          # engine: ''
+          # number_cache_clusters: 0
     variable:
       {{ name }}_replication_group_description:
         type: 'string'
@@ -46,31 +48,31 @@
         value: '${aws_elasticache_replication_group.{{ name }}.id}'
       thub_id:
         value: '${aws_elasticache_replication_group.{{ name }}.id}'
-      maintenance_window:
-        value: '${aws_elasticache_replication_group.{{ name }}.maintenance_window}'
       security_group_ids:
         value: '${aws_elasticache_replication_group.{{ name }}.security_group_ids}'
-      subnet_group_name:
-        value: '${aws_elasticache_replication_group.{{ name }}.subnet_group_name}'
       configuration_endpoint_address:
         value: '${aws_elasticache_replication_group.{{ name }}.configuration_endpoint_address}'
+      snapshot_window:
+        value: '${aws_elasticache_replication_group.{{ name }}.snapshot_window}'
       security_group_names:
         value: '${aws_elasticache_replication_group.{{ name }}.security_group_names}'
-      parameter_group_name:
-        value: '${aws_elasticache_replication_group.{{ name }}.parameter_group_name}'
       apply_immediately:
         value: '${aws_elasticache_replication_group.{{ name }}.apply_immediately}'
+      member_clusters:
+        value: '${aws_elasticache_replication_group.{{ name }}.member_clusters}'
       cluster_mode:
         value: '${aws_elasticache_replication_group.{{ name }}.cluster_mode}'
       engine_version:
         value: '${aws_elasticache_replication_group.{{ name }}.engine_version}'
+      subnet_group_name:
+        value: '${aws_elasticache_replication_group.{{ name }}.subnet_group_name}'
+      maintenance_window:
+        value: '${aws_elasticache_replication_group.{{ name }}.maintenance_window}'
+      node_type:
+        value: '${aws_elasticache_replication_group.{{ name }}.node_type}'
+      parameter_group_name:
+        value: '${aws_elasticache_replication_group.{{ name }}.parameter_group_name}'
       primary_endpoint_address:
         value: '${aws_elasticache_replication_group.{{ name }}.primary_endpoint_address}'
       number_cache_clusters:
         value: '${aws_elasticache_replication_group.{{ name }}.number_cache_clusters}'
-      snapshot_window:
-        value: '${aws_elasticache_replication_group.{{ name }}.snapshot_window}'
-      member_clusters:
-        value: '${aws_elasticache_replication_group.{{ name }}.member_clusters}'
-      node_type:
-        value: '${aws_elasticache_replication_group.{{ name }}.node_type}'

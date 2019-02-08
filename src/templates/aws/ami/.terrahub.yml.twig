@@ -2,20 +2,25 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_ami:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          # image_location: ''
-          # ena_support: false
           # kernel_id: ''
-          # root_device_name: ''
-          # architecture: ''
+          # ramdisk_id: ''
+          # sriov_net_support: ''
           # ephemeral_block_device: 
           #   device_name: ''
           #   virtual_name: ''
-          # sriov_net_support: ''
+          # image_location: ''
+          # description: ''
+          # ena_support: false
+          # architecture: ''
+          # root_device_name: ''
+          # virtualization_type: ''
           # ebs_block_device: 
           #   device_name: ''
           #   encrypted: false
@@ -24,11 +29,8 @@
           #   volume_size: 0
           #   volume_type: ''
           #   delete_on_termination: false
-          # description: ''
-          # ramdisk_id: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # virtualization_type: ''
     variable:
       {{ name }}_name:
         type: 'string'
@@ -37,13 +39,13 @@
         value: '${aws_ami.{{ name }}.id}'
       thub_id:
         value: '${aws_ami.{{ name }}.id}'
-      image_location:
-        value: '${aws_ami.{{ name }}.image_location}'
-      manage_ebs_snapshots:
-        value: '${aws_ami.{{ name }}.manage_ebs_snapshots}'
-      ephemeral_block_device:
-        value: '${aws_ami.{{ name }}.ephemeral_block_device}'
-      ebs_block_device:
-        value: '${aws_ami.{{ name }}.ebs_block_device}'
       root_snapshot_id:
         value: '${aws_ami.{{ name }}.root_snapshot_id}'
+      ephemeral_block_device:
+        value: '${aws_ami.{{ name }}.ephemeral_block_device}'
+      image_location:
+        value: '${aws_ami.{{ name }}.image_location}'
+      ebs_block_device:
+        value: '${aws_ami.{{ name }}.ebs_block_device}'
+      manage_ebs_snapshots:
+        value: '${aws_ami.{{ name }}.manage_ebs_snapshots}'

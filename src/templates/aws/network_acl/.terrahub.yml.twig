@@ -2,55 +2,57 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_network_acl:
         {{ name }}:
-          vpc_id: '${var.{{ name }}_vpc_id}'
           ingress: 
             protocol: ''
-            action: ''
-            from_port: 0
             to_port: 0
             rule_no: 0
-          #   icmp_code: 0
+            action: ''
+            from_port: 0
           #   cidr_block: ''
-          #   ipv6_cidr_block: ''
           #   icmp_type: 0
+          #   icmp_code: 0
+          #   ipv6_cidr_block: ''
           egress: 
-            from_port: 0
-            action: ''
             protocol: ''
+            from_port: 0
             to_port: 0
             rule_no: 0
-          #   cidr_block: ''
+            action: ''
           #   ipv6_cidr_block: ''
           #   icmp_type: 0
+          #   cidr_block: ''
           #   icmp_code: 0
-          # subnet_id: ''
-          # subnet_ids: []
+          vpc_id: '${var.{{ name }}_vpc_id}'
           # ingress: 
           #   from_port: 0
-          #   to_port: 0
           #   rule_no: 0
           #   action: ''
+          #   to_port: 0
           #   protocol: ''
-          #   icmp_type: 0
-          #   cidr_block: ''
           #   ipv6_cidr_block: ''
+          #   cidr_block: ''
+          #   icmp_type: 0
           #   icmp_code: 0
           # egress: 
-          #   from_port: 0
           #   action: ''
+          #   from_port: 0
           #   to_port: 0
           #   rule_no: 0
           #   protocol: ''
-          #   icmp_type: 0
           #   cidr_block: ''
-          #   ipv6_cidr_block: ''
           #   icmp_code: 0
+          #   ipv6_cidr_block: ''
+          #   icmp_type: 0
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # subnet_id: ''
+          # subnet_ids: []
     variable:
       {{ name }}_vpc_id:
         type: 'string'
@@ -59,6 +61,10 @@
         value: '${aws_network_acl.{{ name }}.id}'
       thub_id:
         value: '${aws_network_acl.{{ name }}.id}'
+      ingress:
+        value: '${aws_network_acl.{{ name }}.ingress}'
+      egress:
+        value: '${aws_network_acl.{{ name }}.egress}'
       owner_id:
         value: '${aws_network_acl.{{ name }}.owner_id}'
       vpc_id:
@@ -67,7 +73,3 @@
         value: '${aws_network_acl.{{ name }}.subnet_id}'
       subnet_ids:
         value: '${aws_network_acl.{{ name }}.subnet_ids}'
-      ingress:
-        value: '${aws_network_acl.{{ name }}.ingress}'
-      egress:
-        value: '${aws_network_acl.{{ name }}.egress}'

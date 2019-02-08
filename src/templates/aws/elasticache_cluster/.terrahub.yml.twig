@@ -2,34 +2,36 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_elasticache_cluster:
         {{ name }}:
           cluster_id: '${var.{{ name }}_cluster_id}'
-          # availability_zones: []
-          # num_cache_nodes: 0
+          # security_group_names: []
+          # snapshot_arns: []
           # snapshot_retention_limit: 0
           # snapshot_window: ''
-          # notification_topic_arn: ''
-          # security_group_ids: []
           # apply_immediately: false
           # engine_version: ''
-          # port: 0
-          # snapshot_arns: []
-          # availability_zone: ''
-          # maintenance_window: ''
-          # node_type: ''
+          # notification_topic_arn: ''
           # preferred_availability_zones: []
           # replication_group_id: ''
-          # security_group_names: []
           # snapshot_name: ''
-          # az_mode: ''
-          # engine: ''
-          # parameter_group_name: ''
           # subnet_group_name: ''
+          # az_mode: ''
+          # node_type: ''
           # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # availability_zone: ''
+          # num_cache_nodes: 0
+          # parameter_group_name: ''
+          # port: 0
+          # security_group_ids: []
+          # availability_zones: []
+          # engine: ''
+          # maintenance_window: ''
     variable:
       {{ name }}_cluster_id:
         type: 'string'
@@ -38,37 +40,37 @@
         value: '${aws_elasticache_cluster.{{ name }}.id}'
       thub_id:
         value: '${aws_elasticache_cluster.{{ name }}.id}'
-      num_cache_nodes:
-        value: '${aws_elasticache_cluster.{{ name }}.num_cache_nodes}'
+      security_group_names:
+        value: '${aws_elasticache_cluster.{{ name }}.security_group_names}'
       snapshot_window:
         value: '${aws_elasticache_cluster.{{ name }}.snapshot_window}'
-      security_group_ids:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_ids}'
       apply_immediately:
         value: '${aws_elasticache_cluster.{{ name }}.apply_immediately}'
       configuration_endpoint:
         value: '${aws_elasticache_cluster.{{ name }}.configuration_endpoint}'
       engine_version:
         value: '${aws_elasticache_cluster.{{ name }}.engine_version}'
-      availability_zone:
-        value: '${aws_elasticache_cluster.{{ name }}.availability_zone}'
-      cluster_address:
-        value: '${aws_elasticache_cluster.{{ name }}.cluster_address}'
-      maintenance_window:
-        value: '${aws_elasticache_cluster.{{ name }}.maintenance_window}'
-      node_type:
-        value: '${aws_elasticache_cluster.{{ name }}.node_type}'
       replication_group_id:
         value: '${aws_elasticache_cluster.{{ name }}.replication_group_id}'
-      security_group_names:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_names}'
+      subnet_group_name:
+        value: '${aws_elasticache_cluster.{{ name }}.subnet_group_name}'
       az_mode:
         value: '${aws_elasticache_cluster.{{ name }}.az_mode}'
       cache_nodes:
         value: '${aws_elasticache_cluster.{{ name }}.cache_nodes}'
-      engine:
-        value: '${aws_elasticache_cluster.{{ name }}.engine}'
+      cluster_address:
+        value: '${aws_elasticache_cluster.{{ name }}.cluster_address}'
+      node_type:
+        value: '${aws_elasticache_cluster.{{ name }}.node_type}'
+      availability_zone:
+        value: '${aws_elasticache_cluster.{{ name }}.availability_zone}'
+      num_cache_nodes:
+        value: '${aws_elasticache_cluster.{{ name }}.num_cache_nodes}'
       parameter_group_name:
         value: '${aws_elasticache_cluster.{{ name }}.parameter_group_name}'
-      subnet_group_name:
-        value: '${aws_elasticache_cluster.{{ name }}.subnet_group_name}'
+      security_group_ids:
+        value: '${aws_elasticache_cluster.{{ name }}.security_group_ids}'
+      engine:
+        value: '${aws_elasticache_cluster.{{ name }}.engine}'
+      maintenance_window:
+        value: '${aws_elasticache_cluster.{{ name }}.maintenance_window}'

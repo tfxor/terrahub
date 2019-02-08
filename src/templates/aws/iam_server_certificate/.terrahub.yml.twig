@@ -2,21 +2,23 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_iam_server_certificate:
         {{ name }}:
-          private_key: '${var.{{ name }}_private_key}'
           certificate_body: '${var.{{ name }}_certificate_body}'
+          private_key: '${var.{{ name }}_private_key}'
           # certificate_chain: ''
           # path: ''
           # name: ''
           # name_prefix: ''
           # arn: ''
     variable:
-      {{ name }}_private_key:
-        type: 'string'
       {{ name }}_certificate_body:
+        type: 'string'
+      {{ name }}_private_key:
         type: 'string'
     output:
       id:

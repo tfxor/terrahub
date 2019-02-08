@@ -2,71 +2,73 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_opsworks_instance:
         {{ name }}:
-          stack_id: '${var.{{ name }}_stack_id}'
           layer_ids: '${var.{{ name }}_layer_ids}'
-          # private_dns: ''
-          # security_group_ids: []
-          # subnet_id: ''
+          stack_id: '${var.{{ name }}_stack_id}'
           # delete_eip: false
+          # last_service_error_id: ''
+          # private_dns: ''
+          # tenancy: ''
+          # ephemeral_block_device: 
+          #   device_name: ''
+          #   virtual_name: ''
           # infrastructure_class: ''
-          # public_dns: ''
-          # ssh_host_rsa_key_fingerprint: ''
+          # public_ip: ''
+          # root_device_volume_id: ''
           # state: ''
+          # ami_id: ''
+          # platform: ''
+          # reported_agent_version: ''
+          # root_device_type: ''
           # ebs_block_device: 
           #   device_name: ''
-          #   delete_on_termination: false
-          #   iops: 0
           #   snapshot_id: ''
           #   volume_size: 0
           #   volume_type: ''
+          #   delete_on_termination: false
+          #   iops: 0
           # delete_ebs: false
+          # ebs_optimized: false
+          # elastic_ip: ''
+          # instance_profile_arn: ''
+          # private_ip: ''
           # hostname: ''
-          # instance_type: ''
-          # public_ip: ''
-          # root_device_type: ''
-          # ssh_key_name: ''
-          # virtualization_type: ''
+          # ssh_host_dsa_key_fingerprint: ''
+          # ssh_host_rsa_key_fingerprint: ''
           # root_block_device: 
           #   delete_on_termination: false
           #   iops: 0
           #   volume_size: 0
           #   volume_type: ''
-          # architecture: ''
-          # availability_zone: ''
-          # platform: ''
-          # registered_by: ''
-          # reported_os_name: ''
-          # reported_os_family: ''
-          # ssh_host_dsa_key_fingerprint: ''
-          # ami_id: ''
           # auto_scaling_type: ''
-          # elastic_ip: ''
-          # instance_profile_arn: ''
-          # private_ip: ''
-          # ebs_optimized: false
-          # last_service_error_id: ''
-          # reported_os_version: ''
-          # status: ''
-          # ecs_cluster_arn: ''
+          # created_at: ''
           # install_updates_on_boot: false
           # os: ''
-          # reported_agent_version: ''
-          # root_device_volume_id: ''
+          # ssh_key_name: ''
+          # availability_zone: ''
+          # instance_type: ''
+          # registered_by: ''
+          # reported_os_family: ''
+          # reported_os_name: ''
+          # security_group_ids: []
+          # status: ''
+          # subnet_id: ''
           # agent_version: ''
-          # created_at: ''
-          # tenancy: ''
-          # ephemeral_block_device: 
-          #   device_name: ''
-          #   virtual_name: ''
+          # architecture: ''
+          # ecs_cluster_arn: ''
+          # public_dns: ''
+          # reported_os_version: ''
+          # virtualization_type: ''
     variable:
-      {{ name }}_stack_id:
-        type: 'string'
       {{ name }}_layer_ids:
         type: 'list'
+      {{ name }}_stack_id:
+        type: 'string'
     output:
       id:
         value: '${aws_opsworks_instance.{{ name }}.id}'
@@ -74,69 +76,69 @@
         value: '${aws_opsworks_instance.{{ name }}.id}'
       ec2_instance_id:
         value: '${aws_opsworks_instance.{{ name }}.ec2_instance_id}'
+      last_service_error_id:
+        value: '${aws_opsworks_instance.{{ name }}.last_service_error_id}'
       private_dns:
         value: '${aws_opsworks_instance.{{ name }}.private_dns}'
-      security_group_ids:
-        value: '${aws_opsworks_instance.{{ name }}.security_group_ids}'
-      subnet_id:
-        value: '${aws_opsworks_instance.{{ name }}.subnet_id}'
+      tenancy:
+        value: '${aws_opsworks_instance.{{ name }}.tenancy}'
+      ephemeral_block_device:
+        value: '${aws_opsworks_instance.{{ name }}.ephemeral_block_device}'
       infrastructure_class:
         value: '${aws_opsworks_instance.{{ name }}.infrastructure_class}'
-      public_dns:
-        value: '${aws_opsworks_instance.{{ name }}.public_dns}'
-      ssh_host_rsa_key_fingerprint:
-        value: '${aws_opsworks_instance.{{ name }}.ssh_host_rsa_key_fingerprint}'
-      ebs_block_device:
-        value: '${aws_opsworks_instance.{{ name }}.ebs_block_device}'
-      hostname:
-        value: '${aws_opsworks_instance.{{ name }}.hostname}'
       public_ip:
         value: '${aws_opsworks_instance.{{ name }}.public_ip}'
-      root_device_type:
-        value: '${aws_opsworks_instance.{{ name }}.root_device_type}'
-      ssh_key_name:
-        value: '${aws_opsworks_instance.{{ name }}.ssh_key_name}'
-      virtualization_type:
-        value: '${aws_opsworks_instance.{{ name }}.virtualization_type}'
-      root_block_device:
-        value: '${aws_opsworks_instance.{{ name }}.root_block_device}'
-      availability_zone:
-        value: '${aws_opsworks_instance.{{ name }}.availability_zone}'
-      platform:
-        value: '${aws_opsworks_instance.{{ name }}.platform}'
-      registered_by:
-        value: '${aws_opsworks_instance.{{ name }}.registered_by}'
-      reported_os_name:
-        value: '${aws_opsworks_instance.{{ name }}.reported_os_name}'
-      reported_os_family:
-        value: '${aws_opsworks_instance.{{ name }}.reported_os_family}'
-      ssh_host_dsa_key_fingerprint:
-        value: '${aws_opsworks_instance.{{ name }}.ssh_host_dsa_key_fingerprint}'
+      root_device_volume_id:
+        value: '${aws_opsworks_instance.{{ name }}.root_device_volume_id}'
       ami_id:
         value: '${aws_opsworks_instance.{{ name }}.ami_id}'
+      platform:
+        value: '${aws_opsworks_instance.{{ name }}.platform}'
+      reported_agent_version:
+        value: '${aws_opsworks_instance.{{ name }}.reported_agent_version}'
+      root_device_type:
+        value: '${aws_opsworks_instance.{{ name }}.root_device_type}'
+      ebs_block_device:
+        value: '${aws_opsworks_instance.{{ name }}.ebs_block_device}'
       elastic_ip:
         value: '${aws_opsworks_instance.{{ name }}.elastic_ip}'
       instance_profile_arn:
         value: '${aws_opsworks_instance.{{ name }}.instance_profile_arn}'
       private_ip:
         value: '${aws_opsworks_instance.{{ name }}.private_ip}'
-      last_service_error_id:
-        value: '${aws_opsworks_instance.{{ name }}.last_service_error_id}'
-      reported_os_version:
-        value: '${aws_opsworks_instance.{{ name }}.reported_os_version}'
-      status:
-        value: '${aws_opsworks_instance.{{ name }}.status}'
-      ecs_cluster_arn:
-        value: '${aws_opsworks_instance.{{ name }}.ecs_cluster_arn}'
-      os:
-        value: '${aws_opsworks_instance.{{ name }}.os}'
-      reported_agent_version:
-        value: '${aws_opsworks_instance.{{ name }}.reported_agent_version}'
-      root_device_volume_id:
-        value: '${aws_opsworks_instance.{{ name }}.root_device_volume_id}'
+      hostname:
+        value: '${aws_opsworks_instance.{{ name }}.hostname}'
+      ssh_host_dsa_key_fingerprint:
+        value: '${aws_opsworks_instance.{{ name }}.ssh_host_dsa_key_fingerprint}'
+      ssh_host_rsa_key_fingerprint:
+        value: '${aws_opsworks_instance.{{ name }}.ssh_host_rsa_key_fingerprint}'
+      root_block_device:
+        value: '${aws_opsworks_instance.{{ name }}.root_block_device}'
       created_at:
         value: '${aws_opsworks_instance.{{ name }}.created_at}'
-      tenancy:
-        value: '${aws_opsworks_instance.{{ name }}.tenancy}'
-      ephemeral_block_device:
-        value: '${aws_opsworks_instance.{{ name }}.ephemeral_block_device}'
+      os:
+        value: '${aws_opsworks_instance.{{ name }}.os}'
+      ssh_key_name:
+        value: '${aws_opsworks_instance.{{ name }}.ssh_key_name}'
+      availability_zone:
+        value: '${aws_opsworks_instance.{{ name }}.availability_zone}'
+      registered_by:
+        value: '${aws_opsworks_instance.{{ name }}.registered_by}'
+      reported_os_family:
+        value: '${aws_opsworks_instance.{{ name }}.reported_os_family}'
+      reported_os_name:
+        value: '${aws_opsworks_instance.{{ name }}.reported_os_name}'
+      security_group_ids:
+        value: '${aws_opsworks_instance.{{ name }}.security_group_ids}'
+      status:
+        value: '${aws_opsworks_instance.{{ name }}.status}'
+      subnet_id:
+        value: '${aws_opsworks_instance.{{ name }}.subnet_id}'
+      ecs_cluster_arn:
+        value: '${aws_opsworks_instance.{{ name }}.ecs_cluster_arn}'
+      public_dns:
+        value: '${aws_opsworks_instance.{{ name }}.public_dns}'
+      reported_os_version:
+        value: '${aws_opsworks_instance.{{ name }}.reported_os_version}'
+      virtualization_type:
+        value: '${aws_opsworks_instance.{{ name }}.virtualization_type}'

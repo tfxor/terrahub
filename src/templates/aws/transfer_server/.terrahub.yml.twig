@@ -2,23 +2,25 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_transfer_server:
         {{ name }}:
+          # force_destroy: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # invocation_role: ''
           # url: ''
           # identity_provider_type: ''
           # logging_role: ''
-          # force_destroy: false
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
     output:
       id:
         value: '${aws_transfer_server.{{ name }}.id}'
       thub_id:
         value: '${aws_transfer_server.{{ name }}.id}'
-      endpoint:
-        value: '${aws_transfer_server.{{ name }}.endpoint}'
       arn:
         value: '${aws_transfer_server.{{ name }}.arn}'
+      endpoint:
+        value: '${aws_transfer_server.{{ name }}.endpoint}'

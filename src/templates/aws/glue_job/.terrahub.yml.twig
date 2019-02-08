@@ -2,31 +2,33 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_glue_job:
         {{ name }}:
+          role_arn: '${var.{{ name }}_role_arn}'
+          name: '${var.{{ name }}_name}'
           command: 
             -
               script_location: ''
           #     name: ''
-          name: '${var.{{ name }}_name}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          # allocated_capacity: 0
-          # description: ''
-          # security_configuration: ''
-          # connections: []
+          # max_retries: 0
+          # timeout: 0
           # default_arguments: 
           #   '[TO_BE_REPLACED]': ''
+          # description: ''
           # execution_property: 
           #   -
           #     max_concurrent_runs: 0
-          # max_retries: 0
-          # timeout: 0
+          # security_configuration: ''
+          # allocated_capacity: 0
+          # connections: []
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_name:
         type: 'string'
     output:
       id:

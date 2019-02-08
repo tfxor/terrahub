@@ -2,24 +2,26 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_cognito_identity_pool_roles_attachment:
         {{ name }}:
+          identity_pool_id: '${var.{{ name }}_identity_pool_id}'
           roles: 
             '[TO_BE_REPLACED]': ''
           #   'authenticated': ''
           #   'unauthenticated': ''
-          identity_pool_id: '${var.{{ name }}_identity_pool_id}'
           # role_mapping: 
           #   identity_provider: ''
           #   ambiguous_role_resolution: ''
           #   mapping_rule: 
           #     -
-          #       claim: ''
-          #       match_type: ''
           #       role_arn: ''
           #       value: ''
+          #       claim: ''
+          #       match_type: ''
     variable:
       {{ name }}_identity_pool_id:
         type: 'string'
