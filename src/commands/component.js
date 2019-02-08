@@ -80,11 +80,11 @@ class ComponentCommand extends AbstractCommand {
         }
       });
     } else if (this._save) {
-      return Promise.all(names.map(it => this._saveComponent(it))).then(data => {
-        if (data.some(it => !it)) {
-          return Promise.resolve();
+      return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
+        if (!answer) {
+          return Promise.reject('Action aborted');
         } else {
-          return Promise.resolve('Done');
+          return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
         }
       });
     }else {
@@ -103,7 +103,6 @@ class ComponentCommand extends AbstractCommand {
       const tmpPath = homePath(jitPath);
       const arch = (new Downloader()).getOsArch();
       const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      this.logger.info(`Done for terrahub component: '${name}'`);
       return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
     }
     return Promise.resolve();
