@@ -92,7 +92,7 @@
 #     build:
 #       commands:
 #         - echo "BUILD: Running build step"
-#         - ../../bin/compile.sh
+#         - ./scripts/compile.sh
 #       finally:
 #         - echo "BUILD: build step successful"
 #     post_build:
@@ -105,6 +105,3 @@
 #         - rm -f .terrahub_build.env $THUB_LAMBDA_ZIP
 #       finally:
 #         - echo "BUILD: post_build step successful"
-
-## hook config
-# hook:

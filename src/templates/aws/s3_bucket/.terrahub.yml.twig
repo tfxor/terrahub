@@ -6,15 +6,6 @@
     #       bucket: 'bucket-name'
     #       key: 'path/to/terraform.tfstate'
     # data:
-    #   aws_iam_policy_document:
-    #     default_assume_s3_policy:
-    #       statement:
-    #         - sid: 'bucket_policy_site_main'
-    #           principals:
-    #             type: 'AWS'
-    #             identifiers: ['*']
-    #           actions: ['s3:GetObject']
-    #           resources: ['arn:aws:s3:::${var.{{ name }}_name}/*']
     #   aws_s3_bucket_object:
     #     {{ name }}_object:
     #       key: 'index.txt'
@@ -91,7 +82,7 @@
           #   ThubCode: '${local.project["code"]}'
           #   ThubEnv: '${terraform.workspace}'
           #   ThubName: '{{ name }}'
-          # policy: '${data.aws_iam_policy_document.default_assume_s3_policy.json}'
+          # policy: ''
           # hosted_zone_id: ''
           # acceleration_status: ''
           # cors_rule: 
@@ -161,9 +152,9 @@
 #       THUB_ENV: "dev"
 #       THUB_INDEX_FILE: "index.txt"
 #       THUB_DEEP_BUCKET: "s3://"
-#       THUB_PARAMETERS_PATH: "../../.env"
+#       THUB_PARAMETERS_PATH: ".terrahub_build.env"
 #       THUB_S3_PATH: "s3://"
-#       THUB_BUILD_PATH: "../../build"
+#       THUB_BUILD_PATH: "build"
 #       THUB_SOURCE_PATH: ""
 #       THUB_BUILD_OK: "false"
 #       THUB_MAX_AGE: "600"
@@ -179,7 +170,7 @@
 #     build:
 #       commands:
 #         - echo "BUILD: Running build step"
-#         - ../../bin/compile.sh
+#         - ./scripts/compile.sh
 #       finally:
 #         - echo "BUILD: build step successful"
 #     post_build:
