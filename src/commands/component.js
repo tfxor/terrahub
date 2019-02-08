@@ -98,11 +98,16 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
-    const directory = path.resolve(this._directory, name);
-    const tmpPath = homePath(jitPath);
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`
-    return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${directory} ${name}`, { encoding: 'utf8' });
+    const config = this.getConfig();
+    const key = Object.keys(config).find(it => config[it].name === name);
+    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
+    if (configPath) {    
+      const tmpPath = homePath(jitPath);
+      const arch = (new Downloader()).getOsArch();
+      const componentBinPath = `${commandsPath}/../../bin/${arch}`
+      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
+    }
+    return Promise.resolve();
   }
 
   /**
