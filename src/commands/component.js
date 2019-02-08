@@ -219,7 +219,7 @@ class ComponentCommand extends AbstractCommand {
       const tmpPath = homePath(jitPath);
       const arch = (new Downloader()).getOsArch();
       const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
+      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${directory} ${name}`, { encoding: 'utf8' });
     }).then(() => 'Done');
   }
 

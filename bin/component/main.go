@@ -77,7 +77,9 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		StartProccesingFile(sourcePath + file.Name(), destinationPath + "/" + file.Name())
+		if !file.IsDir() {
+			StartProccesingFile(sourcePath + file.Name(), destinationPath + "/" + file.Name())
+		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
 }
