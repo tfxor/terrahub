@@ -83,9 +83,8 @@ class ComponentCommand extends AbstractCommand {
       return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
-        } else {
-          return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
         }
+        return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
       });
     } else {
       return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
