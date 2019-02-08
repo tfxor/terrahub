@@ -9,22 +9,22 @@ import (
 )
 
 type ElementProcess struct {
-	endIndex int
+	endIndex    int
 	curentIndex int
-	in string
-	index int
-	newValue string
-	val bool
+	in          string
+	index       int
+	newValue    string
+	val         bool
 }
 
 type ElementProcessCC struct {
-	element byte
-	endIndex int
+	element     byte
+	endIndex    int
 	curentIndex int
-	in string
-	index int
-	index2 int
-	val bool
+	in          string
+	index       int
+	index2      int
+	val         bool
 }
 
 var argsToRemove = []string{
@@ -284,7 +284,6 @@ func ResolveJSONElemProcessing(in string, element string, startIndex int) int {
 	}
 	return endIndex
 }
-
 
 // ForCodeClimate - Special pentru CodeClimate :)
 func ForCodeClimate(param ElementProcessCC) (int, int, int, int, bool) {
