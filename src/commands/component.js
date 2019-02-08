@@ -98,9 +98,7 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
+    const configPath = this._getConfigPath(name)
     if (configPath) {    
       const tmpPath = homePath(jitPath);
       const arch = (new Downloader()).getOsArch();
@@ -116,11 +114,19 @@ class ComponentCommand extends AbstractCommand {
    * @return {Promise}
    * @private
    */
-  _deleteComponent(name) {
+  _getConfigPath(name) {
     const config = this.getConfig();
     const key = Object.keys(config).find(it => config[it].name === name);
-    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
+    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
+  }
 
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  _deleteComponent(name) {
+    const configPath = this._getConfigPath(name)
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
