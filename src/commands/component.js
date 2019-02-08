@@ -79,9 +79,30 @@ class ComponentCommand extends AbstractCommand {
           return Promise.resolve('Done');
         }
       });
-    } else {
+    } else if (this._save) {
+      return Promise.all(names.map(it => this._saveComponent(it))).then(data => {
+        if (data.some(it => !it)) {
+          return Promise.resolve();
+        } else {
+          return Promise.resolve('Done');
+        }
+      });
+    }else {
       return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
+  }
+
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  _saveComponent(name) {
+    const directory = path.resolve(this._directory, name);
+    const tmpPath = homePath(jitPath);
+    const arch = (new Downloader()).getOsArch();
+    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+    return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${directory} ${name}`, { encoding: 'utf8' });
   }
 
   /**
@@ -215,11 +236,7 @@ class ComponentCommand extends AbstractCommand {
       if (!this._save) {
         return Promise.resolve();
       }      
-      
-      const tmpPath = homePath(jitPath);
-      const arch = (new Downloader()).getOsArch();
-      const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${directory} ${name}`, { encoding: 'utf8' });
+      return this._saveComponent(name);
     }).then(() => 'Done');
   }
 
