@@ -105,6 +105,7 @@ class ComponentCommand extends AbstractCommand {
       const tmpPath = homePath(jitPath);
       const arch = (new Downloader()).getOsArch();
       const componentBinPath = `${commandsPath}/../../bin/${arch}`
+      this.logger.info(`Done for terrahub component: '${name}'`);
       return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
     }
     return Promise.resolve();
