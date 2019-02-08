@@ -87,7 +87,7 @@ class ComponentCommand extends AbstractCommand {
           return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
         }
       });
-    }else {
+    } else {
       return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
   }
@@ -98,14 +98,15 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
-    const configPath = this._getConfigPath(name)
-    if (configPath) {    
-      const tmpPath = homePath(jitPath);
-      const arch = (new Downloader()).getOsArch();
-      const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
-    }
-    return Promise.resolve();
+    const configPath = this._getConfigPath(name);
+    if (!configPath) {
+      return Promise.resolve();
+    }     
+    const tmpPath = homePath(jitPath);
+    const arch = (new Downloader()).getOsArch();
+    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+
+    return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`, { encoding: 'utf8' });
   }
 
   /**
@@ -125,7 +126,7 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _deleteComponent(name) {
-    const configPath = this._getConfigPath(name)
+    const configPath = this._getConfigPath(name);
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
@@ -290,7 +291,7 @@ class ComponentCommand extends AbstractCommand {
   _getTemplatePath() {
     const keys = this._template.split('_');
     const provider = keys.shift();
-    const resourceName = this._template.replace(provider + '_', '')
+    const resourceName = this._template.replace(provider + '_', '');
     const templateDir = path.join(path.dirname(templates.path), provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
