@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iot_thing_principal_attachment:
+        {{ name }}:
+          principal: '${var.{{ name }}_principal}'
+          thing: '${var.{{ name }}_thing}'
+    variable:
+      {{ name }}_principal:
+        type: 'string'
+      {{ name }}_thing:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iot_thing_principal_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iot_thing_principal_attachment.{{ name }}.id}'

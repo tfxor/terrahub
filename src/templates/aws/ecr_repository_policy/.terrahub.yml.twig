@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ecr_repository_policy:
+        {{ name }}:
+          repository: '${var.{{ name }}_repository}'
+          policy: '${var.{{ name }}_policy}'
+    variable:
+      {{ name }}_repository:
+        type: 'string'
+      {{ name }}_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ecr_repository_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ecr_repository_policy.{{ name }}.id}'
+      registry_id:
+        value: '${aws_ecr_repository_policy.{{ name }}.registry_id}'

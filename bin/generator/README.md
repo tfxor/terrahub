@@ -3,18 +3,18 @@
 Generation TerraHub Templates from Terraform-providers
 ==================
 
-Generation the bin file: 
+Generate the bin file:
 
 ```sh
 $ cd $GOPATH/src/generator
 $ make linux | darwin | windows | all
 ```
 
-Generation the templates
+Generate the terrahub templates
 
 ```sh
 $ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
-$ geerator [provider name] [destination path like ./templates/]
+$ generator [provider_name] [path_to_output_templates]
 ```
 
 ## Install Linux

@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_servicebus_subscription:
+        {{ name }}:
+          max_delivery_count: '${var.{{ name }}_max_delivery_count}'
+          topic_name: '${var.{{ name }}_topic_name}'
+          name: '${var.{{ name }}_name}'
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          # dead_lettering_on_filter_evaluation_exceptions: false
+          # default_message_ttl: ''
+          # enable_batched_operations: false
+          # requires_session: false
+          # forward_to: ''
+          # auto_delete_on_idle: ''
+          # lock_duration: ''
+          # dead_lettering_on_message_expiration: false
+    variable:
+      {{ name }}_max_delivery_count:
+        type: 'int'
+      {{ name }}_topic_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_namespace_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_servicebus_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_servicebus_subscription.{{ name }}.id}'
+      default_message_ttl:
+        value: '${azurerm_arm_servicebus_subscription.{{ name }}.default_message_ttl}'
+      auto_delete_on_idle:
+        value: '${azurerm_arm_servicebus_subscription.{{ name }}.auto_delete_on_idle}'
+      lock_duration:
+        value: '${azurerm_arm_servicebus_subscription.{{ name }}.lock_duration}'

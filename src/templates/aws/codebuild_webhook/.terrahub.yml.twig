@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codebuild_webhook:
+        {{ name }}:
+          project_name: '${var.{{ name }}_project_name}'
+          # branch_filter: ''
+    variable:
+      {{ name }}_project_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codebuild_webhook.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codebuild_webhook.{{ name }}.id}'
+      payload_url:
+        value: '${aws_codebuild_webhook.{{ name }}.payload_url}'
+      secret:
+        value: '${aws_codebuild_webhook.{{ name }}.secret}'
+      url:
+        value: '${aws_codebuild_webhook.{{ name }}.url}'

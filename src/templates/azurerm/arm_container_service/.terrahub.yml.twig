@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_container_service:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          orchestration_platform: '${var.{{ name }}_orchestration_platform}'
+          master_profile: 
+            dns_prefix: ''
+          #   count: 0
+          linux_profile: 
+            admin_username: ''
+            ssh_key: 
+              key_data: ''
+          agent_pool_profile: 
+            name: ''
+            dns_prefix: ''
+            vm_size: ''
+          #   count: 0
+          diagnostics_profile: 
+            enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # service_principal: 
+          #   client_id: ''
+          #   client_secret: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_orchestration_platform:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_container_service.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_container_service.{{ name }}.id}'

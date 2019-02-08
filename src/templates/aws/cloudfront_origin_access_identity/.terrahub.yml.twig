@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudfront_origin_access_identity:
+        {{ name }}:
+          # comment: ''
+    output:
+      id:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.id}'
+      s3_canonical_user_id:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.s3_canonical_user_id}'
+      caller_reference:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.caller_reference}'
+      cloudfront_access_identity_path:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.cloudfront_access_identity_path}'
+      etag:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.etag}'
+      iam_arn:
+        value: '${aws_cloudfront_origin_access_identity.{{ name }}.iam_arn}'

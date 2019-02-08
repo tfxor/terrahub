@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_neptune_event_subscription:
+        {{ name }}:
+          sns_topic_arn: '${var.{{ name }}_sns_topic_arn}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+          # event_categories: []
+          # name: ''
+          # source_ids: []
+          # source_type: ''
+          # enabled: false
+    variable:
+      {{ name }}_sns_topic_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_neptune_event_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_neptune_event_subscription.{{ name }}.id}'
+      arn:
+        value: '${aws_neptune_event_subscription.{{ name }}.arn}'
+      name_prefix:
+        value: '${aws_neptune_event_subscription.{{ name }}.name_prefix}'
+      customer_aws_id:
+        value: '${aws_neptune_event_subscription.{{ name }}.customer_aws_id}'
+      name:
+        value: '${aws_neptune_event_subscription.{{ name }}.name}'

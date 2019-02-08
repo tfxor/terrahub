@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_policy:
+        {{ name }}:
+          policy: '${var.{{ name }}_policy}'
+          # name: ''
+          # name_prefix: ''
+          # description: ''
+          # path: ''
+    variable:
+      {{ name }}_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_policy.{{ name }}.id}'
+      name:
+        value: '${aws_iam_policy.{{ name }}.name}'
+      arn:
+        value: '${aws_iam_policy.{{ name }}.arn}'

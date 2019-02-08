@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # path: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_group.{{ name }}.id}'
+      arn:
+        value: '${aws_iam_group.{{ name }}.arn}'
+      unique_id:
+        value: '${aws_iam_group.{{ name }}.unique_id}'

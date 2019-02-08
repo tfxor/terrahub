@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route_table_association:
+        {{ name }}:
+          subnet_id: '${var.{{ name }}_subnet_id}'
+          route_table_id: '${var.{{ name }}_route_table_id}'
+    variable:
+      {{ name }}_subnet_id:
+        type: 'string'
+      {{ name }}_route_table_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_route_table_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_route_table_association.{{ name }}.id}'

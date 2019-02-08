@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_gamelift_build:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          operating_system: '${var.{{ name }}_operating_system}'
+          storage_location: 
+            -
+              bucket: ''
+              key: ''
+              role_arn: ''
+          # version: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_operating_system:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_gamelift_build.{{ name }}.id}'
+      thub_id:
+        value: '${aws_gamelift_build.{{ name }}.id}'

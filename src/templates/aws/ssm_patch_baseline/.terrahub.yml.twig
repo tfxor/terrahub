@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ssm_patch_baseline:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # global_filter: 
+          #   -
+          #     key: ''
+          #     values: []
+          # approval_rule: 
+          #   -
+          #     approve_after_days: 0
+          #     patch_filter: 
+          #       -
+          #         key: ''
+          #         values: []
+          #     compliance_level: ''
+          #     enable_non_security: false
+          # approved_patches: []
+          # rejected_patches: []
+          # operating_system: ''
+          # approved_patches_compliance_level: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ssm_patch_baseline.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ssm_patch_baseline.{{ name }}.id}'

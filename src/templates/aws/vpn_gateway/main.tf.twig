@@ -1,7 +1,0 @@
-resource "aws_vpn_gateway" "{{ name }}" {
-  vpc_id            = "${var.vpn_gateway_vpc_id}"
-  availability_zone = "${var.vpn_gateway_availability_zone}"
-  amazon_side_asn   = "${var.vpn_gateway_amazon_side_asn}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

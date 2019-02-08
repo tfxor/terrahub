@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_server_certificate:
+        {{ name }}:
+          certificate_body: '${var.{{ name }}_certificate_body}'
+          private_key: '${var.{{ name }}_private_key}'
+          # certificate_chain: ''
+          # path: ''
+          # name: ''
+          # name_prefix: ''
+          # arn: ''
+    variable:
+      {{ name }}_certificate_body:
+        type: 'string'
+      {{ name }}_private_key:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_server_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_server_certificate.{{ name }}.id}'
+      name:
+        value: '${aws_iam_server_certificate.{{ name }}.name}'
+      arn:
+        value: '${aws_iam_server_certificate.{{ name }}.arn}'

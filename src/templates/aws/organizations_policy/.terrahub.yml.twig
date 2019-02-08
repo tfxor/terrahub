@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_organizations_policy:
+        {{ name }}:
+          content: '${var.{{ name }}_content}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # type: ''
+    variable:
+      {{ name }}_content:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_organizations_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_organizations_policy.{{ name }}.id}'
+      arn:
+        value: '${aws_organizations_policy.{{ name }}.arn}'

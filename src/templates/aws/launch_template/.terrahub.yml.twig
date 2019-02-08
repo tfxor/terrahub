@@ -1,0 +1,111 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_launch_template:
+        {{ name }}:
+          # name_prefix: ''
+          # network_interfaces: 
+          #   -
+          #     ipv4_address_count: 0
+          #     delete_on_termination: false
+          #     device_index: 0
+          #     security_groups: 
+          #     ipv6_addresses: 
+          #     network_interface_id: ''
+          #     private_ip_address: ''
+          #     ipv4_addresses: 
+          #     subnet_id: ''
+          #     associate_public_ip_address: false
+          #     description: ''
+          #     ipv6_address_count: 0
+          # security_group_names: []
+          # description: ''
+          # monitoring: 
+          #   -
+          #     enabled: false
+          # placement: 
+          #   -
+          #     host_id: ''
+          #     spread_domain: ''
+          #     tenancy: ''
+          #     affinity: ''
+          #     availability_zone: ''
+          #     group_name: ''
+          # ram_disk_id: ''
+          # user_data: ''
+          # iam_instance_profile: 
+          #   -
+          #     arn: ''
+          #     name: ''
+          # image_id: ''
+          # instance_type: ''
+          # block_device_mappings: 
+          #   -
+          #     virtual_name: ''
+          #     ebs: 
+          #       -
+          #         volume_type: ''
+          #         delete_on_termination: ''
+          #         encrypted: ''
+          #         iops: 0
+          #         kms_key_id: ''
+          #         snapshot_id: ''
+          #         volume_size: 0
+          #     device_name: ''
+          #     no_device: ''
+          # capacity_reservation_specification: 
+          #   -
+          #     capacity_reservation_target: 
+          #       -
+          #         capacity_reservation_id: ''
+          #     capacity_reservation_preference: ''
+          # credit_specification: 
+          #   -
+          #     cpu_credits: ''
+          # ebs_optimized: ''
+          # instance_market_options: 
+          #   -
+          #     market_type: ''
+          #     spot_options: 
+          #       -
+          #         block_duration_minutes: 0
+          #         instance_interruption_behavior: ''
+          #         max_price: ''
+          #         spot_instance_type: ''
+          #         valid_until: ''
+          # key_name: ''
+          # license_specification: 
+          #   license_configuration_arn: ''
+          # disable_api_termination: false
+          # tag_specifications: 
+          #   -
+          #     resource_type: ''
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+          # elastic_gpu_specifications: 
+          #   -
+          #     type: ''
+          # kernel_id: ''
+          # vpc_security_group_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # instance_initiated_shutdown_behavior: ''
+    output:
+      id:
+        value: '${aws_launch_template.{{ name }}.id}'
+      thub_id:
+        value: '${aws_launch_template.{{ name }}.id}'
+      arn:
+        value: '${aws_launch_template.{{ name }}.arn}'
+      latest_version:
+        value: '${aws_launch_template.{{ name }}.latest_version}'
+      name:
+        value: '${aws_launch_template.{{ name }}.name}'
+      default_version:
+        value: '${aws_launch_template.{{ name }}.default_version}'

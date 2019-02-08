@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_batch_job_definition:
+        {{ name }}:
+          type: '${var.{{ name }}_type}'
+          name: '${var.{{ name }}_name}'
+          # retry_strategy: 
+          #   -
+          #     attempts: 0
+          # timeout: 
+          #   -
+          #     attempt_duration_seconds: 0
+          # container_properties: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_type:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_batch_job_definition.{{ name }}.id}'
+      thub_id:
+        value: '${aws_batch_job_definition.{{ name }}.id}'
+      revision:
+        value: '${aws_batch_job_definition.{{ name }}.revision}'
+      arn:
+        value: '${aws_batch_job_definition.{{ name }}.arn}'

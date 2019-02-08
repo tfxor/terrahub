@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_organization_iam_custom_role:
+        {{ name }}:
+          org_id: '${var.{{ name }}_org_id}'
+          title: '${var.{{ name }}_title}'
+          permissions: '${var.{{ name }}_permissions}'
+          role_id: '${var.{{ name }}_role_id}'
+          # stage: ''
+          # description: ''
+    variable:
+      {{ name }}_org_id:
+        type: 'string'
+      {{ name }}_title:
+        type: 'string'
+      {{ name }}_permissions:
+        type: 'set'
+      {{ name }}_role_id:
+        type: 'string'
+    output:
+      id:
+        value: '${google_organization_iam_custom_role.{{ name }}.id}'
+      thub_id:
+        value: '${google_organization_iam_custom_role.{{ name }}.id}'
+      deleted:
+        value: '${google_organization_iam_custom_role.{{ name }}.deleted}'

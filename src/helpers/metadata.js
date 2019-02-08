@@ -3,6 +3,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const { homePath } = require('./util');
+const { jitPath } = require('../parameters');
 
 class Metadata {
   /**
@@ -34,7 +35,7 @@ class Metadata {
    */
   getRoot() {
     return this._cfg.isJit
-      ? homePath('cache/jit', this._cfg.hash)
+      ? homePath(jitPath, this._cfg.hash)
       : path.join(this._cfg.project.root, this._cfg.root);
   }
 

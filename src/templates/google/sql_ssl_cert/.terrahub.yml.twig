@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_sql_ssl_cert:
+        {{ name }}:
+          common_name: '${var.{{ name }}_common_name}'
+          instance: '${var.{{ name }}_instance}'
+    variable:
+      {{ name }}_common_name:
+        type: 'string'
+      {{ name }}_instance:
+        type: 'string'
+    output:
+      id:
+        value: '${google_sql_ssl_cert.{{ name }}.id}'
+      thub_id:
+        value: '${google_sql_ssl_cert.{{ name }}.id}'
+      create_time:
+        value: '${google_sql_ssl_cert.{{ name }}.create_time}'
+      expiration_time:
+        value: '${google_sql_ssl_cert.{{ name }}.expiration_time}'
+      private_key:
+        value: '${google_sql_ssl_cert.{{ name }}.private_key}'
+      cert_serial_number:
+        value: '${google_sql_ssl_cert.{{ name }}.cert_serial_number}'
+      cert:
+        value: '${google_sql_ssl_cert.{{ name }}.cert}'
+      server_ca_cert:
+        value: '${google_sql_ssl_cert.{{ name }}.server_ca_cert}'
+      sha1_fingerprint:
+        value: '${google_sql_ssl_cert.{{ name }}.sha1_fingerprint}'

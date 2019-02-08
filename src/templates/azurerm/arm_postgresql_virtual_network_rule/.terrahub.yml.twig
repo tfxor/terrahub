@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_postgresql_virtual_network_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          server_name: '${var.{{ name }}_server_name}'
+          subnet_id: '${var.{{ name }}_subnet_id}'
+          # ignore_missing_vnet_service_endpoint: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_server_name:
+        type: 'string'
+      {{ name }}_subnet_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_postgresql_virtual_network_rule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_postgresql_virtual_network_rule.{{ name }}.id}'

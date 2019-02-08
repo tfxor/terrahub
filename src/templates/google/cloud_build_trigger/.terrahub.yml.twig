@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_cloud_build_trigger:
+        {{ name }}:
+          # included_files: []
+          # substitutions: 
+          #   '[TO_BE_REPLACED]': ''
+          # ignored_files: []
+          # trigger_template: 
+          #   -
+          #     tag_name: ''
+          #     branch_name: ''
+          #     commit_sha: ''
+          #     dir: ''
+          #     project_id: ''
+          #     repo_name: ''
+          # build: 
+          #   -
+          #     images: 
+          #       -
+          #     step: 
+          #       -
+          #         args: 
+          #           -
+          #         name: ''
+          # description: ''
+          # disabled: ''
+          # filename: ''
+          # project: ''
+    output:
+      id:
+        value: '${google_cloud_build_trigger.{{ name }}.id}'
+      thub_id:
+        value: '${google_cloud_build_trigger.{{ name }}.id}'
+      create_time:
+        value: '${google_cloud_build_trigger.{{ name }}.create_time}'
+      trigger_id:
+        value: '${google_cloud_build_trigger.{{ name }}.trigger_id}'
+      project:
+        value: '${google_cloud_build_trigger.{{ name }}.project}'

@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dms_certificate:
+        {{ name }}:
+          certificate_id: '${var.{{ name }}_certificate_id}'
+          # certificate_pem: ''
+          # certificate_wallet: ''
+    variable:
+      {{ name }}_certificate_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dms_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dms_certificate.{{ name }}.id}'
+      certificate_arn:
+        value: '${aws_dms_certificate.{{ name }}.certificate_arn}'

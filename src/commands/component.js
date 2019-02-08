@@ -6,10 +6,10 @@ const { homePath } = require('../helpers/util');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
 const ConfigLoader = require('../config-loader');
-const { templates, commandsPath } = require('../parameters');
+const { templates, commandsPath, jitPath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const Downloader = require('../helpers/downloader');
-const childProcess = require('child_process');
+const { exec } = require('child-process-promise');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -79,6 +79,13 @@ class ComponentCommand extends AbstractCommand {
           return Promise.resolve('Done');
         }
       });
+    } else if (this._save) {
+      return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
+        if (!answer) {
+          return Promise.reject('Action aborted');
+        }
+        return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
+      });
     } else {
       return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
@@ -89,11 +96,36 @@ class ComponentCommand extends AbstractCommand {
    * @return {Promise}
    * @private
    */
-  _deleteComponent(name) {
+  _saveComponent(name) {
+    const configPath = this._getConfigPath(name);
+    if (!configPath) {
+      return Promise.resolve();
+    }     
+    const tmpPath = homePath(jitPath);
+    const arch = (new Downloader()).getOsArch();
+    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+
+    return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`);
+  }
+
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  _getConfigPath(name) {
     const config = this.getConfig();
     const key = Object.keys(config).find(it => config[it].name === name);
-    const configPath = config[key] ? path.join(config[key].project.root, config[key].root) : '';
+    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
+  }
 
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  _deleteComponent(name) {
+    const configPath = this._getConfigPath(name);
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
@@ -215,10 +247,7 @@ class ComponentCommand extends AbstractCommand {
       if (!this._save) {
         return Promise.resolve();
       }      
-      const tmpPath = homePath('cache/jit');
-      const arch = (new Downloader()).getOsArch();
-      const componentBinPath = `${commandsPath}/../../bin/${arch}`
-      return childProcess.execSync(`${componentBinPath}/component ${tmpPath} ${name} ${directory}`, { encoding: 'utf8' });
+      return this._saveComponent(name);
     }).then(() => 'Done');
   }
 
@@ -259,8 +288,10 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _getTemplatePath() {
-    const mapping = require(templates.mapping);
-    const templateDir = path.join(path.dirname(templates.mapping), mapping[this._template]);
+    const keys = this._template.split('_');
+    const provider = keys.shift();
+    const resourceName = this._template.replace(provider + '_', '');
+    const templateDir = path.join(path.dirname(templates.path), provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);

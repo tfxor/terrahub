@@ -1,0 +1,90 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_autoscaling_group:
+        {{ name }}:
+          min_size: '${var.{{ name }}_min_size}'
+          max_size: '${var.{{ name }}_max_size}'
+          # force_delete: false
+          # enabled_metrics: []
+          # default_cooldown: 0
+          # wait_for_elb_capacity: 0
+          # tag: []
+          # min_elb_capacity: 0
+          # initial_lifecycle_hook: 
+          #   name: ''
+          #   lifecycle_transition: ''
+          #   role_arn: ''
+          #   default_result: ''
+          #   heartbeat_timeout: 0
+          #   notification_metadata: ''
+          #   notification_target_arn: ''
+          # tags: 
+          #   -
+          # name: ''
+          # launch_template: 
+          #   -
+          #     name: ''
+          #     version: ''
+          #     id: ''
+          # placement_group: ''
+          # service_linked_role_arn: ''
+          # health_check_grace_period: 0
+          # metrics_granularity: ''
+          # target_group_arns: []
+          # termination_policies: []
+          # wait_for_capacity_timeout: ''
+          # desired_capacity: 0
+          # vpc_zone_identifier: []
+          # health_check_type: ''
+          # availability_zones: []
+          # load_balancers: []
+          # suspended_processes: []
+          # protect_from_scale_in: false
+          # name_prefix: ''
+          # launch_configuration: ''
+          # mixed_instances_policy: 
+          #   -
+          #     instances_distribution: 
+          #       -
+          #         on_demand_base_capacity: 0
+          #         on_demand_percentage_above_base_capacity: 0
+          #         spot_allocation_strategy: ''
+          #         spot_instance_pools: 0
+          #         spot_max_price: ''
+          #         on_demand_allocation_strategy: ''
+    variable:
+      {{ name }}_min_size:
+        type: 'int'
+      {{ name }}_max_size:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_autoscaling_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_autoscaling_group.{{ name }}.id}'
+      default_cooldown:
+        value: '${aws_autoscaling_group.{{ name }}.default_cooldown}'
+      name:
+        value: '${aws_autoscaling_group.{{ name }}.name}'
+      service_linked_role_arn:
+        value: '${aws_autoscaling_group.{{ name }}.service_linked_role_arn}'
+      target_group_arns:
+        value: '${aws_autoscaling_group.{{ name }}.target_group_arns}'
+      desired_capacity:
+        value: '${aws_autoscaling_group.{{ name }}.desired_capacity}'
+      vpc_zone_identifier:
+        value: '${aws_autoscaling_group.{{ name }}.vpc_zone_identifier}'
+      health_check_type:
+        value: '${aws_autoscaling_group.{{ name }}.health_check_type}'
+      availability_zones:
+        value: '${aws_autoscaling_group.{{ name }}.availability_zones}'
+      load_balancers:
+        value: '${aws_autoscaling_group.{{ name }}.load_balancers}'
+      arn:
+        value: '${aws_autoscaling_group.{{ name }}.arn}'

@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_subnet_network_security_group_association:
+        {{ name }}:
+          subnet_id: '${var.{{ name }}_subnet_id}'
+          network_security_group_id: '${var.{{ name }}_network_security_group_id}'
+    variable:
+      {{ name }}_subnet_id:
+        type: 'string'
+      {{ name }}_network_security_group_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_subnet_network_security_group_association.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_subnet_network_security_group_association.{{ name }}.id}'

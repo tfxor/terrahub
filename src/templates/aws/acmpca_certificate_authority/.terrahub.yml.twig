@@ -2,32 +2,31 @@
     # terraform:
     #   backend:
     #     s3:
-    #     key: 'path/to/terraform.tfstate'
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
     resource:
       aws_acmpca_certificate_authority:
         {{ name }}:
-          certificate_authority_configuration:
+          certificate_authority_configuration: 
             -
               key_algorithm: ''
               signing_algorithm: ''
               subject: 
                 -
-          #         country: ''
+          #         title: ''
+          #         organization: ''
+          #         organizational_unit: ''
+          #         state: ''
+          #         generation_qualifier: ''
           #         given_name: ''
           #         initials: ''
           #         locality: ''
-          #         organizational_unit: ''
           #         pseudonym: ''
-          #         state: ''
           #         common_name: ''
-          #         title: ''
-          #         surname: ''
-          #         generation_qualifier: ''
-          #         organization: ''
+          #         country: ''
           #         distinguished_name_qualifier: ''
-          # tags: 
-          #   '[TO_BE_REPLACED]': ''
-          # enabled: false
+          #         surname: ''
           # revocation_configuration: 
           #   -
           #     crl_configuration: 
@@ -36,25 +35,28 @@
           #         s3_bucket_name: ''
           #         custom_cname: ''
           #         enabled: false
+          # enabled: false
           # type: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     output:
       id:
         value: '${aws_acmpca_certificate_authority.{{ name }}.id}'
       thub_id:
         value: '${aws_acmpca_certificate_authority.{{ name }}.id}'
+      not_after:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.not_after}'
+      serial:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.serial}'
+      arn:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.arn}'
+      certificate:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.certificate}'
+      certificate_chain:
+        value: '${aws_acmpca_certificate_authority.{{ name }}.certificate_chain}'
       status:
         value: '${aws_acmpca_certificate_authority.{{ name }}.status}'
       certificate_signing_request:
         value: '${aws_acmpca_certificate_authority.{{ name }}.certificate_signing_request}'
       not_before:
         value: '${aws_acmpca_certificate_authority.{{ name }}.not_before}'
-      serial:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.serial}'
-      certificate_chain:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.certificate_chain}'
-      not_after:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.not_after}'
-      arn:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.arn}'
-      certificate:
-        value: '${aws_acmpca_certificate_authority.{{ name }}.certificate}'

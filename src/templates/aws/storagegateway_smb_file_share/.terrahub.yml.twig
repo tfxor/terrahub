@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_storagegateway_smb_file_share:
+        {{ name }}:
+          role_arn: '${var.{{ name }}_role_arn}'
+          gateway_arn: '${var.{{ name }}_gateway_arn}'
+          location_arn: '${var.{{ name }}_location_arn}'
+          # kms_encrypted: false
+          # requester_pays: false
+          # authentication: ''
+          # valid_user_list: []
+          # object_acl: ''
+          # guess_mime_type_enabled: false
+          # invalid_user_list: []
+          # default_storage_class: ''
+          # kms_key_arn: ''
+          # read_only: false
+    variable:
+      {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_location_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_storagegateway_smb_file_share.{{ name }}.id}'
+      thub_id:
+        value: '${aws_storagegateway_smb_file_share.{{ name }}.id}'
+      fileshare_id:
+        value: '${aws_storagegateway_smb_file_share.{{ name }}.fileshare_id}'
+      arn:
+        value: '${aws_storagegateway_smb_file_share.{{ name }}.arn}'

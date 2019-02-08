@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpc_ipv4_cidr_block_association:
+        {{ name }}:
+          vpc_id: '${var.{{ name }}_vpc_id}'
+          cidr_block: '${var.{{ name }}_cidr_block}'
+    variable:
+      {{ name }}_vpc_id:
+        type: 'string'
+      {{ name }}_cidr_block:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpc_ipv4_cidr_block_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpc_ipv4_cidr_block_association.{{ name }}.id}'

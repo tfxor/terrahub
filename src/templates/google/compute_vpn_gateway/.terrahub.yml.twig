@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_vpn_gateway:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          network: '${var.{{ name }}_network}'
+          # project: ''
+          # description: ''
+          # region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_network:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_vpn_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_vpn_gateway.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_vpn_gateway.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_vpn_gateway.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_vpn_gateway.{{ name }}.self_link}'
+      region:
+        value: '${google_compute_vpn_gateway.{{ name }}.region}'

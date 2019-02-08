@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_securityhub_product_subscription:
+        {{ name }}:
+          product_arn: '${var.{{ name }}_product_arn}'
+    variable:
+      {{ name }}_product_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_securityhub_product_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_securityhub_product_subscription.{{ name }}.id}'
+      arn:
+        value: '${aws_securityhub_product_subscription.{{ name }}.arn}'

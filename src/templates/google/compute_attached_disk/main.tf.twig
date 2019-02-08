@@ -1,8 +1,0 @@
-resource "google_compute_attached_disk" "{{ name }}" {
-  disk        = "${var.google_compute_attached_disk_name}"
-  instance    = "${var.google_compute_attached_instance_name}"
-  project     = "${var.google_project_id}"
-  zone        = "${var.google_compute_attached_disk_zone}"
-  device_name = "${var.google_compute_attached_device_name}"
-  mode        = "${var.google_compute_attached_disk_mode}"
-}

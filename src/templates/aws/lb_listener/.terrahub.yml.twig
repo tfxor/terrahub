@@ -1,0 +1,67 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lb_listener:
+        {{ name }}:
+          load_balancer_arn: '${var.{{ name }}_load_balancer_arn}'
+          default_action: 
+            -
+              type: ''
+          #     order: 0
+          #     target_group_arn: ''
+          #     redirect: 
+          #       -
+          #         status_code: ''
+          #         port: ''
+          #         protocol: ''
+          #         query: ''
+          #         host: ''
+          #         path: ''
+          port: '${var.{{ name }}_port}'
+          # authenticate_oidc: 
+          #   -
+          #     user_info_endpoint: ''
+          #     client_secret: ''
+          #     issuer: ''
+          #     token_endpoint: ''
+          #     authorization_endpoint: ''
+          #     client_id: ''
+          #     session_timeout: 0
+          #     scope: ''
+          #     session_cookie_name: ''
+          #     authentication_request_extra_params: 
+          #       '[TO_BE_REPLACED]': ''
+          #     on_unauthenticated_request: ''
+          # protocol: ''
+          # ssl_policy: ''
+          # certificate_arn: ''
+          # authenticate_cognito: 
+          #   -
+          #     user_pool_arn: ''
+          #     user_pool_client_id: ''
+          #     user_pool_domain: ''
+          #     scope: ''
+          #     session_cookie_name: ''
+          #     session_timeout: 0
+          #     authentication_request_extra_params: 
+          #       '[TO_BE_REPLACED]': ''
+          #     on_unauthenticated_request: ''
+    variable:
+      {{ name }}_load_balancer_arn:
+        type: 'string'
+      {{ name }}_port:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_lb_listener.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lb_listener.{{ name }}.id}'
+      arn:
+        value: '${aws_lb_listener.{{ name }}.arn}'
+      ssl_policy:
+        value: '${aws_lb_listener.{{ name }}.ssl_policy}'

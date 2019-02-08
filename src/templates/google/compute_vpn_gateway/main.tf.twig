@@ -1,7 +1,0 @@
-resource "google_compute_vpn_gateway" "{{ name }}" {
-  name        = "${var.google_compute_vpn_gateway_name}"
-  network     = "${var.google_network}"
-  project     = "${var.google_project_id}"
-  region      = "${var.google_project_region}"
-  description = "${var.google_compute_vpn_gateway_description}"
-}

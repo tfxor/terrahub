@@ -1,7 +1,0 @@
-resource "aws_ebs_volume" "{{ name }}" {
-	availability_zone = "${var.ebs_volume_availability_zone}"
-	size = "${var.ebs_volume_size}"
-	encrypted = "${var.ebs_volume_encrypted}"
-	type = "${var.ebs_volume_type}"
-	tags = "${merge(var.default_tags, var.custom_tags)}"
-}

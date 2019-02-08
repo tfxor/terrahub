@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_subnet_route_table_association:
+        {{ name }}:
+          route_table_id: '${var.{{ name }}_route_table_id}'
+          subnet_id: '${var.{{ name }}_subnet_id}'
+    variable:
+      {{ name }}_route_table_id:
+        type: 'string'
+      {{ name }}_subnet_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_subnet_route_table_association.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_subnet_route_table_association.{{ name }}.id}'

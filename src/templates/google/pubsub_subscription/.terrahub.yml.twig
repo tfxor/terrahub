@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_pubsub_subscription:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          topic: '${var.{{ name }}_topic}'
+          # ack_deadline_seconds: 0
+          # project: ''
+          # push_config: 
+          #   -
+          #     push_endpoint: ''
+          #     attributes: 
+          #       '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_topic:
+        type: 'string'
+    output:
+      id:
+        value: '${google_pubsub_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${google_pubsub_subscription.{{ name }}.id}'
+      ack_deadline_seconds:
+        value: '${google_pubsub_subscription.{{ name }}.ack_deadline_seconds}'
+      project:
+        value: '${google_pubsub_subscription.{{ name }}.project}'
+      path:
+        value: '${google_pubsub_subscription.{{ name }}.path}'

@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_db_parameter_group:
+        {{ name }}:
+          family: '${var.{{ name }}_family}'
+          # description: ''
+          # parameter: 
+          #   name: ''
+          #   value: ''
+          #   apply_method: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # name_prefix: ''
+    variable:
+      {{ name }}_family:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_db_parameter_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_db_parameter_group.{{ name }}.id}'
+      arn:
+        value: '${aws_db_parameter_group.{{ name }}.arn}'
+      name:
+        value: '${aws_db_parameter_group.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_db_parameter_group.{{ name }}.name_prefix}'

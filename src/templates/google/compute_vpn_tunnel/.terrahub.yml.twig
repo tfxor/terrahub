@@ -1,0 +1,53 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_vpn_tunnel:
+        {{ name }}:
+          peer_ip: '${var.{{ name }}_peer_ip}'
+          shared_secret: '${var.{{ name }}_shared_secret}'
+          target_vpn_gateway: '${var.{{ name }}_target_vpn_gateway}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # local_traffic_selector: []
+          # region: ''
+          # remote_traffic_selector: []
+          # ike_version: 0
+          # router: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # project: ''
+    variable:
+      {{ name }}_peer_ip:
+        type: 'string'
+      {{ name }}_shared_secret:
+        type: 'string'
+      {{ name }}_target_vpn_gateway:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_vpn_tunnel.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_vpn_tunnel.{{ name }}.id}'
+      shared_secret_hash:
+        value: '${google_compute_vpn_tunnel.{{ name }}.shared_secret_hash}'
+      local_traffic_selector:
+        value: '${google_compute_vpn_tunnel.{{ name }}.local_traffic_selector}'
+      region:
+        value: '${google_compute_vpn_tunnel.{{ name }}.region}'
+      remote_traffic_selector:
+        value: '${google_compute_vpn_tunnel.{{ name }}.remote_traffic_selector}'
+      detailed_status:
+        value: '${google_compute_vpn_tunnel.{{ name }}.detailed_status}'
+      self_link:
+        value: '${google_compute_vpn_tunnel.{{ name }}.self_link}'
+      creation_timestamp:
+        value: '${google_compute_vpn_tunnel.{{ name }}.creation_timestamp}'
+      label_fingerprint:
+        value: '${google_compute_vpn_tunnel.{{ name }}.label_fingerprint}'
+      project:
+        value: '${google_compute_vpn_tunnel.{{ name }}.project}'

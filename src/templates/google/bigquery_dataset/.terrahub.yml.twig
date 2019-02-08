@@ -1,0 +1,48 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_bigquery_dataset:
+        {{ name }}:
+          dataset_id: '${var.{{ name }}_dataset_id}'
+          # project: ''
+          # friendly_name: ''
+          # description: ''
+          # default_table_expiration_ms: 0
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # access: 
+          #   domain: ''
+          #   group_by_email: ''
+          #   special_group: ''
+          #   user_by_email: ''
+          #   view: 
+          #     -
+          #       project_id: ''
+          #       dataset_id: ''
+          #       table_id: ''
+          #   role: ''
+          # location: ''
+          # default_partition_expiration_ms: 0
+    variable:
+      {{ name }}_dataset_id:
+        type: 'string'
+    output:
+      id:
+        value: '${google_bigquery_dataset.{{ name }}.id}'
+      thub_id:
+        value: '${google_bigquery_dataset.{{ name }}.id}'
+      self_link:
+        value: '${google_bigquery_dataset.{{ name }}.self_link}'
+      creation_time:
+        value: '${google_bigquery_dataset.{{ name }}.creation_time}'
+      project:
+        value: '${google_bigquery_dataset.{{ name }}.project}'
+      access:
+        value: '${google_bigquery_dataset.{{ name }}.access}'
+      etag:
+        value: '${google_bigquery_dataset.{{ name }}.etag}'
+      last_modified_time:
+        value: '${google_bigquery_dataset.{{ name }}.last_modified_time}'

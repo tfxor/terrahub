@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elastic_beanstalk_application:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # appversion_lifecycle: 
+          #   -
+          #     service_role: ''
+          #     max_age_in_days: 0
+          #     max_count: 0
+          #     delete_source_from_s3: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_elastic_beanstalk_application.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elastic_beanstalk_application.{{ name }}.id}'

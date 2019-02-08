@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_ssl_policy:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # project: ''
+          # min_tls_version: ''
+          # profile: ''
+          # custom_features: []
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_ssl_policy.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_ssl_policy.{{ name }}.id}'
+      fingerprint:
+        value: '${google_compute_ssl_policy.{{ name }}.fingerprint}'
+      project:
+        value: '${google_compute_ssl_policy.{{ name }}.project}'
+      enabled_features:
+        value: '${google_compute_ssl_policy.{{ name }}.enabled_features}'
+      creation_timestamp:
+        value: '${google_compute_ssl_policy.{{ name }}.creation_timestamp}'
+      self_link:
+        value: '${google_compute_ssl_policy.{{ name }}.self_link}'

@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_service_linked_role:
+        {{ name }}:
+          aws_service_name: '${var.{{ name }}_aws_service_name}'
+          # custom_suffix: ''
+          # description: ''
+    variable:
+      {{ name }}_aws_service_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_service_linked_role.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_service_linked_role.{{ name }}.id}'
+      unique_id:
+        value: '${aws_iam_service_linked_role.{{ name }}.unique_id}'
+      name:
+        value: '${aws_iam_service_linked_role.{{ name }}.name}'
+      path:
+        value: '${aws_iam_service_linked_role.{{ name }}.path}'
+      arn:
+        value: '${aws_iam_service_linked_role.{{ name }}.arn}'
+      create_date:
+        value: '${aws_iam_service_linked_role.{{ name }}.create_date}'

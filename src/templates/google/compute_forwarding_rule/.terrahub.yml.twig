@@ -1,0 +1,49 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_forwarding_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # project: ''
+          # backend_service: ''
+          # description: ''
+          # load_balancing_scheme: ''
+          # subnetwork: ''
+          # ip_address: ''
+          # network: ''
+          # network_tier: ''
+          # ports: []
+          # region: ''
+          # ip_protocol: ''
+          # ip_version: ''
+          # port_range: ''
+          # target: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_forwarding_rule.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_forwarding_rule.{{ name }}.id}'
+      project:
+        value: '${google_compute_forwarding_rule.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_forwarding_rule.{{ name }}.self_link}'
+      subnetwork:
+        value: '${google_compute_forwarding_rule.{{ name }}.subnetwork}'
+      ip_address:
+        value: '${google_compute_forwarding_rule.{{ name }}.ip_address}'
+      network:
+        value: '${google_compute_forwarding_rule.{{ name }}.network}'
+      network_tier:
+        value: '${google_compute_forwarding_rule.{{ name }}.network_tier}'
+      creation_timestamp:
+        value: '${google_compute_forwarding_rule.{{ name }}.creation_timestamp}'
+      region:
+        value: '${google_compute_forwarding_rule.{{ name }}.region}'
+      ip_protocol:
+        value: '${google_compute_forwarding_rule.{{ name }}.ip_protocol}'

@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iot_policy:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          policy: '${var.{{ name }}_policy}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iot_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iot_policy.{{ name }}.id}'
+      arn:
+        value: '${aws_iot_policy.{{ name }}.arn}'
+      default_version_id:
+        value: '${aws_iot_policy.{{ name }}.default_version_id}'

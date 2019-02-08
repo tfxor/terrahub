@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_redshift_subnet_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          subnet_ids: '${var.{{ name }}_subnet_ids}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_subnet_ids:
+        type: 'set'
+    output:
+      id:
+        value: '${aws_redshift_subnet_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_redshift_subnet_group.{{ name }}.id}'

@@ -1,0 +1,68 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_neptune_cluster_instance:
+        {{ name }}:
+          instance_class: '${var.{{ name }}_instance_class}'
+          cluster_identifier: '${var.{{ name }}_cluster_identifier}'
+          # auto_minor_version_upgrade: false
+          # neptune_parameter_group_name: ''
+          # neptune_subnet_group_name: ''
+          # port: 0
+          # preferred_maintenance_window: ''
+          # identifier: ''
+          # promotion_tier: 0
+          # availability_zone: ''
+          # engine: ''
+          # identifier_prefix: ''
+          # preferred_backup_window: ''
+          # apply_immediately: false
+          # engine_version: ''
+          # publicly_accessible: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_instance_class:
+        type: 'string'
+      {{ name }}_cluster_identifier:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_neptune_cluster_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_neptune_cluster_instance.{{ name }}.id}'
+      writer:
+        value: '${aws_neptune_cluster_instance.{{ name }}.writer}'
+      neptune_subnet_group_name:
+        value: '${aws_neptune_cluster_instance.{{ name }}.neptune_subnet_group_name}'
+      preferred_maintenance_window:
+        value: '${aws_neptune_cluster_instance.{{ name }}.preferred_maintenance_window}'
+      arn:
+        value: '${aws_neptune_cluster_instance.{{ name }}.arn}'
+      endpoint:
+        value: '${aws_neptune_cluster_instance.{{ name }}.endpoint}'
+      identifier:
+        value: '${aws_neptune_cluster_instance.{{ name }}.identifier}'
+      kms_key_arn:
+        value: '${aws_neptune_cluster_instance.{{ name }}.kms_key_arn}'
+      availability_zone:
+        value: '${aws_neptune_cluster_instance.{{ name }}.availability_zone}'
+      identifier_prefix:
+        value: '${aws_neptune_cluster_instance.{{ name }}.identifier_prefix}'
+      preferred_backup_window:
+        value: '${aws_neptune_cluster_instance.{{ name }}.preferred_backup_window}'
+      storage_encrypted:
+        value: '${aws_neptune_cluster_instance.{{ name }}.storage_encrypted}'
+      address:
+        value: '${aws_neptune_cluster_instance.{{ name }}.address}'
+      apply_immediately:
+        value: '${aws_neptune_cluster_instance.{{ name }}.apply_immediately}'
+      dbi_resource_id:
+        value: '${aws_neptune_cluster_instance.{{ name }}.dbi_resource_id}'
+      engine_version:
+        value: '${aws_neptune_cluster_instance.{{ name }}.engine_version}'

@@ -1,6 +1,0 @@
-resource "aws_vpc_peering_connection_accepter" "{{ name }}" {
-  vpc_peering_connection_id = "${var.vpc_peering_vpc_peering_connection_id}"
-  auto_accept               = "${var.vpc_peering_auto_accept}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

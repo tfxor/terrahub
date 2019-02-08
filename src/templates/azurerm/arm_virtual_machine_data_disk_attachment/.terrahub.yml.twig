@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_machine_data_disk_attachment:
+        {{ name }}:
+          managed_disk_id: '${var.{{ name }}_managed_disk_id}'
+          virtual_machine_id: '${var.{{ name }}_virtual_machine_id}'
+          lun: '${var.{{ name }}_lun}'
+          caching: '${var.{{ name }}_caching}'
+          # create_option: ''
+          # write_accelerator_enabled: false
+    variable:
+      {{ name }}_managed_disk_id:
+        type: 'string'
+      {{ name }}_virtual_machine_id:
+        type: 'string'
+      {{ name }}_lun:
+        type: 'int'
+      {{ name }}_caching:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id}'

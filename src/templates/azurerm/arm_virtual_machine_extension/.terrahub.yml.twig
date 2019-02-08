@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_machine_extension:
+        {{ name }}:
+          publisher: '${var.{{ name }}_publisher}'
+          name: '${var.{{ name }}_name}'
+          virtual_machine_name: '${var.{{ name }}_virtual_machine_name}'
+          type: '${var.{{ name }}_type}'
+          type_handler_version: '${var.{{ name }}_type_handler_version}'
+          # protected_settings: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # auto_upgrade_minor_version: false
+          # settings: ''
+    variable:
+      {{ name }}_publisher:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_virtual_machine_name:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+      {{ name }}_type_handler_version:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_machine_extension.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_machine_extension.{{ name }}.id}'

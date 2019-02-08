@@ -1,0 +1,45 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_cloudiot_registry:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # event_notification_config: 
+          #   '[TO_BE_REPLACED]': ''
+          #   'pubsub_topic_name': ''
+          # state_notification_config: 
+          #   '[TO_BE_REPLACED]': ''
+          #   'pubsub_topic_name': ''
+          # mqtt_config: 
+          #   '[TO_BE_REPLACED]': ''
+          #   'mqtt_enabled_state': ''
+          # http_config: 
+          #   '[TO_BE_REPLACED]': ''
+          #   'http_enabled_state': ''
+          # credentials: 
+          #   -
+          #     public_key_certificate: 
+          #       '[TO_BE_REPLACED]': ''
+          #     'format': ''
+          #     'certificate': ''
+          # project: ''
+          # region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_cloudiot_registry.{{ name }}.id}'
+      thub_id:
+        value: '${google_cloudiot_registry.{{ name }}.id}'
+      mqtt_config:
+        value: '${google_cloudiot_registry.{{ name }}.mqtt_config}'
+      http_config:
+        value: '${google_cloudiot_registry.{{ name }}.http_config}'
+      project:
+        value: '${google_cloudiot_registry.{{ name }}.project}'
+      region:
+        value: '${google_cloudiot_registry.{{ name }}.region}'

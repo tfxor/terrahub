@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_neptune_parameter_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          family: '${var.{{ name }}_family}'
+          # description: ''
+          # parameter: 
+          #   name: ''
+          #   value: ''
+          #   apply_method: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_family:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_neptune_parameter_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_neptune_parameter_group.{{ name }}.id}'
+      arn:
+        value: '${aws_neptune_parameter_group.{{ name }}.arn}'

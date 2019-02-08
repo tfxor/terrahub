@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_rds_cluster_endpoint:
+        {{ name }}:
+          cluster_endpoint_identifier: '${var.{{ name }}_cluster_endpoint_identifier}'
+          cluster_identifier: '${var.{{ name }}_cluster_identifier}'
+          custom_endpoint_type: '${var.{{ name }}_custom_endpoint_type}'
+          # excluded_members: []
+          # static_members: []
+    variable:
+      {{ name }}_cluster_endpoint_identifier:
+        type: 'string'
+      {{ name }}_cluster_identifier:
+        type: 'string'
+      {{ name }}_custom_endpoint_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_rds_cluster_endpoint.{{ name }}.id}'
+      thub_id:
+        value: '${aws_rds_cluster_endpoint.{{ name }}.id}'
+      endpoint:
+        value: '${aws_rds_cluster_endpoint.{{ name }}.endpoint}'
+      arn:
+        value: '${aws_rds_cluster_endpoint.{{ name }}.arn}'

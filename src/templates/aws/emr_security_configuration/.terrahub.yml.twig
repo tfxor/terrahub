@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_emr_security_configuration:
+        {{ name }}:
+          configuration: '${var.{{ name }}_configuration}'
+          # name: ''
+          # name_prefix: ''
+    variable:
+      {{ name }}_configuration:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_emr_security_configuration.{{ name }}.id}'
+      thub_id:
+        value: '${aws_emr_security_configuration.{{ name }}.id}'
+      creation_date:
+        value: '${aws_emr_security_configuration.{{ name }}.creation_date}'
+      name:
+        value: '${aws_emr_security_configuration.{{ name }}.name}'

@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_media_store_container_policy:
+        {{ name }}:
+          container_name: '${var.{{ name }}_container_name}'
+          policy: '${var.{{ name }}_policy}'
+    variable:
+      {{ name }}_container_name:
+        type: 'string'
+      {{ name }}_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_media_store_container_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_media_store_container_policy.{{ name }}.id}'

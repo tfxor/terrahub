@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_group_membership:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          users: '${var.{{ name }}_users}'
+          group: '${var.{{ name }}_group}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_users:
+        type: 'set'
+      {{ name }}_group:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_group_membership.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_group_membership.{{ name }}.id}'

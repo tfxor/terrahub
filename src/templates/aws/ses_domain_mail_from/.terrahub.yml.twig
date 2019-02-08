@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_domain_mail_from:
+        {{ name }}:
+          domain: '${var.{{ name }}_domain}'
+          mail_from_domain: '${var.{{ name }}_mail_from_domain}'
+          # behavior_on_mx_failure: ''
+    variable:
+      {{ name }}_domain:
+        type: 'string'
+      {{ name }}_mail_from_domain:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ses_domain_mail_from.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_domain_mail_from.{{ name }}.id}'

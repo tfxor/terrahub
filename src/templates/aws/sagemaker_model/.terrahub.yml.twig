@@ -1,0 +1,45 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sagemaker_model:
+        {{ name }}:
+          execution_role_arn: '${var.{{ name }}_execution_role_arn}'
+          # primary_container: 
+          #   -
+          #     image: ''
+          #     container_hostname: ''
+          #     model_data_url: ''
+          #     environment: 
+          #       '[TO_BE_REPLACED]': ''
+          # vpc_config: 
+          #   -
+          #     subnets: []
+          #     security_group_ids: []
+          # enable_network_isolation: false
+          # container: 
+          #   -
+          #     image: ''
+          #     environment: 
+          #       '[TO_BE_REPLACED]': ''
+          #     container_hostname: ''
+          #     model_data_url: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+    variable:
+      {{ name }}_execution_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_sagemaker_model.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sagemaker_model.{{ name }}.id}'
+      arn:
+        value: '${aws_sagemaker_model.{{ name }}.arn}'
+      name:
+        value: '${aws_sagemaker_model.{{ name }}.name}'

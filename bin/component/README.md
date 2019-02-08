@@ -1,9 +1,6 @@
 # component
 
-Generation Terraform scripts from json
-==================
-
-Generation the bin file: 
+Generate HCL version of terraform configuration
 
 ```sh
 $ cd $GOPATH/src/component
@@ -14,7 +11,7 @@ Generation the templates
 
 ```sh
 $ cd $GOPATH/src/component/../[YOUR OS ARCHITECTURE]/
-$ geerator [provider name] [destination path like ./templates/]
+$ component [path_to_input_json] [path_to_output_hcl] [component_name]
 ```
 
 ## Install Linux

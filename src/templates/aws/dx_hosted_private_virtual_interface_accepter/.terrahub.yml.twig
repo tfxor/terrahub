@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_hosted_private_virtual_interface_accepter:
+        {{ name }}:
+          virtual_interface_id: '${var.{{ name }}_virtual_interface_id}'
+          # vpn_gateway_id: ''
+          # dx_gateway_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_virtual_interface_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_hosted_private_virtual_interface_accepter.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_hosted_private_virtual_interface_accepter.{{ name }}.id}'
+      arn:
+        value: '${aws_dx_hosted_private_virtual_interface_accepter.{{ name }}.arn}'

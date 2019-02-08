@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_client_certificate:
+        {{ name }}:
+          # description: ''
+    output:
+      id:
+        value: '${aws_api_gateway_client_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_client_certificate.{{ name }}.id}'
+      created_date:
+        value: '${aws_api_gateway_client_certificate.{{ name }}.created_date}'
+      expiration_date:
+        value: '${aws_api_gateway_client_certificate.{{ name }}.expiration_date}'
+      pem_encoded_certificate:
+        value: '${aws_api_gateway_client_certificate.{{ name }}.pem_encoded_certificate}'
