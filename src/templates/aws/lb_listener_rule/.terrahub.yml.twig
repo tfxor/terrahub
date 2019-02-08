@@ -1,0 +1,43 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lb_listener_rule:
+        {{ name }}:
+          listener_arn: '${var.{{ name }}_listener_arn}'
+          action: 
+            -
+              type: ''
+          #     order: 0
+          #     target_group_arn: ''
+          #     redirect: 
+          #       -
+          #         status_code: ''
+          #         host: ''
+          #         path: ''
+          #         port: ''
+          #         protocol: ''
+          #         query: ''
+          condition: 
+          #   field: ''
+          #   values: 
+          #     -
+          # priority: 0
+          # authenticate_cognito: []
+          # authenticate_oidc: []
+    variable:
+      {{ name }}_listener_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lb_listener_rule.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lb_listener_rule.{{ name }}.id}'
+      arn:
+        value: '${aws_lb_listener_rule.{{ name }}.arn}'
+      priority:
+        value: '${aws_lb_listener_rule.{{ name }}.priority}'

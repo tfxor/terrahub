@@ -1,0 +1,61 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_redis_cache:
+        {{ name }}:
+          redis_configuration: 
+            -
+          #     maxmemory_reserved: 0
+          #     rdb_backup_enabled: false
+          #     rdb_storage_connection_string: ''
+          #     maxmemory_policy: ''
+          #     rdb_backup_frequency: 0
+          #     rdb_backup_max_snapshot_count: 0
+          #     notify_keyspace_events: ''
+          #     maxmemory_delta: 0
+          location: '${var.{{ name }}_location}'
+          name: '${var.{{ name }}_name}'
+          sku_name: '${var.{{ name }}_sku_name}'
+          capacity: '${var.{{ name }}_capacity}'
+          family: '${var.{{ name }}_family}'
+          # private_static_ip_address: ''
+          # shard_count: 0
+          # subnet_id: ''
+          # patch_schedule: 
+          #   -
+          #     day_of_week: ''
+          #     start_hour_utc: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_location:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_sku_name:
+        type: 'string'
+      {{ name }}_capacity:
+        type: 'int'
+      {{ name }}_family:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_redis_cache.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_redis_cache.{{ name }}.id}'
+      private_static_ip_address:
+        value: '${azurerm_arm_redis_cache.{{ name }}.private_static_ip_address}'
+      port:
+        value: '${azurerm_arm_redis_cache.{{ name }}.port}'
+      primary_access_key:
+        value: '${azurerm_arm_redis_cache.{{ name }}.primary_access_key}'
+      hostname:
+        value: '${azurerm_arm_redis_cache.{{ name }}.hostname}'
+      ssl_port:
+        value: '${azurerm_arm_redis_cache.{{ name }}.ssl_port}'
+      secondary_access_key:
+        value: '${azurerm_arm_redis_cache.{{ name }}.secondary_access_key}'

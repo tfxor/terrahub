@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ebs_snapshot_copy:
+        {{ name }}:
+          source_region: '${var.{{ name }}_source_region}'
+          source_snapshot_id: '${var.{{ name }}_source_snapshot_id}'
+          # description: ''
+          # encrypted: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # kms_key_id: ''
+    variable:
+      {{ name }}_source_region:
+        type: 'string'
+      {{ name }}_source_snapshot_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.id}'
+      volume_size:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_size}'
+      data_encryption_key_id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.data_encryption_key_id}'
+      volume_id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.volume_id}'
+      owner_alias:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.owner_alias}'
+      owner_id:
+        value: '${aws_ebs_snapshot_copy.{{ name }}.owner_id}'

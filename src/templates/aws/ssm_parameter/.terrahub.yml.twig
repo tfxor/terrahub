@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ssm_parameter:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          value: '${var.{{ name }}_value}'
+          type: '${var.{{ name }}_type}'
+          # arn: ''
+          # key_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # overwrite: false
+          # allowed_pattern: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_value:
+        type: 'string'
+      {{ name }}_type:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ssm_parameter.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ssm_parameter.{{ name }}.id}'
+      arn:
+        value: '${aws_ssm_parameter.{{ name }}.arn}'
+      key_id:
+        value: '${aws_ssm_parameter.{{ name }}.key_id}'

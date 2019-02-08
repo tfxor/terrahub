@@ -1,0 +1,71 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_codebuild_project:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          environment: 
+            compute_type: ''
+          #   environment_variable: 
+          #     -
+          #       value: ''
+          #       name: ''
+          #       type: ''
+          artifacts: 
+            type: ''
+          #   packaging: ''
+          #   path: ''
+          #   name: ''
+          #   encryption_disabled: false
+          #   location: ''
+          #   namespace_type: ''
+          service_role: '${var.{{ name }}_service_role}'
+          # secondary_artifacts: 
+          #   artifact_identifier: ''
+          #   type: ''
+          #   location: ''
+          #   namespace_type: ''
+          #   packaging: ''
+          #   path: ''
+          #   name: ''
+          #   encryption_disabled: false
+          # cache: 
+          #   -
+          #     type: ''
+          #     location: ''
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # vpc_config: 
+          #   -
+          #     vpc_id: ''
+          #     subnets: []
+          #     security_group_ids: []
+          # build_timeout: 0
+          # secondary_sources: 
+          # badge_enabled: false
+          # timeout: 0
+          # encryption_key: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_service_role:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_codebuild_project.{{ name }}.id}'
+      thub_id:
+        value: '${aws_codebuild_project.{{ name }}.id}'
+      badge_url:
+        value: '${aws_codebuild_project.{{ name }}.badge_url}'
+      description:
+        value: '${aws_codebuild_project.{{ name }}.description}'
+      arn:
+        value: '${aws_codebuild_project.{{ name }}.arn}'
+      encryption_key:
+        value: '${aws_codebuild_project.{{ name }}.encryption_key}'

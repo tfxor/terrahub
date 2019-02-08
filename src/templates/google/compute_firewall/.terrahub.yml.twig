@@ -1,0 +1,18 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_firewall:
+        {{ name }}:
+          protocol: '${var.{{ name }}_protocol}'
+          # ports: []
+    variable:
+      {{ name }}_protocol:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_firewall.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_firewall.{{ name }}.id}'

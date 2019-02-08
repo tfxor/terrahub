@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_route_table:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # route: 
+          #   -
+          #     name: ''
+          #     address_prefix: ''
+          #     next_hop_type: ''
+          #     next_hop_in_ip_address: ''
+          # disable_bgp_route_propagation: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_route_table.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_route_table.{{ name }}.id}'
+      route:
+        value: '${azurerm_arm_route_table.{{ name }}.route}'
+      subnets:
+        value: '${azurerm_arm_route_table.{{ name }}.subnets}'

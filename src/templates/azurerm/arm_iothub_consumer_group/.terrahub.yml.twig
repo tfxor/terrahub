@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_iothub_consumer_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          iothub_name: '${var.{{ name }}_iothub_name}'
+          eventhub_endpoint_name: '${var.{{ name }}_eventhub_endpoint_name}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_iothub_name:
+        type: 'string'
+      {{ name }}_eventhub_endpoint_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_iothub_consumer_group.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_iothub_consumer_group.{{ name }}.id}'

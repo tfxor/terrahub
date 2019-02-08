@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_notification_hub:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # apns_credential: 
+          #   -
+          #     application_mode: ''
+          #     bundle_id: ''
+          #     key_id: ''
+          #     team_id: ''
+          #     token: ''
+          # gcm_credential: 
+          #   -
+          #     api_key: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_namespace_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_notification_hub.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_notification_hub.{{ name }}.id}'

@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_baidu_channel:
+        {{ name }}:
+          api_key: '${var.{{ name }}_api_key}'
+          secret_key: '${var.{{ name }}_secret_key}'
+          application_id: '${var.{{ name }}_application_id}'
+          # enabled: false
+    variable:
+      {{ name }}_api_key:
+        type: 'string'
+      {{ name }}_secret_key:
+        type: 'string'
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_baidu_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_baidu_channel.{{ name }}.id}'

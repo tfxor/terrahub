@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_athena_database:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          bucket: '${var.{{ name }}_bucket}'
+          # force_destroy: false
+          # encryption_configuration: 
+          #   -
+          #     encryption_option: ''
+          #     kms_key: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_athena_database.{{ name }}.id}'
+      thub_id:
+        value: '${aws_athena_database.{{ name }}.id}'

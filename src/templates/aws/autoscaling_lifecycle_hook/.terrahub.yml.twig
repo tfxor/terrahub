@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_autoscaling_lifecycle_hook:
+        {{ name }}:
+          lifecycle_transition: '${var.{{ name }}_lifecycle_transition}'
+          name: '${var.{{ name }}_name}'
+          autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
+          # heartbeat_timeout: 0
+          # notification_metadata: ''
+          # notification_target_arn: ''
+          # role_arn: ''
+          # default_result: ''
+    variable:
+      {{ name }}_lifecycle_transition:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_autoscaling_group_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_autoscaling_lifecycle_hook.{{ name }}.id}'
+      thub_id:
+        value: '${aws_autoscaling_lifecycle_hook.{{ name }}.id}'
+      default_result:
+        value: '${aws_autoscaling_lifecycle_hook.{{ name }}.default_result}'

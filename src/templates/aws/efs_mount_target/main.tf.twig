@@ -1,6 +1,0 @@
-resource "aws_efs_mount_target" "{{ name }}" {
-  file_system_id  = "${var.efs_mount_target_file_system_id}"
-  subnet_id       = "${var.efs_mount_target_subnet_id}"
-  ip_address      = "${var.efs_mount_target_ip_address}"
-  security_groups = ["${var.efs_mount_target_security_groups}"]
-}

@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_router_peer:
+        {{ name }}:
+          interface: '${var.{{ name }}_interface}'
+          name: '${var.{{ name }}_name}'
+          router: '${var.{{ name }}_router}'
+          peer_asn: '${var.{{ name }}_peer_asn}'
+          # peer_ip_address: ''
+          # project: ''
+          # region: ''
+          # advertised_route_priority: 0
+    variable:
+      {{ name }}_interface:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_router:
+        type: 'string'
+      {{ name }}_peer_asn:
+        type: 'int'
+    output:
+      id:
+        value: '${google_compute_router_peer.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_router_peer.{{ name }}.id}'
+      ip_address:
+        value: '${google_compute_router_peer.{{ name }}.ip_address}'
+      project:
+        value: '${google_compute_router_peer.{{ name }}.project}'
+      region:
+        value: '${google_compute_router_peer.{{ name }}.region}'

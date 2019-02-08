@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_storagegateway_cached_iscsi_volume:
+        {{ name }}:
+          target_name: '${var.{{ name }}_target_name}'
+          volume_size_in_bytes: '${var.{{ name }}_volume_size_in_bytes}'
+          gateway_arn: '${var.{{ name }}_gateway_arn}'
+          network_interface_id: '${var.{{ name }}_network_interface_id}'
+          # snapshot_id: ''
+          # source_volume_arn: ''
+    variable:
+      {{ name }}_target_name:
+        type: 'string'
+      {{ name }}_volume_size_in_bytes:
+        type: 'int'
+      {{ name }}_gateway_arn:
+        type: 'string'
+      {{ name }}_network_interface_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.id}'
+      thub_id:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.id}'
+      arn:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.arn}'
+      chap_enabled:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.chap_enabled}'
+      volume_arn:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.volume_arn}'
+      volume_id:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.volume_id}'
+      lun_number:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.lun_number}'
+      network_interface_port:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.network_interface_port}'
+      target_arn:
+        value: '${aws_storagegateway_cached_iscsi_volume.{{ name }}.target_arn}'

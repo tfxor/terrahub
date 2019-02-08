@@ -1,7 +1,0 @@
-resource "aws_route" "{{ name }}" {
-  route_table_id         = "${var.route_route_table_id}"
-  destination_cidr_block = "${var.route_destination_cidr_block}"
-  egress_only_gateway_id = "${var.route_egress_only_gateway_id}"
-  gateway_id             = "${var.route_gateway_id}"
-  nat_gateway_id         = "${var.route_nat_gateway_id}"
-}

@@ -1,5 +1,0 @@
-resource "aws_ebs_snapshot" "{{ name }}" {
-  volume_id = "${var.ebs_snapshot_volume_id}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

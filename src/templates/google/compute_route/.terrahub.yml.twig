@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_route:
+        {{ name }}:
+          dest_range: '${var.{{ name }}_dest_range}'
+          name: '${var.{{ name }}_name}'
+          network: '${var.{{ name }}_network}'
+          # next_hop_gateway: ''
+          # next_hop_instance: ''
+          # tags: []
+          # next_hop_ip: ''
+          # project: ''
+          # next_hop_vpn_tunnel: ''
+          # next_hop_instance_zone: ''
+          # description: ''
+          # priority: 0
+    variable:
+      {{ name }}_dest_range:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_network:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_route.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_route.{{ name }}.id}'
+      next_hop_network:
+        value: '${google_compute_route.{{ name }}.next_hop_network}'
+      project:
+        value: '${google_compute_route.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_route.{{ name }}.self_link}'

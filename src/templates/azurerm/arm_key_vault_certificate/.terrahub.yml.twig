@@ -1,0 +1,64 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_key_vault_certificate:
+        {{ name }}:
+          secret_properties: 
+            -
+              content_type: ''
+          certificate_policy: 
+            -
+              issuer_parameters: 
+                -
+                  name: ''
+          name: '${var.{{ name }}_name}'
+          vault_uri: '${var.{{ name }}_vault_uri}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # certificate: 
+          #   -
+          #     contents: ''
+          #     password: ''
+          # lifetime_action: 
+          #   -
+          #     action: 
+          #       -
+          #         action_type: ''
+          # x509_certificate_properties: 
+          #   -
+          #     key_usage: []
+          #     subject: ''
+          #     subject_alternative_names: 
+          #       -
+          #         emails: 
+          #           -
+          #         dns_names: 
+          #           -
+          #         upns: 
+          #           -
+          #     extended_key_usage: 
+          #       -
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_vault_uri:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.id}'
+      secret_id:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.secret_id}'
+      certificate_data:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.certificate_data}'
+      thumbprint:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.thumbprint}'
+      version:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.version}'
+      x509_certificate_properties:
+        value: '${azurerm_arm_key_vault_certificate.{{ name }}.x509_certificate_properties}'

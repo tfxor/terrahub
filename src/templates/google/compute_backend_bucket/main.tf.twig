@@ -1,7 +1,0 @@
-resource "google_compute_backend_bucket" "{{ name }}" {
-  name        = "${var.google_compute_backend_bucket_resource_name}"
-  description = "${var.google_compute_backend_bucket_description}"
-  bucket_name = "${var.google_compute_backend_bucket_name}"
-  enable_cdn  = "${var.google_compute_backend_bucket_enable_cdn}"
-  project     = "${var.google_project_id}"
-}

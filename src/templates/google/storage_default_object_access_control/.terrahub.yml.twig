@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_storage_default_object_access_control:
+        {{ name }}:
+          role: '${var.{{ name }}_role}'
+          bucket: '${var.{{ name }}_bucket}'
+          entity: '${var.{{ name }}_entity}'
+          # object: ''
+    variable:
+      {{ name }}_role:
+        type: 'string'
+      {{ name }}_bucket:
+        type: 'string'
+      {{ name }}_entity:
+        type: 'string'
+    output:
+      id:
+        value: '${google_storage_default_object_access_control.{{ name }}.id}'
+      thub_id:
+        value: '${google_storage_default_object_access_control.{{ name }}.id}'
+      domain:
+        value: '${google_storage_default_object_access_control.{{ name }}.domain}'
+      generation:
+        value: '${google_storage_default_object_access_control.{{ name }}.generation}'
+      project_team:
+        value: '${google_storage_default_object_access_control.{{ name }}.project_team}'
+      email:
+        value: '${google_storage_default_object_access_control.{{ name }}.email}'
+      entity_id:
+        value: '${google_storage_default_object_access_control.{{ name }}.entity_id}'

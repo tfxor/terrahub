@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_dns_managed_zone:
+        {{ name }}:
+          dns_name: '${var.{{ name }}_dns_name}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # project: ''
+    variable:
+      {{ name }}_dns_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_dns_managed_zone.{{ name }}.id}'
+      thub_id:
+        value: '${google_dns_managed_zone.{{ name }}.id}'
+      name_servers:
+        value: '${google_dns_managed_zone.{{ name }}.name_servers}'
+      project:
+        value: '${google_dns_managed_zone.{{ name }}.project}'

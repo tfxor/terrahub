@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_redis_firewall_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          redis_cache_name: '${var.{{ name }}_redis_cache_name}'
+          start_ip: '${var.{{ name }}_start_ip}'
+          end_ip: '${var.{{ name }}_end_ip}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_redis_cache_name:
+        type: 'string'
+      {{ name }}_start_ip:
+        type: 'string'
+      {{ name }}_end_ip:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_redis_firewall_rule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_redis_firewall_rule.{{ name }}.id}'

@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_opsworks_permission:
+        {{ name }}:
+          user_arn: '${var.{{ name }}_user_arn}'
+          # allow_ssh: false
+          # allow_sudo: false
+          # level: ''
+          # stack_id: ''
+    variable:
+      {{ name }}_user_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_opsworks_permission.{{ name }}.id}'
+      thub_id:
+        value: '${aws_opsworks_permission.{{ name }}.id}'
+      allow_ssh:
+        value: '${aws_opsworks_permission.{{ name }}.allow_ssh}'
+      allow_sudo:
+        value: '${aws_opsworks_permission.{{ name }}.allow_sudo}'
+      level:
+        value: '${aws_opsworks_permission.{{ name }}.level}'
+      stack_id:
+        value: '${aws_opsworks_permission.{{ name }}.stack_id}'

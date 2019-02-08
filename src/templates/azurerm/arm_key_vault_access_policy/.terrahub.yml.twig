@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_key_vault_access_policy:
+        {{ name }}:
+          tenant_id: '${var.{{ name }}_tenant_id}'
+          object_id: '${var.{{ name }}_object_id}'
+          vault_name: '${var.{{ name }}_vault_name}'
+          # application_id: ''
+    variable:
+      {{ name }}_tenant_id:
+        type: 'string'
+      {{ name }}_object_id:
+        type: 'string'
+      {{ name }}_vault_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_key_vault_access_policy.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_key_vault_access_policy.{{ name }}.id}'

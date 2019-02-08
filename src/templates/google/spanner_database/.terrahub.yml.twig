@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_spanner_database:
+        {{ name }}:
+          instance: '${var.{{ name }}_instance}'
+          name: '${var.{{ name }}_name}'
+          # ddl: []
+          # project: ''
+    variable:
+      {{ name }}_instance:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_spanner_database.{{ name }}.id}'
+      thub_id:
+        value: '${google_spanner_database.{{ name }}.id}'
+      state:
+        value: '${google_spanner_database.{{ name }}.state}'
+      project:
+        value: '${google_spanner_database.{{ name }}.project}'

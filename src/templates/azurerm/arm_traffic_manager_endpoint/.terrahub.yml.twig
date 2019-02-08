@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_traffic_manager_endpoint:
+        {{ name }}:
+          type: '${var.{{ name }}_type}'
+          profile_name: '${var.{{ name }}_profile_name}'
+          name: '${var.{{ name }}_name}'
+          # target: ''
+          # target_resource_id: ''
+          # min_child_endpoints: 0
+          # endpoint_status: ''
+          # weight: 0
+          # priority: 0
+          # endpoint_location: ''
+          # geo_mappings: []
+    variable:
+      {{ name }}_type:
+        type: 'string'
+      {{ name }}_profile_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.id}'
+      target:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.target}'
+      endpoint_monitor_status:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_monitor_status}'
+      endpoint_status:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_status}'
+      weight:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.weight}'
+      priority:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.priority}'
+      endpoint_location:
+        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_location}'

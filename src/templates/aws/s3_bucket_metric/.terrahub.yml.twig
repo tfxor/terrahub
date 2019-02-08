@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_s3_bucket_metric:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          bucket: '${var.{{ name }}_bucket}'
+          # filter: 
+          #   -
+          #     prefix: ''
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_s3_bucket_metric.{{ name }}.id}'
+      thub_id:
+        value: '${aws_s3_bucket_metric.{{ name }}.id}'

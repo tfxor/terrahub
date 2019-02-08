@@ -22,6 +22,8 @@ class PlanCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
+    this.warnExecutionStarted(config);
+
     return distributor
       .runActions(['prepare', 'workspaceSelect', 'plan'], {
         silent: this.getOption('silent'),

@@ -1,0 +1,71 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_backend_service:
+        {{ name }}:
+          health_checks: '${var.{{ name }}_health_checks}'
+          name: '${var.{{ name }}_name}'
+          # timeout_sec: 0
+          # backend: 
+          #   capacity_scaler: ''
+          #   max_rate: 0
+          #   max_rate_per_instance: ''
+          #   max_utilization: ''
+          #   group: ''
+          #   balancing_mode: ''
+          #   description: ''
+          #   max_connections: 0
+          #   max_connections_per_instance: 0
+          # enable_cdn: false
+          # protocol: ''
+          # region: ''
+          # security_policy: ''
+          # iap: 
+          #   -
+          #     oauth2_client_id: ''
+          #     oauth2_client_secret: ''
+          # custom_request_headers: []
+          # project: ''
+          # session_affinity: ''
+          # cdn_policy: 
+          #   -
+          #     cache_key_policy: 
+          #       -
+          #         include_host: false
+          #         include_protocol: false
+          #         include_query_string: false
+          #         query_string_blacklist: 
+          #         query_string_whitelist: 
+          # affinity_cookie_ttl_sec: 0
+          # connection_draining_timeout_sec: 0
+          # description: ''
+          # port_name: ''
+    variable:
+      {{ name }}_health_checks:
+        type: 'set'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_backend_service.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_backend_service.{{ name }}.id}'
+      timeout_sec:
+        value: '${google_compute_backend_service.{{ name }}.timeout_sec}'
+      protocol:
+        value: '${google_compute_backend_service.{{ name }}.protocol}'
+      project:
+        value: '${google_compute_backend_service.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_backend_service.{{ name }}.self_link}'
+      session_affinity:
+        value: '${google_compute_backend_service.{{ name }}.session_affinity}'
+      cdn_policy:
+        value: '${google_compute_backend_service.{{ name }}.cdn_policy}'
+      fingerprint:
+        value: '${google_compute_backend_service.{{ name }}.fingerprint}'
+      port_name:
+        value: '${google_compute_backend_service.{{ name }}.port_name}'

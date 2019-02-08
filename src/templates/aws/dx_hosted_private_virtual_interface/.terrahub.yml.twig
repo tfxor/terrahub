@@ -1,0 +1,47 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_hosted_private_virtual_interface:
+        {{ name }}:
+          connection_id: '${var.{{ name }}_connection_id}'
+          bgp_asn: '${var.{{ name }}_bgp_asn}'
+          address_family: '${var.{{ name }}_address_family}'
+          name: '${var.{{ name }}_name}'
+          vlan: '${var.{{ name }}_vlan}'
+          owner_account_id: '${var.{{ name }}_owner_account_id}'
+          # bgp_auth_key: ''
+          # customer_address: ''
+          # amazon_address: ''
+    variable:
+      {{ name }}_connection_id:
+        type: 'string'
+      {{ name }}_bgp_asn:
+        type: 'int'
+      {{ name }}_address_family:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_vlan:
+        type: 'int'
+      {{ name }}_owner_account_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.id}'
+      jumbo_frame_capable:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.jumbo_frame_capable}'
+      bgp_auth_key:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.bgp_auth_key}'
+      customer_address:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.customer_address}'
+      amazon_address:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.amazon_address}'
+      arn:
+        value: '${aws_dx_hosted_private_virtual_interface.{{ name }}.arn}'

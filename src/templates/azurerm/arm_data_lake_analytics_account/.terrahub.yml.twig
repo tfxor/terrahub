@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_data_lake_analytics_account:
+        {{ name }}:
+          default_store_account_name: '${var.{{ name }}_default_store_account_name}'
+          name: '${var.{{ name }}_name}'
+          # tier: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_default_store_account_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_data_lake_analytics_account.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_data_lake_analytics_account.{{ name }}.id}'

@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_pubsub_topic:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_pubsub_topic.{{ name }}.id}'
+      thub_id:
+        value: '${google_pubsub_topic.{{ name }}.id}'
+      project:
+        value: '${google_pubsub_topic.{{ name }}.project}'

@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_automation_dsc_configuration:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          automation_account_name: '${var.{{ name }}_automation_account_name}'
+          content_embedded: '${var.{{ name }}_content_embedded}'
+          # log_verbose: false
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_automation_account_name:
+        type: 'string'
+      {{ name }}_content_embedded:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_automation_dsc_configuration.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_automation_dsc_configuration.{{ name }}.id}'
+      state:
+        value: '${azurerm_arm_automation_dsc_configuration.{{ name }}.state}'

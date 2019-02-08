@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_sql_administrator:
+        {{ name }}:
+          tenant_id: '${var.{{ name }}_tenant_id}'
+          server_name: '${var.{{ name }}_server_name}'
+          login: '${var.{{ name }}_login}'
+          object_id: '${var.{{ name }}_object_id}'
+    variable:
+      {{ name }}_tenant_id:
+        type: 'string'
+      {{ name }}_server_name:
+        type: 'string'
+      {{ name }}_login:
+        type: 'string'
+      {{ name }}_object_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_sql_administrator.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_sql_administrator.{{ name }}.id}'

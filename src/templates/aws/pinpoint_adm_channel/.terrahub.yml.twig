@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_adm_channel:
+        {{ name }}:
+          client_id: '${var.{{ name }}_client_id}'
+          client_secret: '${var.{{ name }}_client_secret}'
+          application_id: '${var.{{ name }}_application_id}'
+          # enabled: false
+    variable:
+      {{ name }}_client_id:
+        type: 'string'
+      {{ name }}_client_secret:
+        type: 'string'
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_adm_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_adm_channel.{{ name }}.id}'

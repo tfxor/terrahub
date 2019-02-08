@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_project_metadata_item:
+        {{ name }}:
+          value: '${var.{{ name }}_value}'
+          key: '${var.{{ name }}_key}'
+          # project: ''
+    variable:
+      {{ name }}_value:
+        type: 'string'
+      {{ name }}_key:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_project_metadata_item.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_project_metadata_item.{{ name }}.id}'
+      project:
+        value: '${google_compute_project_metadata_item.{{ name }}.project}'

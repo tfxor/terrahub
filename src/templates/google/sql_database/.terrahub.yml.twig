@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_sql_database:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          instance: '${var.{{ name }}_instance}'
+          # charset: ''
+          # collation: ''
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_instance:
+        type: 'string'
+    output:
+      id:
+        value: '${google_sql_database.{{ name }}.id}'
+      thub_id:
+        value: '${google_sql_database.{{ name }}.id}'
+      self_link:
+        value: '${google_sql_database.{{ name }}.self_link}'
+      charset:
+        value: '${google_sql_database.{{ name }}.charset}'
+      collation:
+        value: '${google_sql_database.{{ name }}.collation}'
+      project:
+        value: '${google_sql_database.{{ name }}.project}'

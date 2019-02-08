@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_pinpoint_email_channel:
+        {{ name }}:
+          from_address: '${var.{{ name }}_from_address}'
+          identity: '${var.{{ name }}_identity}'
+          role_arn: '${var.{{ name }}_role_arn}'
+          application_id: '${var.{{ name }}_application_id}'
+          # enabled: false
+    variable:
+      {{ name }}_from_address:
+        type: 'string'
+      {{ name }}_identity:
+        type: 'string'
+      {{ name }}_role_arn:
+        type: 'string'
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_pinpoint_email_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_pinpoint_email_channel.{{ name }}.id}'
+      messages_per_second:
+        value: '${aws_pinpoint_email_channel.{{ name }}.messages_per_second}'

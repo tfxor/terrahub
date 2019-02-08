@@ -1,6 +1,0 @@
-resource "aws_acm_certificate" "{{ name }}" {
-  domain_name       = "${var.acm_certificate_domain_name}"
-  validation_method = "${var.acm_certificate_validation_method}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

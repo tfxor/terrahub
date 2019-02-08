@@ -1,0 +1,14 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_app_engine_application:
+        {{ name }}:
+          # split_health_checks: false
+    output:
+      id:
+        value: '${google_app_engine_application.{{ name }}.id}'
+      thub_id:
+        value: '${google_app_engine_application.{{ name }}.id}'

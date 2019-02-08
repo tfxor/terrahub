@@ -1,0 +1,47 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_recovery_services_protection_policy_vm:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          recovery_vault_name: '${var.{{ name }}_recovery_vault_name}'
+          backup: 
+            -
+              frequency: ''
+              time: ''
+          #     weekdays: 
+          # retention_daily: 
+          #   -
+          #     count: 0
+          # retention_weekly: 
+          #   -
+          #     count: 0
+          #     weekdays: []
+          # retention_yearly: 
+          #   -
+          #     count: 0
+          #     months: []
+          #     weeks: []
+          #     weekdays: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # timezone: ''
+          # retention_monthly: 
+          #   -
+          #     weeks: []
+          #     weekdays: []
+          #     count: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_recovery_vault_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id}'

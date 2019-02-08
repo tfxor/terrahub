@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sns_topic:
+        {{ name }}:
+          # policy: ''
+          # application_success_feedback_role_arn: ''
+          # application_success_feedback_sample_rate: 0
+          # http_success_feedback_sample_rate: 0
+          # kms_master_key_id: ''
+          # lambda_success_feedback_sample_rate: 0
+          # name_prefix: ''
+          # display_name: ''
+          # sqs_success_feedback_role_arn: ''
+          # sqs_success_feedback_sample_rate: 0
+          # name: ''
+          # http_failure_feedback_role_arn: ''
+          # lambda_failure_feedback_role_arn: ''
+          # delivery_policy: ''
+          # application_failure_feedback_role_arn: ''
+          # sqs_failure_feedback_role_arn: ''
+          # http_success_feedback_role_arn: ''
+          # lambda_success_feedback_role_arn: ''
+    output:
+      id:
+        value: '${aws_sns_topic.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sns_topic.{{ name }}.id}'
+      policy:
+        value: '${aws_sns_topic.{{ name }}.policy}'
+      arn:
+        value: '${aws_sns_topic.{{ name }}.arn}'
+      name:
+        value: '${aws_sns_topic.{{ name }}.name}'

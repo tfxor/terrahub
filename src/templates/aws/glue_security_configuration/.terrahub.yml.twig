@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glue_security_configuration:
+        {{ name }}:
+          encryption_configuration: 
+            -
+              cloudwatch_encryption: 
+                -
+          #         cloudwatch_encryption_mode: ''
+          #         kms_key_arn: ''
+          s3_encryption: 
+            -
+          #     kms_key_arn: ''
+          #     s3_encryption_mode: ''
+          name: '${var.{{ name }}_name}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glue_security_configuration.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glue_security_configuration.{{ name }}.id}'

@@ -1,6 +1,0 @@
-resource "aws_load_balancer_listener_policy" "{{ name }}" {
-  load_balancer_name = "${var.load_balancer_backend_server_policy_lb_name}"
-  load_balancer_port = "${var.load_balancer_backend_server_policy_lb_port}"
-
-  policy_names = ["${var.load_balancer_listener_policy_names}"]
-}

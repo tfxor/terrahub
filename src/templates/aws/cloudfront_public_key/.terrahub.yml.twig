@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudfront_public_key:
+        {{ name }}:
+          encoded_key: '${var.{{ name }}_encoded_key}'
+          # comment: ''
+          # name: ''
+          # name_prefix: ''
+    variable:
+      {{ name }}_encoded_key:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudfront_public_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudfront_public_key.{{ name }}.id}'
+      caller_reference:
+        value: '${aws_cloudfront_public_key.{{ name }}.caller_reference}'
+      etag:
+        value: '${aws_cloudfront_public_key.{{ name }}.etag}'
+      name:
+        value: '${aws_cloudfront_public_key.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_cloudfront_public_key.{{ name }}.name_prefix}'

@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_instance_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # zone: ''
+          # network: ''
+          # project: ''
+          # named_port: 
+          #   -
+          #     name: ''
+          #     port: 0
+          # description: ''
+          # instances: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_instance_group.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_instance_group.{{ name }}.id}'
+      size:
+        value: '${google_compute_instance_group.{{ name }}.size}'
+      zone:
+        value: '${google_compute_instance_group.{{ name }}.zone}'
+      network:
+        value: '${google_compute_instance_group.{{ name }}.network}'
+      project:
+        value: '${google_compute_instance_group.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_instance_group.{{ name }}.self_link}'
+      instances:
+        value: '${google_compute_instance_group.{{ name }}.instances}'

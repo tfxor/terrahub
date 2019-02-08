@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudformation_stack:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # template_url: ''
+          # capabilities: []
+          # on_failure: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # iam_role_arn: ''
+          # template_body: ''
+          # disable_rollback: false
+          # notification_arns: []
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # policy_url: ''
+          # timeout_in_minutes: 0
+          # policy_body: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudformation_stack.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudformation_stack.{{ name }}.id}'
+      template_body:
+        value: '${aws_cloudformation_stack.{{ name }}.template_body}'
+      parameters:
+        value: '${aws_cloudformation_stack.{{ name }}.parameters}'
+      outputs:
+        value: '${aws_cloudformation_stack.{{ name }}.outputs}'
+      policy_body:
+        value: '${aws_cloudformation_stack.{{ name }}.policy_body}'

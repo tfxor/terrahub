@@ -1,5 +1,0 @@
-resource "aws_eip" "{{ name }}" {
-  vpc               = "${var.eip_vpc}"
-  network_interface = "${var.eip_network_interface_id}"
-  tags              = "${merge(var.default_tags, var.custom_tags)}"
-}

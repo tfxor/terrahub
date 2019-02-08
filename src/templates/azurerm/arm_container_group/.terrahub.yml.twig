@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_container_group:
+        {{ name }}:
+          container: 
+            -
+              name: ''
+              image: ''
+              cpu: ''
+              memory: ''
+          #     port: 0
+          #     protocol: ''
+          #     ports: 
+          #     port: 0
+          #     protocol: ''
+          name: '${var.{{ name }}_name}'
+          os_type: '${var.{{ name }}_os_type}'
+          # restart_policy: ''
+          # dns_name_label: ''
+          # ip_address_type: ''
+          # image_registry_credential: 
+          #   -
+          #     server: ''
+          #     username: ''
+          #     password: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_os_type:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_container_group.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_container_group.{{ name }}.id}'
+      fqdn:
+        value: '${azurerm_arm_container_group.{{ name }}.fqdn}'
+      ip_address:
+        value: '${azurerm_arm_container_group.{{ name }}.ip_address}'

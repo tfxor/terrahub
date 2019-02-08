@@ -1,0 +1,48 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lightsail_instance:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          blueprint_id: '${var.{{ name }}_blueprint_id}'
+          availability_zone: '${var.{{ name }}_availability_zone}'
+          bundle_id: '${var.{{ name }}_bundle_id}'
+          # user_data: ''
+          # key_pair_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_blueprint_id:
+        type: 'string'
+      {{ name }}_availability_zone:
+        type: 'string'
+      {{ name }}_bundle_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lightsail_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lightsail_instance.{{ name }}.id}'
+      created_at:
+        value: '${aws_lightsail_instance.{{ name }}.created_at}'
+      ipv6_address:
+        value: '${aws_lightsail_instance.{{ name }}.ipv6_address}'
+      username:
+        value: '${aws_lightsail_instance.{{ name }}.username}'
+      arn:
+        value: '${aws_lightsail_instance.{{ name }}.arn}'
+      cpu_count:
+        value: '${aws_lightsail_instance.{{ name }}.cpu_count}'
+      ram_size:
+        value: '${aws_lightsail_instance.{{ name }}.ram_size}'
+      is_static_ip:
+        value: '${aws_lightsail_instance.{{ name }}.is_static_ip}'
+      private_ip_address:
+        value: '${aws_lightsail_instance.{{ name }}.private_ip_address}'
+      public_ip_address:
+        value: '${aws_lightsail_instance.{{ name }}.public_ip_address}'

@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_servicecatalog_portfolio:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # provider_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_servicecatalog_portfolio.{{ name }}.id}'
+      thub_id:
+        value: '${aws_servicecatalog_portfolio.{{ name }}.id}'
+      arn:
+        value: '${aws_servicecatalog_portfolio.{{ name }}.arn}'
+      created_time:
+        value: '${aws_servicecatalog_portfolio.{{ name }}.created_time}'
+      description:
+        value: '${aws_servicecatalog_portfolio.{{ name }}.description}'

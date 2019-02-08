@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ssm_patch_group:
+        {{ name }}:
+          patch_group: '${var.{{ name }}_patch_group}'
+          baseline_id: '${var.{{ name }}_baseline_id}'
+    variable:
+      {{ name }}_patch_group:
+        type: 'string'
+      {{ name }}_baseline_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ssm_patch_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ssm_patch_group.{{ name }}.id}'

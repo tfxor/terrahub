@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_load_balancer_backend_server_policy:
+        {{ name }}:
+          load_balancer_name: '${var.{{ name }}_load_balancer_name}'
+          instance_port: '${var.{{ name }}_instance_port}'
+          # policy_names: []
+    variable:
+      {{ name }}_load_balancer_name:
+        type: 'string'
+      {{ name }}_instance_port:
+        type: 'int'
+    output:
+      id:
+        value: '${aws_load_balancer_backend_server_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_load_balancer_backend_server_policy.{{ name }}.id}'

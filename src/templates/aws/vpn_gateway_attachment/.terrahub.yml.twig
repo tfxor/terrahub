@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpn_gateway_attachment:
+        {{ name }}:
+          vpc_id: '${var.{{ name }}_vpc_id}'
+          vpn_gateway_id: '${var.{{ name }}_vpn_gateway_id}'
+    variable:
+      {{ name }}_vpc_id:
+        type: 'string'
+      {{ name }}_vpn_gateway_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpn_gateway_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpn_gateway_attachment.{{ name }}.id}'

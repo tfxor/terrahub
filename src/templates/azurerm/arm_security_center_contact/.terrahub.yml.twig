@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_security_center_contact:
+        {{ name }}:
+          email: '${var.{{ name }}_email}'
+          phone: '${var.{{ name }}_phone}'
+          alert_notifications: '${var.{{ name }}_alert_notifications}'
+          alerts_to_admins: '${var.{{ name }}_alerts_to_admins}'
+    variable:
+      {{ name }}_email:
+        type: 'string'
+      {{ name }}_phone:
+        type: 'string'
+      {{ name }}_alert_notifications:
+        type: 'bool'
+      {{ name }}_alerts_to_admins:
+        type: 'bool'
+    output:
+      id:
+        value: '${azurerm_arm_security_center_contact.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_security_center_contact.{{ name }}.id}'

@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_connection_association:
+        {{ name }}:
+          connection_id: '${var.{{ name }}_connection_id}'
+          lag_id: '${var.{{ name }}_lag_id}'
+    variable:
+      {{ name }}_connection_id:
+        type: 'string'
+      {{ name }}_lag_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_connection_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_connection_association.{{ name }}.id}'

@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_service_account:
+        {{ name }}:
+          account_id: '${var.{{ name }}_account_id}'
+          # project: ''
+          # policy_data: ''
+          # display_name: ''
+    variable:
+      {{ name }}_account_id:
+        type: 'string'
+    output:
+      id:
+        value: '${google_service_account.{{ name }}.id}'
+      thub_id:
+        value: '${google_service_account.{{ name }}.id}'
+      project:
+        value: '${google_service_account.{{ name }}.project}'
+      email:
+        value: '${google_service_account.{{ name }}.email}'
+      unique_id:
+        value: '${google_service_account.{{ name }}.unique_id}'
+      name:
+        value: '${google_service_account.{{ name }}.name}'

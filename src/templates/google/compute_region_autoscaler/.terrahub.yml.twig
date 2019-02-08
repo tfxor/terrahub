@@ -1,0 +1,44 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_region_autoscaler:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          target: '${var.{{ name }}_target}'
+          autoscaling_policy: 
+            -
+              max_replicas: 0
+              min_replicas: 0
+          #     cooldown_period: 0
+          #     cpu_utilization: 
+          #       -
+          #         target: ''
+          # metric: 
+          #   -
+          #     name: ''
+          #     target: ''
+          #     type: ''
+          # description: ''
+          # region: ''
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_target:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_region_autoscaler.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_region_autoscaler.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_region_autoscaler.{{ name }}.creation_timestamp}'
+      region:
+        value: '${google_compute_region_autoscaler.{{ name }}.region}'
+      project:
+        value: '${google_compute_region_autoscaler.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_region_autoscaler.{{ name }}.self_link}'

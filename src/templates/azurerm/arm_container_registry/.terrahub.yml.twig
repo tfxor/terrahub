@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_container_registry:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # sku: ''
+          # admin_enabled: false
+          # storage_account_id: ''
+          # storage_account: []
+          # georeplication_locations: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_container_registry.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_container_registry.{{ name }}.id}'
+      admin_username:
+        value: '${azurerm_arm_container_registry.{{ name }}.admin_username}'
+      admin_password:
+        value: '${azurerm_arm_container_registry.{{ name }}.admin_password}'
+      login_server:
+        value: '${azurerm_arm_container_registry.{{ name }}.login_server}'

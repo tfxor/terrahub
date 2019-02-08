@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_gateway:
+        {{ name }}:
+          amazon_side_asn: '${var.{{ name }}_amazon_side_asn}'
+          name: '${var.{{ name }}_name}'
+    variable:
+      {{ name }}_amazon_side_asn:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dx_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dx_gateway.{{ name }}.id}'

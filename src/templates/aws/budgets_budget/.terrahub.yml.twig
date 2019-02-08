@@ -1,0 +1,60 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_budgets_budget:
+        {{ name }}:
+          time_period_start: '${var.{{ name }}_time_period_start}'
+          budget_type: '${var.{{ name }}_budget_type}'
+          limit_amount: '${var.{{ name }}_limit_amount}'
+          limit_unit: '${var.{{ name }}_limit_unit}'
+          time_unit: '${var.{{ name }}_time_unit}'
+          # name: ''
+          # cost_types: 
+          #   -
+          #     include_tax: false
+          #     use_amortized: false
+          #     use_blended: false
+          #     include_discount: false
+          #     include_other_subscription: false
+          #     include_recurring: false
+          #     include_refund: false
+          #     include_subscription: false
+          #     include_support: false
+          #     include_upfront: false
+          #     include_credit: false
+          # time_period_end: ''
+          # account_id: ''
+          # cost_filters: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+    variable:
+      {{ name }}_time_period_start:
+        type: 'string'
+      {{ name }}_budget_type:
+        type: 'string'
+      {{ name }}_limit_amount:
+        type: 'string'
+      {{ name }}_limit_unit:
+        type: 'string'
+      {{ name }}_time_unit:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_budgets_budget.{{ name }}.id}'
+      thub_id:
+        value: '${aws_budgets_budget.{{ name }}.id}'
+      name:
+        value: '${aws_budgets_budget.{{ name }}.name}'
+      cost_types:
+        value: '${aws_budgets_budget.{{ name }}.cost_types}'
+      account_id:
+        value: '${aws_budgets_budget.{{ name }}.account_id}'
+      cost_filters:
+        value: '${aws_budgets_budget.{{ name }}.cost_filters}'
+      name_prefix:
+        value: '${aws_budgets_budget.{{ name }}.name_prefix}'

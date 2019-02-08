@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_config_delivery_channel:
+        {{ name }}:
+          s3_bucket_name: '${var.{{ name }}_s3_bucket_name}'
+          # s3_key_prefix: ''
+          # sns_topic_arn: ''
+          # snapshot_delivery_properties: 
+          #   -
+          #     delivery_frequency: ''
+          # name: ''
+    variable:
+      {{ name }}_s3_bucket_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_config_delivery_channel.{{ name }}.id}'
+      thub_id:
+        value: '${aws_config_delivery_channel.{{ name }}.id}'

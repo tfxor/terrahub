@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_db_event_subscription:
+        {{ name }}:
+          sns_topic: '${var.{{ name }}_sns_topic}'
+          # name: ''
+          # event_categories: []
+          # source_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # source_type: ''
+          # enabled: false
+          # name_prefix: ''
+    variable:
+      {{ name }}_sns_topic:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_db_event_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_db_event_subscription.{{ name }}.id}'
+      name:
+        value: '${aws_db_event_subscription.{{ name }}.name}'
+      arn:
+        value: '${aws_db_event_subscription.{{ name }}.arn}'
+      customer_aws_id:
+        value: '${aws_db_event_subscription.{{ name }}.customer_aws_id}'

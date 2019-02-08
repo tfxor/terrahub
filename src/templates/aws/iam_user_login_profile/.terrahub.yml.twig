@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_user_login_profile:
+        {{ name }}:
+          user: '${var.{{ name }}_user}'
+          pgp_key: '${var.{{ name }}_pgp_key}'
+          # password_length: 0
+          # password_reset_required: false
+    variable:
+      {{ name }}_user:
+        type: 'string'
+      {{ name }}_pgp_key:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_user_login_profile.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_user_login_profile.{{ name }}.id}'
+      key_fingerprint:
+        value: '${aws_iam_user_login_profile.{{ name }}.key_fingerprint}'
+      encrypted_password:
+        value: '${aws_iam_user_login_profile.{{ name }}.encrypted_password}'

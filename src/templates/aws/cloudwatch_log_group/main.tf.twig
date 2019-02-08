@@ -1,5 +1,0 @@
-resource "aws_cloudwatch_log_group" "{{ name }}" {
-  name = "${var.cloudwatch_log_group_name}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}
