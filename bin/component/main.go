@@ -33,10 +33,10 @@ func main() {
 		cashPath = os.Args[1]
 	}	
 	if len(argsWithoutProg) > 1 {
-		terrahubComponent = os.Args[2]
+		terrahubComponentPath = os.Args[2]
 	}	
 	if len(argsWithoutProg) > 2 {
-		terrahubComponentPath = os.Args[3]
+		terrahubComponent = os.Args[3]
 	}	
 	cashComponentPath := PrepareJSON(terrahubComponent)
 	if cashComponentPath != "" {
@@ -117,6 +117,10 @@ func Clearing(input string) []byte {
 func ProccesingDotTerrahub(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "  template:")
-	sourceValue := string(input)[:endIndex]	
+	startIndex := strings.Index(string(input), "## build config")
+	sourceValue := string(input)[:endIndex]
+	if startIndex > -1 {
+		sourceValue += "\n" + string(input)[startIndex:]
+	}
 	ioutil.WriteFile(source, []byte(sourceValue), 0777)
 }
