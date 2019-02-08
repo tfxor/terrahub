@@ -9,7 +9,7 @@ const ConfigLoader = require('../config-loader');
 const { templates, commandsPath, jitPath } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
 const Downloader = require('../helpers/downloader');
-const childProcess = require('child_process');
+const { exec } = require('child-process-promise');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -98,14 +98,6 @@ class ComponentCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
-    /**
-     * @param {String} command
-     * @return {String}
-     */
-    function exec(command) {
-      return childProcess.execSync(command, { encoding: 'utf8' });
-    }
-
     const configPath = this._getConfigPath(name);
     if (!configPath) {
       return Promise.resolve();
