@@ -1,8 +1,8 @@
 package terraform
 
 import (
-	"fmt"
 	"io/ioutil"
+	"fmt"
 )
 
 type ElementParam struct {
@@ -80,9 +80,9 @@ func GenerateYml(param GenerateYmlParam) bool {
 		templateYml += "    output:\n"
 		if param.existID {
 			templateYml += "      id:\n" +
-				"        value: '${" + param.resurceType + ".{{ name }}.id}'\n"
+				"        value: '${"+param.resurceType+".{{ name }}.id}'\n"
 			templateYml += "      thub_id:\n" +
-				"        value: '${" + param.resurceType + ".{{ name }}.id}'\n"
+				"        value: '${"+param.resurceType+".{{ name }}.id}'\n"
 		}
 		templateYml += paramOutputs
 	}
@@ -112,7 +112,7 @@ func GenerateParameters(param GenerateParam) (string, string, string, string) {
 			paramOptionals += ParsingOptionalElement(parsingParam)
 			if param.haveParent == 1 && element["Computed"] != nil {
 				paramOutputs += "      " + k + ":\n" +
-					"        value: '${" + param.resurceType + ".{{ name }}." + k + "}'\n"
+					"        value: '${"+param.resurceType+".{{ name }}." + k + "}'\n"
 			}
 		}
 	}
@@ -122,7 +122,7 @@ func GenerateParameters(param GenerateParam) (string, string, string, string) {
 func SerVarHaveParentList(elementType string, haveParentList int) int {
 	if elementType == "list" {
 		return haveParentList + 1
-	}
+	} 
 	return 0
 }
 
@@ -146,14 +146,14 @@ func ParsingOptionalElement(param ElementParam) string {
 		return paramOptionals
 	}
 	switch param.element["Elem"].(type) {
-	case map[string]interface{}:
-		pReqInt, pOptInt, _, _ := GenerateParameters(
-			GenerateParam{
-				param.element["Elem"].(map[string]interface{}),
-				param.resurceType, param.paramType, param.haveParent + 1,
-				param.isRequest, param.haveParentList})
-		paramOptionals += pReqInt
-		paramOptionals += pOptInt
+		case map[string]interface{}:
+			pReqInt, pOptInt, _, _ := GenerateParameters(
+				GenerateParam{
+					param.element["Elem"].(map[string]interface{}),
+					param.resurceType, param.paramType, param.haveParent + 1,
+					param.isRequest, param.haveParentList})
+			paramOptionals += pReqInt
+			paramOptionals += pOptInt
 	}
 	return paramOptionals
 }
@@ -211,13 +211,13 @@ func ParsingElementByType(param ElementParam) string {
 	}
 	switch param.elementType {
 	case "list":
-		paramProc = SetSpaces(param.isRequest)
+	    paramProc = SetSpaces(param.isRequest)
 		startWith += param.valName + ": "
 	case "map":
-		paramProc = SetSpaces(param.isRequest)
+	    paramProc = SetSpaces(param.isRequest)
 		startWith += "'" + param.valName + "': "
 	case "set":
-		paramProc = SetSpaces(param.isRequest)
+	    paramProc = SetSpaces(param.isRequest)
 		startWith += param.valName + ": "
 	}
 	for j := 2; j <= param.haveParent; j++ {
@@ -258,7 +258,7 @@ func ReturnDefaultValueByType(param ElementParam) string {
 			defaultValueElem += "  "
 		}
 		defaultValue += ParsingDefaultValue(defaultValue, param.haveChild,
-			"[]\n", defaultValueElem+startWith+"  -\n")
+			"[]\n", defaultValueElem + startWith + "  -\n")
 	case "map":
 		for j := 2; j <= param.haveParent; j++ {
 			defaultValueElem += "  "
@@ -278,7 +278,7 @@ func ReturnDefaultValueByType(param ElementParam) string {
 
 // ParsingDefaultValue - parsing default value
 func ParsingDefaultValue(defaultValue string, haveChild bool, valueHave string, valueDoNotHave string) string {
-	if !haveChild {
+    if !haveChild {
 		defaultValue += valueHave
 	} else {
 		defaultValue += valueDoNotHave

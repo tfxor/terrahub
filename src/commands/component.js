@@ -113,7 +113,7 @@ class ComponentCommand extends AbstractCommand {
     }     
     const arch = (new Downloader()).getOsArch();
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
-console.log(`${componentBinPath}/generator -toyml ${configPath}/ ${configPath}/`)
+    
     return exec(`${componentBinPath}/generator -toyml ${configPath}/ ${configPath}/`);
   }
 
