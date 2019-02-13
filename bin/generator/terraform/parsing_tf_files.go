@@ -63,10 +63,10 @@ func RefactoringYml(source string, newYml string) string {
 	for _, match := range re.FindAllString(newYml, -1) {
 		newYml = strings.Replace(newYml, match, " {}", 1)
 	}
-	re = regexp.MustCompile(`(?m):\n          [^ ]`)
-	for _, match := range re.FindAllString(newYml, -1) {
-		newYml = strings.Replace(newYml, match, ":\n        - "+match[len(match)-1:], 1)
-	}
+	// re = regexp.MustCompile(`(?m):\n          [^ ]`)
+	// for _, match := range re.FindAllString(newYml, -1) {
+	// 	newYml = strings.Replace(newYml, match, ":\n        - "+match[len(match)-1:], 1)
+	// }
 	return newYml
 }
 
