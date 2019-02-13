@@ -79,13 +79,6 @@ class ComponentCommand extends AbstractCommand {
           return Promise.resolve('Done');
         }
       });
-    } else if (this._save) {
-      return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
-        if (!answer) {
-          return Promise.reject('Action aborted');
-        }
-        return Promise.all(names.map(it => this._saveComponent(it))).then(() => 'Done');
-      });
     } else {
       return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
@@ -106,6 +99,22 @@ class ComponentCommand extends AbstractCommand {
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
 
     return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`);
+  }
+
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  _revertComponent(name) {
+    const configPath = this._getConfigPath(name);
+    if (!configPath) {
+      return Promise.resolve();
+    }     
+    const arch = (new Downloader()).getOsArch();
+    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+    
+    return exec(`${componentBinPath}/generator -toyml ${configPath}/ ${configPath}/`);
   }
 
   /**
@@ -176,10 +185,25 @@ class ComponentCommand extends AbstractCommand {
 
         if (fse.pathExistsSync(outFile)) {
           const config = ConfigLoader.readConfig(outFile);
+          if (config.project) {
+            throw new Error(`Configuring components in project's root is NOT allowed.`);
+          }
+          
+          if (config.component.template) {
+            return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
+              if (!answer) {
+                return Promise.reject('Action aborted');
+              }
+              return this._saveComponent(name);
+            });
+          }
 
-          throw new Error(config.project
-            ? `Configuring components in project's root is NOT allowed.`
-            : `Couldn't create config because terraform component already exists.`);
+          return yesNoQuestion('Are you sure you want to compress terraform configurations into terrahub config? (Y/N) ').then(answer => {
+            if (!answer) {
+              return Promise.reject('Action aborted');
+            }
+            return this._revertComponent(name);
+          });
         }
 
         if (existing.name) {
