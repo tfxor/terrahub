@@ -70,14 +70,15 @@ func ParsingTfFile(source string, destination string) {
 			strings.Index(file.Name(), ".tfstate") == -1 &&
 			strings.Index(file.Name(), "locals.tf") == -1 {
 			newYml += StartProccesingTfFile(source + file.Name())
-			// if source == destination {
-			// 	DeleteFile(source + file.Name())
-			// }
+			if source == destination {
+				DeleteFile(source + file.Name())
+			}
 		}
 	}
-	// if source == destination {
-	// 	DeleteFile(source + "locals.tf")
-	// }
+	if source == destination {
+		DeleteFile(source + "locals.tf")
+		DeleteFile(source + "default.tfvars")
+	}
 
 	ioutil.WriteFile(destination+".terrahub.yml", []byte(RefactoringYml(source, newYml)), 0777)
 }
@@ -90,10 +91,6 @@ func RefactoringYml(source string, newYml string) string {
 	for _, match := range re.FindAllString(newYml, -1) {
 		newYml = strings.Replace(newYml, match, " {}", 1)
 	}
-	// re = regexp.MustCompile(`(?m):\n          [^ ]`)
-	// for _, match := range re.FindAllString(newYml, -1) {
-	// 	newYml = strings.Replace(newYml, match, ":\n        - "+match[len(match)-1:], 1)
-	// }
 	return newYml
 }
 
@@ -234,6 +231,5 @@ func AddTfVars(source string, context string) string {
 		newYml = strings.Replace(newYml, match, "      "+match, 1)
 	}
 	newYml = strings.Replace(newYml, "- ", "  ", -1)
-	// DeleteFile(source + "default.tfvars")
 	return context + "tfvars:\n" + newYml
 }
