@@ -24,6 +24,14 @@ $ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
 $ generator -toyml [path_to_input_hcl] [path_to_output_config]
 ```
 
+Compress terraform configurations into terrahub config
+Scanning all children directories
+
+```sh
+$ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
+$ generator -toymlfolder [path_to_input_hcl_parent_folder] [path_to_output_config_parent_folder]
+```
+
 ## Install Linux
 
 Here's how it could look for 64 bits Linux, if you wanted `generator` available globally:

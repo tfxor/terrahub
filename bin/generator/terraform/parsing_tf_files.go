@@ -25,6 +25,31 @@ type Element struct {
 	Elements []interface{}
 }
 
+// ParsingFolderTfFile - parsing all tf file from directory
+func ParsingFolderTfFile(source string, destination string) {
+	f, err := os.Open(source)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, file := range fileInfo {
+		if file.IsDir() {
+			if source != destination {
+				_, err := os.Open(destination + file.Name())
+				if err != nil {
+					CreateFolder(destination + file.Name())
+				}
+			}
+			fmt.Println(source+file.Name()+"/", destination+file.Name()+"/")
+			ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
+		}
+	}
+}
+
 // ParsingTfFile - parsing all tf file from directory
 func ParsingTfFile(source string, destination string) {
 	f, err := os.Open(source)
@@ -41,16 +66,18 @@ func ParsingTfFile(source string, destination string) {
 		if strings.Index(file.Name(), ".tf") > -1 &&
 			!file.IsDir() &&
 			strings.Index(file.Name(), ".tfvars") == -1 &&
+			strings.Index(file.Name(), ".tfplan") == -1 &&
+			strings.Index(file.Name(), ".tfstate") == -1 &&
 			strings.Index(file.Name(), "locals.tf") == -1 {
 			newYml += StartProccesingTfFile(source + file.Name())
-			if source == destination {
-				DeleteFile(source + file.Name())
-			}
+			// if source == destination {
+			// 	DeleteFile(source + file.Name())
+			// }
 		}
 	}
-	if source == destination {
-		DeleteFile(source + "locals.tf")
-	}
+	// if source == destination {
+	// 	DeleteFile(source + "locals.tf")
+	// }
 
 	ioutil.WriteFile(destination+".terrahub.yml", []byte(RefactoringYml(source, newYml)), 0777)
 }
@@ -102,7 +129,9 @@ func NormalizeJson(jsonLoad []byte) []byte {
 	uniqKeys := CheckElementByType([]Element{}, m)
 
 	for _, value := range uniqKeys {
-		m[value.GK].([]interface{})[value.SK].(map[string]interface{})[value.EK] = value.Elements
+		if m[value.GK].([]interface{})[value.SK] != nil {
+			m[value.GK].([]interface{})[value.SK].(map[string]interface{})[value.EK] = value.Elements
+		}
 	}
 
 	jsonLoad, err = json.Marshal(m)
@@ -175,14 +204,18 @@ func PrepareNewYmlFromOld(source string, context string) string {
 	oldYml, err := ioutil.ReadFile(source + ".terrahub.yml")
 	if err != nil {
 		paths := strings.Split(source, "/")
-		newYml += "## local config\n" +
+		return newYml + "## local config\n" +
 			"component:\n" +
 			"  name: '" + paths[len(paths)-2] + "'\n" + context
-	} else {
-		re := regexp.MustCompile(`(?m)\n\n`)
-		for _, match := range re.FindAllString(string(oldYml), -1) {
-			newYml = strings.Replace(string(oldYml), match, "\n"+context+"\n", 1)
-		}
+	}
+	replaced := true
+	re := regexp.MustCompile(`(?m)\n\n`)
+	for _, match := range re.FindAllString(string(oldYml), -1) {
+		replaced = false
+		newYml = strings.Replace(string(oldYml), match, "\n"+context+"\n", 1)
+	}
+	if replaced {
+		newYml += string(oldYml) + context
 	}
 	return newYml
 }
@@ -201,6 +234,6 @@ func AddTfVars(source string, context string) string {
 		newYml = strings.Replace(newYml, match, "      "+match, 1)
 	}
 	newYml = strings.Replace(newYml, "- ", "  ", -1)
-	DeleteFile(source + "default.tfvars")
+	// DeleteFile(source + "default.tfvars")
 	return context + "tfvars:\n" + newYml
 }
