@@ -38,13 +38,10 @@ func ParsingFolderTfFile(source string, destination string) {
 	}
 	for _, file := range fileInfo {
 		if file.IsDir() {
-			if source != destination {
-				_, err := os.Open(destination + file.Name())
-				if err != nil {
-					CreateFolder(destination + file.Name())
-				}
+			_, err := os.Open(destination + file.Name())
+			if err != nil {
+				CreateFolder(destination + file.Name())
 			}
-			fmt.Println(source+file.Name()+"/", destination+file.Name()+"/")
 			ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
 		}
 	}
@@ -63,11 +60,8 @@ func ParsingTfFile(source string, destination string) {
 	}
 	newYml := ""
 	for _, file := range fileInfo {
-		if strings.Index(file.Name(), ".tf") > -1 &&
+		if file.Name()[len(file.Name())-3:] == ".tf" &&
 			!file.IsDir() &&
-			strings.Index(file.Name(), ".tfvars") == -1 &&
-			strings.Index(file.Name(), ".tfplan") == -1 &&
-			strings.Index(file.Name(), ".tfstate") == -1 &&
 			strings.Index(file.Name(), "locals.tf") == -1 {
 			newYml += StartProccesingTfFile(source + file.Name())
 			if source == destination {
