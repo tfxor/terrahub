@@ -5,13 +5,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/hashicorp/hcl"
 )
+
+type Keys struct {
+	GK string
+	SK int
+	EK string
+}
 
 type Element struct {
 	GK       string
@@ -39,17 +44,18 @@ func ParsingTfFile(source string, destination string) {
 			strings.Index(file.Name(), "locals.tf") == -1 {
 			newYml += StartProccesingTfFile(source + file.Name())
 			if source == destination {
-				cmd := exec.Command("rm", "-rf", source+file.Name())
-				if err := cmd.Run(); err != nil {
-					fmt.Println(err)
-				}
-				cmd = exec.Command("rm", source+"locals.tf")
-				if err := cmd.Run(); err != nil {
-					fmt.Println(err)
-				}
+				DeleteFile(source + file.Name())
 			}
 		}
 	}
+	if source == destination {
+		DeleteFile(source + "locals.tf")
+	}
+
+	ioutil.WriteFile(destination+".terrahub.yml", []byte(RefactoringYml(source, newYml)), 0777)
+}
+
+func RefactoringYml(source string, newYml string) string {
 	newYml = strings.Replace(newYml, "\n", "\n    ", -1)
 	newYml = strings.Replace(newYml, "- ", "  ", -1)
 	newYml = PrepareNewYmlFromOld(source, "  template:\n    "+newYml)
@@ -61,7 +67,7 @@ func ParsingTfFile(source string, destination string) {
 	for _, match := range re.FindAllString(newYml, -1) {
 		newYml = strings.Replace(newYml, match, ":\n        - "+match[len(match)-1:], 1)
 	}
-	ioutil.WriteFile(destination+".terrahub.yml", []byte(newYml), 0777)
+	return newYml
 }
 
 // StartProccesingTfFile - Start proccesing
@@ -116,22 +122,28 @@ func CheckElementByType(uniqKeys []Element, m map[string]interface{}) []Element 
 			for key, value1 := range element {
 				switch value1.(type) {
 				case map[string]interface{}:
-					element2 := element[key].(map[string]interface{})
-					for key2, value2 := range element2 {
-						switch value2.(type) {
-						case []interface{}:
-							if !Contains(uniqKeys, key2) {
-								elements := make([]interface{}, 0)
-								elements = append(elements, value2)
-								uniqKeys = append(uniqKeys, Element{k, key, key2, elements})
-							} else {
-								lE := uniqKeys[ReturnElement(uniqKeys, key2)]
-								lE.Elements = append(lE.Elements, value2)
-								m[k].([]interface{})[key] = nil
-							}
-						}
-					}
+					keys := Keys{k, key, ""}
+					uniqKeys = CheckElementByTypeStep3(uniqKeys, m, keys, element)
 				}
+			}
+		}
+	}
+	return uniqKeys
+}
+
+func CheckElementByTypeStep3(uniqKeys []Element, m map[string]interface{}, keys Keys, element []interface{}) []Element {
+	element2 := element[keys.SK].(map[string]interface{})
+	for key2, value2 := range element2 {
+		switch value2.(type) {
+		case []interface{}:
+			if !Contains(uniqKeys, key2) {
+				elements := make([]interface{}, 0)
+				elements = append(elements, value2)
+				uniqKeys = append(uniqKeys, Element{keys.GK, keys.SK, key2, elements})
+			} else {
+				lE := uniqKeys[ReturnElement(uniqKeys, key2)]
+				lE.Elements = append(lE.Elements, value2)
+				m[keys.GK].([]interface{})[keys.SK] = nil
 			}
 		}
 	}
@@ -189,9 +201,6 @@ func AddTfVars(source string, context string) string {
 		newYml = strings.Replace(newYml, match, "      "+match, 1)
 	}
 	newYml = strings.Replace(newYml, "- ", "  ", -1)
-	cmd := exec.Command("rm", source+"default.tfvars")
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-	}
+	DeleteFile(source + "default.tfvars")
 	return context + "tfvars:\n" + newYml
 }
