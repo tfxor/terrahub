@@ -33,3 +33,10 @@ func DeleteFile(path string) {
 		fmt.Println(err)
 	}
 }
+
+func CreateFolder(path string) {
+	cmd := exec.Command("mkdir", path)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+	}
+}
