@@ -32,7 +32,7 @@ func Generation(provider string, source string, destination string) {
 // StartProccesingFile - Start proccesing
 func StartProccesingFile(source string, destination string, fileName string, provider string) {
 	err, result, existID := ParsingFile(source, fileName, provider)
-	
+
 	if err {
 		fmt.Println("=====Error=====")
 		fmt.Println("Provider: " + provider)

@@ -1,17 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
-	"io/ioutil"
-	"bytes"
 
-	jsonParser "github.com/hashicorp/hcl/json/parser"
 	"github.com/hashicorp/hcl/hcl/printer"
+	jsonParser "github.com/hashicorp/hcl/json/parser"
 )
 
 // VERSION is what is returned by the `-v` flag
@@ -24,25 +24,25 @@ func main() {
 		fmt.Println(Version)
 		return
 	}
-	
+
 	argsWithoutProg := os.Args[1:]
 	terrahubComponent := ""
 	terrahubComponentPath := ""
 	cashPath := ""
 	if len(argsWithoutProg) > 0 {
 		cashPath = os.Args[1]
-	}	
+	}
 	if len(argsWithoutProg) > 1 {
 		terrahubComponentPath = os.Args[2]
-	}	
+	}
 	if len(argsWithoutProg) > 2 {
 		terrahubComponent = os.Args[3]
-	}	
-	cashComponentPath := PrepareJSON(terrahubComponent)
-	if cashComponentPath != "" {		
-		GenerateHcl(cashPath + "/" + cashComponentPath + "/", terrahubComponentPath)
 	}
-	
+	cashComponentPath := PrepareJSON(terrahubComponent)
+	if cashComponentPath != "" {
+		GenerateHcl(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
+	}
+
 }
 
 func PrepareJSON(terrahubComponent string) string {
@@ -59,7 +59,7 @@ func PrepareJSON(terrahubComponent string) string {
 	sha := string(cmdOut)
 	re := regexp.MustCompile(`(?m).+?✅`)
 	for _, match := range re.FindAllString(sha, -1) {
-		match = strings.Replace(match,"✅","",-1)
+		match = strings.Replace(match, "✅", "", -1)
 		return match
 	}
 	return ""
@@ -77,22 +77,22 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {			
-			StartProccesingFile(sourcePath + file.Name(), destinationPath + "/" + file.Name())
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
+			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
 }
 
 func StartProccesingFile(source string, destination string) {
-	input, _ := ioutil.ReadFile(source)		
-	sourceValue := strings.Replace(string(input),"null","",-1)
-	sourceValue = strings.Replace(sourceValue,"NULL","",-1)
+	input, _ := ioutil.ReadFile(source)
+	sourceValue := strings.Replace(string(input), "null", "", -1)
+	sourceValue = strings.Replace(sourceValue, "NULL", "", -1)
 	ast, err := jsonParser.Parse([]byte(sourceValue))
 	if err != nil {
 		fmt.Printf("unable to parse JSON: %s", err)
 	}
-    var b bytes.Buffer
+	var b bytes.Buffer
 	err = printer.Fprint(&b, ast)
 	if err != nil {
 		fmt.Printf("unable to print HCL: %s", err)
@@ -101,19 +101,19 @@ func StartProccesingFile(source string, destination string) {
 }
 
 func Clearing(input string) []byte {
-	input = strings.Replace(input, "\"resource\"", "resource",-1)
-	input = strings.Replace(input, "\"data\"", "data",-1)
-	input = strings.Replace(input, "\"output\"", "output",-1)
-	input = strings.Replace(input, "\"module\"", "module",-1)
-	input = strings.Replace(input, "\"provider\"", "provider",-1)
-	input = strings.Replace(input, "\"backend\"", "backend",-1)
-	input = strings.Replace(input, "\"variable\"", "variable",-1)
+	input = strings.Replace(input, "\"resource\"", "resource", -1)
+	input = strings.Replace(input, "\"data\"", "data", -1)
+	input = strings.Replace(input, "\"output\"", "output", -1)
+	input = strings.Replace(input, "\"module\"", "module", -1)
+	input = strings.Replace(input, "\"provider\"", "provider", -1)
+	input = strings.Replace(input, "\"backend\"", "backend", -1)
+	input = strings.Replace(input, "\"variable\"", "variable", -1)
 	re := regexp.MustCompile(`(?m)\".+?\" =`)
 	for _, match := range re.FindAllString(input, -1) {
-		input = strings.Replace(input, match, strings.Replace(match,"\"","",-1),-1)
-	}	
-	input = strings.Replace(input,"\\n","\n",-1)
-	input = strings.Replace(input,"\\","",-1)
+		input = strings.Replace(input, match, strings.Replace(match, "\"", "", -1), -1)
+	}
+	input = strings.Replace(input, "\\n", "\n", -1)
+	input = strings.Replace(input, "\\", "", -1)
 	return []byte(input)
 }
 
@@ -125,7 +125,7 @@ func ProccesingDotTerrahub(source string) {
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
 	}
-	sourceValue = strings.Replace(sourceValue,"\\n","\n",-1)
-	sourceValue = strings.Replace(sourceValue,"\\","",-1)
+	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
+	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
 	ioutil.WriteFile(source, []byte(sourceValue), 0777)
 }
