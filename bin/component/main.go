@@ -77,7 +77,7 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() {
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
 			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
@@ -88,7 +88,6 @@ func StartProccesingFile(source string, destination string) {
 	input, _ := ioutil.ReadFile(source)
 	sourceValue := strings.Replace(string(input), "null", "", -1)
 	sourceValue = strings.Replace(sourceValue, "NULL", "", -1)
-	// fmt.Println(string(input))
 	ast, err := jsonParser.Parse([]byte(sourceValue))
 	if err != nil {
 		fmt.Printf("unable to parse JSON: %s", err)
@@ -113,6 +112,8 @@ func Clearing(input string) []byte {
 	for _, match := range re.FindAllString(input, -1) {
 		input = strings.Replace(input, match, strings.Replace(match, "\"", "", -1), -1)
 	}
+	input = strings.Replace(input, "\\n", "\n", -1)
+	input = strings.Replace(input, "\\", "", -1)
 	return []byte(input)
 }
 
@@ -124,5 +125,7 @@ func ProccesingDotTerrahub(source string) {
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
 	}
+	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
+	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
 	ioutil.WriteFile(source, []byte(sourceValue), 0777)
 }

@@ -26,3 +26,17 @@ func DeleteFolder(url string) bool {
 	fmt.Println("Success")
 	return true
 }
+
+func DeleteFile(path string) {
+	cmd := exec.Command("rm", path)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func CreateFolder(path string) {
+	cmd := exec.Command("mkdir", path)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+	}
+}
