@@ -98,13 +98,7 @@ func ScanRec(interYml string) string {
 	scanner := bufio.NewScanner(strings.NewReader(interYml))
 	for scanner.Scan() {
 		line := scanner.Text()
-		spaces := 0
-		for _, v := range line {
-			if v != ' ' {
-				break
-			}
-			spaces++
-		}
+		spaces := SpaceCount(line)
 		isVariable := strings.Index(line, ":")
 		if spaces <= 10 && isVariable != -1 {
 			line = strings.Replace(line, "- - ", "# ", 1)
@@ -117,6 +111,17 @@ func ScanRec(interYml string) string {
 		newYml += line + "\n"
 	}
 	return newYml
+}
+
+func SpaceCount(line string) int {
+	spaces := 0
+	for _, v := range line {
+		if v != ' ' {
+			break
+		}
+		spaces++
+	}
+	return spaces
 }
 
 // StartProccesingTfFile - Start proccesing
