@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 )
 
@@ -28,9 +29,12 @@ func DeleteFolder(url string) bool {
 }
 
 func DeleteFile(path string) {
-	cmd := exec.Command("rm", path)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
+	_, err := ioutil.ReadFile(path)
+	if err == nil {
+		cmd := exec.Command("rm", path)
+		if err := cmd.Run(); err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 

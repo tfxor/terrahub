@@ -1,6 +1,7 @@
 package terraform
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -71,19 +72,49 @@ func ParsingTfFile(source string, destination string) {
 	}
 	if source == destination {
 		DeleteFile(source + "locals.tf")
-		DeleteFile(source + "default.tfvars")
 	}
 
 	ioutil.WriteFile(destination+".terrahub.yml", []byte(RefactoringYml(source, newYml)), 0777)
 }
 
 func RefactoringYml(source string, newYml string) string {
-	newYml = strings.Replace(newYml, "\n", "\n    ", -1)
-	newYml = strings.Replace(newYml, "- ", "  ", -1)
-	newYml = PrepareNewYmlFromOld(source, "  template:\n    "+newYml)
+	interYml := ""
+	scanner := bufio.NewScanner(strings.NewReader(newYml))
+	for scanner.Scan() {
+		interYml += "\n    " + scanner.Text()
+	}
+	newYml = ScanRec(interYml)
+	newYml = strings.Replace(newYml, "# ", "  ", -1)
+	newYml = PrepareNewYmlFromOld(source, "  template:"+newYml)
 	re := regexp.MustCompile(`(?m)\n(.+?|){}`)
 	for _, match := range re.FindAllString(newYml, -1) {
 		newYml = strings.Replace(newYml, match, " {}", 1)
+	}
+	return newYml + "\n"
+}
+
+func ScanRec(interYml string) string {
+	newYml := ""
+	scanner := bufio.NewScanner(strings.NewReader(interYml))
+	for scanner.Scan() {
+		line := scanner.Text()
+		spaces := 0
+		for _, v := range line {
+			if v != ' ' {
+				break
+			}
+			spaces++
+		}
+		isVariable := strings.Index(line, ":")
+		if spaces <= 10 && isVariable != -1 {
+			line = strings.Replace(line, "- - ", "# ", 1)
+			line = strings.Replace(line, "- ", "  ", 1)
+		}
+		if spaces >= 10 {
+			line = line[2:]
+		}
+
+		newYml += line + "\n"
 	}
 	return newYml
 }
@@ -111,14 +142,16 @@ func StartProccesingTfFile(filePath string) string {
 	return string(y)
 }
 
+var uniqKeys []Element
+
 func NormalizeJson(jsonLoad []byte) []byte {
 	var m map[string]interface{}
 	err := json.Unmarshal(jsonLoad, &m)
 	if err != nil {
 		panic(err)
 	}
-	uniqKeys := CheckElementByType([]Element{}, m)
-
+	uniqKeys = []Element{}
+	CheckElementByType(m)
 	for _, value := range uniqKeys {
 		if m[value.GK].([]interface{})[value.SK] != nil {
 			m[value.GK].([]interface{})[value.SK].(map[string]interface{})[value.EK] = value.Elements
@@ -134,7 +167,7 @@ func NormalizeJson(jsonLoad []byte) []byte {
 	return []byte(newJson)
 }
 
-func CheckElementByType(uniqKeys []Element, m map[string]interface{}) []Element {
+func CheckElementByType(m map[string]interface{}) {
 	for k, v := range m {
 		switch v.(type) {
 		case []interface{}:
@@ -143,15 +176,14 @@ func CheckElementByType(uniqKeys []Element, m map[string]interface{}) []Element 
 				switch value1.(type) {
 				case map[string]interface{}:
 					keys := Keys{k, key, ""}
-					uniqKeys = CheckElementByTypeStep3(uniqKeys, m, keys, element)
+					CheckElementByTypeStep3(m, keys, element)
 				}
 			}
 		}
 	}
-	return uniqKeys
 }
 
-func CheckElementByTypeStep3(uniqKeys []Element, m map[string]interface{}, keys Keys, element []interface{}) []Element {
+func CheckElementByTypeStep3(m map[string]interface{}, keys Keys, element []interface{}) {
 	element2 := element[keys.SK].(map[string]interface{})
 	for key2, value2 := range element2 {
 		switch value2.(type) {
@@ -161,13 +193,12 @@ func CheckElementByTypeStep3(uniqKeys []Element, m map[string]interface{}, keys 
 				elements = append(elements, value2)
 				uniqKeys = append(uniqKeys, Element{keys.GK, keys.SK, key2, elements})
 			} else {
-				lE := uniqKeys[ReturnElement(uniqKeys, key2)]
-				lE.Elements = append(lE.Elements, value2)
+				lEKey := ReturnElement(uniqKeys, key2)
+				uniqKeys[lEKey].Elements = append(uniqKeys[lEKey].Elements, value2)
 				m[keys.GK].([]interface{})[keys.SK] = nil
 			}
 		}
 	}
-	return uniqKeys
 }
 
 func Contains(arr []Element, str string) bool {
@@ -220,10 +251,11 @@ func AddTfVars(source string, context string) string {
 	}
 
 	newYml = StartProccesingTfFile(source + "default.tfvars")
-	re := regexp.MustCompile(`(?m).+?\n`)
-	for _, match := range re.FindAllString(newYml, -1) {
-		newYml = strings.Replace(newYml, match, "      "+match, 1)
+	interYml := ""
+	scanner := bufio.NewScanner(strings.NewReader(newYml))
+	for scanner.Scan() {
+		interYml += "\n      " + scanner.Text()
 	}
-	newYml = strings.Replace(newYml, "- ", "  ", -1)
-	return context + "tfvars:\n" + newYml
+	DeleteFile(source + "default.tfvars")
+	return context + "    tfvars:" + interYml
 }
