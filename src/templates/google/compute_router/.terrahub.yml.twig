@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_router:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          network: '${var.{{ name }}_network}'
+          # bgp: 
+          #   -
+          #     asn: 0
+          #     advertised_ip_ranges: 
+          #       -
+          #         description: ''
+          #         range: ''
+          #     advertise_mode: ''
+          #     advertised_groups: 
+          #       -
+          # description: ''
+          # region: ''
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_network:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_router.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_router.{{ name }}.id}'
+      region:
+        value: '${google_compute_router.{{ name }}.region}'
+      creation_timestamp:
+        value: '${google_compute_router.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_router.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_router.{{ name }}.self_link}'

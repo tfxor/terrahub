@@ -1,6 +1,0 @@
-resource "aws_api_gateway_integration_response" "{{ name }}" {
-  rest_api_id = "${var.aws_api_gateway_rest_api_id}"
-  resource_id = "${var.aws_api_gateway_resource_id}"
-  http_method = "${var.aws_api_gateway_method_http_method}"
-  status_code = "${var.aws_api_gateway_status_code}"
-}

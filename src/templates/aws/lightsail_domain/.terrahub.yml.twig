@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lightsail_domain:
+        {{ name }}:
+          domain_name: '${var.{{ name }}_domain_name}'
+    variable:
+      {{ name }}_domain_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lightsail_domain.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lightsail_domain.{{ name }}.id}'
+      arn:
+        value: '${aws_lightsail_domain.{{ name }}.arn}'

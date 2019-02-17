@@ -1,0 +1,107 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_lambda_function:
+        {{ name }}:
+          function_name: '${var.{{ name }}_function_name}'
+          handler: '${var.{{ name }}_handler}'
+          runtime: '${var.{{ name }}_runtime}'
+          role: '${var.{{ name }}_role}'
+          # vpc_config: 
+          #   -
+          #     subnet_ids: []
+          #     security_group_ids: []
+          # kms_key_arn: ''
+          # filename: ''
+          # layers: []
+          # publish: false
+          # source_code_hash: ''
+          # s3_bucket: ''
+          # dead_letter_config: 
+          #   -
+          #     target_arn: ''
+          # reserved_concurrent_executions: 0
+          # tracing_config: 
+          #   -
+          #     mode: ''
+          # s3_key: ''
+          # memory_size: 0
+          # timeout: 0
+          # s3_object_version: ''
+          # environment: 
+          #   -
+          #     variables: 
+          #       '[TO_BE_REPLACED]': ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_function_name:
+        type: 'string'
+      {{ name }}_handler:
+        type: 'string'
+      {{ name }}_runtime:
+        type: 'string'
+      {{ name }}_role:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_lambda_function.{{ name }}.id}'
+      thub_id:
+        value: '${aws_lambda_function.{{ name }}.id}'
+      qualified_arn:
+        value: '${aws_lambda_function.{{ name }}.qualified_arn}'
+      invoke_arn:
+        value: '${aws_lambda_function.{{ name }}.invoke_arn}'
+      source_code_hash:
+        value: '${aws_lambda_function.{{ name }}.source_code_hash}'
+      tracing_config:
+        value: '${aws_lambda_function.{{ name }}.tracing_config}'
+      source_code_size:
+        value: '${aws_lambda_function.{{ name }}.source_code_size}'
+      version:
+        value: '${aws_lambda_function.{{ name }}.version}'
+      last_modified:
+        value: '${aws_lambda_function.{{ name }}.last_modified}'
+      arn:
+        value: '${aws_lambda_function.{{ name }}.arn}'
+
+## build config
+# build:
+#   env:
+#     variables:
+#       THUB_ENV: 'dev'
+#       THUB_LAMBDA_ZIP: 'nodejs8.10.zip'
+#       THUB_LAMBDA_TXT: 'nodejs8.10.txt'
+#       THUB_S3_PATH: 's3://'
+#       THUB_BUILD_PATH: './build'
+#       THUB_BUILD_OK: 'false'
+#   phases:
+#     pre_build:
+#       commands:
+#         - echo "BUILD: Running pre_build step"
+#         - ./scripts/download.sh $THUB_LAMBDA_TXT $THUB_S3_PATH/$THUB_LAMBDA_TXT
+#         - ./scripts/compare.sh $THUB_LAMBDA_TXT
+#       finally:
+#         - echo "BUILD: pre_build step successful"
+#     build:
+#       commands:
+#         - echo "BUILD: Running build step"
+#         - ./scripts/compile.sh
+#       finally:
+#         - echo "BUILD: build step successful"
+#     post_build:
+#       commands:
+#         - echo "BUILD: Running post_build step"
+#         - ./scripts/shasum.sh $THUB_LAMBDA_TXT
+#         - ./scripts/zip.sh $THUB_LAMBDA_ZIP $THUB_BUILD_PATH/*.js*
+#         - ./scripts/upload.sh $THUB_LAMBDA_ZIP $THUB_S3_PATH/$THUB_LAMBDA_ZIP
+#         - ./scripts/upload.sh $THUB_LAMBDA_TXT $THUB_S3_PATH/$THUB_LAMBDA_TXT
+#         - rm -f .terrahub_build.env $THUB_LAMBDA_ZIP
+#       finally:
+#         - echo "BUILD: post_build step successful"

@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_method:
+        {{ name }}:
+          http_method: '${var.{{ name }}_http_method}'
+          authorization: '${var.{{ name }}_authorization}'
+          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          resource_id: '${var.{{ name }}_resource_id}'
+          # api_key_required: false
+          # request_parameters_in_json: ''
+          # authorizer_id: ''
+          # authorization_scopes: []
+          # request_models: 
+          #   '[TO_BE_REPLACED]': ''
+          # request_parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # request_validator_id: ''
+    variable:
+      {{ name }}_http_method:
+        type: 'string'
+      {{ name }}_authorization:
+        type: 'string'
+      {{ name }}_rest_api_id:
+        type: 'string'
+      {{ name }}_resource_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_api_gateway_method.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_method.{{ name }}.id}'

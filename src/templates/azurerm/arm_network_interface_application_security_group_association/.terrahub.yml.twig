@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_network_interface_application_security_group_association:
+        {{ name }}:
+          network_interface_id: '${var.{{ name }}_network_interface_id}'
+          ip_configuration_name: '${var.{{ name }}_ip_configuration_name}'
+          application_security_group_id: '${var.{{ name }}_application_security_group_id}'
+    variable:
+      {{ name }}_network_interface_id:
+        type: 'string'
+      {{ name }}_ip_configuration_name:
+        type: 'string'
+      {{ name }}_application_security_group_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_network_interface_application_security_group_association.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_network_interface_application_security_group_association.{{ name }}.id}'

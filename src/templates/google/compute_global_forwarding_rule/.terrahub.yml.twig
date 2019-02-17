@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_global_forwarding_rule:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          target: '${var.{{ name }}_target}'
+          # description: ''
+          # ip_address: ''
+          # ip_protocol: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # port_range: ''
+          # ip_version: ''
+          # project: ''
+          # region: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_target:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.id}'
+      ip_address:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.ip_address}'
+      ip_protocol:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.ip_protocol}'
+      label_fingerprint:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.label_fingerprint}'
+      project:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_global_forwarding_rule.{{ name }}.self_link}'

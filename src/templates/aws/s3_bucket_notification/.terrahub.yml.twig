@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_s3_bucket_notification:
+        {{ name }}:
+          bucket: '${var.{{ name }}_bucket}'
+          # topic: 
+          #   -
+          #     topic_arn: ''
+          #     events: []
+          #     filter_prefix: ''
+          #     filter_suffix: ''
+          #     id: ''
+          # queue: 
+          #   -
+          #     queue_arn: ''
+          #     events: []
+          #     id: ''
+          #     filter_prefix: ''
+          #     filter_suffix: ''
+          # lambda_function: 
+          #   -
+          #     events: []
+          #     id: ''
+          #     filter_prefix: ''
+          #     filter_suffix: ''
+          #     lambda_function_arn: ''
+    variable:
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_s3_bucket_notification.{{ name }}.id}'
+      thub_id:
+        value: '${aws_s3_bucket_notification.{{ name }}.id}'

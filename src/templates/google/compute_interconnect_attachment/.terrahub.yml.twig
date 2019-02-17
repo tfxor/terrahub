@@ -1,0 +1,52 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_interconnect_attachment:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          router: '${var.{{ name }}_router}'
+          # type: ''
+          # interconnect: ''
+          # region: ''
+          # candidate_subnets: []
+          # project: ''
+          # description: ''
+          # edge_availability_domain: ''
+          # vlan_tag8021q: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_router:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_interconnect_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_interconnect_attachment.{{ name }}.id}'
+      type:
+        value: '${google_compute_interconnect_attachment.{{ name }}.type}'
+      pairing_key:
+        value: '${google_compute_interconnect_attachment.{{ name }}.pairing_key}'
+      private_interconnect_info:
+        value: '${google_compute_interconnect_attachment.{{ name }}.private_interconnect_info}'
+      self_link:
+        value: '${google_compute_interconnect_attachment.{{ name }}.self_link}'
+      region:
+        value: '${google_compute_interconnect_attachment.{{ name }}.region}'
+      cloud_router_ip_address:
+        value: '${google_compute_interconnect_attachment.{{ name }}.cloud_router_ip_address}'
+      creation_timestamp:
+        value: '${google_compute_interconnect_attachment.{{ name }}.creation_timestamp}'
+      google_reference_id:
+        value: '${google_compute_interconnect_attachment.{{ name }}.google_reference_id}'
+      partner_asn:
+        value: '${google_compute_interconnect_attachment.{{ name }}.partner_asn}'
+      state:
+        value: '${google_compute_interconnect_attachment.{{ name }}.state}'
+      project:
+        value: '${google_compute_interconnect_attachment.{{ name }}.project}'
+      customer_router_ip_address:
+        value: '${google_compute_interconnect_attachment.{{ name }}.customer_router_ip_address}'

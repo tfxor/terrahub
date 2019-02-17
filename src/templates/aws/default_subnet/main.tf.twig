@@ -1,5 +1,0 @@
-resource "aws_default_subnet" "{{ name }}" {
-  availability_zone = "${var.default_subnet_availability_zone}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

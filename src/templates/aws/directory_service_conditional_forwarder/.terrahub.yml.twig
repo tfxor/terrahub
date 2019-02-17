@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_directory_service_conditional_forwarder:
+        {{ name }}:
+          directory_id: '${var.{{ name }}_directory_id}'
+          dns_ips: '${var.{{ name }}_dns_ips}'
+          remote_domain_name: '${var.{{ name }}_remote_domain_name}'
+    variable:
+      {{ name }}_directory_id:
+        type: 'string'
+      {{ name }}_dns_ips:
+        type: 'list'
+      {{ name }}_remote_domain_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_directory_service_conditional_forwarder.{{ name }}.id}'
+      thub_id:
+        value: '${aws_directory_service_conditional_forwarder.{{ name }}.id}'

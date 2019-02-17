@@ -67,6 +67,7 @@ module.exports = {
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
   cfgPath: cfgPath,
+  jitPath: path.join('cache', 'jit'),
   config: {
     api: cfg.api,
     env: cfg.env,
@@ -80,11 +81,8 @@ module.exports = {
     usePhysicalCpu: cfg.usePhysicalCpu
   },
   templates: {
-    aws: path.join(templates, 'aws'),
-    azurerm: path.join(templates, 'azurerm'),
-    gcp: path.join(templates, 'gcp'),
+    path: path.join(templates, 'templates'),
     config: path.join(templates, 'config'),
-    mapping: path.join(templates, 'mapping.json'),
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),
     helpDefault: path.join(templates, 'help', 'default.twig'),

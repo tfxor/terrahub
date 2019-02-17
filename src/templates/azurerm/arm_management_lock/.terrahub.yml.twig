@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_management_lock:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          scope: '${var.{{ name }}_scope}'
+          lock_level: '${var.{{ name }}_lock_level}'
+          # notes: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_scope:
+        type: 'string'
+      {{ name }}_lock_level:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_management_lock.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_management_lock.{{ name }}.id}'

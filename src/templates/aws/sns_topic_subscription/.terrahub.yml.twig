@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sns_topic_subscription:
+        {{ name }}:
+          protocol: '${var.{{ name }}_protocol}'
+          topic_arn: '${var.{{ name }}_topic_arn}'
+          endpoint: '${var.{{ name }}_endpoint}'
+          # endpoint_auto_confirms: false
+          # raw_message_delivery: false
+          # confirmation_timeout_in_minutes: 0
+          # delivery_policy: ''
+          # filter_policy: ''
+    variable:
+      {{ name }}_protocol:
+        type: 'string'
+      {{ name }}_topic_arn:
+        type: 'string'
+      {{ name }}_endpoint:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_sns_topic_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_sns_topic_subscription.{{ name }}.id}'
+      arn:
+        value: '${aws_sns_topic_subscription.{{ name }}.arn}'

@@ -1,0 +1,64 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dms_endpoint:
+        {{ name }}:
+          endpoint_id: '${var.{{ name }}_endpoint_id}'
+          endpoint_type: '${var.{{ name }}_endpoint_type}'
+          engine_name: '${var.{{ name }}_engine_name}'
+          # password: ''
+          # port: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # server_name: ''
+          # mongodb_settings: 
+          #   -
+          #     auth_source: ''
+          #     auth_type: ''
+          #     auth_mechanism: ''
+          #     nesting_level: ''
+          #     extract_doc_id: ''
+          #     docs_to_investigate: ''
+          # extra_connection_attributes: ''
+          # s3_settings: 
+          #   -
+          #     service_access_role_arn: ''
+          #     external_table_definition: ''
+          #     csv_row_delimiter: ''
+          #     csv_delimiter: ''
+          #     bucket_folder: ''
+          #     bucket_name: ''
+          #     compression_type: ''
+          # certificate_arn: ''
+          # database_name: ''
+          # kms_key_arn: ''
+          # ssl_mode: ''
+          # username: ''
+          # service_access_role: ''
+    variable:
+      {{ name }}_endpoint_id:
+        type: 'string'
+      {{ name }}_endpoint_type:
+        type: 'string'
+      {{ name }}_engine_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dms_endpoint.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dms_endpoint.{{ name }}.id}'
+      extra_connection_attributes:
+        value: '${aws_dms_endpoint.{{ name }}.extra_connection_attributes}'
+      certificate_arn:
+        value: '${aws_dms_endpoint.{{ name }}.certificate_arn}'
+      kms_key_arn:
+        value: '${aws_dms_endpoint.{{ name }}.kms_key_arn}'
+      ssl_mode:
+        value: '${aws_dms_endpoint.{{ name }}.ssl_mode}'
+      endpoint_arn:
+        value: '${aws_dms_endpoint.{{ name }}.endpoint_arn}'

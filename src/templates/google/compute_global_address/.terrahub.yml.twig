@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_global_address:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # project: ''
+          # address: ''
+          # address_type: ''
+          # description: ''
+          # ip_version: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_global_address.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_global_address.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_global_address.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_global_address.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_global_address.{{ name }}.self_link}'
+      address:
+        value: '${google_compute_global_address.{{ name }}.address}'

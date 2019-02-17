@@ -1,0 +1,70 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_region_instance_group_manager:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          base_instance_name: '${var.{{ name }}_base_instance_name}'
+          region: '${var.{{ name }}_region}'
+          # named_port: 
+          #   name: ''
+          #   port: 0
+          # version: 
+          #   -
+          #     name: ''
+          #     instance_template: ''
+          #     target_size: 
+          #       -
+          #         fixed: 0
+          #         percent: 0
+          # auto_healing_policies: 
+          #   -
+          #     health_check: ''
+          #     initial_delay_sec: 0
+          # description: ''
+          # target_pools: []
+          # target_size: 0
+          # wait_for_instances: false
+          # distribution_policy_zones: []
+          # rolling_update_policy: 
+          #   -
+          #     type: ''
+          #     minimal_action: ''
+          #     max_surge_fixed: 0
+          #     max_surge_percent: 0
+          #     max_unavailable_fixed: 0
+          #     max_unavailable_percent: 0
+          #     min_ready_sec: 0
+          # instance_template: ''
+          # project: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_base_instance_name:
+        type: 'string'
+      {{ name }}_region:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.id}'
+      version:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.version}'
+      fingerprint:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.fingerprint}'
+      target_size:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.target_size}'
+      self_link:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.self_link}'
+      distribution_policy_zones:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.distribution_policy_zones}'
+      rolling_update_policy:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.rolling_update_policy}'
+      instance_group:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.instance_group}'
+      project:
+        value: '${google_compute_region_instance_group_manager.{{ name }}.project}'

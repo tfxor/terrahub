@@ -1,0 +1,41 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_eventhub:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          partition_count: '${var.{{ name }}_partition_count}'
+          message_retention: '${var.{{ name }}_message_retention}'
+          # capture_description: 
+          #   -
+          #     destination: 
+          #       -
+          #         storage_account_id: ''
+          #         name: ''
+          #         archive_name_format: ''
+          #         blob_container_name: ''
+          #     enabled: false
+          #     encoding: ''
+          #     interval_in_seconds: 0
+          #     size_limit_in_bytes: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_namespace_name:
+        type: 'string'
+      {{ name }}_partition_count:
+        type: 'int'
+      {{ name }}_message_retention:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_eventhub.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_eventhub.{{ name }}.id}'
+      partition_ids:
+        value: '${azurerm_arm_eventhub.{{ name }}.partition_ids}'

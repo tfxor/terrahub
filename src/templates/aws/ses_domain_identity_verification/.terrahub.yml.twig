@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_domain_identity_verification:
+        {{ name }}:
+          domain: '${var.{{ name }}_domain}'
+    variable:
+      {{ name }}_domain:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ses_domain_identity_verification.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_domain_identity_verification.{{ name }}.id}'
+      arn:
+        value: '${aws_ses_domain_identity_verification.{{ name }}.arn}'

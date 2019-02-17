@@ -1,7 +1,0 @@
-resource "aws_glue_classifier" "{{ name }}" {
-  name = "${var.glue_classifier_name}"
-  xml_classifier {
-    classification = "${var.glue_classifier_classification}"
-    row_tag        = "${var.glue_classifier_row_tag}"
-  }
-}

@@ -1,0 +1,106 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_rds_cluster:
+        {{ name }}:
+          # master_username: ''
+          # preferred_maintenance_window: ''
+          # iam_roles: []
+          # cluster_identifier: ''
+          # engine: ''
+          # skip_final_snapshot: false
+          # port: 0
+          # source_region: ''
+          # cluster_members: []
+          # db_cluster_parameter_group_name: ''
+          # global_cluster_identifier: ''
+          # snapshot_identifier: ''
+          # kms_key_id: ''
+          # engine_version: ''
+          # scaling_configuration: 
+          #   -
+          #     auto_pause: false
+          #     max_capacity: 0
+          #     min_capacity: 0
+          #     seconds_until_auto_pause: 0
+          # storage_encrypted: false
+          # cluster_identifier_prefix: ''
+          # apply_immediately: false
+          # replication_source_identifier: ''
+          # s3_import: 
+          #   -
+          #     bucket_name: ''
+          #     bucket_prefix: ''
+          #     ingestion_role: ''
+          #     source_engine: ''
+          #     source_engine_version: ''
+          #     bucket_prefix: ''
+          # master_password: ''
+          # vpc_security_group_ids: []
+          # availability_zones: []
+          # database_name: ''
+          # final_snapshot_identifier: ''
+          # backup_retention_period: 0
+          # iam_database_authentication_enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # deletion_protection: false
+          # engine_mode: ''
+          # preferred_backup_window: ''
+          # enabled_cloudwatch_logs_exports: []
+          # backtrack_window: 0
+          # db_subnet_group_name: ''
+    output:
+      id:
+        value: '${aws_rds_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_rds_cluster.{{ name }}.id}'
+      master_username:
+        value: '${aws_rds_cluster.{{ name }}.master_username}'
+      preferred_maintenance_window:
+        value: '${aws_rds_cluster.{{ name }}.preferred_maintenance_window}'
+      cluster_identifier:
+        value: '${aws_rds_cluster.{{ name }}.cluster_identifier}'
+      hosted_zone_id:
+        value: '${aws_rds_cluster.{{ name }}.hosted_zone_id}'
+      port:
+        value: '${aws_rds_cluster.{{ name }}.port}'
+      cluster_members:
+        value: '${aws_rds_cluster.{{ name }}.cluster_members}'
+      db_cluster_parameter_group_name:
+        value: '${aws_rds_cluster.{{ name }}.db_cluster_parameter_group_name}'
+      snapshot_identifier:
+        value: '${aws_rds_cluster.{{ name }}.snapshot_identifier}'
+      kms_key_id:
+        value: '${aws_rds_cluster.{{ name }}.kms_key_id}'
+      engine_version:
+        value: '${aws_rds_cluster.{{ name }}.engine_version}'
+      cluster_identifier_prefix:
+        value: '${aws_rds_cluster.{{ name }}.cluster_identifier_prefix}'
+      apply_immediately:
+        value: '${aws_rds_cluster.{{ name }}.apply_immediately}'
+      endpoint:
+        value: '${aws_rds_cluster.{{ name }}.endpoint}'
+      reader_endpoint:
+        value: '${aws_rds_cluster.{{ name }}.reader_endpoint}'
+      vpc_security_group_ids:
+        value: '${aws_rds_cluster.{{ name }}.vpc_security_group_ids}'
+      cluster_resource_id:
+        value: '${aws_rds_cluster.{{ name }}.cluster_resource_id}'
+      availability_zones:
+        value: '${aws_rds_cluster.{{ name }}.availability_zones}'
+      database_name:
+        value: '${aws_rds_cluster.{{ name }}.database_name}'
+      preferred_backup_window:
+        value: '${aws_rds_cluster.{{ name }}.preferred_backup_window}'
+      enabled_cloudwatch_logs_exports:
+        value: '${aws_rds_cluster.{{ name }}.enabled_cloudwatch_logs_exports}'
+      arn:
+        value: '${aws_rds_cluster.{{ name }}.arn}'
+      db_subnet_group_name:
+        value: '${aws_rds_cluster.{{ name }}.db_subnet_group_name}'

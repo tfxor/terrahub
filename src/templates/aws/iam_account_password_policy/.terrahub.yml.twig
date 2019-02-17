@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_account_password_policy:
+        {{ name }}:
+          # hard_expiry: false
+          # require_lowercase_characters: false
+          # require_numbers: false
+          # require_symbols: false
+          # allow_users_to_change_password: false
+          # max_password_age: 0
+          # minimum_password_length: 0
+          # password_reuse_prevention: 0
+          # require_uppercase_characters: false
+    output:
+      id:
+        value: '${aws_iam_account_password_policy.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_account_password_policy.{{ name }}.id}'
+      expire_passwords:
+        value: '${aws_iam_account_password_policy.{{ name }}.expire_passwords}'
+      hard_expiry:
+        value: '${aws_iam_account_password_policy.{{ name }}.hard_expiry}'
+      require_lowercase_characters:
+        value: '${aws_iam_account_password_policy.{{ name }}.require_lowercase_characters}'
+      require_numbers:
+        value: '${aws_iam_account_password_policy.{{ name }}.require_numbers}'
+      require_symbols:
+        value: '${aws_iam_account_password_policy.{{ name }}.require_symbols}'
+      max_password_age:
+        value: '${aws_iam_account_password_policy.{{ name }}.max_password_age}'
+      password_reuse_prevention:
+        value: '${aws_iam_account_password_policy.{{ name }}.password_reuse_prevention}'
+      require_uppercase_characters:
+        value: '${aws_iam_account_password_policy.{{ name }}.require_uppercase_characters}'

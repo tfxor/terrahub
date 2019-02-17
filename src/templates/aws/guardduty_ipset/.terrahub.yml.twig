@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_guardduty_ipset:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          format: '${var.{{ name }}_format}'
+          location: '${var.{{ name }}_location}'
+          activate: '${var.{{ name }}_activate}'
+          detector_id: '${var.{{ name }}_detector_id}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_format:
+        type: 'string'
+      {{ name }}_location:
+        type: 'string'
+      {{ name }}_activate:
+        type: 'bool'
+      {{ name }}_detector_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_guardduty_ipset.{{ name }}.id}'
+      thub_id:
+        value: '${aws_guardduty_ipset.{{ name }}.id}'

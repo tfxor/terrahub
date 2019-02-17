@@ -1,0 +1,91 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_instance_template:
+        {{ name }}:
+          disk: 
+            -
+          #     device_name: ''
+          #     disk_type: ''
+          #     interface: ''
+          #     mode: ''
+          #     source: ''
+          #     type: ''
+          #     auto_delete: false
+          #     boot: false
+          #     disk_name: ''
+          #     disk_size_gb: 0
+          #     source_image: ''
+          #     disk_encryption_key: 
+          #       -
+          #         kms_key_self_link: ''
+          machine_type: '${var.{{ name }}_machine_type}'
+          # scheduling: 
+          #   -
+          #     preemptible: false
+          #     automatic_restart: false
+          #     on_host_maintenance: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # metadata: 
+          #   '[TO_BE_REPLACED]': ''
+          # can_ip_forward: false
+          # instance_description: ''
+          # metadata_startup_script: ''
+          # network_interface: 
+          #   -
+          #     network: ''
+          #     network_ip: ''
+          #     subnetwork: ''
+          #     subnetwork_project: ''
+          #     access_config: 
+          #       -
+          #         nat_ip: ''
+          #         network_tier: ''
+          # project: ''
+          # name_prefix: ''
+          # automatic_restart: false
+          # service_account: 
+          #   -
+          #     scopes: []
+          #     email: ''
+          # guest_accelerator: 
+          #   -
+          #     count: 0
+          #     type: ''
+          # tags: []
+          # on_host_maintenance: ''
+          # name: ''
+          # address: ''
+          # region: ''
+          # min_cpu_platform: ''
+    variable:
+      {{ name }}_machine_type:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_instance_template.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_instance_template.{{ name }}.id}'
+      scheduling:
+        value: '${google_compute_instance_template.{{ name }}.scheduling}'
+      metadata_fingerprint:
+        value: '${google_compute_instance_template.{{ name }}.metadata_fingerprint}'
+      project:
+        value: '${google_compute_instance_template.{{ name }}.project}'
+      name_prefix:
+        value: '${google_compute_instance_template.{{ name }}.name_prefix}'
+      tags_fingerprint:
+        value: '${google_compute_instance_template.{{ name }}.tags_fingerprint}'
+      name:
+        value: '${google_compute_instance_template.{{ name }}.name}'
+      address:
+        value: '${google_compute_instance_template.{{ name }}.address}'
+      region:
+        value: '${google_compute_instance_template.{{ name }}.region}'
+      self_link:
+        value: '${google_compute_instance_template.{{ name }}.self_link}'

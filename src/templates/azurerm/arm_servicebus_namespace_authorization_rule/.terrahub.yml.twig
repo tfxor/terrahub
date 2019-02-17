@@ -1,0 +1,14 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_servicebus_namespace_authorization_rule:
+        {{ name }}:
+    output:
+      id:
+        value: '${azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id}'

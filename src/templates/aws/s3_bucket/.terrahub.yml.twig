@@ -1,0 +1,188 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    # data:
+    #   aws_s3_bucket_object:
+    #     {{ name }}_object:
+    #       key: 'index.txt'
+    #       bucket: '${aws_s3_bucket.{{ name }}.id}'
+    resource:
+      aws_s3_bucket:
+        {{ name }}:
+          status: '${var.{{ name }}_status}'
+          # website: 
+          #   -
+          #     index_document: 'index.html'
+          #     error_document: '/404.html'
+          #     redirect_all_requests_to: ''
+          #     routing_rules: ''
+          # request_payer: ''
+          # replication_configuration: 
+          #   -
+          #     role: ''
+          #     rules: 
+          #     destination:
+          #       bucket: ''
+          #       account_id: ''
+          #       storage_class: ''
+          #       replica_kms_key_id: ''
+          #       access_control_translation:
+          #         -
+          #           owner: ''
+          #     id: ''
+          #     source_selection_criteria: 
+          #     sse_kms_encrypted_objects:
+          #       enabled:false
+          # bucket_prefix: ''
+          # server_side_encryption_configuration: 
+          #   -
+          #     rule: 
+          #       -
+          #         apply_server_side_encryption_by_default: 
+          #           -
+          #             sse_algorithm: ''
+          #             kms_master_key_id: ''
+          # object_lock_configuration: 
+          #   -
+          #     object_lock_enabled: ''
+          #     rule: 
+          #       -
+          #         default_retention: 
+          #           -
+          #             mode: ''
+          #             days: 0
+          #             years: 0
+          # bucket: '${var.{{ name}}_name}'
+          # acl: 'public-read'
+          # lifecycle_rule: 
+          #   -
+          #     enabled: false
+          #     id: ''
+          #     prefix: ''
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+          #     abort_incomplete_multipart_upload_days: 0
+          #     expiration: 
+          #     date: ''
+          #     days: 0
+          #     expired_object_delete_marker: false
+          # force_destroy: 'true'
+          # website_endpoint: ''
+          # versioning: 
+          #   -
+          #     enabled: false
+          #     mfa_delete: false
+          # priority: 0
+          # tags:
+          #   Description: 'Managed by TerraHub'
+          #   ThubCode: '${local.project["code"]}'
+          #   ThubEnv: '${terraform.workspace}'
+          #   ThubName: '{{ name }}'
+          # policy: ''
+          # hosted_zone_id: ''
+          # acceleration_status: ''
+          # cors_rule: 
+          #   -
+          #     allowed_methods: ['HEAD', 'GET', 'PUT', 'POST', 'DELETE']
+          #     allowed_origins: ['*']
+          #     allowed_headers: ['*']
+          #     expose_headers: ['ETag']
+          #     max_age_seconds: '0'
+          # region: 'us-east-1'
+          # transition: 
+          #   storage_class: ''
+          #   date: ''
+          #   days:0
+          # arn: ''
+          # website_domain: ''
+          # logging: 
+          #   target_bucket: ''
+          #   target_prefix: ''
+          # filter: 
+          #   -
+          #     prefix: ''
+          #     tags:
+          #       '[TO_BE_REPLACED]': ''
+          # noncurrent_version_transition: 
+          #   storage_class: ''
+          #   days: 0
+          # prefix: ''
+    variable:
+      {{ name }}_status:
+        type: 'string'
+      # {{ name }}_name:
+      #   type: 'string'
+    output:
+      id:
+        value: '${aws_s3_bucket.{{ name }}.id}'
+      thub_id:
+        value: '${aws_s3_bucket.{{ name }}.id}'
+      request_payer:
+        value: '${aws_s3_bucket.{{ name }}.request_payer}'
+      bucket_domain_name:
+        value: '${aws_s3_bucket.{{ name }}.bucket_domain_name}'
+      bucket:
+        value: '${aws_s3_bucket.{{ name }}.bucket}'
+      website_endpoint:
+        value: '${aws_s3_bucket.{{ name }}.website_endpoint}'
+      versioning:
+        value: '${aws_s3_bucket.{{ name }}.versioning}'
+      bucket_regional_domain_name:
+        value: '${aws_s3_bucket.{{ name }}.bucket_regional_domain_name}'
+      hosted_zone_id:
+        value: '${aws_s3_bucket.{{ name }}.hosted_zone_id}'
+      acceleration_status:
+        value: '${aws_s3_bucket.{{ name }}.acceleration_status}'
+      region:
+        value: '${aws_s3_bucket.{{ name }}.region}'
+      arn:
+        value: '${aws_s3_bucket.{{ name }}.arn}'
+      website_domain:
+        value: '${aws_s3_bucket.{{ name }}.website_domain}'
+
+
+## build config
+# build:
+#   env:
+#     variables:
+#       THUB_ENV: "dev"
+#       THUB_INDEX_FILE: "index.txt"
+#       THUB_DEEP_BUCKET: "s3://"
+#       THUB_PARAMETERS_PATH: ".terrahub_build.env"
+#       THUB_S3_PATH: "s3://"
+#       THUB_BUILD_PATH: "build"
+#       THUB_SOURCE_PATH: ""
+#       THUB_BUILD_OK: "false"
+#       THUB_MAX_AGE: "600"
+#   phases:
+#     pre_build:
+#       commands:
+#         - echo "BUILD: Running pre_build step"
+#         - ./scripts/download.sh $THUB_PARAMETERS_PATH $THUB_DEEP_BUCKET
+#         - ./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE
+#         - ./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH
+#       finally:
+#         - echo "BUILD: pre_build step successful"
+#     build:
+#       commands:
+#         - echo "BUILD: Running build step"
+#         - ./scripts/compile.sh
+#       finally:
+#         - echo "BUILD: build step successful"
+#     post_build:
+#       commands:
+#         - echo "BUILD: Running post_build step"
+#         - ./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE
+#         - ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
+#         - rm -f .terrahub_build.env $THUB_INDEX_FILE
+#       finally:
+#         - echo "BUILD: post_build step successful"
+
+## hook config
+#  hook:
+#    apply:
+#      after: ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE

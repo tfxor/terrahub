@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_redshift_security_group:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          ingress: 
+          #   cidr: ''
+          #   security_group_name: ''
+          #   security_group_owner_id: ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_redshift_security_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_redshift_security_group.{{ name }}.id}'

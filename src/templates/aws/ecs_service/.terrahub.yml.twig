@@ -1,0 +1,67 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ecs_service:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          task_definition: '${var.{{ name }}_task_definition}'
+          # cluster: ''
+          # enable_ecs_managed_tags: false
+          # launch_type: ''
+          # placement_strategy: []
+          # desired_count: 0
+          # platform_version: ''
+          # scheduling_strategy: ''
+          # iam_role: ''
+          # load_balancer: 
+          #   container_name: ''
+          #   container_port: 0
+          #   elb_name: ''
+          #   target_group_arn: ''
+          # placement_constraints: 
+          #   type: ''
+          #   expression: ''
+          # health_check_grace_period_seconds: 0
+          # deployment_controller: 
+          #   -
+          #     type: ''
+          # deployment_maximum_percent: 0
+          # deployment_minimum_healthy_percent: 0
+          # network_configuration: 
+          #   -
+          #     subnets: []
+          #     security_groups: 
+          #     assign_public_ip: false
+          # service_registries: 
+          #   registry_arn: ''
+          #   container_name: ''
+          #   container_port: 0
+          #   port: 0
+          # ordered_placement_strategy: 
+          #   -
+          #     type: ''
+          #     field: ''
+          # propagate_tags: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_task_definition:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ecs_service.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ecs_service.{{ name }}.id}'
+      cluster:
+        value: '${aws_ecs_service.{{ name }}.cluster}'
+      platform_version:
+        value: '${aws_ecs_service.{{ name }}.platform_version}'
+      iam_role:
+        value: '${aws_ecs_service.{{ name }}.iam_role}'

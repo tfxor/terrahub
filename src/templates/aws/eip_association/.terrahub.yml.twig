@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_eip_association:
+        {{ name }}:
+          # allocation_id: ''
+          # allow_reassociation: false
+          # instance_id: ''
+          # network_interface_id: ''
+          # private_ip_address: ''
+          # public_ip: ''
+    output:
+      id:
+        value: '${aws_eip_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_eip_association.{{ name }}.id}'
+      allocation_id:
+        value: '${aws_eip_association.{{ name }}.allocation_id}'
+      instance_id:
+        value: '${aws_eip_association.{{ name }}.instance_id}'
+      network_interface_id:
+        value: '${aws_eip_association.{{ name }}.network_interface_id}'
+      private_ip_address:
+        value: '${aws_eip_association.{{ name }}.private_ip_address}'
+      public_ip:
+        value: '${aws_eip_association.{{ name }}.public_ip}'

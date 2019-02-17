@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_backend_bucket:
+        {{ name }}:
+          bucket_name: '${var.{{ name }}_bucket_name}'
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # enable_cdn: false
+          # project: ''
+    variable:
+      {{ name }}_bucket_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_backend_bucket.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_backend_bucket.{{ name }}.id}'
+      creation_timestamp:
+        value: '${google_compute_backend_bucket.{{ name }}.creation_timestamp}'
+      project:
+        value: '${google_compute_backend_bucket.{{ name }}.project}'
+      self_link:
+        value: '${google_compute_backend_bucket.{{ name }}.self_link}'

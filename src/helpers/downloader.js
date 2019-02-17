@@ -29,6 +29,17 @@ class Downloader {
    * @returns {String}
    */
   _buildSrcUrl(version) {
+    const arch = this.getOsArch()
+
+    return url.resolve(
+      'https://releases.hashicorp.com/terraform/', `${version}/terraform_${version}_${arch}.zip`
+    );
+  }
+
+  /**
+   * @returns {String}
+   */
+  getOsArch() {
     let arch, platform;
 
     switch (os.arch()) {
@@ -53,10 +64,9 @@ class Downloader {
         platform = os.platform();
     }
 
-    return url.resolve(
-      'https://releases.hashicorp.com/terraform/', `${version}/terraform_${version}_${platform}_${arch}.zip`
-    );
+    return `${platform}_${arch}`
   }
+
 }
 
 module.exports = Downloader;

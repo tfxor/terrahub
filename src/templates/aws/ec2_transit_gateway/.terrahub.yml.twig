@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_transit_gateway:
+        {{ name }}:
+          # description: ''
+          # default_route_table_propagation: ''
+          # auto_accept_shared_attachments: ''
+          # default_route_table_association: ''
+          # dns_support: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # amazon_side_asn: 0
+          # vpn_ecmp_support: ''
+    output:
+      id:
+        value: '${aws_ec2_transit_gateway.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_transit_gateway.{{ name }}.id}'
+      propagation_default_route_table_id:
+        value: '${aws_ec2_transit_gateway.{{ name }}.propagation_default_route_table_id}'
+      arn:
+        value: '${aws_ec2_transit_gateway.{{ name }}.arn}'
+      association_default_route_table_id:
+        value: '${aws_ec2_transit_gateway.{{ name }}.association_default_route_table_id}'
+      owner_id:
+        value: '${aws_ec2_transit_gateway.{{ name }}.owner_id}'

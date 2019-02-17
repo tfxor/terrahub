@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_servicebus_queue:
+        {{ name }}:
+          namespace_name: '${var.{{ name }}_namespace_name}'
+          name: '${var.{{ name }}_name}'
+          # default_message_ttl: ''
+          # duplicate_detection_history_time_window: ''
+          # support_ordering: false
+          # auto_delete_on_idle: ''
+          # max_delivery_count: 0
+          # lock_duration: ''
+          # requires_session: false
+          # enable_batched_operations: false
+          # max_size_in_megabytes: 0
+    variable:
+      {{ name }}_namespace_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.id}'
+      default_message_ttl:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.default_message_ttl}'
+      duplicate_detection_history_time_window:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.duplicate_detection_history_time_window}'
+      auto_delete_on_idle:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.auto_delete_on_idle}'
+      lock_duration:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.lock_duration}'
+      max_size_in_megabytes:
+        value: '${azurerm_arm_servicebus_queue.{{ name }}.max_size_in_megabytes}'

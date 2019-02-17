@@ -104,14 +104,7 @@ class Distributor {
    * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number }} options
    * @return {Promise}
    */
-  runActions(actions, options) {
-    const {
-      silent = false,
-      format = '',
-      planDestroy = false,
-      dependencyDirection = null
-    } = options;
-
+  runActions(actions, { silent = false, format = '', planDestroy = false, dependencyDirection = null } = {}) {
     this._env = {
       silent: silent,
       format: format,
@@ -172,9 +165,7 @@ class Distributor {
     });
 
     this._dependencyTable = {};
-    if (err instanceof Array) {
-      err = err.map(it => Buffer.from(it).toString('utf8')).join(os.EOL);
-    }
+
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 }

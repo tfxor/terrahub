@@ -1,0 +1,77 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_docdb_cluster:
+        {{ name }}:
+          # availability_zones: []
+          # storage_encrypted: false
+          # final_snapshot_identifier: ''
+          # kms_key_id: ''
+          # cluster_members: []
+          # master_username: ''
+          # port: 0
+          # preferred_maintenance_window: ''
+          # cluster_identifier_prefix: ''
+          # engine: ''
+          # engine_version: ''
+          # master_password: ''
+          # snapshot_identifier: ''
+          # preferred_backup_window: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # cluster_identifier: ''
+          # vpc_security_group_ids: []
+          # enabled_cloudwatch_logs_exports: []
+          # db_subnet_group_name: ''
+          # apply_immediately: false
+          # db_cluster_parameter_group_name: ''
+          # skip_final_snapshot: false
+          # backup_retention_period: 0
+    output:
+      id:
+        value: '${aws_docdb_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_docdb_cluster.{{ name }}.id}'
+      availability_zones:
+        value: '${aws_docdb_cluster.{{ name }}.availability_zones}'
+      kms_key_id:
+        value: '${aws_docdb_cluster.{{ name }}.kms_key_id}'
+      cluster_members:
+        value: '${aws_docdb_cluster.{{ name }}.cluster_members}'
+      master_username:
+        value: '${aws_docdb_cluster.{{ name }}.master_username}'
+      preferred_maintenance_window:
+        value: '${aws_docdb_cluster.{{ name }}.preferred_maintenance_window}'
+      hosted_zone_id:
+        value: '${aws_docdb_cluster.{{ name }}.hosted_zone_id}'
+      cluster_identifier_prefix:
+        value: '${aws_docdb_cluster.{{ name }}.cluster_identifier_prefix}'
+      engine_version:
+        value: '${aws_docdb_cluster.{{ name }}.engine_version}'
+      preferred_backup_window:
+        value: '${aws_docdb_cluster.{{ name }}.preferred_backup_window}'
+      cluster_identifier:
+        value: '${aws_docdb_cluster.{{ name }}.cluster_identifier}'
+      endpoint:
+        value: '${aws_docdb_cluster.{{ name }}.endpoint}'
+      reader_endpoint:
+        value: '${aws_docdb_cluster.{{ name }}.reader_endpoint}'
+      vpc_security_group_ids:
+        value: '${aws_docdb_cluster.{{ name }}.vpc_security_group_ids}'
+      enabled_cloudwatch_logs_exports:
+        value: '${aws_docdb_cluster.{{ name }}.enabled_cloudwatch_logs_exports}'
+      db_subnet_group_name:
+        value: '${aws_docdb_cluster.{{ name }}.db_subnet_group_name}'
+      apply_immediately:
+        value: '${aws_docdb_cluster.{{ name }}.apply_immediately}'
+      cluster_resource_id:
+        value: '${aws_docdb_cluster.{{ name }}.cluster_resource_id}'
+      arn:
+        value: '${aws_docdb_cluster.{{ name }}.arn}'
+      db_cluster_parameter_group_name:
+        value: '${aws_docdb_cluster.{{ name }}.db_cluster_parameter_group_name}'

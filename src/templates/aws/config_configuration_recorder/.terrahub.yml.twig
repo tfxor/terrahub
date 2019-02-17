@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_config_configuration_recorder:
+        {{ name }}:
+          role_arn: '${var.{{ name }}_role_arn}'
+          # recording_group: 
+          #   -
+          #     include_global_resource_types: false
+          #     resource_types: 
+          #     all_supported: false
+          # name: ''
+    variable:
+      {{ name }}_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_config_configuration_recorder.{{ name }}.id}'
+      thub_id:
+        value: '${aws_config_configuration_recorder.{{ name }}.id}'
+      recording_group:
+        value: '${aws_config_configuration_recorder.{{ name }}.recording_group}'

@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_data_lake_store:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # firewall_allow_azure_ips: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # tier: ''
+          # encryption_state: ''
+          # encryption_type: ''
+          # firewall_state: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_data_lake_store.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_data_lake_store.{{ name }}.id}'
+      encryption_type:
+        value: '${azurerm_arm_data_lake_store.{{ name }}.encryption_type}'
+      endpoint:
+        value: '${azurerm_arm_data_lake_store.{{ name }}.endpoint}'

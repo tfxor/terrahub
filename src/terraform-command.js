@@ -1,13 +1,12 @@
 'use strict';
 
 const os = require('os');
-const { join } = require('path');
-const { lstatSync } = require('fs');
+const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const { execSync } = require('child_process');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { extend, askQuestion, toMd5, handleGitDiffError } = require('./helpers/util');
+const ListException = require('./exceptions/list-exception');
 
 /**
  * @abstract
@@ -36,7 +35,7 @@ class TerraformCommand extends AbstractCommand {
   validate() {
     return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
       if (this._isComponentsCountZero()) {
-        return Promise.reject('No components defined in configuration file. '
+        throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
 
@@ -45,7 +44,7 @@ class TerraformCommand extends AbstractCommand {
       const nonExistingComponents = this._getNonExistingComponents();
 
       if (nonExistingComponents.length) {
-        return Promise.reject('Some of components were not found: ' + nonExistingComponents.join(', '));
+        throw new Error('Some of components were not found: ' + nonExistingComponents.join(', '));
       }
 
       return Promise.resolve();
@@ -62,29 +61,29 @@ class TerraformCommand extends AbstractCommand {
    */
   _checkProjectDataMissing() {
     const projectConfig = this._configLoader.getProjectConfig();
-    const missingData = this._getProjectDataMissing(projectConfig);
+    const missingData = ['root', 'name', 'code'].find(it => !projectConfig[it]);
 
-    if (missingData) {
-      return missingData === 'config' ?
-        Promise.reject('Configuration file not found. Either re-run the same command ' +
-          'in project\'s root or initialize new project with `terrahub project`.') :
-        askQuestion(`Global config is missing project ${missingData}. Please provide value 
-          (e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
-        ).then(answer => {
+    if (!missingData) {
+      return Promise.resolve();
+    } else if (missingData === 'root') {
+      throw new Error('Configuration file not found. Either re-run the same command ' +
+        'in project\'s root or initialize new project with `terrahub project`.');
+    } else {
+      return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
+        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
+      ).then(answer => {
 
-          try {
-            this._configLoader.addToGlobalConfig(missingData, answer);
-          } catch (error) {
-            this.logger.debug(error);
-          }
+        try {
+          this._configLoader.addToGlobalConfig(missingData, answer);
+        } catch (error) {
+          this.logger.debug(error);
+        }
 
-          this._configLoader.updateRootConfig();
+        this._configLoader.updateRootConfig();
 
-          return this._checkProjectDataMissing();
-        });
+        return this._checkProjectDataMissing();
+      });
     }
-
-    return Promise.resolve();
   }
 
   /**
@@ -103,7 +102,7 @@ class TerraformCommand extends AbstractCommand {
 
     Object.keys(config).forEach(hash => {
       // hash is required in distributor to remove components from dependency table
-      result[hash] = extend(config[hash], [cliParams, { hash: hash }]);
+      result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
     return result;
@@ -212,7 +211,7 @@ class TerraformCommand extends AbstractCommand {
     try {
       stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
     } catch (error) {
-      throw handleGitDiffError(error, this.getAppPath());
+      throw Util.handleGitDiffError(error, this.getAppPath());
     }
 
     if (!stdout || !stdout.toString().length) {
@@ -241,6 +240,36 @@ class TerraformCommand extends AbstractCommand {
     }, []);
   }
 
+  /**
+   * @param {Object|Array} config
+   * @param {Boolean} autoApprove
+   * @return {Promise}
+   */
+  askForApprovement(config, autoApprove = false) {
+    Util.printListAuto(config, this.getProjectConfig().name);
+
+    const action = this.getName();
+
+    if (autoApprove) {
+      this.logger.log(`Option 'auto-approve' is enabled, therefore '${action}' ` +
+        `action is executed with no confirmation.`);
+
+      return Promise.resolve(true);
+    }
+
+    return Util.yesNoQuestion(`Do you want to perform 'terrahub ${action}' action? (Y/N) `);
+  }
+
+  /**
+   * @param {Object|Array} config
+   */
+  warnExecutionStarted(config) {
+    Util.printListAuto(config, this.getProjectConfig().name);
+
+    const action = this.getName();
+
+    this.logger.log(`'terrahub ${action}' action is executed for above list of components.`);
+  }
 
   /**
    * @returns {Array}
@@ -277,10 +306,10 @@ class TerraformCommand extends AbstractCommand {
       const dependsOn = {};
 
       node.dependsOn.forEach(dep => {
-        const key = toMd5(dep);
+        const key = Util.toMd5(dep);
 
         if (!fullConfig[key]) {
-          const dir = fullConfig[hash].dependsOn.find(it => toMd5(it) === key);
+          const dir = fullConfig[hash].dependsOn.find(it => Util.toMd5(it) === key);
 
           issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
         }
@@ -293,10 +322,7 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      throw new Error(errorStrings.join(os.EOL));
+      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
     }
 
     return tree;
@@ -312,7 +338,7 @@ class TerraformCommand extends AbstractCommand {
     const cycle = this._getDependencyCycle(config);
 
     if (cycle.length) {
-      return Promise.reject('There is a dependency cycle between the following components: ' + cycle.join(', '));
+      throw new Error('There is a dependency cycle between the following components: ' + cycle.join(', '));
     }
 
     return Promise.resolve();
@@ -397,10 +423,7 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (issues.length) {
-      const errorStrings = issues.map((it, index) => `${index + 1}. ${it}`);
-      errorStrings.unshift('TerraHub failed because of the following issues:');
-
-      return Promise.reject(new Error(errorStrings.join(os.EOL)));
+      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
     }
 
     return this._checkDependencyCycle(config);
@@ -445,9 +468,10 @@ class TerraformCommand extends AbstractCommand {
 
     keys.forEach(hash => {
       const depNode = fullConfig[hash];
-      const dependsOn = depNode.dependsOn.map(path => toMd5(path));
+      const dependsOn = depNode.dependsOn.map(path => Util.toMd5(path));
 
-      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it)).map(it => `'${fullConfig[it].name}'`).join(', ');
+      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it))
+        .map(it => `'${fullConfig[it].name}'`).join(', ');
 
       if (issueNodes.length) {
         issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
@@ -456,28 +480,6 @@ class TerraformCommand extends AbstractCommand {
     });
 
     return issues;
-  }
-
-  /**
-   * Return name of the required field missing in project data
-   * @param {Object} projectConfig
-   * @return {String|null}
-   * @private
-   */
-  _getProjectDataMissing(projectConfig) {
-    if (!projectConfig.hasOwnProperty('root')) {
-      return 'config';
-    }
-
-    if (!projectConfig.hasOwnProperty('name')) {
-      return 'name';
-    }
-
-    if (!projectConfig.hasOwnProperty('code')) {
-      return 'code';
-    }
-
-    return null;
   }
 
   /**

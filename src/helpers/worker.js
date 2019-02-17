@@ -5,6 +5,7 @@ const path = require('path');
 const cluster = require('cluster');
 const Terrahub = require('./terrahub');
 const BuildHelper = require('./build-helper');
+const { jitPath } = require('../parameters');
 const { promiseSeries, homePath, extend } = require('./util');
 
 /**
@@ -68,7 +69,7 @@ function transformConfig(config) {
  */
 function jitMiddleware(config) {
   const cfg = transformConfig(config);
-  const tmpPath = homePath('cache/jit', cfg.hash);
+  const tmpPath = homePath(jitPath, cfg.hash);
 
   if (!cfg.isJit) {
     return Promise.resolve(config);

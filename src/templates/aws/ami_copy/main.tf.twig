@@ -1,9 +1,0 @@
-resource "aws_ami_copy" "{{ name }}" {
-  name              = "${var.ami_copy_name}"
-  description       = "A copy of ${var.ami_copy_source_ami_id}, ${var.ami_copy_description}"
-  source_ami_id     = "${var.ami_copy_source_ami_id}"
-  encrypted         = "${var.ami_copy_encrypted}"
-  source_ami_region = "${var.ami_copy_source_ami_region}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

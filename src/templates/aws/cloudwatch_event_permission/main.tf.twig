@@ -1,5 +1,0 @@
-resource "aws_cloudwatch_event_permission" "{{ name }}" {
-  principal    = "${var.account_id}"
-  statement_id = "${var.cloudwatch_event_permission_statement_id}"
-  action       = "${var.cloudwatch_event_permission_action}"
-}

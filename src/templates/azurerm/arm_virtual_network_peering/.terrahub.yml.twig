@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_network_peering:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          virtual_network_name: '${var.{{ name }}_virtual_network_name}'
+          remote_virtual_network_id: '${var.{{ name }}_remote_virtual_network_id}'
+          # allow_forwarded_traffic: false
+          # allow_gateway_transit: false
+          # use_remote_gateways: false
+          # allow_virtual_network_access: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_virtual_network_name:
+        type: 'string'
+      {{ name }}_remote_virtual_network_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.id}'
+      allow_forwarded_traffic:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.allow_forwarded_traffic}'
+      allow_gateway_transit:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.allow_gateway_transit}'
+      use_remote_gateways:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.use_remote_gateways}'
+      allow_virtual_network_access:
+        value: '${azurerm_arm_virtual_network_peering.{{ name }}.allow_virtual_network_access}'

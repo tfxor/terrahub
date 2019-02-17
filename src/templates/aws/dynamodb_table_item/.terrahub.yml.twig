@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dynamodb_table_item:
+        {{ name }}:
+          table_name: '${var.{{ name }}_table_name}'
+          hash_key: '${var.{{ name }}_hash_key}'
+          item: '${var.{{ name }}_item}'
+          # range_key: ''
+    variable:
+      {{ name }}_table_name:
+        type: 'string'
+      {{ name }}_hash_key:
+        type: 'string'
+      {{ name }}_item:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dynamodb_table_item.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dynamodb_table_item.{{ name }}.id}'

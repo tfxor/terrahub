@@ -1,0 +1,54 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudwatch_metric_alarm:
+        {{ name }}:
+          namespace: '${var.{{ name }}_namespace}'
+          threshold: '${var.{{ name }}_threshold}'
+          alarm_name: '${var.{{ name }}_alarm_name}'
+          comparison_operator: '${var.{{ name }}_comparison_operator}'
+          period: '${var.{{ name }}_period}'
+          evaluation_periods: '${var.{{ name }}_evaluation_periods}'
+          metric_name: '${var.{{ name }}_metric_name}'
+          # actions_enabled: false
+          # ok_actions: []
+          # extended_statistic: ''
+          # dimensions: 
+          #   '[TO_BE_REPLACED]': ''
+          # datapoints_to_alarm: 0
+          # unit: ''
+          # evaluate_low_sample_count_percentiles: ''
+          # alarm_description: ''
+          # insufficient_data_actions: []
+          # treat_missing_data: ''
+          # statistic: ''
+          # alarm_actions: []
+    variable:
+      {{ name }}_namespace:
+        type: 'string'
+      {{ name }}_threshold:
+        type: 'float'
+      {{ name }}_alarm_name:
+        type: 'string'
+      {{ name }}_comparison_operator:
+        type: 'string'
+      {{ name }}_period:
+        type: 'int'
+      {{ name }}_evaluation_periods:
+        type: 'int'
+      {{ name }}_metric_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_cloudwatch_metric_alarm.{{ name }}.id}'
+      thub_id:
+        value: '${aws_cloudwatch_metric_alarm.{{ name }}.id}'
+      arn:
+        value: '${aws_cloudwatch_metric_alarm.{{ name }}.arn}'
+      evaluate_low_sample_count_percentiles:
+        value: '${aws_cloudwatch_metric_alarm.{{ name }}.evaluate_low_sample_count_percentiles}'

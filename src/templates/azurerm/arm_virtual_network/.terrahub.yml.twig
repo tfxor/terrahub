@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_virtual_network:
+        {{ name }}:
+          address_space: '${var.{{ name }}_address_space}'
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # ddos_protection_plan: 
+          #   -
+          #     id: ''
+          #     enable: false
+          # dns_servers: []
+          # subnet: 
+          #   address_prefix: ''
+          #   name: ''
+          #   security_group: ''
+    variable:
+      {{ name }}_address_space:
+        type: 'list'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_virtual_network.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_virtual_network.{{ name }}.id}'
+      subnet:
+        value: '${azurerm_arm_virtual_network.{{ name }}.subnet}'

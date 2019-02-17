@@ -25,7 +25,7 @@ class Fetch {
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse);
+    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse).catch(this._handleError);
   }
 
   /**
@@ -39,7 +39,8 @@ class Fetch {
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts)).then(this._handleResponse);
+    return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
+      .then(this._handleResponse).catch(this._handleError);
   }
 
   /**
@@ -76,12 +77,41 @@ class Fetch {
         body: json
       }, null, 2));
 
-      if (result.status === 403) {
-        return Promise.reject({ message: 'Provided THUB_TOKEN is invalid', errorType: 'ValidationException' });
+      let error;
+      switch (result.status) {
+        case 403:
+          error = new Error(JSON.stringify({
+            message: 'Provided THUB_TOKEN is invalid',
+            errorType: 'ValidationException'
+          }, null, 2));
+          break;
+
+        case 500:
+        case 504:
+          error = new Error('Please retry. If this problem persists, ' +
+            'report this issue here: github.com/TerraHubCorp/terrahub/issues.');
+          break;
+      }
+
+      if (error) {
+        return Promise.reject(error);
       }
 
       return result.ok && !json.hasOwnProperty('errorType') ? json : Promise.reject(json);
     });
+  }
+
+  /**
+   * @param {Error} error
+   * @throws {Error}
+   * @private
+   */
+  _handleError(error) {
+    if (['EAI_AGAIN', 'NetworkingError'].includes(error.code)) {
+      error.message = 'Internet connection issue';
+    }
+
+    throw error;
   }
 }
 

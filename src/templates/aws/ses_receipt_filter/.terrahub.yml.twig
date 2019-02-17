@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_receipt_filter:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          cidr: '${var.{{ name }}_cidr}'
+          policy: '${var.{{ name }}_policy}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_cidr:
+        type: 'string'
+      {{ name }}_policy:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ses_receipt_filter.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_receipt_filter.{{ name }}.id}'

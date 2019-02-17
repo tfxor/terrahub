@@ -1,4 +1,0 @@
-resource "aws_autoscaling_attachment" "{{ name }}" {
-  autoscaling_group_name = "${var.autoscaling_attachment_autoscaling_group_name}"
-  alb_target_group_arn   = "${var.autoscaling_attachment_alb_target_group_arn}"
-}
