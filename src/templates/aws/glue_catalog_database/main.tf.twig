@@ -1,9 +1,0 @@
-resource "aws_glue_catalog_database" "{{ name }}" {
-  name       = "${var.glue_catalog_database_name}"
-  catalog_id = "${
-    var.glue_catalog_database_catalog_id != "" ?
-    var.glue_catalog_database_catalog_id : var.account_id
-  }"
-  description = "${var.glue_catalog_database_description}"
-  parameters  = "${var.glue_catalog_database_parameters}"
-}

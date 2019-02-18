@@ -1,8 +1,0 @@
-resource "aws_route53_record" "{{ name }}" {
-  zone_id         = "${var.route53_record_zone_id}"
-  name            = "${var.route53_record_name}"
-  type            = "${var.route53_record_type}"
-  ttl             = "${var.route53_record_ttl}"
-  allow_overwrite = "${var.route53_record_allow_overwrite}"
-  records        = "${var.route53_record_records}"
-}

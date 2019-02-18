@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_kms_key:
+        {{ name }}:
+          # is_enabled: false
+          # enable_key_rotation: false
+          # description: ''
+          # key_usage: ''
+          # policy: ''
+          # deletion_window_in_days: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    output:
+      id:
+        value: '${aws_kms_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_kms_key.{{ name }}.id}'
+      key_id:
+        value: '${aws_kms_key.{{ name }}.key_id}'
+      description:
+        value: '${aws_kms_key.{{ name }}.description}'
+      key_usage:
+        value: '${aws_kms_key.{{ name }}.key_usage}'
+      policy:
+        value: '${aws_kms_key.{{ name }}.policy}'
+      arn:
+        value: '${aws_kms_key.{{ name }}.arn}'

@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_service_discovery_public_dns_namespace:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_service_discovery_public_dns_namespace.{{ name }}.id}'
+      thub_id:
+        value: '${aws_service_discovery_public_dns_namespace.{{ name }}.id}'
+      arn:
+        value: '${aws_service_discovery_public_dns_namespace.{{ name }}.arn}'
+      hosted_zone:
+        value: '${aws_service_discovery_public_dns_namespace.{{ name }}.hosted_zone}'

@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_storage_default_object_acl:
+        {{ name }}:
+          bucket: '${var.{{ name }}_bucket}'
+          # role_entity: []
+    variable:
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${google_storage_default_object_acl.{{ name }}.id}'
+      thub_id:
+        value: '${google_storage_default_object_acl.{{ name }}.id}'
+      role_entity:
+        value: '${google_storage_default_object_acl.{{ name }}.role_entity}'

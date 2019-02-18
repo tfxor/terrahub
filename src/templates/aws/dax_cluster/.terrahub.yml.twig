@@ -1,0 +1,58 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dax_cluster:
+        {{ name }}:
+          replication_factor: '${var.{{ name }}_replication_factor}'
+          cluster_name: '${var.{{ name }}_cluster_name}'
+          node_type: '${var.{{ name }}_node_type}'
+          iam_role_arn: '${var.{{ name }}_iam_role_arn}'
+          # description: ''
+          # security_group_ids: []
+          # availability_zones: []
+          # notification_topic_arn: ''
+          # parameter_group_name: ''
+          # server_side_encryption: 
+          #   -
+          #     enabled: false
+          # maintenance_window: ''
+          # subnet_group_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_replication_factor:
+        type: 'int'
+      {{ name }}_cluster_name:
+        type: 'string'
+      {{ name }}_node_type:
+        type: 'string'
+      {{ name }}_iam_role_arn:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dax_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dax_cluster.{{ name }}.id}'
+      security_group_ids:
+        value: '${aws_dax_cluster.{{ name }}.security_group_ids}'
+      cluster_address:
+        value: '${aws_dax_cluster.{{ name }}.cluster_address}'
+      nodes:
+        value: '${aws_dax_cluster.{{ name }}.nodes}'
+      parameter_group_name:
+        value: '${aws_dax_cluster.{{ name }}.parameter_group_name}'
+      port:
+        value: '${aws_dax_cluster.{{ name }}.port}'
+      configuration_endpoint:
+        value: '${aws_dax_cluster.{{ name }}.configuration_endpoint}'
+      arn:
+        value: '${aws_dax_cluster.{{ name }}.arn}'
+      maintenance_window:
+        value: '${aws_dax_cluster.{{ name }}.maintenance_window}'
+      subnet_group_name:
+        value: '${aws_dax_cluster.{{ name }}.subnet_group_name}'

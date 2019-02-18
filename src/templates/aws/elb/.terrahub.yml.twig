@@ -1,0 +1,72 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_elb:
+        {{ name }}:
+          listener: 
+            lb_port: 0
+            lb_protocol: ''
+            instance_port: 0
+            instance_protocol: ''
+          #   ssl_certificate_id: ''
+          # connection_draining: false
+          # name: ''
+          # name_prefix: ''
+          # source_security_group: ''
+          # connection_draining_timeout: 0
+          # access_logs: 
+          #   -
+          #     bucket: ''
+          #     enabled: false
+          #     interval: 0
+          #     bucket_prefix: ''
+          # health_check: 
+          #   -
+          #     healthy_threshold: 0
+          #     unhealthy_threshold: 0
+          #     target: ''
+          #     interval: 0
+          #     timeout: 0
+          # internal: false
+          # cross_zone_load_balancing: false
+          # instances: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # availability_zones: []
+          # idle_timeout: 0
+          # security_groups: []
+          # subnets: []
+    output:
+      id:
+        value: '${aws_elb.{{ name }}.id}'
+      thub_id:
+        value: '${aws_elb.{{ name }}.id}'
+      zone_id:
+        value: '${aws_elb.{{ name }}.zone_id}'
+      name:
+        value: '${aws_elb.{{ name }}.name}'
+      source_security_group:
+        value: '${aws_elb.{{ name }}.source_security_group}'
+      source_security_group_id:
+        value: '${aws_elb.{{ name }}.source_security_group_id}'
+      health_check:
+        value: '${aws_elb.{{ name }}.health_check}'
+      internal:
+        value: '${aws_elb.{{ name }}.internal}'
+      instances:
+        value: '${aws_elb.{{ name }}.instances}'
+      dns_name:
+        value: '${aws_elb.{{ name }}.dns_name}'
+      availability_zones:
+        value: '${aws_elb.{{ name }}.availability_zones}'
+      arn:
+        value: '${aws_elb.{{ name }}.arn}'
+      security_groups:
+        value: '${aws_elb.{{ name }}.security_groups}'
+      subnets:
+        value: '${aws_elb.{{ name }}.subnets}'

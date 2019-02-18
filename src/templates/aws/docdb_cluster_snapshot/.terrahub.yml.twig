@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_docdb_cluster_snapshot:
+        {{ name }}:
+    output:
+      id:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.id}'
+      thub_id:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.id}'
+      snapshot_type:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.snapshot_type}'
+      status:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.status}'
+      vpc_id:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.vpc_id}'
+      availability_zones:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.availability_zones}'
+      db_cluster_snapshot_arn:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
+      storage_encrypted:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.storage_encrypted}'
+      engine:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.engine}'
+      engine_version:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.engine_version}'
+      kms_key_id:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.kms_key_id}'
+      port:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.port}'
+      source_db_cluster_snapshot_arn:
+        value: '${aws_docdb_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'

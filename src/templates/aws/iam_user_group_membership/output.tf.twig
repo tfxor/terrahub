@@ -1,9 +1,0 @@
-# Define list of variables to be output
-
-output "user" {
-  value = "${aws_iam_user_group_membership.{{ name }}.user}"
-}
-
-output "groups" {
-  value = "${aws_iam_user_group_membership.{{ name }}.groups}"
-}

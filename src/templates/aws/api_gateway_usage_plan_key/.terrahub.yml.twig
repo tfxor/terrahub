@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_usage_plan_key:
+        {{ name }}:
+          key_id: '${var.{{ name }}_key_id}'
+          key_type: '${var.{{ name }}_key_type}'
+          usage_plan_id: '${var.{{ name }}_usage_plan_id}'
+    variable:
+      {{ name }}_key_id:
+        type: 'string'
+      {{ name }}_key_type:
+        type: 'string'
+      {{ name }}_usage_plan_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_api_gateway_usage_plan_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_usage_plan_key.{{ name }}.id}'
+      name:
+        value: '${aws_api_gateway_usage_plan_key.{{ name }}.name}'
+      value:
+        value: '${aws_api_gateway_usage_plan_key.{{ name }}.value}'

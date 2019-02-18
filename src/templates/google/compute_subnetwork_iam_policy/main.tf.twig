@@ -1,6 +1,0 @@
-resource "google_compute_subnetwork_iam_policy" "{{ name }}" {
-  subnetwork  = "${var.google_subnetwork}"
-  project     = "${var.google_project_id}"
-  policy_data = "${data.google_iam_policy.{{ name }}.policy_data}"
-  region      = "${var.google_project_region}"
-}

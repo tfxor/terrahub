@@ -1,0 +1,19 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_macie_member_account_association:
+        {{ name }}:
+          member_account_id: '${var.{{ name }}_member_account_id}'
+    variable:
+      {{ name }}_member_account_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_macie_member_account_association.{{ name }}.id}'
+      thub_id:
+        value: '${aws_macie_member_account_association.{{ name }}.id}'

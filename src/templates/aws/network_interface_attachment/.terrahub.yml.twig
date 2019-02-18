@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_network_interface_attachment:
+        {{ name }}:
+          device_index: '${var.{{ name }}_device_index}'
+          instance_id: '${var.{{ name }}_instance_id}'
+          network_interface_id: '${var.{{ name }}_network_interface_id}'
+    variable:
+      {{ name }}_device_index:
+        type: 'int'
+      {{ name }}_instance_id:
+        type: 'string'
+      {{ name }}_network_interface_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_network_interface_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_network_interface_attachment.{{ name }}.id}'
+      attachment_id:
+        value: '${aws_network_interface_attachment.{{ name }}.attachment_id}'
+      status:
+        value: '${aws_network_interface_attachment.{{ name }}.status}'

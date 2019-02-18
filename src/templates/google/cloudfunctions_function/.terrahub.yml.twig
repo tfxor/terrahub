@@ -1,0 +1,64 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_cloudfunctions_function:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # description: ''
+          # timeout: 0
+          # trigger_topic: ''
+          # source_archive_object: ''
+          # entry_point: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # https_trigger_url: ''
+          # project: ''
+          # source_repository: 
+          #   -
+          #     url: ''
+          # available_memory_mb: 0
+          # trigger_bucket: ''
+          # event_trigger: 
+          #   -
+          #     resource: ''
+          #     event_type: ''
+          #     failure_policy: 
+          #       -
+          #         retry: false
+          # retry_on_failure: false
+          # region: ''
+          # source_archive_bucket: ''
+          # runtime: ''
+          # service_account_email: ''
+          # environment_variables: 
+          #   '[TO_BE_REPLACED]': ''
+          # trigger_http: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${google_cloudfunctions_function.{{ name }}.id}'
+      thub_id:
+        value: '${google_cloudfunctions_function.{{ name }}.id}'
+      trigger_topic:
+        value: '${google_cloudfunctions_function.{{ name }}.trigger_topic}'
+      https_trigger_url:
+        value: '${google_cloudfunctions_function.{{ name }}.https_trigger_url}'
+      project:
+        value: '${google_cloudfunctions_function.{{ name }}.project}'
+      trigger_bucket:
+        value: '${google_cloudfunctions_function.{{ name }}.trigger_bucket}'
+      event_trigger:
+        value: '${google_cloudfunctions_function.{{ name }}.event_trigger}'
+      retry_on_failure:
+        value: '${google_cloudfunctions_function.{{ name }}.retry_on_failure}'
+      region:
+        value: '${google_cloudfunctions_function.{{ name }}.region}'
+      runtime:
+        value: '${google_cloudfunctions_function.{{ name }}.runtime}'
+      service_account_email:
+        value: '${google_cloudfunctions_function.{{ name }}.service_account_email}'

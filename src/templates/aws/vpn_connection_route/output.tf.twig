@@ -1,9 +1,0 @@
-# Define list of variables to be output
-
-output "destination_cidr_block" {
-  value = "${aws_vpn_connection_route.{{ name }}.destination_cidr_block}"
-}
-
-output "vpn_connection_id" {
-  value = "${aws_vpn_connection_route.{{ name }}.vpn_connection_id}"
-}

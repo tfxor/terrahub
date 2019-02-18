@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_traffic_manager_profile:
+        {{ name }}:
+          monitor_config: 
+            protocol: ''
+            port: 0
+          #   path: ''
+          dns_config: 
+            relative_name: ''
+            ttl: 0
+          traffic_routing_method: '${var.{{ name }}_traffic_routing_method}'
+          name: '${var.{{ name }}_name}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # profile_status: ''
+    variable:
+      {{ name }}_traffic_routing_method:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.id}'
+      fqdn:
+        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.fqdn}'
+      profile_status:
+        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.profile_status}'

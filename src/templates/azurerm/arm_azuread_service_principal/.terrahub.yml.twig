@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_azuread_service_principal:
+        {{ name }}:
+          application_id: '${var.{{ name }}_application_id}'
+    variable:
+      {{ name }}_application_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_azuread_service_principal.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_azuread_service_principal.{{ name }}.id}'
+      display_name:
+        value: '${azurerm_arm_azuread_service_principal.{{ name }}.display_name}'

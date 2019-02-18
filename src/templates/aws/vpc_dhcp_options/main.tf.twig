@@ -1,9 +1,0 @@
-resource "aws_vpc_dhcp_options" "{{ name }}" {
-  domain_name          = "${var.vpc_dhcp_options_domain_name}"
-  domain_name_servers  = ["${var.vpc_dhcp_options_domain_name_servers}"]
-  ntp_servers          = ["${var.vpc_dhcp_options_ntp_servers}"]
-  netbios_name_servers = ["${var.vpc_dhcp_options_netbios_name_servers}"]
-  netbios_node_type    = "${var.vpc_dhcp_options_netbios_node_type}"
-
-  tags = "${merge(var.default_tags, var.custom_tags)}"
-}

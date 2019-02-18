@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_vpn_connection_route:
+        {{ name }}:
+          destination_cidr_block: '${var.{{ name }}_destination_cidr_block}'
+          vpn_connection_id: '${var.{{ name }}_vpn_connection_id}'
+    variable:
+      {{ name }}_destination_cidr_block:
+        type: 'string'
+      {{ name }}_vpn_connection_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_vpn_connection_route.{{ name }}.id}'
+      thub_id:
+        value: '${aws_vpn_connection_route.{{ name }}.id}'

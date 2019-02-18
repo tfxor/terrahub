@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_db_option_group:
+        {{ name }}:
+          engine_name: '${var.{{ name }}_engine_name}'
+          major_engine_version: '${var.{{ name }}_major_engine_version}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # name_prefix: ''
+          # option_group_description: ''
+          # option: 
+          #   option_name: ''
+          #   option_settings: 
+          #     name: ''
+          #     value: ''
+    variable:
+      {{ name }}_engine_name:
+        type: 'string'
+      {{ name }}_major_engine_version:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_db_option_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_db_option_group.{{ name }}.id}'
+      arn:
+        value: '${aws_db_option_group.{{ name }}.arn}'
+      name:
+        value: '${aws_db_option_group.{{ name }}.name}'
+      name_prefix:
+        value: '${aws_db_option_group.{{ name }}.name_prefix}'

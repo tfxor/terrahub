@@ -1,0 +1,40 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_worklink_fleet:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # audit_stream_arn: ''
+          # network: 
+          #   -
+          #     vpc_id: ''
+          #     security_group_ids: []
+          #     subnet_ids: []
+          # device_ca_certificate: ''
+          # display_name: ''
+          # identity_provider: 
+          #   -
+          #     type: ''
+          #     saml_metadata: ''
+          # optimize_for_end_user_location: false
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_worklink_fleet.{{ name }}.id}'
+      thub_id:
+        value: '${aws_worklink_fleet.{{ name }}.id}'
+      company_code:
+        value: '${aws_worklink_fleet.{{ name }}.company_code}'
+      last_updated_time:
+        value: '${aws_worklink_fleet.{{ name }}.last_updated_time}'
+      arn:
+        value: '${aws_worklink_fleet.{{ name }}.arn}'
+      created_time:
+        value: '${aws_worklink_fleet.{{ name }}.created_time}'

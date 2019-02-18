@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_organizations_account:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          email: '${var.{{ name }}_email}'
+          # iam_user_access_to_billing: ''
+          # role_name: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_email:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_organizations_account.{{ name }}.id}'
+      thub_id:
+        value: '${aws_organizations_account.{{ name }}.id}'
+      arn:
+        value: '${aws_organizations_account.{{ name }}.arn}'
+      joined_method:
+        value: '${aws_organizations_account.{{ name }}.joined_method}'
+      joined_timestamp:
+        value: '${aws_organizations_account.{{ name }}.joined_timestamp}'
+      status:
+        value: '${aws_organizations_account.{{ name }}.status}'

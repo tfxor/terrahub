@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_iam_saml_provider:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          saml_metadata_document: '${var.{{ name }}_saml_metadata_document}'
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_saml_metadata_document:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_iam_saml_provider.{{ name }}.id}'
+      thub_id:
+        value: '${aws_iam_saml_provider.{{ name }}.id}'
+      arn:
+        value: '${aws_iam_saml_provider.{{ name }}.arn}'
+      valid_until:
+        value: '${aws_iam_saml_provider.{{ name }}.valid_until}'

@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_config_configuration_aggregator:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # account_aggregation_source: 
+          #   -
+          #     account_ids: []
+          #     regions: 
+          #       -
+          # organization_aggregation_source: 
+          #   -
+          #     role_arn: ''
+          #     regions: 
+          #       -
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_config_configuration_aggregator.{{ name }}.id}'
+      thub_id:
+        value: '${aws_config_configuration_aggregator.{{ name }}.id}'
+      arn:
+        value: '${aws_config_configuration_aggregator.{{ name }}.arn}'

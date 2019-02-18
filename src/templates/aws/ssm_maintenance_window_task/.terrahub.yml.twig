@@ -1,0 +1,50 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ssm_maintenance_window_task:
+        {{ name }}:
+          max_errors: '${var.{{ name }}_max_errors}'
+          task_type: '${var.{{ name }}_task_type}'
+          targets: 
+            -
+              key: ''
+              values: []
+          max_concurrency: '${var.{{ name }}_max_concurrency}'
+          task_arn: '${var.{{ name }}_task_arn}'
+          service_role_arn: '${var.{{ name }}_service_role_arn}'
+          window_id: '${var.{{ name }}_window_id}'
+          # name: ''
+          # task_parameters: 
+          #   -
+          #     name: ''
+          #     values: []
+          # description: ''
+          # priority: 0
+          # logging_info: 
+          #   -
+          #     s3_bucket_name: ''
+          #     s3_region: ''
+          #     s3_bucket_prefix: ''
+    variable:
+      {{ name }}_max_errors:
+        type: 'string'
+      {{ name }}_task_type:
+        type: 'string'
+      {{ name }}_max_concurrency:
+        type: 'string'
+      {{ name }}_task_arn:
+        type: 'string'
+      {{ name }}_service_role_arn:
+        type: 'string'
+      {{ name }}_window_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ssm_maintenance_window_task.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ssm_maintenance_window_task.{{ name }}.id}'

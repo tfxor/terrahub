@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_service_discovery_service:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          dns_config: 
+            -
+              namespace_id: ''
+              dns_records: 
+                -
+                  ttl: 0
+                  type: ''
+          # description: ''
+          # health_check_config: 
+          #   -
+          #     failure_threshold: 0
+          #     resource_path: ''
+          #     type: ''
+          # health_check_custom_config: 
+          #   -
+          #     failure_threshold: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_service_discovery_service.{{ name }}.id}'
+      thub_id:
+        value: '${aws_service_discovery_service.{{ name }}.id}'
+      arn:
+        value: '${aws_service_discovery_service.{{ name }}.arn}'

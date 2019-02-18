@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ec2_transit_gateway_route_table:
+        {{ name }}:
+          transit_gateway_id: '${var.{{ name }}_transit_gateway_id}'
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_transit_gateway_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ec2_transit_gateway_route_table.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ec2_transit_gateway_route_table.{{ name }}.id}'
+      default_propagation_route_table:
+        value: '${aws_ec2_transit_gateway_route_table.{{ name }}.default_propagation_route_table}'
+      default_association_route_table:
+        value: '${aws_ec2_transit_gateway_route_table.{{ name }}.default_association_route_table}'

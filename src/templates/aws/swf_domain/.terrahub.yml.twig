@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_swf_domain:
+        {{ name }}:
+          workflow_execution_retention_period_in_days: '${var.{{ name }}_workflow_execution_retention_period_in_days}'
+          # name: ''
+          # name_prefix: ''
+          # description: ''
+    variable:
+      {{ name }}_workflow_execution_retention_period_in_days:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_swf_domain.{{ name }}.id}'
+      thub_id:
+        value: '${aws_swf_domain.{{ name }}.id}'
+      name:
+        value: '${aws_swf_domain.{{ name }}.name}'

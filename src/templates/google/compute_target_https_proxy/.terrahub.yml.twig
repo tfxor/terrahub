@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_target_https_proxy:
+        {{ name }}:
+          ssl_certificates: '${var.{{ name }}_ssl_certificates}'
+          name: '${var.{{ name }}_name}'
+          url_map: '${var.{{ name }}_url_map}'
+          # description: ''
+          # quic_override: ''
+          # ssl_policy: ''
+          # project: ''
+    variable:
+      {{ name }}_ssl_certificates:
+        type: 'list'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_url_map:
+        type: 'string'
+    output:
+      id:
+        value: '${google_compute_target_https_proxy.{{ name }}.id}'
+      thub_id:
+        value: '${google_compute_target_https_proxy.{{ name }}.id}'
+      self_link:
+        value: '${google_compute_target_https_proxy.{{ name }}.self_link}'
+      proxy_id:
+        value: '${google_compute_target_https_proxy.{{ name }}.proxy_id}'
+      project:
+        value: '${google_compute_target_https_proxy.{{ name }}.project}'
+      creation_timestamp:
+        value: '${google_compute_target_https_proxy.{{ name }}.creation_timestamp}'

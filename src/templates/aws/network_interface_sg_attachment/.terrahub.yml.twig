@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_network_interface_sg_attachment:
+        {{ name }}:
+          network_interface_id: '${var.{{ name }}_network_interface_id}'
+          security_group_id: '${var.{{ name }}_security_group_id}'
+    variable:
+      {{ name }}_network_interface_id:
+        type: 'string'
+      {{ name }}_security_group_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_network_interface_sg_attachment.{{ name }}.id}'
+      thub_id:
+        value: '${aws_network_interface_sg_attachment.{{ name }}.id}'

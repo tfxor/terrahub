@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_spot_datafeed_subscription:
+        {{ name }}:
+          bucket: '${var.{{ name }}_bucket}'
+          # prefix: ''
+    variable:
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_spot_datafeed_subscription.{{ name }}.id}'
+      thub_id:
+        value: '${aws_spot_datafeed_subscription.{{ name }}.id}'

@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_snapshot_create_volume_permission:
+        {{ name }}:
+          snapshot_id: '${var.{{ name }}_snapshot_id}'
+          account_id: '${var.{{ name }}_account_id}'
+    variable:
+      {{ name }}_snapshot_id:
+        type: 'string'
+      {{ name }}_account_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_snapshot_create_volume_permission.{{ name }}.id}'
+      thub_id:
+        value: '${aws_snapshot_create_volume_permission.{{ name }}.id}'

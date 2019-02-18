@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_opsworks_rds_db_instance:
+        {{ name }}:
+          stack_id: '${var.{{ name }}_stack_id}'
+          rds_db_instance_arn: '${var.{{ name }}_rds_db_instance_arn}'
+          db_password: '${var.{{ name }}_db_password}'
+          db_user: '${var.{{ name }}_db_user}'
+    variable:
+      {{ name }}_stack_id:
+        type: 'string'
+      {{ name }}_rds_db_instance_arn:
+        type: 'string'
+      {{ name }}_db_password:
+        type: 'string'
+      {{ name }}_db_user:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_opsworks_rds_db_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_opsworks_rds_db_instance.{{ name }}.id}'

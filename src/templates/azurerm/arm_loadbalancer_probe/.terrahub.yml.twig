@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_loadbalancer_probe:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
+          port: '${var.{{ name }}_port}'
+          # request_path: ''
+          # interval_in_seconds: 0
+          # protocol: ''
+          # number_of_probes: 0
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_loadbalancer_id:
+        type: 'string'
+      {{ name }}_port:
+        type: 'int'
+    output:
+      id:
+        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
+      load_balancer_rules:
+        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.load_balancer_rules}'
+      protocol:
+        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.protocol}'

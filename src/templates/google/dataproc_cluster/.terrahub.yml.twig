@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_dataproc_cluster:
+        {{ name }}:
+          accelerator_count: '${var.{{ name }}_accelerator_count}'
+          accelerator_type: '${var.{{ name }}_accelerator_type}'
+    variable:
+      {{ name }}_accelerator_count:
+        type: 'int'
+      {{ name }}_accelerator_type:
+        type: 'string'
+    output:
+      id:
+        value: '${google_dataproc_cluster.{{ name }}.id}'
+      thub_id:
+        value: '${google_dataproc_cluster.{{ name }}.id}'

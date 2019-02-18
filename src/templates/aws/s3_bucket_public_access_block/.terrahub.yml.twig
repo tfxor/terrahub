@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_s3_bucket_public_access_block:
+        {{ name }}:
+          bucket: '${var.{{ name }}_bucket}'
+          # restrict_public_buckets: false
+          # block_public_acls: false
+          # block_public_policy: false
+          # ignore_public_acls: false
+    variable:
+      {{ name }}_bucket:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_s3_bucket_public_access_block.{{ name }}.id}'
+      thub_id:
+        value: '${aws_s3_bucket_public_access_block.{{ name }}.id}'

@@ -1,0 +1,61 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dms_replication_instance:
+        {{ name }}:
+          replication_instance_class: '${var.{{ name }}_replication_instance_class}'
+          replication_instance_id: '${var.{{ name }}_replication_instance_id}'
+          # apply_immediately: false
+          # replication_subnet_group_id: ''
+          # vpc_security_group_ids: []
+          # preferred_maintenance_window: ''
+          # allocated_storage: 0
+          # engine_version: ''
+          # kms_key_arn: ''
+          # multi_az: false
+          # auto_minor_version_upgrade: false
+          # availability_zone: ''
+          # publicly_accessible: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_replication_instance_class:
+        type: 'string'
+      {{ name }}_replication_instance_id:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_dms_replication_instance.{{ name }}.id}'
+      thub_id:
+        value: '${aws_dms_replication_instance.{{ name }}.id}'
+      replication_instance_arn:
+        value: '${aws_dms_replication_instance.{{ name }}.replication_instance_arn}'
+      replication_subnet_group_id:
+        value: '${aws_dms_replication_instance.{{ name }}.replication_subnet_group_id}'
+      vpc_security_group_ids:
+        value: '${aws_dms_replication_instance.{{ name }}.vpc_security_group_ids}'
+      preferred_maintenance_window:
+        value: '${aws_dms_replication_instance.{{ name }}.preferred_maintenance_window}'
+      replication_instance_private_ips:
+        value: '${aws_dms_replication_instance.{{ name }}.replication_instance_private_ips}'
+      allocated_storage:
+        value: '${aws_dms_replication_instance.{{ name }}.allocated_storage}'
+      engine_version:
+        value: '${aws_dms_replication_instance.{{ name }}.engine_version}'
+      kms_key_arn:
+        value: '${aws_dms_replication_instance.{{ name }}.kms_key_arn}'
+      multi_az:
+        value: '${aws_dms_replication_instance.{{ name }}.multi_az}'
+      auto_minor_version_upgrade:
+        value: '${aws_dms_replication_instance.{{ name }}.auto_minor_version_upgrade}'
+      availability_zone:
+        value: '${aws_dms_replication_instance.{{ name }}.availability_zone}'
+      publicly_accessible:
+        value: '${aws_dms_replication_instance.{{ name }}.publicly_accessible}'
+      replication_instance_public_ips:
+        value: '${aws_dms_replication_instance.{{ name }}.replication_instance_public_ips}'

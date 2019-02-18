@@ -1,0 +1,56 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_monitoring_uptime_check_config:
+        {{ name }}:
+          display_name: '${var.{{ name }}_display_name}'
+          timeout: '${var.{{ name }}_timeout}'
+          # tcp_check: 
+          #   -
+          #     port: 0
+          # content_matchers: 
+          #   -
+          #     content: ''
+          # http_check: 
+          #   -
+          #     auth_info: 
+          #       -
+          #         username: ''
+          #         password: ''
+          # is_internal: false
+          # monitored_resource: 
+          #   -
+          #     labels: 
+          #       '[TO_BE_REPLACED]': ''
+          #     type: ''
+          # period: ''
+          # resource_group: 
+          #   -
+          #     group_id: ''
+          #     resource_type: ''
+          # project: ''
+          # internal_checkers: 
+          #   -
+          #     name: ''
+          #     network: ''
+          #     peer_project_id: ''
+          #     display_name: ''
+          #     gcp_zone: ''
+          # selected_regions: []
+    variable:
+      {{ name }}_display_name:
+        type: 'string'
+      {{ name }}_timeout:
+        type: 'string'
+    output:
+      id:
+        value: '${google_monitoring_uptime_check_config.{{ name }}.id}'
+      thub_id:
+        value: '${google_monitoring_uptime_check_config.{{ name }}.id}'
+      name:
+        value: '${google_monitoring_uptime_check_config.{{ name }}.name}'
+      project:
+        value: '${google_monitoring_uptime_check_config.{{ name }}.project}'

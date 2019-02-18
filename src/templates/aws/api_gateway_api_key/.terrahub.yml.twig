@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_api_gateway_api_key:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          # value: ''
+          # description: ''
+          # enabled: false
+          # stage_key: []
+    variable:
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_api_gateway_api_key.{{ name }}.id}'
+      thub_id:
+        value: '${aws_api_gateway_api_key.{{ name }}.id}'
+      created_date:
+        value: '${aws_api_gateway_api_key.{{ name }}.created_date}'
+      last_updated_date:
+        value: '${aws_api_gateway_api_key.{{ name }}.last_updated_date}'
+      value:
+        value: '${aws_api_gateway_api_key.{{ name }}.value}'

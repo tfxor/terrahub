@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_glacier_vault_lock:
+        {{ name }}:
+          complete_lock: '${var.{{ name }}_complete_lock}'
+          policy: '${var.{{ name }}_policy}'
+          vault_name: '${var.{{ name }}_vault_name}'
+          # ignore_deletion_error: false
+    variable:
+      {{ name }}_complete_lock:
+        type: 'bool'
+      {{ name }}_policy:
+        type: 'string'
+      {{ name }}_vault_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_glacier_vault_lock.{{ name }}.id}'
+      thub_id:
+        value: '${aws_glacier_vault_lock.{{ name }}.id}'

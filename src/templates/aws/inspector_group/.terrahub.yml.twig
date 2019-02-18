@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_inspector_group:
+        {{ name }}:
+          tags: '${var.{{ name }}_tags}'
+    variable:
+      {{ name }}_tags:
+        type: 'map'
+    output:
+      id:
+        value: '${aws_inspector_group.{{ name }}.id}'
+      thub_id:
+        value: '${aws_inspector_group.{{ name }}.id}'
+      arn:
+        value: '${aws_inspector_group.{{ name }}.arn}'

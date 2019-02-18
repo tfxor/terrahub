@@ -1,0 +1,43 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_mssql_elasticpool:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          per_database_settings: 
+            -
+              min_capacity: ''
+              max_capacity: ''
+          server_name: '${var.{{ name }}_server_name}'
+          sku: 
+            -
+              name: ''
+              capacity: 0
+              tier: ''
+          #     family: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # max_size_bytes: 0
+          # max_size_gb: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_server_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.id}'
+      elastic_pool_properties:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.elastic_pool_properties}'
+      zone_redundant:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.zone_redundant}'
+      max_size_bytes:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.max_size_bytes}'
+      max_size_gb:
+        value: '${azurerm_arm_mssql_elasticpool.{{ name }}.max_size_gb}'

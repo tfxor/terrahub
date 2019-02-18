@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_template_deployment:
+        {{ name }}:
+          deployment_mode: '${var.{{ name }}_deployment_mode}'
+          name: '${var.{{ name }}_name}'
+          # template_body: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # parameters_body: ''
+    variable:
+      {{ name }}_deployment_mode:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_template_deployment.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_template_deployment.{{ name }}.id}'
+      template_body:
+        value: '${azurerm_arm_template_deployment.{{ name }}.template_body}'
+      outputs:
+        value: '${azurerm_arm_template_deployment.{{ name }}.outputs}'

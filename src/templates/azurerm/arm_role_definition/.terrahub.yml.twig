@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_role_definition:
+        {{ name }}:
+          name: '${var.{{ name }}_name}'
+          scope: '${var.{{ name }}_scope}'
+          permissions: 
+            -
+          #     data_actions: 
+          #     not_data_actions: 
+          #     actions: 
+          #       -
+          #     not_actions: 
+          #       -
+          assignable_scopes: '${var.{{ name }}_assignable_scopes}'
+          # role_definition_id: ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_scope:
+        type: 'string'
+      {{ name }}_assignable_scopes:
+        type: 'list'
+    output:
+      id:
+        value: '${azurerm_arm_role_definition.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_role_definition.{{ name }}.id}'
+      role_definition_id:
+        value: '${azurerm_arm_role_definition.{{ name }}.role_definition_id}'

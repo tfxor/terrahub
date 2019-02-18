@@ -1,0 +1,66 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ses_receipt_rule:
+        {{ name }}:
+          rule_set_name: '${var.{{ name }}_rule_set_name}'
+          name: '${var.{{ name }}_name}'
+          # stop_action: 
+          #   scope: ''
+          #   position: 0
+          #   topic_arn: ''
+          # workmail_action: 
+          #   organization_arn: ''
+          #   position: 0
+          #   topic_arn: ''
+          # sns_action: 
+          #   topic_arn: ''
+          #   position: 0
+          # after: ''
+          # scan_enabled: false
+          # tls_policy: ''
+          # bounce_action: 
+          #   message: ''
+          #   sender: ''
+          #   smtp_reply_code: ''
+          #   position: 0
+          #   status_code: ''
+          #   topic_arn: ''
+          # recipients: []
+          # add_header_action: 
+          #   header_name: ''
+          #   header_value: ''
+          #   position: 0
+          # enabled: false
+          # lambda_action: 
+          #   function_arn: ''
+          #   position: 0
+          #   invocation_type: ''
+          #   topic_arn: ''
+          # s3_action: 
+          #   position: 0
+          #   bucket_name: ''
+          #   object_key_prefix: ''
+          #   topic_arn: ''
+          #   kms_key_arn: ''
+    variable:
+      {{ name }}_rule_set_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+    output:
+      id:
+        value: '${aws_ses_receipt_rule.{{ name }}.id}'
+      thub_id:
+        value: '${aws_ses_receipt_rule.{{ name }}.id}'
+      scan_enabled:
+        value: '${aws_ses_receipt_rule.{{ name }}.scan_enabled}'
+      tls_policy:
+        value: '${aws_ses_receipt_rule.{{ name }}.tls_policy}'
+      enabled:
+        value: '${aws_ses_receipt_rule.{{ name }}.enabled}'

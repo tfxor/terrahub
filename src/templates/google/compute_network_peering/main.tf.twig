@@ -1,6 +1,0 @@
-resource "google_compute_network_peering" "{{ name }}" {
-  name               = "${var.compute_network_peering_name}"
-  network            = "${var.compute_network_peering_network}"
-  peer_network       = "${var.compute_network_peering_peer_network}"
-  auto_create_routes = "${var.compute_network_peering_auto_create_routes}"
-}

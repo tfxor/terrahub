@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_app_service_slot:
+        {{ name }}:
+          app_service_name: '${var.{{ name }}_app_service_name}'
+          name: '${var.{{ name }}_name}'
+          app_service_plan_id: '${var.{{ name }}_app_service_plan_id}'
+          # app_settings: 
+          #   '[TO_BE_REPLACED]': ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # https_only: false
+          # enabled: false
+          # identity: 
+          #   -
+          #     type: ''
+          # client_affinity_enabled: false
+          # connection_string: 
+          #   name: ''
+          #   value: ''
+          #   type: ''
+    variable:
+      {{ name }}_app_service_name:
+        type: 'string'
+      {{ name }}_name:
+        type: 'string'
+      {{ name }}_app_service_plan_id:
+        type: 'string'
+    output:
+      id:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.id}'
+      thub_id:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.id}'
+      app_settings:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.app_settings}'
+      default_site_hostname:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.default_site_hostname}'
+      client_affinity_enabled:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.client_affinity_enabled}'
+      connection_string:
+        value: '${azurerm_arm_app_service_slot.{{ name }}.connection_string}'
