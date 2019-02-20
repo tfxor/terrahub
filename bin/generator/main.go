@@ -15,6 +15,7 @@ func main() {
 	version := flag.Bool("version", false, "Prints current app version")
 	toYml := flag.Bool("toyml", false, "Input HCL folder, output yml file")
 	toymlfolder := flag.Bool("toymlfolder", false, "Input HCL folder, output yml folder")
+	thub := flag.Bool("thub", false, "Normalize HCL and YAML")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -28,6 +29,11 @@ func main() {
 
 	if *toymlfolder {
 		ConvertFolderToYml()
+		return
+	}
+
+	if *thub {
+		NormalizeTHub()
 		return
 	}
 
@@ -94,5 +100,33 @@ func ConvertFolderToYml() {
 		fmt.Println("The source path is not set!")
 	} else {
 		terraform.ParsingFolderTfFile(source, destination)
+	}
+}
+
+// NormalizeTHub - Normalize
+func NormalizeTHub() {
+	argsWithoutProg := os.Args[2:]
+	projectFolder := "./"
+	source := ""
+	destination := "./terrahub/"
+	env := ""
+	if len(argsWithoutProg) > 0 {
+		projectFolder = os.Args[2]
+	}
+	if len(argsWithoutProg) > 1 {
+		source = os.Args[3]
+	}
+	if len(argsWithoutProg) > 2 {
+		destination = os.Args[4]
+	} else {
+		destination = source
+	}
+	if len(argsWithoutProg) > 3 {
+		env = os.Args[5]
+	}
+	if source == "" {
+		fmt.Println("The source path is not set!")
+	} else {
+		terraform.Normalize(projectFolder, source, destination, env)
 	}
 }

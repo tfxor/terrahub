@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os/exec"
+	"os"
+	"io"
 )
 
 func DownloadFromGit(url string) bool {
@@ -14,6 +16,18 @@ func DownloadFromGit(url string) bool {
 		return false
 	}
 	fmt.Println("Success")
+	return true
+}
+
+func DeleteEmptyFolder(url string) bool {
+	if !IsDirEmpty(url) {
+		return true
+	}
+	cmd := exec.Command("rm", "-rf", url)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+		return false
+	}
 	return true
 }
 
@@ -43,4 +57,19 @@ func CreateFolder(path string) {
 	if err := cmd.Run(); err != nil {
 		fmt.Println(err)
 	}
+}
+
+func IsDirEmpty(name string) bool {
+	f, err := os.Open(name)
+	if err != nil {
+			return false
+	}
+	defer f.Close()
+
+	_, err = f.Readdir(1)
+
+	if err == io.EOF {
+			return true
+	}
+	return false
 }
