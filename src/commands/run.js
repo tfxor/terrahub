@@ -3,7 +3,7 @@
 const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { printConfigAsList } = require('../helpers/util');
+const { printListAsTree } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -26,7 +26,7 @@ class RunCommand extends TerraformCommand {
    */
   run() {
     if (this.getOption('dry-run')) {
-      printConfigAsList(this.getConfigObject(), this.getProjectConfig());
+      printListAsTree(this.getConfigObject(), this.getProjectConfig().name);
       return Promise.resolve('Done');
     }
 
