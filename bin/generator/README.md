@@ -21,7 +21,7 @@ Compress terraform configurations into terrahub config
 
 ```sh
 $ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
-$ generator -toyml [-recursively] [path_to_input_hcl] [path_to_output_config]
+$ generator -toyml [-recursive] [path_to_input_hcl] [path_to_output_config]
 ```
 
 Compress terraform configurations into terrahub config
@@ -29,7 +29,7 @@ Scanning all children directories
 
 ```sh
 $ cd $GOPATH/src/generator/../[YOUR OS ARCHITECTURE]/
-$ generator -thub [-recursively] [path_to_input_hcl_parent_folder] [path_to_output_config_parent_folder] [everoment] 
+$ generator -thub [-recursive] [path_to_input_hcl_parent_folder] [path_to_output_config_parent_folder] [environment] 
 ```
 
 ## Install Linux

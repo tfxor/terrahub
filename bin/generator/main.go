@@ -15,7 +15,7 @@ func main() {
 	version := flag.Bool("version", false, "Prints current app version")
 	toYml := flag.Bool("toyml", false, "Input HCL folder, output yml file")
 	thub := flag.Bool("thub", false, "Normalize HCL and YAML")
-	recursively := flag.Bool("recursively", false, "Scan folder recursively")
+	recursive := flag.Bool("recursive", false, "Scan folder recursive")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -23,12 +23,12 @@ func main() {
 	}
 
 	if *toYml {
-		ConvertToYml(*recursively)
+		ConvertToYml(*recursive)
 		return
 	}
 
 	if *thub {
-		NormalizeTHub(*recursively)
+		NormalizeTHub(*recursive)
 		return
 	}
 
@@ -59,20 +59,20 @@ func GenerationTemplates() {
 }
 
 // ConvertToYml - Convert tf to yml
-func ConvertToYml(recursively bool) {
+func ConvertToYml(recursive bool) {
 	countelement := 2
 	argsWithoutProg := os.Args[countelement:]
 	if len(argsWithoutProg) < countelement {
 		fmt.Println("Set please all params!")
 		return
 	}
-	if recursively {
+	if recursive {
 		countelement++
 	}
 	source := os.Args[countelement]
 	destination := os.Args[countelement+1]
 
-	if recursively {
+	if recursive {
 		terraform.ParsingFolderTfFile(source, destination)
 	} else {
 		terraform.ParsingTfFile(source, destination)
@@ -80,14 +80,14 @@ func ConvertToYml(recursively bool) {
 }
 
 // NormalizeTHub - Normalize
-func NormalizeTHub(recursively bool) {
+func NormalizeTHub(recursive bool) {
 	countelement := 2
 	argsWithoutProg := os.Args[countelement:]
 	if len(argsWithoutProg) < countelement {
 		fmt.Println("Set please all params!")
 		return
 	}
-	if recursively {
+	if recursive {
 		countelement++
 	}
 	source := os.Args[countelement]
@@ -96,7 +96,7 @@ func NormalizeTHub(recursively bool) {
 	if len(argsWithoutProg) > countelement+1 {
 		env = os.Args[countelement+2]
 	}
-	if recursively {
+	if recursive {
 		terraform.NormalizeFolder(source, destination, env)
 	} else {
 		terraform.Normalize(source, destination, env)
