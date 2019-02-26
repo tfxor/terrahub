@@ -88,14 +88,19 @@ func AddTypeString(input []byte, spaceCount int, parentValue string, addString s
 		newYml += line + "\n"
 		itIsParent = CheckIfItIs(itIsParent, line, 4, parentValue)
 		if itIsParent && strings.Index(line, parentValue) == -1 {
-			if (SpaceCount(lines[i+1]) == spaceCount && SpaceCount(line) == spaceCount) ||
-				(SpaceCount(lines[i+1]) == spaceCount+2 && strings.Index(lines[i+1], " type:") == -1) ||
-				(SpaceCount(lines[i+1]) == spaceCount-2 && strings.Index(lines[i], " type:") == -1) {
-				newYml += addString
-			}
+			newYml += ValidateSpace(lines, addString, i, spaceCount)
 		}
 	}
 	return newYml
+}
+
+func ValidateSpace(lines []string, addString string, i int, spaceCount int) string {
+	if (SpaceCount(lines[i+1]) == spaceCount && SpaceCount(lines[i]) == spaceCount) ||
+		(SpaceCount(lines[i+1]) == spaceCount+2 && strings.Index(lines[i+1], " type:") == -1) ||
+		(SpaceCount(lines[i+1]) == spaceCount-2 && strings.Index(lines[i], " type:") == -1) {
+		return addString
+	}
+	return ""
 }
 
 func CreateNewYml(input []byte, spaceCount int, valueSearch string, parent ...string) string {
