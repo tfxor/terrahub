@@ -3,7 +3,7 @@ GOARCH32=386
 GOARCH64=amd64
 VERSION=v0.0.1
 
-all: linux solaris windows vet fmt fmtcheck errcheck golint
+all: linux solaris darwin windows vet fmt fmtcheck errcheck golint
 
 linux:
 	@echo
@@ -26,6 +26,14 @@ solaris:
 	@GOOS=darwin GOARCH=${GOARCH64} go build -o ../solaris_${GOARCH64}/${BINARY} \
 	-ldflags="-X main.Version=${VERSION}" &&  \
         echo 'BUILD EXECUTED SUCCESSFULLY' || echo 'BUILD FAILED'
+	
+darwin:
+	@echo
+	@rm ../darwin_${GOARCH64}/${BINARY} && echo 'DARWIN BINARY FOR amd64 ARCHITECTUR REMOVED SUCCESFULLY' || echo 'DARWIN BINARY FOR amd64 ARCHITECTUR WERE NOT REMOVED'
+	@echo 'BUILDING DARWIN BINARY FOR amd64 ARCHITECTURE'
+	@GOOS=darwin GOARCH=${GOARCH64} go build -o ../darwin_${GOARCH64}/${BINARY} \
+	-ldflags="-X main.Version=${VERSION}" &&  \
+        echo 'BUILD EXECUTED SUCCESSFULLY' || echo 'BUILD FAILED'
 
 windows:
 	@echo
@@ -41,4 +49,4 @@ windows:
 	-ldflags="-X main.Version=${VERSION}" &&  \
         echo 'BUILD EXECUTED SUCCESSFULLY' || echo 'BUILD FAILED'
 
-.PHONY: linux solaris windows
+.PHONY: linux solaris darwin windows

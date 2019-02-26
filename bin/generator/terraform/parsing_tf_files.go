@@ -44,32 +44,33 @@ func ParsingFolderTfFile(source string, destination string, envs ...string) {
 				CreateFolder(destination + file.Name())
 			}
 			switch len(envs) {
-				case 1:
-					ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0])
-				case 2:
-					ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0], envs[0])
-				default:
-					ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
+			case 1:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0])
+			case 2:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0], envs[0])
+			default:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
 			}
 		}
 	}
 }
 
 var workspace string
+
 // ParsingTfFile - parsing all tf file from directory
 func ParsingTfFile(source string, destination string, envs ...string) {
 	env := "default"
 	configFileName := ""
 	workspace = ""
 	switch len(envs) {
-		case 1:
-			env = envs[0]
-			configFileName = "." + env
-			workspace = "workspace/"
-		case 2:
-			env = envs[0]
-			configFileName = "." + env
-			workspace = envs[1]
+	case 1:
+		env = envs[0]
+		configFileName = "." + env
+		workspace = "workspace/"
+	case 2:
+		env = envs[0]
+		configFileName = "." + env
+		workspace = envs[1]
 	}
 	f, err := os.Open(source + workspace)
 	if err != nil {
@@ -86,16 +87,16 @@ func ParsingTfFile(source string, destination string, envs ...string) {
 			!file.IsDir() &&
 			strings.Index(file.Name(), "locals.tf") == -1 {
 			newYml += StartProccesingTfFile(source + workspace + file.Name())
-			if source + workspace == destination {
+			if source+workspace == destination {
 				DeleteFile(source + workspace + file.Name())
 			}
 		}
 	}
-	if source + workspace == destination {
+	if source+workspace == destination {
 		DeleteFile(source + workspace + "locals.tf")
 	}
 
-	ioutil.WriteFile(destination+".terrahub" + configFileName + ".yml", []byte(RefactoringYml(source + workspace, newYml, env, configFileName)), 0777)
+	ioutil.WriteFile(destination+".terrahub"+configFileName+".yml", []byte(RefactoringYml(source+workspace, newYml, env, configFileName)), 0777)
 	DeleteEmptyFolder(source + workspace)
 }
 
@@ -280,12 +281,12 @@ func ProcessingEnv(source string, context string, env string, configFileName str
 	if err != nil {
 		return "## " + env + " config\n" + context
 	}
-	if string(oldYml)  == "{}\n" || string(oldYml)  == ""{
+	if string(oldYml) == "{}\n" || string(oldYml) == "" {
 		return "## " + env + " config\n" +
 			"component:\n" + context + "\n"
 	}
 	return "## " + env + " config\n" +
-		"component:\n" + context + "\n\n" + string(oldYml) 
+		"component:\n" + context + "\n\n" + string(oldYml)
 }
 
 // AddTfVars - Add tfvars values

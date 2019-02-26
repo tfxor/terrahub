@@ -14,8 +14,8 @@ var Version = "development"
 func main() {
 	version := flag.Bool("version", false, "Prints current app version")
 	toYml := flag.Bool("toyml", false, "Input HCL folder, output yml file")
-	toymlfolder := flag.Bool("toymlfolder", false, "Input HCL folder, output yml folder")
 	thub := flag.Bool("thub", false, "Normalize HCL and YAML")
+	recursively := flag.Bool("recursively", false, "Scan folder recursively")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -23,17 +23,12 @@ func main() {
 	}
 
 	if *toYml {
-		ConvertToYml()
-		return
-	}
-
-	if *toymlfolder {
-		ConvertFolderToYml()
+		ConvertToYml(*recursively)
 		return
 	}
 
 	if *thub {
-		NormalizeTHub()
+		NormalizeTHub(*recursively)
 		return
 	}
 
@@ -64,69 +59,46 @@ func GenerationTemplates() {
 }
 
 // ConvertToYml - Convert tf to yml
-func ConvertToYml() {
-	argsWithoutProg := os.Args[2:]
-	source := ""
-	destination := "./terrahub/"
-	if len(argsWithoutProg) > 0 {
-		source = os.Args[2]
+func ConvertToYml(recursively bool) {
+	countelement := 2
+	argsWithoutProg := os.Args[countelement:]
+	if len(argsWithoutProg) < countelement {
+		fmt.Println("Set please all params!")
+		return
 	}
-	if len(argsWithoutProg) > 1 {
-		destination = os.Args[3]
-	} else {
-		destination = source
+	if recursively {
+		countelement++
 	}
-	if source == "" {
-		fmt.Println("The source path is not set!")
+	source := os.Args[countelement]
+	destination := os.Args[countelement+1]
+
+	if recursively {
+		terraform.ParsingFolderTfFile(source, destination)
 	} else {
 		terraform.ParsingTfFile(source, destination)
 	}
 }
 
-// ConvertFolderToYml - Convert tf to yml
-func ConvertFolderToYml() {
-	argsWithoutProg := os.Args[2:]
-	source := ""
-	destination := "./terrahub/"
-	if len(argsWithoutProg) > 0 {
-		source = os.Args[2]
-	}
-	if len(argsWithoutProg) > 1 {
-		destination = os.Args[3]
-	} else {
-		destination = source
-	}
-	if source == "" {
-		fmt.Println("The source path is not set!")
-	} else {
-		terraform.ParsingFolderTfFile(source, destination)
-	}
-}
-
 // NormalizeTHub - Normalize
-func NormalizeTHub() {
-	argsWithoutProg := os.Args[2:]
-	projectFolder := "./"
-	source := ""
-	destination := "./terrahub/"
+func NormalizeTHub(recursively bool) {
+	countelement := 2
+	argsWithoutProg := os.Args[countelement:]
+	if len(argsWithoutProg) < countelement {
+		fmt.Println("Set please all params!")
+		return
+	}
+	if recursively {
+		countelement++
+	}
+	source := os.Args[countelement]
+	destination := os.Args[countelement+1]
 	env := ""
-	if len(argsWithoutProg) > 0 {
-		projectFolder = os.Args[2]
+	if len(argsWithoutProg) > countelement+1 {
+		env = os.Args[countelement+2]
 	}
-	if len(argsWithoutProg) > 1 {
-		source = os.Args[3]
-	}
-	if len(argsWithoutProg) > 2 {
-		destination = os.Args[4]
+	if recursively {
+		terraform.NormalizeFolder(source, destination, env)
 	} else {
-		destination = source
-	}
-	if len(argsWithoutProg) > 3 {
-		env = os.Args[5]
-	}
-	if source == "" {
-		fmt.Println("The source path is not set!")
-	} else {
-		terraform.Normalize(projectFolder, source, destination, env)
+		terraform.Normalize(source, destination, env)
 	}
 }

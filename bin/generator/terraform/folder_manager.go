@@ -2,10 +2,10 @@ package terraform
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os/exec"
-	"os"
 	"io"
+	"io/ioutil"
+	"os"
+	"os/exec"
 )
 
 func DownloadFromGit(url string) bool {
@@ -62,14 +62,14 @@ func CreateFolder(path string) {
 func IsDirEmpty(name string) bool {
 	f, err := os.Open(name)
 	if err != nil {
-			return false
+		return false
 	}
 	defer f.Close()
 
 	_, err = f.Readdir(1)
 
 	if err == io.EOF {
-			return true
+		return true
 	}
 	return false
 }
