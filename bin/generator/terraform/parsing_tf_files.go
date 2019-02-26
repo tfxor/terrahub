@@ -27,7 +27,7 @@ type Element struct {
 }
 
 // ParsingFolderTfFile - parsing all tf file from directory
-func ParsingFolderTfFile(source string, destination string) {
+func ParsingFolderTfFile(source string, destination string, envs ...string) {
 	f, err := os.Open(source)
 	if err != nil {
 		fmt.Println(err)
@@ -39,20 +39,39 @@ func ParsingFolderTfFile(source string, destination string) {
 	}
 	for _, file := range fileInfo {
 		if file.IsDir() {
-			_, err := os.Open(destination + file.Name())
-			if err != nil {
-				CreateFolder(destination + file.Name())
+			CreateFolder(destination + file.Name())
+			switch len(envs) {
+			case 1:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0])
+			case 2:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0], envs[0])
+			default:
+				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
 			}
-			ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/")
 		}
 	}
 }
 
+var workspace string
+
 // ParsingTfFile - parsing all tf file from directory
-func ParsingTfFile(source string, destination string) {
-	f, err := os.Open(source)
+func ParsingTfFile(source string, destination string, envs ...string) {
+	env := "default"
+	configFileName := ""
+	workspace = ""
+	switch len(envs) {
+	case 1:
+		env = envs[0]
+		configFileName = "." + env
+		workspace = "workspace/"
+	case 2:
+		env = envs[0]
+		configFileName = "." + env
+		workspace = envs[1]
+	}
+	f, err := os.Open(source + workspace)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 	fileInfo, err := f.Readdir(-1)
 	f.Close()
@@ -64,20 +83,23 @@ func ParsingTfFile(source string, destination string) {
 		if file.Name()[len(file.Name())-3:] == ".tf" &&
 			!file.IsDir() &&
 			strings.Index(file.Name(), "locals.tf") == -1 {
-			newYml += StartProccesingTfFile(source + file.Name())
-			if source == destination {
-				DeleteFile(source + file.Name())
-			}
+			newYml += StartProccesingTfFile(source + workspace + file.Name())
+			DeleteFileIfItIsNeed(source, workspace, destination, file.Name())
 		}
 	}
-	if source == destination {
-		DeleteFile(source + "locals.tf")
-	}
+	DeleteFileIfItIsNeed(source, workspace, destination, "locals.tf")
 
-	ioutil.WriteFile(destination+".terrahub.yml", []byte(RefactoringYml(source, newYml)), 0777)
+	ioutil.WriteFile(destination+".terrahub"+configFileName+".yml", []byte(RefactoringYml(source+workspace, newYml, env, configFileName)), 0777)
+	DeleteEmptyFolder(source + workspace)
 }
 
-func RefactoringYml(source string, newYml string) string {
+func DeleteFileIfItIsNeed(source string, workspace string, destination string, fileName string) {
+	if source+workspace == destination {
+		DeleteFile(source + workspace + fileName)
+	}
+}
+
+func RefactoringYml(source string, newYml string, env string, configFileName string) string {
 	interYml := ""
 	scanner := bufio.NewScanner(strings.NewReader(newYml))
 	for scanner.Scan() {
@@ -85,12 +107,15 @@ func RefactoringYml(source string, newYml string) string {
 	}
 	newYml = ScanRec(interYml)
 	newYml = strings.Replace(newYml, "# ", "  ", -1)
-	newYml = PrepareNewYmlFromOld(source, "  template:"+newYml)
+	newYml = PrepareNewYmlFromOld(source, "  template:"+newYml, env, configFileName)
 	re := regexp.MustCompile(`(?m)\n(.+?|){}`)
 	for _, match := range re.FindAllString(newYml, -1) {
 		newYml = strings.Replace(newYml, match, " {}", 1)
 	}
-	return newYml + "\n"
+	if env == "default" {
+		return newYml + "\n"
+	}
+	return newYml
 }
 
 func ScanRec(interYml string) string {
@@ -225,10 +250,13 @@ func ReturnElement(arr []Element, str string) int {
 }
 
 // PrepareNewYmlFromOld - Prepare new yml from old
-func PrepareNewYmlFromOld(source string, context string) string {
+func PrepareNewYmlFromOld(source string, context string, env string, configFileName string) string {
 	newYml := ""
-	context = AddTfVars(source, context)
-	oldYml, err := ioutil.ReadFile(source + ".terrahub.yml")
+	context = AddTfVars(source, context, env)
+	if env != "default" {
+		return ProcessingEnv(source[:len(source)-len(workspace)], context, env, configFileName)
+	}
+	oldYml, err := ioutil.ReadFile(source + ".terrahub" + configFileName + ".yml")
 	if err != nil {
 		paths := strings.Split(source, "/")
 		return newYml + "## local config\n" +
@@ -247,20 +275,36 @@ func PrepareNewYmlFromOld(source string, context string) string {
 	return newYml
 }
 
+func ProcessingEnv(source string, context string, env string, configFileName string) string {
+	oldYml, err := ioutil.ReadFile(source + ".terrahub" + configFileName + ".yml")
+	if err != nil {
+		return "## " + env + " config\n" + context
+	}
+	if string(oldYml) == "{}\n" || string(oldYml) == "" {
+		return "## " + env + " config\n" +
+			"component:\n" + context + "\n"
+	}
+	return "## " + env + " config\n" +
+		"component:\n" + context + "\n\n" + string(oldYml)
+}
+
 // AddTfVars - Add tfvars values
-func AddTfVars(source string, context string) string {
+func AddTfVars(source string, context string, env string) string {
 	newYml := ""
-	_, err := ioutil.ReadFile(source + "default.tfvars")
+	_, err := ioutil.ReadFile(source + env + ".tfvars")
 	if err != nil {
 		return context
 	}
 
-	newYml = StartProccesingTfFile(source + "default.tfvars")
+	newYml = StartProccesingTfFile(source + env + ".tfvars")
 	interYml := ""
 	scanner := bufio.NewScanner(strings.NewReader(newYml))
 	for scanner.Scan() {
 		interYml += "\n      " + scanner.Text()
 	}
-	DeleteFile(source + "default.tfvars")
-	return context + "    tfvars:" + interYml
+	DeleteFile(source + env + ".tfvars")
+	if env == "default" {
+		return context + "    tfvars:" + interYml
+	}
+	return context + "\n    tfvars:" + interYml
 }
