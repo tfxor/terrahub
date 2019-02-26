@@ -98,7 +98,7 @@ class ComponentCommand extends AbstractCommand {
     const arch = (new Downloader()).getOsArch();
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
 
-    return exec(`${componentBinPath}/component ${tmpPath} ${configPath} ${name}`);
+    return exec(`${componentBinPath}/component -thub ${tmpPath} ${configPath} ${name}`);
   }
 
   /**
@@ -114,7 +114,7 @@ class ComponentCommand extends AbstractCommand {
     const arch = (new Downloader()).getOsArch();
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
     
-    return exec(`${componentBinPath}/generator -toyml ${configPath}/ ${configPath}/`);
+    return exec(`${componentBinPath}/generator -thub ${configPath}/ ${configPath}/`);
   }
 
   /**

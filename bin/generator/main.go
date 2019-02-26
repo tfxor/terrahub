@@ -14,7 +14,8 @@ var Version = "development"
 func main() {
 	version := flag.Bool("version", false, "Prints current app version")
 	toYml := flag.Bool("toyml", false, "Input HCL folder, output yml file")
-	toymlfolder := flag.Bool("toymlfolder", false, "Input HCL folder, output yml folder")
+	thub := flag.Bool("thub", false, "Normalize HCL and YAML")
+	recursive := flag.Bool("recursive", false, "Scan folder recursive")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -22,12 +23,12 @@ func main() {
 	}
 
 	if *toYml {
-		ConvertToYml()
+		ConvertToYml(*recursive)
 		return
 	}
 
-	if *toymlfolder {
-		ConvertFolderToYml()
+	if *thub {
+		NormalizeTHub(*recursive)
 		return
 	}
 
@@ -58,41 +59,46 @@ func GenerationTemplates() {
 }
 
 // ConvertToYml - Convert tf to yml
-func ConvertToYml() {
-	argsWithoutProg := os.Args[2:]
-	source := ""
-	destination := "./terrahub/"
-	if len(argsWithoutProg) > 0 {
-		source = os.Args[2]
+func ConvertToYml(recursive bool) {
+	countelement := 2
+	argsWithoutProg := os.Args[countelement:]
+	if len(argsWithoutProg) < countelement {
+		fmt.Println("Set please all params!")
+		return
 	}
-	if len(argsWithoutProg) > 1 {
-		destination = os.Args[3]
-	} else {
-		destination = source
+	if recursive {
+		countelement++
 	}
-	if source == "" {
-		fmt.Println("The source path is not set!")
+	source := os.Args[countelement]
+	destination := os.Args[countelement+1]
+
+	if recursive {
+		terraform.ParsingFolderTfFile(source, destination)
 	} else {
 		terraform.ParsingTfFile(source, destination)
 	}
 }
 
-// ConvertFolderToYml - Convert tf to yml
-func ConvertFolderToYml() {
-	argsWithoutProg := os.Args[2:]
-	source := ""
-	destination := "./terrahub/"
-	if len(argsWithoutProg) > 0 {
-		source = os.Args[2]
+// NormalizeTHub - Normalize
+func NormalizeTHub(recursive bool) {
+	countelement := 2
+	argsWithoutProg := os.Args[countelement:]
+	if len(argsWithoutProg) < countelement {
+		fmt.Println("Set please all params!")
+		return
 	}
-	if len(argsWithoutProg) > 1 {
-		destination = os.Args[3]
-	} else {
-		destination = source
+	if recursive {
+		countelement++
 	}
-	if source == "" {
-		fmt.Println("The source path is not set!")
+	source := os.Args[countelement]
+	destination := os.Args[countelement+1]
+	env := ""
+	if len(argsWithoutProg) > countelement+1 {
+		env = os.Args[countelement+2]
+	}
+	if recursive {
+		terraform.NormalizeFolder(source, destination, env)
 	} else {
-		terraform.ParsingFolderTfFile(source, destination)
+		terraform.Normalize(source, destination, env)
 	}
 }
