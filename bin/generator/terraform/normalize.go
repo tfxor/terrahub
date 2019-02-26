@@ -95,10 +95,19 @@ func AddTypeString(input []byte, spaceCount int, parentValue string, addString s
 }
 
 func ValidateSpace(lines []string, addString string, i int, spaceCount int) string {
-	if (SpaceCount(lines[i+1]) == spaceCount && SpaceCount(lines[i]) == spaceCount) ||
-		(SpaceCount(lines[i+1]) == spaceCount+2 && strings.Index(lines[i+1], " type:") == -1) ||
-		(SpaceCount(lines[i+1]) == spaceCount-2 && strings.Index(lines[i], " type:") == -1) {
-		return addString
+	switch SpaceCount(lines[i+1]) {
+	case spaceCount:
+		if SpaceCount(lines[i]) == spaceCount {
+			return addString
+		}
+	case spaceCount+2:
+		if strings.Index(lines[i+1], " type:") == -1 {
+			return addString
+		}
+	case spaceCount-2:
+		if strings.Index(lines[i], " type:") == -1 {
+			return addString
+		}
 	}
 	return ""
 }
