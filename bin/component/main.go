@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	ymlto "github.com/ghodss/yaml"
 	"github.com/hashicorp/hcl/hcl/printer"
 	jsonParser "github.com/hashicorp/hcl/json/parser"
 )
@@ -19,30 +20,76 @@ var Version = "development"
 
 func main() {
 	version := flag.Bool("version", false, "Prints current app version")
+	tohcl := flag.Bool("tohcl", false, "Prints current app version")
+	thub := flag.Bool("thub", false, "Prints current app version")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
 		return
 	}
 
-	argsWithoutProg := os.Args[1:]
-	terrahubComponent := ""
-	terrahubComponentPath := ""
-	cashPath := ""
-	if len(argsWithoutProg) > 0 {
-		cashPath = os.Args[1]
+	if *tohcl {
+		GenerateHclFromYml()
+		return
 	}
-	if len(argsWithoutProg) > 1 {
-		terrahubComponentPath = os.Args[2]
+
+	if *thub {
+		GenerateHclFromYml()
+		GenerateHclFromYmlThubEnv()
+		return
 	}
-	if len(argsWithoutProg) > 2 {
-		terrahubComponent = os.Args[3]
+}
+
+func GenerateHclFromYml() {
+	argsWithoutProg := os.Args[2:]
+	if len(argsWithoutProg) < 3 {
+		fmt.Println("Set please all params!")
+		return
 	}
+	cashPath := os.Args[2]
+	terrahubComponentPath := os.Args[3]
+	terrahubComponent := os.Args[4]
 	cashComponentPath := PrepareJSON(terrahubComponent)
 	if cashComponentPath != "" {
 		GenerateHcl(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
 	}
+}
 
+func GenerateHclFromYmlThubEnv() {
+	terrahubComponentPath := os.Args[3]
+	f, err := os.Open(terrahubComponentPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	CreateFolder(terrahubComponentPath + "/workspace")
+	for _, file := range fileInfo {
+		if !file.IsDir() && strings.Index(file.Name(), ".yml") > -1 && strings.Index(file.Name(), "terrahub.yml") == -1 {
+			StartProccesingFileEnv(terrahubComponentPath+"/"+file.Name(), file.Name(), terrahubComponentPath)
+		}
+	}
+}
+
+func StartProccesingFileEnv(source string, fileName string, destination string) {
+	y := GetTfvarsTerrahubEnv(source)
+	j1, _ := ymlto.YAMLToJSON(y)
+	ast, err := jsonParser.Parse(j1)
+	if err != nil {
+		fmt.Printf("unable to parse JSON: %s", err)
+	}
+	var b bytes.Buffer
+	err = printer.Fprint(&b, ast)
+	if err != nil {
+		fmt.Printf("unable to print HCL: %s", err)
+	}
+	env := strings.Replace(fileName, ".terrahub.", "", -1)
+	env = strings.Replace(env, ".yml", "", -1)
+	ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
+	ProccesingDotTerrahubEnv(source)
 }
 
 func PrepareJSON(terrahubComponent string) string {
@@ -106,6 +153,7 @@ func Clearing(input string) []byte {
 	input = strings.Replace(input, "\"output\"", "output", -1)
 	input = strings.Replace(input, "\"module\"", "module", -1)
 	input = strings.Replace(input, "\"provider\"", "provider", -1)
+	input = strings.Replace(input, "\"terraform\"", "terraform", -1)
 	input = strings.Replace(input, "\"backend\"", "backend", -1)
 	input = strings.Replace(input, "\"variable\"", "variable", -1)
 	re := regexp.MustCompile(`(?m)\".+?\" =`)
@@ -128,4 +176,39 @@ func ProccesingDotTerrahub(source string) {
 	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
 	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
 	ioutil.WriteFile(source, []byte(sourceValue), 0777)
+}
+
+func ProccesingDotTerrahubEnv(source string) {
+	input, _ := ioutil.ReadFile(source)
+	endIndex := strings.Index(string(input), "component:")
+	startIndex := strings.Index(string(input), "build")
+	sourceValue := string(input)[:endIndex]
+	if startIndex > -1 {
+		sourceValue += "\n" + string(input)[startIndex:]
+	}
+	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
+	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
+	ioutil.WriteFile(source, []byte(sourceValue), 0777)
+}
+
+func GetTfvarsTerrahubEnv(source string) []byte {
+	input, _ := ioutil.ReadFile(source)
+	searchValue := "    tfvars:"
+	startIndex := strings.Index(string(input), searchValue)
+	if startIndex > -1 {
+		startIndex += len(searchValue)
+	}
+	endIndex := strings.Index(string(input), "build")
+	if endIndex < startIndex {
+		endIndex = len(string(input))
+	}
+	sourceValue := string(input)[startIndex:endIndex]
+	return []byte(sourceValue)
+}
+
+func CreateFolder(path string) {
+	cmd := exec.Command("mkdir", path)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+	}
 }
