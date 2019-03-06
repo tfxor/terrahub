@@ -9,10 +9,10 @@
       aws_spot_fleet_request:
         {{ name }}:
           ami: '${var.{{ name }}_ami}'
-          launch_specification: 
-          #   vpc_security_group_ids: 
+          launch_specification:
+          #   vpc_security_group_ids:
           #   associate_public_ip_address: false
-          #   ebs_block_device: 
+          #   ebs_block_device:
           #     device_name: ''
           #     delete_on_termination: false
           #     encrypted: false
@@ -34,7 +34,7 @@
           # excess_capacity_termination_policy: ''
           # valid_from: ''
           # target_group_arns: []
-          # root_block_device: 
+          # root_block_device:
           #   volume_size: 0
           #   volume_type: ''
           #   delete_on_termination: false
@@ -47,7 +47,7 @@
           # terminate_instances_with_expiration: false
           # replace_unhealthy_instances: false
           # iam_instance_profile_arn: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # instance_pools_to_use_count: 0
           # wait_for_fulfillment: false

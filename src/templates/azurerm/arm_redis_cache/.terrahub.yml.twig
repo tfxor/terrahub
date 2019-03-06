@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_redis_cache:
         {{ name }}:
-          redis_configuration: 
+          redis_configuration:
             -
           #     maxmemory_reserved: 0
           #     rdb_backup_enabled: false
@@ -25,11 +25,11 @@
           # private_static_ip_address: ''
           # shard_count: 0
           # subnet_id: ''
-          # patch_schedule: 
+          # patch_schedule:
           #   -
           #     day_of_week: ''
           #     start_hour_utc: 0
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_location:

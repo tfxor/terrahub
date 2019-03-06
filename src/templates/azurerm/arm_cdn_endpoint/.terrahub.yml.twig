@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_cdn_endpoint:
         {{ name }}:
-          origin: 
+          origin:
             name: ''
             host_name: ''
           #   http_port: 0
@@ -15,12 +15,12 @@
           name: '${var.{{ name }}_name}'
           profile_name: '${var.{{ name }}_profile_name}'
           # probe_path: ''
-          # geo_filter: 
+          # geo_filter:
           #   -
           #     relative_path: ''
           #     action: ''
           #     country_codes: []
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # querystring_caching_behaviour: ''
           # content_types_to_compress: []

@@ -8,7 +8,7 @@
       azurerm_arm_monitor_activity_log_alert:
         {{ name }}:
           scopes: '${var.{{ name }}_scopes}'
-          criteria: 
+          criteria:
             -
               category: ''
           #     resource_type: ''
@@ -21,12 +21,12 @@
           #     operation_name: ''
           #     sub_status: ''
           name: '${var.{{ name }}_name}'
-          # action: 
+          # action:
           #   action_group_id: ''
-          #   webhook_properties: 
+          #   webhook_properties:
           #     '[TO_BE_REPLACED]': ''
           # enabled: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # description: ''
     variable:

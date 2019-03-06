@@ -8,7 +8,7 @@
     resource:
       aws_dynamodb_global_table:
         {{ name }}:
-          replica: 
+          replica:
             region_name: ''
           name: '${var.{{ name }}_name}'
     variable:

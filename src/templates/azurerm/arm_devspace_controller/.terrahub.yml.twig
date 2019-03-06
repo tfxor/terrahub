@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_devspace_controller:
         {{ name }}:
-          sku: 
+          sku:
             -
               name: ''
               tier: ''
@@ -15,7 +15,7 @@
           target_container_host_credentials_base64: '${var.{{ name }}_target_container_host_credentials_base64}'
           name: '${var.{{ name }}_name}'
           host_suffix: '${var.{{ name }}_host_suffix}'
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_target_container_host_resource_id:

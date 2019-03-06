@@ -7,9 +7,9 @@
       google_compute_instance:
         {{ name }}:
           machine_type: '${var.{{ name }}_machine_type}'
-          network_interface: 
+          network_interface:
             -
-          #     access_config: 
+          #     access_config:
           #       -
           #         network_tier: ''
           #         public_ptr_domain_name: ''
@@ -19,12 +19,12 @@
           #     subnetwork_project: ''
           #     network_ip: ''
           name: '${var.{{ name }}_name}'
-          boot_disk: 
+          boot_disk:
             -
           #     auto_delete: false
           #     device_name: ''
           #     disk_encryption_key_raw: ''
-          #     initialize_params: 
+          #     initialize_params:
           #       -
           #         size: 0
           #         type: ''
@@ -33,7 +33,7 @@
           # address: ''
           # description: ''
           # can_ip_forward: false
-          # disk: 
+          # disk:
           #   -
           #     scratch: false
           #     size: 0
@@ -45,30 +45,30 @@
           #     disk_encryption_key_raw: ''
           # zone: ''
           # hostname: ''
-          # attached_disk: 
+          # attached_disk:
           #   -
           #     source: ''
           #     device_name: ''
           #     mode: ''
           #     disk_encryption_key_raw: ''
           # deletion_protection: false
-          # guest_accelerator: 
+          # guest_accelerator:
           #   -
           #     type: ''
           #     count: 0
-          # labels: 
+          # labels:
           #   '[TO_BE_REPLACED]': ''
-          # metadata: 
+          # metadata:
           #   '[TO_BE_REPLACED]': ''
-          # scheduling: 
+          # scheduling:
           #   -
           #     on_host_maintenance: ''
           #     automatic_restart: false
           #     preemptible: false
-          # scratch_disk: 
+          # scratch_disk:
           #   -
           #     interface: ''
-          # service_account: 
+          # service_account:
           #   -
           #     scopes: []
           #     email: ''
