@@ -9,13 +9,13 @@
       aws_ec2_client_vpn_endpoint:
         {{ name }}:
           server_certificate_arn: '${var.{{ name }}_server_certificate_arn}'
-          authentication_options: 
+          authentication_options:
             -
               type: ''
           #     active_directory_id: ''
           #     root_certificate_chain_arn: ''
           client_cidr_block: '${var.{{ name }}_client_cidr_block}'
-          connection_log_options: 
+          connection_log_options:
             -
               enabled: false
           #     cloudwatch_log_group: ''

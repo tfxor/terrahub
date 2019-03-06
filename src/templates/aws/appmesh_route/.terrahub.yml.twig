@@ -11,16 +11,16 @@
           name: '${var.{{ name }}_name}'
           mesh_name: '${var.{{ name }}_mesh_name}'
           virtual_router_name: '${var.{{ name }}_virtual_router_name}'
-          spec: 
+          spec:
             -
-              match: 
+              match:
                 -
                   prefix: ''
-          #     http_route: 
+          #     http_route:
           #       -
-          #         action: 
+          #         action:
           #           -
-          #             weighted_target: 
+          #             weighted_target:
           #         virtual_node: ''
           #         weight: 0
     variable:

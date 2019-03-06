@@ -9,7 +9,7 @@
         {{ name }}:
           reliability_level: '${var.{{ name }}_reliability_level}'
           management_endpoint: '${var.{{ name }}_management_endpoint}'
-          node_type: 
+          node_type:
             -
               name: ''
               instance_count: 0
@@ -18,44 +18,44 @@
               http_endpoint_port: 0
           #     reverse_proxy_endpoint_port: 0
           #     durability_level: ''
-          #     application_ports: 
+          #     application_ports:
           #       -
           #         start_port: 0
           #         end_port: 0
           name: '${var.{{ name }}_name}'
           upgrade_mode: '${var.{{ name }}_upgrade_mode}'
           vm_image: '${var.{{ name }}_vm_image}'
-          # azure_active_directory: 
+          # azure_active_directory:
           #   -
           #     tenant_id: ''
           #     cluster_application_id: ''
           #     client_application_id: ''
-          # diagnostics_config: 
+          # diagnostics_config:
           #   -
           #     table_endpoint: ''
           #     storage_account_name: ''
           #     protected_account_key_name: ''
           #     blob_endpoint: ''
           #     queue_endpoint: ''
-          # certificate: 
+          # certificate:
           #   -
           #     thumbprint: ''
           #     x509_store_name: ''
           #     thumbprint_secondary: ''
-          # client_certificate_thumbprint: 
+          # client_certificate_thumbprint:
           #   -
           #     is_admin: false
           #     thumbprint: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # cluster_code_version: ''
           # add_on_features: []
-          # fabric_settings: 
+          # fabric_settings:
           #   -
           #     name: ''
-          #     parameters: 
+          #     parameters:
           #       '[TO_BE_REPLACED]': ''
-          # reverse_proxy_certificate: 
+          # reverse_proxy_certificate:
           #   -
           #     x509_store_name: ''
           #     thumbprint: ''

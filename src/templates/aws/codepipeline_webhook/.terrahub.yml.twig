@@ -9,13 +9,13 @@
       aws_codepipeline_webhook:
         {{ name }}:
           authentication: '${var.{{ name }}_authentication}'
-          filter: 
+          filter:
             json_path: ''
             match_equals: ''
           name: '${var.{{ name }}_name}'
           target_action: '${var.{{ name }}_target_action}'
           target_pipeline: '${var.{{ name }}_target_pipeline}'
-          # authentication_configuration: 
+          # authentication_configuration:
           #   -
           #     secret_token: ''
           #     allowed_ip_range: ''

@@ -8,17 +8,17 @@
     resource:
       aws_waf_web_acl:
         {{ name }}:
-          default_action: 
+          default_action:
             type: ''
           metric_name: '${var.{{ name }}_metric_name}'
           priority: '${var.{{ name }}_priority}'
           rule_id: '${var.{{ name }}_rule_id}'
           name: '${var.{{ name }}_name}'
-          # rules: 
-          #   action: 
+          # rules:
+          #   action:
           #     -
           #       type: ''
-          # override_action: 
+          # override_action:
           #   -
           #     type: ''
           # type: ''

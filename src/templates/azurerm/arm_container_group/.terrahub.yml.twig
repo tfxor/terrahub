@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_container_group:
         {{ name }}:
-          container: 
+          container:
             -
               name: ''
               image: ''
@@ -15,7 +15,7 @@
               memory: ''
           #     port: 0
           #     protocol: ''
-          #     ports: 
+          #     ports:
           #     port: 0
           #     protocol: ''
           name: '${var.{{ name }}_name}'
@@ -23,7 +23,7 @@
           # restart_policy: ''
           # dns_name_label: ''
           # ip_address_type: ''
-          # image_registry_credential: 
+          # image_registry_credential:
           #   -
           #     server: ''
           #     username: ''

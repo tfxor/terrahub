@@ -9,12 +9,12 @@
       aws_lb_listener_rule:
         {{ name }}:
           listener_arn: '${var.{{ name }}_listener_arn}'
-          action: 
+          action:
             -
               type: ''
           #     order: 0
           #     target_group_arn: ''
-          #     redirect: 
+          #     redirect:
           #       -
           #         status_code: ''
           #         host: ''
@@ -22,9 +22,9 @@
           #         port: ''
           #         protocol: ''
           #         query: ''
-          condition: 
+          condition:
           #   field: ''
-          #   values: 
+          #   values:
           #     -
           # priority: 0
           # authenticate_cognito: []

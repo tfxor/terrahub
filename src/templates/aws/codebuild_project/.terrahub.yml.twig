@@ -9,14 +9,14 @@
       aws_codebuild_project:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          environment: 
+          environment:
             compute_type: ''
-          #   environment_variable: 
+          #   environment_variable:
           #     -
           #       value: ''
           #       name: ''
           #       type: ''
-          artifacts: 
+          artifacts:
             type: ''
           #   packaging: ''
           #   path: ''
@@ -25,7 +25,7 @@
           #   location: ''
           #   namespace_type: ''
           service_role: '${var.{{ name }}_service_role}'
-          # secondary_artifacts: 
+          # secondary_artifacts:
           #   artifact_identifier: ''
           #   type: ''
           #   location: ''
@@ -34,20 +34,20 @@
           #   path: ''
           #   name: ''
           #   encryption_disabled: false
-          # cache: 
+          # cache:
           #   -
           #     type: ''
           #     location: ''
           # description: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
-          # vpc_config: 
+          # vpc_config:
           #   -
           #     vpc_id: ''
           #     subnets: []
           #     security_group_ids: []
           # build_timeout: 0
-          # secondary_sources: 
+          # secondary_sources:
           # badge_enabled: false
           # timeout: 0
           # encryption_key: ''

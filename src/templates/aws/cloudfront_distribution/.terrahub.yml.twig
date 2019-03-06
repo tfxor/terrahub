@@ -8,26 +8,26 @@
     resource:
       aws_cloudfront_distribution:
         {{ name }}:
-          default_cache_behavior: 
+          default_cache_behavior:
             allowed_methods: []
             cached_methods: []
-            forwarded_values: 
-              cookies: 
+            forwarded_values:
+              cookies:
                 forward: ''
-          #       whitelisted_names: 
+          #       whitelisted_names:
           #         -
           #   compress: false
           #   default_ttl: 0
           #   field_level_encryption_id: ''
-          restrictions: 
-            geo_restriction: 
+          restrictions:
+            geo_restriction:
               restriction_type: ''
-          #     locations: 
+          #     locations:
           #       -
           enabled: '${var.{{ name }}_enabled}'
           target_origin_id: '${var.{{ name }}_target_origin_id}'
-          origin: 
-          #   custom_origin_config: 
+          origin:
+          #   custom_origin_config:
           #     http_port: 0
           #     https_port: 0
           #     origin_protocol_policy: ''
@@ -37,7 +37,7 @@
           path_pattern: '${var.{{ name }}_path_pattern}'
           viewer_protocol_policy: '${var.{{ name }}_viewer_protocol_policy}'
           origin_id: '${var.{{ name }}_origin_id}'
-          viewer_certificate: 
+          viewer_certificate:
           #   acm_certificate_arn: ''
           #   cloudfront_default_certificate: false
           #   iam_certificate_id: ''
@@ -46,25 +46,25 @@
           # origin_path: ''
           # web_acl_id: ''
           # comment: ''
-          # s3_origin_config: 
+          # s3_origin_config:
           #   origin_access_identity: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # smooth_streaming: false
-          # ordered_cache_behavior: 
+          # ordered_cache_behavior:
           #   -
           #     allowed_methods: []
           #     cached_methods: []
-          #     forwarded_values: 
-          #     cookies: 
+          #     forwarded_values:
+          #     cookies:
           #       forward: ''
-          #       whitelisted_names: 
+          #       whitelisted_names:
           #         -
           #     compress: false
           #     default_ttl: 0
           #     field_level_encryption_id: ''
           # trusted_signers: []
-          # custom_error_response: 
+          # custom_error_response:
           #   error_code: 0
           #   error_caching_min_ttl: 0
           #   response_code: 0
@@ -77,11 +77,11 @@
           # price_class: ''
           # is_ipv6_enabled: false
           # min_ttl: 0
-          # lambda_function_association: 
+          # lambda_function_association:
           #   lambda_arn: ''
           #   event_type: ''
           #   include_body: false
-          # logging_config: 
+          # logging_config:
           #   bucket: ''
           #   include_cookies: false
           #   prefix: ''

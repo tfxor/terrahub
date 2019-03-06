@@ -9,35 +9,35 @@
       aws_elasticsearch_domain:
         {{ name }}:
           domain_name: '${var.{{ name }}_domain_name}'
-          # log_publishing_options: 
+          # log_publishing_options:
           #   log_type: ''
           #   cloudwatch_log_group_arn: ''
           #   enabled: false
           # cognito_options: []
           # access_policies: ''
-          # encrypt_at_rest: 
+          # encrypt_at_rest:
           #   -
           #     enabled: false
           #     kms_key_id: ''
-          # vpc_options: 
+          # vpc_options:
           #   -
-          #     security_group_ids: 
-          #     subnet_ids: 
-          # ebs_options: 
+          #     security_group_ids:
+          #     subnet_ids:
+          # ebs_options:
           #   -
           #     ebs_enabled: false
           #     iops: 0
           #     volume_size: 0
           #     volume_type: ''
-          # snapshot_options: 
+          # snapshot_options:
           #   -
           #     automated_snapshot_start_hour: 0
-          # advanced_options: 
+          # advanced_options:
           #   '[TO_BE_REPLACED]': ''
-          # node_to_node_encryption: 
+          # node_to_node_encryption:
           #   -
           #     enabled: false
-          # cluster_config: 
+          # cluster_config:
           #   -
           #     zone_awareness_enabled: false
           #     dedicated_master_count: 0
@@ -46,7 +46,7 @@
           #     instance_count: 0
           #     instance_type: ''
           # elasticsearch_version: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_domain_name:

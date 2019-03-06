@@ -9,7 +9,7 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           ssl_enforcement: '${var.{{ name }}_ssl_enforcement}'
-          sku: 
+          sku:
             -
               tier: ''
               family: ''
@@ -18,12 +18,12 @@
           administrator_login: '${var.{{ name }}_administrator_login}'
           administrator_login_password: '${var.{{ name }}_administrator_login_password}'
           version: '${var.{{ name }}_version}'
-          storage_profile: 
+          storage_profile:
             -
               storage_mb: 0
           #     backup_retention_days: 0
           #     geo_redundant_backup: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:

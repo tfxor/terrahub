@@ -8,14 +8,14 @@
       azurerm_arm_dns_srv_record:
         {{ name }}:
           zone_name: '${var.{{ name }}_zone_name}'
-          record: 
+          record:
             priority: 0
             weight: 0
             port: 0
             target: ''
           ttl: '${var.{{ name }}_ttl}'
           name: '${var.{{ name }}_name}'
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_zone_name:
