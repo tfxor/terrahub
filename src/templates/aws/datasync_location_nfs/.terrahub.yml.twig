@@ -10,10 +10,10 @@
         {{ name }}:
           server_hostname: '${var.{{ name }}_server_hostname}'
           subdirectory: '${var.{{ name }}_subdirectory}'
-          on_prem_config: 
+          on_prem_config:
             -
               agent_arns: []
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_server_hostname:

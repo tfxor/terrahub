@@ -7,40 +7,40 @@
     resource:
       azurerm_arm_key_vault_certificate:
         {{ name }}:
-          secret_properties: 
+          secret_properties:
             -
               content_type: ''
-          certificate_policy: 
+          certificate_policy:
             -
-              issuer_parameters: 
+              issuer_parameters:
                 -
                   name: ''
           name: '${var.{{ name }}_name}'
           vault_uri: '${var.{{ name }}_vault_uri}'
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
-          # certificate: 
+          # certificate:
           #   -
           #     contents: ''
           #     password: ''
-          # lifetime_action: 
+          # lifetime_action:
           #   -
-          #     action: 
+          #     action:
           #       -
           #         action_type: ''
-          # x509_certificate_properties: 
+          # x509_certificate_properties:
           #   -
           #     key_usage: []
           #     subject: ''
-          #     subject_alternative_names: 
+          #     subject_alternative_names:
           #       -
-          #         emails: 
+          #         emails:
           #           -
-          #         dns_names: 
+          #         dns_names:
           #           -
-          #         upns: 
+          #         upns:
           #           -
-          #     extended_key_usage: 
+          #     extended_key_usage:
           #       -
     variable:
       {{ name }}_name:

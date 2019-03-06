@@ -7,13 +7,13 @@
     resource:
       azurerm_arm_notification_hub_namespace:
         {{ name }}:
-          sku: 
+          sku:
             -
               name: ''
           namespace_type: '${var.{{ name }}_namespace_type}'
           name: '${var.{{ name }}_name}'
           # enabled: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_namespace_type:

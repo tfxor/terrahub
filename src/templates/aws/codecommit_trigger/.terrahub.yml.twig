@@ -9,11 +9,11 @@
       aws_codecommit_trigger:
         {{ name }}:
           repository_name: '${var.{{ name }}_repository_name}'
-          trigger: 
+          trigger:
             events: []
             name: ''
             destination_arn: ''
-          #   branches: 
+          #   branches:
           #     -
           #   custom_data: ''
     variable:

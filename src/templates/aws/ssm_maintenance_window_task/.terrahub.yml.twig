@@ -10,7 +10,7 @@
         {{ name }}:
           max_errors: '${var.{{ name }}_max_errors}'
           task_type: '${var.{{ name }}_task_type}'
-          targets: 
+          targets:
             -
               key: ''
               values: []
@@ -19,13 +19,13 @@
           service_role_arn: '${var.{{ name }}_service_role_arn}'
           window_id: '${var.{{ name }}_window_id}'
           # name: ''
-          # task_parameters: 
+          # task_parameters:
           #   -
           #     name: ''
           #     values: []
           # description: ''
           # priority: 0
-          # logging_info: 
+          # logging_info:
           #   -
           #     s3_bucket_name: ''
           #     s3_region: ''

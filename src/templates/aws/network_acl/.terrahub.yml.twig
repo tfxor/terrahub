@@ -8,7 +8,7 @@
     resource:
       aws_network_acl:
         {{ name }}:
-          ingress: 
+          ingress:
             protocol: ''
             to_port: 0
             rule_no: 0
@@ -18,7 +18,7 @@
           #   icmp_type: 0
           #   icmp_code: 0
           #   ipv6_cidr_block: ''
-          egress: 
+          egress:
             protocol: ''
             from_port: 0
             to_port: 0
@@ -29,7 +29,7 @@
           #   cidr_block: ''
           #   icmp_code: 0
           vpc_id: '${var.{{ name }}_vpc_id}'
-          # ingress: 
+          # ingress:
           #   from_port: 0
           #   rule_no: 0
           #   action: ''
@@ -39,7 +39,7 @@
           #   cidr_block: ''
           #   icmp_type: 0
           #   icmp_code: 0
-          # egress: 
+          # egress:
           #   action: ''
           #   from_port: 0
           #   to_port: 0
@@ -49,7 +49,7 @@
           #   icmp_code: 0
           #   ipv6_cidr_block: ''
           #   icmp_type: 0
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # subnet_id: ''
           # subnet_ids: []

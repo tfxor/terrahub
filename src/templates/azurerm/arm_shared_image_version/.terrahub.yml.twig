@@ -9,13 +9,13 @@
         {{ name }}:
           gallery_name: '${var.{{ name }}_gallery_name}'
           image_name: '${var.{{ name }}_image_name}'
-          target_region: 
+          target_region:
             name: ''
             regional_replica_count: 0
           name: '${var.{{ name }}_name}'
           managed_image_id: '${var.{{ name }}_managed_image_id}'
           # exclude_from_latest: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_gallery_name:

@@ -11,14 +11,14 @@
           role_arn: '${var.{{ name }}_role_arn}'
           destination: '${var.{{ name }}_destination}'
           name: '${var.{{ name }}_name}'
-          output_format_configuration: 
+          output_format_configuration:
             -
-              serializer: 
+              serializer:
                 -
-          #         orc_ser_de: 
+          #         orc_ser_de:
           #           -
           #             block_size_bytes: 0
-          #             bloom_filter_columns: 
+          #             bloom_filter_columns:
           #               -
           #             compression: ''
           #             format_version: ''
@@ -28,7 +28,7 @@
           #             dictionary_key_threshold: ''
           #             enable_padding: false
           #             stripe_size_bytes: 0
-          schema_configuration: 
+          schema_configuration:
             -
               database_name: ''
               role_arn: ''
@@ -36,7 +36,7 @@
           #     catalog_id: ''
           #     region: ''
           #     version_id: ''
-          # elasticsearch_configuration: 
+          # elasticsearch_configuration:
           #   -
           #     role_arn: ''
           #     index_name: ''
@@ -47,7 +47,7 @@
           #     type_name: ''
           #     buffering_interval: 0
           #     buffering_size: 0
-          # splunk_configuration: 
+          # splunk_configuration:
           #   -
           #     hec_token: ''
           #     hec_endpoint: ''
@@ -60,7 +60,7 @@
           # error_output_prefix: ''
           # kms_key_arn: ''
           # s3_backup_mode: ''
-          # redshift_configuration: 
+          # redshift_configuration:
           #   -
           #     username: ''
           #     password: ''
@@ -72,28 +72,28 @@
           #     data_table_columns: ''
           #     s3_backup_mode: ''
           # destination_id: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # prefix: ''
-          # kinesis_source_configuration: 
+          # kinesis_source_configuration:
           #   -
           #     kinesis_stream_arn: ''
           #     role_arn: ''
-          # extended_s3_configuration: 
+          # extended_s3_configuration:
           #   -
           #     bucket_arn: ''
           #     buffer_size: 0
           #     buffer_interval: 0
           #     compression_format: ''
-          #     data_format_conversion_configuration: 
+          #     data_format_conversion_configuration:
           #       -
-          #         input_format_configuration: 
+          #         input_format_configuration:
           #           -
-          #             deserializer: 
+          #             deserializer:
           #               -
-          #                 hive_json_ser_de: 
+          #                 hive_json_ser_de:
           #                   -
-          #                     timestamp_formats: 
+          #                     timestamp_formats:
           #                       -
           #         enabled: false
     variable:

@@ -8,12 +8,12 @@
     resource:
       aws_datasync_location_s3:
         {{ name }}:
-          s3_config: 
+          s3_config:
             -
               bucket_access_role_arn: ''
           subdirectory: '${var.{{ name }}_subdirectory}'
           s3_bucket_arn: '${var.{{ name }}_s3_bucket_arn}'
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_subdirectory:

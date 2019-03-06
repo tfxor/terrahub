@@ -6,7 +6,7 @@
     resource:
       google_compute_instance_template:
         {{ name }}:
-          disk: 
+          disk:
             -
           #     device_name: ''
           #     disk_type: ''
@@ -19,41 +19,41 @@
           #     disk_name: ''
           #     disk_size_gb: 0
           #     source_image: ''
-          #     disk_encryption_key: 
+          #     disk_encryption_key:
           #       -
           #         kms_key_self_link: ''
           machine_type: '${var.{{ name }}_machine_type}'
-          # scheduling: 
+          # scheduling:
           #   -
           #     preemptible: false
           #     automatic_restart: false
           #     on_host_maintenance: ''
-          # labels: 
+          # labels:
           #   '[TO_BE_REPLACED]': ''
           # description: ''
-          # metadata: 
+          # metadata:
           #   '[TO_BE_REPLACED]': ''
           # can_ip_forward: false
           # instance_description: ''
           # metadata_startup_script: ''
-          # network_interface: 
+          # network_interface:
           #   -
           #     network: ''
           #     network_ip: ''
           #     subnetwork: ''
           #     subnetwork_project: ''
-          #     access_config: 
+          #     access_config:
           #       -
           #         nat_ip: ''
           #         network_tier: ''
           # project: ''
           # name_prefix: ''
           # automatic_restart: false
-          # service_account: 
+          # service_account:
           #   -
           #     scopes: []
           #     email: ''
-          # guest_accelerator: 
+          # guest_accelerator:
           #   -
           #     count: 0
           #     type: ''

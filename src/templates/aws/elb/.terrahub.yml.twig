@@ -8,7 +8,7 @@
     resource:
       aws_elb:
         {{ name }}:
-          listener: 
+          listener:
             lb_port: 0
             lb_protocol: ''
             instance_port: 0
@@ -19,13 +19,13 @@
           # name_prefix: ''
           # source_security_group: ''
           # connection_draining_timeout: 0
-          # access_logs: 
+          # access_logs:
           #   -
           #     bucket: ''
           #     enabled: false
           #     interval: 0
           #     bucket_prefix: ''
-          # health_check: 
+          # health_check:
           #   -
           #     healthy_threshold: 0
           #     unhealthy_threshold: 0
@@ -35,7 +35,7 @@
           # internal: false
           # cross_zone_load_balancing: false
           # instances: []
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # availability_zones: []
           # idle_timeout: 0

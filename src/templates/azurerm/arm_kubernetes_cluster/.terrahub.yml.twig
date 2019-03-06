@@ -8,7 +8,7 @@
       azurerm_arm_kubernetes_cluster:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          agent_pool_profile: 
+          agent_pool_profile:
             -
               vm_size: ''
               name: ''
@@ -17,41 +17,41 @@
           #     os_type: ''
           #     max_pods: 0
           #     count: 0
-          service_principal: 
+          service_principal:
             client_id: ''
             client_secret: ''
           dns_prefix: '${var.{{ name }}_dns_prefix}'
           # kubernetes_version: ''
-          # linux_profile: 
+          # linux_profile:
           #   -
-          #     ssh_key: 
+          #     ssh_key:
           #       -
           #         key_data: ''
           #     admin_username: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
-          # addon_profile: 
+          # addon_profile:
           #   -
-          #     http_application_routing: 
+          #     http_application_routing:
           #       -
           #         enabled: false
-          # network_profile: 
+          # network_profile:
           #   -
           #     network_plugin: ''
           #     pod_cidr: ''
           #     service_cidr: ''
           #     dns_service_ip: ''
           #     docker_bridge_cidr: ''
-          # role_based_access_control: 
+          # role_based_access_control:
           #   -
           #     enabled: false
-          #     azure_active_directory: 
+          #     azure_active_directory:
           #       -
           #         server_app_secret: ''
           #         client_app_id: ''
           #         server_app_id: ''
           #         tenant_id: ''
-          # aci_connector_linux: 
+          # aci_connector_linux:
           #   -
           #     enabled: false
           #     subnet_name: ''

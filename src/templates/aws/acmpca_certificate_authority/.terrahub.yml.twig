@@ -8,11 +8,11 @@
     resource:
       aws_acmpca_certificate_authority:
         {{ name }}:
-          certificate_authority_configuration: 
+          certificate_authority_configuration:
             -
               key_algorithm: ''
               signing_algorithm: ''
-              subject: 
+              subject:
                 -
           #         title: ''
           #         organization: ''
@@ -27,9 +27,9 @@
           #         country: ''
           #         distinguished_name_qualifier: ''
           #         surname: ''
-          # revocation_configuration: 
+          # revocation_configuration:
           #   -
-          #     crl_configuration: 
+          #     crl_configuration:
           #       -
           #         expiration_in_days: 0
           #         s3_bucket_name: ''
@@ -37,7 +37,7 @@
           #         enabled: false
           # enabled: false
           # type: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     output:
       id:
