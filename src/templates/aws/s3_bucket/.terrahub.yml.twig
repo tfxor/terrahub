@@ -14,17 +14,17 @@
       aws_s3_bucket:
         {{ name }}:
           status: '${var.{{ name }}_status}'
-          # website: 
+          # website:
           #   -
           #     index_document: 'index.html'
           #     error_document: '/404.html'
           #     redirect_all_requests_to: ''
           #     routing_rules: ''
           # request_payer: ''
-          # replication_configuration: 
+          # replication_configuration:
           #   -
           #     role: ''
-          #     rules: 
+          #     rules:
           #     destination:
           #       bucket: ''
           #       account_id: ''
@@ -34,45 +34,45 @@
           #         -
           #           owner: ''
           #     id: ''
-          #     source_selection_criteria: 
+          #     source_selection_criteria:
           #     sse_kms_encrypted_objects:
           #       enabled:false
           # bucket_prefix: ''
-          # server_side_encryption_configuration: 
+          # server_side_encryption_configuration:
           #   -
-          #     rule: 
+          #     rule:
           #       -
-          #         apply_server_side_encryption_by_default: 
+          #         apply_server_side_encryption_by_default:
           #           -
           #             sse_algorithm: ''
           #             kms_master_key_id: ''
-          # object_lock_configuration: 
+          # object_lock_configuration:
           #   -
           #     object_lock_enabled: ''
-          #     rule: 
+          #     rule:
           #       -
-          #         default_retention: 
+          #         default_retention:
           #           -
           #             mode: ''
           #             days: 0
           #             years: 0
           # bucket: '${var.{{ name}}_name}'
           # acl: 'public-read'
-          # lifecycle_rule: 
+          # lifecycle_rule:
           #   -
           #     enabled: false
           #     id: ''
           #     prefix: ''
-          #     tags: 
+          #     tags:
           #       '[TO_BE_REPLACED]': ''
           #     abort_incomplete_multipart_upload_days: 0
-          #     expiration: 
+          #     expiration:
           #     date: ''
           #     days: 0
           #     expired_object_delete_marker: false
           # force_destroy: 'true'
           # website_endpoint: ''
-          # versioning: 
+          # versioning:
           #   -
           #     enabled: false
           #     mfa_delete: false
@@ -85,7 +85,7 @@
           # policy: ''
           # hosted_zone_id: ''
           # acceleration_status: ''
-          # cors_rule: 
+          # cors_rule:
           #   -
           #     allowed_methods: ['HEAD', 'GET', 'PUT', 'POST', 'DELETE']
           #     allowed_origins: ['*']
@@ -93,21 +93,21 @@
           #     expose_headers: ['ETag']
           #     max_age_seconds: '0'
           # region: 'us-east-1'
-          # transition: 
+          # transition:
           #   storage_class: ''
           #   date: ''
           #   days:0
           # arn: ''
           # website_domain: ''
-          # logging: 
+          # logging:
           #   target_bucket: ''
           #   target_prefix: ''
-          # filter: 
+          # filter:
           #   -
           #     prefix: ''
           #     tags:
           #       '[TO_BE_REPLACED]': ''
-          # noncurrent_version_transition: 
+          # noncurrent_version_transition:
           #   storage_class: ''
           #   days: 0
           # prefix: ''

@@ -8,7 +8,7 @@
       azurerm_arm_virtual_machine:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          storage_os_disk: 
+          storage_os_disk:
             -
               name: ''
               create_option: ''
@@ -22,31 +22,31 @@
           #     disk_size_gb: 0
           vm_size: '${var.{{ name }}_vm_size}'
           network_interface_ids: '${var.{{ name }}_network_interface_ids}'
-          # identity: 
+          # identity:
           #   -
           #     type: ''
-          #     identity_ids: 
+          #     identity_ids:
           #       -
-          # storage_image_reference: 
+          # storage_image_reference:
           #   offer: ''
           #   sku: ''
           #   version: ''
           #   id: ''
           #   publisher: ''
-          # os_profile_linux_config: 
+          # os_profile_linux_config:
           #   disable_password_authentication: false
-          #   ssh_keys: 
+          #   ssh_keys:
           #     -
           #       path: ''
           #       key_data: ''
-          # plan: 
+          # plan:
           #   -
           #     name: ''
           #     publisher: ''
           #     product: ''
           # availability_set_id: ''
-          # os_profile_windows_config: 
-          #   winrm: 
+          # os_profile_windows_config:
+          #   winrm:
           #     -
           #       protocol: ''
           #       certificate_url: ''
@@ -55,7 +55,7 @@
           #   timezone: ''
           # license_type: ''
           # delete_os_disk_on_termination: false
-          # storage_data_disk: 
+          # storage_data_disk:
           #   -
           #     create_option: ''
           #     name: ''
@@ -66,25 +66,25 @@
           #     caching: ''
           #     disk_size_gb: 0
           #     write_accelerator_enabled: false
-          # os_profile: 
+          # os_profile:
           #   computer_name: ''
           #   admin_username: ''
           #   admin_password: ''
           #   custom_data: ''
           # primary_network_interface_id: ''
           # delete_data_disks_on_termination: false
-          # boot_diagnostics: 
+          # boot_diagnostics:
           #   -
           #     enabled: false
           #     storage_uri: ''
-          # os_profile_secrets: 
+          # os_profile_secrets:
           #   -
           #     source_vault_id: ''
-          #     vault_certificates: 
+          #     vault_certificates:
           #       -
           #         certificate_url: ''
           #         certificate_store: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:

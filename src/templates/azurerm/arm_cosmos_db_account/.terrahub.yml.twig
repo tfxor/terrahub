@@ -8,7 +8,7 @@
       azurerm_arm_cosmos_db_account:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          consistency_policy: 
+          consistency_policy:
             -
               consistency_level: ''
           #     max_interval_in_seconds: 0
@@ -16,18 +16,18 @@
           offer_type: '${var.{{ name }}_offer_type}'
           # kind: ''
           # failover_policy: []
-          # virtual_network_rule: 
+          # virtual_network_rule:
           #   id: ''
-          # geo_location: 
+          # geo_location:
           #   failover_priority: 0
           #   prefix: ''
           # is_virtual_network_filter_enabled: false
           # enable_multiple_write_locations: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # enable_automatic_failover: false
           # ip_range_filter: ''
-          # capabilities: 
+          # capabilities:
           #   name: ''
     variable:
       {{ name }}_name:

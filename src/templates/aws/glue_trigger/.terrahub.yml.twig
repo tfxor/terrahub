@@ -9,19 +9,19 @@
       aws_glue_trigger:
         {{ name }}:
           type: '${var.{{ name }}_type}'
-          actions: 
+          actions:
             -
               job_name: ''
-          #     arguments: 
+          #     arguments:
           #       '[TO_BE_REPLACED]': ''
           #     timeout: 0
           name: '${var.{{ name }}_name}'
           # schedule: ''
           # description: ''
           # enabled: false
-          # predicate: 
+          # predicate:
           #   -
-          #     conditions: 
+          #     conditions:
           #       -
           #         job_name: ''
           #         state: ''

@@ -10,24 +10,24 @@
         {{ name }}:
           bucket: '${var.{{ name }}_bucket}'
           name: '${var.{{ name }}_name}'
-          destination: 
+          destination:
             -
-              bucket: 
+              bucket:
                 -
                   format: ''
                   bucket_arn: ''
           #         account_id: ''
           #         prefix: ''
-          #         encryption: 
+          #         encryption:
           #           -
-          #             sse_kms: 
+          #             sse_kms:
           #               -
           #                 key_id: ''
-          schedule: 
+          schedule:
             -
               frequency: ''
           included_object_versions: '${var.{{ name }}_included_object_versions}'
-          # filter: 
+          # filter:
           #   -
           #     prefix: ''
           # optional_fields: []

@@ -8,18 +8,18 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           target: '${var.{{ name }}_target}'
-          autoscaling_policy: 
+          autoscaling_policy:
             -
               max_replicas: 0
               min_replicas: 0
           #     cooldown_period: 0
-          #     cpu_utilization: 
+          #     cpu_utilization:
           #       -
           #         target: ''
           # description: ''
           # zone: ''
           # project: ''
-          # metric: 
+          # metric:
           #   -
           #     name: ''
           #     target: ''

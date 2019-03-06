@@ -7,7 +7,7 @@
     resource:
       azurerm_arm_express_route_circuit:
         {{ name }}:
-          sku: 
+          sku:
             -
               tier: ''
               family: ''
@@ -15,7 +15,7 @@
           peering_location: '${var.{{ name }}_peering_location}'
           bandwidth_in_mbps: '${var.{{ name }}_bandwidth_in_mbps}'
           name: '${var.{{ name }}_name}'
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # allow_classic_operations: false
     variable:
