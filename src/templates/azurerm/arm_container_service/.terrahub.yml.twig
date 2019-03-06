@@ -9,23 +9,23 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           orchestration_platform: '${var.{{ name }}_orchestration_platform}'
-          master_profile: 
+          master_profile:
             dns_prefix: ''
           #   count: 0
-          linux_profile: 
+          linux_profile:
             admin_username: ''
-            ssh_key: 
+            ssh_key:
               key_data: ''
-          agent_pool_profile: 
+          agent_pool_profile:
             name: ''
             dns_prefix: ''
             vm_size: ''
           #   count: 0
-          diagnostics_profile: 
+          diagnostics_profile:
             enabled: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
-          # service_principal: 
+          # service_principal:
           #   client_id: ''
           #   client_secret: ''
     variable:

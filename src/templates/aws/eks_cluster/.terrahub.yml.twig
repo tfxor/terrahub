@@ -10,10 +10,10 @@
         {{ name }}:
           name: '${var.{{ name }}_name}'
           role_arn: '${var.{{ name }}_role_arn}'
-          vpc_config: 
+          vpc_config:
             -
               subnet_ids: []
-          #     security_group_ids: 
+          #     security_group_ids:
           # version: ''
     variable:
       {{ name }}_name:

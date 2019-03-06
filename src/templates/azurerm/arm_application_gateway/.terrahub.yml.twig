@@ -7,29 +7,29 @@
     resource:
       azurerm_arm_application_gateway:
         {{ name }}:
-          frontend_ip_configuration: 
+          frontend_ip_configuration:
             -
               name: ''
           #     subnet_id: ''
           #     private_ip_address: ''
           #     public_ip_address_id: ''
           #     private_ip_address_allocation: ''
-          backend_http_settings: 
+          backend_http_settings:
             -
               name: ''
               port: 0
               protocol: ''
               cookie_based_affinity: ''
-          #     authentication_certificate: 
+          #     authentication_certificate:
           #       -
           #         name: ''
           #     pick_host_name_from_backend_address: false
           #     request_timeout: 0
-          frontend_port: 
+          frontend_port:
             -
               name: ''
               port: 0
-          request_routing_rule: 
+          request_routing_rule:
             -
               name: ''
               rule_type: ''
@@ -38,58 +38,58 @@
           #     backend_http_settings_name: ''
           #     url_path_map_name: ''
           name: '${var.{{ name }}_name}'
-          sku: 
+          sku:
             -
               tier: ''
               capacity: 0
               name: ''
           resource_group_name: '${var.{{ name }}_resource_group_name}'
-          gateway_ip_configuration: 
+          gateway_ip_configuration:
             -
               name: ''
               subnet_id: ''
-          http_listener: 
+          http_listener:
             -
               name: ''
               frontend_ip_configuration_name: ''
               frontend_port_name: ''
               protocol: ''
           #     ssl_certificate_name: ''
-          #     custom_error_configuration: 
+          #     custom_error_configuration:
           #       -
           #         status_code: ''
           #         custom_error_page_url: ''
           #     host_name: ''
           #     require_sni: false
-          backend_address_pool: 
+          backend_address_pool:
             -
               name: ''
-          #     ip_addresses: 
+          #     ip_addresses:
           #       -
           #     fqdn_list: []
           #     ip_address_list: []
-          #     fqdns: 
+          #     fqdns:
           #       -
-          # url_path_map: 
+          # url_path_map:
           #   -
           #     default_backend_address_pool_name: ''
           #     default_backend_http_settings_name: ''
-          #     path_rule: 
+          #     path_rule:
           #       -
           #         paths: []
           #         backend_address_pool_name: ''
           #         backend_http_settings_name: ''
           #         name: ''
           #     name: ''
-          # custom_error_configuration: 
+          # custom_error_configuration:
           #   -
           #     custom_error_page_url: ''
           #     status_code: ''
-          # authentication_certificate: 
+          # authentication_certificate:
           #   -
           #     name: ''
           #     data: ''
-          # waf_configuration: 
+          # waf_configuration:
           #   -
           #     enabled: false
           #     firewall_mode: ''
@@ -97,10 +97,10 @@
           #     rule_set_type: ''
           #     file_upload_limit_mb: 0
           # disabled_ssl_protocols: []
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
           # enable_http2: false
-          # probe: 
+          # probe:
           #   -
           #     protocol: ''
           #     timeout: 0
@@ -109,14 +109,14 @@
           #     path: ''
           #     interval: 0
           #     pick_host_name_from_backend_http_settings: false
-          #     match: 
+          #     match:
           #       -
           #         body: ''
-          #         status_code: 
+          #         status_code:
           #           -
           #     host: ''
           #     minimum_servers: 0
-          # ssl_certificate: 
+          # ssl_certificate:
           #   -
           #     name: ''
           #     data: ''

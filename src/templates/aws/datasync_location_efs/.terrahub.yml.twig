@@ -8,13 +8,13 @@
     resource:
       aws_datasync_location_efs:
         {{ name }}:
-          ec2_config: 
+          ec2_config:
             -
               security_group_arns: []
               subnet_arn: ''
           efs_file_system_arn: '${var.{{ name }}_efs_file_system_arn}'
           # subdirectory: ''
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_efs_file_system_arn:

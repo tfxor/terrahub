@@ -8,9 +8,9 @@
       azurerm_arm_monitor_autoscale_setting:
         {{ name }}:
           name: '${var.{{ name }}_name}'
-          profile: 
+          profile:
             -
-              capacity: 
+              capacity:
                 -
                   maximum: 0
                   default: 0
@@ -18,28 +18,28 @@
               name: ''
           target_resource_id: '${var.{{ name }}_target_resource_id}'
           # enabled: false
-          # fixed_date: 
+          # fixed_date:
           #   -
           #     start: ''
           #     end: ''
           #     timezone: ''
-          # recurrence: 
+          # recurrence:
           #   -
           #     days: []
-          #     hours: 
+          #     hours:
           #       -
-          #     minutes: 
+          #     minutes:
           #       -
           #     timezone: ''
-          # notification: 
+          # notification:
           #   -
-          #     email: 
+          #     email:
           #       -
           #         send_to_subscription_co_administrator: false
-          #         custom_emails: 
+          #         custom_emails:
           #           -
           #         send_to_subscription_administrator: false
-          # tags: 
+          # tags:
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
