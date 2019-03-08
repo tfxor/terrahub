@@ -321,6 +321,18 @@ class Terraform {
   }
 
   /**
+   * https://www.terraform.io/docs/commands/import.html
+   * @return {Promise}
+   */
+  import() {
+    const options = {'-input': false };
+    const args = ['-no-color'];
+    const values = [process.env.resourceName, process.env.importId];
+    return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
+      values));
+  }
+
+  /**
    * https://www.terraform.io/docs/commands/apply.html
    * @return {Promise}
    */

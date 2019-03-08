@@ -101,14 +101,16 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number }} options
+   * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number, resourceName: String, importId: String }} options
    * @return {Promise}
    */
-  runActions(actions, { silent = false, format = '', planDestroy = false, dependencyDirection = null } = {}) {
+  runActions(actions, { silent = false, format = '', planDestroy = false, dependencyDirection = null, resourceName = '', importId = '' } = {}) {
     this._env = {
       silent: silent,
       format: format,
-      planDestroy: planDestroy
+      planDestroy: planDestroy,
+      resourceName: resourceName,
+      importId: importId
     };
 
     const results = [];
