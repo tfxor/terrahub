@@ -222,7 +222,7 @@ class ComponentCommand extends AbstractCommand {
         });
 
         const templateName = this._configLoader.getDefaultFileName() + '.twig';
-        const specificConfigPath = path.join(path.dirname(templates.mapping), templateName);
+        const specificConfigPath = path.join(path.dirname(templates.config), templateName);
         const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
 
         return renderTwig(
