@@ -98,10 +98,16 @@ function jitMiddleware(config) {
 
   const src = path.join(config.project.root, config.root);
   const regEx = /\.terrahub.*(json|yml|yaml)$/;
-
-  return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
-    .then(() => Promise.all(promises))
-    .then(() => Promise.resolve(cfg));
+  
+  return fse.ensureDir(tmpPath)
+    .then(() => {
+      return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
+        .then(() => Promise.all(promises))
+        .then(() => Promise.resolve(cfg));
+    })
+    .catch(err => {
+      throw new Error(`${err}`);
+    });
 }
 
 /**
