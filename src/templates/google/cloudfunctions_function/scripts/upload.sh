@@ -22,9 +22,9 @@ if [ "${THUB_BUILD_OK}" == "true" ]; then
   ## Sync THUB_SRC to THUB_GS_PATH
   gsutil --version > /dev/null 2>&1 || { echo >&2 'gsutil is missing. Aborting...'; exit 1; }
   if [[ -d "${THUB_SRC}" ]]; then
-    gsutil rsync ${THUB_SRC} ${THUB_GS_PATH}
+    gsutil -m rsync ${THUB_SRC} ${THUB_GS_PATH}
   elif [[ -f "${THUB_SRC}" ]]; then
-    gsutil cp ${THUB_SRC} ${THUB_GS_PATH}
+    gsutil -m cp ${THUB_SRC} ${THUB_GS_PATH}
   else
     echo >&2 "ERROR: ${THUB_SRC} is not valid"
     exit 1
