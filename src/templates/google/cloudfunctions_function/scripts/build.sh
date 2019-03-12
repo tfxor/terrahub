@@ -1,20 +1,20 @@
 #!/bin/bash
 
-## Component name
-COMPONENT_NAME=${1}
-if [ -z "${COMPONENT_NAME}" ]; then
-  echo >&2 'ERROR: COMPONENT_NAME variable is empty. Aborting...'
+## TerraHub Component
+THUB_COMPONENT=${1}
+if [ -z "${THUB_COMPONENT}" ]; then
+  echo >&2 'ERROR: THUB_COMPONENT variable is empty. Aborting...'
   exit 1
 fi
 
-## Object name
-OBJECT_NAME=${2}
-if [ -z "${OBJECT_NAME}" ]; then
-  echo >&2 'ERROR: OBJECT_NAME variable is empty. Aborting...'
+## Google Storage object name
+THUB_OBJECT=${2}
+if [ -z "${THUB_OBJECT}" ]; then
+  echo >&2 'ERROR: THUB_OBJECT variable is empty. Aborting...'
   exit 1
 fi
 
-## Bucket key
+## Google Storage bucket key
 THUB_BUCKET_KEY=${3}
 if [ -z "${THUB_BUCKET_KEY}" ]; then
   echo >&2 'ERROR: THUB_BUCKET_KEY variable is empty. Aborting...'
@@ -26,8 +26,9 @@ fi
 
 ## Checking if THUB_BUILD_OK is true
 if [ "$THUB_BUILD_OK" == "true" ]; then
-  OBJECT_IN_COMPONENT='component.template.resource.google_storage_bucket_object.'${OBJECT_NAME}'.name'
-  terrahub configure -i ${COMPONENT_NAME} -c ${OBJECT_IN_COMPONENT}=${THUB_BUCKET_KEY}$(date +%s).zip
+  THUB_OBJECT_KEY='component.template.resource.google_storage_bucket_object.'${THUB_OBJECT}'.name'
+  terrahub --version > /dev/null 2>&1 || { echo >&2 'terrahub is missing. Aborting...'; exit 1; }
+  terrahub configure -i ${THUB_COMPONENT} -c ${THUB_OBJECT_KEY}=${THUB_BUCKET_KEY}$(date +%s).zip
   echo 'Build was executed'
 else
   echo 'Build was NOT executed'

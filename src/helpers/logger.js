@@ -10,7 +10,7 @@ class Logger {
     const level = (process.env.DEBUG || logger.INFO.name).toUpperCase();
 
     logger.useDefaults({
-      defaultLevel: logger[ level ],
+      defaultLevel: logger[level],
       formatter: (messages, context) => {}
     });
 
@@ -57,12 +57,12 @@ class Logger {
    * @param {String|Error} message
    */
   error(message) {
-    if (message.constructor === Error) {
+    if (message instanceof Error) {
       const { name } = this._logger.getLevel();
 
-      message = (name === logger.DEBUG.name)
-        ? message.stack
-        : message.message;
+      message = (name === logger.DEBUG.name) ?
+        message.stack :
+        message.message;
     }
 
     this._logger.error('❌', message);
