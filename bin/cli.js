@@ -46,7 +46,7 @@ try {
 }
 
 command
-  .validate()
+  .validate(command._name)
   .then(() => command.run())
   .then(message => {
     if (message) {
