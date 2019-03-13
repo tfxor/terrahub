@@ -62,7 +62,7 @@
 #     variables:
 #       THUB_ENV: dev
 #       THUB_INDEX_FILE: www.txt
-#       THUB_S3_PATH: 'gs://{{name}}'
+#       THUB_GS_PATH: 'gs://{{name}}'
 #       THUB_ROBOTS: ../../robots.dev.txt
 #       THUB_BUILD_PATH: ../../build
 #       THUB_SOURCE_PATH: ../../assets ../../static/fonts ../../static/img ../../views
@@ -72,7 +72,7 @@
 #     pre_build:
 #       commands:
 #         - 'echo "BUILD: Running pre_build step"'
-#         - ./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE
+#         - ./scripts/download.sh $THUB_INDEX_FILE $THUB_GS_PATH/$THUB_INDEX_FILE
 #         - ./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH
 #       finally:
 #         - 'echo "BUILD: pre_build step successful"'
@@ -86,7 +86,7 @@
 #       commands:
 #         - 'echo "BUILD: Running post_build step"'
 #         - ./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE
-#         - ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
+#         - ./scripts/upload.sh $THUB_BUILD_PATH $THUB_GS_PATH --cache-control max-age=$THUB_MAX_AGE
 #         - rm -f .terrahub_build.env $THUB_INDEX_FILE
 #       finally:
 #         - 'echo "BUILD: post_build step successful"'

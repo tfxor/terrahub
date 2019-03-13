@@ -68,8 +68,8 @@
 #     variables:
 #       THUB_FUNCTION_ZIP: {{ name }}.zip
 #       THUB_FUNCTION_TXT: {{ name }}.txt
-#       COMPONENT_NAME: {{ name }}
-#       OBJECT_NAME: demo_object
+#       THUB_COMPONENT: {{ name }}
+#       THUB_OBJECT: demo_object
 #       THUB_BUILD_PATH: ..
 #       THUB_BUILD_OK: 'false'
 #       THUB_BUCKET_PATH: 'gs://'
@@ -85,7 +85,7 @@
 #     build:
 #       commands:
 #         - 'echo "BUILD: Running build step"'
-#         - ./scripts/build.sh $COMPONENT_NAME $OBJECT_NAME $THUB_BUCKET_KEY/
+#         - ./scripts/build.sh $THUB_COMPONENT $THUB_OBJECT $THUB_BUCKET_KEY/
 #       finally:
 #         - 'echo "BUILD: build step successful"'
 #     post_build:
