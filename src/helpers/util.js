@@ -14,12 +14,9 @@ const childProcess = require('child_process');
 const { spawn } = require('child-process-promise');
 const { EOL, platform, cpus, homedir } = require('os');
 
-const readLineInterface = ReadLine.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  historySize: 0
-});
-
+/**
+ * @static
+ */
 class Util {
   /**
    * @param {String} text
@@ -160,12 +157,27 @@ class Util {
   }
 
   /**
+   * @return {Interface}
+   */
+  static get readLineInterface() {
+    if (!Util._readLineInterface) {
+      Util._readLineInterface = ReadLine.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        historySize: 0
+      });
+    }
+
+    return Util._readLineInterface;
+  }
+
+  /**
    * @param {String} question
    * @return {Promise}
    */
   static askQuestion(question) {
     return new Promise(resolve => {
-      readLineInterface.question(question, resolve);
+      Util.readLineInterface.question(question, resolve);
     });
   }
 
@@ -175,11 +187,7 @@ class Util {
    */
   static yesNoQuestion(question) {
     return Util.askQuestion(question).then(answer => {
-      if (!['y', 'yes'].includes(answer.toLowerCase())) {
-        return Promise.resolve(false);
-      }
-
-      return Promise.resolve(true);
+      return Promise.resolve(['y', 'yes'].includes(answer.toLowerCase()));
     });
   }
 
