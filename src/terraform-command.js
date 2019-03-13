@@ -30,12 +30,11 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} commandName
    * @returns {Promise}
    */
-  validate(commandName = '') {
+  validate() {
     return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
-      if (this._isComponentsCountZero() && commandName != 'configure') {
+      if (this._isComponentsCountZero() && this.getName() != 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
