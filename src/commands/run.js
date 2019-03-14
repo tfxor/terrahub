@@ -21,6 +21,7 @@ class RunCommand extends TerraformCommand {
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
       .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
+      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false)
     ;
   }
 
@@ -33,10 +34,15 @@ class RunCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
+    this._isApply = this.getOption('apply');
+    this._isDestroy = this.getOption('destroy');
+    this._isBuild = this.getOption('build');
+
     const config = this.getConfigObject();
 
     return this._getPromise(config)
-      .then(answer => answer ? this._runPhases(config) : Promise.reject('Action aborted'))
+      .then(isConfirmed => isConfirmed ? this._checkDependencies(config) : Promise.reject('Action aborted'))
+      .then(() => this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config))
       .then(() => Promise.resolve('Done'));
   }
 
@@ -60,29 +66,19 @@ class RunCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _runPhases(config) {
+  _runLocal(config) {
+    const actions = ['prepare', 'init', 'workspaceSelect'];
     const distributor = new Distributor(config);
 
-    this._isApply = this.getOption('apply');
-    this._isDestroy = this.getOption('destroy');
-    this._isBuild = this.getOption('build');
+    if (!this._isApply && !this._isDestroy) {
+      if (this._isBuild) {
+        actions.push('build');
+      }
 
-    return this._checkDependencies(config)
-      .then(() => {
-        const actions = ['prepare', 'init', 'workspaceSelect'];
+      actions.push('plan');
+    }
 
-        if (!this._isApply && !this._isDestroy) {
-          if (this._isBuild) {
-            actions.push('build');
-          }
-
-          actions.push('plan');
-        }
-
-        return distributor.runActions(actions, {
-          silent: this.getOption('silent')
-        });
-      })
+    return distributor.runActions(actions, { silent: this.getOption('silent') })
       .then(() => !this._isApply ?
         Promise.resolve() :
         distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {

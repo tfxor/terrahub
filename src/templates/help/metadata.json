@@ -846,6 +846,12 @@
           "defaultValue": false
         },
         {
+          "name": "cloud",
+          "shortcut": "c",
+          "description": "Run your terraform execution in cloud",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
