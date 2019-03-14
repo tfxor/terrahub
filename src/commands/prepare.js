@@ -1,8 +1,8 @@
 'use strict';
 
-const Distributor = require('../helpers/distributor');
-const TerraformCommand = require('../terraform-command');
 const logger = require('../helpers/logger');
+const TerraformCommand = require('../terraform-command');
+const Distributor = require('../helpers/distributors/thread-distributor');
 
 class PrepareCommand extends TerraformCommand {
   /**

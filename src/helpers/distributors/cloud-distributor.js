@@ -1,69 +1,25 @@
 'use strict';
 
-const logger = require('./logger');
-const Dictionary = require('./dictionary');
-const { fetch } = require('../parameters');
+const logger = require('../logger');
+const { fetch } = require('../../parameters');
+const AbstractDistributor = require('./abstract-distributor');
 
-class CloudDistributor {
+class CloudDistributor extends AbstractDistributor {
   /**
    * @param {Object} configObject
    * @param {String} thubRunId
    */
   constructor(configObject, thubRunId) {
-    this.THUB_RUN_ID = thubRunId;
-    this._config = Object.assign({}, configObject);
+    super(configObject, { thubRunId });
+
     this._errors = [];
-  }
-
-  /**
-   * @param {Object} config
-   * @param {Number} direction
-   * @return {Object}
-   * @private
-   */
-  _buildDependencyTable(config, direction) {
-    const keys = Object.keys(config);
-
-    const result = keys.reduce((acc, key) => {
-      acc[key] = {};
-
-      return acc;
-    }, {});
-
-    switch (direction) {
-      case Dictionary.DIRECTION.FORWARD:
-        keys.forEach(key => {
-          Object.assign(result[key], config[key].dependsOn);
-        });
-        break;
-
-      case Dictionary.DIRECTION.REVERSE:
-        keys.forEach(key => {
-          Object.keys(config[key].dependsOn).forEach(hash => {
-            result[hash][key] = null;
-          });
-        });
-        break;
-    }
-
-    return result;
-  }
-
-  /**
-   * Remove dependencies on this component
-   * @param {String} hash
-   * @private
-   */
-  _removeDependencies(hash) {
-    Object.keys(this._dependencyTable).forEach(key => {
-      delete this._dependencyTable[key][hash];
-    });
   }
 
   /**
    * @param {String[]} actions
    * @param {Object} options
    * @return {Promise}
+   * @override
    */
   runActions(actions, options = {}) {
     const {
@@ -72,7 +28,7 @@ class CloudDistributor {
 
     let inProgress = 0;
     const results = [];
-    this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
+    this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     return new Promise((resolve, reject) => {
@@ -96,7 +52,7 @@ class CloudDistributor {
        * @private
        */
       const _callLambdaExecutor = hash => {
-        const config = this._config[hash];
+        const config = this.config[hash];
 
         const body = JSON.stringify({
           actions: this.TERRAFORM_ACTIONS,
@@ -110,7 +66,7 @@ class CloudDistributor {
         fetch.post('thub/deploy/create', { body: body })
           .then(res => {
             results.push(res);
-            this._removeDependencies(hash);
+            this.removeDependencies(this._dependencyTable, hash);
 
             logger.info(`[${config.name}] Successfully deployed!`);
 

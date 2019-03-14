@@ -1,15 +1,15 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
-const HashTable = require('../helpers/hash-table');
-const Distributor = require('../helpers/distributor');
-const ConfigLoader = require('../config-loader');
-const TerraformCommand = require('../terraform-command');
-const { config, templates } = require('../parameters');
-const { renderTwig, yesNoQuestion } = require('../helpers/util');
+const fse = require('fs-extra');
 const treeify = require('treeify');
+const ConfigLoader = require('../config-loader');
+const HashTable = require('../helpers/hash-table');
+const { config, templates } = require('../parameters');
+const TerraformCommand = require('../terraform-command');
+const { renderTwig, yesNoQuestion } = require('../helpers/util');
+const Distributor = require('../helpers/distributors/thread-distributor');
 
 class WorkspaceCommand extends TerraformCommand {
   /**

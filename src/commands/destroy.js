@@ -1,8 +1,8 @@
 'use strict';
 
 const Dictionary = require("../helpers/dictionary");
-const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
+const Distributor = require('../helpers/distributors/thread-distributor');
 
 class DestroyCommand extends TerraformCommand {
   /**

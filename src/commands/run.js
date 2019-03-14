@@ -3,10 +3,10 @@
 const S3Helper = require('../helpers/s3-helper');
 const { config, fetch } = require('../parameters');
 const Dictionary = require("../helpers/dictionary");
-const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const CloudDistributor = require('../helpers/cloud-distributor');
 const { printListAsTree, uuid } = require('../helpers/util');
+const Distributor = require('../helpers/distributors/thread-distributor');
+const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
 class RunCommand extends TerraformCommand {
   /**
