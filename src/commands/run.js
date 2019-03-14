@@ -1,9 +1,12 @@
 'use strict';
 
+const S3Helper = require('../helpers/s3-helper');
+const { config, fetch } = require('../parameters');
 const Dictionary = require("../helpers/dictionary");
 const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { printListAsTree } = require('../helpers/util');
+const CloudDistributor = require('../helpers/cloud-distributor');
+const { printListAsTree, uuid } = require('../helpers/util');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -95,6 +98,45 @@ class RunCommand extends TerraformCommand {
           planDestroy: true
         })
       );
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _runCloud(cfg) {
+    const thubRunId = uuid();
+    const actions = ['prepare', 'init', 'workspaceSelect', 'build', 'plan', 'apply'];
+    const distributor = new CloudDistributor(cfg, thubRunId);
+    const s3Helper = new S3Helper();
+
+    const bucketName = S3Helper.METADATA_BUCKET;
+    const s3Path = config.api.replace('api', 'projects');
+
+    return this._fetchAndSetupCredentials()
+      .then(accountId => s3Helper.uploadDirectory(
+        this.getAppPath(),
+        bucketName,
+        [s3Path, accountId, thubRunId].join('/'),
+        { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
+      ))
+      .then(() => distributor.runActions(actions))
+      // delete directory from s3 in any case
+      .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3Path))
+      .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3Path).then(() => Promise.reject(error)));
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _fetchAndSetupCredentials() {
+    return fetch.get('thub/temporary-credentials/retrieve').then(json => {
+      Object.assign(process.env, json.data.credentials);
+
+      return Promise.resolve(json.data.accountId);
+    });
   }
 
   /**
