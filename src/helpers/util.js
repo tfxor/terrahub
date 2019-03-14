@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const Twig = require('twig');
+const glob = require('glob');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const logger = require('./logger');
@@ -376,6 +377,17 @@ class Util {
     array.forEach(val => { result[val] = null; });
 
     return result;
+  }
+
+  /**
+   * @param {String} pattern
+   * @param {Object} options
+   * @return {Promise}
+   */
+  static globPromise(pattern, options) {
+    return new Promise((resolve, reject) =>
+      glob(pattern, options, (error, files) => error ? reject(error) : resolve(files))
+    );
   }
 }
 
