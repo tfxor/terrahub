@@ -1,12 +1,10 @@
 'use strict';
 
-const fse = require('fs-extra');
-const path = require('path');
 const cluster = require('cluster');
-const Terrahub = require('../terrahub');
+const JitHelper = require('../jit-helper');
+const { promiseSeries} = require('../util');
 const BuildHelper = require('../build-helper');
-const { jitPath } = require('../../parameters');
-const { promiseSeries, homePath, extend } = require('../util');
+const Terrahub = require('../wrappers/terrahub');
 
 /**
  * Parse terraform actions
@@ -22,7 +20,7 @@ function getActions() {
  * @return {Function[]}
  */
 function getTasks(config) {
-  const terrahub = new Terrahub(config);
+  const terrahub = new Terrahub(config, process.env.THUB_RUN_ID);
 
   return getActions().map(action =>
     (options) => (action !== 'build' ?
@@ -31,91 +29,11 @@ function getTasks(config) {
 }
 
 /**
- * Transform template config
- * @param {Object} config
- * @return {Object}
- */
-function transformConfig(config) {
-  config.isJit = config.hasOwnProperty('template');
-
-  if (config.isJit) {
-    const componentPath = path.join(config.project.root, config.root);
-
-    if (!config.mapping.length) {
-      config.mapping.push(componentPath);
-    }
-
-    config.template.locals = extend(config.template.locals, [{
-      timestamp: Date.now(),
-      component: {
-        name: config.name,
-        path: componentPath
-      },
-      project: {
-        path: config.project.root,
-        name: config.project.name,
-        code: config.project.code
-      }
-    }]);
-  }
-
-  return config;
-}
-
-/**
- * JIT middleware (config to files)
- * @param {Object} config
- * @return {Promise}
- */
-function jitMiddleware(config) {
-  const cfg = transformConfig(config);
-  const tmpPath = homePath(jitPath, cfg.hash);
-
-  if (!cfg.isJit) {
-    return Promise.resolve(config);
-  }
-
-  const promises = Object.keys(cfg.template).map(it => {
-    if (!cfg.template[it]) {
-      return Promise.resolve();
-    }
-
-    let name = `${it}.tf`;
-    let data = { [it]: cfg.template[it] };
-
-    switch (it) {
-      case 'resource':
-        name = 'main.tf';
-        break;
-      case 'tfvars':
-        name = `${cfg.cfgEnv === 'default' ? '' : 'workspace/'}${cfg.cfgEnv}.tfvars`;
-        data = cfg.template[it];
-        break;
-    }
-
-    return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
-  });
-
-  const src = path.join(config.project.root, config.root);
-  const regEx = /\.terrahub.*(json|yml|yaml)$/;
-
-  return fse.ensureDir(tmpPath)
-  .then(() => {
-    return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
-      .then(() => Promise.all(promises))
-      .then(() => Promise.resolve(cfg));
-  })
-  .catch(err => {
-    throw new Error(`${err}`);
-  });
-}
-
-/**
  * BladeRunner
  * @param {Object} config
  */
 function run(config) {
-  jitMiddleware(config)
+  JitHelper.jitMiddleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {

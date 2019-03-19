@@ -5,13 +5,13 @@ const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
-const logger = require('./logger');
-const Metadata = require('./metadata');
-const Dictionary = require('./dictionary');
-const Downloader = require('./downloader');
+const logger = require('../logger');
+const Metadata = require('../metadata');
+const Dictionary = require('../dictionary');
+const Downloader = require('../downloader');
 const { execSync } = require('child_process');
-const { config, fetch, jitPath } = require('../parameters');
-const { extend, spawner, homePath } = require('./util');
+const { extend, spawner, homePath } = require('../util');
+const { config, fetch, jitPath } = require('../../parameters');
 
 class Terraform {
   /**
