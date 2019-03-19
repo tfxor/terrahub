@@ -17,15 +17,11 @@ class CloudDistributor extends AbstractDistributor {
 
   /**
    * @param {String[]} actions
-   * @param {Object} options
+   * @param {Number} dependencyDirection
    * @return {Promise}
    * @override
    */
-  runActions(actions, options = {}) {
-    const {
-      dependencyDirection = null
-    } = options;
-
+  runActions(actions, { dependencyDirection = null } = {}) {
     let inProgress = 0;
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
