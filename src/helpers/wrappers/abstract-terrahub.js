@@ -1,18 +1,19 @@
 'use strict';
 
 const path = require('path');
-const logger = require('./logger');
+const logger = require('../logger');
 const Terraform = require('./terraform');
-const Dictionary = require('./dictionary');
-const { config, fetch } = require('../parameters');
-const { promiseSeries, toMd5, spawner, exponentialBackoff } = require('./util');
+const Dictionary = require('../dictionary');
+const { config } = require('../../parameters');
+const { promiseSeries, toMd5, spawner, exponentialBackoff } = require('../util');
 
-class Terrahub {
+class AbstractTerrahub {
   /**
    * @param {Object} cfg
+   * @param {String} thubRunId
    */
-  constructor(cfg) {
-    this._runId = process.env.THUB_RUN_ID;
+  constructor(cfg, thubRunId) {
+    this._runId = thubRunId;
     this._action = '';
     this._config = cfg;
     this._project = cfg.project;
@@ -25,35 +26,11 @@ class Terrahub {
    * @param {Object} data
    * @param {Error|String} err
    * @return {Promise}
-   * @private
+   * @protected
+   * @abstract
    */
-  _on(data, err = null) {
-    let error = null;
-    let payload = {
-      action: this._action,
-      status: data.status,
-      projectId: this._project.id,
-      componentHash: this._componentHash,
-      componentName: this._config.name,
-      terraformRunId: this._runId
-    };
-
-    if (err) {
-      error = err instanceof Error ? err : new Error(err || 'Unknown error');
-      payload.error = error.message.trim();
-    }
-
-    if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
-      payload.metadata = data.metadata;
-    }
-
-    let actionPromise = !config.token
-      ? Promise.resolve()
-      : fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
-
-    return actionPromise.then(() => {
-      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
-    });
+  on(data, err = null) {
+    throw new Error(`Implement 'on' method...`);
   }
 
   /**
@@ -71,7 +48,7 @@ class Terrahub {
       }
 
       if (options.skip) {
-        return this._on({ status: Dictionary.REALTIME.SKIP })
+        return this.on({ status: Dictionary.REALTIME.SKIP })
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -115,7 +92,7 @@ class Terrahub {
       Object.assign(process.env, this._config.hook.env.variables);
     }
 
-    const commandsList = hookPath instanceof Array ? hookPath : [hookPath];
+    const commandsList = Array.isArray(hookPath) ? hookPath : [hookPath];
 
     return promiseSeries(commandsList.map(it => {
       const args = it.split(' ');
@@ -212,23 +189,11 @@ class Terrahub {
 
   /**
    * @return {Promise}
-   * @private
+   * @protected
+   * @abstract
    */
-  _checkProject() {
-    if (!config.token) {
-      return Promise.resolve();
-    }
-
-    const payload = {
-      name: this._project.name,
-      hash: this._project.code
-    };
-
-    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
-      this._project.id = json.data.id;
-
-      return Promise.resolve();
-    });
+  checkProject() {
+    throw new Error(`Implement 'checkProject' method...`);
   }
 
   /**
@@ -237,87 +202,24 @@ class Terrahub {
    * @private
    */
   _getTask() {
-    return this._checkProject()
-      .then(() => this._on({ status: Dictionary.REALTIME.START }))
+    return this.checkProject()
+      .then(() => this.on({ status: Dictionary.REALTIME.START }))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
-      .then(data => this._upload(data))
+      .then(data => this.upload(data))
       .then(res => this._hook('after', res))
-      .then(data => this._on(data))
-      .catch(err => this._on({ status: Dictionary.REALTIME.ERROR }, err));
+      .then(data => this.on(data))
+      .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
   }
 
   /**
    * @param {Object} data
    * @return {Promise}
-   * @private
+   * @protected
+   * @abstract
    */
-  _upload(data) {
-    if (!config.token || !data || !data.buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
-      return Promise.resolve(data);
-    }
-
-    const key = this._getKey();
-    const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
-
-    return this._putObject(url, data.buffer)
-      .then(() => this._callParseLambda(key))
-      .then(() => Promise.resolve(data));
-  }
-
-  /**
-   * Get destination key
-   * @return {String}
-   * @private
-   */
-  _getKey() {
-    const dir = config.api.replace('api', 'public');
-    const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
-
-    return `${dir}/${this._timestamp}/${keyName}`;
-  }
-
-  /**
-   * @param {String} key
-   * @return {Promise}
-   * @private
-   */
-  _callParseLambda(key) {
-    const url = `thub/resource/parse-${this._action}`;
-
-    const options = {
-      body: JSON.stringify({
-        key: key,
-        projectId: this._project.id,
-        thubRunId: this._runId
-      })
-    };
-
-    const promise = fetch.post(url, options).catch(error => {
-      error.message = this._addNameToMessage('Failed to trigger parse function');
-      logger.error(error);
-
-      return Promise.resolve();
-    });
-
-    return process.env.DEBUG ? promise : Promise.resolve();
-  }
-
-  /**
-   * Put object via bucket url
-   * @param {String} url
-   * @param {Buffer} body
-   * @return {Promise}
-   * @private
-   */
-  _putObject(url, body) {
-    const options = {
-      method: 'PUT',
-      body: body,
-      headers: { 'Content-Type': 'text/plain', 'x-amz-acl': 'bucket-owner-full-control' }
-    };
-
-    return fetch.request(url, options);
+  upload(data) {
+    throw new Error(`Implement 'upload' method...`);
   }
 
   /**
@@ -328,15 +230,6 @@ class Terrahub {
   _addNameToMessage(message) {
     return `[${this._config.name}] ${message}`;
   }
-
-  /**
-   * Metadata bucket associated domain
-   * @return {String}
-   * @constructor
-   */
-  static get METADATA_DOMAIN() {
-    return 'https://data-lake-terrahub-us-east-1.s3.amazonaws.com';
-  }
 }
 
-module.exports = Terrahub;
+module.exports = AbstractTerrahub;
