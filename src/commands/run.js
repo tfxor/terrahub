@@ -103,24 +103,40 @@ class RunCommand extends TerraformCommand {
    */
   _runCloud(cfg) {
     const thubRunId = uuid();
-    const actions = ['prepare', 'init', 'workspaceSelect', 'build', 'plan', 'apply'];
+    const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
     const distributor = new CloudDistributor(cfg, thubRunId);
     const s3Helper = new S3Helper();
 
     const bucketName = S3Helper.METADATA_BUCKET;
     const s3Path = config.api.replace('api', 'projects');
 
-    return this._fetchAndSetupCredentials()
-      .then(accountId => s3Helper.uploadDirectory(
-        this.getAppPath(),
-        bucketName,
-        [s3Path, accountId, thubRunId].join('/'),
-        { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
-      ))
-      .then(() => distributor.runActions(actions))
+    return this._fetchAccountId()
+      .then(accountId => {
+        this.logger.warn('Uploading project to S3.');
+
+        return s3Helper.uploadDirectory(
+          this.getAppPath(),
+          bucketName,
+          [s3Path, accountId, thubRunId].join('/'),
+          { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
+        );
+      })
+      .then(() => {
+        this.logger.warn('Directory uploaded to S3.');
+
+        return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+      })
       // delete directory from s3 in any case
       .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3Path))
       .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3Path).then(() => Promise.reject(error)));
+  }
+
+  /**
+   * @return {Promise<String>}
+   * @private
+   */
+  _fetchAccountId() {
+    return fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
   }
 
   /**
