@@ -1,16 +1,15 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
-const { homePath } = require('../helpers/util');
 const glob = require('glob');
-const Terraform = require('../helpers/terraform');
+const fse = require('fs-extra');
 const ConfigLoader = require('../config-loader');
-const { templates, commandsPath, jitPath } = require('../parameters');
-const AbstractCommand = require('../abstract-command');
-const Downloader = require('../helpers/downloader');
 const { exec } = require('child-process-promise');
-const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
+const Downloader = require('../helpers/downloader');
+const AbstractCommand = require('../abstract-command');
+const Terraform = require('../helpers/wrappers/terraform');
+const { templates, commandsPath, jitPath } = require('../parameters');
+const { homePath, renderTwig, isAwsNameValid, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -62,7 +61,7 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
-      printConfigAsList(this._name, this.getProjectConfig());
+      printListAsTree(this._name, this.getProjectConfig());
 
       return yesNoQuestion('Do you want to perform delete action? (Y/N) ').then(answer => {
         if (!answer) {
