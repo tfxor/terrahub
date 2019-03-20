@@ -1,4 +1,4 @@
-# Publish on Debian
+# Publish on LaunchPad
 
 ```shell
 gpg --gen-key
