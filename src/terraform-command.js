@@ -268,7 +268,7 @@ class TerraformCommand extends AbstractCommand {
 
     const action = this.getName();
 
-    this.logger.log(`'terrahub ${action}' action is executed for above list of components.`);
+    this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
   }
 
   /**
