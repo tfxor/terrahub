@@ -296,9 +296,9 @@ class Terraform {
         let skip = false;
         if (planData) {
           const planCounter = planData.slice(-3);
-          ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
+          ['add', 'change', 'destroy'].forEach((field, index) => { metadata[field] = planCounter[index]; });
         } else {
-          ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
+          ['add', 'change', 'destroy'].forEach((field) => { metadata[field] = '0'; });
           skip = true;
         }
 

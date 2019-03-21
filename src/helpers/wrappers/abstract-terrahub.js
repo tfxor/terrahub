@@ -108,7 +108,7 @@ class AbstractTerrahub {
       switch (extension) {
         case '.js':
           return () => {
-            const promise = require(args[0])(this._config, res.buffer);
+            const promise = require(args[0])(this._config, res.buffer); // eslint-disable-line global-require
 
             return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
           };
