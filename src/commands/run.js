@@ -80,21 +80,28 @@ class RunCommand extends TerraformCommand {
           silent: this.getOption('silent')
         });
       })
-      .then(() => !this._isApply ?
-        Promise.resolve() :
-        distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
+      .then(() => {
+        if (!this._isApply) {
+          return Promise.resolve();
+        }
+        const actions = this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'];
+
+        return distributor.runActions(actions, {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.FORWARD
-        })
-      )
-      .then(() => !this._isDestroy ?
-        Promise.resolve() :
-        distributor.runActions(['plan', 'destroy'], {
+        });
+      })
+      .then(() => {
+        if (!this._isDestroy) {
+          return Promise.resolve();
+        }
+
+        return distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
-        })
-      );
+        });
+      });
   }
 
   /**

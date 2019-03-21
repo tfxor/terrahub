@@ -10,69 +10,60 @@ class BuildHelper {
    * @return {Promise}
    */
   static getComponentBuildTask(config) {
-    return new Promise((resolve, reject) => {
-      const buildConfig = config.build;
-      const name = config.name;
+    const { build: buildConfig, name } = config;
 
-      const env = Object.assign({}, process.env);
-      if (buildConfig.env) {
-        BuildHelper._extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
-      }
+    const env = Object.assign({}, process.env);
+    if (buildConfig.env) {
+      BuildHelper._extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
+    }
 
-      const commandsList = [];
+    const commandsList = [];
 
-      if (buildConfig.phases) {
-        BuildHelper._pushCommandsAndFinally(
-          commandsList,
-          buildConfig.phases.install,
-          buildConfig.phases.pre_build,
-          buildConfig.phases.build,
-          buildConfig.phases.post_build
-        );
-      }
+    if (buildConfig.phases) {
+      BuildHelper._pushCommandsAndFinally(
+        commandsList, ...['install', 'pre_build', 'build', 'post_build'].map(it => buildConfig.phases[it])
+      );
+    }
 
-      promiseSeries(commandsList.map(it =>
-        () => {
-          let fullCommand = it;
+    return promiseSeries(commandsList.map(it =>
+      () => {
+        let fullCommand = it;
 
-          if (it.constructor === Object) {
-            const key = Object.keys(it)[0];
+        if (it.constructor === Object) {
+          const key = Object.keys(it)[0];
 
-            fullCommand = [key, it[key]].join(': ');
-          }
+          fullCommand = [key, it[key]].join(': ');
+        }
 
-          const isVerbose = !process.env.format && process.env.silent === 'false';
-          const [command, ...args] = fullCommand.split(' ');
-          const options = {
-            cwd: path.join(config.project.root, config.root),
-            env: env,
-            shell: true,
-          };
+        const isVerbose = !process.env.format && process.env.silent === 'false';
+        const [command, ...args] = fullCommand.split(' ');
+        const options = {
+          cwd: path.join(config.project.root, config.root),
+          env: env,
+          shell: true
+        };
 
-          return spawner(command, args, options,
-            err => {
-              if (isVerbose) {
-                logger.error(BuildHelper._out(name, err));
-              }
-            },
-            data => {
-              if (isVerbose) {
-                logger.raw(BuildHelper._out(name, data));
-              }
+        return spawner(command, args, options,
+          err => {
+            if (isVerbose) {
+              logger.error(BuildHelper._out(name, err));
             }
-          );
-        })
-      ).then(() => {
-        BuildHelper._printOutput(`Build successfully finished for [${name}].`, true);
+          },
+          data => {
+            if (isVerbose) {
+              logger.raw(BuildHelper._out(name, data));
+            }
+          }
+        );
+      })
+    ).then(() => {
+      BuildHelper._printOutput(BuildHelper._out(`Build successfully finished.`, name), true);
 
-        resolve({
-          action: 'build'
-        });
-      }).catch(err => {
-        BuildHelper._printOutput(`Build failed for [${name}].`, false);
+      return Promise.resolve({ action: 'build' });
+    }).catch(err => {
+      BuildHelper._printOutput(BuildHelper._out(`Build failed.`, name), false);
 
-        reject(err);
-      });
+      return Promise.reject(err);
     });
   }
 
@@ -124,6 +115,7 @@ class BuildHelper {
         logger.log(JSON.stringify(json));
         break;
       }
+
       case 'text': {
         if (isSuccess) {
           logger.info(message);
