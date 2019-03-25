@@ -1,12 +1,10 @@
 ## local config
 component:
-  name: '{{ name }}'
-  mapping:
-    - '.'
+  name: {{ name }}
 {% if dependsOn %}
   dependsOn:
 {% for dep in dependsOn %}
-    - '{{ dep }}'
+    - {{ dep }}
 {% endfor %}
 {% endif %}
 {% if data != ''%}
