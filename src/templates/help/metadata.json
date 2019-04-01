@@ -297,6 +297,35 @@
       ]
     },
     {
+      "name": "convert",
+      "description": "create new or include existing terraform configuration into current terrahub project",
+      "options": [
+        {
+          "name": "component",
+          "shortcut": "c",
+          "description": "Uniquely identifiable cloud resource name"
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path to the component (default: cwd)",
+          "defaultValue": "Current working directory"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
       "name": "destroy",
       "description": "run `terraform destroy` across multiple terrahub components",
       "options": [
