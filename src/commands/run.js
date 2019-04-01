@@ -81,7 +81,7 @@ class RunCommand extends TerraformCommand {
     return distributor.runActions(actions, { silent: this.getOption('silent') })
       .then(() => !this._isApply ?
         Promise.resolve() :
-        distributor.runActions(this._isBuild ? ['plan', 'build', 'apply'] : ['plan', 'apply'], {
+        distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.FORWARD
         })
