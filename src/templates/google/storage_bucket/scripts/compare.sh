@@ -35,7 +35,7 @@ fi
 
 ## Checking if the project requires to be built
 THUB_COMPARE=$(head -n 1 ${THUB_SRC})
-echo "INFO: S3 Object SHA256 => ${THUB_COMPARE}"
+echo "INFO: Google Storage Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
   echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env

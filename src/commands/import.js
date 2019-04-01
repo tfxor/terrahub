@@ -11,8 +11,7 @@ class ImportCommand extends TerraformCommand {
     this
       .setName('import')
       .setDescription('run `terraform import` for single terrahub component')
-      .addOption('resource', 't', 'Runs the command with resource full name', String)
-      .addOption('id', 'k', 'Runs the command with resource id', String)
+      .addOption('config', 'c', 'Import resource', String)
     ;
   }
 
@@ -20,17 +19,25 @@ class ImportCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const config = this.getConfigObject();
-    const distributor = new Distributor(config);
+    const configContent = this.getOption('config');
+    const configContentArr = configContent instanceof Array ? configContent : [configContent];
+    const configAction = this.getConfigObject();
 
-    this.warnExecutionStarted(config);
-
-    return distributor
-      .runActions(['prepare', 'workspaceSelect', 'init', 'import'], {
+    const distributor = new Distributor(configAction);
+    let finalArray = [];
+    this.warnExecutionStarted(configAction);
+    configContentArr.forEach(it => {
+      const resourceData = it.split('=');
+      finalArray.push(distributor
+      .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
         silent: this.getOption('silent'),
-        resourceName: this.getOption('resource'),
-        importId: this.getOption('id')
-      }).then(() => Promise.resolve('Done'));
+        resourceName: resourceData[0],
+        importId: resourceData[1]
+      }));
+    });
+
+
+    return Promise.all(finalArray);
   }
 }
 

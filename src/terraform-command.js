@@ -34,7 +34,7 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
-      if (this._isComponentsCountZero()) {
+      if (this._isComponentsCountZero() && this.getName() != 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
@@ -268,7 +268,7 @@ class TerraformCommand extends AbstractCommand {
 
     const action = this.getName();
 
-    this.logger.log(`'terrahub ${action}' action is executed for above list of components.`);
+    this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
   }
 
   /**

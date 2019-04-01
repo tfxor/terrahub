@@ -1,7 +1,6 @@
 {
   "component": {
-    "name": "{{ name }}",
-    "mapping": ["."]
+    "name": "{{ name }}"
     {% if dependsOn %}
     ,"dependsOn": ["{{ dependsOn|join('","') }}"]
     {% endif %}
