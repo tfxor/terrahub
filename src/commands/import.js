@@ -26,7 +26,7 @@ class ImportCommand extends TerraformCommand {
     return Promise.all(
       configContentArr.map(it => {
         const resourceData = it.split('=');
-        
+
         return distributor
           .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
             silent: this.getOption('silent'),
@@ -34,7 +34,7 @@ class ImportCommand extends TerraformCommand {
             importId: resourceData[1]
           });
       })
-    )
+    );
   }
 }
 
