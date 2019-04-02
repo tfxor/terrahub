@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-02T10:46:12.592Z",
+  "buildDate": "2019-04-02T15:06:33.325Z",
   "commands": [
     {
       "name": "apply",
@@ -292,7 +292,7 @@
     },
     {
       "name": "convert",
-      "description": "create new or include existing terraform configuration into current terrahub project",
+      "description": "convert terraform configuration into yaml, json or hcl format (both directions)",
       "options": [
         {
           "name": "name",
@@ -315,18 +315,6 @@
           "name": "to-hcl",
           "shortcut": "1",
           "description": "Convert to HCL",
-          "defaultValue": false
-        },
-        {
-          "name": "to-hcl2",
-          "shortcut": "2",
-          "description": "Convert to HCL2",
-          "defaultValue": false
-        },
-        {
-          "name": "to-json",
-          "shortcut": "3",
-          "description": "Convert to JSON",
           "defaultValue": false
         },
         {
