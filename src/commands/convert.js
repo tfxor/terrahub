@@ -115,7 +115,7 @@ class ConvertCommand extends AbstractCommand {
     if (config.component.template) {
       return yesNoQuestion(`Are you sure you want to convert component '${name}' into HCL format? (y/N) `).then(answer => {
           if (!answer) {
-          return Promise.reject('Action aborted');
+            return Promise.reject('Action aborted');
           }
           return this._saveComponent(name);
       });
