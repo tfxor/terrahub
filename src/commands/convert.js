@@ -136,6 +136,29 @@ class ConvertCommand extends AbstractCommand {
 
   /**
    * @param {String} name
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _convert(name, config) {
+    if (this._toYML || this._toYAML) {
+      return this._toYml(name, config);
+    }
+
+    if (this._toHCL) {
+      return this._toHcl(name, config);
+    }
+
+    if (this._toHCL2 || this._toJSON) {
+      // @todo
+      return Promise.reject('To do!');
+    }
+
+    return Promise.resolve('Done');
+  }
+
+  /**
+   * @param {String} name
    * @return {Promise}
    * @private
    */
@@ -150,21 +173,9 @@ class ConvertCommand extends AbstractCommand {
     if (fse.pathExistsSync(outFile)) {
         const config = ConfigLoader.readConfig(outFile);
         if (config.project) {
-        throw new Error(`Configuring components in project's root is NOT allowed.`);
+          throw new Error(`Configuring components in project's root is NOT allowed.`);
         }
-        
-        if (this._toYML || this._toYAML) {
-          return this._toYml(name, config);
-        }
-
-        if (this._toHCL) {
-          return this._toHcl(name, config);
-        }
-
-        if (this._toHCL2 || this._toJSON) {
-          // @todo
-          return Promise.reject('To do!');
-        }
+        return this._convert(name, config);        
     }
     return Promise.resolve('Done');
   }
