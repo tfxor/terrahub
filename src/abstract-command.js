@@ -81,7 +81,7 @@ class AbstractCommand {
   /**
    * @param {String} name
    * @return {Promise}
-   * @private
+   * @public
    */
   getConfigPath(name) {
     const config = this.getConfig();

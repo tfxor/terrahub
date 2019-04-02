@@ -1,15 +1,14 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const { homePath } = require('../helpers/util');
-const Terraform = require('../helpers/terraform');
 const ConfigLoader = require('../config-loader');
-const { templates, commandsPath, jitPath } = require('../parameters');
-const AbstractCommand = require('../abstract-command');
-const Downloader = require('../helpers/downloader');
 const { exec } = require('child-process-promise');
+const Downloader = require('../helpers/downloader');
+const AbstractCommand = require('../abstract-command');
 const { isAwsNameValid, yesNoQuestion } = require('../helpers/util');
+const { templates, commandsPath, jitPath, config } = require('../parameters');
 
 class ConvertCommand extends AbstractCommand {
   /**
@@ -36,20 +35,12 @@ class ConvertCommand extends AbstractCommand {
   run() {
     this._componentName = this.getOption('name');
     this._directory = this.getOption('directory');
-    this._toYML = this.getOption('to-yml');
-    this._toYAML = this.getOption('to-yaml');
+    this._toYML = this.getOption('to-yml') || this.getOption('to-yaml');
     this._toHCL = this.getOption('to-hcl');
     this._toHCL2 = this.getOption('to-hcl2');
     this._toJSON = this.getOption('to-json');
 
-    const projectFormat = this.getProjectFormat();
-
     this._appPath = this.getAppPath();
-    this._srcFile = path.join(
-      templates.config,
-      'component',
-      `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`
-    );
 
     if (!this._appPath) {
       throw new Error(`Project's config not found`);
@@ -59,9 +50,7 @@ class ConvertCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    const _componentNames = this._componentName;
-
-    return Promise.all(_componentNames.map(it => this._convertComponent(it))).then(() => 'Done');
+    return Promise.all(this._componentName.map(it => this._convertComponent(it))).then(() => 'Done');
   }
 
   /**
@@ -142,7 +131,7 @@ class ConvertCommand extends AbstractCommand {
    * @private
    */
   _convert(name, config) {
-    if (this._toYML || this._toYAML) {
+    if (this._toYML) {
       return this._toYml(name, config);
     }
 
@@ -166,7 +155,7 @@ class ConvertCommand extends AbstractCommand {
   _convertComponent(name) {
     const directory = path.resolve(this._directory);
 
-    let outFile = path.join(directory, this._defaultFileName());
+    let outFile = path.join(directory, config.defaultFileName);
     let componentData = { component: { name: name } };
 
     componentData.component['dependsOn'] = this._dependsOn;
@@ -179,14 +168,6 @@ class ConvertCommand extends AbstractCommand {
         return this._convert(name, config);        
     }
     return Promise.resolve('Done');
-  }
-
-  /**
-   * @returns {String}
-   * @private
-   */
-  _defaultFileName() {
-    return this.getDefaultFileName() ? `.terrahub${this.getProjectFormat()}` : this.getDefaultFileName();
   }
 }
 

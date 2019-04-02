@@ -1,11 +1,11 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const Terraform = require('../helpers/terraform');
-const ConfigLoader = require('../config-loader');
+const fse = require('fs-extra');
 const { templates } = require('../parameters');
+const ConfigLoader = require('../config-loader');
+const Terraform = require('../helpers/terraform');
 const AbstractCommand = require('../abstract-command');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
