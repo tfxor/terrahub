@@ -10,7 +10,7 @@ class ImportCommand extends TerraformCommand {
   configure() {
     this
       .setName('import')
-      .setDescription('run `terraform import` for single terrahub component')
+      .setDescription('run `terraform import` across multiple terrahub components')
       .addOption('config', 'c', 'Import resource', Array)
     ;
   }
