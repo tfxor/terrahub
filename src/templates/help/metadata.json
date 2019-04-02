@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-03-26T12:33:22.919Z",
+  "buildDate": "2019-04-02T10:39:37.350Z",
   "commands": [
     {
       "name": "apply",
@@ -388,7 +388,7 @@
     },
     {
       "name": "import",
-      "description": "run `terraform import` for single terrahub component",
+      "description": "run `terraform import` across multiple terrahub components",
       "options": [
         {
           "name": "config",
