@@ -61,11 +61,10 @@ class AbstractDistributor {
 
   /**
    * @param {String[]} actions
-   * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number }} options
    * @return {Promise}
    * @abstract
    */
-  runActions(actions, { silent = false, format = '', planDestroy = false, dependencyDirection = null } = {}) {
+  runActions(actions, {} = {}) {
     throw new Error('runActions requires implementation');
   }
 }
