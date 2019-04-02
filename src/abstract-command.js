@@ -1,6 +1,7 @@
 'use strict';
 
 const fse = require('fs-extra');
+const path = require('path');
 const { config } = require('./parameters');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
@@ -75,6 +76,17 @@ class AbstractCommand {
    */
   getDescription() {
     return this._description;
+  }
+
+  /**
+   * @param {String} name
+   * @return {Promise}
+   * @private
+   */
+  getConfigPath(name) {
+    const config = this.getConfig();
+    const key = Object.keys(config).find(it => config[it].name === name);
+    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
   }
 
   /**

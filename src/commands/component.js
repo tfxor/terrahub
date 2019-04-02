@@ -2,14 +2,11 @@
 
 const fse = require('fs-extra');
 const path = require('path');
-const { homePath } = require('../helpers/util');
 const glob = require('glob');
 const Terraform = require('../helpers/terraform');
 const ConfigLoader = require('../config-loader');
-const { templates, commandsPath, jitPath } = require('../parameters');
+const { templates } = require('../parameters');
 const AbstractCommand = require('../abstract-command');
-const Downloader = require('../helpers/downloader');
-const { exec } = require('child-process-promise');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -87,19 +84,8 @@ class ComponentCommand extends AbstractCommand {
    * @return {Promise}
    * @private
    */
-  _getConfigPath(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
-  }
-
-  /**
-   * @param {String} name
-   * @return {Promise}
-   * @private
-   */
   _deleteComponent(name) {
-    const configPath = this._getConfigPath(name);
+    const configPath = this.getConfigPath(name);
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 

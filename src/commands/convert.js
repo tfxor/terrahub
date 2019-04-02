@@ -59,7 +59,7 @@ class ConvertCommand extends AbstractCommand {
    * @private
    */
   _saveComponent(name) {
-    const configPath = this._getConfigPath(name);
+    const configPath = this.getConfigPath(name);
     if (!configPath) {
       return Promise.resolve();
     }     
@@ -76,7 +76,7 @@ class ConvertCommand extends AbstractCommand {
    * @private
    */
   _revertComponent(name) {
-    const configPath = this._getConfigPath(name);
+    const configPath = this.getConfigPath(name);
     if (!configPath) {
       return Promise.resolve();
     }     
@@ -84,17 +84,6 @@ class ConvertCommand extends AbstractCommand {
     const componentBinPath = `${commandsPath}/../../bin/${arch}`
     
     return exec(`${componentBinPath}/generator -thub ${configPath}/ ${configPath}/`);
-  }
-
-  /**
-   * @param {String} name
-   * @return {Promise}
-   * @private
-   */
-  _getConfigPath(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
   }
 
   /**
