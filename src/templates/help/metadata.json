@@ -188,12 +188,6 @@
           "defaultValue": false
         },
         {
-          "name": "save",
-          "shortcut": "S",
-          "description": "Generate terraform configuration files in the component folder",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -301,9 +295,39 @@
       "description": "create new or include existing terraform configuration into current terrahub project",
       "options": [
         {
-          "name": "component",
-          "shortcut": "c",
+          "name": "name",
+          "shortcut": "n",
           "description": "Uniquely identifiable cloud resource name"
+        },
+        {
+          "name": "to-yml",
+          "shortcut": "0",
+          "description": "Convert to YML",
+          "defaultValue": false
+        },
+        {
+          "name": "to-yaml",
+          "shortcut": "0",
+          "description": "Convert to YAML",
+          "defaultValue": false
+        },
+        {
+          "name": "to-hcl",
+          "shortcut": "1",
+          "description": "Convert to HCL",
+          "defaultValue": false
+        },
+        {
+          "name": "to-hcl2",
+          "shortcut": "2",
+          "description": "Convert to HCL2",
+          "defaultValue": false
+        },
+        {
+          "name": "to-json",
+          "shortcut": "3",
+          "description": "Convert to JSON",
+          "defaultValue": false
         },
         {
           "name": "directory",
