@@ -76,19 +76,21 @@ func GenerateHclFromYmlThubEnv() {
 
 func StartProccesingFileEnv(source string, fileName string, destination string) {
 	y := GetTfvarsTerrahubEnv(source)
-	j1, _ := ymlto.YAMLToJSON(y)
-	ast, err := jsonParser.Parse(j1)
-	if err != nil {
-		fmt.Printf("unable to parse JSON: %s", err)
+	if len(y) > 0 {
+		j1, _ := ymlto.YAMLToJSON(y)
+		ast, err := jsonParser.Parse(j1)
+		if err != nil {
+			fmt.Printf("unable to parse JSON: %s", err)
+		}
+		var b bytes.Buffer
+		err = printer.Fprint(&b, ast)
+		if err != nil {
+			fmt.Printf("unable to print HCL: %s", err)
+		}
+		env := strings.Replace(fileName, ".terrahub.", "", -1)
+		env = strings.Replace(env, ".yml", "", -1)
+		ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
 	}
-	var b bytes.Buffer
-	err = printer.Fprint(&b, ast)
-	if err != nil {
-		fmt.Printf("unable to print HCL: %s", err)
-	}
-	env := strings.Replace(fileName, ".terrahub.", "", -1)
-	env = strings.Replace(env, ".yml", "", -1)
-	ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
 	ProccesingDotTerrahubEnv(source)
 }
 
@@ -201,6 +203,9 @@ func GetTfvarsTerrahubEnv(source string) []byte {
 	endIndex := strings.Index(string(input), "build")
 	if endIndex < startIndex {
 		endIndex = len(string(input))
+	}
+	if endIndex == -1 && startIndex == -1 {
+		return []byte("")
 	}
 	sourceValue := string(input)[startIndex:endIndex]
 	return []byte(sourceValue)
