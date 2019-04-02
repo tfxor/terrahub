@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-02T10:46:12.592Z",
+  "buildDate": "2019-04-02T15:06:33.325Z",
   "commands": [
     {
       "name": "apply",
@@ -188,12 +188,6 @@
           "defaultValue": false
         },
         {
-          "name": "save",
-          "shortcut": "S",
-          "description": "Generate terraform configuration files in the component folder",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -281,6 +275,53 @@
           "shortcut": "s",
           "description": "Runs the command silently (without any output)",
           "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "convert",
+      "description": "convert terraform configuration into yaml, json or hcl format (both directions)",
+      "options": [
+        {
+          "name": "name",
+          "shortcut": "n",
+          "description": "Uniquely identifiable cloud resource name"
+        },
+        {
+          "name": "to-yml",
+          "shortcut": "0",
+          "description": "Convert to YML",
+          "defaultValue": false
+        },
+        {
+          "name": "to-yaml",
+          "shortcut": "0",
+          "description": "Convert to YAML",
+          "defaultValue": false
+        },
+        {
+          "name": "to-hcl",
+          "shortcut": "1",
+          "description": "Convert to HCL",
+          "defaultValue": false
+        },
+        {
+          "name": "directory",
+          "shortcut": "d",
+          "description": "Path to the component (default: cwd)",
+          "defaultValue": "Current working directory"
         },
         {
           "name": "env",
