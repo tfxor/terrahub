@@ -18,13 +18,14 @@ class ConvertCommand extends AbstractCommand {
   configure() {
     this
       .setName('convert')
-      .setDescription('create new or include existing terraform configuration into current terrahub project')
+      .setDescription('convert terraform configuration into yaml, json or hcl format (both directions)')
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
       .addOption('to-yml', '0', 'Convert to YML', Boolean, false)
       .addOption('to-yaml', '0', 'Convert to YAML', Boolean, false)
       .addOption('to-hcl', '1', 'Convert to HCL', Boolean, false)
-      .addOption('to-hcl2', '2', 'Convert to HCL2', Boolean, false)
-      .addOption('to-json', '3', 'Convert to JSON', Boolean, false)
+      // @todo: implement hcl2 and json
+      //.addOption('to-hcl2', '2', 'Convert to HCL2', Boolean, false)
+      //.addOption('to-json', '3', 'Convert to JSON', Boolean, false)
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
     ;
   }
@@ -104,14 +105,14 @@ class ConvertCommand extends AbstractCommand {
    */
   _toYml(name, config) {
     if (!config.component.template) {
-      return yesNoQuestion('Are you sure you want to compress terraform configurations into terrahub config? (Y/N) ').then(answer => {
+      return yesNoQuestion(`Are you sure you want to convert component '${name}' into YML format? (y/N) `).then(answer => {
         if (!answer) {
             return Promise.reject('Action aborted');
         }
         return this._revertComponent(name);
         });
     } else {
-      return Promise.reject('Current component is already YML');
+      return Promise.reject(`Component '${name}' is already in YML format`);
     }
   }
 
@@ -123,14 +124,14 @@ class ConvertCommand extends AbstractCommand {
    */
   _toHcl(name, config) {
     if (config.component.template) {
-      return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
+      return yesNoQuestion(`Are you sure you want to convert component '${name}' into HCL format? (y/N) `).then(answer => {
           if (!answer) {
           return Promise.reject('Action aborted');
           }
           return this._saveComponent(name);
       });
     } else {
-      return Promise.reject('Current component is already HCL');
+      return Promise.reject(`Component '${name}' is already in HCL format`);
     }
   }
 
