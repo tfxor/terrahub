@@ -1,15 +1,12 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
-const { homePath } = require('../helpers/util');
 const glob = require('glob');
-const Terraform = require('../helpers/terraform');
+const fse = require('fs-extra');
+const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
-const { templates, commandsPath, jitPath } = require('../parameters');
+const Terraform = require('../helpers/terraform');
 const AbstractCommand = require('../abstract-command');
-const Downloader = require('../helpers/downloader');
-const { exec } = require('child-process-promise');
 const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
@@ -26,7 +23,6 @@ class ComponentCommand extends AbstractCommand {
       .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
-      .addOption('save', 'S', 'Generate terraform configuration files in the component folder', Boolean, false)
     ;
   }
 
@@ -40,7 +36,6 @@ class ComponentCommand extends AbstractCommand {
     this._dependsOn = this.getOption('depends-on');
     this._force = this.getOption('force');
     this._delete = this.getOption('delete');
-    this._save = this.getOption('save');
 
     const projectFormat = this.getProjectFormat();
 
@@ -89,52 +84,8 @@ class ComponentCommand extends AbstractCommand {
    * @return {Promise}
    * @private
    */
-  _saveComponent(name) {
-    const configPath = this._getConfigPath(name);
-    if (!configPath) {
-      return Promise.resolve();
-    }     
-    const tmpPath = homePath(jitPath);
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`
-
-    return exec(`${componentBinPath}/component -thub ${tmpPath} ${configPath} ${name}`);
-  }
-
-  /**
-   * @param {String} name
-   * @return {Promise}
-   * @private
-   */
-  _revertComponent(name) {
-    const configPath = this._getConfigPath(name);
-    if (!configPath) {
-      return Promise.resolve();
-    }     
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`
-    
-    return exec(`${componentBinPath}/generator -thub ${configPath}/ ${configPath}/`);
-  }
-
-  /**
-   * @param {String} name
-   * @return {Promise}
-   * @private
-   */
-  _getConfigPath(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
-  }
-
-  /**
-   * @param {String} name
-   * @return {Promise}
-   * @private
-   */
   _deleteComponent(name) {
-    const configPath = this._getConfigPath(name);
+    const configPath = this.getConfigPath(name);
     if (configPath) {
       const configFiles = this.listAllEnvConfig(configPath);
 
@@ -188,22 +139,6 @@ class ComponentCommand extends AbstractCommand {
           if (config.project) {
             throw new Error(`Configuring components in project's root is NOT allowed.`);
           }
-          
-          if (config.component.template) {
-            return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
-              if (!answer) {
-                return Promise.reject('Action aborted');
-              }
-              return this._saveComponent(name);
-            });
-          }
-
-          return yesNoQuestion('Are you sure you want to compress terraform configurations into terrahub config? (Y/N) ').then(answer => {
-            if (!answer) {
-              return Promise.reject('Action aborted');
-            }
-            return this._revertComponent(name);
-          });
         }
 
         if (existing.name) {
@@ -267,11 +202,6 @@ class ComponentCommand extends AbstractCommand {
     }).then(() => {
       const outFile = path.join(directory, this._defaultFileName());      
       return renderTwig(outFile, { name: name, code: code }, outFile);
-    }).then(() => {
-      if (!this._save) {
-        return Promise.resolve();
-      }      
-      return this._saveComponent(name);
     }).then(() => 'Done');
   }
 
