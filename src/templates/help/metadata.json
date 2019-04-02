@@ -387,6 +387,77 @@
       ]
     },
     {
+      "name": "import",
+      "description": "run `terraform import` for single terrahub component",
+      "options": [
+        {
+          "name": "config",
+          "shortcut": "c",
+          "description": "Import resource"
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
+          "defaultValue": false
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
       "name": "init",
       "description": "run `terraform init` across multiple terrahub components",
       "options": [
