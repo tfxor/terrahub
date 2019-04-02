@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-03-26T12:33:22.919Z",
+  "buildDate": "2019-04-02T10:39:37.350Z",
   "commands": [
     {
       "name": "apply",
@@ -425,6 +425,77 @@
       "name": "graph",
       "description": "show dependencies graph for terraform configuration mapped as terrahub components",
       "options": [
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "import",
+      "description": "run `terraform import` across multiple terrahub components",
+      "options": [
+        {
+          "name": "config",
+          "shortcut": "c",
+          "description": "Import resource"
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
+          "defaultValue": false
+        },
         {
           "name": "env",
           "shortcut": "e",
