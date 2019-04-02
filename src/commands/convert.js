@@ -98,6 +98,44 @@ class ConvertCommand extends AbstractCommand {
 
   /**
    * @param {String} name
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _toYml(name, config) {
+    if (!config.component.template) {
+      return yesNoQuestion('Are you sure you want to compress terraform configurations into terrahub config? (Y/N) ').then(answer => {
+        if (!answer) {
+            return Promise.reject('Action aborted');
+        }
+        return this._revertComponent(name);
+        });
+    } else {
+      return Promise.reject('Current component is already YML');
+    }
+  }
+
+  /**
+   * @param {String} name
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _toHcl(name, config) {
+    if (config.component.template) {
+      return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
+          if (!answer) {
+          return Promise.reject('Action aborted');
+          }
+          return this._saveComponent(name);
+      });
+    } else {
+      return Promise.reject('Current component is already HCL');
+    }
+  }
+
+  /**
+   * @param {String} name
    * @return {Promise}
    * @private
    */
@@ -116,29 +154,11 @@ class ConvertCommand extends AbstractCommand {
         }
         
         if (this._toYML || this._toYAML) {
-          if (!config.component.template) {
-            return yesNoQuestion('Are you sure you want to compress terraform configurations into terrahub config? (Y/N) ').then(answer => {
-              if (!answer) {
-                  return Promise.reject('Action aborted');
-              }
-              return this._revertComponent(name);
-              });
-          } else {
-            return Promise.reject('Current component is already YML');
-          }
+          return this._toYml(name, config);
         }
 
         if (this._toHCL) {
-          if (config.component.template) {
-            return yesNoQuestion('Are you sure you want to make terrahub config more descriptive as terraform configurations? (Y/N) ').then(answer => {
-                if (!answer) {
-                return Promise.reject('Action aborted');
-                }
-                return this._saveComponent(name);
-            });
-          } else {
-            return Promise.reject('Current component is already HCL');
-          }
+          return this._toHcl(name, config);
         }
 
         if (this._toHCL2) {
