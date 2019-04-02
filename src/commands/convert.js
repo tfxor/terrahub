@@ -161,12 +161,7 @@ class ConvertCommand extends AbstractCommand {
           return this._toHcl(name, config);
         }
 
-        if (this._toHCL2) {
-          // @todo
-          return Promise.reject('To do!');
-        }
-
-        if (this._toJSON) {
+        if (this._toHCL2 || this._toJSON) {
           // @todo
           return Promise.reject('To do!');
         }
