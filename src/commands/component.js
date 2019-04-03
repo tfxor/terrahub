@@ -5,9 +5,9 @@ const glob = require('glob');
 const fse = require('fs-extra');
 const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
-const Terraform = require('../helpers/terraform');
 const AbstractCommand = require('../abstract-command');
-const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printConfigAsList } = require('../helpers/util');
+const Terraform = require('../helpers/wrappers/terraform');
+const { renderTwig, isAwsNameValid, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -57,7 +57,7 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
-      printConfigAsList(this._name, this.getProjectConfig());
+      printListAsTree(this._name, this.getProjectConfig());
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {

@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.16",
+  "version": "0.2.21",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-02T10:39:37.350Z",
+  "buildDate": "2019-04-02T16:21:30.087Z",
   "commands": [
     {
       "name": "apply",
@@ -986,6 +986,12 @@
           "name": "build",
           "shortcut": "b",
           "description": "Enable build command as part of automated workflow",
+          "defaultValue": false
+        },
+        {
+          "name": "cloud",
+          "shortcut": "c",
+          "description": "Run your terraform execution in cloud",
           "defaultValue": false
         },
         {
