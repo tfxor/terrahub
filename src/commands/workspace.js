@@ -45,10 +45,12 @@ class WorkspaceCommand extends TerraformCommand {
 
     if (this.getOption('list')) {
       this.logger.log(`Project: ${this.getProjectConfig.name}`);
+
       return this._workspace('workspaceList', configs)
         .then(results => this._handleWorkspaceList(results))
         .then(() => 'Done');
     }
+
     if (includeRootConfig) {
       configsList.unshift(rootConfigPath);
     }
@@ -128,7 +130,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', action], {
+    return distributor.runActions(['prepare', 'init', action], {
       silent: this.getOption('silent')
     });
   }
