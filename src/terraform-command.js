@@ -243,9 +243,10 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
+   * @param {String} customQuestion
    * @return {Promise}
    */
-  askForApprovement(config, autoApprove = false) {
+  askForApprovement(config, autoApprove = false, customQuestion = '') {
     Util.printListAuto(config, this.getProjectConfig().name);
 
     const action = this.getName();
@@ -257,7 +258,9 @@ class TerraformCommand extends AbstractCommand {
       return Promise.resolve(true);
     }
 
-    return Util.yesNoQuestion(`Do you want to perform 'terrahub ${action}' action? (Y/N) `);
+    const defaultQuestion = `Do you want to perform 'terrahub ${action}' action? (y/N) `;
+
+    return Util.yesNoQuestion(customQuestion || defaultQuestion);
   }
 
   /**

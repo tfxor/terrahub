@@ -59,7 +59,7 @@ class ComponentCommand extends AbstractCommand {
     if (this._delete) {
       printConfigAsList(this._name, this.getProjectConfig());
 
-      return yesNoQuestion('Do you want to perform delete action? (Y/N) ').then(answer => {
+      return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {

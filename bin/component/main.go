@@ -170,7 +170,7 @@ func Clearing(input string) []byte {
 func ProccesingDotTerrahub(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "  template:")
-	startIndex := strings.Index(string(input), "## build config")
+	startIndex := strings.Index(string(input), "build:")
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]

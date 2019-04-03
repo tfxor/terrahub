@@ -99,7 +99,7 @@ class WorkspaceCommand extends TerraformCommand {
         .then(() => Promise.resolve(message));
     }
 
-    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (Y/N)? `).then(confirmed => {
+    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (y/N)? `).then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
       }
