@@ -43,9 +43,9 @@ class WorkspaceCommand extends TerraformCommand {
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
 
-    if (this.getOption('list')) {
-      this.logger.log(`Project: ${this.getProjectConfig.name}`);
+    const { name: projectName, code } = this.getProjectConfig();
 
+    if (this.getOption('list')) {
       return this._workspace('workspaceList', configs)
         .then(results => this._handleWorkspaceList(results))
         .then(() => 'Done');
@@ -55,7 +55,6 @@ class WorkspaceCommand extends TerraformCommand {
       configsList.unshift(rootConfigPath);
     }
 
-    const { name, code } = this.getProjectConfig();
     if (config.isDefault) {
       return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }
@@ -79,7 +78,7 @@ class WorkspaceCommand extends TerraformCommand {
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
         if (i !== 0 || !includeRootConfig) { // Skip root path
-          promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
+          promises.push(renderTwig(template, { name: projectName, code, env: config.env }, tfvarsPath));
         }
       }
 
