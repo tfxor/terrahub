@@ -184,6 +184,9 @@ func ProccesingDotTerrahubEnv(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "component:")
 	startIndex := strings.Index(string(input), "build")
+	if endIndex == -1 {
+		endIndex = len(input)
+	}
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
