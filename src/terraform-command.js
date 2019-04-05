@@ -114,38 +114,23 @@ class TerraformCommand extends AbstractCommand {
    */
   getConfig() {
     const config = this.getExtendedConfig();
-    const filters = [];
-
     const gitDiff = this.getGitDiff();
-    if (gitDiff.length) {
-      filters.push(hash => !gitDiff.includes(config[hash].name));
-    }
-
     const includeRegex = this.getIncludesRegex();
-    if (includeRegex.length) {
-      filters.push(hash => !includeRegex.some(regex => regex.test(config[hash].name)));
-    }
-
     const include = this.getIncludes();
-    if (include.length) {
-      filters.push(hash => !include.includes(config[hash].name));
-    }
-
     const excludeRegex = this.getExcludesRegex();
-    if (excludeRegex.length) {
-      filters.push(hash => excludeRegex.some(regex => regex.test(config[hash].name)));
-    }
-
     const exclude = this.getExcludes();
-    if (exclude.length) {
-      filters.push(hash => exclude.includes(config[hash].name));
-    }
 
-    Object.keys(config).forEach(hash => {
-      if (filters.some(it => it(hash))) {
-        delete config[hash];
-      }
-    });
+    const filters = [
+      gitDiff.length ? hash => gitDiff.includes(config[hash].name) : null,
+      includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
+      include.length ? hash => include.includes(config[hash].name) : null,
+      excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
+      exclude.length ? hash => !exclude.includes(config[hash].name) : null
+    ].filter(Boolean);
+
+    Object.keys(config)
+      .filter(hash => filters.some(check => !check(hash)))
+      .forEach(hash => { delete config[hash]; });
 
     if (!Object.keys(config).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
