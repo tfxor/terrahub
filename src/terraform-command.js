@@ -192,6 +192,22 @@ class TerraformCommand extends AbstractCommand {
       })
       .forEach(hash => { result[hash] = null; });
 
+    // Add components' dependencies to the execution list
+    let newHashes = Object.keys(result);
+
+    while (newHashes.length) {
+      const componentHash = newHashes.pop();
+      const { dependsOn } = config[componentHash];
+
+      dependsOn
+        .map(path => Util.toMd5(path))
+        .filter(hash => !result.hasOwnProperty(hash))
+        .forEach(hash => {
+          newHashes.push(hash);
+          result[hash] = null;
+        });
+    }
+
     return Object.keys(result);
   }
 
