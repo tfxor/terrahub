@@ -21,7 +21,7 @@ const { EOL, platform, cpus, homedir } = require('os');
 class Util {
   /**
    * @param {String} text
-   * @returns {*}
+   * @returns {String}
    */
   static toMd5(text) {
     return createHash('md5').update(text).digest('hex');
@@ -29,7 +29,7 @@ class Util {
 
   /**
    * Get timestamp based uuid
-   * @return {*}
+   * @return {String}
    */
   static uuid() {
     return Util.toMd5(Date.now().toString());
@@ -341,27 +341,6 @@ class Util {
       amount = cores.length;
     }
     return amount;
-  }
-
-  /**
-   * @param {Error} error
-   * @param {String} appPath
-   * @return {*}
-   */
-  static handleGitDiffError(error, appPath) {
-    logger.debug(error);
-
-    if (error.stderr) {
-      const stderr = error.stderr.toString();
-
-      if (/not found/.test(stderr)) {
-        error.message = 'Git is not installed on this device.';
-      } else if (/Not a git repository/i.test(stderr)) {
-        error.message = `Git repository not found in '${appPath}'.`;
-      }
-    }
-
-    return error;
   }
 
   /**

@@ -72,7 +72,6 @@ module.exports = {
   config: {
     api: cfg.api,
     env: cfg.env,
-    home: homePath(),
     token: cfg.token,
     format: cfg.format,
     isDefault: isDefault,
