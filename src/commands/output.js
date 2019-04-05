@@ -51,7 +51,7 @@ class OutputCommand extends TerraformCommand {
     } else {
       this.logger.warn('This command makes sense only after apply command, and configured outputs');
 
-      return yesNoQuestion('Do you want to run it (Y/N)? ');
+      return yesNoQuestion('Do you want to run it (y/N)? ');
     }
   }
 

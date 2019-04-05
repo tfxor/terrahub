@@ -106,9 +106,9 @@ func PrepareJSON(terrahubComponent string) string {
 		os.Exit(1)
 	}
 	sha := string(cmdOut)
-	re := regexp.MustCompile(`(?m).+?✅`)
+	re := regexp.MustCompile(`(?m).+?\n`)
 	for _, match := range re.FindAllString(sha, -1) {
-		match = strings.Replace(match, "✅", "", -1)
+		match = strings.Replace(match, "\n", "", -1)
 		return match
 	}
 	return ""
@@ -170,7 +170,7 @@ func Clearing(input string) []byte {
 func ProccesingDotTerrahub(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "  template:")
-	startIndex := strings.Index(string(input), "## build config")
+	startIndex := strings.Index(string(input), "build:")
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
