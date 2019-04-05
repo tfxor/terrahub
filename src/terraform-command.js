@@ -34,7 +34,7 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
-      if (this._isComponentsCountZero() && this.getName() != 'configure') {
+      if (this._isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
@@ -114,51 +114,38 @@ class TerraformCommand extends AbstractCommand {
    */
   getConfig() {
     const config = this.getExtendedConfig();
-    const include = this.getIncludes();
-    const exclude = this.getExcludes();
-    const includeRegex = this.getIncludesRegex();
-    const excludeRegex = this.getExcludesRegex();
+    const filters = [];
+
     const gitDiff = this.getGitDiff();
-
-    if (gitDiff.length > 0) {
-      Object.keys(config).forEach(hash => {
-        if (!gitDiff.includes(config[hash].name)) {
-          delete config[hash];
-        }
-      });
+    if (gitDiff.length) {
+      filters.push(hash => !gitDiff.includes(config[hash].name));
     }
 
-    if (includeRegex.length > 0) {
-      Object.keys(config).forEach(hash => {
-        if (!includeRegex.some(regex => regex.test(config[hash].name))) {
-          delete config[hash];
-        }
-      });
+    const includeRegex = this.getIncludesRegex();
+    if (includeRegex.length) {
+      filters.push(hash => !includeRegex.some(regex => regex.test(config[hash].name)));
     }
 
-    if (include.length > 0) {
-      Object.keys(config).forEach(hash => {
-        if (!include.includes(config[hash].name)) {
-          delete config[hash];
-        }
-      });
+    const include = this.getIncludes();
+    if (include.length) {
+      filters.push(hash => !include.includes(config[hash].name));
     }
 
-    if (excludeRegex.length > 0) {
-      Object.keys(config).forEach(hash => {
-        if (excludeRegex.some(regex => regex.test(config[hash].name))) {
-          delete config[hash];
-        }
-      });
+    const excludeRegex = this.getExcludesRegex();
+    if (excludeRegex.length) {
+      filters.push(hash => excludeRegex.some(regex => regex.test(config[hash].name)));
     }
 
-    if (exclude.length > 0) {
-      Object.keys(config).forEach(hash => {
-        if (exclude.includes(config[hash].name)) {
-          delete config[hash];
-        }
-      });
+    const exclude = this.getExcludes();
+    if (exclude.length) {
+      filters.push(hash => exclude.includes(config[hash].name));
     }
+
+    Object.keys(config).forEach(hash => {
+      if (filters.some(it => it(hash))) {
+        delete config[hash];
+      }
+    });
 
     if (!Object.keys(config).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
