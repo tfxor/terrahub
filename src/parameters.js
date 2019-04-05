@@ -63,22 +63,23 @@ const isDefault = cfg.env === 'default';
 
 module.exports = {
   args: args,
-  fetch: new Fetch(apiBase, cfg.token),
-  commandsPath: path.join(__dirname, 'commands'),
-  packageJson: path.join(__dirname, '..', 'package.json'),
   cfgPath: cfgPath,
   jitPath: path.join('cache', 'jit'),
+  fetch: new Fetch(apiBase, cfg.token),
+  binPath: path.join(__dirname, '..', 'bin'),
+  commandsPath: path.join(__dirname, 'commands'),
+  packageJson: path.join(__dirname, '..', 'package.json'),
   config: {
     api: cfg.api,
     env: cfg.env,
     home: homePath(),
     token: cfg.token,
     format: cfg.format,
-    retryCount: cfg.retryCount,
-    isHelp: _isHelp(args),
-    defaultFileName: `.terrahub.${cfg.format}`,
     isDefault: isDefault,
-    usePhysicalCpu: cfg.usePhysicalCpu
+    isHelp: _isHelp(args),
+    retryCount: cfg.retryCount,
+    usePhysicalCpu: cfg.usePhysicalCpu,
+    defaultFileName: `.terrahub.${cfg.format}`
   },
   templates: {
     path: path.join(templates, 'templates'),
