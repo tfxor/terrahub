@@ -1,9 +1,8 @@
 'use strict';
 
-const os = require('os');
-const Util = require('./helpers/util');
+ const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
-const { execSync } = require('child_process');
+const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
@@ -121,7 +120,7 @@ class TerraformCommand extends AbstractCommand {
     const exclude = this.getExcludes();
 
     const filters = [
-      gitDiff.length ? hash => gitDiff.includes(config[hash].name) : null,
+      gitDiff.length ? hash => gitDiff.includes(hash) : null,
       includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
       include.length ? hash => include.includes(config[hash].name) : null,
       excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
@@ -168,6 +167,7 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @description Returns an array of hashes to include in the execution
    * @return {String[]}
    */
   getGitDiff() {
@@ -179,37 +179,20 @@ class TerraformCommand extends AbstractCommand {
       throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
     }
 
-    let stdout;
-    try {
-      stdout = execSync(`git diff --name-only ${commits.join(' ')}`, { cwd: this.getAppPath(), stdio: 'pipe' });
-    } catch (error) {
-      throw Util.handleGitDiffError(error, this.getAppPath());
-    }
-
-    if (!stdout || !stdout.toString().length) {
-      throw new Error('There are no changes between commits, commit and working tree, etc.');
-    }
-
-    const diffList = stdout.toString().split(os.EOL).slice(0, -1);
+    const diffList = GitHelper.getGitDiff(commits, this.getAppPath());
 
     const config = super.getConfig();
-    const projectCiMapping = this.getProjectConfig().mapping || [];
+    const result = {};
 
-    if (
-      projectCiMapping.some(dep => diffList.some(diff => diff.startsWith(dep)))
-    ) {
-      return Object.keys(config).map(key => config[key].name);
-    }
+    Object.keys(config)
+      .filter(hash => {
+        const { mapping } = config[hash];
 
-    return Object.keys(config).reduce((filtered, hash) => {
-      const { mapping, name } = config[hash];
+        return mapping && mapping.some(dep => diffList.some(diff => diff.startsWith(dep)));
+      })
+      .forEach(hash => { result[hash] = null; });
 
-      if (mapping && mapping.some(dep => diffList.some(diff => diff.startsWith(dep)))) {
-        filtered.push(name);
-      }
-
-      return filtered;
-    }, []);
+    return Object.keys(result);
   }
 
   /**
