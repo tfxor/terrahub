@@ -1,16 +1,16 @@
 'use strict';
 
 const logger = require('../logger');
-const { fetch } = require('../../parameters');
+const S3Helper = require('../s3-helper');
+const { fetch, config } = require('../../parameters');
 const AbstractDistributor = require('./abstract-distributor');
 
 class CloudDistributor extends AbstractDistributor {
   /**
    * @param {Object} configObject
-   * @param {String} thubRunId
    */
-  constructor(configObject, thubRunId) {
-    super(configObject, { thubRunId });
+  constructor(configObject) {
+    super(configObject);
 
     this._errors = [];
   }
@@ -23,74 +23,107 @@ class CloudDistributor extends AbstractDistributor {
    */
   runActions(actions, { dependencyDirection = null } = {}) {
     let inProgress = 0;
-    const results = [];
+    const s3Helper = new S3Helper();
+    const bucketName = S3Helper.METADATA_BUCKET;
+    const s3directory = config.api.replace('api', 'projects');
+
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
-    this.TERRAFORM_ACTIONS = actions;
 
-    return new Promise((resolve, reject) => {
-      /**
-       * @private
-       */
-      const _distributeConfigs = () => {
-        Object.keys(this._dependencyTable).forEach(hash => {
-          const dependencies = this._dependencyTable[hash];
+    return this._fetchAccountId()
+      .then(accountId => {
+        logger.warn('Uploading project to S3.');
 
-          if (!Object.keys(dependencies).length) {
-            delete this._dependencyTable[hash];
+        return s3Helper.uploadDirectory(
+          this._getProjectPath(),
+          bucketName,
+          [s3directory, accountId, this.THUB_RUN_ID].join('/'),
+          { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
+        );
+      })
+      .then(() => {
+        logger.warn('Directory uploaded to S3.');
 
-            _callLambdaExecutor(hash);
-          }
-        });
-      };
+        return new Promise((resolve, reject) => {
+          /**
+           * @private
+           */
+          const _distributeConfigs = () => {
+            Object.keys(this._dependencyTable).forEach(hash => {
+              const dependencies = this._dependencyTable[hash];
 
-      /**
-       * @param {String} hash
-       * @private
-       */
-      const _callLambdaExecutor = hash => {
-        const config = this.config[hash];
+              if (!Object.keys(dependencies).length) {
+                delete this._dependencyTable[hash];
 
-        const body = JSON.stringify({
-          actions: this.TERRAFORM_ACTIONS,
-          thubRunId: this.THUB_RUN_ID,
-          config: config
-        });
-
-        inProgress++;
-
-        logger.warn(`[${config.name}] Deploy started!`);
-        fetch.post('thub/deploy/create', { body: body })
-          .then(res => {
-            results.push(res);
-            this.removeDependencies(this._dependencyTable, hash);
-
-            logger.info(`[${config.name}] Successfully deployed!`);
-
-            return Promise.resolve();
-          })
-          .catch(error => {
-            this._dependencyTable = {};
-            this._errors.push(error);
-
-            return Promise.resolve();
-          })
-          .then(() => {
-            inProgress--;
-
-            if (Object.keys(this._dependencyTable).length) {
-              _distributeConfigs();
-            } else if (!inProgress) {
-              if (this._errors.length) {
-                return reject(this._errors);
+                _callLambdaExecutor(hash);
               }
+            });
+          };
 
-              return resolve(results);
-            }
-          });
-      };
+          /**
+           * @param {String} hash
+           * @private
+           */
+          const _callLambdaExecutor = hash => {
+            const config = this.config[hash];
 
-      _distributeConfigs();
-    });
+            const body = JSON.stringify({
+              actions: this.TERRAFORM_ACTIONS,
+              thubRunId: this.THUB_RUN_ID,
+              config: config
+            });
+
+            inProgress++;
+
+            logger.warn(`[${config.name}] Deploy started!`);
+            fetch.post('thub/deploy/create', { body: body })
+              .then(() => {
+                this.removeDependencies(this._dependencyTable, hash);
+
+                logger.info(`[${config.name}] Successfully deployed!`);
+              })
+              .catch(error => {
+                this._dependencyTable = {};
+                this._errors.push(error);
+              })
+              .then(() => {
+                inProgress--;
+
+                if (Object.keys(this._dependencyTable).length) {
+                  _distributeConfigs();
+                } else if (!inProgress) {
+                  if (this._errors.length) {
+                    return reject(this._errors);
+                  }
+
+                  return resolve();
+                }
+              });
+          };
+
+          _distributeConfigs();
+        });
+      })
+      // delete directory from s3 in any case
+      .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3directory))
+      .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3directory).then(() => Promise.reject(error)));
+  }
+
+  /**
+   * @return {String}
+   * @private
+   */
+  _getProjectPath() {
+    const key = Object.keys(this.config)[0];
+
+    return this.config[key].project.root;
+  }
+
+  /**
+   * @return {Promise<String>}
+   * @private
+   */
+  _fetchAccountId() {
+    return fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
   }
 }
 

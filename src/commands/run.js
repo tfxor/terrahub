@@ -1,10 +1,8 @@
 'use strict';
 
-const S3Helper = require('../helpers/s3-helper');
-const { config, fetch } = require('../parameters');
-const Dictionary = require("../helpers/dictionary");
+const Dictionary = require('../helpers/dictionary');
+const { printListAsTree } = require('../helpers/util');
 const TerraformCommand = require('../terraform-command');
-const { printListAsTree, uuid } = require('../helpers/util');
 const Distributor = require('../helpers/distributors/thread-distributor');
 const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
@@ -102,53 +100,10 @@ class RunCommand extends TerraformCommand {
    * @private
    */
   _runCloud(cfg) {
-    const thubRunId = uuid();
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    const distributor = new CloudDistributor(cfg, thubRunId);
-    const s3Helper = new S3Helper();
+    const distributor = new CloudDistributor(cfg);
 
-    const bucketName = S3Helper.METADATA_BUCKET;
-    const s3Path = config.api.replace('api', 'projects');
-
-    return this._fetchAccountId()
-      .then(accountId => {
-        this.logger.warn('Uploading project to S3.');
-
-        return s3Helper.uploadDirectory(
-          this.getAppPath(),
-          bucketName,
-          [s3Path, accountId, thubRunId].join('/'),
-          { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
-        );
-      })
-      .then(() => {
-        this.logger.warn('Directory uploaded to S3.');
-
-        return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
-      })
-      // delete directory from s3 in any case
-      .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3Path))
-      .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3Path).then(() => Promise.reject(error)));
-  }
-
-  /**
-   * @return {Promise<String>}
-   * @private
-   */
-  _fetchAccountId() {
-    return fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
-  }
-
-  /**
-   * @return {Promise}
-   * @private
-   */
-  _fetchAndSetupCredentials() {
-    return fetch.get('thub/temporary-credentials/retrieve').then(json => {
-      Object.assign(process.env, json.data.credentials);
-
-      return Promise.resolve(json.data.accountId);
-    });
+    return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }
 
   /**
