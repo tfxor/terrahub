@@ -7,7 +7,6 @@ const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
 const { commandsPath, jitPath, config } = require('../parameters');
-const { yesNoQuestion, printListAuto } = require('../helpers/util');
 
 class ConvertCommand extends TerraformCommand {
   /**
@@ -60,6 +59,21 @@ class ConvertCommand extends TerraformCommand {
   }
 
   /**
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  _saveComponentJson(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+
+    const tmpPath = homePath(jitPath);
+    const arch = (new Downloader()).getOsArch();
+    const componentBinPath = `${commandsPath}/../../bin/${arch}`;
+
+    return exec(`${componentBinPath}/component -json ${tmpPath} ${configPath} ${config.name}`);
+  }
+
+  /**
    * @param {Object} cfg
    * @return {Promise}
    * @private
@@ -100,6 +114,17 @@ class ConvertCommand extends TerraformCommand {
   }
 
   /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _toJson(cfg) {
+    return this._saveComponentJson(cfg).then(() => {
+      this.logSuccess(cfg.name, 'JSON');
+    });
+  }
+
+  /**
    * @param {Object} config
    * @param {String} format
    * @return {Promise}
@@ -116,6 +141,9 @@ class ConvertCommand extends TerraformCommand {
 
       case 'hcl':
         promise = this._toHcl(config);
+        break;
+      case 'json':
+        promise = this._toJson(config);
         break;
     }
 

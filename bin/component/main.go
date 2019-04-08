@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -20,8 +21,9 @@ var Version = "development"
 
 func main() {
 	version := flag.Bool("version", false, "Prints current app version")
-	tohcl := flag.Bool("tohcl", false, "Prints current app version")
-	thub := flag.Bool("thub", false, "Prints current app version")
+	tohcl := flag.Bool("tohcl", false, "Convert to HCL")
+	thub := flag.Bool("thub", false, "Convert to HCL and generate THub config file")
+	tjson := flag.Bool("json", false, "Convert to JSON and generate THub config file")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -38,6 +40,28 @@ func main() {
 		GenerateHclFromYmlThubEnv()
 		return
 	}
+
+	if *tjson {
+		GenerateJsonFromYml()
+		return
+	}
+}
+
+func GenerateJsonFromYml() {
+	argsWithoutProg := os.Args[2:]
+	if len(argsWithoutProg) < 3 {
+		fmt.Println("Set please all params!")
+		return
+	}
+	cashPath := os.Args[2]
+	terrahubComponentPath := os.Args[3]
+	terrahubComponent := os.Args[4]
+	cashComponentPath := PrepareJSON(terrahubComponent)
+	if cashComponentPath != "" {
+		ClearFolder(terrahubComponentPath)
+		TransferJson(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
+	}
+	os.Exit(0)
 }
 
 func GenerateHclFromYml() {
@@ -131,6 +155,71 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+}
+
+func ClearFolder(sourcePath string) {
+	f, err := os.Open(sourcePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range fileInfo {
+		if !file.IsDir() && (strings.Index(file.Name(), ".tf") > -1 || strings.Index(file.Name(), ".tfvars") > -1) {
+			deleteFile(sourcePath+file.Name())
+		}
+	}
+}
+
+func TransferJson(sourcePath string, destinationPath string) {
+	f, err := os.Open(sourcePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range fileInfo {
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
+			copyFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
+		}
+	}
+	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+}
+
+func copyFile(sourcePath string, destinationPath string) {
+	// copy file
+	from, err := os.Open(sourcePath)
+	if isError(err) { return }
+	defer from.Close()
+
+	to, err := os.OpenFile(destinationPath, os.O_RDWR|os.O_CREATE, 0666)
+	if isError(err) { return }
+	defer to.Close()
+
+	_, err = io.Copy(to, from)
+	if isError(err) { return }
+}
+
+func deleteFile(path string) {
+	// delete file
+	err := os.Remove(path)
+	if isError(err) { return }
+}
+
+func isError(err error) bool {
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return (err != nil)
 }
 
 func StartProccesingFile(source string, destination string) {
