@@ -88,15 +88,16 @@ class ConvertCommand extends TerraformCommand {
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
     
     if (!this._checkIfFilesIsJson(cfg)) {      
-      if (!rawConfig.component.hasOwnProperty('template')) {
-        return ConvertCommand._revertComponent(cfg).then(() => { 
-          return ConvertCommand._saveComponentJson(cfg).then(() => {
-            this.logSuccess(cfg.name, 'JSON'); 
-          }); 
-        });      
-      }
-      return ConvertCommand._saveComponentJson(cfg).then(() => {
-        this.logSuccess(cfg.name, 'JSON'); 
+      return Promise.resolve().then(() => {
+        if (!rawConfig.component.hasOwnProperty('template')) {
+          return ConvertCommand._revertComponent(cfg);
+        }
+    
+        return Promise.resolve();
+      }).then(() => {
+        return ConvertCommand._saveComponentJson(cfg).then(() => {
+          this.logSuccess(cfg.name, 'JSON');
+        });
       }); 
     }
 
@@ -194,11 +195,10 @@ class ConvertCommand extends TerraformCommand {
       return false;
     }
 
-    let rawdata = fse.readFileSync(mainFilePath);  
+    let rawdata = fse.readFileSync(mainFilePath, 'utf8'); 
     
-    try
-    {
-      JSON.parse(rawdata.toString());
+    try {
+      JSON.parse(rawdata);
     } catch (ex) {
       return false;
     }
