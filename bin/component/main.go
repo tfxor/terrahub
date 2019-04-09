@@ -260,6 +260,12 @@ func ProccesingDotTerrahub(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "  template:")
 	startIndex := strings.Index(string(input), "build:")
+	if endIndex == -1 && startIndex == -1 {
+		endIndex = len(input)
+	} 
+	if endIndex == -1 && startIndex > -1 {
+		endIndex = startIndex
+	}
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
@@ -272,7 +278,13 @@ func ProccesingDotTerrahub(source string) {
 func ProccesingDotTerrahubEnv(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "component:")
-	startIndex := strings.Index(string(input), "build")
+	startIndex := strings.Index(string(input), "build")	
+	if endIndex == -1 && startIndex == -1 {
+		endIndex = len(input)
+	} 
+	if endIndex == -1 && startIndex > -1 {
+		endIndex = startIndex
+	}
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]

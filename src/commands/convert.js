@@ -1,12 +1,13 @@
 'use strict';
 
-const path = require('path');
+const fse = require('fs-extra');
+const { join, sep } = require('path');
 const { homePath } = require('../helpers/util');
 const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
-const { commandsPath, jitPath, config } = require('../parameters');
+const { binPath, jitPath, config } = require('../parameters');
 
 class ConvertCommand extends TerraformCommand {
   /**
@@ -44,49 +45,16 @@ class ConvertCommand extends TerraformCommand {
   }
 
   /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  _saveComponent(config) {
-    const configPath = ConvertCommand._buildComponentPath(config);
-
-    const tmpPath = homePath(jitPath);
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`;
-
-    return exec(`${componentBinPath}/component -thub ${tmpPath} ${configPath} ${config.name}`);
-  }
-
-  /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  _saveComponentJson(config) {
-    const configPath = ConvertCommand._buildComponentPath(config);
-
-    const tmpPath = homePath(jitPath);
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`;
-
-    return exec(`${componentBinPath}/component -json ${tmpPath} ${configPath} ${config.name}`);
-  }
-
-  /**
    * @param {Object} cfg
    * @return {Promise}
    * @private
    */
   _toYml(cfg) {
-    const rawConfig = ConfigLoader.readConfig(
-      path.join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName)
-    );
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
-    if (!rawConfig.component.hasOwnProperty('template')) {
-      return ConvertCommand._revertComponent(cfg).then(() => {
-        this.logSuccess(cfg.name, 'YML');
-      });
+    if (!rawConfig.component.hasOwnProperty('template') || !this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
     }
 
     this.logSkip(cfg.name, 'YML');
@@ -99,14 +67,11 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toHcl(cfg) {
-    const rawConfig = ConfigLoader.readConfig(
-      path.join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName)
-    );
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
-    if (rawConfig.component.hasOwnProperty('template')) {
-      return this._saveComponent(cfg).then(() => {
-        this.logSuccess(cfg.name, 'HCL');
-      });
+    if (rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._saveComponent(cfg).then(() => {this.logSuccess(cfg.name, 'HCL'); });
     }
 
     this.logSkip(cfg.name, 'HCL');
@@ -119,9 +84,12 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toJson(cfg) {
-    return this._saveComponentJson(cfg).then(() => {
-      this.logSuccess(cfg.name, 'JSON');
-    });
+    if (!this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._saveComponentJson(cfg).then(() => {this.logSuccess(cfg.name, 'JSON'); });
+    }
+
+    this.logSkip(cfg.name, 'JSON');
+    return Promise.resolve();
   }
 
   /**
@@ -142,6 +110,7 @@ class ConvertCommand extends TerraformCommand {
       case 'hcl':
         promise = this._toHcl(config);
         break;
+
       case 'json':
         promise = this._toJson(config);
         break;
@@ -155,7 +124,7 @@ class ConvertCommand extends TerraformCommand {
    * @param {String} format
    */
   logSuccess(name, format) {
-    this.logger.warn(`Component '${name}' was successfully converted in ${format} format.`);
+    this.logger.info(`Component '${name}' was successfully converted in ${format} format.`);
   }
 
   /**
@@ -163,7 +132,7 @@ class ConvertCommand extends TerraformCommand {
    * @param {String} format
    */
   logSkip(name, format) {
-    this.logger.info(`Component '${name}' is already in ${format} format.`);
+    this.logger.warn(`Component '${name}' is already in ${format} format.`);
   }
 
   /**
@@ -172,7 +141,7 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   static _buildComponentPath(config) {
-    return path.join(config.project.root, config.root);
+    return join(config.project.root, config.root);
   }
 
   /**
@@ -190,13 +159,64 @@ class ConvertCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
+  static _saveComponent(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+
+    const tmpPath = homePath(jitPath);
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
+
+    return exec(`${join(componentBinPath, 'component')} -thub ${tmpPath} ${configPath} ${config.name}`);
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Boolean}
+   * @private
+   */
+  _checkIfFilesIsJson(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+    const mainFilePath = `${configPath}${sep}main.tf`;
+    if (!fse.existsSync(mainFilePath)) {
+      return false;
+    }
+
+    let rawdata = fse.readFileSync(mainFilePath);  
+    let json = JSON.parse(rawdata);  
+    if (typeof(json) === 'object') {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  static _saveComponentJson(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+
+    const tmpPath = homePath(jitPath);
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
+
+    return exec(`${join(componentBinPath, 'component')} -json ${tmpPath} ${configPath} ${config.name}`);
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
   static _revertComponent(config) {
     const configPath = ConvertCommand._buildComponentPath(config);
 
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`;
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
 
-    return exec(`${componentBinPath}/generator -thub ${configPath}/ ${configPath}/`);
+    return exec(`${join(componentBinPath, 'generator ')} -thub ${configPath}/ ${configPath}/`);
   }
 
   /**
@@ -204,7 +224,7 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   static get _supportedFormats() {
-    return ['yml', 'yaml', 'hcl'];
+    return ['yml', 'yaml', 'hcl', 'json'];
   }
 }
 
