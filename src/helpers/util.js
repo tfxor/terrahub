@@ -313,33 +313,47 @@ class Util {
      * @param {String} command
      * @return {String}
      */
-    function exec(command) {
-      return childProcess.execSync(command, { encoding: 'utf8' });
-    }
+    const exec = command => childProcess.execSync(command, { encoding: 'utf8' });
 
     let amount;
     let platformCheck = platform();
 
-    if (platformCheck === 'linux') {
-      const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
-      amount = parseInt(output.trim(), 10);
-    } else if (platformCheck === 'darwin') {
-      const output = exec('sysctl -n hw.physicalcpu_max');
-      amount = parseInt(output.trim(), 10);
-    } else if (platformCheck === 'windows') {
-      const output = exec('WMIC CPU Get NumberOfCores');
-      amount = output.split(EOL)
-        .map(line => parseInt(line))
-        .filter(value => !isNaN(value))
-        .reduce((sum, number) => (sum + number), 0);
-    } else {
-      const cores = cpus().filter(function (cpu, index) {
-        const hasHyperthreading = cpu.model.includes('Intel');
-        const isOdd = index % 2 === 1;
-        return !hasHyperthreading || isOdd;
-      });
-      amount = cores.length;
+    switch (platformCheck) {
+      case 'win32': {
+        const output = exec('WMIC CPU Get NumberOfCores');
+
+        amount = output.split(EOL)
+          .map(line => parseInt(line))
+          .filter(value => !isNaN(value))
+          .reduce((sum, number) => (sum + number), 0);
+        break;
+      }
+
+      case 'linux': {
+        const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
+        amount = parseInt(output.trim(), 10);
+        break;
+      }
+
+      case 'darwin': {
+        const output = exec('sysctl -n hw.physicalcpu_max');
+        amount = parseInt(output.trim(), 10);
+        break;
+      }
+
+      default: {
+        const cores = cpus().filter((cpu, index) => {
+          const hasHyperThreading = cpu.model.includes('Intel');
+          const isOdd = index % 2 === 1;
+
+          return !hasHyperThreading || isOdd;
+        });
+
+        amount = cores.length;
+        break;
+      }
     }
+
     return amount;
   }
 
