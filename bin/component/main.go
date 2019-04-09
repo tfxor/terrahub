@@ -150,7 +150,7 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 && strings.Index(file.Name(), ".tfplan") == -1 {
 			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
@@ -261,7 +261,7 @@ func ProccesingDotTerrahub(source string) {
 	endIndex := strings.Index(string(input), "  template:")
 	startIndex := strings.Index(string(input), "build:")
 	if endIndex == -1 && startIndex == -1 {
-		endIndex = len(input)
+		endIndex = len(string(input))
 	} 
 	if endIndex == -1 && startIndex > -1 {
 		endIndex = startIndex
@@ -280,7 +280,7 @@ func ProccesingDotTerrahubEnv(source string) {
 	endIndex := strings.Index(string(input), "component:")
 	startIndex := strings.Index(string(input), "build")	
 	if endIndex == -1 && startIndex == -1 {
-		endIndex = len(input)
+		endIndex = len(string(input))
 	} 
 	if endIndex == -1 && startIndex > -1 {
 		endIndex = startIndex

@@ -53,7 +53,7 @@ class ConvertCommand extends TerraformCommand {
     const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
-    if (!rawConfig.component.hasOwnProperty('template') || !this._checkIfFilesIsJson(cfg)) {
+    if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
       return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
     }
 
@@ -84,8 +84,20 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toJson(cfg) {
-    if (!this._checkIfFilesIsJson(cfg)) {
-      return ConvertCommand._saveComponentJson(cfg).then(() => {this.logSuccess(cfg.name, 'JSON'); });
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
+    
+    if (!this._checkIfFilesIsJson(cfg)) {      
+      if (!rawConfig.component.hasOwnProperty('template')) {
+        return ConvertCommand._revertComponent(cfg).then(() => { 
+          return ConvertCommand._saveComponentJson(cfg).then(() => {
+            this.logSuccess(cfg.name, 'JSON'); 
+          }); 
+        });      
+      }
+      return ConvertCommand._saveComponentJson(cfg).then(() => {
+        this.logSuccess(cfg.name, 'JSON'); 
+      }); 
     }
 
     this.logSkip(cfg.name, 'JSON');
@@ -177,17 +189,21 @@ class ConvertCommand extends TerraformCommand {
   _checkIfFilesIsJson(config) {
     const configPath = ConvertCommand._buildComponentPath(config);
     const mainFilePath = `${configPath}${sep}main.tf`;
+    
     if (!fse.existsSync(mainFilePath)) {
       return false;
     }
 
     let rawdata = fse.readFileSync(mainFilePath);  
-    let json = JSON.parse(rawdata);  
-    if (typeof(json) === 'object') {
-      return true;
+    
+    try
+    {
+      JSON.parse(rawdata.toString());
+    } catch (ex) {
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   /**
