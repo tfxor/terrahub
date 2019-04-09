@@ -188,14 +188,10 @@ class ConvertCommand extends TerraformCommand {
     const configPath = ConvertCommand._buildComponentPath(config);
     const mainFilePath = `${configPath}${sep}main.tf`;
     
-    if (!fse.existsSync(mainFilePath)) {
-      return false;
-    }
-
-    let rawdata = fse.readFileSync(mainFilePath, 'utf8'); 
-    
     try {
-      JSON.parse(rawdata);
+      const rawData = fse.readFileSync(mainFilePath, 'utf8');
+      
+      JSON.parse(rawData);
     } catch (ex) {
       return false;
     }
