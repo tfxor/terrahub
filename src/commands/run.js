@@ -1,9 +1,12 @@
 'use strict';
 
+const S3Helper = require('../helpers/s3-helper');
+const { config, fetch } = require('../parameters');
 const Dictionary = require("../helpers/dictionary");
-const Distributor = require('../helpers/distributor');
 const TerraformCommand = require('../terraform-command');
-const { printListAsTree } = require('../helpers/util');
+const { printListAsTree, uuid } = require('../helpers/util');
+const Distributor = require('../helpers/distributors/thread-distributor');
+const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -18,6 +21,7 @@ class RunCommand extends TerraformCommand {
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
       .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
+      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false)
     ;
   }
 
@@ -30,10 +34,15 @@ class RunCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
+    this._isApply = this.getOption('apply');
+    this._isDestroy = this.getOption('destroy');
+    this._isBuild = this.getOption('build');
+
     const config = this.getConfigObject();
 
     return this._getPromise(config)
-      .then(answer => answer ? this._runPhases(config) : Promise.reject('Action aborted'))
+      .then(isConfirmed => isConfirmed ? this._checkDependencies(config) : Promise.reject('Action aborted'))
+      .then(() => this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config))
       .then(() => Promise.resolve('Done'));
   }
 
@@ -57,51 +66,89 @@ class RunCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _runPhases(config) {
+  _runLocal(config) {
+    const actions = ['prepare', 'init', 'workspaceSelect'];
     const distributor = new Distributor(config);
 
-    this._isApply = this.getOption('apply');
-    this._isDestroy = this.getOption('destroy');
-    this._isBuild = this.getOption('build');
+    if (!this._isApply && !this._isDestroy) {
+      if (this._isBuild) {
+        actions.push('build');
+      }
 
-    return this._checkDependencies(config)
-      .then(() => {
-        const actions = ['prepare', 'init', 'workspaceSelect'];
+      actions.push('plan');
+    }
 
-        if (!this._isApply && !this._isDestroy) {
-          if (this._isBuild) {
-            actions.push('build');
-          }
-
-          actions.push('plan');
-        }
-
-        return distributor.runActions(actions, {
-          silent: this.getOption('silent')
-        });
-      })
-      .then(() => {
-        if (!this._isApply) {
-          return Promise.resolve();
-        }
-        const actions = this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'];
-
-        return distributor.runActions(actions, {
+    return distributor.runActions(actions, { silent: this.getOption('silent') })
+      .then(() => !this._isApply ?
+        Promise.resolve() :
+        distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.FORWARD
-        });
-      })
-      .then(() => {
-        if (!this._isDestroy) {
-          return Promise.resolve();
-        }
-
-        return distributor.runActions(['plan', 'destroy'], {
+        })
+      )
+      .then(() => !this._isDestroy ?
+        Promise.resolve() :
+        distributor.runActions(['plan', 'destroy'], {
           silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
-        });
-      });
+        })
+      );
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _runCloud(cfg) {
+    const thubRunId = uuid();
+    const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
+    const distributor = new CloudDistributor(cfg, thubRunId);
+    const s3Helper = new S3Helper();
+
+    const bucketName = S3Helper.METADATA_BUCKET;
+    const s3Path = config.api.replace('api', 'projects');
+
+    return this._fetchAccountId()
+      .then(accountId => {
+        this.logger.warn('Uploading project to S3.');
+
+        return s3Helper.uploadDirectory(
+          this.getAppPath(),
+          bucketName,
+          [s3Path, accountId, thubRunId].join('/'),
+          { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
+        );
+      })
+      .then(() => {
+        this.logger.warn('Directory uploaded to S3.');
+
+        return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+      })
+      // delete directory from s3 in any case
+      .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3Path))
+      .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3Path).then(() => Promise.reject(error)));
+  }
+
+  /**
+   * @return {Promise<String>}
+   * @private
+   */
+  _fetchAccountId() {
+    return fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _fetchAndSetupCredentials() {
+    return fetch.get('thub/temporary-credentials/retrieve').then(json => {
+      Object.assign(process.env, json.data.credentials);
+
+      return Promise.resolve(json.data.accountId);
+    });
   }
 
   /**

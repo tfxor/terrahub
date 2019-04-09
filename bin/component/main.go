@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -20,8 +21,9 @@ var Version = "development"
 
 func main() {
 	version := flag.Bool("version", false, "Prints current app version")
-	tohcl := flag.Bool("tohcl", false, "Prints current app version")
-	thub := flag.Bool("thub", false, "Prints current app version")
+	tohcl := flag.Bool("tohcl", false, "Convert to HCL")
+	thub := flag.Bool("thub", false, "Convert to HCL and generate THub config file")
+	tjson := flag.Bool("json", false, "Convert to JSON and generate THub config file")
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
@@ -38,6 +40,28 @@ func main() {
 		GenerateHclFromYmlThubEnv()
 		return
 	}
+
+	if *tjson {
+		GenerateJsonFromYml()
+		return
+	}
+}
+
+func GenerateJsonFromYml() {
+	argsWithoutProg := os.Args[2:]
+	if len(argsWithoutProg) < 3 {
+		fmt.Println("Set please all params!")
+		return
+	}
+	cashPath := os.Args[2]
+	terrahubComponentPath := os.Args[3]
+	terrahubComponent := os.Args[4]
+	cashComponentPath := PrepareJSON(terrahubComponent)
+	if cashComponentPath != "" {
+		ClearFolder(terrahubComponentPath)
+		TransferJson(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
+	}
+	os.Exit(0)
 }
 
 func GenerateHclFromYml() {
@@ -76,19 +100,21 @@ func GenerateHclFromYmlThubEnv() {
 
 func StartProccesingFileEnv(source string, fileName string, destination string) {
 	y := GetTfvarsTerrahubEnv(source)
-	j1, _ := ymlto.YAMLToJSON(y)
-	ast, err := jsonParser.Parse(j1)
-	if err != nil {
-		fmt.Printf("unable to parse JSON: %s", err)
+	if len(y) > 0 {
+		j1, _ := ymlto.YAMLToJSON(y)
+		ast, err := jsonParser.Parse(j1)
+		if err != nil {
+			fmt.Printf("unable to parse JSON: %s", err)
+		}
+		var b bytes.Buffer
+		err = printer.Fprint(&b, ast)
+		if err != nil {
+			fmt.Printf("unable to print HCL: %s", err)
+		}
+		env := strings.Replace(fileName, ".terrahub.", "", -1)
+		env = strings.Replace(env, ".yml", "", -1)
+		ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
 	}
-	var b bytes.Buffer
-	err = printer.Fprint(&b, ast)
-	if err != nil {
-		fmt.Printf("unable to print HCL: %s", err)
-	}
-	env := strings.Replace(fileName, ".terrahub.", "", -1)
-	env = strings.Replace(env, ".yml", "", -1)
-	ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
 	ProccesingDotTerrahubEnv(source)
 }
 
@@ -104,9 +130,9 @@ func PrepareJSON(terrahubComponent string) string {
 		os.Exit(1)
 	}
 	sha := string(cmdOut)
-	re := regexp.MustCompile(`(?m).+?✅`)
+	re := regexp.MustCompile(`(?m).+?\n`)
 	for _, match := range re.FindAllString(sha, -1) {
-		match = strings.Replace(match, "✅", "", -1)
+		match = strings.Replace(match, "\n", "", -1)
 		return match
 	}
 	return ""
@@ -124,11 +150,76 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 && strings.Index(file.Name(), ".tfplan") == -1 {
 			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+}
+
+func ClearFolder(sourcePath string) {
+	f, err := os.Open(sourcePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range fileInfo {
+		if !file.IsDir() && (strings.Index(file.Name(), ".tf") > -1 || strings.Index(file.Name(), ".tfvars") > -1) {
+			deleteFile(sourcePath+file.Name())
+		}
+	}
+}
+
+func TransferJson(sourcePath string, destinationPath string) {
+	f, err := os.Open(sourcePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range fileInfo {
+		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
+			copyFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
+		}
+	}
+	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+}
+
+func copyFile(sourcePath string, destinationPath string) {
+	// copy file
+	from, err := os.Open(sourcePath)
+	if isError(err) { return }
+	defer from.Close()
+
+	to, err := os.OpenFile(destinationPath, os.O_RDWR|os.O_CREATE, 0666)
+	if isError(err) { return }
+	defer to.Close()
+
+	_, err = io.Copy(to, from)
+	if isError(err) { return }
+}
+
+func deleteFile(path string) {
+	// delete file
+	err := os.Remove(path)
+	if isError(err) { return }
+}
+
+func isError(err error) bool {
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return (err != nil)
 }
 
 func StartProccesingFile(source string, destination string) {
@@ -168,7 +259,13 @@ func Clearing(input string) []byte {
 func ProccesingDotTerrahub(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "  template:")
-	startIndex := strings.Index(string(input), "## build config")
+	startIndex := strings.Index(string(input), "build:")
+	if endIndex == -1 && startIndex == -1 {
+		endIndex = len(string(input))
+	} 
+	if endIndex == -1 && startIndex > -1 {
+		endIndex = startIndex
+	}
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
@@ -181,7 +278,13 @@ func ProccesingDotTerrahub(source string) {
 func ProccesingDotTerrahubEnv(source string) {
 	input, _ := ioutil.ReadFile(source)
 	endIndex := strings.Index(string(input), "component:")
-	startIndex := strings.Index(string(input), "build")
+	startIndex := strings.Index(string(input), "build")	
+	if endIndex == -1 && startIndex == -1 {
+		endIndex = len(string(input))
+	} 
+	if endIndex == -1 && startIndex > -1 {
+		endIndex = startIndex
+	}
 	sourceValue := string(input)[:endIndex]
 	if startIndex > -1 {
 		sourceValue += "\n" + string(input)[startIndex:]
@@ -201,6 +304,9 @@ func GetTfvarsTerrahubEnv(source string) []byte {
 	endIndex := strings.Index(string(input), "build")
 	if endIndex < startIndex {
 		endIndex = len(string(input))
+	}
+	if endIndex == -1 && startIndex == -1 {
+		return []byte("")
 	}
 	sourceValue := string(input)[startIndex:endIndex]
 	return []byte(sourceValue)

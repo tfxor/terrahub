@@ -5,13 +5,13 @@ const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
-const logger = require('./logger');
-const Metadata = require('./metadata');
-const Dictionary = require('./dictionary');
-const Downloader = require('./downloader');
+const logger = require('../logger');
+const Metadata = require('../metadata');
+const Dictionary = require('../dictionary');
+const Downloader = require('../downloader');
 const { execSync } = require('child_process');
-const { config, fetch, jitPath } = require('../parameters');
-const { extend, spawner, homePath } = require('./util');
+const { extend, spawner, homePath } = require('../util');
+const { config, fetch, jitPath } = require('../../parameters');
 
 class Terraform {
   /**
@@ -296,9 +296,9 @@ class Terraform {
         let skip = false;
         if (planData) {
           const planCounter = planData.slice(-3);
-          ['add', 'change', 'destroy'].forEach((field, index) => metadata[field] = planCounter[index]);
+          ['add', 'change', 'destroy'].forEach((field, index) => { metadata[field] = planCounter[index]; });
         } else {
-          ['add', 'change', 'destroy'].forEach((field) => metadata[field] = '0');
+          ['add', 'change', 'destroy'].forEach((field) => { metadata[field] = '0'; });
           skip = true;
         }
 
@@ -318,6 +318,18 @@ class Terraform {
           status: Dictionary.REALTIME.SUCCESS
         });
       });
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/import.html
+   * @return {Promise}
+   */
+  import() {
+    const options = {'-input': false };
+    const args = ['-no-color'];
+    const values = [process.env.resourceName, process.env.importId];
+    return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
+      values));
   }
 
   /**

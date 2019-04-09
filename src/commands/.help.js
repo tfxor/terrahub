@@ -84,10 +84,10 @@ class Help extends AbstractCommand {
       allCommands.forEach(command => {
         command.separator = '.'.repeat(20 - command.name.length);
 
-        if (['build', 'list', 'run'].includes(command.name)) {
-          variables.cloudAutomation.push(command);
-        } else if (['project', 'component', 'graph', 'configure'].includes(command.name)) {
+        if (['component', 'configure', 'convert', 'graph', 'project'].includes(command.name)) {
           variables.terrahubManagement.push(command);
+        } else if (['build', 'list', 'run'].includes(command.name)) {
+          variables.cloudAutomation.push(command);
         } else {
           variables.terraformExecution.push(command);
         }
