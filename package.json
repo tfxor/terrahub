@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.2.15",
+  "version": "0.2.27",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
   "main": "index.js",
   "preferGlobal": true,
@@ -40,6 +40,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TerraHubCorp/terrahub.git"
+  },
+  "node_deb": {
+    "init": "none",
+    "entrypoints": {
+      "cli": "./bin/cli.js"
+    },
+    "maintainer": "TerraHub"
   },
   "keywords": [
     "terrahub",
