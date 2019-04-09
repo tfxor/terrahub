@@ -94,11 +94,8 @@ class ConvertCommand extends TerraformCommand {
         }
     
         return Promise.resolve();
-      }).then(() => {
-        return ConvertCommand._saveComponentJson(cfg).then(() => {
-          this.logSuccess(cfg.name, 'JSON');
-        });
-      }); 
+      }).then(() => ConvertCommand._saveComponentJson(cfg))
+      .then(() => { this.logSuccess(cfg.name, 'JSON'); });
     }
 
     this.logSkip(cfg.name, 'JSON');
