@@ -1,16 +1,15 @@
 'use strict';
 
-const path = require('path');
 const fse = require('fs-extra');
+const { join, sep } = require('path');
 const { homePath } = require('../helpers/util');
 const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
-const AbstractCommand = require('../abstract-command');
-const { isAwsNameValid, yesNoQuestion } = require('../helpers/util');
-const { templates, commandsPath, jitPath, config } = require('../parameters');
+const TerraformCommand = require('../terraform-command');
+const { binPath, jitPath, config } = require('../parameters');
 
-class ConvertCommand extends AbstractCommand {
+class ConvertCommand extends TerraformCommand {
   /**
    * Command configuration
    */
@@ -18,14 +17,8 @@ class ConvertCommand extends AbstractCommand {
     this
       .setName('convert')
       .setDescription('convert terraform configuration into yaml, json or hcl format (both directions)')
-      .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
-      .addOption('to-yml', '0', 'Convert to YML', Boolean, false)
-      .addOption('to-yaml', '0', 'Convert to YAML', Boolean, false)
-      .addOption('to-hcl', '1', 'Convert to HCL', Boolean, false)
-      // @todo: implement hcl2 and json
-      //.addOption('to-hcl2', '2', 'Convert to HCL2', Boolean, false)
-      //.addOption('to-json', '3', 'Convert to JSON', Boolean, false)
-      .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
+      .addOption('to', 't', 'Convert current component TO another format (e.g. yml, hcl; default: yml)', String, 'yml')
+      .addOption('auto-approve', 'y', 'Auto approve config conversion', Boolean, false)
     ;
   }
 
@@ -33,141 +26,214 @@ class ConvertCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    this._componentName = this.getOption('name');
-    this._directory = this.getOption('directory');
-    this._toYML = this.getOption('to-yml') || this.getOption('to-yaml');
-    this._toHCL = this.getOption('to-hcl');
-    this._toHCL2 = this.getOption('to-hcl2');
-    this._toJSON = this.getOption('to-json');
+    const format = this.getOption('to');
+    ConvertCommand._validateFormat(format);
 
-    this._appPath = this.getAppPath();
+    const config = this.getConfigObject();
 
-    if (!this._appPath) {
-      throw new Error(`Project's config not found`);
-    }
+    return this.askForApprovement(
+      config,
+      this.getOption('auto-approve'),
+      `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `
+    ).then(answer => {
+      if (!answer) {
+        return Promise.reject('Action aborted');
+      }
 
-    if (this._componentName.some(it => !isAwsNameValid(it))) {
-      throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
-    }
-
-    return Promise.all(this._componentName.map(it => this._convertComponent(it))).then(() => 'Done');
+      return Promise.all(Object.keys(config).map(hash => this._convertComponent(config[hash], format)));
+    }).then(() => 'Done');
   }
 
   /**
-   * @param {String} name
+   * @param {Object} cfg
    * @return {Promise}
    * @private
    */
-  _saveComponent(name) {
-    const configPath = this.getConfigPath(name);
-    if (!configPath) {
-      return Promise.resolve();
-    }     
-    const tmpPath = homePath(jitPath);
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+  _toYml(cfg) {
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
-    return exec(`${componentBinPath}/component -thub ${tmpPath} ${configPath} ${name}`);
+    if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
+    }
+
+    this.logSkip(cfg.name, 'YML');
+    return Promise.resolve();
   }
 
   /**
-   * @param {String} name
+   * @param {Object} cfg
    * @return {Promise}
    * @private
    */
-  _revertComponent(name) {
-    const configPath = this.getConfigPath(name);
-    if (!configPath) {
-      return Promise.resolve();
-    }     
-    const arch = (new Downloader()).getOsArch();
-    const componentBinPath = `${commandsPath}/../../bin/${arch}`
+  _toHcl(cfg) {
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
+
+    if (rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._saveComponent(cfg).then(() => {this.logSuccess(cfg.name, 'HCL'); });
+    }
+
+    this.logSkip(cfg.name, 'HCL');
+    return Promise.resolve();
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _toJson(cfg) {
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
     
-    return exec(`${componentBinPath}/generator -thub ${configPath}/ ${configPath}/`);
-  }
-
-  /**
-   * @param {String} name
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  _toYml(name, config) {
-    if (!config.component.template) {
-      return yesNoQuestion(`Are you sure you want to convert component '${name}' into YML format? (y/N) `).then(answer => {
-        if (!answer) {
-            return Promise.reject('Action aborted');
+    if (!this._checkIfFilesIsJson(cfg)) {      
+      return Promise.resolve().then(() => {
+        if (!rawConfig.component.hasOwnProperty('template')) {
+          return ConvertCommand._revertComponent(cfg);
         }
-        return this._revertComponent(name);
-        });
-    } else {
-      return Promise.reject(`Component '${name}' is already in YML format`);
+    
+        return Promise.resolve();
+      }).then(() => ConvertCommand._saveComponentJson(cfg))
+      .then(() => { this.logSuccess(cfg.name, 'JSON'); });
     }
+
+    this.logSkip(cfg.name, 'JSON');
+    return Promise.resolve();
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} format
+   * @return {Promise}
+   * @private
+   */
+  _convertComponent(config, format) {
+    let promise;
+
+    switch (format) {
+      case 'yaml':
+      case 'yml':
+        promise = this._toYml(config);
+        break;
+
+      case 'hcl':
+        promise = this._toHcl(config);
+        break;
+
+      case 'json':
+        promise = this._toJson(config);
+        break;
+    }
+
+    return promise;
   }
 
   /**
    * @param {String} name
+   * @param {String} format
+   */
+  logSuccess(name, format) {
+    this.logger.info(`Component '${name}' was successfully converted in ${format} format.`);
+  }
+
+  /**
+   * @param {String} name
+   * @param {String} format
+   */
+  logSkip(name, format) {
+    this.logger.warn(`Component '${name}' is already in ${format} format.`);
+  }
+
+  /**
+   * @param {Object} config
+   * @return {String}
+   * @private
+   */
+  static _buildComponentPath(config) {
+    return join(config.project.root, config.root);
+  }
+
+  /**
+   * @param format
+   * @private
+   */
+  static _validateFormat(format) {
+    if (!ConvertCommand._supportedFormats.includes(format)) {
+      throw new Error(`'${format}' format is not supported for configuration conversion.`);
+    }
+  }
+
+  /**
    * @param {Object} config
    * @return {Promise}
    * @private
    */
-  _toHcl(name, config) {
-    if (config.component.template) {
-      return yesNoQuestion(`Are you sure you want to convert component '${name}' into HCL format? (y/N) `).then(answer => {
-          if (!answer) {
-            return Promise.reject('Action aborted');
-          }
-          return this._saveComponent(name);
-      });
-    } else {
-      return Promise.reject(`Component '${name}' is already in HCL format`);
-    }
+  static _saveComponent(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+
+    const tmpPath = homePath(jitPath);
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
+
+    return exec(`${join(componentBinPath, 'component')} -thub ${tmpPath} ${configPath} ${config.name}`);
   }
 
   /**
-   * @param {String} name
+   * @param {Object} config
+   * @return {Boolean}
+   * @private
+   */
+  _checkIfFilesIsJson(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
+    const mainFilePath = `${configPath}${sep}main.tf`;
+    
+    try {
+      const rawData = fse.readFileSync(mainFilePath, 'utf8');
+      
+      JSON.parse(rawData);
+    } catch (ex) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * @param {Object} config
    * @return {Promise}
    * @private
    */
-  _convert(name, config) {
-    if (this._toYML) {
-      return this._toYml(name, config);
-    }
+  static _saveComponentJson(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
 
-    if (this._toHCL) {
-      return this._toHcl(name, config);
-    }
+    const tmpPath = homePath(jitPath);
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
 
-    if (this._toHCL2 || this._toJSON) {
-      // @todo
-      return Promise.reject('To do!');
-    }
-
-    return Promise.resolve('Done');
+    return exec(`${join(componentBinPath, 'component')} -json ${tmpPath} ${configPath} ${config.name}`);
   }
 
   /**
-   * @param {String} name
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
-  _convertComponent(name) {
-    const directory = path.resolve(this._directory);
+  static _revertComponent(config) {
+    const configPath = ConvertCommand._buildComponentPath(config);
 
-    let outFile = path.join(directory, config.defaultFileName);
-    let componentData = { component: { name: name } };
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
 
-    componentData.component['dependsOn'] = this._dependsOn;
+    return exec(`${join(componentBinPath, 'generator ')} -thub ${configPath}/ ${configPath}/`);
+  }
 
-    if (fse.pathExistsSync(outFile)) {
-        const config = ConfigLoader.readConfig(outFile);
-        if (config.project) {
-          throw new Error(`Configuring components in project's root is NOT allowed.`);
-        }
-        return this._convert(name, config);        
-    }
-    return Promise.resolve('Done');
+  /**
+   * @return {String[]}
+   * @private
+   */
+  static get _supportedFormats() {
+    return ['yml', 'yaml', 'hcl', 'json'];
   }
 }
 

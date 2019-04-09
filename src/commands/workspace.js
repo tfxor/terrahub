@@ -1,15 +1,15 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
-const HashTable = require('../helpers/hash-table');
-const Distributor = require('../helpers/distributor');
-const ConfigLoader = require('../config-loader');
-const TerraformCommand = require('../terraform-command');
-const { config, templates } = require('../parameters');
-const { renderTwig, yesNoQuestion } = require('../helpers/util');
+const fse = require('fs-extra');
 const treeify = require('treeify');
+const ConfigLoader = require('../config-loader');
+const HashTable = require('../helpers/hash-table');
+const { config, templates } = require('../parameters');
+const TerraformCommand = require('../terraform-command');
+const { renderTwig, yesNoQuestion } = require('../helpers/util');
+const Distributor = require('../helpers/distributors/thread-distributor');
 
 class WorkspaceCommand extends TerraformCommand {
   /**
@@ -43,17 +43,18 @@ class WorkspaceCommand extends TerraformCommand {
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
 
+    const { name: projectName, code } = this.getProjectConfig();
+
     if (this.getOption('list')) {
-      this.logger.log(`Project: ${this.getProjectConfig.name}`);
       return this._workspace('workspaceList', configs)
         .then(results => this._handleWorkspaceList(results))
         .then(() => 'Done');
     }
+
     if (includeRootConfig) {
       configsList.unshift(rootConfigPath);
     }
 
-    const { name, code } = this.getProjectConfig();
     if (config.isDefault) {
       return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }
@@ -77,7 +78,7 @@ class WorkspaceCommand extends TerraformCommand {
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
         if (i !== 0 || !includeRootConfig) { // Skip root path
-          promises.push(renderTwig(template, { name, code, env: config.env }, tfvarsPath));
+          promises.push(renderTwig(template, { name: projectName, code, env: config.env }, tfvarsPath));
         }
       }
 
@@ -99,7 +100,7 @@ class WorkspaceCommand extends TerraformCommand {
         .then(() => Promise.resolve(message));
     }
 
-    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (Y/N)? `).then(confirmed => {
+    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (y/N)? `).then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
       }
@@ -128,7 +129,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', action], {
+    return distributor.runActions(['prepare', 'init', action], {
       silent: this.getOption('silent')
     });
   }

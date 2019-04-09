@@ -3,55 +3,22 @@
 const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
-const Dictionary = require("./dictionary");
-const { config } = require('../parameters');
-const { uuid, physicalCpuCount } = require('./util');
+const { config } = require('../../parameters');
+const { physicalCpuCount } = require('../util');
+const AbstractDistributor = require('./abstract-distributor');
 
-class Distributor {
+class ThreadDistributor extends AbstractDistributor {
   /**
    * @param {Object} configObject
    */
   constructor(configObject) {
-    this.THUB_RUN_ID = uuid();
-    this._config = Object.assign({}, configObject);
+    super(configObject);
+
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
+
     cluster.setupMaster({ exec: this._worker });
-  }
-
-  /**
-   * @param {Object} config
-   * @param {Number} direction
-   * @return {Object}
-   * @private
-   */
-  _buildDependencyTable(config, direction) {
-    const keys = Object.keys(config);
-
-    const result = keys.reduce((acc, key) => {
-      acc[key] = {};
-
-      return acc;
-    }, {});
-
-    switch (direction) {
-      case Dictionary.DIRECTION.FORWARD:
-        keys.forEach(key => {
-          Object.assign(result[key], config[key].dependsOn);
-        });
-        break;
-
-      case Dictionary.DIRECTION.REVERSE:
-        keys.forEach(key => {
-          Object.keys(config[key].dependsOn).forEach(hash => {
-            result[hash][key] = null;
-          });
-        });
-        break;
-    }
-
-    return result;
   }
 
   /**
@@ -59,7 +26,7 @@ class Distributor {
    * @private
    */
   _createWorker(hash) {
-    const cfgThread = this._config[hash];
+    const cfgThread = this.config[hash];
 
     const worker = cluster.fork(Object.assign({
       THUB_RUN_ID: this.THUB_RUN_ID,
@@ -70,17 +37,6 @@ class Distributor {
 
     this._workersCount++;
     worker.send(cfgThread);
-  }
-
-  /**
-   * Remove dependencies on this component
-   * @param {String} hash
-   * @private
-   */
-  _removeDependencies(hash) {
-    Object.keys(this._dependencyTable).forEach(key => {
-      delete this._dependencyTable[key][hash];
-    });
   }
 
   /**
@@ -101,20 +57,26 @@ class Distributor {
 
   /**
    * @param {String[]} actions
-   * @param {{ silent: Boolean, format: String, planDestroy: Boolean, dependencyDirection: Number, resourceName: String, importId: String }} options
+   * @param {Boolean} silent
+   * @param {String} format
+   * @param {Boolean} planDestroy
+   * @param {Number} dependencyDirection
+   * @param {String} resourceName
+   * @param {String} importId
    * @return {Promise}
    */
-  runActions(actions, { silent = false, format = '', planDestroy = false, dependencyDirection = null, resourceName = '', importId = '' } = {}) {
-    this._env = {
-      silent: silent,
-      format: format,
-      planDestroy: planDestroy,
-      resourceName: resourceName,
-      importId: importId
-    };
+  runActions(actions, {
+    silent = false,
+    format = '',
+    planDestroy = false,
+    dependencyDirection = null,
+    resourceName = '',
+    importId = ''
+  } = {}) {
+    this._env = { silent, format, planDestroy, resourceName, importId };
 
     const results = [];
-    this._dependencyTable = this._buildDependencyTable(this._config, dependencyDirection);
+    this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     return new Promise((resolve, reject) => {
@@ -130,7 +92,7 @@ class Distributor {
           results.push(data.data);
         }
 
-        this._removeDependencies(data.hash);
+        this.removeDependencies(this._dependencyTable, data.hash);
       });
 
       cluster.on('exit', (worker, code) => {
@@ -172,4 +134,4 @@ class Distributor {
   }
 }
 
-module.exports = Distributor;
+module.exports = ThreadDistributor;

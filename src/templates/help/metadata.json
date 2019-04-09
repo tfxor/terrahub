@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.19",
+  "version": "0.2.25",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-02T16:05:37.737Z",
+  "buildDate": "2019-04-09T16:12:21.908Z",
   "commands": [
     {
       "name": "apply",
@@ -295,33 +295,64 @@
       "description": "convert terraform configuration into yaml, json or hcl format (both directions)",
       "options": [
         {
-          "name": "name",
-          "shortcut": "n",
-          "description": "Uniquely identifiable cloud resource name"
+          "name": "to",
+          "shortcut": "t",
+          "description": "Convert current component TO another format (e.g. yml, hcl; default: yml)",
+          "defaultValue": "yml"
         },
         {
-          "name": "to-yml",
-          "shortcut": "0",
-          "description": "Convert to YML",
+          "name": "auto-approve",
+          "shortcut": "y",
+          "description": "Auto approve config conversion",
           "defaultValue": false
         },
         {
-          "name": "to-yaml",
-          "shortcut": "0",
-          "description": "Convert to YAML",
-          "defaultValue": false
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
         },
         {
-          "name": "to-hcl",
-          "shortcut": "1",
-          "description": "Convert to HCL",
-          "defaultValue": false
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
         },
         {
-          "name": "directory",
-          "shortcut": "d",
-          "description": "Path to the component (default: cwd)",
-          "defaultValue": "Current working directory"
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "silent",
+          "shortcut": "s",
+          "description": "Runs the command silently (without any output)",
+          "defaultValue": false
         },
         {
           "name": "env",
@@ -955,6 +986,12 @@
           "name": "build",
           "shortcut": "b",
           "description": "Enable build command as part of automated workflow",
+          "defaultValue": false
+        },
+        {
+          "name": "cloud",
+          "shortcut": "c",
+          "description": "Run your terraform execution in cloud",
           "defaultValue": false
         },
         {

@@ -1,8 +1,8 @@
 'use strict';
 
-const Distributor = require('../helpers/distributor');
-const TerraformCommand = require('../terraform-command');
 const { yesNoQuestion } = require('../helpers/util');
+const TerraformCommand = require('../terraform-command');
+const Distributor = require('../helpers/distributors/thread-distributor');
 
 class OutputCommand extends TerraformCommand {
   /**
@@ -51,7 +51,7 @@ class OutputCommand extends TerraformCommand {
     } else {
       this.logger.warn('This command makes sense only after apply command, and configured outputs');
 
-      return yesNoQuestion('Do you want to run it (Y/N)? ');
+      return yesNoQuestion('Do you want to run it (y/N)? ');
     }
   }
 

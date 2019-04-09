@@ -217,7 +217,7 @@ class ConfigureCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion(`Do you want to perform delete action on given component ${this.getOption('config')} (Y/N)? `);
+      return yesNoQuestion(`Do you want to perform delete action on given component ${this.getOption('config')} (y/N)? `);
     }
   }
 }
