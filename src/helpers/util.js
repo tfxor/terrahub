@@ -281,7 +281,7 @@ class Util {
    * @param {Object|Array} config
    * @param {Object} projectName
    */
-  static printListAsTree(config, projectName, listLimit) {
+  static printListAsTree(config, projectName) {
     const componentList = Util.arrayToObject(Object.keys(config).map(key => config[key].name));
 
     logger.log(`Project: ${projectName}`);
@@ -293,10 +293,10 @@ class Util {
 
   /**
    * @param {Object|Array} config
-   * @param {String}projectName
+   * @param {String} projectName
    * @param {Number} listLimit
    */
-  static printListAuto(config, projectName, listLimit) {
+  static printListAuto(config, projectName, listLimit = 5) {
     const { length } = Object.keys(config);
 
     if (listLimit < 0 || length > listLimit) {

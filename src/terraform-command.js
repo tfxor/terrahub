@@ -8,7 +8,6 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
-
 /**
  * @abstract
  */
@@ -217,7 +216,6 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
-   * @param {Number} listLimit
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
@@ -239,7 +237,6 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * @param {Object|Array} config
-   * @param {Number} listLimit
    */
   warnExecutionStarted(config) {
     Util.printListAuto(config, this.getProjectConfig().name, listLimit);
