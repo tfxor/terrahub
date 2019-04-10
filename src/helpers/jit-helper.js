@@ -83,11 +83,13 @@ class JitHelper {
         return fs.readdirAsync( src ).then( files => {
           return files.filter(src => !regEx.test(src));
         }).then( files => {
-          files.forEach(file => {
-            return fse.ensureSymlink(src + sep + file, tmpPath + sep + file).catch(() => {});
+          files.forEach( file => {
+            fse.ensureSymlink(src + sep + file, tmpPath + sep + file)
+            .catch(() => {});
           })
-        }).then(() => Promise.all(promises))
-          .then(() => Promise.resolve(transformedConfig));
+        })
+        .then(() => Promise.all(promises))
+        .then(() => Promise.resolve(transformedConfig))
       })
       .catch(err => {
         throw new Error(err.toString());
