@@ -1,9 +1,9 @@
 'use strict';
 
 const fse = require('fs-extra');
-const Promise = require('bluebird');
-const { join, sep } = require('path');
-const fs = Promise.promisifyAll(require('fs'));
+const Bluebird = require('bluebird');
+const path = require('path');
+const fs = Bluebird.promisifyAll(require('fs'));
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -18,7 +18,7 @@ class JitHelper {
     config.isJit = config.hasOwnProperty('template');
 
     if (config.isJit) {
-      const componentPath = join(config.project.root, config.root);
+      const componentPath = path.join(config.project.root, config.root);
 
       if (!config.mapping.length) {
         config.mapping.push(componentPath);
@@ -47,7 +47,7 @@ class JitHelper {
    * @return {Promise}
    */
   static jitMiddleware(config) {
-    const transformedConfig = this._transformConfig(config);
+    const transformedConfig = JitHelper._transformConfig(config);
     const tmpPath = homePath(jitPath, transformedConfig.hash);
 
     if (!transformedConfig.isJit) {
@@ -72,10 +72,10 @@ class JitHelper {
           break;
       }
 
-      return fse.outputJson(join(tmpPath, name), data, { spaces: 2 });
+      return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
-    const src = join(config.project.root, config.root);
+    const src = path.join(config.project.root, config.root);
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
     return fse.ensureDir(tmpPath)
@@ -84,7 +84,7 @@ class JitHelper {
           return files.filter(src => !regEx.test(src));
         }).then( files => {
           files.forEach( file => {
-            fse.ensureSymlink(src + sep + file, tmpPath + sep + file)
+            fse.ensureSymlink(src + path.sep + file, tmpPath + path.sep + file)
             .catch(() => {});
           })
         })
