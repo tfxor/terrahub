@@ -2,5 +2,6 @@
   "format": "yml",
   "token": false,
   "retryCount": 2,
-  "usePhysicalCpu": false
+  "usePhysicalCpu": true,
+  "listLimit": 5
 }
