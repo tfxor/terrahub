@@ -1,7 +1,9 @@
 'use strict';
 
-const path = require('path');
 const fse = require('fs-extra');
+const Promise = require('bluebird');
+const { join, sep } = require('path');
+const fs = Promise.promisifyAll(require('fs'));
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -16,7 +18,7 @@ class JitHelper {
     config.isJit = config.hasOwnProperty('template');
 
     if (config.isJit) {
-      const componentPath = path.join(config.project.root, config.root);
+      const componentPath = join(config.project.root, config.root);
 
       if (!config.mapping.length) {
         config.mapping.push(componentPath);
@@ -35,7 +37,7 @@ class JitHelper {
         }
       }]);
     }
-
+    
     return config;
   }
 
@@ -45,7 +47,7 @@ class JitHelper {
    * @return {Promise}
    */
   static jitMiddleware(config) {
-    const transformedConfig = JitHelper._transformConfig(config);
+    const transformedConfig = this._transformConfig(config);
     const tmpPath = homePath(jitPath, transformedConfig.hash);
 
     if (!transformedConfig.isJit) {
@@ -70,16 +72,21 @@ class JitHelper {
           break;
       }
 
-      return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
+      return fse.outputJson(join(tmpPath, name), data, { spaces: 2 });
     });
 
-    const src = path.join(config.project.root, config.root);
+    const src = join(config.project.root, config.root);
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
     return fse.ensureDir(tmpPath)
       .then(() => {
-        return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
-          .then(() => Promise.all(promises))
+        return fs.readdirAsync( src ).then( files => {
+          return files.filter(src => !regEx.test(src));
+        }).then( files => {
+          files.forEach(file => {
+            return fse.ensureSymlink(src + sep + file, tmpPath + sep + file).catch(() => {});
+          })
+        }).then(() => Promise.all(promises))
           .then(() => Promise.resolve(transformedConfig));
       })
       .catch(err => {
