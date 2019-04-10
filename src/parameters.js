@@ -48,7 +48,8 @@ const def = {
   token: false,
   format: 'yml',
   retryCount: 2,
-  usePhysicalCpu: false
+  usePhysicalCpu: false,
+  listLimit: 5
 };
 const env = {
   env: _getEnv(args),
@@ -78,7 +79,8 @@ module.exports = {
     isHelp: _isHelp(args),
     retryCount: cfg.retryCount,
     usePhysicalCpu: cfg.usePhysicalCpu,
-    defaultFileName: `.terrahub.${cfg.format}`
+    defaultFileName: `.terrahub.${cfg.format}`,
+    listLimit: cfg.listLimit
   },
   templates: {
     path: path.join(templates, 'templates'),

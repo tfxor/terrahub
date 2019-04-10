@@ -293,12 +293,13 @@ class Util {
 
   /**
    * @param {Object|Array} config
-   * @param projectName
+   * @param {String} projectName
+   * @param {Number} listLimit
    */
-  static printListAuto(config, projectName) {
+  static printListAuto(config, projectName, listLimit = 5) {
     const { length } = Object.keys(config);
 
-    if (length > 5) {
+    if (listLimit < 0 || length > listLimit) {
       Util.printListCommaSeparated(config, projectName);
     } else {
       Util.printListAsTree(config, projectName);
