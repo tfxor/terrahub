@@ -75,6 +75,18 @@ class JitHelper {
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
+    if (!transformedConfig.template.hasOwnProperty('variable') &&
+        transformedConfig.template.hasOwnProperty('tfvars')) {
+      let name = 'variable.tf';
+      let data = {'variable': {}};
+      Object.keys(transformedConfig.template['tfvars']).map(it => {
+        data['variable'][it] = {'type': 'map'};
+        console.log(transformedConfig.template['tfvars'][it]);
+      });
+      
+      promises.push(fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 }));
+    }
+
     const src = path.join(config.project.root, config.root);
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
