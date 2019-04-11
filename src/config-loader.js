@@ -255,9 +255,8 @@ class ConfigLoader {
           throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
         }
 
-        config.mapping.forEach((dep, index) => {
-          config.mapping[index] = path.join(componentPath, dep);
-        });
+        config.mapping.push('.');
+        config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
       }
 
       if (config.hasOwnProperty('env')) {
