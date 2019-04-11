@@ -17,7 +17,7 @@ class TerraformCommand extends AbstractCommand {
    * (post configure action)
    */
   initialize() {
-    this    
+    this
       .addOption('include', 'i', 'List of components to include (comma separated values)', Array, [])
       .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
       .addOption('include-regex', 'I', 'List of components to include (regex search)', Array, [])
