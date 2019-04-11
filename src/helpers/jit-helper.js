@@ -1,7 +1,7 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
