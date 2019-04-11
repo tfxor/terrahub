@@ -3,7 +3,7 @@
 const path = require('path');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
-const { config, cfgPath } = require('../parameters');
+const { cfgPath } = require('../parameters');
 const { yesNoQuestion } = require('../helpers/util');
 
 class ConfigureCommand extends TerraformCommand {
@@ -57,8 +57,7 @@ class ConfigureCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
-    if ([this.getOption('include'), this.getOption('exclude'),
-      this.getOption('exclude-regex'), this.getOption('include-regex')].some(it => it.length)) {
+    if (this._isComponentTarget()) {
       const configs = this.getConfig();
 
       Object.keys(configs).forEach(key => {
@@ -86,7 +85,7 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object}
+   * @return {Object} // no return, maybe {void}
    * @private
    */
   _deleteFromConfig(string, content) {
@@ -95,7 +94,7 @@ class ConfigureCommand extends TerraformCommand {
     let destination = content;
 
     keys.forEach((it, index) => {
-      if (destination[it] && delete[it].hasOwnProperty(it)) {
+      if (destination[it] && delete [it].hasOwnProperty(it)) {
         destination = destination[it];
       } else {
         throw new Error(`The given key doesn't exist in config: ${keys.slice(0, index + 1).join('.')}`);
@@ -132,7 +131,7 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object}
+   * @return {Object} // the same {void}
    * @private
    */
   _updateConfig(string, content) {
@@ -217,8 +216,46 @@ class ConfigureCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion(`Do you want to perform delete action on given component ${this.getOption('config')} (y/N)? `);
+      const global = this.getOption('global');
+      const projectName = this.getProjectConfig().name;
+      let configDirectory;
+
+      if (!global) {
+        configDirectory = this._getTargetName(this.getOption('var-file'));
+      } else {
+        configDirectory = `global|${projectName}`;
+      }
+
+      return yesNoQuestion(`Do you want to delete from (${configDirectory}) '.terrahub.yml' config value associated with ${this.getOption('config')} (y/N)?`);
     }
+  }
+
+  /**
+   * @return {Boolean}
+   * @private
+   */
+  _isComponentTarget() {
+    return ['include', 'exclude', 'exclude-regex', 'include-regex'].some(it => this.getOption(it).length);
+  }
+
+  /**
+   * @param {Array} componentName
+   * @return {String}
+   * @private
+   */
+  _getTargetName(componentName) {
+    const configs = this.getConfig();
+
+    if (Array.isArray(componentName) && componentName.length) {
+      const id = Object.keys(configs).find(key => configs[key].name === componentName.toString());
+      if (!id) {
+        throw new Error(`Component with name ${componentName}, not found in ${this.getProjectConfig().name}`);
+      }
+
+      return configs[id].name;
+    }
+
+    return Object.keys(configs).map(key => configs[key].name).sort().join(', ');
   }
 }
 
