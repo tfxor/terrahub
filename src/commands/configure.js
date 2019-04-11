@@ -47,7 +47,7 @@ class ConfigureCommand extends TerraformCommand {
    * @private
    */
   _runAction(global, data, configAction) {
-    if (global === true) {
+    if (global) {
       const content = ConfigLoader.readConfig(cfgPath);
 
       data.forEach(it => this[configAction](it, content));
@@ -85,7 +85,6 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object} // no return, maybe {void}
    * @private
    */
   _deleteFromConfig(string, content) {
@@ -131,7 +130,6 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object} // the same {void}
    * @private
    */
   _updateConfig(string, content) {
@@ -217,16 +215,20 @@ class ConfigureCommand extends TerraformCommand {
       return Promise.resolve(true);
     } else {
       const global = this.getOption('global');
-      const projectName = this.getProjectConfig().name;
       let configDirectory;
 
-      if (!global) {
-        configDirectory = this._getTargetName(this.getOption('var-file'));
+      if (global) {
+        configDirectory = 'global';
+      } else if (this._isComponentTarget()) {
+        const config = this.getConfigObject();
+        const components = this.buildComponentList(config);
+
+        configDirectory = `${components.map(it => `\`${it}\``).join(', ')} component${components.length > 1 ? 's' : ''}`;
       } else {
-        configDirectory = `global|${projectName}`;
+        configDirectory = `\`${this.getProjectConfig().name}\` project`;
       }
 
-      return yesNoQuestion(`Do you want to delete from (${configDirectory}) '.terrahub.yml' config value associated with ${this.getOption('config')} (y/N)?`);
+      return yesNoQuestion(`Do you want to delete from ${configDirectory} terrahub config value associated with ${this.getOption('config')} (y/N)?`);
     }
   }
 
@@ -236,26 +238,6 @@ class ConfigureCommand extends TerraformCommand {
    */
   _isComponentTarget() {
     return ['include', 'exclude', 'exclude-regex', 'include-regex'].some(it => this.getOption(it).length);
-  }
-
-  /**
-   * @param {Array} componentName
-   * @return {String}
-   * @private
-   */
-  _getTargetName(componentName) {
-    const configs = this.getConfig();
-
-    if (Array.isArray(componentName) && componentName.length) {
-      const id = Object.keys(configs).find(key => configs[key].name === componentName.toString());
-      if (!id) {
-        throw new Error(`Component with name ${componentName}, not found in ${this.getProjectConfig().name}`);
-      }
-
-      return configs[id].name;
-    }
-
-    return Object.keys(configs).map(key => configs[key].name).sort().join(', ');
   }
 }
 

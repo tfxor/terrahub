@@ -1,6 +1,6 @@
 'use strict';
 
- const Util = require('./helpers/util');
+const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
@@ -357,7 +357,7 @@ class TerraformCommand extends AbstractCommand {
     color[hash] = Dictionary.COLOR.GRAY;
     path.push(hash);
 
-    for (const key in dependsOn) {
+    Object.keys(dependsOn).forEach(key => {
       if (color[key] === Dictionary.COLOR.WHITE) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
@@ -369,7 +369,7 @@ class TerraformCommand extends AbstractCommand {
 
         return true;
       }
-    }
+    });
 
     color[hash] = Dictionary.COLOR.BLACK;
     path.pop();
@@ -477,6 +477,15 @@ class TerraformCommand extends AbstractCommand {
     const names = Object.keys(cfg).map(hash => cfg[hash].name);
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
+  }
+
+  /**
+   * 
+   * @param {Object} config 
+   * @return {String[]}
+   */
+  buildComponentList(config) {
+    return Object.keys(config).map(key => config[key].name);
   }
 }
 
