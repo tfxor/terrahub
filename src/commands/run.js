@@ -139,7 +139,7 @@ class RunCommand extends TerraformCommand {
    * @private
    */
   get _isApprovementRequired() {
-    return this.getOption('apply') || this.getOption('destroy');
+    return ['apply', 'destroy'].some(it => this.getOption(it));
   }
 }
 

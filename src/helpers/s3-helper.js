@@ -20,7 +20,7 @@ class S3Helper {
    * @param {String[]} exclude
    * @return {Promise}
    */
-  uploadDirectory(dirPath, bucketName, s3Path , { exclude = [] } = {}) {
+  uploadDirectory(dirPath, bucketName, s3Path, { exclude = [] } = {}) {
     return globPromise('**', {
       cwd: dirPath,
       dot: true,

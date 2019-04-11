@@ -77,14 +77,15 @@ class Util {
   /**
    * @param {String} srcFile
    * @param {Object} vars
-   * @param {*} outFile
+   * @param {String} outFile
    * @returns {Promise}
    */
-  static renderTwig(srcFile, vars, outFile = false) {
+  static renderTwig(srcFile, vars, outFile = null) {
     return new Promise((resolve, reject) => {
       if (!fs.existsSync(srcFile)) {
         return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
       }
+
       Twig.renderFile(srcFile, vars, (err, data) => {
         if (err) {
           return reject(err);
@@ -92,9 +93,7 @@ class Util {
         if (!outFile) {
           return resolve(data);
         }
-        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => {
-          return err ? reject(err) : resolve();
-        });
+        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => err ? reject(err) : resolve());
       });
     });
   }
