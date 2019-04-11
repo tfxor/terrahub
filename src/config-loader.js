@@ -251,7 +251,7 @@ class ConfigLoader {
       }
 
       if (config.hasOwnProperty('mapping')) {
-        if (!(config.mapping instanceof Array)) {
+        if (!Array.isArray(config.mapping)) {
           throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
         }
 
