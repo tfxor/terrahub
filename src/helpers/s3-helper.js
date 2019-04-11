@@ -46,6 +46,17 @@ class S3Helper {
 
   /**
    * @param {String} bucketName
+   * @param {{ localPath: String, s3Path: String }[]} pathMap
+   * @return {Promise}
+   */
+  uploadFiles(bucketName, pathMap) {
+    return Promise.all(pathMap.map(path =>
+      this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))
+    ));
+  }
+
+  /**
+   * @param {String} bucketName
    * @param {String} prefix
    * @param {Boolean} returnChunks
    * @return {Promise<String[]|Array[]>}
