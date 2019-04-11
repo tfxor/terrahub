@@ -102,10 +102,7 @@ class CloudDistributor extends AbstractDistributor {
 
           _distributeConfigs();
         });
-      })
-      // delete directory from s3 in any case
-      .then(() => s3Helper.deleteDirectoryFromS3(bucketName, s3directory))
-      .catch(error => s3Helper.deleteDirectoryFromS3(bucketName, s3directory).then(() => Promise.reject(error)));
+      });
   }
 
   /**
