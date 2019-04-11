@@ -1,6 +1,6 @@
 'use strict';
 
- const Util = require('./helpers/util');
+const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
@@ -474,6 +474,15 @@ class TerraformCommand extends AbstractCommand {
     const names = Object.keys(cfg).map(hash => cfg[hash].name);
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
+  }
+
+  /**
+   * 
+   * @param {Object} config 
+   * @return {String[]}
+   */
+  buildComponentList(config) {
+    return Object.keys(config).map(key => config[key].name);
   }
 }
 
