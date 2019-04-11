@@ -1,9 +1,9 @@
 'use strict';
 
 const path = require('path');
+const { cfgPath } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
-const { cfgPath } = require('../parameters');
 const { yesNoQuestion } = require('../helpers/util');
 
 class ConfigureCommand extends TerraformCommand {

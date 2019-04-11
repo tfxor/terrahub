@@ -354,7 +354,7 @@ class TerraformCommand extends AbstractCommand {
     color[hash] = Dictionary.COLOR.GRAY;
     path.push(hash);
 
-    Object.keys(dependsOn).forEach(key => {
+    for (const key in dependsOn) {
       if (color[key] === Dictionary.COLOR.WHITE) {
         if (this._depthFirstSearch(key, path, config, color)) {
           return true;
@@ -366,7 +366,7 @@ class TerraformCommand extends AbstractCommand {
 
         return true;
       }
-    });
+    }
 
     color[hash] = Dictionary.COLOR.BLACK;
     path.pop();
