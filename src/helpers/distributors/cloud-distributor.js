@@ -1,7 +1,10 @@
 'use strict';
 
+const fse = require('fs-extra');
+const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
+const { globPromise } = require('../util');
 const { fetch, config } = require('../../parameters');
 const AbstractDistributor = require('./abstract-distributor');
 
@@ -11,6 +14,9 @@ class CloudDistributor extends AbstractDistributor {
    */
   constructor(configObject) {
     super(configObject);
+
+    const firstKey = Object.keys(this.config)[0];
+    this._projectRoot = this.config[firstKey].project.root;
 
     this._errors = [];
   }
@@ -23,22 +29,23 @@ class CloudDistributor extends AbstractDistributor {
    */
   runActions(actions, { dependencyDirection = null } = {}) {
     let inProgress = 0;
+
     const s3Helper = new S3Helper();
-    const bucketName = S3Helper.METADATA_BUCKET;
     const s3directory = config.api.replace('api', 'projects');
 
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
 
-    return this._fetchAccountId()
-      .then(accountId => {
+    return Promise.all([this._fetchAccountId(), this._buildFileList()])
+      .then(([accountId, files]) => {
         logger.warn('Uploading project to S3.');
 
-        return s3Helper.uploadDirectory(
-          this._getProjectPath(),
-          bucketName,
-          [s3directory, accountId, this.THUB_RUN_ID].join('/'),
-          { exclude: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'] }
-        );
+        const s3Prefix = [s3directory, accountId, this.THUB_RUN_ID].join('/');
+        const pathMap = files.map(it => ({
+          localPath: join(this._projectRoot, it),
+          s3Path: [s3Prefix, it].join('/')
+        }));
+
+        return s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
       })
       .then(() => {
         logger.warn('Directory uploaded to S3.');
@@ -105,14 +112,42 @@ class CloudDistributor extends AbstractDistributor {
       });
   }
 
+
   /**
-   * @return {String}
+   * @description Returns the current execution file mapping
+   * @return {String[]}
    * @private
    */
-  _getProjectPath() {
-    const key = Object.keys(this.config)[0];
+  _getExecutionMapping() {
+    const componentMappings = [].concat(...Object.keys(this.config).map(hash => this.config[hash].mapping));
 
-    return this.config[key].project.root;
+    return [...new Set(componentMappings)];
+  }
+
+  /**
+   * @description Returns an array of files' paths required for the current execution
+   * @return {Promise<String[]>}
+   * @private
+   */
+  _buildFileList() {
+    const mapping = this._getExecutionMapping();
+
+    return Promise.all(mapping.map(path => fse.stat(path).then(stats => {
+      if (stats.isFile()) {
+        return [path];
+      }
+
+      if (stats.isDirectory()) {
+        return globPromise(join(path, '**'), {
+          cwd: this._projectRoot,
+          dot: true,
+          ignore: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'],
+          nodir: true
+        });
+      }
+
+      return [];
+    }))).then(results => [].concat(...results));
   }
 
   /**
