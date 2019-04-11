@@ -112,7 +112,6 @@ class CloudDistributor extends AbstractDistributor {
       });
   }
 
-
   /**
    * @description Returns the current execution file mapping
    * @return {String[]}
