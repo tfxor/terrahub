@@ -1,9 +1,7 @@
 'use strict';
 
 const fse = require('fs-extra');
-const Bluebird = require('bluebird');
 const path = require('path');
-const fs = Bluebird.promisifyAll(require('fs'));
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -37,7 +35,6 @@ class JitHelper {
         }
       }]);
     }
-    
     return config;
   }
 
@@ -80,16 +77,15 @@ class JitHelper {
 
     return fse.ensureDir(tmpPath)
       .then(() => {
-        return fs.readdirAsync( src ).then( files => {
+        return fse.readdir( src ).then( files => {
           return files.filter(src => !regEx.test(src));
         }).then( files => {
-          files.forEach( file => {
-            fse.ensureSymlink(src + path.sep + file, tmpPath + path.sep + file)
-            .catch(() => {});
-          })
+          return Promise.all(files.map(file => {
+            return fse.ensureSymlink(src + path.sep + file, tmpPath + path.sep + file).catch(() => {});
+          }))
         })
         .then(() => Promise.all(promises))
-        .then(() => Promise.resolve(transformedConfig))
+        .then(() => transformedConfig)
       })
       .catch(err => {
         throw new Error(err.toString());

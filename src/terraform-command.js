@@ -17,15 +17,15 @@ class TerraformCommand extends AbstractCommand {
    * (post configure action)
    */
   initialize() {
-    this
-      .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
+    this    
       .addOption('include', 'i', 'List of components to include (comma separated values)', Array, [])
-      .addOption('exclude-regex', 'X', 'List of components to exclude (regex search)', Array, [])
+      .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
       .addOption('include-regex', 'I', 'List of components to include (regex search)', Array, [])
-      .addOption('input', 'q', 'Ask for input if necessary. Default is false.', Boolean, false)
+      .addOption('exclude-regex', 'X', 'List of components to exclude (regex search)', Array, [])
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+      .addOption('input', 'q', 'Ask for input if necessary. Default is false.', Boolean, false)
       .addOption('silent', 's', 'Runs the command silently (without any output)', Boolean, false)
     ;
   }

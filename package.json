@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.370.0",
-    "bluebird": "^3.5.4",
     "child-process-promise": "^2.2.1",
     "download": "^7.1.0",
     "fs-extra": "^7.0.1",
