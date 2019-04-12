@@ -35,7 +35,7 @@ class Metadata {
    */
   getRoot() {
     return this._cfg.isJit
-      ? homePath(jitPath, this._cfg.hash)
+      ? homePath(jitPath, this._cfg.name + "_" + this._cfg.project.code)
       : path.join(this._cfg.project.root, this._cfg.root);
   }
 

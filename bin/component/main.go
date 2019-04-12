@@ -150,7 +150,7 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 && strings.Index(file.Name(), ".tfplan") == -1 {
+		if !file.IsDir() && file.Name()[len(file.Name())-3:len(file.Name())] == ".tf" {
 			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
@@ -170,7 +170,7 @@ func ClearFolder(sourcePath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && (strings.Index(file.Name(), ".tf") > -1 || strings.Index(file.Name(), ".tfvars") > -1) {
-			deleteFile(sourcePath+file.Name())
+			deleteFile(sourcePath+"/"+file.Name())
 		}
 	}
 }
@@ -188,7 +188,7 @@ func TransferJson(sourcePath string, destinationPath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
-			copyFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
+			copyFile(sourcePath+"/"+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")

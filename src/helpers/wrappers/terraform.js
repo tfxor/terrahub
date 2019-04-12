@@ -68,7 +68,7 @@ class Terraform {
    */
   getRoot() {
     return this._config.isJit ?
-      homePath(jitPath, this._config.hash) :
+      homePath(jitPath, this._config.name + "_" + this._config.project.code) :
       path.join(this._config.project.root, this._config.root);
   }
 
