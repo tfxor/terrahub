@@ -1,7 +1,7 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -35,7 +35,6 @@ class JitHelper {
         }
       }]);
     }
-    
     return config;
   }
 
@@ -100,12 +99,10 @@ class JitHelper {
 
     return fse.ensureDir(tmpPath)
       .then(() => {
-        return fse.readdir( src ).then( files => {
-          return files.filter(src => !regEx.test(src));
-        }).then( files => {
-          return Promise.all(files.map(file => {
-            return fse.ensureSymlink(src + path.sep + file, tmpPath + path.sep + file).catch(() => {});
-          }))
+        return fse.readdir(src).then(files => {
+          return Promise.all(files.filter(src => !regEx.test(src)).map(file => {
+            return fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {});
+          }));
         })
         .then(() => Promise.all(promises))
         .then(() => transformedConfig)
