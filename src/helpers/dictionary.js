@@ -37,6 +37,17 @@ class Dictionary {
       BIDIRECTIONAL: 2
     };
   }
+
+  /**
+   * @return {{SPECIFIC: number, DEFAULT: number, EVERY: number}}
+   */
+  static get ENVIRONMENT() {
+    return {
+      DEFAULT: 0,
+      SPECIFIC: 1,
+      EVERY: 2
+    }
+  }
 }
 
 module.exports = Dictionary;
