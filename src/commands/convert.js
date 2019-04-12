@@ -7,6 +7,7 @@ const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
+const { buildTmpPath } = require('../helpers/jit-helper');
 const { binPath, jitPath, config } = require('../parameters');
 
 class ConvertCommand extends TerraformCommand {
@@ -172,11 +173,10 @@ class ConvertCommand extends TerraformCommand {
   static _saveComponent(config) {
     const configPath = ConvertCommand._buildComponentPath(config);
 
-    const tmpPath = homePath(jitPath);
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
-
-    return exec(`${join(componentBinPath, 'component')} -thub ${tmpPath} ${configPath} ${config.name}`);
+    
+    return exec(`${join(componentBinPath, 'component')} -thub ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
   /**
@@ -207,11 +207,10 @@ class ConvertCommand extends TerraformCommand {
   static _saveComponentJson(config) {
     const configPath = ConvertCommand._buildComponentPath(config);
 
-    const tmpPath = homePath(jitPath);
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
 
-    return exec(`${join(componentBinPath, 'component')} -json ${tmpPath} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, 'component')} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
   /**
