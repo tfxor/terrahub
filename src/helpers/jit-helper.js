@@ -67,8 +67,12 @@ class JitHelper {
           name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
           data = transformedConfig.template[it];
           break;
+        case 'remote_tfvars':
+          name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
+          data = transformedConfig.template[it];
+          break;
       }
-
+      process.exit();
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
