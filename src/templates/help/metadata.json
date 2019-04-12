@@ -21,6 +21,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -91,6 +97,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -235,6 +247,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -313,6 +331,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -383,6 +407,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -474,6 +504,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -538,6 +574,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -666,6 +708,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -738,6 +786,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -802,6 +856,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -897,6 +957,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -1001,6 +1067,12 @@
           "defaultValue": []
         },
         {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
+        },
+        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -1077,6 +1149,12 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
+        },
+        {
+          "name": "input",
+          "shortcut": "q",
+          "description": "Ask for input if necessary. Default is false.",
+          "defaultValue": false
         },
         {
           "name": "exclude",
