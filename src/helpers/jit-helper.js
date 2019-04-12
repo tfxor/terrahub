@@ -18,10 +18,6 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
-      if (!config.mapping.length) {
-        config.mapping.push(componentPath);
-      }
-
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
@@ -35,6 +31,7 @@ class JitHelper {
         }
       }]);
     }
+
     return config;
   }
 
