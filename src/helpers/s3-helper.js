@@ -14,26 +14,6 @@ class S3Helper {
   }
 
   /**
-   * @param {String} dirPath
-   * @param {String} bucketName
-   * @param {String} s3Path
-   * @param {String[]} exclude
-   * @return {Promise}
-   */
-  uploadDirectory(dirPath, bucketName, s3Path , { exclude = [] } = {}) {
-    return globPromise('**', {
-      cwd: dirPath,
-      dot: true,
-      ignore: exclude,
-      nodir: true
-    }).then(files =>
-      Promise.all(files.map(file =>
-        this.writeFile(bucketName, join(s3Path, file), fse.createReadStream(join(dirPath, file)))
-      ))
-    );
-  }
-
-  /**
    * Create s3 object
    * @param {String} bucketName
    * @param {String} objectKey
@@ -42,6 +22,17 @@ class S3Helper {
    */
   writeFile(bucketName, objectKey, body = '') {
     return this._s3.putObject({ Bucket: bucketName, Key: objectKey, Body: body }).promise();
+  }
+
+  /**
+   * @param {String} bucketName
+   * @param {{ localPath: String, s3Path: String }[]} pathMap
+   * @return {Promise}
+   */
+  uploadFiles(bucketName, pathMap) {
+    return Promise.all(pathMap.map(path =>
+      this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))
+    ));
   }
 
   /**
