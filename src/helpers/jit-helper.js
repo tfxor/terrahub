@@ -38,55 +38,53 @@ class JitHelper {
    */
   static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
-    const tmpPath = homePath(jitPath, transformedConfig.name + "_" + transformedConfig.project.code);
+    const tmpPath = JitHelper.buildTmpPath(config);
 
     if (!transformedConfig.isJit) {
       return Promise.resolve(config);
     }
 
-    const promises = Object.keys(transformedConfig.template).map(it => {
-      if (!transformedConfig.template[it]) {
-        return Promise.resolve();
-      }
+    const { template, cfgEnv } = transformedConfig;
 
+    const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
-      let data = { [it]: transformedConfig.template[it] };
+      let data = { [it]: template[it] };
 
       switch (it) {
         case 'resource':
           name = 'main.tf';
           break;
+
         case 'tfvars':
-          name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
-          data = transformedConfig.template[it];
+          name = path.join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
+          data = template[it];
           break;
       }
 
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
-    if (!transformedConfig.template.hasOwnProperty('variable') &&
-        transformedConfig.template.hasOwnProperty('tfvars')) {
-      let name = 'variable.tf';
-      let data = {'variable': {}};
-      Object.keys(transformedConfig.template['tfvars']).map(it => {
-        let type = typeof transformedConfig.template['tfvars'][it];
-        if (type == 'object') {
-          switch (Array.isArray(transformedConfig.template['tfvars'][it])) {
-            case false:
-              type = 'map';
-              break;
-            case true:
-              type = 'list';
-              break;
-          }
+    // generate "variable.tf" if it is not described in config
+    if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
+      const data = { variable: {} };
+
+      const { tfvars } = template;
+
+      Object.keys(tfvars).forEach(it => {
+        let type = typeof tfvars[it];
+
+        if (Array.isArray(tfvars[it])) {
+          type = 'list';
+        } else if (type === 'object') {
+          type = 'map';
         }
-        data['variable'][it] = {'type': type};
+
+        data.variable[it] = { type };
       });
-      
-      promises.push(fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 }));
+
+      promises.push(fse.outputJson(path.join(tmpPath, 'variable.tf'), data, { spaces: 2 }));
     }
-   
+
     const src = path.join(config.project.root, config.root);
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
@@ -108,11 +106,11 @@ class JitHelper {
   }
 
   /**
-   * @param {String} config
+   * @param {Object} config
    * @return {String}
    */
   static buildTmpPath(config) {
-    return homePath(jitPath, config.name + "_" + config.project.code);
+    return homePath(jitPath, `${config.name}_${config.project.code}`);
   }
 }
 
