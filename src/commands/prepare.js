@@ -21,7 +21,7 @@ class PrepareCommand extends TerraformCommand {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
 
-    if (!this.getOption('silent')) {      
+    if (!this.getOption('silent')) {
       const firstKey = Object.keys(config)[0];
 
       this.logger.log(config[firstKey].name + "_" + config[firstKey].project.code);
