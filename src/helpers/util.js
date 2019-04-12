@@ -77,14 +77,15 @@ class Util {
   /**
    * @param {String} srcFile
    * @param {Object} vars
-   * @param {*} outFile
+   * @param {String} outFile
    * @returns {Promise}
    */
-  static renderTwig(srcFile, vars, outFile = false) {
+  static renderTwig(srcFile, vars, outFile = null) {
     return new Promise((resolve, reject) => {
       if (!fs.existsSync(srcFile)) {
         return reject(new Error(`Twig template file by path ${srcFile} doesn't exist`));
       }
+
       Twig.renderFile(srcFile, vars, (err, data) => {
         if (err) {
           return reject(err);
@@ -92,9 +93,7 @@ class Util {
         if (!outFile) {
           return resolve(data);
         }
-        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => {
-          return err ? reject(err) : resolve();
-        });
+        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => err ? reject(err) : resolve());
       });
     });
   }
@@ -299,10 +298,10 @@ class Util {
   static printListAuto(config, projectName, listLimit = 5) {
     const { length } = Object.keys(config);
 
-    if (listLimit < 0 || length > listLimit) {
-      Util.printListCommaSeparated(config, projectName);
-    } else {
+    if (listLimit < 0 || length < listLimit) {
       Util.printListAsTree(config, projectName);
+    } else {
+      Util.printListCommaSeparated(config, projectName);
     }
   }
 
@@ -314,33 +313,47 @@ class Util {
      * @param {String} command
      * @return {String}
      */
-    function exec(command) {
-      return childProcess.execSync(command, { encoding: 'utf8' });
-    }
+    const exec = command => childProcess.execSync(command, { encoding: 'utf8' });
 
     let amount;
     let platformCheck = platform();
 
-    if (platformCheck === 'linux') {
-      const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
-      amount = parseInt(output.trim(), 10);
-    } else if (platformCheck === 'darwin') {
-      const output = exec('sysctl -n hw.physicalcpu_max');
-      amount = parseInt(output.trim(), 10);
-    } else if (platformCheck === 'windows') {
-      const output = exec('WMIC CPU Get NumberOfCores');
-      amount = output.split(EOL)
-        .map(line => parseInt(line))
-        .filter(value => !isNaN(value))
-        .reduce((sum, number) => (sum + number), 0);
-    } else {
-      const cores = cpus().filter(function (cpu, index) {
-        const hasHyperthreading = cpu.model.includes('Intel');
-        const isOdd = index % 2 === 1;
-        return !hasHyperthreading || isOdd;
-      });
-      amount = cores.length;
+    switch (platformCheck) {
+      case 'win32': {
+        const output = exec('WMIC CPU Get NumberOfCores');
+
+        amount = output.split(EOL)
+          .map(line => parseInt(line))
+          .filter(value => !isNaN(value))
+          .reduce((sum, number) => (sum + number), 0);
+        break;
+      }
+
+      case 'linux': {
+        const output = exec('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l');
+        amount = parseInt(output.trim(), 10);
+        break;
+      }
+
+      case 'darwin': {
+        const output = exec('sysctl -n hw.physicalcpu_max');
+        amount = parseInt(output.trim(), 10);
+        break;
+      }
+
+      default: {
+        const cores = cpus().filter((cpu, index) => {
+          const hasHyperThreading = cpu.model.includes('Intel');
+          const isOdd = index % 2 === 1;
+
+          return !hasHyperThreading || isOdd;
+        });
+
+        amount = cores.length;
+        break;
+      }
     }
+
     return amount;
   }
 
