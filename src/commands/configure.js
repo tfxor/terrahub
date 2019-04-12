@@ -1,9 +1,9 @@
 'use strict';
 
 const path = require('path');
+const { cfgPath } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
-const { config, cfgPath } = require('../parameters');
 const { yesNoQuestion } = require('../helpers/util');
 
 class ConfigureCommand extends TerraformCommand {
@@ -47,7 +47,7 @@ class ConfigureCommand extends TerraformCommand {
    * @private
    */
   _runAction(global, data, configAction) {
-    if (global === true) {
+    if (global) {
       const content = ConfigLoader.readConfig(cfgPath);
 
       data.forEach(it => this[configAction](it, content));
@@ -57,8 +57,7 @@ class ConfigureCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
-    if ([this.getOption('include'), this.getOption('exclude'),
-      this.getOption('exclude-regex'), this.getOption('include-regex')].some(it => it.length)) {
+    if (this._isComponentTarget()) {
       const configs = this.getConfig();
 
       Object.keys(configs).forEach(key => {
@@ -86,7 +85,6 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object}
    * @private
    */
   _deleteFromConfig(string, content) {
@@ -95,7 +93,7 @@ class ConfigureCommand extends TerraformCommand {
     let destination = content;
 
     keys.forEach((it, index) => {
-      if (destination[it] && delete[it].hasOwnProperty(it)) {
+      if (destination[it] && delete [it].hasOwnProperty(it)) {
         destination = destination[it];
       } else {
         throw new Error(`The given key doesn't exist in config: ${keys.slice(0, index + 1).join('.')}`);
@@ -132,7 +130,6 @@ class ConfigureCommand extends TerraformCommand {
   /**
    * @param {String} string
    * @param {Object} content
-   * @return {Object}
    * @private
    */
   _updateConfig(string, content) {
@@ -217,8 +214,30 @@ class ConfigureCommand extends TerraformCommand {
     if (this.getOption('auto-approve')) {
       return Promise.resolve(true);
     } else {
-      return yesNoQuestion(`Do you want to perform delete action on given component ${this.getOption('config')} (y/N)? `);
+      const global = this.getOption('global');
+      let configDirectory;
+
+      if (global) {
+        configDirectory = 'global';
+      } else if (this._isComponentTarget()) {
+        const config = this.getConfigObject();
+        const components = this.buildComponentList(config);
+
+        configDirectory = `${components.map(it => `\`${it}\``).join(', ')} component${components.length > 1 ? 's' : ''}`;
+      } else {
+        configDirectory = `\`${this.getProjectConfig().name}\` project`;
+      }
+
+      return yesNoQuestion(`Do you want to delete from ${configDirectory} terrahub config value associated with ${this.getOption('config')} (y/N)?`);
     }
+  }
+
+  /**
+   * @return {Boolean}
+   * @private
+   */
+  _isComponentTarget() {
+    return ['include', 'exclude', 'exclude-regex', 'include-regex'].some(it => this.getOption(it).length);
   }
 }
 

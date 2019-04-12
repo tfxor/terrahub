@@ -80,13 +80,14 @@ class AbstractCommand {
 
   /**
    * @param {String} name
-   * @return {Promise}
+   * @return {String}
    * @public
    */
   getConfigPath(name) {
     const config = this.getConfig();
     const key = Object.keys(config).find(it => config[it].name === name);
-    return config[key] ? path.join(config[key].project.root, config[key].root) : ''; 
+
+    return config[key] ? path.join(config[key].project.root, config[key].root) : null;
   }
 
   /**

@@ -61,10 +61,10 @@ class ComponentCommand extends AbstractCommand {
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
-          return Promise.reject('Action aborted');
-        } else {
-          return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
+          throw new Error('Action aborted');
         }
+
+        return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
@@ -183,10 +183,10 @@ class ComponentCommand extends AbstractCommand {
 
     return Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
-        
+
         const twigReg = /\.twig$/;
         const outFile = path.join(directory, file);
-        const srcFile = path.join(templatePath, file);        
+        const srcFile = path.join(templatePath, file);
         return twigReg.test(srcFile)
           ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
@@ -194,13 +194,13 @@ class ComponentCommand extends AbstractCommand {
     ).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
       const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-      let data = '';      
+      let data = '';
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
       return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => {
-      const outFile = path.join(directory, this._defaultFileName());      
+      const outFile = path.join(directory, this._defaultFileName());
       return renderTwig(outFile, { name: name, code: code }, outFile);
     }).then(() => 'Done');
   }
