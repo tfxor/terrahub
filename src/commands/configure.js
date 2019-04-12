@@ -223,12 +223,14 @@ class ConfigureCommand extends TerraformCommand {
         const config = this.getConfigObject();
         const components = this.buildComponentList(config);
 
-        configDirectory = `${components.map(it => `\`${it}\``).join(', ')} component${components.length > 1 ? 's' : ''}`;
+        configDirectory = components.map(it => `\`${it}\``).join(', ') +
+          `component${components.length > 1 ? 's' : ''}`;
       } else {
         configDirectory = `\`${this.getProjectConfig().name}\` project`;
       }
 
-      return yesNoQuestion(`Do you want to delete from ${configDirectory} terrahub config value associated with ${this.getOption('config')} (y/N)?`);
+      return yesNoQuestion(`Do you want to delete from ${configDirectory}` +
+        `terrahub config value associated with \`${this.getOption('config')}\` (y/N)?`);
     }
   }
 
