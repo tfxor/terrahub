@@ -45,7 +45,6 @@ class JitHelper {
     }
 
     const { template, cfgEnv } = transformedConfig;
-    const tfvarsDirectory = cfgEnv === 'default' ? '' : 'workspace';
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -57,7 +56,7 @@ class JitHelper {
           break;
 
         case 'tfvars':
-          name = path.join(tfvarsDirectory, `${cfgEnv}.tfvars`);
+          name = path.join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
           data = template[it];
           break;
       }
