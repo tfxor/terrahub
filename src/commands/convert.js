@@ -175,7 +175,7 @@ class ConvertCommand extends TerraformCommand {
 
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
-    
+
     return exec(`${join(componentBinPath, 'component')} -thub ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
