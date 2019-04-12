@@ -68,13 +68,14 @@ class JitHelper {
           data = transformedConfig.template[it];
           break;
         case 'remote_tfvars':
+          console.log(transformedConfig);
           name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
           data = transformedConfig.template[it];
           break;
       }
-      process.exit();
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
+    process.exit();
 
     if (!transformedConfig.template.hasOwnProperty('variable') &&
         transformedConfig.template.hasOwnProperty('tfvars')) {
