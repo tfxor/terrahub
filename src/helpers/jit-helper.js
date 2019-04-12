@@ -38,7 +38,7 @@ class JitHelper {
    */
   static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
-    const tmpPath = homePath(jitPath, transformedConfig.name + "_" + transformedConfig.project.code);
+    const tmpPath = JitHelper.buildTmpPath(config);
 
     if (!transformedConfig.isJit) {
       return Promise.resolve(config);
@@ -107,11 +107,11 @@ class JitHelper {
   }
 
   /**
-   * @param {String} config
+   * @param {Object} config
    * @return {String}
    */
   static buildTmpPath(config) {
-    return homePath(jitPath, config.name + "_" + config.project.code);
+    return homePath(jitPath, `${config.name}_${config.project.code}`);
   }
 }
 
