@@ -1,5 +1,6 @@
 'use strict';
 
+const JitHelper = require('../helpers/jit-helper');
 const TerraformCommand = require('../terraform-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
 
@@ -20,16 +21,15 @@ class PrepareCommand extends TerraformCommand {
   run() {
     const config = this.getConfigObject();
     const distributor = new Distributor(config);
+    const silent = this.getOption('silent');
 
-    if (!this.getOption('silent')) {      
+    if (!silent) {
       const firstKey = Object.keys(config)[0];
 
-      this.logger.log(config[firstKey].name + "_" + config[firstKey].project.code);
+      this.logger.log(JitHelper.buildTmpPath(config[firstKey]));
     }
 
-    return distributor.runActions(['prepare'], {
-      silent: this.getOption('silent')
-    }).then(() => Promise.resolve('Done'));
+    return distributor.runActions(['prepare'], { silent }).then(() => Promise.resolve('Done'));
   }
 }
 
