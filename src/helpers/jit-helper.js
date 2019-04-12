@@ -3,7 +3,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const { jitPath } = require('../parameters');
-const { homePath, extend } = require('./util');
+const { homePath, extend, sliceObject } = require('./util');
 
 class JitHelper {
   /**
@@ -24,11 +24,7 @@ class JitHelper {
           name: config.name,
           path: componentPath
         },
-        project: {
-          path: config.project.root,
-          name: config.project.name,
-          code: config.project.code
-        }
+        project: sliceObject(config.project, ['path', 'name', 'code'])
       }]);
     }
 
@@ -75,13 +71,15 @@ class JitHelper {
     return fse.ensureDir(tmpPath)
       .then(() => {
         return fse.readdir(src).then(files => {
-          return Promise.all(files.filter(src => !regEx.test(src)).map(file => {
+          const nonTerrahubFiles = files.filter(src => !regEx.test(src));
+
+          return Promise.all(nonTerrahubFiles.map(file => {
             return fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {});
           }));
-        })
-        .then(() => Promise.all(promises))
-        .then(() => transformedConfig)
+        });
       })
+      .then(() => Promise.all(promises))
+      .then(() => transformedConfig)
       .catch(err => {
         throw new Error(err.toString());
       });
