@@ -298,10 +298,10 @@ class Util {
   static printListAuto(config, projectName, listLimit = 5) {
     const { length } = Object.keys(config);
 
-    if (listLimit < 0 || length > listLimit) {
-      Util.printListCommaSeparated(config, projectName);
-    } else {
+    if (listLimit < 0 || length < listLimit) {
       Util.printListAsTree(config, projectName);
+    } else {
+      Util.printListCommaSeparated(config, projectName);
     }
   }
 
