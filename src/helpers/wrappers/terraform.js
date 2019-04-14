@@ -185,7 +185,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+    return this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
