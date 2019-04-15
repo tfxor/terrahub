@@ -20,7 +20,8 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
       .addOption('template', 't', 'Template name (e.g. aws_ami, google_project)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
+      .addOption('depends-on', 'o', 'List of paths to components that depend on current component' +
+        ' (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;
@@ -58,7 +59,6 @@ class ComponentCommand extends AbstractCommand {
 
     if (this._delete) {
       const inexistentComponents = names.filter(it => !this.getConfigPath(it));
-
       if (inexistentComponents.length === names.length) {
         throw new Error(`Terrahub ${names.length > 1 ?
           `components with provided names: ` : `component with provided name: `}` +
@@ -68,20 +68,17 @@ class ComponentCommand extends AbstractCommand {
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
       const existentComponents = names.filter(it => !inexistentComponents.includes(it));
+      if (inexistentComponents) {
+        this.logger.warn(`Terrahub ${inexistentComponents.length > 1
+          ? `components with provided names: ` : `component with provided name: `}` +
+          `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
+      }
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {
-          return Promise.all(existentComponents.map(it => this._deleteComponent(it))).then(() => {
-            if (inexistentComponents.length) {
-              this.logger.warn(`Terrahub ${inexistentComponents.length > 1
-                ? `components with provided names: ` : `component with provided name: `}` +
-                `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
-            }
-
-            return 'Done';
-          });
+          return Promise.all(existentComponents.map(it => this._deleteComponent(it))).then(() => 'Done');
         }
       });
     } else if (this._template) {
