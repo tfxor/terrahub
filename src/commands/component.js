@@ -72,8 +72,8 @@ class ComponentCommand extends AbstractCommand {
           return Promise.reject('Action aborted');
         }
 
-        return Promise.all(names.map(it => this._deleteComponent(it))).then((it) =>
-          `Done for terrahub component${it.length > 1 ? 's' : ''}: '${it.join(`','`)}'`);
+        return Promise.all(names.map(it => this._deleteComponent(it)))
+          .then((it) => `'${it.join(`','`)}' Terrahub component${it.length > 1 ? 's' : ''} successfully deleted`);
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
