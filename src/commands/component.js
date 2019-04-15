@@ -59,27 +59,21 @@ class ComponentCommand extends AbstractCommand {
 
     if (this._delete) {
       const inexistentComponents = names.filter(it => !this.getConfigPath(it));
-      if (inexistentComponents.length === names.length) {
+      if (inexistentComponents.length) {
         throw new Error(`Terrahub ${names.length > 1 ?
           `components with provided names: ` : `component with provided name: `}` +
-          `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
+          `'${inexistentComponents.join(`','`)}' doesn't exist`);
       }
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
-      const existentComponents = names.filter(it => !inexistentComponents.includes(it));
-      if (inexistentComponents) {
-        this.logger.warn(`Terrahub ${inexistentComponents.length > 1
-          ? `components with provided names: ` : `component with provided name: `}` +
-          `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
-      }
-
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
-        } else {
-          return Promise.all(existentComponents.map(it => this._deleteComponent(it))).then(() => 'Done');
         }
+
+        return Promise.all(names.map(it => this._deleteComponent(it))).then((it) =>
+          `Done for terrahub component${it.length > 1 ? 's' : ''}: '${it.join(`','`)}'`);
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
@@ -103,11 +97,7 @@ class ComponentCommand extends AbstractCommand {
     const configPath = this.getConfigPath(name);
     const configFiles = this.listAllEnvConfig(configPath);
 
-    return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
-      this.logger.info(`Done for terrahub component: '${name}'`);
-
-      return Promise.resolve();
-    });
+    return Promise.all(configFiles.map(it => fse.remove(it))).then(() => Promise.resolve(name));
   }
 
   /**
