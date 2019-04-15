@@ -57,26 +57,27 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
-      const componentExist = () => names.some(it => this.getConfigPath(it) !== '');
-      if (!componentExist()) {
+      const inexistentComponents = names.filter(it => !this.getConfigPath(it));
+
+      if (inexistentComponents.length === names.length) {
         throw new Error(`Terrahub ${names.length > 1 ?
           `components with provided names: ` : `component with provided name: `}` +
-          `${names.map(it => `'${it}'`).join(',')} doesn't exist`);
+          `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
       }
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
+
+      const existentComponents = names.filter(it => !inexistentComponents.includes(it));
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
         } else {
-          return Promise.all(names.map(it => this._deleteComponent(it))).then((errNames) => {
-            const names = errNames.filter(it => !!it);
-
-            if (names.length) {
-              this.logger.warn(`Terrahub ${names.length > 1
+          return Promise.all(existentComponents.map(it => this._deleteComponent(it))).then(() => {
+            if (inexistentComponents.length) {
+              this.logger.warn(`Terrahub ${inexistentComponents.length > 1
                 ? `components with provided names: ` : `component with provided name: `}` +
-                `${names.map(it => `'${it}'`).join(',')} doesn't exist`);
+                `${inexistentComponents.map(it => `'${it}'`).join(',')} doesn't exist`);
             }
 
             return 'Done';
@@ -103,17 +104,13 @@ class ComponentCommand extends AbstractCommand {
    */
   _deleteComponent(name) {
     const configPath = this.getConfigPath(name);
-    if (configPath) {
-      const configFiles = this.listAllEnvConfig(configPath);
+    const configFiles = this.listAllEnvConfig(configPath);
 
-      return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
-        this.logger.info(`Done for terrahub component: '${name}'`);
+    return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
+      this.logger.info(`Done for terrahub component: '${name}'`);
 
-        return Promise.resolve();
-      });
-    }
-
-    return Promise.resolve(name);
+      return Promise.resolve();
+    });
   }
 
   /**
