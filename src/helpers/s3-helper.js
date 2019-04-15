@@ -2,8 +2,6 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
-const { join } = require('path');
-const { globPromise } = require('./util');
 
 class S3Helper {
   /**

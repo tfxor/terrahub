@@ -1,8 +1,10 @@
 'use strict';
 
 const path = require('path');
+const util = require('./util');
 const fse = require('fs-extra');
 const { jitPath } = require('../parameters');
+const { exec } = require('child-process-promise');
 const { homePath, extend, sliceObject } = require('./util');
 
 class JitHelper {
@@ -46,6 +48,16 @@ class JitHelper {
 
     const { template, cfgEnv } = transformedConfig;
 
+    // add "tfvars" if it is not described in config
+    if (!template.hasOwnProperty('tfvars') && template.hasOwnProperty('remote_tfvars')) {
+      const { remote_tfvars } = template;
+      const filePath = path.join(tmpPath, 'terraform.tfvars');
+      exec(`aws s3api get-object --bucket ${remote_tfvars.bucket} --key ${remote_tfvars.prefix} ${filePath}`);
+      template['tfvars'] = util.yamlToJson(filePath).component.template.tfvars;
+      exec(`rm ${filePath}`);
+      delete template['remote_tfvars'];
+    }
+
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
       let data = { [it]: template[it] };
@@ -59,15 +71,9 @@ class JitHelper {
           name = path.join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
           data = template[it];
           break;
-        case 'remote_tfvars':
-          console.log(transformedConfig);
-          name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
-          data = transformedConfig.template[it];
-          break;
       }
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
-    process.exit();
 
     // generate "variable.tf" if it is not described in config
     if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
