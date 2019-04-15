@@ -2,8 +2,7 @@
 
 const path = require('path');
 const fse = require('fs-extra');
-const { homePath } = require('./util');
-const { jitPath } = require('../parameters');
+const { buildTmpPath } = require('./jit-helper');
 
 class Metadata {
   /**
@@ -34,9 +33,7 @@ class Metadata {
    * @return {String}
    */
   getRoot() {
-    return this._cfg.isJit
-      ? homePath(jitPath, this._cfg.name + "_" + this._cfg.project.code)
-      : path.join(this._cfg.project.root, this._cfg.root);
+    return this._cfg.isJit ? buildTmpPath(this._cfg) : path.join(this._cfg.project.root, this._cfg.root);
   }
 
   /**
@@ -95,14 +92,14 @@ class Metadata {
    * @return {String}
    */
   getStateBackupPath() {
-    return path.join(this._getBackupDir(), 'tfstate', `${ Metadata.STATE }.${ Date.now() }.backup`);
+    return path.join(this._getBackupDir(), 'tfstate', `${Metadata.STATE}.${Date.now()}.backup`);
   }
 
   /**
    * @return {String}
    */
   getPlanBackupPath() {
-    return path.join(this._getBackupDir(), 'tfplan', `${ Metadata.PLAN }.${ Date.now() }.backup`);
+    return path.join(this._getBackupDir(), 'tfplan', `${Metadata.PLAN}.${Date.now()}.backup`);
   }
 
   /**
