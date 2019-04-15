@@ -83,9 +83,10 @@ class ComponentCommand extends AbstractCommand {
 
         return Promise.resolve('Done');
       });
-    } else {
-      return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
+
+
+    return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
   }
 
   /**
