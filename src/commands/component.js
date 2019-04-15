@@ -57,14 +57,31 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
-      printListAsTree(this._name, this.getProjectConfig());
+      const componentExist = () => names.some(it => this.getConfigPath(it) !== '');
+      if (!componentExist()) {
+        throw new Error(`Terrahub ${names.length > 1 ?
+          `components with provided names: ` : `component with provided name: `}` +
+          `${names.map(it => `'${it}'`).join(',')} doesn't exist`);
+      }
+
+      printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
-          throw new Error('Action aborted');
-        }
+          return Promise.reject('Action aborted');
+        } else {
+          return Promise.all(names.map(it => this._deleteComponent(it))).then((errNames) => {
+            const names = errNames.filter(it => !!it);
 
-        return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
+            if (names.length) {
+              this.logger.warn(`Terrahub ${names.length > 1
+                ? `components with provided names: ` : `component with provided name: `}` +
+                `${names.map(it => `'${it}'`).join(',')} doesn't exist`);
+            }
+
+            return 'Done';
+          });
+        }
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
@@ -96,8 +113,7 @@ class ComponentCommand extends AbstractCommand {
       });
     }
 
-    this.logger.warn(`Terrahub component with provided name: '${name}' doesn't exist`);
-    return Promise.resolve();
+    return Promise.resolve(name);
   }
 
   /**
