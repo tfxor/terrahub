@@ -194,7 +194,7 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listAllEnvConfig(dir = false) {
-    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.SPECIFIC });
+    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.EVERY });
   }
 
   /**
