@@ -298,10 +298,10 @@ class Util {
   static printListAuto(config, projectName, listLimit = 5) {
     const { length } = Object.keys(config);
 
-    if (listLimit < 0 || length > listLimit) {
-      Util.printListCommaSeparated(config, projectName);
-    } else {
+    if (listLimit < 0 || length < listLimit) {
       Util.printListAsTree(config, projectName);
+    } else {
+      Util.printListCommaSeparated(config, projectName);
     }
   }
 
@@ -381,6 +381,22 @@ class Util {
     return new Promise((resolve, reject) =>
       glob(pattern, options, (error, files) => error ? reject(error) : resolve(files))
     );
+  }
+
+  /**
+   * @example
+   * // returns  returns { a: 0, c: 2 }
+   * sliceObject({ a: 0, b: 1, c: 2 }, ['a', 'c'])
+   * @param {Object} source
+   * @param {String[]} keys
+   * @return {Object}
+   */
+  static sliceObject(source, keys) {
+    const result = {};
+
+    keys.forEach(key => { result[key] = source[key]; });
+
+    return result;
   }
 }
 

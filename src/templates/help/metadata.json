@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.28",
+  "version": "0.2.33",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-09T16:45:41.623Z",
+  "buildDate": "2019-04-14T14:52:00.113Z",
   "commands": [
     {
       "name": "apply",
@@ -19,12 +19,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -97,12 +91,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -247,12 +235,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -331,12 +313,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -407,12 +383,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -504,12 +474,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -574,12 +538,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -708,12 +666,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -786,12 +738,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -856,12 +802,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -957,12 +897,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
@@ -1067,12 +1001,6 @@
           "defaultValue": []
         },
         {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
-        },
-        {
           "name": "exclude",
           "shortcut": "x",
           "description": "List of components to exclude (comma separated values)",
@@ -1149,12 +1077,6 @@
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
           "defaultValue": []
-        },
-        {
-          "name": "input",
-          "shortcut": "q",
-          "description": "Ask for input if necessary. Default is false.",
-          "defaultValue": false
         },
         {
           "name": "exclude",
