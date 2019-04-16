@@ -10,8 +10,9 @@ const Metadata = require('../metadata');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
+const { buildTmpPath } = require('../jit-helper');
+const { config, fetch} = require('../../parameters');
 const { extend, spawner, homePath } = require('../util');
-const { config, fetch, jitPath } = require('../../parameters');
 
 class Terraform {
   /**
@@ -67,9 +68,7 @@ class Terraform {
    * @return {String}
    */
   getRoot() {
-    return this._config.isJit ?
-      homePath(jitPath, this._config.hash) :
-      path.join(this._config.project.root, this._config.root);
+    return this._config.isJit ? buildTmpPath(this._config) : path.join(this._config.project.root, this._config.root);
   }
 
   /**
@@ -185,7 +184,7 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+    return this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }

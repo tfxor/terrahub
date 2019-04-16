@@ -3,7 +3,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const { jitPath } = require('../parameters');
-const { homePath, extend } = require('./util');
+const { homePath, extend, sliceObject } = require('./util');
 
 class JitHelper {
   /**
@@ -18,21 +18,13 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
-      if (!config.mapping.length) {
-        config.mapping.push(componentPath);
-      }
-
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
           name: config.name,
           path: componentPath
         },
-        project: {
-          path: config.project.root,
-          name: config.project.name,
-          code: config.project.code
-        }
+        project: sliceObject(config.project, ['path', 'name', 'code'])
       }]);
     }
 
@@ -46,53 +38,79 @@ class JitHelper {
    */
   static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
-    const tmpPath = homePath(jitPath, transformedConfig.hash);
+    const tmpPath = JitHelper.buildTmpPath(config);
 
     if (!transformedConfig.isJit) {
       return Promise.resolve(config);
     }
 
-    const promises = Object.keys(transformedConfig.template).map(it => {
-      if (!transformedConfig.template[it]) {
-        return Promise.resolve();
-      }
+    const { template, cfgEnv } = transformedConfig;
 
+    const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
-      let data = { [it]: transformedConfig.template[it] };
+      let data = { [it]: template[it] };
 
       switch (it) {
         case 'resource':
           name = 'main.tf';
           break;
+
         case 'tfvars':
-          name = `${transformedConfig.cfgEnv === 'default' ? '' : 'workspace/'}${transformedConfig.cfgEnv}.tfvars`;
-          data = transformedConfig.template[it];
+          name = path.join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
+          data = template[it];
           break;
       }
 
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
+    // generate "variable.tf" if it is not described in config
+    if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
+      const data = { variable: {} };
+
+      const { tfvars } = template;
+
+      Object.keys(tfvars).forEach(it => {
+        let type = typeof tfvars[it];
+
+        if (Array.isArray(tfvars[it])) {
+          type = 'list';
+        } else if (type === 'object') {
+          type = 'map';
+        }
+
+        data.variable[it] = { type };
+      });
+
+      promises.push(fse.outputJson(path.join(tmpPath, 'variable.tf'), data, { spaces: 2 }));
+    }
+
     const src = path.join(config.project.root, config.root);
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
 
     return fse.ensureDir(tmpPath)
       .then(() => {
-        return fse.copy(src, tmpPath, { filter: (src, dest) => !regEx.test(src) })
-          .then(() => Promise.all(promises))
-          .then(() => Promise.resolve(transformedConfig));
+        return fse.readdir(src).then(files => {
+          const nonTerrahubFiles = files.filter(src => !regEx.test(src));
+
+          return Promise.all(nonTerrahubFiles.map(file => {
+            return fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {});
+          }));
+        });
       })
+      .then(() => Promise.all(promises))
+      .then(() => transformedConfig)
       .catch(err => {
         throw new Error(err.toString());
       });
   }
 
   /**
-   * @param {String} config
+   * @param {Object} config
    * @return {String}
    */
   static buildTmpPath(config) {
-    return homePath(jitPath, config.hash);
+    return homePath(jitPath, `${config.name}_${config.project.code}`);
   }
 }
 

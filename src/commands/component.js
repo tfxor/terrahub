@@ -20,7 +20,8 @@ class ComponentCommand extends AbstractCommand {
       .addOption('name', 'n', 'Uniquely identifiable cloud resource name', Array)
       .addOption('template', 't', 'Template name (e.g. aws_ami, google_project)', String, '')
       .addOption('directory', 'd', 'Path to the component (default: cwd)', String, process.cwd())
-      .addOption('depends-on', 'o', 'List of paths to components that depend on current component (comma separated)', Array, [])
+      .addOption('depends-on', 'o', 'List of paths to components that depend on current component' +
+        ' (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
       .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
     ;
@@ -57,26 +58,33 @@ class ComponentCommand extends AbstractCommand {
     const names = this._name;
 
     if (this._delete) {
-      printListAsTree(this._name, this.getProjectConfig());
+      const inexistentComponents = names.filter(it => !this.getConfigPath(it));
+      if (inexistentComponents.length) {
+        throw new Error(`Terrahub components with provided names '${inexistentComponents.join(`', '`)}' don't exist.`);
+      }
+
+      printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
       return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
-          throw new Error('Action aborted');
+          return Promise.reject('Action aborted');
         }
 
-        return Promise.all(names.map(it => this._deleteComponent(it))).then(() => 'Done');
+        return Promise.all(names.map(it => this._deleteComponent(it)))
+          .then(() => `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`);
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
         if (data.some(it => !it)) {
           return Promise.resolve();
-        } else {
-          return Promise.resolve('Done');
         }
+
+        return Promise.resolve('Done');
       });
-    } else {
-      return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
     }
+
+
+    return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
   }
 
   /**
@@ -86,18 +94,9 @@ class ComponentCommand extends AbstractCommand {
    */
   _deleteComponent(name) {
     const configPath = this.getConfigPath(name);
-    if (configPath) {
-      const configFiles = this.listAllEnvConfig(configPath);
+    const configFiles = this.listAllEnvConfig(configPath);
 
-      return Promise.all(configFiles.map(it => fse.remove(it))).then(() => {
-        this.logger.info(`Done for terrahub component: '${name}'`);
-
-        return Promise.resolve();
-      });
-    }
-
-    this.logger.warn(`Terrahub component with provided name: '${name}' doesn't exist`);
-    return Promise.resolve();
+    return Promise.all(configFiles.map(it => fse.remove(it)));
   }
 
   /**
