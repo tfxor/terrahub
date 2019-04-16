@@ -60,9 +60,7 @@ class ComponentCommand extends AbstractCommand {
     if (this._delete) {
       const inexistentComponents = names.filter(it => !this.getConfigPath(it));
       if (inexistentComponents.length) {
-        throw new Error(`Terrahub ${names.length > 1 ?
-          `components with provided names: ` : `component with provided name: `}` +
-          `'${inexistentComponents.join(`','`)}' doesn't exist`);
+        throw new Error(`Terrahub components with provided names: '${inexistentComponents.join(`', '`)}' doesn't exist`);
       }
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
@@ -73,7 +71,7 @@ class ComponentCommand extends AbstractCommand {
         }
 
         return Promise.all(names.map(it => this._deleteComponent(it)))
-          .then((it) => `'${it.join(`','`)}' Terrahub component${it.length > 1 ? 's' : ''} successfully deleted`);
+          .then(() => `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`);
       });
     } else if (this._template) {
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
@@ -98,7 +96,7 @@ class ComponentCommand extends AbstractCommand {
     const configPath = this.getConfigPath(name);
     const configFiles = this.listAllEnvConfig(configPath);
 
-    return Promise.all(configFiles.map(it => fse.remove(it))).then(() => Promise.resolve(name));
+    return Promise.all(configFiles.map(it => fse.remove(it)));
   }
 
   /**
