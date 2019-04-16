@@ -60,7 +60,7 @@ class ComponentCommand extends AbstractCommand {
     if (this._delete) {
       const inexistentComponents = names.filter(it => !this.getConfigPath(it));
       if (inexistentComponents.length) {
-        throw new Error(`Terrahub components with provided names: '${inexistentComponents.join(`', '`)}' doesn't exist`);
+        throw new Error(`Terrahub components with provided names '${inexistentComponents.join(`', '`)}' don't exist.`);
       }
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
