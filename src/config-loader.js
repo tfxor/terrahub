@@ -5,6 +5,7 @@ const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
 const { config } = require('./parameters');
+const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
@@ -36,6 +37,8 @@ class ConfigLoader {
       project: this.getProjectConfig(),
       hook: {},
       build: {},
+      include: [],
+      exclude: [],
       mapping: [],
       children: [],
       terraform: {},
@@ -111,7 +114,7 @@ class ConfigLoader {
 
   /**
    * Get application root directory
-   * @returns {String|Boolean}
+   * @returns {String}
    */
   appPath() {
     return this._rootPath;
@@ -148,25 +151,24 @@ class ConfigLoader {
 
   /**
    * Get list of configuration files
-   * @param {Object} options
+   * @param {String} dir
+   * @param {Number} env
    * @returns {String[]}
    */
-  listConfig(options = {}) {
+  listConfig({ dir = null, env = Dictionary.ENVIRONMENT.DEFAULT } = {}) {
     const { include } = this.getProjectConfig();
-    const {
-      dir = false,
-      env = 'default'
-    } = options;
 
     let searchPattern;
     switch (env) {
-      case 'default':
+      case Dictionary.ENVIRONMENT.DEFAULT:
         searchPattern = '**/.terrahub.+(json|yml|yaml)';
         break;
-      case 'specific':
+
+      case Dictionary.ENVIRONMENT.SPECIFIC:
         searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
         break;
-      case 'every':
+
+      case Dictionary.ENVIRONMENT.EVERY:
         searchPattern = '**/.terrahub*.+(json|yml|yaml)';
         break;
     }
@@ -174,18 +176,13 @@ class ConfigLoader {
     let searchPaths;
     if (dir) {
       searchPaths = [dir];
-    } else if (include && include.length) {
+    } else if (include.length) {
       searchPaths = include.map(it => path.resolve(this.appPath(), it));
     } else {
       searchPaths = [this.appPath()];
     }
 
-    return searchPaths
-      .map(it => this._find(searchPattern, it))
-      .reduce((accumulator, currentValue) => {
-        accumulator.push(...currentValue);
-        return accumulator;
-      }, []);
+    return [].concat(...searchPaths.map(it => this._find(searchPattern, it)));
   }
 
   /**

@@ -2,13 +2,13 @@
 
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
-const path = require('path');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
 const AbstractCommand = require('../abstract-command');
-const { toMd5, homePath } = require('../helpers/util');
+const { toMd5, homePath, sliceObject } = require('../helpers/util');
 const { fetch, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
@@ -225,7 +225,7 @@ class ListCommand extends AbstractCommand {
 
     const { birthtimeMs } = fs.statSync(cachePath);
 
-    if (parseInt(birthtimeMs) + ListCommand.TTL > Date.now()) {
+    if (birthtimeMs + ListCommand.TTL > Date.now()) {
       return fse.readJSON(cachePath);
     }
 
