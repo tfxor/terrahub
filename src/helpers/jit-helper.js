@@ -1,10 +1,10 @@
 'use strict';
 
 const path = require('path');
-const util = require('./util');
+const yaml = require('js-yaml');
 const fse = require('fs-extra');
+const S3Helper = require('./s3-helper');
 const { jitPath } = require('../parameters');
-const { exec } = require('child-process-promise');
 const { homePath, extend, sliceObject } = require('./util');
 
 class JitHelper {
@@ -40,23 +40,53 @@ class JitHelper {
    */
   static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
-    const tmpPath = JitHelper.buildTmpPath(config);
 
     if (!transformedConfig.isJit) {
       return Promise.resolve(config);
     }
 
-    const { template, cfgEnv } = transformedConfig;
+    const { template } = transformedConfig;
 
-    // add "tfvars" if it is not described in config
-    if (!template.hasOwnProperty('tfvars') && template.hasOwnProperty('remote_tfvars')) {
-      const { remote_tfvars } = template;
-      const filePath = path.join(tmpPath, 'terraform.tfvars');
-      exec(`aws s3api get-object --bucket ${remote_tfvars.bucket} --key ${remote_tfvars.prefix} ${filePath}`);
-      template['tfvars'] = util.yamlToJson(filePath).component.template.tfvars;
-      exec(`rm ${filePath}`);
+    return Promise.resolve().then(() => {
+      // add "tfvars" if it is not described in config
+      if (!template.hasOwnProperty('tfvars') && template.hasOwnProperty('remote_tfvars')) {
+        return JitHelper._addTfvars(config);
+      }
+    }).then(() => JitHelper._createTerraformFiles(config))
+      .then(() => {
+        // generate "variable.tf" if it is not described in config
+        if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
+          return JitHelper._generateVariable(config);
+        }
+      })
+      .then(() => JitHelper._symLinkNonTerraHubFiles(config))
+      .then(() => config);
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   */
+  static _addTfvars(config) {
+    const { template } = config;
+    const { remote_tfvars: { bucket, prefix } } = template;
+
+    return JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
+      const json = yaml.safeLoad(data.Body.toString());
+
+      template['tfvars'] = json.component.template.tfvars;
       delete template['remote_tfvars'];
-    }
+    });
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  static _createTerraformFiles(config) {
+    const { template, cfgEnv } = config;
+    const tmpPath = JitHelper.buildTmpPath(config);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -72,48 +102,69 @@ class JitHelper {
           data = template[it];
           break;
       }
+
       return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
     });
 
-    // generate "variable.tf" if it is not described in config
-    if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
-      const data = { variable: {} };
+    return Promise.all(promises);
+  }
 
-      const { tfvars } = template;
+  /**
+   * @param {Object} config
+   * @private
+   */
+  static _generateVariable(config) {
+    const variable = {};
+    const tmpPath = JitHelper.buildTmpPath(config);
 
-      Object.keys(tfvars).forEach(it => {
-        let type = typeof tfvars[it];
+    const { tfvars } = config.template;
 
-        if (Array.isArray(tfvars[it])) {
-          type = 'list';
-        } else if (type === 'object') {
-          type = 'map';
-        }
+    Object.keys(tfvars).forEach(it => {
+      let type = typeof tfvars[it];
 
-        data.variable[it] = { type };
-      });
+      if (Array.isArray(tfvars[it])) {
+        type = 'list';
+      } else if (type === 'object') {
+        type = 'map';
+      }
 
-      promises.push(fse.outputJson(path.join(tmpPath, 'variable.tf'), data, { spaces: 2 }));
-    }
+      variable[it] = { type };
+    });
 
-    const src = path.join(config.project.root, config.root);
+    return fse.outputJson(path.join(tmpPath, 'variable.tf'), { variable }, { spaces: 2 });
+  }
+
+  static _symLinkNonTerraHubFiles(config) {
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
+    const tmpPath = JitHelper.buildTmpPath(config);
+    const src = path.join(config.project.root, config.root);
 
     return fse.ensureDir(tmpPath)
-      .then(() => {
-        return fse.readdir(src).then(files => {
-          const nonTerrahubFiles = files.filter(src => !regEx.test(src));
+      .then(() => fse.readdir(src))
+      .then(files => {
+        const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
-          return Promise.all(nonTerrahubFiles.map(file => {
-            return fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {});
-          }));
-        });
+        const promises = nonTerrahubFiles.map(file =>
+          fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {})
+        );
+
+        return Promise.all(promises);
       })
-      .then(() => Promise.all(promises))
-      .then(() => transformedConfig)
       .catch(err => {
         throw new Error(err.toString());
       });
+  }
+
+  /**
+   * @return {S3Helper}
+   * @private
+   */
+  static get s3Helper() {
+    if (!JitHelper._s3Helper) {
+      JitHelper._s3Helper = new S3Helper();
+    }
+
+    return JitHelper._s3Helper;
   }
 
   /**
