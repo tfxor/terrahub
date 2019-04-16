@@ -1,11 +1,11 @@
 'use strict';
 
 const fs = require('fs');
-const fse = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const { EOL } = require('os');
+const fse = require('fs-extra');
 const { config } = require('./parameters');
+const ListException = require('./exceptions/list-exception');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
 class ConfigLoader {
@@ -279,14 +279,11 @@ class ConfigLoader {
     const pathsArray = Object.keys(rootPaths);
 
     if (pathsArray.length > 1) {
-      let errorMsg = 'Multiple root configs identified in this project:' + EOL;
-
-      pathsArray.forEach((cfgPath, index) => {
-        errorMsg += `  ${index + 1}. ${cfgPath}` + EOL;
+      throw new ListException(pathsArray, {
+        header: 'Multiple root configs identified in this project:',
+        footer: 'ONLY 1 root config per project is allowed. Please remove all the other and try again.',
+        style: ListException.NUMBER
       });
-      errorMsg += 'ONLY 1 root config per project is allowed. Please remove all the other and try again.';
-
-      throw new Error(errorMsg);
     }
   }
 
