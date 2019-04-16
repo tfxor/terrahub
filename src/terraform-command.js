@@ -284,9 +284,7 @@ class TerraformCommand extends AbstractCommand {
         const key = Util.toMd5(dep);
 
         if (!fullConfig[key]) {
-          const dir = fullConfig[hash].dependsOn.find(it => Util.toMd5(it) === key);
-
-          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
+          issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
         }
 
         dependsOn[key] = null;
@@ -297,7 +295,10 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
+      throw new ListException(issues, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
     }
 
     return tree;
@@ -375,7 +376,10 @@ class TerraformCommand extends AbstractCommand {
     }
 
     if (issues.length) {
-      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
+      throw new ListException(issues, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
     }
 
     this._checkDependencyCycle(config);
