@@ -140,6 +140,11 @@ class ComponentCommand extends AbstractCommand {
           }
         }
 
+        if (!this._force && fse.pathExistsSync(outFile)) {
+          this.logger.warn(`Component '${name}' already exists`);
+          return Promise.resolve();
+        }
+
         if (existing.name) {
           componentData.component = extend(existing.config[existing.name], [componentData.component]);
           delete existing.config[existing.name];
