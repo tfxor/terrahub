@@ -131,11 +131,6 @@ class ComponentCommand extends AbstractCommand {
         let outFile = path.join(directory, this._defaultFileName());
         let componentData = { component: { name: name } };
 
-        if (!this._force && fse.pathExistsSync(outFile)) {
-          this.logger.warn(`Component '${name}' already exists`);
-          return Promise.resolve();
-        }
-
         componentData.component['dependsOn'] = this._dependsOn;
 
         if (fse.pathExistsSync(outFile)) {
@@ -143,6 +138,11 @@ class ComponentCommand extends AbstractCommand {
           if (config.project) {
             throw new Error(`Configuring components in project's root is NOT allowed.`);
           }
+        }
+
+        if (!this._force && fse.pathExistsSync(outFile)) {
+          this.logger.warn(`Component '${name}' already exists`);
+          return Promise.resolve();
         }
 
         if (existing.name) {
