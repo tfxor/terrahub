@@ -97,7 +97,7 @@ class JitHelper {
     const regEx = /s3:\/\/.+.tfvars$/gm;
     const s3VarFile = varFile.filter(src => regEx.test(src));
 
-    return s3VarFile
+    return s3VarFile;
   }
 
   /**
