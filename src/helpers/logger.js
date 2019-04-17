@@ -26,7 +26,7 @@ class Logger {
   }
 
   /**
-   * @param {String} message
+   * @param {String|Error} message
    */
   debug(message) {
     this._logger.debug(message);

@@ -56,10 +56,10 @@ func GenerateJsonFromYml() {
 	cashPath := os.Args[2]
 	terrahubComponentPath := os.Args[3]
 	terrahubComponent := os.Args[4]
-	cashComponentPath := PrepareJSON(terrahubComponent)
-	if cashComponentPath != "" {
+	
+	if PrepareJSON(terrahubComponent) {
 		ClearFolder(terrahubComponentPath)
-		TransferJson(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
+		TransferJson(cashPath + "/", terrahubComponentPath)
 	}
 	os.Exit(0)
 }
@@ -73,9 +73,9 @@ func GenerateHclFromYml() {
 	cashPath := os.Args[2]
 	terrahubComponentPath := os.Args[3]
 	terrahubComponent := os.Args[4]
-	cashComponentPath := PrepareJSON(terrahubComponent)
-	if cashComponentPath != "" {
-		GenerateHcl(cashPath+"/"+cashComponentPath+"/", terrahubComponentPath)
+
+	if PrepareJSON(terrahubComponent) {
+		GenerateHcl(cashPath + "/", terrahubComponentPath)
 	}
 }
 
@@ -118,7 +118,7 @@ func StartProccesingFileEnv(source string, fileName string, destination string) 
 	ProccesingDotTerrahubEnv(source)
 }
 
-func PrepareJSON(terrahubComponent string) string {
+func PrepareJSON(terrahubComponent string) bool {
 	var (
 		cmdOut []byte
 		err    error
@@ -129,13 +129,11 @@ func PrepareJSON(terrahubComponent string) string {
 		fmt.Fprintln(os.Stderr, "There was an error running terrahub rev-parse command: ", err)
 		os.Exit(1)
 	}
-	sha := string(cmdOut)
-	re := regexp.MustCompile(`(?m).+?\n`)
-	for _, match := range re.FindAllString(sha, -1) {
-		match = strings.Replace(match, "\n", "", -1)
-		return match
+	
+	if strings.Index(string(cmdOut), "Done") > -1 {
+		return true
 	}
-	return ""
+	return false
 }
 
 func GenerateHcl(sourcePath string, destinationPath string) {
@@ -150,7 +148,7 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 	}
 
 	for _, file := range fileInfo {
-		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 && strings.Index(file.Name(), ".tfplan") == -1 {
+		if !file.IsDir() && file.Name()[len(file.Name())-3:len(file.Name())] == ".tf" {
 			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
@@ -170,7 +168,7 @@ func ClearFolder(sourcePath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && (strings.Index(file.Name(), ".tf") > -1 || strings.Index(file.Name(), ".tfvars") > -1) {
-			deleteFile(sourcePath+file.Name())
+			deleteFile(sourcePath+"/"+file.Name())
 		}
 	}
 }
@@ -188,7 +186,7 @@ func TransferJson(sourcePath string, destinationPath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
-			copyFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
+			copyFile(sourcePath+"/"+file.Name(), destinationPath+"/"+file.Name())
 		}
 	}
 	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")

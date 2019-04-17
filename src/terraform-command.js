@@ -284,9 +284,7 @@ class TerraformCommand extends AbstractCommand {
         const key = Util.toMd5(dep);
 
         if (!fullConfig[key]) {
-          const dir = fullConfig[hash].dependsOn.find(it => Util.toMd5(it) === key);
-
-          issues.push(`'${node.name}' component depends on the component in '${dir}' directory that doesn't exist`);
+          issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
         }
 
         dependsOn[key] = null;
@@ -297,7 +295,10 @@ class TerraformCommand extends AbstractCommand {
     });
 
     if (issues.length) {
-      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
+      throw new ListException(issues, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
     }
 
     return tree;
@@ -306,102 +307,82 @@ class TerraformCommand extends AbstractCommand {
   /**
    * Checks if there is a cycle between dependencies included in the config
    * @param {Object} config
-   * @return {Promise}
+   * @throws {Error}
    * @private
    */
   _checkDependencyCycle(config) {
-    const cycle = this._getDependencyCycle(config);
-
-    if (cycle.length) {
-      throw new Error('There is a dependency cycle between the following components: ' + cycle.join(', '));
-    }
-
-    return Promise.resolve();
-  }
-
-  /**
-   * @return {String[]}
-   * @param {Object} config
-   * @private
-   */
-  _getDependencyCycle(config) {
     const keys = Object.keys(config);
     const path = [];
     const color = {};
 
-    keys.forEach(key => { color[key] = Dictionary.COLOR.WHITE; });
-    keys.every(key => color[key] === Dictionary.COLOR.BLACK || !this._depthFirstSearch(key, path, config, color));
+    /**
+     * @param {String} hash
+     * @throws {Error}
+     */
+    const depthFirstSearch = hash => {
+      const { dependsOn } = config[hash];
 
-    if (path.length) {
-      const index = path.findIndex(it => it === path[path.length - 1]);
+      color[hash] = Dictionary.COLOR.GRAY;
+      path.push(hash);
 
-      return path.map(key => config[key].name).slice(index + 1);
-    }
+      Object.keys(dependsOn).forEach(dependency => {
+        switch (color[dependency]) {
+          case Dictionary.COLOR.WHITE:
+            depthFirstSearch(dependency);
+            break;
 
-    return path;
-  }
+          case Dictionary.COLOR.GRAY:
+            const cycleStartIndex = path.indexOf(dependency);
+            const cycle = path.slice(cycleStartIndex).map(it => config[it].name);
 
-  /**
-   * @param {String} hash
-   * @param {String[]} path
-   * @param {Object} config
-   * @param {Number[]} color
-   * @return {Boolean}
-   * @private
-   */
-  _depthFirstSearch(hash, path, config, color) {
-    const dependsOn = config[hash].dependsOn;
-    color[hash] = Dictionary.COLOR.GRAY;
-    path.push(hash);
-
-    for (const key in dependsOn) {
-      if (color[key] === Dictionary.COLOR.WHITE) {
-        if (this._depthFirstSearch(key, path, config, color)) {
-          return true;
+            throw new Error('There is a dependency cycle between the following components: ' + cycle.join(', '));
         }
+      });
+
+      color[hash] = Dictionary.COLOR.BLACK;
+      path.pop();
+    };
+
+    keys.forEach(key => { color[key] = Dictionary.COLOR.WHITE; });
+
+    // "if" statement is used instead of "Array::filter" because color is changed dynamically in the cycle
+    keys.forEach(key => {
+      if (color[key] !== Dictionary.COLOR.BLACK) {
+        depthFirstSearch(key);
       }
-
-      if (color[key] === Dictionary.COLOR.GRAY) {
-        path.push(key);
-
-        return true;
-      }
-    }
-
-    color[hash] = Dictionary.COLOR.BLACK;
-    path.pop();
-
-    return false;
+    });
   }
 
   /**
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
-   * @return {Promise}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
-    const issues = [];
+    let issues;
 
     switch (direction) {
       case Dictionary.DIRECTION.FORWARD:
-        issues.push(...this.getDependencyIssues(config));
+        issues = this.getDependencyIssues(config);
         break;
 
       case Dictionary.DIRECTION.REVERSE:
-        issues.push(...this.getReverseDependencyIssues(config));
+        issues = this.getReverseDependencyIssues(config);
         break;
 
       case Dictionary.DIRECTION.BIDIRECTIONAL:
-        issues.push(...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config));
+        issues = [...this.getDependencyIssues(config), ...this.getReverseDependencyIssues(config)];
         break;
     }
 
     if (issues.length) {
-      throw new ListException('TerraHub failed because of the following issues:', issues, ListException.NUMBER);
+      throw new ListException(issues, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
     }
 
-    return this._checkDependencyCycle(config);
+    this._checkDependencyCycle(config);
   }
 
   /**
@@ -477,8 +458,8 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * 
-   * @param {Object} config 
+   *
+   * @param {Object} config
    * @return {String[]}
    */
   buildComponentList(config) {

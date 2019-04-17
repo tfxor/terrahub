@@ -38,7 +38,11 @@ class OutputCommand extends TerraformCommand {
       return distributor.runActions(['prepare', 'output'], {
         format: this._format
       });
-    }).then(results => this._handleOutput(results));
+    }).then(results => {
+      this._handleOutput(results);
+
+      return this._format ? Promise.resolve() : Promise.resolve('Done');
+    });
   }
 
   /**
@@ -63,19 +67,16 @@ class OutputCommand extends TerraformCommand {
   _handleOutput(results) {
     switch (this._format) {
       case 'json':
-        const result = results.reduce((acc, it) => {
+        const result = {};
+
+        results.forEach(it => {
           const stdout = (Buffer.from(it.buffer)).toString('utf8');
+          const json = stdout[0] !== '{' ? stdout.indexOf('{') : stdout;
 
-          acc[it.component] = stdout[0] !== '{' ? JSON.parse(stdout.slice(stdout.indexOf('{'))) : JSON.parse(stdout);
-
-          return acc;
-        }, {});
+          result[it.component] = JSON.parse(json);
+        });
 
         this.logger.log(JSON.stringify(result));
-        return Promise.resolve();
-
-      default:
-        return Promise.resolve('Done');
     }
   }
 }
