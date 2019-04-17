@@ -66,6 +66,7 @@ class S3Helper {
   }
 
   /**
+<<<<<<< HEAD
    * @param {String} bucketName
    * @param {String} s3path
    * @return {Promise}
@@ -94,6 +95,8 @@ class S3Helper {
   }
 
   /**
+=======
+>>>>>>> 843e39d7949380cbdd6d566610f24676fc3cae1d
    * Metadata bucket name
    * @returns {String}
    * @constructor

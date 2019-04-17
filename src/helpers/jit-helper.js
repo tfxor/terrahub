@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const { jitPath } = require('../parameters');
-const { homePath, extend, sliceObject } = require('./util');
+const { homePath, extend } = require('./util');
 
 class JitHelper {
   /**
@@ -26,7 +26,11 @@ class JitHelper {
           name: config.name,
           path: componentPath
         },
-        project: sliceObject(config.project, ['path', 'name', 'code'])
+        project: {
+          path: config.project.root,
+          name: config.project.name,
+          code: config.project.code
+        }
       }]);
     }
 
