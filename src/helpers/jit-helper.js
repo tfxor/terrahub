@@ -46,11 +46,12 @@ class JitHelper {
     }
 
     const { template } = transformedConfig;
-
+    
     return Promise.resolve().then(() => {
       // add "tfvars" if it is not described in config
-      if (!template.hasOwnProperty('tfvars') && template.hasOwnProperty('remote_tfvars')) {
-        return JitHelper._addTfvars(config);
+      const s3Links = JitHelper._extractOnlyS3Links(config);
+      if (!template.hasOwnProperty('tfvars') && s3Links.length > 0 ) {
+        return JitHelper._addTfvars(config, s3Links.shift());
       }
     }).then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
@@ -65,18 +66,34 @@ class JitHelper {
 
   /**
    * @param {Object} config
+   * @param {String} s3Link
    * @return {Promise}
    */
-  static _addTfvars(config) {
+  static _addTfvars(config, s3Link) {
     const { template } = config;
-    const { remote_tfvars: { bucket, prefix } } = template;
+    const regExBucket = /(?<=s3:\/\/)(.+?)([^\/]+)/gm;
+    const bucket = s3Link.match(regExBucket).shift();
+    const regExPrefix = new RegExp("(?<=" + bucket + "\/)(.+?)$");
+    const prefix = s3Link.match(regExPrefix).shift();
 
     return JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
       const json = yaml.safeLoad(data.Body.toString());
 
-      template['tfvars'] = json.component.template.tfvars;
-      delete template['remote_tfvars'];
+      template['tfvars'] = json;
     });
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Array}
+   * @private 
+   */
+  static _extractOnlyS3Links(config){
+    const { terraform:  { varFile } } = config;
+    const regEx = /s3:\/\/.+.tfvars$/gm;
+    const s3VarFile = varFile.filter(src => regEx.test(src));
+
+    return s3VarFile
   }
 
   /**
