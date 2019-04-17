@@ -24,7 +24,11 @@ class JitHelper {
           name: config.name,
           path: componentPath
         },
-        project: sliceObject(config.project, ['path', 'name', 'code'])
+        project: {
+          path: config.project.root,
+          name: config.project.name,
+          code: config.project.code
+        }
       }]);
     }
 
