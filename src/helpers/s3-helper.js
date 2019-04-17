@@ -64,6 +64,16 @@ class S3Helper {
 
     return iterate().then(() => returnChunks ? chunks : [].concat(...chunks));
   }
+		
+  /**
+   * Get s3 object
+   * @param {String} bucketName
+   * @param {String} objectKey
+   * @returns {Promise}
+   */
+  getObject(bucketName, objectKey) {
+    return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
+  }
 
   /**
    * Metadata bucket name

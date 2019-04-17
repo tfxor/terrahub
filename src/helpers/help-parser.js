@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
+const fs = require('fs-extra');
 const { commandsPath, templates, packageJson } = require('../parameters');
 
 class HelpParser {
