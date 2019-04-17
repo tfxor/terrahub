@@ -121,7 +121,7 @@ class ComponentCommand extends AbstractCommand {
         });
 
         return Promise.resolve();
-      }).catch(() => Promise.resolve())
+      })
       .then(() => {
         const existing = this._findExistingComponent();
 
@@ -131,6 +131,11 @@ class ComponentCommand extends AbstractCommand {
 
         let outFile = path.join(directory, this._defaultFileName());
         let componentData = { component: { name: name } };
+
+        if (!this._force && fse.pathExistsSync(outFile)) {
+          this.logger.warn(`Component '${name}' already exists`);
+          return Promise.resolve();
+        }
 
         componentData.component['dependsOn'] = this._dependsOn;
 
@@ -163,7 +168,7 @@ class ComponentCommand extends AbstractCommand {
         return renderTwig(
           this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile
         ).then(() => 'Done');
-      });
+      }).catch(() => Promise.resolve());
   }
 
   /**
