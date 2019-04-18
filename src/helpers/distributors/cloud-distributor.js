@@ -74,7 +74,7 @@ class CloudDistributor extends AbstractDistributor {
             const config = this.config[hash];
 
             const body = JSON.stringify({
-              actions: this.TERRAFORM_ACTIONS,
+              actions: actions,
               thubRunId: this.THUB_RUN_ID,
               config: config
             });
@@ -82,7 +82,7 @@ class CloudDistributor extends AbstractDistributor {
             inProgress++;
 
             logger.warn(`[${config.name}] Deploy started!`);
-            fetch.post('thub/deploy/create', { body: body })
+            fetch.post('thub/deploy/create', { body })
               .then(() => {
                 this.removeDependencies(this._dependencyTable, hash);
 
