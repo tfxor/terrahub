@@ -2,8 +2,6 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
-const { join } = require('path');
-const { globPromise } = require('./util');
 
 class S3Helper {
   /**
@@ -66,23 +64,15 @@ class S3Helper {
 
     return iterate().then(() => returnChunks ? chunks : [].concat(...chunks));
   }
-
+		
   /**
+   * Get s3 object
    * @param {String} bucketName
-   * @param {String} s3path
-   * @return {Promise}
+   * @param {String} objectKey
+   * @returns {Promise}
    */
-  deleteDirectoryFromS3(bucketName, s3path) {
-    return this.listObjects(bucketName, s3path, { returnChunks: true }).then(chunks => {
-      return Promise.all(
-        chunks.map(chunk => this._s3.deleteObjects({
-          Bucket: bucketName,
-          Delete: {
-            Objects: chunk.map(file => ({ Key: file }))
-          }
-        }).promise())
-      );
-    });
+  getObject(bucketName, objectKey) {
+    return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
   }
 
   /**

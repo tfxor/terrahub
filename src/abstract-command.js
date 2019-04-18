@@ -1,10 +1,11 @@
 'use strict';
 
-const fse = require('fs-extra');
 const path = require('path');
+const fse = require('fs-extra');
 const { config } = require('./parameters');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
+const Dictionary = require('./helpers/dictionary');
 const { toMd5, homePath } = require('./helpers/util');
 
 /**
@@ -175,9 +176,7 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listConfig(dir = false) {
-    return this._configLoader.listConfig({
-      dir: dir
-    });
+    return this._configLoader.listConfig({ dir });
   }
 
   /**
@@ -186,10 +185,7 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listCurrentEnvConfig(dir = false) {
-    return this._configLoader.listConfig({
-      dir: dir,
-      env: 'specific'
-    });
+    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.SPECIFIC });
   }
 
   /**
@@ -198,10 +194,7 @@ class AbstractCommand {
    * @returns {String[]}
    */
   listAllEnvConfig(dir = false) {
-    return this._configLoader.listConfig({
-      dir: dir,
-      env: 'every'
-    });
+    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.EVERY });
   }
 
   /**
