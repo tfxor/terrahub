@@ -3,7 +3,7 @@
 ```text
 Usage: terrahub destroy [options]
 
-terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
+terrahub@0.0.1 (built: 2018-04-14T19:15:39.787Z)
 this command will run `terraform destroy` across multiple terrahub components
 
 Options:

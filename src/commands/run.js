@@ -38,9 +38,16 @@ class RunCommand extends TerraformCommand {
 
     const config = this.getConfigObject();
 
+    this._checkDependencies(config);
+
     return this._getPromise(config)
-      .then(isConfirmed => isConfirmed ? this._checkDependencies(config) : Promise.reject('Action aborted'))
-      .then(() => this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config))
+      .then(isConfirmed => {
+        if (!isConfirmed) {
+          return Promise.reject('Action aborted');
+        }
+
+        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
+      })
       .then(() => Promise.resolve('Done'));
   }
 
@@ -109,14 +116,13 @@ class RunCommand extends TerraformCommand {
   /**
    * Checks config dependencies in the corresponding order if check is required
    * @param {Object} config
-   * @return {Promise}
    * @private
    */
   _checkDependencies(config) {
     let direction;
-    switch (this._isApply * 1 + this._isDestroy * 2) {
+    switch (+this._isApply + +this._isDestroy * 2) {
       case 0:
-        return Promise.resolve();
+        return;
 
       case 1:
         direction = Dictionary.DIRECTION.FORWARD;
@@ -131,7 +137,7 @@ class RunCommand extends TerraformCommand {
         break;
     }
 
-    return this.checkDependencies(config, direction);
+    this.checkDependencies(config, direction);
   }
 
   /**

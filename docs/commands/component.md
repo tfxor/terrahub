@@ -3,7 +3,7 @@
 ```text
 Usage: terrahub component [options]
 
-terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
+terrahub@0.0.1 (built: 2018-04-14T19:15:39.787Z)
 this command will create new or include existing terraform configuration into current terrahub project
 
 Options:
