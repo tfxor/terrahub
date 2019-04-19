@@ -20,7 +20,12 @@ class GraphCommand extends AbstractCommand {
    * @returns {Promise}
    */
   run() {
-    const { name } = this.getProjectConfig();
+    const { name, root } = this.getProjectConfig();
+
+    if (!root) {
+      throw new Error(`Project's config not found`);
+    }
+
     const treeConfig = familyTree(this.getConfig());
     const configList = Object.keys(treeConfig).map(hash => treeConfig[hash]);
     const tree = this._format(configList);
