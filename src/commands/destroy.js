@@ -1,6 +1,6 @@
 'use strict';
 
-const Dictionary = require("../helpers/dictionary");
+const Dictionary = require('../helpers/dictionary');
 const TerraformCommand = require('../terraform-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
 
