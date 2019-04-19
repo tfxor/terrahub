@@ -236,24 +236,25 @@ class Util {
     } = options;
     let retries = 0;
 
-    function retry() {
-      return promiseFunction().catch(error => {
-        if (!conditionFunction(error)) {
-          return Promise.reject(error);
-        }
+    /**
+     * @return {Promise}
+     */
+    const retry = () => promiseFunction().catch(error => {
+      if (!conditionFunction(error)) {
+        return Promise.reject(error);
+      }
 
-        if (retries >= maxRetries) {
-          error.message += `${EOL}Failed after ${maxRetries} retries.`;
-          return Promise.reject(error);
-        }
+      if (retries >= maxRetries) {
+        error.message += `${EOL}Failed after ${maxRetries} retries.`;
+        return Promise.reject(error);
+      }
 
-        return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
-          intermediateAction(retries, maxRetries);
+      return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
+        intermediateAction(retries, maxRetries);
 
-          return retry();
-        });
+        return retry();
       });
-    }
+    });
 
     return retry();
   }
@@ -359,6 +360,7 @@ class Util {
 
   /**
    * @param {Array} array
+   * @return {Object}
    * @throws Error;
    */
   static arrayToObject(array) {

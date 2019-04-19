@@ -2,13 +2,12 @@
 
 const fse = require('fs-extra');
 const { join, sep } = require('path');
-const { homePath } = require('../helpers/util');
 const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
+const { binPath, config } = require('../parameters');
 const TerraformCommand = require('../terraform-command');
 const { buildTmpPath } = require('../helpers/jit-helper');
-const { binPath, jitPath, config } = require('../parameters');
 
 class ConvertCommand extends TerraformCommand {
   /**
@@ -156,7 +155,7 @@ class ConvertCommand extends TerraformCommand {
   }
 
   /**
-   * @param format
+   * @param {String} format
    * @private
    */
   static _validateFormat(format) {

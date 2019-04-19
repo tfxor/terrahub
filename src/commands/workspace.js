@@ -92,7 +92,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     if (!kill) {
       let isUpdate = promises.length !== (configsList.length - 1);
-      let message = `TerraHub environment '${config.env}' was ${ isUpdate ? 'updated' : 'created' }`;
+      let message = `TerraHub environment '${config.env}' was ${isUpdate ? 'updated' : 'created'}`;
 
       return Promise
         .all(promises)
@@ -139,12 +139,13 @@ class WorkspaceCommand extends TerraformCommand {
    * @private
    */
   _handleWorkspaceList(results) {
-    const result = results.reduce((acc, item) => {
-      item.workspaces.filter(it => !acc[it]).forEach(it => acc[it] = {});
-      acc[item.activeWorkspace][item.component] = null;
+    const result = {};
 
-      return acc;
-    }, {});
+    results.forEach(item => {
+      item.workspaces.filter(it => !result[it]).forEach(it => { result[it] = {}; });
+
+      result[item.activeWorkspace][item.component] = null;
+    });
 
     treeify.asLines(result, false, line => {
       this.logger.log(` ${line}`);

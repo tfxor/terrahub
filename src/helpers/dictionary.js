@@ -46,7 +46,7 @@ class Dictionary {
       DEFAULT: 0,
       SPECIFIC: 1,
       EVERY: 2
-    }
+    };
   }
 }
 

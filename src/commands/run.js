@@ -68,6 +68,7 @@ class RunCommand extends TerraformCommand {
   }
 
   /**
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
