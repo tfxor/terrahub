@@ -195,7 +195,7 @@ class Terraform {
 
       return fse.ensureFile(backupPath)
         .then(() => fse.writeJson(backupPath, pullStateContent))
-        .then(() => pullStateContent);
+        .then(() => JSON.stringify(pullStateContent));
     });
   }
 
