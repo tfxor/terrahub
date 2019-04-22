@@ -12,12 +12,6 @@ class Metadata {
     this._cfg = config;
     this._base = false;
     this._isRemote = false;
-    const remoteStatePath = this._getRemoteStatePath();
-
-    if (fse.existsSync(remoteStatePath)) {
-      const state = fse.readJsonSync(remoteStatePath);
-      this._isRemote = state.hasOwnProperty('backend') ? state['backend'].hasOwnProperty('type') : false;
-    }
 
     this.init();
   }
@@ -26,6 +20,13 @@ class Metadata {
    * Init
    */
   init() {
+    const remoteStatePath = this._getRemoteStatePath();
+
+    if (fse.existsSync(remoteStatePath)) {
+      const state = fse.readJsonSync(remoteStatePath);
+      this._isRemote = state.hasOwnProperty('backend') ? state['backend'].hasOwnProperty('type') : false;
+    }
+
     this.reBase();
   }
 

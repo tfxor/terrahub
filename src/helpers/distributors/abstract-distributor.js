@@ -64,7 +64,7 @@ class AbstractDistributor {
    * @return {Promise}
    * @abstract
    */
-  runActions(actions, {} = {}) {
+  runActions(actions) {
     throw new Error('runActions requires implementation');
   }
 }

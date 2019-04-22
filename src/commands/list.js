@@ -7,8 +7,8 @@ const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
+const { toMd5, homePath} = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { toMd5, homePath, sliceObject } = require('../helpers/util');
 const { fetch, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
