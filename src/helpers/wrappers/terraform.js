@@ -262,7 +262,6 @@ class Terraform {
       const activeWorkspace = buffer.toString().match(/\*\s([a-z]+)/m)[1];
 
       return {
-        action: 'workspaceList',
         activeWorkspace: activeWorkspace,
         workspaces: workspaces
       };
