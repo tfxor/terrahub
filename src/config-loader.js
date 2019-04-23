@@ -272,13 +272,12 @@ class ConfigLoader {
       }
 
       if (config.hasOwnProperty('env')) {
-        ['hook', 'build'].forEach(key => {
-          if (config[key]) {
-            if (!config[key].env) {
-              config[key].env = {};
-            }
-            config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+        ['hook', 'build'].filter(key => !!config[key]).forEach(key => {
+          if (!config[key].env) {
+            config[key].env = {};
           }
+
+          config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
         });
       }
 
@@ -330,7 +329,7 @@ class ConfigLoader {
    * Find files by pattern
    * @param {String} pattern
    * @param {String} path
-   * @returns {*}
+   * @returns {String[]}
    * @private
    */
   _find(pattern, path) {
