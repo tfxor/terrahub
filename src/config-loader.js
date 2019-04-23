@@ -88,28 +88,32 @@ class ConfigLoader {
 
   /**
    * @param {String} dirPath
-   * @return {String|Boolean}
+   * @return {String}
    * @private
    */
   _findRootConfig(dirPath) {
-    let config = {};
-    let lower = path.resolve(dirPath, '..');
-    let files = this._find('.terrahub.+(json|yml|yaml)', dirPath);
+    let projectConfigPath = null;
 
-    if (files.length) {
-      const configPath = files.pop();
+    let currentDir = null;
+    let lowerDir = dirPath;
 
-      config = ConfigLoader.readConfig(configPath);
-      if (config.hasOwnProperty('project')) {
-        return configPath;
+    while (!projectConfigPath && currentDir !== lowerDir) {
+      currentDir = lowerDir;
+      lowerDir = path.join(currentDir, '..');
+
+      const files = this._find('.terrahub.+(json|yml|yaml)', currentDir);
+
+      if (files.length) {
+        const [configPath] = files; // if multiple configs found take the first
+        const config = ConfigLoader.readConfig(configPath);
+
+        if (config.hasOwnProperty('project')) { // check if it is as project config
+          projectConfigPath = configPath;
+        }
       }
     }
 
-    if (lower !== dirPath) {
-      return this._findRootConfig(lower);
-    }
-
-    return false;
+    return projectConfigPath;
   }
 
   /**
