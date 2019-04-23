@@ -12,18 +12,8 @@ class BuildHelper {
   static getComponentBuildTask(config) {
     const { build: buildConfig, name } = config;
 
-    const env = Object.assign({}, process.env);
-    if (buildConfig.env) {
-      BuildHelper._extendProcessEnv(env, buildConfig.env.variables, buildConfig.env['parameter-store']);
-    }
-
-    const commandsList = [];
-
-    if (buildConfig.phases) {
-      BuildHelper._pushCommandsAndFinally(
-        commandsList, ...['install', 'pre_build', 'build', 'post_build'].map(it => buildConfig.phases[it])
-      );
-    }
+    const env = Object.assign({}, process.env, BuildHelper._extractEnvVars(buildConfig));
+    const commandsList = BuildHelper._extractCommandsList(buildConfig);
 
     return promiseSeries(commandsList.map(it =>
       () => {
@@ -55,48 +45,55 @@ class BuildHelper {
             }
           }
         );
-      })
-    ).then(() => {
-      BuildHelper._printOutput(BuildHelper._out(`Build successfully finished.`, name), true);
+      }
+    )).then(() => {
+      BuildHelper._printOutput(BuildHelper._out(name, `Build successfully finished.`), true);
 
       return Promise.resolve({ action: 'build' });
-    }).catch(err => {
-      BuildHelper._printOutput(BuildHelper._out(`Build failed.`, name), false);
+    }).catch(error => {
+      BuildHelper._printOutput(BuildHelper._out(name, `Build failed.`), false);
 
-      return Promise.reject(err);
+      return Promise.reject(error);
     });
   }
 
   /**
-   * @param {Object} env
-   * @param {Object} sources
+   * @param {Object} buildConfig
+   * @return {Object}
    * @private
    */
-  static _extendProcessEnv(env, ...sources) {
-    sources.forEach(source => {
-      if (source) {
-        Object.assign(env, source);
-      }
-    });
+  static _extractEnvVars(buildConfig) {
+    const { env } = buildConfig;
+
+    if (!env) {
+      return {};
+    }
+
+    return Object.assign({}, ...['variables', 'parameter-store'].map(it => env[it]).filter(Boolean));
   }
 
   /**
-   * @param {Array} destination
-   * @param {Object} sources
+   * @param {Object} buildConfig
+   * @return {String[]}
    * @private
    */
-  static _pushCommandsAndFinally(destination, ...sources) {
-    sources.forEach(source => {
-      if (source) {
-        if (source.commands) {
-          destination.push(...source.commands);
-        }
+  static _extractCommandsList(buildConfig) {
+    const { phases } = buildConfig;
 
-        if (source.finally) {
-          destination.push(...source.finally);
-        }
-      }
-    });
+    if (!phases) {
+      return [];
+    }
+
+    return [].concat(
+      ...['install', 'pre_build', 'build', 'post_build']
+        .map(it => phases[it])
+        .filter(Boolean)
+        .map(phase => [].concat(
+          ...['commands', 'finally']
+            .map(it => phase[it])
+            .filter(Boolean)
+        ))
+    );
   }
 
   /**
@@ -106,7 +103,7 @@ class BuildHelper {
    */
   static _printOutput(message, isSuccess) {
     switch (process.env.format) {
-      case 'json': {
+      case 'json':
         const json = {
           message: message,
           error: isSuccess ? '0' : '1'
@@ -114,22 +111,18 @@ class BuildHelper {
 
         logger.log(JSON.stringify(json));
         break;
-      }
 
-      case 'text': {
-        if (isSuccess) {
-          logger.info(message);
-        } else {
-          logger.error(message);
-        }
-      }
+      case 'text':
+      default:
+        logger[isSuccess ? 'info' : 'error'](message);
+        break;
     }
   }
 
   /**
    * @param {String} name
-   * @param {Buffer} data
-   * @return {string}
+   * @param {Buffer|String} data
+   * @return {String}
    * @private
    */
   static _out(name, data) {
