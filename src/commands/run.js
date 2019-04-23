@@ -27,11 +27,6 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    if (this.getOption('dry-run')) {
-      printListAsTree(this.getConfigObject(), this.getProjectConfig().name);
-      return Promise.resolve('Done');
-    }
-
     this._isApply = this.getOption('apply');
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
@@ -39,6 +34,12 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
 
     this._checkDependencies(config);
+
+    if (this.getOption('dry-run')) {
+      printListAsTree(config, this.getProjectConfig().name);
+
+      return Promise.resolve('Done');
+    }
 
     return this._getPromise(config)
       .then(isConfirmed => {
