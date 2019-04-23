@@ -204,14 +204,14 @@ class Util {
     const stdout = [];
     const stderr = [];
     const promise = spawn(command, args, options);
-    const child = promise.childProcess;
+    const { childProcess } = promise;
 
-    child.stderr.on('data', data => {
+    childProcess.stderr.on('data', data => {
       stderr.push(data);
       onStderr(data);
     });
 
-    child.stdout.on('data', data => {
+    childProcess.stdout.on('data', data => {
       stdout.push(data);
       onStdout(data);
     });

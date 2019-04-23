@@ -147,6 +147,9 @@ class WorkspaceCommand extends TerraformCommand {
       result[item.activeWorkspace][item.component] = null;
     });
 
+    const { name } = this.getProjectConfig();
+
+    this.logger.log(`Project: ${name}`);
     treeify.asLines(result, false, line => {
       this.logger.log(` ${line}`);
     });
