@@ -31,19 +31,30 @@ class ConfigLoader {
    * @returns {Object}
    * @private
    */
-  _defaults() {
+  _componentDefaults() {
     return {
       cfgEnv: config.env,
       project: this.getProjectConfig(),
       hook: {},
       build: {},
-      include: [],
-      exclude: [],
       mapping: [],
       children: [],
       terraform: {},
       dependsOn: [],
       env: { variables: {} }
+    };
+  }
+
+  /**
+   * Project default config
+   * @return {Object}
+   * @private
+   */
+  _projectDefaults() {
+    return {
+      root: this._rootPath,
+      include: [],
+      exclude: []
     };
   }
 
@@ -60,7 +71,7 @@ class ConfigLoader {
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
-      this._projectConfig = Object.assign({ root: this._rootPath }, this._rootConfig['project']);
+      this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
 
       this._handleProjectConfig();
 
@@ -215,7 +226,7 @@ class ConfigLoader {
     });
 
     Object.keys(this._config).forEach(module => {
-      this._config[module] = extend({}, [this._defaults(), this._rootConfig, this._config[module]]);
+      this._config[module] = extend({}, [this._componentDefaults(), this._rootConfig, this._config[module]]);
     });
   }
 
@@ -273,7 +284,7 @@ class ConfigLoader {
 
       ['env', 'component'].forEach(key => delete config[key]);
 
-      this._config[componentHash] = extend({ root: componentPath }, [this._defaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend({ root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
     });
 
     rootPaths[this._rootPath] = null;
