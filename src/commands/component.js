@@ -256,7 +256,6 @@ class ComponentCommand extends AbstractCommand {
 
   /**
    * @param {String} directory 
-   * @returns {void}
    */
   _createWorkspaceFiles(directory) {
     this._getWorkspaceFiles().map(file => {
@@ -265,7 +264,7 @@ class ComponentCommand extends AbstractCommand {
   }
 
   /**
-   * @returns {String[]}
+   * @return {String[]}
    */
   _getWorkspaceFiles() {
     if (!this._workspaceFiles) {
