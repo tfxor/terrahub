@@ -23,7 +23,7 @@ class Terraform {
     this._envVars = process.env;
     this._metadata = new Metadata(this._config);
 
-    this._showLogs = process.env.silent === 'false' && !process.env.format;
+    this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
   }
 

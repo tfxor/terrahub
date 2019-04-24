@@ -29,7 +29,6 @@ class ImportCommand extends TerraformCommand {
 
         return distributor
           .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
-            silent: this.getOption('silent'),
             resourceName: resourceData[0],
             importId: resourceData[1]
           });
