@@ -34,38 +34,6 @@ class S3Helper {
   }
 
   /**
-   * @param {String} bucketName
-   * @param {String} prefix
-   * @param {Boolean} returnChunks
-   * @return {Promise<String[]|Array[]>}
-   */
-  listObjects(bucketName, prefix, { returnChunks = false } = {}) {
-    const commonParams = {
-      Bucket: bucketName,
-      Prefix: prefix
-    };
-    const chunks = [];
-
-    /**
-     * @param {String} continuationToken
-     * @return {Promise}
-     */
-    const iterate = (continuationToken = null) => {
-      const params = continuationToken ?
-        Object.assign({ ContinuationToken: continuationToken }, commonParams) :
-        commonParams;
-
-      return this._s3.listObjectsV2(params).promise().then(data => {
-        chunks.push(data.Contents.map(content => content.Key));
-
-        return data.IsTruncated ? iterate(data.NextContinuationToken) : Promise.resolve(chunks);
-      });
-    };
-
-    return iterate().then(() => returnChunks ? chunks : [].concat(...chunks));
-  }
-		
-  /**
    * Get s3 object
    * @param {String} bucketName
    * @param {String} objectKey

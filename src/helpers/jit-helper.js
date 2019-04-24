@@ -50,11 +50,11 @@ class JitHelper {
     }
 
     const { template } = transformedConfig;
-    
+
     return Promise.resolve().then(() => {
       // add "tfvars" if it is not described in config
       const s3Links = JitHelper._extractOnlyS3Links(config);
-      if (!template.hasOwnProperty('tfvars') && s3Links.length > 0 ) {
+      if (!template.hasOwnProperty('tfvars') && s3Links.length > 0) {
         return JitHelper._addTfvars(config, s3Links.shift());
       }
     }).then(() => JitHelper._createTerraformFiles(config))
@@ -81,23 +81,21 @@ class JitHelper {
     const prefix = s3Link.match(regExPrefix).shift();
 
     return JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
-      const json = yaml.safeLoad(data.Body.toString());
-
-      template['tfvars'] = json;
+      // parse yaml
+      template['tfvars'] = yaml.safeLoad(data.Body.toString());
     });
   }
 
   /**
    * @param {Object} config
    * @return {Array}
-   * @private 
+   * @private
    */
-  static _extractOnlyS3Links(config){
-    const { terraform:  { varFile } } = config;
+  static _extractOnlyS3Links(config) {
+    const { terraform: { varFile } } = config;
     const regEx = /s3:\/\/.+.tfvars$/gm;
-    const s3VarFile = varFile.filter(src => regEx.test(src));
 
-    return s3VarFile;
+    return varFile.filter(src => regEx.test(src));
   }
 
   /**

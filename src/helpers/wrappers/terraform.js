@@ -10,7 +10,6 @@ const Metadata = require('../metadata');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
-const { buildTmpPath } = require('../jit-helper');
 const { config, fetch } = require('../../parameters');
 const { extend, spawner, homePath } = require('../util');
 
@@ -24,7 +23,7 @@ class Terraform {
     this._envVars = process.env;
     this._metadata = new Metadata(this._config);
 
-    this._showLogs = process.env.silent === 'false' && !process.env.format;
+    this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
   }
 
@@ -67,13 +66,6 @@ class Terraform {
   /**
    * @return {String}
    */
-  getRoot() {
-    return this._config.isJit ? buildTmpPath(this._config) : path.join(this._config.project.root, this._config.root);
-  }
-
-  /**
-   * @return {String}
-   */
   getBinary() {
     return homePath('terraform', this.getVersion(), 'terraform');
   }
@@ -105,7 +97,7 @@ class Terraform {
     const result = [];
 
     this._tf.varFile.forEach(fileName => {
-      const varFile = path.join(this.getRoot(), fileName);
+      const varFile = path.join(this._metadata.getRoot(), fileName);
 
       if (fs.existsSync(varFile)) {
         result.push(`-var-file='${varFile}'`);
@@ -156,7 +148,7 @@ class Terraform {
    * @private
    */
   _checkResourceDir() {
-    return fse.ensureDir(this.getRoot());
+    return fse.ensureDir(this._metadata.getRoot());
   }
 
   /**
@@ -185,7 +177,8 @@ class Terraform {
    */
   init() {
     return this.run(
-      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
+    )
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -195,10 +188,6 @@ class Terraform {
    * @return {Promise}
    */
   statePull() {
-    if (!this._metadata.isRemote()) {
-      return Promise.resolve();
-    }
-
     this._showLogs = false;
 
     return this.run('state', ['pull', '-no-color']).then(result => {
@@ -208,7 +197,7 @@ class Terraform {
 
       return fse.ensureFile(backupPath)
         .then(() => fse.writeJson(backupPath, pullStateContent))
-        .then(() => Promise.resolve(backupPath));
+        .then(() => JSON.stringify(pullStateContent));
     });
   }
 
@@ -272,7 +261,6 @@ class Terraform {
       const activeWorkspace = buffer.toString().match(/\*\s([a-z]+)/m)[1];
 
       return {
-        action: 'workspaceList',
         activeWorkspace: activeWorkspace,
         workspaces: workspaces
       };
@@ -351,7 +339,7 @@ class Terraform {
    */
   _getStateContent() {
     if (this._metadata.isRemote()) {
-      return this.statePull().then(path => fse.readFile(path));
+      return this.statePull();
     }
 
     return fse.readFile(this._metadata.getStatePath());
@@ -394,7 +382,7 @@ class Terraform {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
     return this._spawn(this.getBinary(), [cmd, ...args], {
-      cwd: this.getRoot(),
+      cwd: this._metadata.getRoot(),
       env: this._envVars,
       shell: true
     });

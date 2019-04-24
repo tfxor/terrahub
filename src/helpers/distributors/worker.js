@@ -23,8 +23,7 @@ function getTasks(config) {
   const terrahub = new Terrahub(config, process.env.THUB_RUN_ID);
 
   return getActions().map(action =>
-    (options) => (action !== 'build' ?
-      terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
+    options => (action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
   );
 }
 

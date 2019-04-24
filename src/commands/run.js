@@ -27,11 +27,6 @@ class RunCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    if (this.getOption('dry-run')) {
-      printListAsTree(this.getConfigObject(), this.getProjectConfig().name);
-      return Promise.resolve('Done');
-    }
-
     this._isApply = this.getOption('apply');
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
@@ -39,6 +34,12 @@ class RunCommand extends TerraformCommand {
     const config = this.getConfigObject();
 
     this._checkDependencies(config);
+
+    if (this.getOption('dry-run')) {
+      printListAsTree(config, this.getProjectConfig().name);
+
+      return Promise.resolve('Done');
+    }
 
     return this._getPromise(config)
       .then(isConfirmed => {
@@ -68,6 +69,7 @@ class RunCommand extends TerraformCommand {
   }
 
   /**
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
@@ -83,18 +85,16 @@ class RunCommand extends TerraformCommand {
       actions.push('plan');
     }
 
-    return distributor.runActions(actions, { silent: this.getOption('silent') })
+    return distributor.runActions(actions)
       .then(() => !this._isApply ?
         Promise.resolve() :
         distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
-          silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.FORWARD
         })
       )
       .then(() => !this._isDestroy ?
         Promise.resolve() :
         distributor.runActions(['plan', 'destroy'], {
-          silent: this.getOption('silent'),
           dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
         })

@@ -5,6 +5,7 @@ const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
 const { globPromise } = require('../util');
+const ConfigLoader = require('../../config-loader');
 const { fetch, config } = require('../../parameters');
 const AbstractDistributor = require('./abstract-distributor');
 
@@ -74,7 +75,7 @@ class CloudDistributor extends AbstractDistributor {
             const config = this.config[hash];
 
             const body = JSON.stringify({
-              actions: this.TERRAFORM_ACTIONS,
+              actions: actions,
               thubRunId: this.THUB_RUN_ID,
               config: config
             });
@@ -82,7 +83,7 @@ class CloudDistributor extends AbstractDistributor {
             inProgress++;
 
             logger.warn(`[${config.name}] Deploy started!`);
-            fetch.post('thub/deploy/create', { body: body })
+            fetch.post('thub/deploy/create', { body })
               .then(() => {
                 this.removeDependencies(this._dependencyTable, hash);
 
@@ -140,7 +141,7 @@ class CloudDistributor extends AbstractDistributor {
         return globPromise(join(path, '**'), {
           cwd: this._projectRoot,
           dot: true,
-          ignore: ['**/node_modules/**', '**/.terraform/**', '**/.git/**'],
+          ignore: ConfigLoader.defaultIgnorePatterns,
           nodir: true
         });
       }

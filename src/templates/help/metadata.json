@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.40",
+  "version": "0.2.49",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-04-17T20:56:27.235Z",
+  "buildDate": "2019-04-23T16:02:38.923Z",
   "commands": [
     {
       "name": "apply",
@@ -55,12 +55,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -127,12 +121,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -271,12 +259,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -349,12 +331,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -419,12 +395,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -510,12 +480,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -574,12 +538,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -702,12 +660,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -774,12 +726,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -838,12 +784,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -933,12 +873,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",
@@ -1037,12 +971,6 @@
           "defaultValue": []
         },
         {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
-        },
-        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -1113,12 +1041,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "silent",
-          "shortcut": "s",
-          "description": "Runs the command silently (without any output)",
-          "defaultValue": false
         },
         {
           "name": "env",

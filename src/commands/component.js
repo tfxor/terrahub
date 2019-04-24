@@ -270,7 +270,7 @@ class ComponentCommand extends AbstractCommand {
   _getWorkspaceFiles() {
     if (!this._workspaceFiles) {
       const projectPath = this.getAppPath();
-      const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
+      const ignorePatterns = this.getProjectConfig().ignore || ConfigLoader.defaultIgnorePatterns;
 
       this._workspaceFiles = glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns })
         .filter(it => it !== this._defaultFileName());
