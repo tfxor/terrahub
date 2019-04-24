@@ -41,7 +41,6 @@ class ComponentCommand extends AbstractCommand {
     const projectFormat = this.getProjectFormat();
 
     this._appPath = this.getAppPath();
-    this._workspaceFiles = this._getWorkspaceFiles();
     this._srcFile = path.join(
       templates.config,
       'component',
@@ -257,15 +256,16 @@ class ComponentCommand extends AbstractCommand {
 
   /**
    * @param {String} directory 
+   * @returns {void}
    */
   _createWorkspaceFiles(directory) {
-    this._workspaceFiles.map(file => {
+    this._getWorkspaceFiles().map(file => {
       ConfigLoader.writeConfig({}, path.join(directory, file));
     });
   }
 
   /**
-   * @returns {Object}
+   * @returns {String[]}
    */
   _getWorkspaceFiles() {
     if (!this._workspaceFiles) {
