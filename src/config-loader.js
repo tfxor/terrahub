@@ -333,7 +333,7 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.IGNORE_PATTERNS });
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns});
   }
 
   /**
@@ -431,12 +431,20 @@ class ConfigLoader {
   }
 
   /**
+   * Default glob patterns to exclude matches
+   * @return {String[]}
+   */
+  static get defaultIgnorePatterns() {
+    return ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+  }
+
+  /**
    * Glob patterns to exclude matches
    * @returns {String[]}
    * @constructor
    */
-  get IGNORE_PATTERNS() {
-    return this.getProjectConfig().ignore || ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+  get ignorePatterns() {
+    return this.getProjectConfig().ignore || ConfigLoader.defaultIgnorePatterns;
   }
 }
 
