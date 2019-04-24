@@ -41,6 +41,7 @@ class ComponentCommand extends AbstractCommand {
     const projectFormat = this.getProjectFormat();
 
     this._appPath = this.getAppPath();
+    this._workspaceFiles = this._getWorkspaceFiles();
     this._srcFile = path.join(
       templates.config,
       'component',
@@ -258,14 +259,24 @@ class ComponentCommand extends AbstractCommand {
    * @param {String} directory 
    */
   _createWorkspaceFiles(directory) {
-    const projectPath = this.getAppPath();
-    const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
-
-    glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns }).map(file => {
-      if (file !== `.terrahub${this.getProjectFormat()}`) {
-        ConfigLoader.writeConfig({}, path.join(directory, file));
-      }
+    this._workspaceFiles.map(file => {
+      ConfigLoader.writeConfig({}, path.join(directory, file));
     });
+  }
+
+  /**
+   * @returns {Object}
+   */
+  _getWorkspaceFiles() {
+    if (!this._workspaceFiles) {
+      const projectPath = this.getAppPath();
+      const ignorePatterns = this.getProjectConfig().ignore || ['**/node_modules/*', '**/.terraform/*'];
+
+      this._workspaceFiles = glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns })
+        .filter(it => it !== this._defaultFileName());
+    }
+
+    return this._workspaceFiles;
   }
 }
 

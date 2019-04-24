@@ -11,7 +11,7 @@ const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
 const { buildTmpPath } = require('../jit-helper');
-const { config, fetch} = require('../../parameters');
+const { config, fetch } = require('../../parameters');
 const { extend, spawner, homePath } = require('../util');
 
 class Terraform {
@@ -184,7 +184,8 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-    return this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
+    return this.run(
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.'])
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -324,7 +325,7 @@ class Terraform {
    * @return {Promise}
    */
   import() {
-    const options = {'-input': false };
+    const options = { '-input': false };
     const args = ['-no-color'];
     const values = [process.env.resourceName, process.env.importId];
     return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
