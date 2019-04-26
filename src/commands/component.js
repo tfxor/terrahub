@@ -152,13 +152,7 @@ class ComponentCommand extends AbstractCommand {
           ConfigLoader.writeConfig(existing.config, existing.path);
         }
 
-        const ignorePatterns = this.getProjectConfig().ignore || ConfigLoader.defaultIgnorePatterns;
-
-        glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns }).map(file => {
-          if (file !== `.terrahub${this.getProjectFormat()}`) {
-            ConfigLoader.writeConfig({}, file);
-          }
-        });
+        this._createWorkspaceFiles(this._directory);
 
         const templateName = this._configLoader.getDefaultFileName() + '.twig';
         const specificConfigPath = path.join(path.dirname(templates.config), templateName);
@@ -184,6 +178,8 @@ class ComponentCommand extends AbstractCommand {
       this.logger.warn(`Component '${name}' already exists`);
       return Promise.resolve();
     }
+
+    this._createWorkspaceFiles(directory);
 
     return Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
@@ -256,6 +252,30 @@ class ComponentCommand extends AbstractCommand {
     }
 
     return templateDir;
+  }
+
+  /**
+   * @param {String} directory 
+   */
+  _createWorkspaceFiles(directory) {
+    this._getWorkspaceFiles().map(file => {
+      ConfigLoader.writeConfig({}, path.join(directory, file));
+    });
+  }
+
+  /**
+   * @return {String[]}
+   */
+  _getWorkspaceFiles() {
+    if (!this._workspaceFiles) {
+      const projectPath = this.getAppPath();
+      const ignorePatterns = this.getProjectConfig().ignore || ConfigLoader.defaultIgnorePatterns;
+
+      this._workspaceFiles = glob.sync('.terrahub.*', { cwd: projectPath, dot: true, ignore: ignorePatterns })
+        .filter(it => it !== this._defaultFileName());
+    }
+
+    return this._workspaceFiles;
   }
 }
 
