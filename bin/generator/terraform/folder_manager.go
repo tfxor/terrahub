@@ -3,7 +3,6 @@ package terraform
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 )
@@ -23,8 +22,7 @@ func DeleteEmptyFolder(url string) bool {
 	if !IsDirEmpty(url) {
 		return true
 	}
-	cmd := exec.Command("rm", "-rf", url)
-	if err := cmd.Run(); err != nil {
+	if err := os.RemoveAll(url); err != nil {
 		fmt.Println(err)
 		return false
 	}
@@ -33,30 +31,12 @@ func DeleteEmptyFolder(url string) bool {
 
 func DeleteFolder(url string) bool {
 	fmt.Println("Delete folder " + url)
-	cmd := exec.Command("rm", "-rf", url)
-	if err := cmd.Run(); err != nil {
+	if err := os.RemoveAll(url); err != nil {
 		fmt.Println(err)
 		return false
 	}
 	fmt.Println("Success")
 	return true
-}
-
-func DeleteFile(path string) {
-	_, err := ioutil.ReadFile(path)
-	if err == nil {
-		cmd := exec.Command("rm", path)
-		if err := cmd.Run(); err != nil {
-			fmt.Println(err)
-		}
-	}
-}
-
-func CreateFolder(path string) {
-	cmd := exec.Command("mkdir", path)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-	}
 }
 
 func IsDirEmpty(name string) bool {

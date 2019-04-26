@@ -139,7 +139,7 @@ class JitHelper {
     const { tfvars } = config.template;
 
     Object.keys(tfvars).forEach(it => {
-      let type = typeof tfvars[it];
+      let type = 'string';
 
       if (Array.isArray(tfvars[it])) {
         type = 'list';
