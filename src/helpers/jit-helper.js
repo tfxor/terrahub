@@ -143,7 +143,7 @@ class JitHelper {
 
       if (Array.isArray(tfvars[it])) {
         type = 'list';
-      } else if (type === 'object') {
+      } else if (typeof tfvars[it] === 'object') {
         type = 'map';
       }
 
