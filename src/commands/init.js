@@ -24,9 +24,7 @@ class InitCommand extends TerraformCommand {
     this.warnExecutionStarted(config);
 
     return distributor
-      .runActions(['prepare', 'init'], {
-        silent: this.getOption('silent')
-      }).then(() => Promise.resolve('Done'));
+      .runActions(['prepare', 'init']).then(() => Promise.resolve('Done'));
   }
 }
 

@@ -39,7 +39,7 @@ func ParsingFolderTfFile(source string, destination string, envs ...string) {
 	}
 	for _, file := range fileInfo {
 		if file.IsDir() {
-			CreateFolder(destination + file.Name())
+			os.MkdirAll(destination + file.Name(), os.ModePerm)
 			switch len(envs) {
 			case 1:
 				ParsingTfFile(source+file.Name()+"/", destination+file.Name()+"/", envs[0])
@@ -95,7 +95,7 @@ func ParsingTfFile(source string, destination string, envs ...string) {
 
 func DeleteFileIfItIsNeed(source string, workspace string, destination string, fileName string) {
 	if source+workspace == destination {
-		DeleteFile(source + workspace + fileName)
+		os.Remove(source + workspace + fileName)
 	}
 }
 
@@ -302,7 +302,7 @@ func AddTfVars(source string, context string, env string) string {
 	for scanner.Scan() {
 		interYml += "\n      " + scanner.Text()
 	}
-	DeleteFile(source + env + ".tfvars")
+	os.Remove(source + env + ".tfvars")
 	if env == "default" {
 		return context + "    tfvars:" + interYml
 	}

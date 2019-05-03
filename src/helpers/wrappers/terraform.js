@@ -23,7 +23,7 @@ class Terraform {
     this._envVars = process.env;
     this._metadata = new Metadata(this._config);
 
-    this._showLogs = process.env.silent === 'false' && !process.env.format;
+    this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
   }
 
@@ -177,8 +177,7 @@ class Terraform {
    */
   init() {
     return this.run(
-      'init',
-      ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
     )
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));

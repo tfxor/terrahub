@@ -23,9 +23,7 @@ class RefreshCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', 'workspaceSelect', 'refresh'], {
-      silent: this.getOption('silent')
-    }).then(() => Promise.resolve('Done'));
+    return distributor.runActions(['prepare', 'workspaceSelect', 'refresh']).then(() => Promise.resolve('Done'));
   }
 }
 

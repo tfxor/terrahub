@@ -50,9 +50,9 @@ func StartProccesingFile(source string, destination string, fileName string, pro
 	fileName = strings.Replace(fileName, "resource_", "", -1)
 	fileName = strings.Replace(fileName, provider+"_", "", -1)
 	fileName = strings.Replace(fileName, ".go", "", -1)
-	templatePath := destination + provider + "/" + fileName + "/.terrahub.yml.twig"
+	templatePath := destination + provider + string(os.PathSeparator) + fileName + string(os.PathSeparator) + ".terrahub.yml.twig"
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		merr := os.MkdirAll(destination+provider+"/"+fileName, os.ModePerm)
+		merr := os.MkdirAll(destination+provider + string(os.PathSeparator) + fileName, os.ModePerm)
 		if merr != nil {
 			panic(merr)
 		}

@@ -20,7 +20,6 @@ class BuildCommand extends TerraformCommand {
    */
   run() {
     const format = this.getOption('format');
-    const silent = this.getOption('silent');
 
     if (format && !['json', 'text'].includes(format)) {
       return Promise.reject(new Error(`The '${format}' output format is not supported for this command.`));
@@ -31,7 +30,7 @@ class BuildCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['build'], { silent: silent, format: format })
+    return distributor.runActions(['build'], { format: format })
       .then(() => Promise.resolve(!['json'].includes(format) ? 'Done' : ''))
       .catch(err => ['json'].includes(format) ? Promise.resolve() : Promise.reject(err));
   }
