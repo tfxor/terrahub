@@ -341,7 +341,7 @@ class ConfigLoader {
    * @returns {*}
    */
   relativePath(fullPath) {
-    return fullPath.replace(this.appPath(), '.');
+    return path.relative(this.appPath(), fullPath);
   }
 
   /**
