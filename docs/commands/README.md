@@ -5,7 +5,7 @@ Getting started with TerraHub CLI is pretty straightforward:
 1. Next, check if `npm` is installed:
 
   ```shell
-  npm -v
+  npm --version
   ```
 
   The output should look similar to the one below (no need to copy paste):
