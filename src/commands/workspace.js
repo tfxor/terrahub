@@ -129,9 +129,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', 'init', action], {
-      silent: this.getOption('silent')
-    });
+    return distributor.runActions(['prepare', 'init', action]);
   }
 
   /**

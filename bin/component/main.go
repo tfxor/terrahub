@@ -59,7 +59,7 @@ func GenerateJsonFromYml() {
 	
 	if PrepareJSON(terrahubComponent) {
 		ClearFolder(terrahubComponentPath)
-		TransferJson(cashPath + "/", terrahubComponentPath)
+		TransferJson(cashPath + string(os.PathSeparator), terrahubComponentPath)
 	}
 	os.Exit(0)
 }
@@ -75,7 +75,7 @@ func GenerateHclFromYml() {
 	terrahubComponent := os.Args[4]
 
 	if PrepareJSON(terrahubComponent) {
-		GenerateHcl(cashPath + "/", terrahubComponentPath)
+		GenerateHcl(cashPath + string(os.PathSeparator), terrahubComponentPath)
 	}
 }
 
@@ -90,10 +90,10 @@ func GenerateHclFromYmlThubEnv() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	CreateFolder(terrahubComponentPath + "/workspace")
+	os.MkdirAll(terrahubComponentPath + string(os.PathSeparator) + "workspace", os.ModePerm)
 	for _, file := range fileInfo {
 		if !file.IsDir() && strings.Index(file.Name(), ".yml") > -1 && strings.Index(file.Name(), "terrahub.yml") == -1 {
-			StartProccesingFileEnv(terrahubComponentPath+"/"+file.Name(), file.Name(), terrahubComponentPath)
+			StartProccesingFileEnv(terrahubComponentPath + string(os.PathSeparator) + file.Name(), file.Name(), terrahubComponentPath)
 		}
 	}
 }
@@ -113,7 +113,8 @@ func StartProccesingFileEnv(source string, fileName string, destination string) 
 		}
 		env := strings.Replace(fileName, ".terrahub.", "", -1)
 		env = strings.Replace(env, ".yml", "", -1)
-		ioutil.WriteFile(destination+"/workspace/"+env+".tfvars", Clearing(b.String()), 0777)
+		ioutil.WriteFile(destination + string(os.PathSeparator) + "workspace" + string(os.PathSeparator) +
+			env + ".tfvars", Clearing(b.String()), 0777)
 	}
 	ProccesingDotTerrahubEnv(source)
 }
@@ -149,10 +150,10 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && file.Name()[len(file.Name())-3:len(file.Name())] == ".tf" {
-			StartProccesingFile(sourcePath+file.Name(), destinationPath+"/"+file.Name())
+			StartProccesingFile(sourcePath+file.Name(), destinationPath + string(os.PathSeparator) + file.Name())
 		}
 	}
-	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+	ProccesingDotTerrahub(destinationPath + string(os.PathSeparator) + ".terrahub.yml")
 }
 
 func ClearFolder(sourcePath string) {
@@ -168,7 +169,7 @@ func ClearFolder(sourcePath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && (strings.Index(file.Name(), ".tf") > -1 || strings.Index(file.Name(), ".tfvars") > -1) {
-			deleteFile(sourcePath+"/"+file.Name())
+			deleteFile(sourcePath + string(os.PathSeparator) + file.Name())
 		}
 	}
 }
@@ -186,10 +187,11 @@ func TransferJson(sourcePath string, destinationPath string) {
 
 	for _, file := range fileInfo {
 		if !file.IsDir() && strings.Index(file.Name(), ".tf") > -1 {
-			copyFile(sourcePath+"/"+file.Name(), destinationPath+"/"+file.Name())
+			copyFile(sourcePath + string(os.PathSeparator) + file.Name(),
+				destinationPath + string(os.PathSeparator) + file.Name())
 		}
 	}
-	ProccesingDotTerrahub(destinationPath + "/.terrahub.yml")
+	ProccesingDotTerrahub(destinationPath + string(os.PathSeparator) + ".terrahub.yml")
 }
 
 func copyFile(sourcePath string, destinationPath string) {
@@ -308,11 +310,4 @@ func GetTfvarsTerrahubEnv(source string) []byte {
 	}
 	sourceValue := string(input)[startIndex:endIndex]
 	return []byte(sourceValue)
-}
-
-func CreateFolder(path string) {
-	cmd := exec.Command("mkdir", path)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-	}
 }

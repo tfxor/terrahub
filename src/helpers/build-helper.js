@@ -25,7 +25,7 @@ class BuildHelper {
           fullCommand = [key, it[key]].join(': ');
         }
 
-        const isVerbose = !process.env.format && process.env.silent === 'false';
+        const isVerbose = !process.env.format;
         const [command, ...args] = fullCommand.split(' ');
         const options = {
           cwd: path.join(config.project.root, config.root),
