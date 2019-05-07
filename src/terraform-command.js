@@ -282,7 +282,7 @@ class TerraformCommand extends AbstractCommand {
       node.dependsOn.forEach(dep => {
         const key = Util.toMd5(dep);
 
-        if (!fullConfig[key]) {
+        if (!fullConfig.hasOwnProperty(key)) {
           issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
         }
 
