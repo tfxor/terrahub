@@ -1,0 +1,27 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_resource_manager_lien:
+        {{ name }}:
+          parent: projects/${var.{{ name }}_project_id}
+          restrictions: ${var.{{ name }}_restrictions}
+          origin: ${var.{{ name }}_origin}
+          reason: ${var.{{ name }}_reason}
+    output:
+      name:
+        value: '${google_resource_manager_lien.{{ name }}.name}'
+      create_time:
+        value: '${google_resource_manager_lien.{{ name }}.create_time}'
+    variable:
+      {{ name }}_project_id:
+        type: string
+      {{ name }}_restrictions:
+        type: list
+      {{ name }}_origin:
+        type: string
+      {{ name }}_reason:
+        type: string
+        default: This project is an important environment

@@ -370,7 +370,6 @@ class ConfigLoader {
         return srcValue;
       }
     };
-
     return (!config.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
@@ -402,7 +401,6 @@ class ConfigLoader {
    */
   static writeConfig(json, outFile) {
     const format = path.extname(outFile);
-
     switch (format) {
       case '.yml':
       case '.yaml':
