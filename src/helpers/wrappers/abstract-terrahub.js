@@ -5,7 +5,8 @@ const logger = require('../logger');
 const Terraform = require('./terraform');
 const Dictionary = require('../dictionary');
 const { config } = require('../../parameters');
-const { promiseSeries, toMd5, spawner, exponentialBackoff } = require('../util');
+const ConfigLoader = require('../../config-loader');
+const { promiseSeries, spawner, exponentialBackoff } = require('../util');
 
 class AbstractTerrahub {
   /**
@@ -19,7 +20,7 @@ class AbstractTerrahub {
     this._project = cfg.project;
     this._terraform = new Terraform(cfg);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
-    this._componentHash = toMd5(this._config.root);
+    this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
   }
 
   /**
