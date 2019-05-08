@@ -220,7 +220,7 @@ class ConfigLoader {
         const root = this.relativePath(path.join(this.appPath(), cfg.root));
 
         cfg.root = root;
-        this._config[this.getComponentHash(root)] = cfg;
+        this._config[ConfigLoader.buildComponentHash(root)] = cfg;
         delete this._rootConfig[key];
       }
     });
@@ -247,7 +247,7 @@ class ConfigLoader {
       }
 
       const componentPath = path.dirname(this.relativePath(configPath));
-      const componentHash = this.getComponentHash(componentPath);
+      const componentHash = ConfigLoader.buildComponentHash(componentPath);
 
       // Delete in case of delete
       config = Object.assign(config, config.component);
@@ -317,15 +317,6 @@ class ConfigLoader {
   }
 
   /**
-   * Build component hash
-   * @param {String} fullPath
-   * @returns {String}
-   */
-  getComponentHash(fullPath) {
-    return toMd5(this.relativePath(fullPath));
-  }
-
-  /**
    * Find files by pattern
    * @param {String} pattern
    * @param {String} path
@@ -333,7 +324,7 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.IGNORE_PATTERNS });
+    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns });
   }
 
   /**
@@ -341,7 +332,7 @@ class ConfigLoader {
    * @returns {*}
    */
   relativePath(fullPath) {
-    return fullPath.replace(this.appPath(), '.');
+    return path.relative(this.appPath(), fullPath);
   }
 
   /**
@@ -431,12 +422,29 @@ class ConfigLoader {
   }
 
   /**
+   * Default glob patterns to exclude matches
+   * @return {String[]}
+   */
+  static get defaultIgnorePatterns() {
+    return ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+  }
+
+  /**
+   * Build component hash
+   * @param {String} relativePath
+   * @returns {String}
+   */
+  static buildComponentHash(relativePath) {
+    return toMd5(relativePath);
+  }
+
+  /**
    * Glob patterns to exclude matches
    * @returns {String[]}
    * @constructor
    */
-  get IGNORE_PATTERNS() {
-    return this.getProjectConfig().ignore || ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+  get ignorePatterns() {
+    return this.getProjectConfig().ignore || ConfigLoader.defaultIgnorePatterns;
   }
 }
 

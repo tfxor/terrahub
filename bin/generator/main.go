@@ -39,7 +39,7 @@ func main() {
 func GenerationTemplates() {
 	argsWithoutProg := os.Args[1:]
 	providers := []string{"aws", "google", "azurerm"}
-	destination := "./templates/"
+	destination := "." + string(os.PathSeparator) + "templates" +string(os.PathSeparator)
 	if len(argsWithoutProg) > 0 {
 		providers = []string{os.Args[1]}
 	}
@@ -52,8 +52,10 @@ func GenerationTemplates() {
 
 		if downloaded {
 			terraform.DeleteFolder(destination + provider)
-			terraform.Generation(provider, "./terraform-provider-"+provider+"/"+provider+"/", destination)
-			terraform.DeleteFolder("./terraform-provider-" + provider)
+			source := "." + string(os.PathSeparator) + "terraform-provider-" + provider +
+				string(os.PathSeparator) + provider + string(os.PathSeparator)
+			terraform.Generation(provider, source, destination)
+			terraform.DeleteFolder("." + string(os.PathSeparator) + "terraform-provider-" + provider)
 		}
 	}
 }

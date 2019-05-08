@@ -175,7 +175,11 @@ class ConvertCommand extends TerraformCommand {
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
 
-    return exec(`${join(componentBinPath, 'component')} -thub ${buildTmpPath(config)} ${configPath} ${config.name}`);
+    let extension = '';
+    if (arch.indexOf("windows") > -1)
+      extension = '.exe';
+
+    return exec(`${join(componentBinPath, `component${extension}`)} -thub ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
   /**
@@ -209,7 +213,11 @@ class ConvertCommand extends TerraformCommand {
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
 
-    return exec(`${join(componentBinPath, 'component')} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
+    let extension = '';
+    if (arch.indexOf("windows") > -1)
+      extension = '.exe';
+
+    return exec(`${join(componentBinPath,  `component${extension}`)} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
   /**
@@ -223,7 +231,11 @@ class ConvertCommand extends TerraformCommand {
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
 
-    return exec(`${join(componentBinPath, 'generator ')} -thub ${configPath}/ ${configPath}/`);
+    let extension = '';
+    if (arch.indexOf("windows") > -1)
+      extension = '.exe';
+
+    return exec(`${join(componentBinPath, `generator${extension}`)} -thub ${configPath}${sep} ${configPath}${sep}`);
   }
 
   /**

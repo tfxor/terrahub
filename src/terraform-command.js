@@ -2,6 +2,7 @@
 
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
+const ConfigLoader = require('./config-loader');
 const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
@@ -25,7 +26,6 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('silent', 's', 'Runs the command silently (without any output)', Boolean, false)
     ;
   }
 
@@ -201,7 +201,7 @@ class TerraformCommand extends AbstractCommand {
       const { dependsOn } = config[componentHash];
 
       dependsOn
-        .map(path => Util.toMd5(path))
+        .map(path => ConfigLoader.buildComponentHash(path))
         .filter(hash => !result.hasOwnProperty(hash))
         .forEach(hash => {
           newHashes.push(hash);
@@ -281,9 +281,9 @@ class TerraformCommand extends AbstractCommand {
       const dependsOn = {};
 
       node.dependsOn.forEach(dep => {
-        const key = Util.toMd5(dep);
+        const key = ConfigLoader.buildComponentHash(dep);
 
-        if (!fullConfig[key]) {
+        if (!fullConfig.hasOwnProperty(key)) {
           issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
         }
 
@@ -424,7 +424,7 @@ class TerraformCommand extends AbstractCommand {
 
     keys.forEach(hash => {
       const depNode = fullConfig[hash];
-      const dependsOn = depNode.dependsOn.map(path => Util.toMd5(path));
+      const dependsOn = depNode.dependsOn.map(path => ConfigLoader.buildComponentHash(path));
 
       const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it))
         .map(it => `'${fullConfig[it].name}'`).join(', ');
