@@ -35,7 +35,6 @@ class ConfigureCommand extends TerraformCommand {
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
-    
     return this._runAction(global, data, configAction);
   }
 
@@ -51,7 +50,6 @@ class ConfigureCommand extends TerraformCommand {
       const content = ConfigLoader.readConfig(cfgPath);
 
       data.forEach(it => this[configAction](it, content));
-      
       ConfigLoader.writeConfig(content, cfgPath);
 
       return Promise.resolve('Done');
@@ -177,7 +175,6 @@ class ConfigureCommand extends TerraformCommand {
     const match = key.match(regex);
     const finalKey = match ? match[1] : key;
     const value = match ? [] : {};
-    
     if (Array.isArray(destination[finalKey])) {
       const index = match[2] || destination[finalKey].push(value);
       destination = destination[finalKey][index];
