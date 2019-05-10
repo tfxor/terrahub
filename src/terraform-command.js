@@ -396,7 +396,6 @@ class TerraformCommand extends AbstractCommand {
     let hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
-    let errors = [];
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
 
@@ -417,15 +416,12 @@ class TerraformCommand extends AbstractCommand {
         });
     }
 
-    Object.keys(issues).forEach(hash => {
-      const name = issues[hash].map(it => fullConfig[it].name);
+    return Object.keys(issues).filter(hash => issues[hash].length).map(hash => {
+      const names = issues[hash].map(it => fullConfig[it].name);
 
-      if (name.length) {
-        errors.push(`'${fullConfig[hash].name}' component depends on ${name.map(it => `'${it}'`).join(', ')} that is excluded from execution list`)
-      }
+      return `'${fullConfig[hash].name}' component depends on ${names.map(it => `'${it}'`).join(', ')} ` +
+        `that ${names.length > 1 ? 'are' : 'is'} excluded from execution list`;
     });
-
-    return errors;
   }
 
   /**
