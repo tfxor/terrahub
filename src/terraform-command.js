@@ -393,7 +393,7 @@ class TerraformCommand extends AbstractCommand {
    */
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    let hashesToCheck = Object.keys(config);
+    const hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
 
