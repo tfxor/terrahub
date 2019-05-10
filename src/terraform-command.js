@@ -398,30 +398,31 @@ class TerraformCommand extends AbstractCommand {
     const issues = {};
     let errors = [];
 
+    Object.keys(fullConfig).forEach(it => { issues[it] = []; });
+
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
-      const { dependsOn, name } = fullConfig[hash];
+      const { dependsOn } = fullConfig[hash];
 
       dependsOn
         .map(path => ConfigLoader.buildComponentHash(path))
-        .filter(it => !checked.hasOwnProperty(it))
+        .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
-          checked[it] = null;
-          hashesToCheck.push(it);
-        });
+          issues[hash].push(it);
 
-      if(!config.hasOwnProperty(hash)) {
-        issues[name] = Object.keys(fullConfig).filter(it => {
-          const {dependsOn} = fullConfig[it];
-          return dependsOn.includes(name);
+          if (!checked.hasOwnProperty(it)) {
+            checked[it] = null;
+            hashesToCheck.push(it);
+          }
         });
-      }
     }
 
-    Object.keys(issues).forEach(it => {
-      const name = issues[it].map(it => fullConfig[it].name);
+    Object.keys(issues).forEach(hash => {
+      const name = issues[hash].map(it => fullConfig[it].name);
 
-      errors.push(`${name.map(it => `'${it}'`).join(', ')} component${name.length > 1 ? 's' : '' } depends on '${it}' that is excluded from execution list`)
+      if (name.length) {
+        errors.push(`'${fullConfig[hash].name}' component depends on ${name.map(it => `'${it}'`).join(', ')} that is excluded from execution list`)
+      }
     });
 
     return errors;
