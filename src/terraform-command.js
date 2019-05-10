@@ -393,21 +393,38 @@ class TerraformCommand extends AbstractCommand {
    */
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    const issues = [];
+    let hashesToCheck = Object.keys(config);
+    const checked = Object.assign({}, config);
+    const issues = {};
+    let errors = [];
 
-    Object.keys(config).forEach(hash => {
-      const node = config[hash];
+    while (hashesToCheck.length) {
+      const hash = hashesToCheck.pop();
+      const { dependsOn, name } = fullConfig[hash];
 
-      const issueDependencies = Object.keys(node.dependsOn).filter(it => !config.hasOwnProperty(it));
+      dependsOn
+        .map(path => ConfigLoader.buildComponentHash(path))
+        .filter(it => !checked.hasOwnProperty(it))
+        .forEach(it => {
+          checked[it] = null;
+          hashesToCheck.push(it);
+        });
 
-      issueDependencies.forEach(it => {
-        const name = fullConfig[it].name;
+      if(!config.hasOwnProperty(hash)) {
+        issues[name] = Object.keys(fullConfig).filter(it => {
+          const {dependsOn} = fullConfig[it];
+          return dependsOn.includes(name);
+        });
+      }
+    }
 
-        issues.push(`'${node.name}' component depends on '${name}' that is excluded from execution list`);
-      });
+    Object.keys(issues).forEach(it => {
+      const name = issues[it].map(it => fullConfig[it].name);
+
+      errors.push(`${name.map(it => `'${it}'`).join(', ')} component${name.length > 1 ? 's' : '' } depends on '${it}' that is excluded from execution list`)
     });
 
-    return issues;
+    return errors;
   }
 
   /**
