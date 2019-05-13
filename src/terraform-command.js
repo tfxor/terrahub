@@ -432,24 +432,40 @@ class TerraformCommand extends AbstractCommand {
    */
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    const issues = [];
+    let hashesToCheck = Object.keys(config);
+    let checked = Object.assign({}, config);
+    const issues = {};
 
-    const keys = Object.keys(fullConfig).filter(key => !config.hasOwnProperty(key));
+    Object.keys(fullConfig).forEach(it => {issues[it] = []; });
 
-    keys.forEach(hash => {
-      const depNode = fullConfig[hash];
-      const dependsOn = depNode.dependsOn.map(path => ConfigLoader.buildComponentHash(path));
+    while (hashesToCheck.length) {
+      const hash = hashesToCheck.pop();
+      issues[hash] = [];
 
-      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it))
-        .map(it => `'${fullConfig[it].name}'`).join(', ');
+      Object.keys(fullConfig)
+        .filter(it => {
+          const { dependsOn } = fullConfig[it];
 
-      if (issueNodes.length) {
-        issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
-          `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
-      }
+          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash)
+        })
+        .filter(it => !config.hasOwnProperty(it))
+        .forEach(it => {
+          issues[hash].push(it);
+
+          if (!checked.hasOwnProperty(it)) {
+            checked[it] = null;
+            hashesToCheck.push(it);
+          }
+        });
+    }
+
+    return Object.keys(issues).filter(it => issues[it].length).map(hash => {
+      const names = issues[hash].map(it => fullConfig[it].name);
+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's' : ''} that depends on ` +
+        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
+
     });
-
-    return issues;
   }
 
   /**
