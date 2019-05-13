@@ -223,7 +223,8 @@ class ConfigLoader {
         delete this._rootConfig[key];
 
         this._processComponentConfig(cfg, root);
-        this._config[ConfigLoader.buildComponentHash(root)] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
+        const hash = ConfigLoader.buildComponentHash(root);
+        this._config[hash] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
       }
     });
   }
