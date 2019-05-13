@@ -35,7 +35,6 @@ class ConfigureCommand extends TerraformCommand {
     const global = this.getOption('global');
     const data = configContent instanceof Array ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
-
     return this._runAction(global, data, configAction);
   }
 
@@ -51,7 +50,6 @@ class ConfigureCommand extends TerraformCommand {
       const content = ConfigLoader.readConfig(cfgPath);
 
       data.forEach(it => this[configAction](it, content));
-
       ConfigLoader.writeConfig(content, cfgPath);
 
       return Promise.resolve('Done');
@@ -133,7 +131,7 @@ class ConfigureCommand extends TerraformCommand {
    * @private
    */
   _updateConfig(string, content) {
-    const regex = /([^[]+)\[\d*]/;
+    const regex = /([^[]+)\[(\d*)]/;
     let [keyString, ...value] = string.split('=');
 
     value = value.join('=');
@@ -147,7 +145,7 @@ class ConfigureCommand extends TerraformCommand {
     });
 
     const match = lastKey.match(regex);
-    const finalKey = match ? match.slice(-2)[1] : lastKey;
+    const finalKey = match ? match[1] : lastKey;
 
     let load;
     try {
@@ -160,7 +158,6 @@ class ConfigureCommand extends TerraformCommand {
       if (!destination[finalKey] || !(destination[finalKey] instanceof Array)) {
         destination[finalKey] = [];
       }
-
       destination[finalKey].push(load);
     } else {
       destination[finalKey] = load;
@@ -176,12 +173,11 @@ class ConfigureCommand extends TerraformCommand {
    */
   _intermediateFill(destination, key, regex) {
     const match = key.match(regex);
-    const finalKey = match ? match.slice(-2)[1] : key;
+    const finalKey = match ? match[1] : key;
     const value = match ? [] : {};
-
-    if (destination instanceof Array) {
-      destination.push(value);
-      destination = destination[destination.length - 1];
+    if (Array.isArray(destination[finalKey])) {
+      const index = match[2] || destination[finalKey].push(value);
+      destination = destination[finalKey][index];
     } else {
       if (!match && !(destination[finalKey] instanceof Object)) {
         destination[finalKey] = value;
