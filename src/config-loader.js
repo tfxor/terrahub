@@ -267,6 +267,11 @@ class ConfigLoader {
   }
 
 
+  /**
+   * @param config {Array}
+   * @param componentPath {String}
+   * @private
+   */
   _processComponentConfig(config, componentPath) {
     if (config.hasOwnProperty('dependsOn')) {
       if (!Array.isArray(config.dependsOn)) {
