@@ -268,7 +268,7 @@ class ConfigLoader {
   }
 
   /**
-   * @param config {Array}
+   * @param config {Object}
    * @param componentPath {String}
    * @private
    */
