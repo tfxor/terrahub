@@ -436,30 +436,32 @@ class TerraformCommand extends AbstractCommand {
     let hashesToCheck = Object.keys(config);
     let checked = Object.assign({}, config);
 
-    Object.keys(fullConfig).forEach(it => {issues[it] = []; });
-
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
-      const { dependsOn } = fullConfig[hash];
+      issues[hash] = [];
 
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
+      Object.keys(fullConfig)
+        .filter(it =>  {
+          const { dependsOn } = fullConfig[it];
+
+          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash)
+        })
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);
 
-          if (!checked.hasOwnProperty(it)) {
+          if(!checked.hasOwnProperty(it)) {
             checked[it] = null;
             hashesToCheck.push(it);
           }
-        });
+        })
     }
 
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${fullConfig[hash].name}' component that depends on '${names.join(`', '`)}' ` +
-        `component${names.length > 1 ? 's' : ''} is excluded from the execution list`;
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's' : ''} that depends on ` +
+        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
 
