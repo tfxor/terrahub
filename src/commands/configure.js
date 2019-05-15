@@ -56,7 +56,7 @@ class ConfigureCommand extends TerraformCommand {
     }
 
     if (this._isComponentTarget()) {
-      const configs = this.getConfig();
+      const configs = this.getFilteredConfig();
 
       Object.keys(configs).forEach(key => {
         const componentPath = path.join(configs[key].project.root, configs[key].root, this.getFileName());

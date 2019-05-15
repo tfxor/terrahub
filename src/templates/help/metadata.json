@@ -57,6 +57,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -120,6 +126,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {
@@ -259,6 +271,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -331,6 +349,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -394,6 +418,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {
@@ -480,6 +510,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -537,6 +573,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {
@@ -660,6 +702,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -726,6 +774,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -783,6 +837,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {
@@ -872,6 +932,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {
@@ -971,6 +1037,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
+          "defaultValue": []
+        },
+        {
           "name": "env",
           "shortcut": "e",
           "description": "Workspace environment",
@@ -1040,6 +1112,12 @@
           "name": "var-file",
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Configure dependency validation",
           "defaultValue": []
         },
         {

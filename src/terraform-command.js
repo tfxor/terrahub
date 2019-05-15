@@ -8,6 +8,9 @@ const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
+const DependencyAuto = require('./helpers/dependency-strategies/dependency-auto');
+const DependencyIgnore = require('./helpers/dependency-strategies/dependency-ignore');
+const DependencyInclude = require('./helpers/dependency-strategies/dependency-include');
 
 /**
  * @abstract
@@ -26,6 +29,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+      .addOption('dependency', 'd', 'Configure dependency validation', String, 'auto')
     ;
   }
 
@@ -112,7 +116,7 @@ class TerraformCommand extends AbstractCommand {
    * Get filtered config
    * @returns {Object}
    */
-  getConfig() {
+  getFilteredConfig() {
     const config = this.getExtendedConfig();
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
@@ -213,6 +217,33 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @description Returns config with applied dependency strategy
+   * @param {Object} config
+   * @param {Object} fullConfig
+   * @param {String[]} dependencies
+   * @return {Object}
+   */
+  getDependency(config, fullConfig, dependencies) {
+    const option = this.getOption('dependency');
+    let strategy;
+
+    switch (option) {
+      case 'auto':
+        strategy = new DependencyAuto(config, fullConfig, null);
+        break;
+      case 'ignore':
+        strategy = new DependencyIgnore(config, fullConfig, dependencies);
+        break;
+      case 'include':
+        strategy = new DependencyInclude(config, fullConfig, dependencies);
+        break;
+    }
+
+    return strategy.execute();
+  }
+
+
+  /**
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
@@ -272,8 +303,9 @@ class TerraformCommand extends AbstractCommand {
    */
   getConfigObject() {
     const tree = {};
-    const object = Object.assign({}, this.getConfig());
+    const object = Object.assign({}, this.getFilteredConfig());
     const issues = [];
+    const dependencies = [];
     const fullConfig = this.getExtendedConfig();
 
     Object.keys(object).forEach(hash => {
@@ -285,6 +317,10 @@ class TerraformCommand extends AbstractCommand {
 
         if (!fullConfig.hasOwnProperty(key)) {
           issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
+        }
+
+        if (!object.hasOwnProperty(key) && !dependencies.includes(key)) {
+          dependencies.push(key);
         }
 
         dependsOn[key] = null;
@@ -299,9 +335,11 @@ class TerraformCommand extends AbstractCommand {
         header: 'TerraHub failed because of the following issues:',
         style: ListException.NUMBER
       });
+
     }
 
-    return tree;
+    const config = this.getDependency(tree, fullConfig, dependencies);
+    return config;
   }
 
   /**
