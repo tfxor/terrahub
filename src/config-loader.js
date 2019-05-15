@@ -218,15 +218,14 @@ class ConfigLoader {
 
       if (cfg.hasOwnProperty('root')) {
         const root = this.relativePath(path.join(this.appPath(), cfg.root));
-
         cfg.root = root;
-        this._config[ConfigLoader.buildComponentHash(root)] = cfg;
-        delete this._rootConfig[key];
-      }
-    });
 
-    Object.keys(this._config).forEach(module => {
-      this._config[module] = extend({}, [this._componentDefaults(), this._rootConfig, this._config[module]]);
+        delete this._rootConfig[key];
+
+        this._processComponentConfig(cfg, root);
+        const hash = ConfigLoader.buildComponentHash(root);
+        this._config[hash] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
+      }
     });
   }
 
@@ -252,37 +251,7 @@ class ConfigLoader {
       // Delete in case of delete
       config = Object.assign(config, config.component);
 
-      if (config.hasOwnProperty('dependsOn')) {
-        if (!(config.dependsOn instanceof Array)) {
-          throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
-        }
-
-        config.dependsOn.forEach((dep, index) => {
-          config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
-        });
-      }
-
-      if (config.hasOwnProperty('mapping')) {
-        if (!Array.isArray(config.mapping)) {
-          throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
-        }
-
-        config.mapping.push('.');
-        config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
-      }
-
-      if (config.hasOwnProperty('env')) {
-        ['hook', 'build'].filter(key => !!config[key]).forEach(key => {
-          if (!config[key].env) {
-            config[key].env = {};
-          }
-
-          config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
-        });
-      }
-
-      ['env', 'component'].forEach(key => delete config[key]);
-
+      this._processComponentConfig(config, componentPath);
       this._config[componentHash] = extend({ root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
     });
 
@@ -296,6 +265,44 @@ class ConfigLoader {
         style: ListException.NUMBER
       });
     }
+  }
+
+  /**
+   * @param config {Object}
+   * @param componentPath {String}
+   * @private
+   */
+  _processComponentConfig(config, componentPath) {
+    if (config.hasOwnProperty('dependsOn')) {
+      if (!Array.isArray(config.dependsOn)) {
+        throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
+      }
+
+      config.dependsOn.forEach((dep, index) => {
+        config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
+      });
+    }
+
+    if (config.hasOwnProperty('mapping')) {
+      if (!Array.isArray(config.mapping)) {
+        throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
+      }
+
+      config.mapping.push('.');
+      config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
+    }
+
+    if (config.hasOwnProperty('env')) {
+      ['hook', 'build'].filter(key => !!config[key]).forEach(key => {
+        if (!config[key].env) {
+          config[key].env = {};
+        }
+
+        config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+      });
+    }
+
+    ['env', 'component'].forEach(key => delete config[key]);
   }
 
   /**
