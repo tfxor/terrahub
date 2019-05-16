@@ -302,44 +302,53 @@ class TerraformCommand extends AbstractCommand {
    * @return {Object}
    */
   getConfigObject() {
-    const tree = {};
-    const object = Object.assign({}, this.getFilteredConfig());
-    const issues = [];
-    const dependencies = [];
-    const fullConfig = this.getExtendedConfig();
+    const filteredConfig = this.getFilteredConfig();
+    const result = {};
 
-    Object.keys(object).forEach(hash => {
-      const node = Object.assign({}, object[hash]);
-      const dependsOn = {};
+    this._checkDependenciesExist(filteredConfig);
+    
+    Object.keys(filteredConfig).forEach(hash => {
+      const node = Object.assign({}, filteredConfig[hash]);
 
-      node.dependsOn.forEach(dep => {
-        const key = ConfigLoader.buildComponentHash(dep);
+      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
 
-        if (!fullConfig.hasOwnProperty(key)) {
-          issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
-        }
+      node.dependsOn = Util.arrayToObject(dependsOn);
 
-        if (!object.hasOwnProperty(key) && !dependencies.includes(key)) {
-          dependencies.push(key);
-        }
-
-        dependsOn[key] = null;
-      });
-
-      node.dependsOn = dependsOn;
-      tree[hash] = node;
+      result[hash] = node;
     });
 
-    if (issues.length) {
-      throw new ListException(issues, {
+    return result;
+        }
+
+  /**
+   * Check all components dependencies existence
+   * @param {Object} config
+   */
+  _checkDependenciesExist(config) {
+    const fullConfig = this.getExtendedConfig();
+    const issues = {};
+
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+      
+      issues[hash] = node.dependsOn.filter(dep => {
+        const key = ConfigLoader.buildComponentHash(dep);
+
+        return !fullConfig.hasOwnProperty(key);
+      });
+      });
+
+    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
+      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' `+
+        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`
+    });
+
+    if (messages.length) {
+      throw new ListException(messages, {
         header: 'TerraHub failed because of the following issues:',
         style: ListException.NUMBER
       });
-
     }
-
-    const config = this.getDependency(tree, fullConfig, dependencies);
-    return config;
   }
 
   /**
