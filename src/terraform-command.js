@@ -8,9 +8,6 @@ const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
-const DependencyAuto = require('./helpers/dependency-strategies/dependency-auto');
-const DependencyIgnore = require('./helpers/dependency-strategies/dependency-ignore');
-const DependencyInclude = require('./helpers/dependency-strategies/dependency-include');
 
 /**
  * @abstract
@@ -29,7 +26,6 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'd', 'Configure dependency validation', String, 'auto')
     ;
   }
 
@@ -226,33 +222,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @description Returns config with applied dependency strategy
-   * @param {Object} config
-   * @param {Object} fullConfig
-   * @param {String[]} dependencies
-   * @return {Object}
-   */
-  getDependency(config, fullConfig, dependencies) {
-    const option = this.getOption('dependency');
-    let strategy;
-
-    switch (option) {
-      case 'auto':
-        strategy = new DependencyAuto(config, fullConfig, null);
-        break;
-      case 'ignore':
-        strategy = new DependencyIgnore(config, fullConfig, dependencies);
-        break;
-      case 'include':
-        strategy = new DependencyInclude(config, fullConfig, dependencies);
-        break;
-    }
-
-    return strategy.execute();
-  }
-
-
-  /**
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
@@ -316,17 +285,17 @@ class TerraformCommand extends AbstractCommand {
 
     Object.keys(config).forEach(hash => {
       const node = config[hash];
-      
+
       issues[hash] = node.dependsOn.filter(dep => {
         const key = ConfigLoader.buildComponentHash(dep);
 
         return !fullConfig.hasOwnProperty(key);
       });
-      });
+    });
 
     const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
-      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' `+
-        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`
+      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
+        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
     });
 
     if (messages.length) {
