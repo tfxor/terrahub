@@ -20,7 +20,7 @@ class ApplyCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const config = this.getConfigObject();
+    const config = this.getFilteredConfig();
     const distributor = new Distributor(config);
 
     this.checkDependencies(config);

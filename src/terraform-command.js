@@ -109,6 +109,15 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
+    this._checkDependenciesExist(result);
+
+    Object.keys(result).forEach(hash => {
+      const node = result[hash];
+      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
+
+      node.dependsOn = Util.arrayToObject(dependsOn);
+    });
+
     return result;
   }
 
@@ -296,29 +305,6 @@ class TerraformCommand extends AbstractCommand {
 
     return result;
   }
-
-  /**
-   * Get object of components' configuration
-   * @return {Object}
-   */
-  getConfigObject() {
-    const filteredConfig = this.getFilteredConfig();
-    const result = {};
-
-    this._checkDependenciesExist(filteredConfig);
-    
-    Object.keys(filteredConfig).forEach(hash => {
-      const node = Object.assign({}, filteredConfig[hash]);
-
-      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
-
-      node.dependsOn = Util.arrayToObject(dependsOn);
-
-      result[hash] = node;
-    });
-
-    return result;
-        }
 
   /**
    * Check all components dependencies existence

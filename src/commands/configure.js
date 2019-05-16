@@ -216,7 +216,7 @@ class ConfigureCommand extends TerraformCommand {
       if (global) {
         configDirectory = 'global';
       } else if (this._isComponentTarget()) {
-        const config = this.getConfigObject();
+        const config = this.getFilteredConfig();
         const components = this.buildComponentList(config);
 
         configDirectory = components.map(it => `\`${it}\``).join(', ') +

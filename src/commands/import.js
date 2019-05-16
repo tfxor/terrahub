@@ -20,7 +20,7 @@ class ImportCommand extends TerraformCommand {
    */
   run() {
     const configContentArr = this.getOption('config');
-    const configAction = this.getConfigObject();
+    const configAction = this.getFilteredConfig();
 
     const distributor = new Distributor(configAction);
     return Promise.all(
