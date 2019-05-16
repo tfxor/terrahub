@@ -359,6 +359,8 @@ class TerraformCommand extends AbstractCommand {
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
+   * @private
+   * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
     let issues;
