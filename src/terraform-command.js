@@ -123,14 +123,15 @@ class TerraformCommand extends AbstractCommand {
     });
 
     this._checkDependenciesExist(result);
-    //this.getDependencyStrategy(result).getExecutionList();
-
+    // this.getDependencyStrategy().getExecutionList(result);
+    
     Object.keys(result).forEach(hash => {
       const node = result[hash];
       const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
-
+      
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
+    
 
     return result;
   }
@@ -140,7 +141,8 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getFilteredConfig() {
-    const config = this.getExtendedConfig();
+    const fullConfig = this.getExtendedConfig();
+    const config = Object.assign({}, fullConfig);
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -154,16 +156,13 @@ class TerraformCommand extends AbstractCommand {
       excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
-
-    Object.keys(config)
-      .filter(hash => filters.some(check => !check(hash)))
-      .forEach(hash => { delete config[hash]; });
+    
 
     if (!Object.keys(config).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
-    return config;
+    return this.getDependencyStrategy().getExecutionList(config, fullConfig, filters);
   }
 
   /**
@@ -239,27 +238,24 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(result);
   }
 
-  getDependecyStrategy() {
-    // if(!this._dependecyStrategy) {
-
-    // }
-    const option = this.getOption('dependency');
-    console.log(option);
-    switch(option) {
-      case 'auto':
-        this._dependecyStrategy = new DependeciesAuto();
-        break;
-      case 'ignore':
-        this._dependecyStrategy = new DependeciesIgnore(); 
-        break;
-      case 'include':
-        this._dependecyStrategy = new DependeciesInclude(); 
-        break;
-      default:
-        throw new Error('Unknown Error!')
+  getDependencyStrategy() {
+    if(!this._dependecyStrategy) {
+      const option = this.getOption('dependency');
+  
+      switch(option) {
+        case 'auto':
+          this._dependecyStrategy = new DependeciesAuto();
+          break;
+        case 'ignore':
+          this._dependecyStrategy = new DependeciesIgnore(); 
+          break;
+        case 'include':
+          this._dependecyStrategy = new DependeciesInclude(); 
+          break;
+        default:
+          throw new Error('Unknown Error!')
+      }
     }
-
-
 
     return this._dependecyStrategy;
   }
@@ -447,10 +443,10 @@ class TerraformCommand extends AbstractCommand {
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
-      const { dependsOn } = fullConfig[hash];
+      const node = fullConfig[hash];
 
-      Object.keys(dependsOn)
-        // .filter(it => !config.hasOwnProperty(it)) 
+      Object.keys(node.dependsOn)
+        .filter(it => !config.hasOwnProperty(it)) 
         .forEach(it => {
           issues[hash].push(it);
 

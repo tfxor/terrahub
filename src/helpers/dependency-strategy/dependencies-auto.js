@@ -8,8 +8,9 @@ class DependencyAuto extends AbstractDependencyStrategy {
         return config;
     }
 
-    getExecutionList() {
-        return this.setStrategy();
+    getExecutionList(config, fullConfig, filters) {
+        super.getExecutionList(config, fullConfig, filters);
+        return config;
     }
 }
 
