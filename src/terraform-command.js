@@ -9,6 +9,10 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
+const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+
 /**
  * @abstract
  */
@@ -26,6 +30,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+      .addOption('dependency', 'd', 'Set TerraHub dependecncy validation', String, 'auto')
     ;
   }
 
@@ -118,6 +123,7 @@ class TerraformCommand extends AbstractCommand {
     });
 
     this._checkDependenciesExist(result);
+    //this.getDependencyStrategy(result).getExecutionList();
 
     Object.keys(result).forEach(hash => {
       const node = result[hash];
@@ -231,6 +237,31 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return Object.keys(result);
+  }
+
+  getDependecyStrategy() {
+    // if(!this._dependecyStrategy) {
+
+    // }
+    const option = this.getOption('dependency');
+    console.log(option);
+    switch(option) {
+      case 'auto':
+        this._dependecyStrategy = new DependeciesAuto();
+        break;
+      case 'ignore':
+        this._dependecyStrategy = new DependeciesIgnore(); 
+        break;
+      case 'include':
+        this._dependecyStrategy = new DependeciesInclude(); 
+        break;
+      default:
+        throw new Error('Unknown Error!')
+    }
+
+
+
+    return this._dependecyStrategy;
   }
 
   /**
@@ -418,9 +449,8 @@ class TerraformCommand extends AbstractCommand {
       const hash = hashesToCheck.pop();
       const { dependsOn } = fullConfig[hash];
 
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
-        .filter(it => !config.hasOwnProperty(it))
+      Object.keys(dependsOn)
+        // .filter(it => !config.hasOwnProperty(it)) 
         .forEach(it => {
           issues[hash].push(it);
 
