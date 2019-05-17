@@ -86,11 +86,19 @@ class TerraformCommand extends AbstractCommand {
     }
   }
 
+  getExtendedConfig() {
+    if(!this._extendedConfig) {
+      this._extendedConfig = this._initExtendedConfig();
+    }
+
+    return this._extendedConfig;
+  }
+
   /**
-   * Get extended config via CLI
+   * Initialize extended config
    * @returns {Object}
    */
-  getExtendedConfig() {
+  _initExtendedConfig() {
     const result = {};
     const config = super.getConfig();
     const cliParams = {
@@ -280,7 +288,6 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object} config
    */
   _checkDependenciesExist(config) {
-    const fullConfig = this.getExtendedConfig();
     const issues = {};
 
     Object.keys(config).forEach(hash => {
@@ -289,7 +296,7 @@ class TerraformCommand extends AbstractCommand {
       issues[hash] = node.dependsOn.filter(dep => {
         const key = ConfigLoader.buildComponentHash(dep);
 
-        return !fullConfig.hasOwnProperty(key);
+        return !config.hasOwnProperty(key);
       });
     });
 
