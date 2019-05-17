@@ -86,6 +86,10 @@ class TerraformCommand extends AbstractCommand {
     }
   }
 
+  /**
+   * Get extended config object
+   * @returns {Object}
+   */
   getExtendedConfig() {
     if(!this._extendedConfig) {
       this._extendedConfig = this._initExtendedConfig();
