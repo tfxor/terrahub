@@ -72,7 +72,7 @@ class OutputCommand extends TerraformCommand {
         results.forEach(it => {
           const stdout = (Buffer.from(it.buffer)).toString('utf8');
           const indexStart = stdout.indexOf('{');
-          const json = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length - indexStart) : stdout;
+          const json = stdout[0] !== '{' ? stdout.substring(indexStart) : stdout;
           
           result[it.component] = JSON.parse(json);
         });
