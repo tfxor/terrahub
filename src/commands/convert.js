@@ -29,7 +29,7 @@ class ConvertCommand extends TerraformCommand {
     const format = this.getOption('to');
     ConvertCommand._validateFormat(format);
 
-    const config = this.getConfigObject();
+    const config = this.getFilteredConfig();
 
     return this.askForApprovement(
       config,

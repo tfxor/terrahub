@@ -31,7 +31,7 @@ class RunCommand extends TerraformCommand {
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
 
-    const config = this.getConfigObject();
+    const config = this.getFilteredConfig();
 
     this._checkDependencies(config);
 
