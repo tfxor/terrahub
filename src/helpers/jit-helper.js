@@ -55,7 +55,7 @@ class JitHelper {
       // add "tfvars" if it is not described in config
       const s3Links = JitHelper._extractOnlyS3Links(config);
       if (!template.hasOwnProperty('tfvars') && s3Links.length > 0) {
-        return JitHelper._addTfvars(config, s3Links.shift());
+        return JitHelper._addTfvars(config, s3Links.shift().replace(/'/g, ''));
       }
     }).then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
@@ -93,7 +93,7 @@ class JitHelper {
    */
   static _extractOnlyS3Links(config) {
     const { terraform: { varFile } } = config;
-    const regEx = /s3:\/\/.+.tfvars$/gm;
+    const regEx = /s3:\/\/.+.tfvars/gm;
 
     return varFile.filter(src => regEx.test(src));
   }

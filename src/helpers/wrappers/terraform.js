@@ -430,7 +430,13 @@ class Terraform {
    * @private
    */
   _out(data) {
-    return `[${this.getName()}] ${data.toString()}`;
+    let str = data.toString();
+    
+    if (str.substr(0, 2) === "o:") {
+      str = str.substr(2, str.length - 2);
+    }
+
+    return `[${this.getName()}] ${str}`;
   }
 
   /**
