@@ -436,7 +436,6 @@ class TerraformCommand extends AbstractCommand {
     let checked = Object.assign({}, config);
     const issues = {};
 
-    Object.keys(fullConfig).forEach(it => {issues[it] = []; });
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
