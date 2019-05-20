@@ -445,7 +445,7 @@ class TerraformCommand extends AbstractCommand {
         .filter(it => {
           const { dependsOn } = fullConfig[it];
 
-          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash)
+          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash);
         })
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
