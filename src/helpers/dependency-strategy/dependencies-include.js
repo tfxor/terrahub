@@ -10,8 +10,8 @@ class DependencyInclude extends AbstractDependencyStrategy {
    * @param {Function<boolean>[]} filters 
    * @returns {Object}
    */
-  getExecutionList(config, fullConfig, filters) {
-    const config = super.getExecutionList(config, fullConfig, filters);
+  getExecutionList(fullConfig, filters) {
+    const config = super.getExecutionList(fullConfig, filters);
     const hashesToCheck = Object.keys(config);
     const _newComponents = {};
     const checked = {};
