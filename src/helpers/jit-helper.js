@@ -50,8 +50,9 @@ class JitHelper {
     }
 
     const { template } = transformedConfig;
-
-    return Promise.resolve().then(() => {
+    
+    return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
+      .then(() => {
       // add "tfvars" if it is not described in config
       const s3Links = JitHelper._extractOnlyS3Links(config);
       if (!template.hasOwnProperty('tfvars') && s3Links.length > 0) {
@@ -66,6 +67,23 @@ class JitHelper {
       })
       .then(() => JitHelper._symLinkNonTerraHubFiles(config))
       .then(() => config);
+  }
+
+  /**
+   * @param {Object} template
+   * @return {Promise}
+   * @private
+   */
+  static _moduleSourceRefactoring(template) {
+    const { module } = template;
+    const promises = Object.keys(module).filter(it => module[it]).map(it => {
+      const { source } = module[it];
+      if (source && source[0] === '.') {
+        module[it].source = path.normalize(path.resolve(template.locals.component.path, source));
+      }
+    });
+
+    return Promise.all(promises);
   }
 
   /**
