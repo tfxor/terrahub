@@ -32,7 +32,7 @@ class OutputCommand extends TerraformCommand {
         return Promise.resolve('Action aborted');
       }
 
-      const config = this.getConfigObject();
+      const config = this.getFilteredConfig();
       const distributor = new Distributor(config);
 
       return distributor.runActions(['prepare', 'output'], {

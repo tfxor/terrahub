@@ -87,10 +87,22 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get extended config via CLI
+   * Get extended config object
    * @returns {Object}
    */
   getExtendedConfig() {
+    if(!this._extendedConfig) {
+      this._extendedConfig = this._initExtendedConfig();
+    }
+
+    return this._extendedConfig;
+  }
+
+  /**
+   * Initialize extended config
+   * @returns {Object}
+   */
+  _initExtendedConfig() {
     const result = {};
     const config = super.getConfig();
     const cliParams = {
@@ -105,6 +117,15 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
+    this._checkDependenciesExist(result);
+
+    Object.keys(result).forEach(hash => {
+      const node = result[hash];
+      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
+
+      node.dependsOn = Util.arrayToObject(dependsOn);
+    });
+
     return result;
   }
 
@@ -112,7 +133,7 @@ class TerraformCommand extends AbstractCommand {
    * Get filtered config
    * @returns {Object}
    */
-  getConfig() {
+  getFilteredConfig() {
     const config = this.getExtendedConfig();
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
@@ -267,41 +288,33 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get object of components' configuration
-   * @return {Object}
+   * Check all components dependencies existence
+   * @param {Object} config
    */
-  getConfigObject() {
-    const tree = {};
-    const object = Object.assign({}, this.getConfig());
-    const issues = [];
-    const fullConfig = this.getExtendedConfig();
+  _checkDependenciesExist(config) {
+    const issues = {};
 
-    Object.keys(object).forEach(hash => {
-      const node = Object.assign({}, object[hash]);
-      const dependsOn = {};
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
 
-      node.dependsOn.forEach(dep => {
+      issues[hash] = node.dependsOn.filter(dep => {
         const key = ConfigLoader.buildComponentHash(dep);
 
-        if (!fullConfig.hasOwnProperty(key)) {
-          issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
-        }
-
-        dependsOn[key] = null;
+        return !config.hasOwnProperty(key);
       });
-
-      node.dependsOn = dependsOn;
-      tree[hash] = node;
     });
 
-    if (issues.length) {
-      throw new ListException(issues, {
+    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
+      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
+        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
+    });
+
+    if (messages.length) {
+      throw new ListException(messages, {
         header: 'TerraHub failed because of the following issues:',
         style: ListException.NUMBER
       });
     }
-
-    return tree;
   }
 
   /**
@@ -357,6 +370,8 @@ class TerraformCommand extends AbstractCommand {
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
+   * @private
+   * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
     let issues;
