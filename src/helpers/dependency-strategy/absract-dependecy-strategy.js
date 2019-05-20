@@ -2,15 +2,21 @@
 
 class AbstractDependencyStrategy {
 
-    setStrategy() {
-        throw new Error('DependencySetStrategy must be overwritten!')
-    }
+  /**
+   * Returns filtered config
+   * @param {Object} fullConfig 
+   * @param {Function<boolean>[]} filters 
+   * @returns {Object}
+   */
+  getExecutionList(fullConfig, filters) {
+    const config = Object.assign({}, fullConfig);
 
-    getExecutionList(config, fullConfig, filters) {
-        Object.keys(config)
-        .filter(hash => filters.some(check => !check(hash)))
-        .forEach(hash => { delete config[hash]; });
-    }
+    Object.keys(config)
+      .filter(hash => filters.some(check => !check(hash)))
+      .forEach(hash => { delete config[hash]; });
+
+    return config;
+  }
 }
 
 module.exports = AbstractDependencyStrategy;

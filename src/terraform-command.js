@@ -31,7 +31,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('dependency', 'd', 'Set TerraHub dependecncy validation', String, 'auto')
-    ;
+      ;
   }
 
   /**
@@ -96,7 +96,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getExtendedConfig() {
-    if(!this._extendedConfig) {
+    if (!this._extendedConfig) {
       this._extendedConfig = this._initExtendedConfig();
     }
 
@@ -123,15 +123,14 @@ class TerraformCommand extends AbstractCommand {
     });
 
     this._checkDependenciesExist(result);
-    // this.getDependencyStrategy().getExecutionList(result);
-    
+
     Object.keys(result).forEach(hash => {
       const node = result[hash];
       const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
-      
+
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
-    
+
 
     return result;
   }
@@ -156,13 +155,13 @@ class TerraformCommand extends AbstractCommand {
       excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
-    
+
 
     if (!Object.keys(config).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
-    return this.getDependencyStrategy().getExecutionList(config, fullConfig, filters);
+    return this.getDependencyStrategy().getExecutionList(fullConfig, filters);
   }
 
   /**
@@ -238,19 +237,22 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(result);
   }
 
+  /**
+   * @returns {AbstractDependencyStrategy}
+   */
   getDependencyStrategy() {
-    if(!this._dependecyStrategy) {
+    if (!this._dependecyStrategy) {
       const option = this.getOption('dependency');
-  
-      switch(option) {
+
+      switch (option) {
         case 'auto':
           this._dependecyStrategy = new DependeciesAuto();
           break;
         case 'ignore':
-          this._dependecyStrategy = new DependeciesIgnore(); 
+          this._dependecyStrategy = new DependeciesIgnore();
           break;
         case 'include':
-          this._dependecyStrategy = new DependeciesInclude(); 
+          this._dependecyStrategy = new DependeciesInclude();
           break;
         default:
           throw new Error('Unknown Error!')
@@ -446,7 +448,7 @@ class TerraformCommand extends AbstractCommand {
       const node = fullConfig[hash];
 
       Object.keys(node.dependsOn)
-        .filter(it => !config.hasOwnProperty(it)) 
+        .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);
 
