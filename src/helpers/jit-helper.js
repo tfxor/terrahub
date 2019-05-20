@@ -61,7 +61,7 @@ class JitHelper {
     }).then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
         // generate "variable.tf" if it is not described in config
-        if (!template.hasOwnProperty('variable') && template.hasOwnProperty('tfvars')) {
+        if (template.hasOwnProperty('tfvars')) {
           return JitHelper._generateVariable(config);
         }
       })
