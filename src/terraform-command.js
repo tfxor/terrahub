@@ -436,10 +436,7 @@ class TerraformCommand extends AbstractCommand {
     let checked = Object.assign({}, config);
     const issues = {};
 
-<<<<<<< HEAD
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
-=======
->>>>>>> 682e8f106aa27af2bf7662ea71b000c472f7b2ff
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
@@ -449,11 +446,7 @@ class TerraformCommand extends AbstractCommand {
         .filter(it => {
           const { dependsOn } = fullConfig[it];
 
-<<<<<<< HEAD
           return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash) && !config.hasOwnProperty(it);
-=======
-          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash);
->>>>>>> 682e8f106aa27af2bf7662ea71b000c472f7b2ff
         })
         .forEach(it => {
           issues[hash].push(it);
