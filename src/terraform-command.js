@@ -26,7 +26,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-    ;
+      ;
   }
 
   /**
@@ -436,7 +436,7 @@ class TerraformCommand extends AbstractCommand {
     let checked = Object.assign({}, config);
     const issues = {};
 
-    Object.keys(fullConfig).forEach(it => {issues[it] = []; });
+    Object.keys(fullConfig).forEach(it => { issues[it] = []; });
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
@@ -446,9 +446,8 @@ class TerraformCommand extends AbstractCommand {
         .filter(it => {
           const { dependsOn } = fullConfig[it];
 
-          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash)
+          return dependsOn.map(it => ConfigLoader.buildComponentHash(it)).includes(hash) && !config.hasOwnProperty(it);
         })
-        .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);
 
