@@ -155,12 +155,13 @@ class TerraformCommand extends AbstractCommand {
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
 
+    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
 
-    if (!Object.keys(config).length) {
+    if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
-    return this.getDependencyStrategy().getExecutionList(fullConfig, filters);
+    return filteredConfig;
   }
 
   /**
