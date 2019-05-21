@@ -475,8 +475,8 @@ class TerraformCommand extends AbstractCommand {
    */
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    let hashesToCheck = Object.keys(config);
-    let checked = Object.assign({}, config);
+    const hashesToCheck = Object.keys(config);
+    const checked = Object.assign({}, config);
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -488,11 +488,11 @@ class TerraformCommand extends AbstractCommand {
         .filter(it => {
           const { dependsOn } = fullConfig[it];
 
-          return Object.keys(dependsOn).includes(hash)
+          return Object.keys(dependsOn).includes(hash);
         })
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
-          issues[hash].push(it);
+          issues[it].push(hash);
 
           if (!checked.hasOwnProperty(it)) {
             checked[it] = null;
@@ -504,7 +504,7 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's' : ''} that depends on ` +
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'} of ` +
         `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
