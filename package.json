@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.370.0",
+    "@google-cloud/storage": "^2.5.0",
     "child-process-promise": "^2.2.1",
     "download": "^7.1.0",
     "fs-extra": "^7.0.1",
