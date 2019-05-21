@@ -30,7 +30,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'd', 'Set TerraHub dependecncy validation', String, 'auto')
+      .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
       ;
   }
 
@@ -130,7 +130,6 @@ class TerraformCommand extends AbstractCommand {
 
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
-
 
     return result;
   }
@@ -445,9 +444,9 @@ class TerraformCommand extends AbstractCommand {
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
-      const node = fullConfig[hash];
+      const { dependsOn } = fullConfig[hash];
 
-      Object.keys(node.dependsOn)
+      Object.keys(dependsOn)
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);

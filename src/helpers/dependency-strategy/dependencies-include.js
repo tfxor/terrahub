@@ -14,7 +14,7 @@ class DependencyInclude extends AbstractDependencyStrategy {
     const config = super.getExecutionList(fullConfig, filters);
     const hashesToCheck = Object.keys(config);
     const _newComponents = {};
-    const checked = {};
+    const checked = Object.assign({}, config);
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -24,7 +24,7 @@ class DependencyInclude extends AbstractDependencyStrategy {
       const { dependsOn } = fullConfig[hash];
 
       Object.keys(dependsOn).forEach(it => {
-        if (!hashesToCheck.includes(it) && !checked.hasOwnProperty(it)) {
+        if (!checked.hasOwnProperty(it)) {
           hashesToCheck.push(it);
           checked[it] = null;
         }
