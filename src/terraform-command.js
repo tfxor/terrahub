@@ -393,11 +393,46 @@ class TerraformCommand extends AbstractCommand {
    */
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    const hashesToCheck = Object.keys(config);
-    const checked = Object.assign({}, config);
+    const issues = this._inlineDependencyIteration(this._initIssuesList(config, fullConfig));
+
+    return Object.keys(issues).filter(hash => issues[hash].length).map(hash => {
+      const names = issues[hash].map(it => fullConfig[it].name);
+
+      return `'${fullConfig[hash].name}' component depends on ${names.map(it => `'${it}'`).join(', ')} ` +
+        `that ${names.length > 1 ? 'are' : 'is'} excluded from execution list`;
+    });
+  }
+
+  /**
+   * Returns an array of error strings related to
+   * components that depend on the components included in run are included in config
+   * @param {Object} config
+   * @return {String[]}
+   */
+  getReverseDependencyIssues(config) {
+    const fullConfig = this.getExtendedConfig();
+    const issues = this._reverseDependencyIteration(this._initIssuesList(config, fullConfig));
+
+    return Object.keys(issues).filter(it => issues[it].length).map(hash => {
+      const names = issues[hash].map(it => fullConfig[it].name);
+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's' : ''} that depends on ` +
+        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
+
+    });
+  }
+
+  _initIssuesList(config, fullConfig) {
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
+
+    return { issues, fullConfig, config };
+  }
+
+  _inlineDependencyIteration({ issues, fullConfig, config }) {
+    let hashesToCheck = Object.keys(config);
+    const checked = Object.assign({}, config);
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
@@ -416,31 +451,15 @@ class TerraformCommand extends AbstractCommand {
         });
     }
 
-    return Object.keys(issues).filter(hash => issues[hash].length).map(hash => {
-      const names = issues[hash].map(it => fullConfig[it].name);
-
-      return `'${fullConfig[hash].name}' component depends on ${names.map(it => `'${it}'`).join(', ')} ` +
-        `that ${names.length > 1 ? 'are' : 'is'} excluded from execution list`;
-    });
+    return issues;
   }
 
-  /**
-   * Returns an array of error strings related to
-   * components that depend on the components included in run are included in config
-   * @param {Object} config
-   * @return {String[]}
-   */
-  getReverseDependencyIssues(config) {
-    const fullConfig = this.getExtendedConfig();
+  _reverseDependencyIteration({ issues, fullConfig, config }) {
     let hashesToCheck = Object.keys(config);
     let checked = Object.assign({}, config);
-    const issues = {};
-
-    Object.keys(fullConfig).forEach(it => { issues[it] = []; });
 
     while (hashesToCheck.length) {
       const hash = hashesToCheck.pop();
-      issues[hash] = [];
 
       Object.keys(fullConfig)
         .filter(it => {
@@ -458,13 +477,7 @@ class TerraformCommand extends AbstractCommand {
         });
     }
 
-    return Object.keys(issues).filter(it => issues[it].length).map(hash => {
-      const names = issues[hash].map(it => fullConfig[it].name);
-
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's' : ''} that depends on ` +
-        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
-
-    });
+    return issues;
   }
 
   /**
