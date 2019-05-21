@@ -9,6 +9,10 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
+const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+
 /**
  * @abstract
  */
@@ -26,7 +30,8 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-    ;
+      .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
+      ;
   }
 
   /**
@@ -91,7 +96,7 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getExtendedConfig() {
-    if(!this._extendedConfig) {
+    if (!this._extendedConfig) {
       this._extendedConfig = this._initExtendedConfig();
     }
 
@@ -134,7 +139,8 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Object}
    */
   getFilteredConfig() {
-    const config = this.getExtendedConfig();
+    const fullConfig = this.getExtendedConfig();
+    const config = Object.assign({}, fullConfig);
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -149,15 +155,13 @@ class TerraformCommand extends AbstractCommand {
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
 
-    Object.keys(config)
-      .filter(hash => filters.some(check => !check(hash)))
-      .forEach(hash => { delete config[hash]; });
+    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
 
-    if (!Object.keys(config).length) {
+    if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
-    return config;
+    return filteredConfig;
   }
 
   /**
@@ -231,6 +235,31 @@ class TerraformCommand extends AbstractCommand {
     }
 
     return Object.keys(result);
+  }
+
+  /**
+   * @returns {AbstractDependencyStrategy}
+   */
+  getDependencyStrategy() {
+    if (!this._dependecyStrategy) {
+      const option = this.getOption('dependency');
+
+      switch (option) {
+        case 'auto':
+          this._dependecyStrategy = new DependeciesAuto();
+          break;
+        case 'ignore':
+          this._dependecyStrategy = new DependeciesIgnore();
+          break;
+        case 'include':
+          this._dependecyStrategy = new DependeciesInclude();
+          break;
+        default:
+          throw new Error('Unknown Error!')
+      }
+    }
+
+    return this._dependecyStrategy;
   }
 
   /**
@@ -418,8 +447,7 @@ class TerraformCommand extends AbstractCommand {
       const hash = hashesToCheck.pop();
       const { dependsOn } = fullConfig[hash];
 
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
+      Object.keys(dependsOn)
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);
