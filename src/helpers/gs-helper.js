@@ -19,10 +19,7 @@ class GsHelper {
   getObject(bucketName, objectKey) {
     const remoteTfvarsStorage = this._gs.bucket(bucketName);
     const file = remoteTfvarsStorage.file(objectKey);
-    return Promise.resolve().then(() => file.download().then((data) => {
-        return data[0];
-      })
-    );
+    return file.download().then(data => data[0]);
   }
 }
 
