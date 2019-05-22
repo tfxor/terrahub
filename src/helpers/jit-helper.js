@@ -76,14 +76,18 @@ class JitHelper {
    */
   static _moduleSourceRefactoring(template) {
     const { module } = template;
-    const promises = Object.keys(module).filter(it => module[it]).map(it => {
-      const { source } = module[it];
-      if (source && source[0] === '.') {
-        module[it].source = path.normalize(path.resolve(template.locals.component.path, source));
-      }
-    });
+    if (module) {
+      const promises = Object.keys(module).filter(it => module[it]).map(it => {
+        const { source } = module[it];
+        if (source && source[0] === '.') {
+          module[it].source = path.normalize(path.resolve(template.locals.component.path, source));
+        }
+      });
+      
+      return Promise.all(promises);
+    } 
 
-    return Promise.all(promises);
+    Promise.resolve();
   }
 
   /**
@@ -157,7 +161,7 @@ class JitHelper {
    * @private
    */
   static _generateVariable(config) {
-    const variable = {};
+    const { variable } = config.template;
     const tmpPath = JitHelper.buildTmpPath(config);
 
     const { tfvars } = config.template;
