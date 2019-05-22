@@ -51,7 +51,6 @@ class JitHelper {
     }
 
     const { template } = transformedConfig;
-    
     return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
       .then(() => {
       // add "tfvars" if it is not described in config
