@@ -51,7 +51,7 @@ class JitHelper {
     }
 
     const { template } = transformedConfig;
-    
+
     return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
       .then(() => {
       // add "tfvars" if it is not described in config
@@ -162,7 +162,8 @@ class JitHelper {
    * @private
    */
   static _generateVariable(config) {
-    const { variable } = config.template;
+    const variable = (config.template.variable) ? config.template.variable : {};
+    
     const tmpPath = JitHelper.buildTmpPath(config);
 
     const { tfvars } = config.template;
