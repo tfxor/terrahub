@@ -127,6 +127,17 @@ class Util {
 
   /**
    * @param {String} name
+   * @param {Object} config
+   * @returns {Boolean}
+   */
+  static isComponentNameUniq(name, config) {
+    return !Object.keys(config).some(hash => {
+      return config[hash].name === name;
+    });
+  }
+
+  /**
+   * @param {String} name
    * @returns {Boolean}
    */
   static isAwsNameValid(name) {
