@@ -32,7 +32,7 @@ class OutputCommand extends TerraformCommand {
         return Promise.resolve('Action aborted');
       }
 
-      const config = this.getConfigObject();
+      const config = this.getFilteredConfig();
       const distributor = new Distributor(config);
 
       return distributor.runActions(['prepare', 'output'], {
@@ -71,8 +71,9 @@ class OutputCommand extends TerraformCommand {
 
         results.forEach(it => {
           const stdout = (Buffer.from(it.buffer)).toString('utf8');
-          const json = stdout[0] !== '{' ? stdout.indexOf('{') : stdout;
-
+          const indexStart = stdout.indexOf('{');
+          const json = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
+          
           result[it.component] = JSON.parse(json);
         });
 

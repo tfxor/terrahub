@@ -5,7 +5,7 @@
     #     prefix: 'terraform/state'
     locals:
       project_name: ${var.{{ name }}_project_name}
-      project_id: ${format("%s-%s",var.{{ name }}_project_name, random_id.random_project_id_suffix.hex)}
+      project_id: ${format("%s-%s",var.{{ name }}_project_name, random_id.random_project_id_suffix.dec)}
     resource:
       random_id:
         random_project_id_suffix:
