@@ -18,7 +18,7 @@ class PrepareCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
-    const config = this.getConfigObject();
+    const config = this.getFilteredConfig();
     const distributor = new Distributor(config);
 
     return distributor.runActions(['prepare']).then(() => Promise.resolve('Done'));

@@ -9,6 +9,10 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
+const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+
 /**
  * @abstract
  */
@@ -26,7 +30,8 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-    ;
+      .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
+      ;
   }
 
   /**
@@ -87,10 +92,22 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get extended config via CLI
+   * Get extended config object
    * @returns {Object}
    */
   getExtendedConfig() {
+    if (!this._extendedConfig) {
+      this._extendedConfig = this._initExtendedConfig();
+    }
+
+    return this._extendedConfig;
+  }
+
+  /**
+   * Initialize extended config
+   * @returns {Object}
+   */
+  _initExtendedConfig() {
     const result = {};
     const config = super.getConfig();
     const cliParams = {
@@ -105,6 +122,15 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
+    this._checkDependenciesExist(result);
+
+    Object.keys(result).forEach(hash => {
+      const node = result[hash];
+      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
+
+      node.dependsOn = Util.arrayToObject(dependsOn);
+    });
+
     return result;
   }
 
@@ -112,8 +138,9 @@ class TerraformCommand extends AbstractCommand {
    * Get filtered config
    * @returns {Object}
    */
-  getConfig() {
-    const config = this.getExtendedConfig();
+  getFilteredConfig() {
+    const fullConfig = this.getExtendedConfig();
+    const config = Object.assign({}, fullConfig);
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -128,15 +155,13 @@ class TerraformCommand extends AbstractCommand {
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
 
-    Object.keys(config)
-      .filter(hash => filters.some(check => !check(hash)))
-      .forEach(hash => { delete config[hash]; });
+    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
 
-    if (!Object.keys(config).length) {
+    if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
-    return config;
+    return filteredConfig;
   }
 
   /**
@@ -213,6 +238,31 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @returns {AbstractDependencyStrategy}
+   */
+  getDependencyStrategy() {
+    if (!this._dependecyStrategy) {
+      const option = this.getOption('dependency');
+
+      switch (option) {
+        case 'auto':
+          this._dependecyStrategy = new DependeciesAuto();
+          break;
+        case 'ignore':
+          this._dependecyStrategy = new DependeciesIgnore();
+          break;
+        case 'include':
+          this._dependecyStrategy = new DependeciesInclude();
+          break;
+        default:
+          throw new Error('Unknown Error!')
+      }
+    }
+
+    return this._dependecyStrategy;
+  }
+
+  /**
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
@@ -267,41 +317,33 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Get object of components' configuration
-   * @return {Object}
+   * Check all components dependencies existence
+   * @param {Object} config
    */
-  getConfigObject() {
-    const tree = {};
-    const object = Object.assign({}, this.getConfig());
-    const issues = [];
-    const fullConfig = this.getExtendedConfig();
+  _checkDependenciesExist(config) {
+    const issues = {};
 
-    Object.keys(object).forEach(hash => {
-      const node = Object.assign({}, object[hash]);
-      const dependsOn = {};
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
 
-      node.dependsOn.forEach(dep => {
+      issues[hash] = node.dependsOn.filter(dep => {
         const key = ConfigLoader.buildComponentHash(dep);
 
-        if (!fullConfig.hasOwnProperty(key)) {
-          issues.push(`'${node.name}' component depends on the component in '${dep}' directory that doesn't exist`);
-        }
-
-        dependsOn[key] = null;
+        return !config.hasOwnProperty(key);
       });
-
-      node.dependsOn = dependsOn;
-      tree[hash] = node;
     });
 
-    if (issues.length) {
-      throw new ListException(issues, {
+    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
+      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
+        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
+    });
+
+    if (messages.length) {
+      throw new ListException(messages, {
         header: 'TerraHub failed because of the following issues:',
         style: ListException.NUMBER
       });
     }
-
-    return tree;
   }
 
   /**
@@ -357,6 +399,8 @@ class TerraformCommand extends AbstractCommand {
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
+   * @private
+   * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
     let issues;
@@ -403,8 +447,7 @@ class TerraformCommand extends AbstractCommand {
       const hash = hashesToCheck.pop();
       const { dependsOn } = fullConfig[hash];
 
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
+      Object.keys(dependsOn)
         .filter(it => !config.hasOwnProperty(it))
         .forEach(it => {
           issues[hash].push(it);
@@ -432,24 +475,38 @@ class TerraformCommand extends AbstractCommand {
    */
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
-    const issues = [];
+    const hashesToCheck = Object.keys(config);
+    const checked = Object.assign({}, config);
+    const issues = {};
 
-    const keys = Object.keys(fullConfig).filter(key => !config.hasOwnProperty(key));
+    Object.keys(fullConfig).forEach(it => { issues[it] = []; });
 
-    keys.forEach(hash => {
-      const depNode = fullConfig[hash];
-      const dependsOn = depNode.dependsOn.map(path => ConfigLoader.buildComponentHash(path));
+    while (hashesToCheck.length) {
+      const hash = hashesToCheck.pop();
 
-      const issueNodes = dependsOn.filter(it => config.hasOwnProperty(it))
-        .map(it => `'${fullConfig[it].name}'`).join(', ');
+      Object.keys(fullConfig)
+        .filter(it => {
+          const { dependsOn } = fullConfig[it];
 
-      if (issueNodes.length) {
-        issues.push(`'${fullConfig[hash].name}' component that depends on ${issueNodes} ` +
-          `component${issueNodes.length > 1 ? 's' : ''} is excluded from the execution list`);
-      }
+          return Object.keys(dependsOn).includes(hash);
+        })
+        .filter(it => !config.hasOwnProperty(it))
+        .forEach(it => {
+          issues[it].push(hash);
+
+          if (!checked.hasOwnProperty(it)) {
+            checked[it] = null;
+            hashesToCheck.push(it);
+          }
+        });
+    }
+
+    return Object.keys(issues).filter(it => issues[it].length).map(hash => {
+      const names = issues[hash].map(it => fullConfig[it].name);
+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'} of ` +
+        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
-
-    return issues;
   }
 
   /**
