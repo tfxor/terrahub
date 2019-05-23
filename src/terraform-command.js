@@ -72,7 +72,7 @@ class TerraformCommand extends AbstractCommand {
     Object.keys(fullConfig).forEach(hash => {
       const { name, root } = fullConfig[hash];
 
-      if(result.hasOwnProperty(name)) {
+      if (result.hasOwnProperty(name)) {
         result[name].push(root);
       } else {
         result[name] = [root];
@@ -81,9 +81,13 @@ class TerraformCommand extends AbstractCommand {
 
     const duplicates = Object.keys(result).filter(it => result[it].length > 1);
 
-    if(duplicates.length) {
-      duplicates.forEach(it => {
-        throw new Error(`In directories: '${result[it].join(`' ,'`)}' is component with same name '${it}'`);
+    if (duplicates.length) {
+      const messages = duplicates.map(it => { return `In directories: '${result[it].join(`' ,'`)}' ` +
+        `is component with same name '${it}'`; });
+
+      throw new ListException(messages, {
+        header: 'Multiple components in project with same name:',
+        style: ListException.DASH
       });
     }
 
@@ -91,7 +95,7 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @returns {Promise}
+   * @return {Promise}
    * @private
    */
   _checkProjectDataMissing() {
@@ -534,7 +538,7 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
         ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
