@@ -133,13 +133,9 @@ class Util {
   static getNonUniqNames(names, config) {
     const result = {};
 
-    names.forEach(it => {
-      Object.keys(config).forEach(hash => {
-        if (config[hash].name === it) {
-          result[it] = config[hash].root; 
-        }
-      });
-    });
+    Object.keys(config)
+      .filter(hash => names.includes(config[hash].name))
+      .forEach(hash => { result[hash] = config[hash].root; });
 
     return result;
   }

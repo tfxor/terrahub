@@ -55,11 +55,12 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    const _duplicatedNames = getNonUniqNames(this._name, this.getConfig());
+    const config = this.getConfig();
+    const duplicatedNames = getNonUniqNames(this._name, config);
 
-    Object.keys(_duplicatedNames).forEach(name => {
-      throw new Error(`Terrahub component with provided name '${name}'`+
-        ` already exists in '${_duplicatedNames[name]}' directory.`);
+    Object.keys(duplicatedNames).forEach(hash => {
+      throw new Error(`Terrahub component with provided name '${config[hash].name}'`+
+        ` already exists in '${duplicatedNames[hash]}' directory.`);
     });  
     
     const names = this._name;
