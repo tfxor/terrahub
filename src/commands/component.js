@@ -7,7 +7,7 @@ const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/wrappers/terraform');
-const { renderTwig, isAwsNameValid, isComponentNameUniq, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
+const { renderTwig, isAwsNameValid, getNonUniqNames, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -55,10 +55,13 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-    if(this._name.some(it => !isComponentNameUniq(it, this.getConfig()))) {
-      throw new Error(`Terrahub component with provided name '${this._name}' already exists.`);
-    }
+    const _duplicatedNames = getNonUniqNames(this._name, this.getConfig());
 
+    Object.keys(_duplicatedNames).forEach(name => {
+      throw new Error(`Terrahub component with provided name '${name}'`+
+        ` already exists in '${_duplicatedNames[name]}' directory.`);
+    });  
+    
     const names = this._name;
 
     if (this._delete) {

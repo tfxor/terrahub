@@ -126,14 +126,22 @@ class Util {
   }
 
   /**
-   * @param {String} name
+   * @param {String[]} names
    * @param {Object} config
-   * @returns {Boolean}
+   * @returns {Object}
    */
-  static isComponentNameUniq(name, config) {
-    return !Object.keys(config).some(hash => {
-      return config[hash].name === name;
+  static getNonUniqNames(names, config) {
+    const result = {};
+
+    names.forEach(it => {
+      Object.keys(config).forEach(hash => {
+        if (config[hash].name === it) {
+          result[it] = config[hash].root; 
+        }
+      });
     });
+
+    return result;
   }
 
   /**
@@ -243,7 +251,7 @@ class Util {
     const {
       maxRetries = 2,
       conditionFunction = () => true,
-      intermediateAction = () => {}
+      intermediateAction = () => { }
     } = options;
     let retries = 0;
 

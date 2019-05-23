@@ -82,12 +82,12 @@ class TerraformCommand extends AbstractCommand {
     const duplicates = Object.keys(result).filter(it => result[it].length > 1);
 
     if (duplicates.length) {
-      const messages = duplicates.map(it => { return `In directories: '${result[it].join(`' ,'`)}' ` +
-        `is component with same name '${it}'`; });
+      const messages = duplicates.map(it => `component '${it}' ` +
+        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
 
       throw new ListException(messages, {
-        header: 'Multiple components in project with same name:',
-        style: ListException.DASH
+        header: 'Some components have duplicates in project:',
+        style: ListException.NUMBER
       });
     }
 
