@@ -53,15 +53,45 @@ class TerraformCommand extends AbstractCommand {
       }
 
       return Promise.resolve();
-    }).catch(err => {
-      const error = err.constructor === String ? new Error(err) : err;
+    }).then(() => this._checkProjectDuplicateComponents())
+      .catch(err => {
+        const error = err.constructor === String ? new Error(err) : err;
 
-      return Promise.reject(error);
-    });
+        return Promise.reject(error);
+      });
   }
 
   /**
-   * @return {Promise}
+   * @returns {Promise}
+   * @private
+   */
+  _checkProjectDuplicateComponents() {
+    const fullConfig = this.getExtendedConfig();
+    const result = {};
+
+    Object.keys(fullConfig).forEach(hash => {
+      const { name, root } = fullConfig[hash];
+
+      if(result.hasOwnProperty(name)) {
+        result[name].push(root);
+      } else {
+        result[name] = [root];
+      }
+    });
+
+    const duplicates = Object.keys(result).filter(it => result[it].length > 1);
+
+    if(duplicates.length) {
+      duplicates.forEach(it => {
+        throw new Error(`In directories: '${result[it].join(`' ,'`)}' is component with same name '${it}'`);
+      });
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * @returns {Promise}
    * @private
    */
   _checkProjectDataMissing() {
@@ -255,7 +285,7 @@ class TerraformCommand extends AbstractCommand {
           this._dependecyStrategy = new DependeciesInclude();
           break;
         default:
-          throw new Error('Unknown Error!')
+          throw new Error('Unknown Error!');
       }
     }
 
@@ -504,8 +534,8 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'} of ` +
-        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
+        ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
 
