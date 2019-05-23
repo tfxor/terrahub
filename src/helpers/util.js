@@ -247,7 +247,7 @@ class Util {
     const {
       maxRetries = 2,
       conditionFunction = () => true,
-      intermediateAction = () => { }
+      intermediateAction = () => {}
     } = options;
     let retries = 0;
 
