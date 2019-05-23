@@ -80,15 +80,15 @@ class JitHelper {
     if (module) {
       const promises = Object.keys(module).filter(it => module[it]).map(it => {
         const { source } = module[it];
-        if (source && source[0] === '.') {
-          module[it].source = path.normalize(path.resolve(template.locals.component.path, source));
+        if (source) {
+          module[it].source = path.resolve(template.locals.component.path, source);
         }
       });
       
       return Promise.all(promises);
     } 
 
-    Promise.resolve();
+    return Promise.resolve();
   }
 
   /**
@@ -162,7 +162,7 @@ class JitHelper {
    * @private
    */
   static _generateVariable(config) {
-    const variable = (config.template.variable) ? config.template.variable : {};
+    const variable = config.template.variable || {};
     
     const tmpPath = JitHelper.buildTmpPath(config);
 
