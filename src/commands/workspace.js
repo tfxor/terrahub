@@ -31,7 +31,7 @@ class WorkspaceCommand extends TerraformCommand {
     const promises = [];
     let filesToRemove = [];
     const kill = this.getOption('delete');
-    const configs = this.getConfigObject();
+    const configs = this.getFilteredConfig();
 
     const rootPath = this.getAppPath();
     const rootConfigPath = path.join(rootPath, this.getDefaultFileName());
@@ -88,7 +88,7 @@ class WorkspaceCommand extends TerraformCommand {
     });
 
     this.reloadConfig();
-    const cfgObject = this.getConfigObject();
+    const cfgObject = this.getFilteredConfig();
 
     if (!kill) {
       let isUpdate = promises.length !== (configsList.length - 1);

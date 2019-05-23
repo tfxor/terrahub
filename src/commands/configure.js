@@ -56,7 +56,7 @@ class ConfigureCommand extends TerraformCommand {
     }
 
     if (this._isComponentTarget()) {
-      const configs = this.getConfig();
+      const configs = this.getFilteredConfig();
 
       Object.keys(configs).forEach(key => {
         const componentPath = path.join(configs[key].project.root, configs[key].root, this.getFileName());
@@ -216,7 +216,7 @@ class ConfigureCommand extends TerraformCommand {
       if (global) {
         configDirectory = 'global';
       } else if (this._isComponentTarget()) {
-        const config = this.getConfigObject();
+        const config = this.getFilteredConfig();
         const components = this.buildComponentList(config);
 
         configDirectory = components.map(it => `\`${it}\``).join(', ') +
