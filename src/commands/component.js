@@ -7,7 +7,7 @@ const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/wrappers/terraform');
-const { renderTwig, isAwsNameValid, getNonUniqNames, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
+const { renderTwig, isAwsNameValid, getNonUniqueNames, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -56,7 +56,7 @@ class ComponentCommand extends AbstractCommand {
     }
 
     const config = this.getConfig();
-    const duplicatedNames = getNonUniqNames(this._name, config);
+    const duplicatedNames = getNonUniqueNames(this._name, config);
 
     Object.keys(duplicatedNames).forEach(hash => {
       throw new Error(`Terrahub component with provided name '${config[hash].name}'`+

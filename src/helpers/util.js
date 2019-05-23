@@ -130,7 +130,7 @@ class Util {
    * @param {Object} config
    * @returns {Object}
    */
-  static getNonUniqNames(names, config) {
+  static getNonUniqueNames(names, config) {
     const result = {};
 
     Object.keys(config)
