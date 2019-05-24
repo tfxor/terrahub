@@ -30,7 +30,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'D', 'Set TerraHub dependency validation strategy', String, 'auto')
+      .addOption('dependency', 'D', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
       ;
   }
 
