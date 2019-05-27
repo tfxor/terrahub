@@ -168,7 +168,7 @@ class AbstractCommand {
       );
     }
 
-    return this.tokenValidate();
+    return this._tokenValidate();
   }
 
   /**
@@ -266,19 +266,38 @@ class AbstractCommand {
     return toMd5(name + Date.now().toString()).slice(0, 8);
   }
 
-
-  tokenValidate() {
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _tokenValidate() {
     if(!config.token) {
-      throw new AuthorizationException('THUB_TOKEN is not provided.');
+      this.onTokenMissingOrInvalid(null);
+      return Promise.resolve();
     }
 
     return fetch.get('thub/account/retrieve').catch(err => {
       if (err instanceof AuthorizationException) {
+        this.onTokenMissingOrInvalid(config.token);
         return;
       }
 
       throw err;
     });
+  }
+
+  /**
+   * @abstract
+   * @param {String} token
+   * @returns {void}
+   */
+  onTokenMissingOrInvalid(token) {
+    if (token) {
+      this.logger.error('THUB_TOKEN is not valid.');
+    } else {
+      this.logger.warn('THUB_TOKEN is not provided.');
+    }
+
   }
 }
 
