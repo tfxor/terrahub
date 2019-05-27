@@ -2,11 +2,12 @@
 
 const path = require('path');
 const fse = require('fs-extra');
-const { config } = require('./parameters');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
+const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const { toMd5, homePath } = require('./helpers/util');
+const AuthorizationException = require('./exceptions/authorization-exception');
 
 /**
  * @abstract
@@ -167,7 +168,7 @@ class AbstractCommand {
       );
     }
 
-    return Promise.resolve();
+    return this.tokenValidate();
   }
 
   /**
@@ -263,6 +264,21 @@ class AbstractCommand {
    */
   getProjectCode(name) {
     return toMd5(name + Date.now().toString()).slice(0, 8);
+  }
+
+
+  tokenValidate() {
+    if(!config.token) {
+      throw new AuthorizationException('THUB_TOKEN is not provided.');
+    }
+
+    return fetch.get('thub/account/retrieve').catch(err => {
+      if (err instanceof AuthorizationException) {
+        return;
+      }
+
+      throw err;
+    });
   }
 }
 

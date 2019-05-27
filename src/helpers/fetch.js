@@ -1,6 +1,7 @@
 'use strict';
 
 const URL = require('url');
+const AuthorizationException = require('../exceptions/authorization-exception');
 const logger = require('./logger');
 const fetch = require('node-fetch');
 const merge = require('lodash.mergewith');
@@ -80,10 +81,7 @@ class Fetch {
       let error;
       switch (result.status) {
         case 403:
-          error = new Error(JSON.stringify({
-            message: 'Provided THUB_TOKEN is invalid',
-            errorType: 'ValidationException'
-          }, null, 2));
+          error = new AuthorizationException();
           break;
 
         case 500:
