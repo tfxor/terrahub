@@ -26,6 +26,7 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _createWorker(hash) {
+    console.log('************** CREATING WORKER **************');
     const cfgThread = this.config[hash];
 
     const worker = cluster.fork(Object.assign({
@@ -81,7 +82,7 @@ class ThreadDistributor extends AbstractDistributor {
 
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
-
+      console.log('WORKER WORK *******************************************************************************************************');
       cluster.on('message', (worker, data) => {
         if (data.isError) {
           this._error = this._handleError(data.error);
@@ -131,6 +132,22 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+  }
+
+  /**
+   * @return {void}
+   */
+  disconnect() {
+    console.log('disconnecting');
+    Object.keys(cluster.workers).forEach(id => {
+      const worker = cluster.workers[id];
+
+      console.log(`Worker id:${id} killed`);
+
+      worker.kill();
+    });
+
+    process.exit();
   }
 }
 

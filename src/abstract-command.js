@@ -264,6 +264,13 @@ class AbstractCommand {
   getProjectCode(name) {
     return toMd5(name + Date.now().toString()).slice(0, 8);
   }
+
+  /**
+   * @abstract
+   */
+  stopExecution() {
+    throw new Error('Method must be implemented.')
+  }
 }
 
 module.exports = AbstractCommand;

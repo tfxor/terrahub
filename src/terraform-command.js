@@ -32,6 +32,8 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
       ;
+
+    process.on('SIGINT', this.stopExecution);
   }
 
   /**
@@ -570,6 +572,15 @@ class TerraformCommand extends AbstractCommand {
   buildComponentList(config) {
     return Object.keys(config).map(key => config[key].name);
   }
+
+  /**
+   * @return {void}
+   */
+  stopExecution() {
+      console.log('Terrahub exit command.');
+      process.exit();
+  }
+
 }
 
 module.exports = TerraformCommand;

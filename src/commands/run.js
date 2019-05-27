@@ -21,6 +21,7 @@ class RunCommand extends TerraformCommand {
       .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
       .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false)
     ;
+
   }
 
   /**
@@ -75,8 +76,9 @@ class RunCommand extends TerraformCommand {
    */
   _runLocal(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
-    const distributor = new Distributor(config);
+    this.distributor = new Distributor(config);
 
+    console.log('_runLocal', this.distributor);
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
         actions.push('build');
@@ -85,16 +87,16 @@ class RunCommand extends TerraformCommand {
       actions.push('plan');
     }
 
-    return distributor.runActions(actions)
+    return this.distributor.runActions(actions)
       .then(() => !this._isApply ?
         Promise.resolve() :
-        distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
+        this.distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
           dependencyDirection: Dictionary.DIRECTION.FORWARD
         })
       )
       .then(() => !this._isDestroy ?
         Promise.resolve() :
-        distributor.runActions(['plan', 'destroy'], {
+        this.distributor.runActions(['plan', 'destroy'], {
           dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
         })
@@ -108,9 +110,11 @@ class RunCommand extends TerraformCommand {
    */
   _runCloud(cfg) {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    const distributor = new CloudDistributor(cfg);
+    this.distributor = new CloudDistributor(cfg);
 
-    return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+    console.log('run cloud', this.distributor);
+
+    return this.distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }
 
   /**
@@ -146,6 +150,15 @@ class RunCommand extends TerraformCommand {
    */
   get _isApprovementRequired() {
     return ['apply', 'destroy'].some(it => this.getOption(it));
+  }
+
+  stopExecution() {
+    console.log('Stoping exuction :*)', this.distributor);
+    if(this.distributor) {
+      this.distributor.disconnect();
+    } else {
+      super.stopExecution();
+    }
   }
 }
 

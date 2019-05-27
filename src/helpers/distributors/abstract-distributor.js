@@ -68,6 +68,13 @@ class AbstractDistributor {
   runActions(actions, options = {}) {
     throw new Error('runActions requires implementation');
   }
+
+  /**
+   * @abstract
+   */
+  disconnect() {
+    throw new Error('Method must be implemented.')
+  }
 }
 
 module.exports = AbstractDistributor;
