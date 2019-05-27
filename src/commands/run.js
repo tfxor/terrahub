@@ -159,7 +159,6 @@ class RunCommand extends TerraformCommand {
       super.onTokenMissingOrInvalid(token);
     }
   }
-
 }
 
 module.exports = RunCommand;
