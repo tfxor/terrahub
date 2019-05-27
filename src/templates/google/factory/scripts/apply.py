@@ -7,7 +7,7 @@ def main():
     includ = []
     for (k, v) in components.items():
         includ.append(k)
-        args = ['terrahub', 'configure', '-i', k, '-c', "terraform.varFile[0]='" + str(v) + "'"]
+        args = ['terrahub', 'configure', '-i', k, '-c', "terraform.varFile[0]=" + str(v)]
         subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.environ['root'])
     includ = ','.join(includ)
 

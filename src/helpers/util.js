@@ -126,6 +126,21 @@ class Util {
   }
 
   /**
+   * @param {String[]} names
+   * @param {Object} config
+   * @returns {Object}
+   */
+  static getNonUniqueNames(names, config) {
+    const result = {};
+
+    Object.keys(config)
+      .filter(hash => names.includes(config[hash].name))
+      .forEach(hash => { result[hash] = config[hash].root; });
+
+    return result;
+  }
+
+  /**
    * @param {String} name
    * @returns {Boolean}
    */

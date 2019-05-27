@@ -30,7 +30,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
+      .addOption('dependency', 'D', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
       ;
   }
 
@@ -53,11 +53,45 @@ class TerraformCommand extends AbstractCommand {
       }
 
       return Promise.resolve();
-    }).catch(err => {
-      const error = err.constructor === String ? new Error(err) : err;
+    }).then(() => this._checkProjectDuplicateComponents())
+      .catch(err => {
+        const error = err.constructor === String ? new Error(err) : err;
 
-      return Promise.reject(error);
+        return Promise.reject(error);
+      });
+  }
+
+  /**
+   * @returns {Promise}
+   * @private
+   */
+  _checkProjectDuplicateComponents() {
+    const fullConfig = this.getExtendedConfig();
+    const result = {};
+
+    Object.keys(fullConfig).forEach(hash => {
+      const { name, root } = fullConfig[hash];
+
+      if (result.hasOwnProperty(name)) {
+        result[name].push(root);
+      } else {
+        result[name] = [root];
+      }
     });
+
+    const duplicates = Object.keys(result).filter(it => result[it].length > 1);
+
+    if (duplicates.length) {
+      const messages = duplicates.map(it => `component '${it}' ` +
+        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
+
+      throw new ListException(messages, {
+        header: 'Some components have duplicates in project:',
+        style: ListException.NUMBER
+      });
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -255,7 +289,7 @@ class TerraformCommand extends AbstractCommand {
           this._dependecyStrategy = new DependeciesInclude();
           break;
         default:
-          throw new Error('Unknown Error!')
+          throw new Error('Unknown Error!');
       }
     }
 
@@ -504,8 +538,8 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'} of ` +
-        `'${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
+        ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
 
