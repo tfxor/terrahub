@@ -156,7 +156,7 @@ class RunCommand extends TerraformCommand {
     super.onTokenMissingOrInvalid(token);
 
     if (this.getOption('cloud')) {
-      throw error;
+      return false;
     }
   }
 
