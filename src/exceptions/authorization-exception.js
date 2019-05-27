@@ -4,7 +4,7 @@ class AuthorizationException extends Error {
   /**
    * @param {String} issue
    */
-  constructor(issue = 'Please provide valid THUB_TOKEN.') {
+  constructor(issue) {
     super(issue);
 
     this.errorType =  'AuthorizationException';
