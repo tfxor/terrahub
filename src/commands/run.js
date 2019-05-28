@@ -149,7 +149,6 @@ class RunCommand extends TerraformCommand {
   }
 
   /**
-   * Returns Warning | Error
    * @param {String} token
    */
   onTokenMissingOrInvalid(token) {
