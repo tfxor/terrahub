@@ -287,7 +287,6 @@ class AbstractCommand {
   }
 
   /**
-   * @abstract
    * @param {String} token
    * @returns {void}
    */
