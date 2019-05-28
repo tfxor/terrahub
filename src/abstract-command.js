@@ -7,7 +7,7 @@ const ConfigLoader = require('./config-loader');
 const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const { toMd5, homePath } = require('./helpers/util');
-const AuthorizationException = require('./exceptions/authorization-exception');
+const AuthenticationException = require('./exceptions/authentication-exception');
 
 /**
  * @abstract
@@ -277,7 +277,7 @@ class AbstractCommand {
     }
 
     return fetch.get('thub/account/retrieve').catch(err => {
-      if (err instanceof AuthorizationException) {
+      if (err instanceof AuthenticationException) {
         this.onTokenMissingOrInvalid(config.token);
         return;
       }
@@ -293,7 +293,7 @@ class AbstractCommand {
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
-      throw new AuthorizationException('Provided THUB_TOKEN is not valid.');
+      throw new AuthenticationException('Provided THUB_TOKEN is not valid.');
     } else {
       this.logger.warn('THUB_TOKEN is not provided.');
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 const URL = require('url');
-const AuthorizationException = require('../exceptions/authorization-exception');
+const AuthenticationException = require('../exceptions/authentication-exception');
 const logger = require('./logger');
 const fetch = require('node-fetch');
 const merge = require('lodash.mergewith');
@@ -81,7 +81,7 @@ class Fetch {
       let error;
       switch (result.status) {
         case 403:
-          error = new AuthorizationException();
+          error = new AuthenticationException();
           break;
 
         case 500:
