@@ -112,7 +112,7 @@ class RunCommand extends TerraformCommand {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
     this.distributor = new CloudDistributor(cfg);
 
-    console.log('run cloud', this.distributor);
+    console.log('run cloud');
 
     return this.distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }

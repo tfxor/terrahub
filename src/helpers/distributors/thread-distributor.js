@@ -51,6 +51,7 @@ class ThreadDistributor extends AbstractDistributor {
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
+        console.log('creating work ', hash);
         this._createWorker(hash);
       }
     }
@@ -82,7 +83,6 @@ class ThreadDistributor extends AbstractDistributor {
 
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
-      console.log('WORKER WORK *******************************************************************************************************');
       cluster.on('message', (worker, data) => {
         if (data.isError) {
           this._error = this._handleError(data.error);
@@ -147,7 +147,7 @@ class ThreadDistributor extends AbstractDistributor {
       worker.kill();
     });
 
-    process.exit();
+    process.exit(0);
   }
 }
 
