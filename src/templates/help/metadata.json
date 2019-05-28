@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.2.58",
+  "version": "0.2.62",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-05-23T13:37:25.029Z",
+  "buildDate": "2019-05-24T16:40:09.771Z",
   "commands": [
     {
       "name": "apply",
@@ -58,8 +58,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -130,8 +130,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -272,8 +272,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -350,8 +350,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -422,8 +422,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -511,8 +511,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -577,8 +577,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -703,8 +703,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -775,8 +775,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -841,8 +841,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -936,8 +936,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -1038,8 +1038,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {
@@ -1116,8 +1116,8 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
+          "shortcut": "D",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
           "defaultValue": "auto"
         },
         {

@@ -268,8 +268,8 @@ class ConfigLoader {
   }
 
   /**
-   * @param config {Object}
-   * @param componentPath {String}
+   * @param {Object} config
+   * @param {String} componentPath
    * @private
    */
   _processComponentConfig(config, componentPath) {

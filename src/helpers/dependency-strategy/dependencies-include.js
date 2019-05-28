@@ -40,7 +40,7 @@ class DependencyInclude extends AbstractDependencyStrategy {
 
       console.log(`Terrahub added '${fullConfig[hash].name}' component that is dependency of ` +
         `'${names.join(`' ,'`)}' component${names.length > 1 ? 's' : ''}`);
-    })
+    });
 
     return Object.assign({}, config, _newComponents);
   }
