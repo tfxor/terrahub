@@ -288,7 +288,6 @@ class AbstractCommand {
 
   /**
    * @param {String} token
-   * @returns {void}
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
