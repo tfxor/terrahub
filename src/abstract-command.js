@@ -297,7 +297,6 @@ class AbstractCommand {
     } else {
       this.logger.warn('THUB_TOKEN is not provided.');
     }
-
   }
 }
 
