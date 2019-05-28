@@ -287,9 +287,7 @@ class AbstractCommand {
   }
 
   /**
-   * @abstract
    * @param {String} token
-   * @returns {void}
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
@@ -297,7 +295,6 @@ class AbstractCommand {
     } else {
       this.logger.warn('THUB_TOKEN is not provided.');
     }
-
   }
 }
 

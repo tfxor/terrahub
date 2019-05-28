@@ -149,8 +149,8 @@ class RunCommand extends TerraformCommand {
   }
 
   /**
-   * Returns Warning | Error
    * @param {String} token
+   * @protected
    */
   onTokenMissingOrInvalid(token) {
     if (this.getOption('cloud')) {
@@ -159,7 +159,6 @@ class RunCommand extends TerraformCommand {
       super.onTokenMissingOrInvalid(token);
     }
   }
-
 }
 
 module.exports = RunCommand;
