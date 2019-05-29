@@ -154,13 +154,17 @@ class RunCommand extends TerraformCommand {
   }
 
   stopExecution() {
+
     console.log('this.distributor', this.distributor);
+
+
     if (this.distributor) {
       console.log('hereis');
       this.distributor.disconnect();
-    } else {
-      super.stopExecution();
     }
+
+    super.stopExecution();
+
   }
 
 }
