@@ -78,7 +78,8 @@ class RunCommand extends TerraformCommand {
     const actions = ['prepare', 'init', 'workspaceSelect'];
     this.distributor = new Distributor(config);
 
-    console.log('_runLocal', this.distributor);
+    console.log('_runLocal');
+
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
         actions.push('build');
@@ -153,13 +154,15 @@ class RunCommand extends TerraformCommand {
   }
 
   stopExecution() {
-    console.log('Stoping exuction :*)', this.distributor);
-    if(this.distributor) {
+    console.log('this.distributor', this.distributor);
+    if (this.distributor) {
+      console.log('hereis');
       this.distributor.disconnect();
     } else {
       super.stopExecution();
     }
   }
+
 }
 
 module.exports = RunCommand;

@@ -33,8 +33,6 @@ class TerraformCommand extends AbstractCommand {
       .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
       ;
 
-    // process.stdin.resume();
-    process.on('SIGINT', this.stopExecution);
   }
 
   /**
@@ -578,16 +576,18 @@ class TerraformCommand extends AbstractCommand {
    * @return {void}
    */
   stopExecution() {
-      console.log('Terrahub exit command.', this.signalCount);
-      if(!this.signalCount) {
-        this.signalCount = 1;
-      }
-
+    if(!this.signalCount) {
+      this.signalCount = 1;
+    } else {
       this.signalCount++;
+    }
 
-      if(this.signalCount > 1) {
-        // process.exit(0);
-      }
+    console.log('Signal Count: ', this.signalCount);
+
+    if(this.signalCount > 1) {
+      console.log('Exit with code 1');
+      process.exit(1);
+    }
   }
 
 }

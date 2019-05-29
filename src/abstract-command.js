@@ -28,6 +28,10 @@ class AbstractCommand {
     this.initialize();
     this._addDefaultOptions();
 
+
+    // process.stdin.resume();
+    process.on('SIGINT', this.stopExecution);
+
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
     }
