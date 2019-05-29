@@ -114,7 +114,7 @@ class Help extends AbstractCommand {
 
   /**
    * Overrides method to prevent token validation
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
   validateToken() {
     return Promise.resolve();
