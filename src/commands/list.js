@@ -107,7 +107,7 @@ class ListCommand extends AbstractCommand {
       .then(() => Promise.resolve('Done'))
       .catch(err => {
         if (err.code === 'EHOSTUNREACH') {
-          this.logger.warn('Seems AWS credentials are invalid.');
+          this.logger.warn('TerraHub hasn\'t find any AWS credentials.');
         }
 
         throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
