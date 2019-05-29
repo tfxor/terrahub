@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
-const { toMd5, homePath} = require('../helpers/util');
+const { toMd5, homePath } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
 const { fetch, config, templates } = require('../parameters');
 
@@ -90,7 +90,7 @@ class ListCommand extends AbstractCommand {
       .then(() => {
         const projectsData = this.hash.getRaw();
 
-        if(Object.keys(projectsData).length) {
+        if (Object.keys(projectsData).length) {
           this.logger.log('Projects');
 
           this._showTree(this._format(projectsData, 0, depth));
@@ -106,7 +106,7 @@ class ListCommand extends AbstractCommand {
       })
       .then(() => Promise.resolve('Done'))
       .catch(err => {
-        if(err.code === 'EHOSTUNREACH') {
+        if (err.code === 'EHOSTUNREACH') {
           this.logger.warn('Seems AWS credentials are invalid.');
         }
 
