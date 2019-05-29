@@ -168,7 +168,7 @@ class AbstractCommand {
       );
     }
 
-    return this._validateToken();
+    return this.validateToken();
   }
 
   /**
@@ -268,13 +268,9 @@ class AbstractCommand {
 
   /**
    * @return {Promise}
-   * @private
+   * @protected
    */
-  _validateToken() {
-    if (['help', 'version'].some(it => this.getOption(it))) {
-      return Promise.resolve();
-    }
-
+  validateToken() {
     if (!config.token) {
       this.onTokenMissingOrInvalid(null);
       return Promise.resolve();
