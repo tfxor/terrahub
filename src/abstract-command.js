@@ -272,7 +272,7 @@ class AbstractCommand {
    */
   _validateToken() {
     if (['help', 'version'].some(it => this.getOption(it))) {
-      return Promise.resolve(0);
+      return Promise.resolve();
     }
 
     if (!config.token) {
