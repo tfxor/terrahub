@@ -157,7 +157,6 @@ class RunCommand extends TerraformCommand {
 
     console.log('this.distributor', this.distributor);
 
-
     if (this.distributor) {
       console.log('hereis');
       this.distributor.disconnect();
