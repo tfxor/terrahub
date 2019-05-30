@@ -1,9 +1,9 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
 
-class PlanCommand extends TerraformCommand {
+class PlanCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -20,7 +20,7 @@ class PlanCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = this.getDistributor(config);
 
     this.warnExecutionStarted(config);
 

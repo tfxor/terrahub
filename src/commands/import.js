@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class ImportCommand extends TerraformCommand {
+class ImportCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -22,7 +21,7 @@ class ImportCommand extends TerraformCommand {
     const configContentArr = this.getOption('config');
     const configAction = this.getFilteredConfig();
 
-    const distributor = new Distributor(configAction);
+    const distributor = this.getDistributor(configAction);
     return Promise.all(
       configContentArr.map(it => {
         const resourceData = it.split('=');

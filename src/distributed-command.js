@@ -25,9 +25,7 @@ class DistributedCommand extends ConfigCommand {
 
   stopExecution() {
     //maybe make it
-    console.log('this.distributor', this.distributor);
     if (this.distributor) {
-      console.log('hereis');
       this.distributor.disconnect();
     }
 

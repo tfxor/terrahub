@@ -96,8 +96,14 @@ class ThreadDistributor extends AbstractDistributor {
         this.removeDependencies(this._dependencyTable, data.hash);
       });
 
-      cluster.on('exit', (worker, code) => {
+      cluster.on('exit', (worker, code, signal) => {
         this._workersCount--;
+
+        if (signal === 'SIGINT') {
+          while(!Object.keys(cluster.workers).length) {
+            return reject('Gracefully shutting down');
+          }
+        }
 
         if (code === 0) {
           this._distributeConfigs();
@@ -124,31 +130,42 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _handleError(err) {
+    this._killParallelWorkers();
+
+    return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+  }
+
+  _killParallelWorkers() {
     Object.keys(cluster.workers).forEach(id => {
       const worker = cluster.workers[id];
-      worker.kill();
+
+      setTimeout(() => {
+        console.log(`Killing worker with id ${worker.id}`);
+        worker.kill();
+      }, 2000);
     });
 
     this._dependencyTable = {};
-
-    return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 
   /**
    * @return {void}
    */
   disconnect() {
-    console.log('disconnecting');
-    Object.keys(cluster.workers).forEach(id => {
-      const worker = cluster.workers[id];
-
-      console.log(`Worker id:${id} killed`);
-
-      worker.kill();
-    });
-
-    process.exit(0);
+    this._killParallelWorkers();
   }
+
+  // checkIfNoWorkersAndExit() {
+  //   if (!this._workersCount) {
+  //     console.log('Cluster graceful shutdown: done.');
+  //     if (shutdownTimer) clearTimeout(shutdownTimer);
+  //     process.exit(0);
+  //   } else {
+  //     console.log('Cluster graceful shutdown: wait ' + this._workersCount + ' worker' + (this._workersCount > 1 ? 's' : '') + '.');
+  //   }
+  // }
+
+
 }
 
 module.exports = ThreadDistributor;

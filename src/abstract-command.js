@@ -27,7 +27,6 @@ class AbstractCommand {
     this.configure();
     this.initialize();
     this._addDefaultOptions();
-    // this._sigintSignalHandler();
 
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
@@ -264,13 +263,6 @@ class AbstractCommand {
    */
   getProjectCode(name) {
     return toMd5(name + Date.now().toString()).slice(0, 8);
-  }
-
-  /**
-   * @private
-   */
-  _sigintSignalHandler() {
-    process.on('SIGINT', () => { this.stopExecution(); });
   }
 
   /**

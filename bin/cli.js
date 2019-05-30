@@ -45,13 +45,11 @@ try {
   process.exit(1);
 }
 
+process.on('SIGINT', () => { command.stopExecution(); });
+
 command
   .validate()
   .then(() => command.run())
-  // .then(() => {
-  //   process.on('SIGINT', () => { this.stopExecution(); });
-  //   Promise.resolve();
-  // })
   .then(message => {
     if (message) {
       logger.info(message);

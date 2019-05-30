@@ -2,7 +2,7 @@
 
 const cluster = require('cluster');
 const JitHelper = require('../jit-helper');
-const { promiseSeries} = require('../util');
+const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
 

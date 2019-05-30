@@ -571,8 +571,22 @@ class ConfigCommand extends AbstractCommand {
     return Object.keys(config).map(key => config[key].name);
   }
 
+
   stopExecution() {
-    console.log('Implemented method.');
+    if (!this.signalCount) {
+      this.signalCount = 1;
+    } else {
+      this.signalCount++;
+    }
+
+    console.log('Signal Count: ', this.signalCount);
+
+    if (this.signalCount > 1) {
+      console.log('Two interrupts received. Exiting immediately. Note that data\n' +
+        'loss may have occurred.');
+      console.log('Exit with code 1');
+      process.exit(1);
+    }
   }
 
 }

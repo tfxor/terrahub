@@ -1,10 +1,9 @@
 'use strict';
 
 const { yesNoQuestion } = require('../helpers/util');
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class OutputCommand extends TerraformCommand {
+class OutputCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -33,7 +32,7 @@ class OutputCommand extends TerraformCommand {
       }
 
       const config = this.getFilteredConfig();
-      const distributor = new Distributor(config);
+      const distributor = this.getDistributor(config);
 
       return distributor.runActions(['prepare', 'output'], {
         format: this._format

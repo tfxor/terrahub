@@ -88,6 +88,8 @@ class RunCommand extends DistributedCommand {
       actions.push('plan');
     }
 
+    console.log(actions);
+
     return this.distributor.runActions(actions)
       .then(() => !this._isApply ?
         Promise.resolve() :
@@ -101,7 +103,9 @@ class RunCommand extends DistributedCommand {
           dependencyDirection: Dictionary.DIRECTION.REVERSE,
           planDestroy: true
         })
-      );
+      ).catch(err => {
+        console.log('Run Error :', err);
+      });
   }
 
   /**
