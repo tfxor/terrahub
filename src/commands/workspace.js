@@ -7,11 +7,10 @@ const treeify = require('treeify');
 const ConfigLoader = require('../config-loader');
 const HashTable = require('../helpers/hash-table');
 const { config, templates } = require('../parameters');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { renderTwig, yesNoQuestion } = require('../helpers/util');
-const Distributor = require('../helpers/distributors/thread-distributor');
 
-class WorkspaceCommand extends TerraformCommand {
+class WorkspaceCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -125,7 +124,7 @@ class WorkspaceCommand extends TerraformCommand {
    * @private
    */
   _workspace(action, config) {
-    const distributor = new Distributor(config);
+    const distributor = this.getDistributor(config);
 
     this.warnExecutionStarted(config);
 

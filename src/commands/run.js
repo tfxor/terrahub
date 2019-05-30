@@ -2,11 +2,11 @@
 
 const Dictionary = require('../helpers/dictionary');
 const { printListAsTree } = require('../helpers/util');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
 const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
-class RunCommand extends TerraformCommand {
+class RunCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -76,7 +76,7 @@ class RunCommand extends TerraformCommand {
    */
   _runLocal(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
-    this.distributor = new Distributor(config);
+    this.distributor = this.getDistributor(config);
 
     console.log('_runLocal');
 
@@ -111,7 +111,7 @@ class RunCommand extends TerraformCommand {
    */
   _runCloud(cfg) {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    this.distributor = new CloudDistributor(cfg);
+    this.distributor = this.getCloudDistributor(cfg);
 
     console.log('run cloud');
 
@@ -152,20 +152,6 @@ class RunCommand extends TerraformCommand {
   get _isApprovementRequired() {
     return ['apply', 'destroy'].some(it => this.getOption(it));
   }
-
-  stopExecution() {
-
-    console.log('this.distributor', this.distributor);
-
-    if (this.distributor) {
-      console.log('hereis');
-      this.distributor.disconnect();
-    }
-
-    super.stopExecution();
-
-  }
-
 }
 
 module.exports = RunCommand;

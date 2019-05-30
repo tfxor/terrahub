@@ -17,12 +17,23 @@ class DistributedCommand extends ConfigCommand {
 
   getCloudDistributor(config) {
     if(!this.cloudDistributor) {
-      this.cloudDistributor = new Distributor(config);
+      this.cloudDistributor = new CloudDistributor(config);
     }
 
     return this.cloudDistributor;
   }
 
+  stopExecution() {
+    //maybe make it
+    console.log('this.distributor', this.distributor);
+    if (this.distributor) {
+      console.log('hereis');
+      this.distributor.disconnect();
+    }
+
+    super.stopExecution();
+
+  }
 }
 
 module.exports = DistributedCommand;

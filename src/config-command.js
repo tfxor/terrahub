@@ -9,9 +9,9 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
-const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
-const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
-const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-include');
 
 
 class ConfigCommand extends AbstractCommand {
@@ -280,13 +280,13 @@ class ConfigCommand extends AbstractCommand {
 
       switch (option) {
         case 'auto':
-          this._dependecyStrategy = new DependeciesAuto();
+          this._dependecyStrategy = new DependenciesAuto();
           break;
         case 'ignore':
-          this._dependecyStrategy = new DependeciesIgnore();
+          this._dependecyStrategy = new DependenciesIgnore();
           break;
         case 'include':
-          this._dependecyStrategy = new DependeciesInclude();
+          this._dependecyStrategy = new DependenciesInclude();
           break;
         default:
           throw new Error('Unknown Error!');

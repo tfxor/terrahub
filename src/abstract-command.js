@@ -27,7 +27,7 @@ class AbstractCommand {
     this.configure();
     this.initialize();
     this._addDefaultOptions();
-    //this._sigintSignalHandler();
+    // this._sigintSignalHandler();
 
     if (!this.getName()) {
       throw new Error('The command cannot have an empty name');
