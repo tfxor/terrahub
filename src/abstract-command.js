@@ -272,14 +272,12 @@ class AbstractCommand {
    */
   _validateToken() {
     if(!config.token) {
-      this.onTokenMissingOrInvalid(null);
-      return Promise.resolve();
+      return this.onTokenMissingOrInvalid(null);
     }
 
     return fetch.get('thub/account/retrieve').catch(err => {
       if (err instanceof AuthenticationException) {
-        this.onTokenMissingOrInvalid(config.token);
-        return;
+        return this.onTokenMissingOrInvalid(config.token);
       }
 
       throw err;

@@ -154,7 +154,7 @@ class RunCommand extends TerraformCommand {
    */
   onTokenMissingOrInvalid(token) {
     if (this.getOption('cloud')) {
-      throw new Error('Please provide valid THUB_TOKEN');
+      return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
     } else {
       super.onTokenMissingOrInvalid(token);
     }
