@@ -14,6 +14,13 @@ class Logger {
       formatter: (messages, context) => {}
     });
 
+    const consoleHandler = logger.createDefaultHandler();
+    logger.setHandler((messages, context) => {
+      consoleHandler(messages, context);
+      this._esHandler(messages);
+    });
+
+    this._promises = [];
     this._logger = logger;
   }
 
@@ -23,6 +30,7 @@ class Logger {
    */
   raw(message) {
     process.stdout.write(message);
+    this._esHandler([message]);
   }
 
   /**
@@ -66,6 +74,26 @@ class Logger {
     }
 
     this._logger.error('❌', message);
+  }
+
+  /**
+   * @return {Promise[]}
+   */
+  get promises() {
+    return this._promises;
+  }
+
+  /**
+   * @param {String[]} messages
+   * @private
+   */
+  _esHandler(messages) {
+    const message = Object.keys(messages).map(key => messages[key]).join('');
+
+    // @todo: implement POST to ElasticSearch
+    // const promise = fs.appendFile(join(__dirname, '../../log.txt'), message + EOL).catch();
+
+    this._promises.push(promise);
   }
 }
 

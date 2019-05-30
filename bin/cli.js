@@ -37,6 +37,14 @@ function commandCreate(logger = console) {
   return new Command(args, logger);
 }
 
+/**
+ * @param {Number} code
+ * @return {Promise}
+ */
+function syncExitProcess(code) {
+  return Promise.all(logger.promises).then(() => process.exit(code));
+}
+
 let command;
 try {
   command = commandCreate(logger);
@@ -52,9 +60,11 @@ command
     if (message) {
       logger.info(message);
     }
-    process.exit(0);
+
+    return syncExitProcess(0);
   })
   .catch(err => {
     logger.error(err || 'Error occurred');
-    process.exit(1);
+
+    return syncExitProcess(1);
   });
