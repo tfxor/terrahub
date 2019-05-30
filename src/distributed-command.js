@@ -7,9 +7,7 @@ const CloudDistributor = require('./helpers/distributors/cloud-distributor');
 class DistributedCommand extends ConfigCommand {
 
 
-  getDistributor() {
-    const config = this.getFilteredConfig();
-
+  getDistributor(config) {
     if(!this.distributor) {
       this.distributor = new Distributor(config);
     }
@@ -17,9 +15,7 @@ class DistributedCommand extends ConfigCommand {
     return this.distributor;
   }
 
-  getCloudDistributor() {
-    const config = this.getFilteredConfig();
-
+  getCloudDistributor(config) {
     if(!this.cloudDistributor) {
       this.cloudDistributor = new Distributor(config);
     }
