@@ -4,12 +4,12 @@ const fse = require('fs-extra');
 const { join, sep } = require('path');
 const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
+const ConfigCommand = require('../config-command');
 const Downloader = require('../helpers/downloader');
 const { binPath, config } = require('../parameters');
-const TerraformCommand = require('../terraform-command');
 const { buildTmpPath } = require('../helpers/jit-helper');
 
-class ConvertCommand extends TerraformCommand {
+class ConvertCommand extends ConfigCommand {
   /**
    * Command configuration
    */

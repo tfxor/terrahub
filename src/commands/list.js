@@ -6,12 +6,14 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const treeify = require('treeify');
+const ConfigCommand = require('../config-command');
+const AbstractCommand = require('../abstract-command');
+
 const HashTable = require('../helpers/hash-table');
 const { toMd5, homePath} = require('../helpers/util');
-const AbstractCommand = require('../abstract-command');
 const { fetch, config, templates } = require('../parameters');
 
-class ListCommand extends AbstractCommand {
+class ListCommand extends ConfigCommand {
   /**
    * Command configuration
    */
@@ -319,7 +321,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getRegions() {
-    const list = fse.readJsonSync(path.join(templates.aws, 'regions.json'), { throws: false }) || [];
+    const list = fse.readJsonSync(path.join(templates.path, 'aws', 'regions.json'), { throws: false }) || [];
 
     return list
       .filter(region => region.public === true)

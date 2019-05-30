@@ -48,6 +48,10 @@ try {
 command
   .validate()
   .then(() => command.run())
+  // .then(() => {
+  //   process.on('SIGINT', () => { this.stopExecution(); });
+  //   Promise.resolve();
+  // })
   .then(message => {
     if (message) {
       logger.info(message);

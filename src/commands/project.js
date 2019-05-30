@@ -3,11 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const ConfigLoader = require('../config-loader');
-const AbstractCommand = require('../abstract-command');
+const ConfigCommand = require('../config-command');
 const { templates, config, fetch } = require('../parameters');
 const { renderTwig, isAwsNameValid } = require('../helpers/util');
 
-class ProjectCommand extends AbstractCommand {
+class ProjectCommand extends ConfigCommand {
   /**
    * Command configuration
    */
