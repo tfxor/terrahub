@@ -1,10 +1,9 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributorCommand = require('../distributed-command');
 
-class ApplyCommand extends TerraformCommand {
+class ApplyCommand extends DistributorCommand {
   /**
    * Command configuration
    */
@@ -21,7 +20,7 @@ class ApplyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = this.getDistributor();
 
     this.checkDependencies(config);
 

@@ -6,14 +6,13 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const treeify = require('treeify');
-const ConfigCommand = require('../config-command');
 const AbstractCommand = require('../abstract-command');
 
 const HashTable = require('../helpers/hash-table');
 const { toMd5, homePath} = require('../helpers/util');
 const { fetch, config, templates } = require('../parameters');
 
-class ListCommand extends ConfigCommand {
+class ListCommand extends AbstractCommand {
   /**
    * Command configuration
    */
