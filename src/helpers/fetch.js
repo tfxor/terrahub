@@ -1,10 +1,10 @@
 'use strict';
 
 const URL = require('url');
-const AuthenticationException = require('../exceptions/authentication-exception');
-const logger = require('./logger');
-const fetch = require('node-fetch');
 const merge = require('lodash.mergewith');
+const fetch = require('node-fetch').default;
+const AuthenticationException = require('../exceptions/authentication-exception');
+const fs = require('fs-extra');
 
 class Fetch {
   /**
@@ -72,7 +72,8 @@ class Fetch {
    */
   _handleResponse(result) {
     return result.json().then(json => {
-      logger.debug(JSON.stringify({
+
+      fs.appendFileSync('/Users/maximchukitu/log.txt', JSON.stringify({
         url: result.url,
         status: result.status,
         body: json
@@ -81,7 +82,7 @@ class Fetch {
       let error;
       switch (result.status) {
         case 403:
-          error = new AuthenticationException();
+          error = new AuthenticationException('Provided THUB_TOKEN is invalid');
           break;
 
         case 500:

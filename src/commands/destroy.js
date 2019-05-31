@@ -10,6 +10,7 @@ class DestroyCommand extends TerraformCommand {
    */
   configure() {
     this
+      .enableElasticSearchLogging()
       .setName('destroy')
       .setDescription('run `terraform destroy` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
@@ -21,7 +22,7 @@ class DestroyCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.checkDependencies(config, Dictionary.DIRECTION.REVERSE);
 

@@ -4,9 +4,10 @@ const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
 const GitHelper = require('./helpers/git-helper');
+const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { config: { listLimit } } = require('./parameters');
+const { config: { listLimit, token } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
 const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
@@ -17,6 +18,22 @@ const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-i
  * @abstract
  */
 class TerraformCommand extends AbstractCommand {
+  /**
+   * @param {Object} input
+   * @param {Logger} logger
+   */
+  constructor(input, logger) {
+    super(input, logger);
+
+    this._runId = Util.uuid();
+
+    this.logger.updateContext({
+      runId: this._runId,
+      componentName: 'main',
+      action: 'main'
+    });
+  }
+
   /**
    * Command initialization
    * (post configure action)
@@ -31,7 +48,17 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('dependency', 'D', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
-      ;
+    ;
+  }
+
+  /**
+   * Enables ElasticSearch Logging
+   * @return {TerraformCommand}
+   */
+  enableElasticSearchLogging() {
+    this.logger.updateContext({ sendLogsToES: true });
+
+    return this;
   }
 
   /**
@@ -59,6 +86,13 @@ class TerraformCommand extends AbstractCommand {
 
         return Promise.reject(error);
       });
+  }
+
+  /**
+   * @return {String}
+   */
+  get runId() {
+    return this._runId;
   }
 
   /**
@@ -303,7 +337,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    Util.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
 
     const action = this.getName();
 
@@ -323,7 +357,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object|Array} config
    */
   warnExecutionStarted(config) {
-    Util.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
 
     const action = this.getName();
 
@@ -433,7 +467,7 @@ class TerraformCommand extends AbstractCommand {
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
-   * @private
+   * @protected
    * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {

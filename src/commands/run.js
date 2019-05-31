@@ -1,8 +1,8 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const { printListAsTree } = require('../helpers/util');
 const TerraformCommand = require('../terraform-command');
+const { printListAsTree } = require('../helpers/log-helper');
 const Distributor = require('../helpers/distributors/thread-distributor');
 const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
@@ -12,6 +12,7 @@ class RunCommand extends TerraformCommand {
    */
   configure() {
     this
+      .enableElasticSearchLogging()
       .setName('run')
       .setDescription('execute automated workflow terraform init > workspace > plan > apply > destroy')
       .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
@@ -75,7 +76,7 @@ class RunCommand extends TerraformCommand {
    */
   _runLocal(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {

@@ -19,7 +19,7 @@ class RefreshCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 

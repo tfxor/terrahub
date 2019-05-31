@@ -9,6 +9,7 @@ class InitCommand extends TerraformCommand {
    */
   configure() {
     this
+      .enableElasticSearchLogging()
       .setName('init')
       .setDescription('run `terraform init` across multiple terrahub components')
     ;
@@ -19,7 +20,7 @@ class InitCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 

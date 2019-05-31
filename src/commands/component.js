@@ -3,11 +3,12 @@
 const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
+const Util = require('../helpers/util');
 const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/wrappers/terraform');
-const { renderTwig, isAwsNameValid, getNonUniqueNames, extend, yesNoQuestion, printListAsTree } = require('../helpers/util');
+const { printListAsTree } = require('../helpers/log-helper');
 
 class ComponentCommand extends AbstractCommand {
   /**
@@ -51,18 +52,18 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Project's config not found`);
     }
 
-    if (this._name.some(it => !isAwsNameValid(it))) {
+    if (this._name.some(it => !Util.isAwsNameValid(it))) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
     const config = this.getConfig();
-    const duplicatedNames = getNonUniqueNames(this._name, config);
+    const duplicatedNames = Util.getNonUniqueNames(this._name, config);
 
     Object.keys(duplicatedNames).forEach(hash => {
-      throw new Error(`Terrahub component with provided name '${config[hash].name}'`+
+      throw new Error(`Terrahub component with provided name '${config[hash].name}'` +
         ` already exists in '${duplicatedNames[hash]}' directory.`);
-    });  
-    
+    });
+
     const names = this._name;
 
     if (this._delete) {
@@ -73,7 +74,7 @@ class ComponentCommand extends AbstractCommand {
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
-      return yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
+      return Util.yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
         if (!answer) {
           return Promise.reject('Action aborted');
         }
@@ -154,7 +155,7 @@ class ComponentCommand extends AbstractCommand {
         }
 
         if (existing.name) {
-          componentData.component = extend(existing.config[existing.name], [componentData.component]);
+          componentData.component = Util.extend(existing.config[existing.name], [componentData.component]);
           delete existing.config[existing.name];
 
           ConfigLoader.writeConfig(existing.config, existing.path);
@@ -166,7 +167,7 @@ class ComponentCommand extends AbstractCommand {
         const specificConfigPath = path.join(path.dirname(templates.config), templateName);
         const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
 
-        return renderTwig(
+        return Util.renderTwig(
           this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile
         ).then(() => 'Done');
       });
@@ -196,7 +197,7 @@ class ComponentCommand extends AbstractCommand {
         const outFile = path.join(directory, file);
         const srcFile = path.join(templatePath, file);
         return twigReg.test(srcFile)
-          ? renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
+          ? Util.renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
       })
     ).then(() => {
@@ -206,10 +207,10 @@ class ComponentCommand extends AbstractCommand {
       if (fse.existsSync(specificConfigPath)) {
         data = fse.readFileSync(specificConfigPath);
       }
-      return renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+      return Util.renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
     }).then(() => {
       const outFile = path.join(directory, this._defaultFileName());
-      return renderTwig(outFile, { name: name, code: code }, outFile);
+      return Util.renderTwig(outFile, { name: name, code: code }, outFile);
     }).then(() => 'Done');
   }
 
@@ -263,7 +264,7 @@ class ComponentCommand extends AbstractCommand {
   }
 
   /**
-   * @param {String} directory 
+   * @param {String} directory
    */
   _createWorkspaceFiles(directory) {
     this._getWorkspaceFiles().map(file => {

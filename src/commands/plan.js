@@ -9,6 +9,7 @@ class PlanCommand extends TerraformCommand {
    */
   configure() {
     this
+      .enableElasticSearchLogging()
       .setName('plan')
       .setDescription('run `terraform plan` across multiple terrahub components')
       .addOption('destroy', 'd', 'Runs the command with destroy plan', Boolean, false)
@@ -20,7 +21,7 @@ class PlanCommand extends TerraformCommand {
    */
   run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 
