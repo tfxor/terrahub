@@ -151,6 +151,7 @@ class RunCommand extends TerraformCommand {
   /**
    * @param {String} token
    * @protected
+   * @return {void|Promise}
    */
   onTokenMissingOrInvalid(token) {
     if (this.getOption('cloud')) {
