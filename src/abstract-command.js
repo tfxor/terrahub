@@ -286,7 +286,7 @@ class AbstractCommand {
 
   /**
    * @param {String} token
-   * @return {void|AuthenticationException}
+   * @return {void|Promise}
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
