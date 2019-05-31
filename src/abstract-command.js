@@ -267,7 +267,7 @@ class AbstractCommand {
   }
 
   /**
-   * @return {Promise}
+   * @return {void|Promise}
    * @private
    */
   _validateToken() {
