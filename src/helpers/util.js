@@ -224,7 +224,7 @@ class Util {
     childProcess.stderr.on('data', data => {
       stderr.push(data);
       onStderr(data);
-    });``
+    });
 
     childProcess.stdout.on('data', data => {
       stdout.push(data);
