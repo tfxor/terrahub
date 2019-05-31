@@ -4,14 +4,18 @@ const ConfigCommand = require('./config-command');
 const Distributor = require('./helpers/distributors/thread-distributor');
 const CloudDistributor = require('./helpers/distributors/cloud-distributor');
 
+/**
+ * @abstract
+ */
 class DistributedCommand extends ConfigCommand {
 
   initialize() {
     super.initialize();
 
-    this.addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
-        .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
-        .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+    this
+      .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
+      .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
+      .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
     ;
   }
 
@@ -38,7 +42,7 @@ class DistributedCommand extends ConfigCommand {
     return [...filters, gitDiff.length ? hash => gitDiff.includes(hash) : null].filter(Boolean);
   }
 
-  _cliParams() {
+  get cliParams() {
     return {
       terraform: {
         var: this.getOption('var'),
@@ -53,7 +57,6 @@ class DistributedCommand extends ConfigCommand {
     }
 
     super.stopExecution();
-
   }
 }
 

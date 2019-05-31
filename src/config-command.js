@@ -13,7 +13,9 @@ const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-aut
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
 const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-include');
 
-
+/**
+ * @abstract
+ */
 class ConfigCommand extends AbstractCommand {
   /**
    * Command initialization
@@ -141,7 +143,7 @@ class ConfigCommand extends AbstractCommand {
   _initExtendedConfig() {
     const result = {};
     const config = super.getConfig();
-    const cliParams = this.cliParams();
+    const cliParams = this.cliParams;
     // const cliParams = {
     //   terraform: {
     //     var: this.getVar(),
@@ -167,10 +169,6 @@ class ConfigCommand extends AbstractCommand {
   }
 
   get cliParams() {
-    return this._cliParams;
-  }
-
-  _cliParams() {
     return {
       terraform: {}
     };
