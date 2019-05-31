@@ -17,6 +17,8 @@ class ConvertCommand extends ConfigCommand {
     this
       .setName('convert')
       .setDescription('convert terraform configuration into yaml, json or hcl format (both directions)')
+      //.addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
+      //.addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('to', 't', 'Convert current component TO another format (e.g. yml, hcl; default: yml)', String, 'yml')
       .addOption('auto-approve', 'y', 'Auto approve config conversion', Boolean, false)
     ;

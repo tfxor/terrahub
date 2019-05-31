@@ -39,6 +39,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -55,12 +61,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -111,6 +111,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -127,12 +133,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -253,24 +253,6 @@
           "defaultValue": []
         },
         {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "List of components to include (git diff)",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Variable(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Variable file(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
           "name": "dependency",
           "shortcut": "d",
           "description": "Set TerraHub dependency validation strategy",
@@ -331,24 +313,6 @@
           "defaultValue": []
         },
         {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "List of components to include (git diff)",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Variable(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Variable file(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
           "name": "dependency",
           "shortcut": "d",
           "description": "Set TerraHub dependency validation strategy",
@@ -403,6 +367,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -419,12 +389,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -466,24 +430,6 @@
           "name": "exclude-regex",
           "shortcut": "X",
           "description": "List of components to exclude (regex search)",
-          "defaultValue": []
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "List of components to include (git diff)",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Variable(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
         },
         {
@@ -540,6 +486,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -556,12 +508,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -606,6 +552,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -622,12 +574,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -732,6 +678,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -748,12 +700,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -804,6 +750,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -820,12 +772,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -870,6 +816,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -886,12 +838,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -921,54 +867,6 @@
           "shortcut": "d",
           "description": "Path where project should be created (default: cwd)",
           "defaultValue": "Current working directory"
-        },
-        {
-          "name": "include",
-          "shortcut": "i",
-          "description": "List of components to include (comma separated values)",
-          "defaultValue": []
-        },
-        {
-          "name": "exclude",
-          "shortcut": "x",
-          "description": "List of components to exclude (comma separated values)",
-          "defaultValue": []
-        },
-        {
-          "name": "include-regex",
-          "shortcut": "I",
-          "description": "List of components to include (regex search)",
-          "defaultValue": []
-        },
-        {
-          "name": "exclude-regex",
-          "shortcut": "X",
-          "description": "List of components to exclude (regex search)",
-          "defaultValue": []
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "List of components to include (git diff)",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Variable(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Variable file(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -1013,6 +911,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -1029,12 +933,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -1115,6 +1013,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -1131,12 +1035,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",
@@ -1193,6 +1091,12 @@
           "defaultValue": []
         },
         {
+          "name": "dependency",
+          "shortcut": "d",
+          "description": "Set TerraHub dependency validation strategy",
+          "defaultValue": "auto"
+        },
+        {
           "name": "git-diff",
           "shortcut": "g",
           "description": "List of components to include (git diff)",
@@ -1209,12 +1113,6 @@
           "shortcut": "l",
           "description": "Variable file(s) to be used by terraform",
           "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "d",
-          "description": "Set TerraHub dependency validation strategy",
-          "defaultValue": "auto"
         },
         {
           "name": "env",

@@ -104,7 +104,7 @@ class RunCommand extends DistributedCommand {
           planDestroy: true
         })
       ).catch(err => {
-        console.log('Run Error :', err);
+        console.log(err);
       });
   }
 

@@ -25,9 +25,6 @@ class ConfigCommand extends AbstractCommand {
       .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
       .addOption('include-regex', 'I', 'List of components to include (regex search)', Array, [])
       .addOption('exclude-regex', 'X', 'List of components to exclude (regex search)', Array, [])
-      .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
-      .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
-      .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
     ;
 
@@ -144,12 +141,13 @@ class ConfigCommand extends AbstractCommand {
   _initExtendedConfig() {
     const result = {};
     const config = super.getConfig();
-    const cliParams = {
-      terraform: {
-        var: this.getVar(),
-        varFile: this.getVarFile()
-      }
-    };
+    const cliParams = this.cliParams();
+    // const cliParams = {
+    //   terraform: {
+    //     var: this.getVar(),
+    //     varFile: this.getVarFile()
+    //   }
+    // };
 
     Object.keys(config).forEach(hash => {
       // hash is required in distributor to remove components from dependency table
@@ -168,26 +166,23 @@ class ConfigCommand extends AbstractCommand {
     return result;
   }
 
+  get cliParams() {
+    return this._cliParams;
+  }
+
+  _cliParams() {
+    return {
+      terraform: {}
+    };
+  }
+
   /**
    * Get filtered config
    * @returns {Object}
    */
   getFilteredConfig() {
     const fullConfig = this.getExtendedConfig();
-    const config = Object.assign({}, fullConfig);
-    const gitDiff = this.getGitDiff();
-    const includeRegex = this.getIncludesRegex();
-    const include = this.getIncludes();
-    const excludeRegex = this.getExcludesRegex();
-    const exclude = this.getExcludes();
-
-    const filters = [
-      gitDiff.length ? hash => gitDiff.includes(hash) : null,
-      includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
-      include.length ? hash => include.includes(config[hash].name) : null,
-      excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
-      exclude.length ? hash => !exclude.includes(config[hash].name) : null
-    ].filter(Boolean);
+    const filters = this.filters;
 
     const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
 
@@ -196,6 +191,29 @@ class ConfigCommand extends AbstractCommand {
     }
 
     return filteredConfig;
+  }
+
+  /**
+   * @returns {Function[]}
+   */
+  get filters() {
+    return this._filters();
+  }
+
+
+  _filters() {
+    const config = Object.assign({}, this.getExtendedConfig());
+    const includeRegex = this.getIncludesRegex();
+    const include = this.getIncludes();
+    const excludeRegex = this.getExcludesRegex();
+    const exclude = this.getExcludes();
+
+    return [
+      includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
+      include.length ? hash => include.includes(config[hash].name) : null,
+      excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
+      exclude.length ? hash => !exclude.includes(config[hash].name) : null
+    ].filter(Boolean);
   }
 
   /**
@@ -433,7 +451,6 @@ class ConfigCommand extends AbstractCommand {
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
-   * @private
    * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {

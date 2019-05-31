@@ -6,9 +6,17 @@ const CloudDistributor = require('./helpers/distributors/cloud-distributor');
 
 class DistributedCommand extends ConfigCommand {
 
+  initialize() {
+    super.initialize();
+
+    this.addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
+        .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
+        .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
+    ;
+  }
 
   getDistributor(config) {
-    if(!this.distributor) {
+    if (!this.distributor) {
       this.distributor = new Distributor(config);
     }
 
@@ -16,15 +24,30 @@ class DistributedCommand extends ConfigCommand {
   }
 
   getCloudDistributor(config) {
-    if(!this.cloudDistributor) {
+    if (!this.cloudDistributor) {
       this.cloudDistributor = new CloudDistributor(config);
     }
 
     return this.cloudDistributor;
   }
 
+  _filters() {
+    const filters = super._filters();
+    const gitDiff = this.getOption('git-diff');
+
+    return [...filters, gitDiff.length ? hash => gitDiff.includes(hash) : null].filter(Boolean);
+  }
+
+  _cliParams() {
+    return {
+      terraform: {
+        var: this.getOption('var'),
+        varFile: this.getOption('var-file')
+      }
+    };
+  }
+
   stopExecution() {
-    //maybe make it
     if (this.distributor) {
       this.distributor.disconnect();
     }

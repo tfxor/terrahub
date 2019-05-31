@@ -54,14 +54,6 @@ class ComponentCommand extends AbstractCommand {
     if (this._name.some(it => !isAwsNameValid(it))) {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
-
-    const config = this.getConfig();
-    const duplicatedNames = getNonUniqueNames(this._name, config);
-
-    Object.keys(duplicatedNames).forEach(hash => {
-      throw new Error(`Terrahub component with provided name '${config[hash].name}'`+
-        ` already exists in '${duplicatedNames[hash]}' directory.`);
-    });  
     
     const names = this._name;
 
@@ -82,6 +74,14 @@ class ComponentCommand extends AbstractCommand {
           .then(() => `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`);
       });
     } else if (this._template) {
+      const config = this.getConfig();
+      const duplicatedNames = getNonUniqueNames(this._name, config);
+
+      Object.keys(duplicatedNames).forEach(hash => {
+        throw new Error(`Terrahub component with provided name '${config[hash].name}'`+
+          ` already exists in '${duplicatedNames[hash]}' directory.`);
+      });
+
       return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
         if (data.some(it => !it)) {
           return Promise.resolve();

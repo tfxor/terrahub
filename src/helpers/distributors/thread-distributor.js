@@ -14,6 +14,7 @@ class ThreadDistributor extends AbstractDistributor {
   constructor(configObject) {
     super(configObject);
 
+    this._killingProcess = false;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
@@ -81,6 +82,11 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
+    if(this._killingProcess) {
+      return Promise.reject('Please wait for Terrahub to exit or data loss may occur.\n' +
+        'Gracefully shutting down...');
+    }
+
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
       cluster.on('message', (worker, data) => {
@@ -99,11 +105,9 @@ class ThreadDistributor extends AbstractDistributor {
       cluster.on('exit', (worker, code, signal) => {
         this._workersCount--;
 
-        if (signal === 'SIGINT') {
-          while(!Object.keys(cluster.workers).length) {
-            return reject('Gracefully shutting down');
-          }
-        }
+        // if (signal === 'SIGINT') {
+        //   return reject('Gracefully shutting down');
+        // }
 
         if (code === 0) {
           this._distributeConfigs();
@@ -135,37 +139,38 @@ class ThreadDistributor extends AbstractDistributor {
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
   }
 
+  /**
+   * @private
+   */
   _killParallelWorkers() {
-    Object.keys(cluster.workers).forEach(id => {
-      const worker = cluster.workers[id];
-
-      setTimeout(() => {
-        console.log(`Killing worker with id ${worker.id}`);
-        worker.kill();
-      }, 2000);
-    });
+    Object.keys(cluster.workers).forEach(id => { this._killWorker(id); });
 
     this._dependencyTable = {};
   }
 
   /**
+   * @param {String} id
+   * @private
+   */
+  _killWorker(id) {
+    const worker = cluster.workers[id];
+    console.log(`Killing worker with id ${worker.id}`);
+    worker.kill();
+  }
+
+
+  /**
    * @return {void}
    */
   disconnect() {
+    this._killingProcess = true;
     this._killParallelWorkers();
+
+    if (!Object.keys(cluster.workers)) {
+      console.log('Cluster graceful shutdown: done.');
+      process.exit(0);
+    }
   }
-
-  // checkIfNoWorkersAndExit() {
-  //   if (!this._workersCount) {
-  //     console.log('Cluster graceful shutdown: done.');
-  //     if (shutdownTimer) clearTimeout(shutdownTimer);
-  //     process.exit(0);
-  //   } else {
-  //     console.log('Cluster graceful shutdown: wait ' + this._workersCount + ' worker' + (this._workersCount > 1 ? 's' : '') + '.');
-  //   }
-  // }
-
-
 }
 
 module.exports = ThreadDistributor;
