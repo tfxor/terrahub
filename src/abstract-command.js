@@ -267,11 +267,11 @@ class AbstractCommand {
   }
 
   /**
-   * @return {void|Promise}
-   * @private
+   * @return {Promise}
+   * @protected
    */
   _validateToken() {
-    if(!config.token) {
+    if (!config.token) {
       return this.onTokenMissingOrInvalid(null);
     }
 
@@ -286,14 +286,15 @@ class AbstractCommand {
 
   /**
    * @param {String} token
-   * @return {void|AuthenticationException}
+   * @return {Promise|void}
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
       throw new AuthenticationException('Provided THUB_TOKEN is not valid.');
-    } else {
-      this.logger.warn('THUB_TOKEN is not provided.');
     }
+
+    this.logger.warn('THUB_TOKEN is not provided.');
+    return Promise.resolve();
   }
 }
 
