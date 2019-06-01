@@ -168,7 +168,7 @@ class AbstractCommand {
       );
     }
 
-    return this._validateToken();
+    return this.validateToken();
   }
 
   /**
@@ -270,7 +270,7 @@ class AbstractCommand {
    * @return {Promise}
    * @protected
    */
-  _validateToken() {
+  validateToken() {
     if (!config.token) {
       return this.onTokenMissingOrInvalid(null);
     }
