@@ -53,8 +53,17 @@ class JitHelper {
   static _normalizeBackendLocalPath(config) {
     const { template } = config;
     const { terraform: { backend: { local } } } = template;
-    const localTfstatePath = template.locals.component.local ||
-      path.resolve('/tmp/.terrahub/local_tfstate/', config.project.name);
+    const { locals } = template;
+    let localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.local) {
+          localTfstatePath = component.local;
+        }
+      });
+    }
 
     if (local) {
       Object.keys(local).filter(it => local[it]).map(() => {
@@ -77,8 +86,17 @@ class JitHelper {
   static _normalizeBackendS3Key(config) {
     const { template } = config;
     const { terraform: { backend: { s3 } } } = template;
-    const remoteTfstatePath = template.locals.component.remote ||
-      path.join('terraform', config.project.name);
+    const { locals } = template;
+    let remoteTfstatePath = path.join('terraform', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.remote) {
+          localTfstatePath = component.remote;
+        }
+      });
+    }
 
     if (s3) {
       Object.keys(s3).filter(it => s3[it]).map(() => {
