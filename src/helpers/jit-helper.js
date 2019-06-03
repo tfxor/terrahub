@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
+const hcltojson = require('hcl-to-json');
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -107,11 +108,11 @@ class JitHelper {
     const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
       JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
         template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-          JSON.stringify(yaml.safeLoad(data.toString()))).replace(/}{/g,","));
+          JSON.stringify(hcltojson(data.toString()))).replace(/}{/g,","));
       }):
       JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
         template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-        JSON.stringify(yaml.safeLoad(data.Body.toString()))).replace(/}{/g,","));
+        JSON.stringify(hcltojson(data.Body.toString()))).replace(/}{/g,","));
       });
     
 
