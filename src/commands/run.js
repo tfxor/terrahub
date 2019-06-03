@@ -147,6 +147,19 @@ class RunCommand extends TerraformCommand {
   get _isApprovementRequired() {
     return ['apply', 'destroy'].some(it => this.getOption(it));
   }
+
+  /**
+   * @param {String} token
+   * @protected
+   * @return {void|Promise}
+   */
+  onTokenMissingOrInvalid(token) {
+    if (this.getOption('cloud')) {
+      return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
+    }
+
+    return super.onTokenMissingOrInvalid(token);
+  }
 }
 
 module.exports = RunCommand;

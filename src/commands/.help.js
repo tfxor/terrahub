@@ -111,6 +111,14 @@ class Help extends AbstractCommand {
     return Object.keys(args).filter(arg =>
       !command.options.find(it => it.name === arg || it.shortcut === arg));
   }
+
+  /**
+   * Overrides method to prevent token validation
+   * @returns {Promise}
+   */
+  validateToken() {
+    return Promise.resolve();
+  }
 }
 
 module.exports = Help;

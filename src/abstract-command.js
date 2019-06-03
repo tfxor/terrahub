@@ -2,11 +2,12 @@
 
 const path = require('path');
 const fse = require('fs-extra');
-const { config } = require('./parameters');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
+const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const { toMd5, homePath } = require('./helpers/util');
+const AuthenticationException = require('./exceptions/authentication-exception');
 
 /**
  * @abstract
@@ -167,7 +168,7 @@ class AbstractCommand {
       );
     }
 
-    return Promise.resolve();
+    return this.validateToken();
   }
 
   /**
@@ -263,6 +264,37 @@ class AbstractCommand {
    */
   getProjectCode(name) {
     return toMd5(name + Date.now().toString()).slice(0, 8);
+  }
+
+  /**
+   * @return {Promise}
+   * @protected
+   */
+  validateToken() {
+    if (!config.token) {
+      return this.onTokenMissingOrInvalid(null);
+    }
+
+    return fetch.get('thub/account/retrieve').catch(err => {
+      if (err instanceof AuthenticationException) {
+        return this.onTokenMissingOrInvalid(config.token);
+      }
+
+      throw err;
+    });
+  }
+
+  /**
+   * @param {String} token
+   * @return {Promise|void}
+   */
+  onTokenMissingOrInvalid(token) {
+    if (token) {
+      throw new AuthenticationException('Provided THUB_TOKEN is not valid.');
+    }
+
+    this.logger.warn('THUB_TOKEN is not provided.');
+    return Promise.resolve();
   }
 }
 
