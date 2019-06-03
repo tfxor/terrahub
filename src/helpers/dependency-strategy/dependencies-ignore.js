@@ -35,8 +35,8 @@ class DependencyIgnore extends AbstractDependencyStrategy {
       const names = issues[it].map(it => fullConfig[it].name);
 
       console.log(`TerraHub component '${fullConfig[it].name}' ` +
-        `that is dependecy of '${names.join(`', '`)}' was deleted from config`);
-    })
+        `that is dependecy of '${names.join(`', '`)}' was excluded from the execution list.`);
+    });
 
     return config;
   }
