@@ -52,7 +52,7 @@ class JitHelper {
    */
   static _normalizeBackendLocalPath(config) {
     const owner = config.owner || '';
-    const localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', owner, config.project.name, config.name);
+    const localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', owner, config.project.name);
     const { template: { terraform: { backend: { local } } } } = config;
 
     if (local) {
@@ -75,7 +75,7 @@ class JitHelper {
    */
   static _normalizeBackendS3Key(config) {
     const owner = config.owner || '';
-    const remoteTfstatePath = path.join('terraform', owner, config.project.name, config.name);
+    const remoteTfstatePath = path.join('terraform', owner, config.project.name);
     const { template: { terraform: { backend: { s3 } } } } = config;
 
     if (s3) {
