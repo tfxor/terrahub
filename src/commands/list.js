@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
-const { toMd5, homePath} = require('../helpers/util');
+const { toMd5, homePath } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
 const { fetch, config, templates } = require('../parameters');
 
@@ -88,9 +88,15 @@ class ListCommand extends AbstractCommand {
         return Promise.resolve();
       })
       .then(() => {
-        this.logger.log('Projects');
+        const projectsData = this.hash.getRaw();
 
-        this._showTree(this._format(this.hash.getRaw(), 0, depth));
+        if (Object.keys(projectsData).length) {
+          this.logger.log('Projects');
+
+          this._showTree(this._format(projectsData, 0, depth));
+        } else {
+          this.logger.log('No Projects to display.');
+        }
 
         this.logger.log('');
         this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
@@ -100,6 +106,11 @@ class ListCommand extends AbstractCommand {
       })
       .then(() => Promise.resolve('Done'))
       .catch(err => {
+        if (err.code === 'EHOSTUNREACH') {
+          this.logger.warn('TerraHub hasn\'t found any AWS credentials.');
+          return;
+        }
+
         throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
           new Error('TerraHub is missing internet connection') :
           err;
