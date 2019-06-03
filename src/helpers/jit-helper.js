@@ -22,8 +22,8 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
-      localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
-      remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
+      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
+      const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
 
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
