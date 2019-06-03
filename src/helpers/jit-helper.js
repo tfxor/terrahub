@@ -51,9 +51,19 @@ class JitHelper {
    * @private
    */
   static _normalizeBackendLocalPath(config) {
-    const owner = config.owner || '';
-    const localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', owner, config.project.name);
-    const { template: { terraform: { backend: { local } } } } = config;
+    const { template } = config;
+    const { terraform: { backend: { local } } } = template;
+    const { locals } = template;
+    let localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.local) {
+          localTfstatePath = component.local;
+        }
+      });
+    }
 
     if (local) {
       Object.keys(local).filter(it => local[it]).map(() => {
@@ -74,9 +84,19 @@ class JitHelper {
    * @private
    */
   static _normalizeBackendS3Key(config) {
-    const owner = config.owner || '';
-    const remoteTfstatePath = path.join('terraform', owner, config.project.name);
-    const { template: { terraform: { backend: { s3 } } } } = config;
+    const { template } = config;
+    const { terraform: { backend: { s3 } } } = template;
+    const { locals } = template;
+    let remoteTfstatePath = path.join('terraform', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.remote) {
+          localTfstatePath = component.remote;
+        }
+      });
+    }
 
     if (s3) {
       Object.keys(s3).filter(it => s3[it]).map(() => {
