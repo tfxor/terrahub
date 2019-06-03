@@ -381,6 +381,7 @@ class Terraform {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
+    console.log('start spawninmg');
     return this._spawn(this.getBinary(), [cmd, ...args], {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
@@ -415,8 +416,13 @@ class Terraform {
   _spawn(command, args, options) {
     return spawner(
       command, args, options,
-      err => logger.error(this._out(err)),
+      err => {
+        console.log('_spawn err', err);
+        logger.error(this._out(err))
+      },
       data => {
+        console.log('_spawn data', this._out(data));
+
         if (this._showLogs) {
           logger.raw(this._out(data));
         }

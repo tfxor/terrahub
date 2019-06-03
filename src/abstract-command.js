@@ -269,7 +269,9 @@ class AbstractCommand {
    * @abstract
    */
   stopExecution() {
-    throw new Error('Method must be implemented.')
+    throw new Error('Method must be implemented.');
+    // component, config, list, project
+    // can be proccess.exit(0); + message
   }
 }
 

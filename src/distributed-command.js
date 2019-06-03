@@ -52,11 +52,12 @@ class DistributedCommand extends ConfigCommand {
   }
 
   stopExecution() {
+    super.stopExecution();
+
     if (this.distributor) {
-      this.distributor.disconnect();
+      return this.distributor.disconnect();
     }
 
-    super.stopExecution();
   }
 }
 

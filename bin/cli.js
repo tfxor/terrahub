@@ -51,10 +51,15 @@ command
   .validate()
   .then(() => command.run())
   .then(message => {
+    console.log('here ??', message);
     if (message) {
       logger.info(message);
     }
-    process.exit(0);
+    //@todo remove timeout
+    setTimeout(() => {
+      process.exit(0);
+
+    }, 5000);
   })
   .catch(err => {
     logger.error(err || 'Error occurred');

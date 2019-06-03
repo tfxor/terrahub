@@ -88,8 +88,6 @@ class RunCommand extends DistributedCommand {
       actions.push('plan');
     }
 
-    console.log(actions);
-
     return this.distributor.runActions(actions)
       .then(() => !this._isApply ?
         Promise.resolve() :

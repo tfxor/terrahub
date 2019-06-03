@@ -221,18 +221,48 @@ class Util {
     const promise = spawn(command, args, options);
     const { childProcess } = promise;
 
+    // var eventEmitter = new process.EventEmitter();
+    // eventEmitter.emmit('SIGINT', { test: 'test' });
+
+    // childProcess.on('SIGINT', (code, signal) => {
+    //   console.log('SIGNAL ::', signal);
+    //   // stdout.push(signal);
+    //
+    //   // childProcess.disconnect();
+    // });
+    // childProcess.on('close', (code, signal) => {
+    //   console.log('close ::', signal);
+    //   // stdout.push(signal);
+    //
+    //   // childProcess.disconnect();
+    // });
+    // childProcess.on('disconnect', (code, signal) => {
+    //   console.log('disconnect ::', signal);
+    //   // childProcess.disconnect();
+    // });
+    // childProcess.on('exit', (code, signal) => {
+    //   console.log('exit ::', signal);
+    //   // childProcess.disconnect();
+    // });
+
     childProcess.stderr.on('data', data => {
+      console.log('stderr', data);
       stderr.push(data);
       onStderr(data);
     });
 
     childProcess.stdout.on('data', data => {
+      console.log('stdout', data);
       stdout.push(data);
       onStdout(data);
     });
 
+    console.log('events', childProcess._events);
+
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
+
+      console.log('message', err.message);
 
       return Promise.reject(err);
     });

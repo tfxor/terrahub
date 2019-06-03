@@ -14,7 +14,6 @@ class ThreadDistributor extends AbstractDistributor {
   constructor(configObject) {
     super(configObject);
 
-    this._killingProcess = false;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
@@ -82,7 +81,8 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
-    if(this._killingProcess) {
+
+    if(this.killingProcess) {
       return Promise.reject('Please wait for Terrahub to exit or data loss may occur.\n' +
         'Gracefully shutting down...');
     }
@@ -143,9 +143,19 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _killParallelWorkers() {
-    Object.keys(cluster.workers).forEach(id => { this._killWorker(id); });
+    console.log('2');
+
+    Object.keys(cluster.workers).forEach(id => {
+      console.log('3');
+      // const timer = setInterval((id) => { this._killWorker(id); }, 1500);
+      // clearInterval(timer);
+
+      this._killWorker(id);
+    });
 
     this._dependencyTable = {};
+
+    return Promise.resolve();
   }
 
   /**
@@ -158,18 +168,33 @@ class ThreadDistributor extends AbstractDistributor {
     worker.kill();
   }
 
+  get killingProcess() {
+    if(!this._killingProcess) {
+      this._killingProcess = false;
+    }
+
+    return this._killingProcess;
+  }
 
   /**
    * @return {void}
    */
   disconnect() {
+    console.log('1');
     this._killingProcess = true;
-    this._killParallelWorkers();
+    // this._killParallelWorkers().then(() => {
+    //   console.log('4', Object.keys(cluster.workers).length);
+    //
+    //   if (!Object.keys(cluster.workers).length) {
+    //     console.log('Cluster graceful shutdown: done.');
+    //     setTimeout(() => {
+    //       console.log('here is ');
+    //       process.exit(0);
+    //     }, 2500);
+    //   }
+    // });
 
-    if (!Object.keys(cluster.workers)) {
-      console.log('Cluster graceful shutdown: done.');
-      process.exit(0);
-    }
+
   }
 }
 
