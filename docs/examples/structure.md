@@ -75,7 +75,9 @@ To make working with terrahub a pleasure we also adding into `locals` some addit
   "timestamp": 1544222111000,
   "component": {
     "name": "jit_component",
-    "path": "/User/username/projects/current/jit_component"
+    "path": "/User/username/projects/current/jit_component",
+    "local": "/tmp/.terrahub/local_tfstate/account_name/Jit_docs/jit_component",
+    "remote": "terraform/account_name/Jit_docs/jit_component"
   },
   "project": {
     "path": "/User/username/projects/current",

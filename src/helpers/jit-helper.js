@@ -22,6 +22,9 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
+      JitHelper._normalizeBackendLocalPath(config);
+      JitHelper._normalizeBackendS3Key(config);
+
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
@@ -37,6 +40,46 @@ class JitHelper {
     }
 
     return config;
+  }
+
+  /**
+   * Normalize Backend Local config
+   * @param {Object} config
+   * @private
+   */
+  static _normalizeBackendLocalPath(config) {
+    const owner = config.owner || '';
+    const localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', owner, config.project.name, config.name);
+    const { template: { terraform: { backend: { local } } } } = config;
+
+    if (local) {
+      Object.keys(local).filter(it => local[it]).map(() => {
+        const { path } = local;
+        if (path) {
+          local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+        }
+      });
+    }
+  }
+
+  /**
+   * Normalize Backend S3 config
+   * @param {Object} config
+   * @private
+   */
+  static _normalizeBackendS3Key(config) {
+    const owner = config.owner || '';
+    const remoteTfstatePath = path.join('terraform', owner, config.project.name, config.name);
+    const { template: { terraform: { backend: { s3 } } } } = config;
+
+    if (s3) {
+      Object.keys(s3).filter(it => s3[it]).map(() => {
+        const { key } = s3;
+        if (key) {
+          s3.key = key.replace(/\$\{local.component\["remote"\]\}/g, remoteTfstatePath);
+        }
+      });
+    }
   }
 
   /**
