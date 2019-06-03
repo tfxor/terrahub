@@ -22,14 +22,16 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
-      JitHelper._normalizeBackendLocalPath(config);
-      JitHelper._normalizeBackendS3Key(config);
+      localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
+      remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
 
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
           name: config.name,
-          path: componentPath
+          path: componentPath,
+          local: localTfstatePath,
+          remote: remoteTfstatePath
         },
         project: {
           path: config.project.root,
@@ -45,6 +47,7 @@ class JitHelper {
   /**
    * Normalize Backend Local config
    * @param {Object} config
+   * @return {String}
    * @private
    */
   static _normalizeBackendLocalPath(config) {
@@ -60,11 +63,14 @@ class JitHelper {
         }
       });
     }
+
+    return localTfstatePath;
   }
 
   /**
    * Normalize Backend S3 config
    * @param {Object} config
+   * @return {String}
    * @private
    */
   static _normalizeBackendS3Key(config) {
@@ -80,6 +86,8 @@ class JitHelper {
         }
       });
     }
+
+    return remoteTfstatePath;
   }
 
   /**
