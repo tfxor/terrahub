@@ -76,12 +76,12 @@ To make working with terrahub a pleasure we also adding into `locals` some addit
   "component": {
     "name": "jit_component",
     "path": "/User/username/projects/current/jit_component",
-    "local": "/tmp/.terrahub/local_tfstate/owner/Jit_docs",
-    "remote": "terraform/owner/Jit_docs"
+    "local": "/tmp/.terrahub/local_tfstate/owner/jit_docs",
+    "remote": "terraform/owner/jit_docs"
   },
   "project": {
     "path": "/User/username/projects/current",
-    "name": "Jit_docs",
+    "name": "jit_docs",
     "code": "abcd1234"
   }
 }
