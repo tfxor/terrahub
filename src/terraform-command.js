@@ -31,7 +31,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
       .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
-      ;
+    ;
   }
 
   /**
@@ -437,13 +437,27 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @param {Object} config
+   * @param {Number} direction
+   * @protected
+   * @throws {ListException}
+   */
+  checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
+    if (this.getDependencyOption() === 'auto') {
+      this._checkComponentsDependencies(config, direction);
+    }
+
+    this._checkDependencyCycle(config);
+  }
+
+  /**
    * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
    * @private
    * @throws {ListException}
    */
-  checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
+  _checkComponentsDependencies(config, direction) {
     let issues;
 
     switch (direction) {
@@ -466,8 +480,6 @@ class TerraformCommand extends AbstractCommand {
         style: ListException.NUMBER
       });
     }
-
-    this._checkDependencyCycle(config);
   }
 
   /**
@@ -477,7 +489,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String[]}
    */
   getDependencyIssues(config) {
-    const fullConfig = this.getDependencyOption() === 'auto' ? this.getExtendedConfig() : config;
+    const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
@@ -515,7 +527,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String[]}
    */
   getReverseDependencyIssues(config) {
-    const fullConfig = this.getDependencyOption() === 'auto' ? this.getExtendedConfig() : config;
+    const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
