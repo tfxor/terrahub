@@ -3,8 +3,6 @@
 const Dictionary = require('../helpers/dictionary');
 const { printListAsTree } = require('../helpers/util');
 const DistributedCommand = require('../distributed-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
-const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
 class RunCommand extends DistributedCommand {
   /**
@@ -78,8 +76,6 @@ class RunCommand extends DistributedCommand {
     const actions = ['prepare', 'init', 'workspaceSelect'];
     this.distributor = this.getDistributor(config);
 
-    console.log('_runLocal');
-
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
         actions.push('build');
@@ -114,8 +110,6 @@ class RunCommand extends DistributedCommand {
   _runCloud(cfg) {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
     this.distributor = this.getCloudDistributor(cfg);
-
-    console.log('run cloud');
 
     return this.distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }

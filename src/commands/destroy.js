@@ -2,7 +2,6 @@
 
 const Dictionary = require('../helpers/dictionary');
 const DistributedCommand = require('../distributed-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
 
 class DestroyCommand extends DistributedCommand {
   /**

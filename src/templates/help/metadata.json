@@ -40,7 +40,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -112,7 +112,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -254,7 +254,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -314,7 +314,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -368,7 +368,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -434,7 +434,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -487,7 +487,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -553,7 +553,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -679,7 +679,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -751,7 +751,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -817,7 +817,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -912,7 +912,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -1014,7 +1014,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },
@@ -1092,7 +1092,7 @@
         },
         {
           "name": "dependency",
-          "shortcut": "d",
+          "shortcut": "p",
           "description": "Set TerraHub dependency validation strategy",
           "defaultValue": "auto"
         },

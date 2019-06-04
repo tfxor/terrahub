@@ -2,8 +2,6 @@
 
 const DistributorCommand = require('../distributed-command');
 
-
-
 class BuildCommand extends DistributorCommand {
   /**
    * Command configuration

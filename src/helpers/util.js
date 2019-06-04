@@ -221,29 +221,13 @@ class Util {
     const promise = spawn(command, args, options);
     const { childProcess } = promise;
 
-    // var eventEmitter = new process.EventEmitter();
-    // eventEmitter.emmit('SIGINT', { test: 'test' });
+    process.on('SIGINT', () => {
+      //return control to Terraform
+      console.log('siginted in spawner');
+      console.log('code :', childProcess);
 
-    // childProcess.on('SIGINT', (code, signal) => {
-    //   console.log('SIGNAL ::', signal);
-    //   // stdout.push(signal);
-    //
-    //   // childProcess.disconnect();
-    // });
-    // childProcess.on('close', (code, signal) => {
-    //   console.log('close ::', signal);
-    //   // stdout.push(signal);
-    //
-    //   // childProcess.disconnect();
-    // });
-    // childProcess.on('disconnect', (code, signal) => {
-    //   console.log('disconnect ::', signal);
-    //   // childProcess.disconnect();
-    // });
-    // childProcess.on('exit', (code, signal) => {
-    //   console.log('exit ::', signal);
-    //   // childProcess.disconnect();
-    // });
+      // childProcess.kill('SIGINT');
+    });
 
     childProcess.stderr.on('data', data => {
       console.log('stderr', data);
@@ -252,7 +236,6 @@ class Util {
     });
 
     childProcess.stdout.on('data', data => {
-      console.log('stdout', data);
       stdout.push(data);
       onStdout(data);
     });

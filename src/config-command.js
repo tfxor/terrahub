@@ -1,9 +1,7 @@
 'use strict';
 
 const Util = require('./helpers/util');
-const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
@@ -27,7 +25,7 @@ class ConfigCommand extends AbstractCommand {
       .addOption('exclude', 'x', 'List of components to exclude (comma separated values)', Array, [])
       .addOption('include-regex', 'I', 'List of components to include (regex search)', Array, [])
       .addOption('exclude-regex', 'X', 'List of components to exclude (regex search)', Array, [])
-      .addOption('dependency', 'd', 'Set TerraHub dependency validation strategy', String, 'auto')
+      .addOption('dependency', 'p', 'Set TerraHub dependency validation strategy', String, 'auto')
     ;
 
   }
@@ -144,12 +142,6 @@ class ConfigCommand extends AbstractCommand {
     const result = {};
     const config = super.getConfig();
     const cliParams = this.cliParams;
-    // const cliParams = {
-    //   terraform: {
-    //     var: this.getVar(),
-    //     varFile: this.getVarFile()
-    //   }
-    // };
 
     Object.keys(config).forEach(hash => {
       // hash is required in distributor to remove components from dependency table
@@ -168,6 +160,10 @@ class ConfigCommand extends AbstractCommand {
     return result;
   }
 
+  /**
+   * @abstract
+   * @returns {Object}
+   */
   get cliParams() {
     return {
       terraform: {}
@@ -198,7 +194,11 @@ class ConfigCommand extends AbstractCommand {
     return this._filters();
   }
 
-
+  /**
+   * Returns included filters
+   * @returns {Function[]}
+   * @protected
+   */
   _filters() {
     const config = Object.assign({}, this.getExtendedConfig());
     const includeRegex = this.getIncludesRegex();
@@ -222,7 +222,7 @@ class ConfigCommand extends AbstractCommand {
   }
 
   /**
-   * @return {String[]}
+   * @returns {String[]}
    */
   getExcludes() {
     return this.getOption('exclude');
@@ -240,51 +240,6 @@ class ConfigCommand extends AbstractCommand {
    */
   getExcludesRegex() {
     return this.getOption('exclude-regex').map(it => new RegExp(it));
-  }
-
-  /**
-   * @description Returns an array of hashes to include in the execution
-   * @return {String[]}
-   */
-  getGitDiff() {
-    const commits = this.getOption('git-diff');
-
-    if (!commits.length) {
-      return [];
-    } else if (commits.length > 2) {
-      throw new Error('Invalid \'--git-diff\' option format! More than two arguments specified!');
-    }
-
-    const diffList = GitHelper.getGitDiff(commits, this.getAppPath());
-
-    const config = super.getConfig();
-    const result = {};
-
-    Object.keys(config)
-      .filter(hash => {
-        const { mapping } = config[hash];
-
-        return mapping && mapping.some(dep => diffList.some(diff => diff.startsWith(dep)));
-      })
-      .forEach(hash => { result[hash] = null; });
-
-    // Add components' dependencies to the execution list
-    let newHashes = Object.keys(result);
-
-    while (newHashes.length) {
-      const componentHash = newHashes.pop();
-      const { dependsOn } = config[componentHash];
-
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
-        .filter(hash => !result.hasOwnProperty(hash))
-        .forEach(hash => {
-          newHashes.push(hash);
-          result[hash] = null;
-        });
-    }
-
-    return Object.keys(result);
   }
 
   /**
@@ -316,7 +271,7 @@ class ConfigCommand extends AbstractCommand {
    * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
-   * @return {Promise}
+   * @returns {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
     Util.printListAuto(config, this.getProjectConfig().name, listLimit);
@@ -344,26 +299,6 @@ class ConfigCommand extends AbstractCommand {
     const action = this.getName();
 
     this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
-  }
-
-  /**
-   * @returns {Array}
-   */
-  getVarFile() {
-    return this.getOption('var-file');
-  }
-
-  /**
-   * @returns {Object}
-   */
-  getVar() {
-    let result = {};
-
-    this.getOption('var').map(item => {
-      Object.assign(result, Args.toObject(item));
-    });
-
-    return result;
   }
 
   /**
@@ -482,7 +417,7 @@ class ConfigCommand extends AbstractCommand {
    * Returns an array of error strings related to
    * all components' dependencies are included in config
    * @param {Object} config
-   * @return {String[]}
+   * @returns {String[]}
    */
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
@@ -520,7 +455,7 @@ class ConfigCommand extends AbstractCommand {
    * Returns an array of error strings related to
    * components that depend on the components included in run are included in config
    * @param {Object} config
-   * @return {String[]}
+   * @returns {String[]}
    */
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
@@ -567,7 +502,7 @@ class ConfigCommand extends AbstractCommand {
   }
 
   /**
-   * @return {String[]}
+   * @returns {String[]}
    * @private
    */
   _getNonExistingComponents() {
@@ -580,13 +515,16 @@ class ConfigCommand extends AbstractCommand {
   /**
    *
    * @param {Object} config
-   * @return {String[]}
+   * @returns {String[]}
    */
   buildComponentList(config) {
     return Object.keys(config).map(key => config[key].name);
   }
 
 
+  /**
+   * Immediately exit after 2 SIGINT signals
+   */
   stopExecution() {
     if (!this.signalCount) {
       this.signalCount = 1;
@@ -596,7 +534,7 @@ class ConfigCommand extends AbstractCommand {
 
     console.log('Signal Count: ', this.signalCount);
 
-    if (this.signalCount > 1) {
+    if (this.signalCount > 2) {
       console.log('Two interrupts received. Exiting immediately. Note that data\n' +
         'loss may have occurred.');
       console.log('Exit with code 1');

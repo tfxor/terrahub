@@ -158,7 +158,7 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        console.log('Got error :', error);
+        console.log('Got error :', error.code);
         return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: config.retryCount,

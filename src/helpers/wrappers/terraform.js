@@ -423,6 +423,10 @@ class Terraform {
       data => {
         console.log('_spawn data', this._out(data));
 
+        if(['/Interrupt received/'].test(this._out(data))){
+
+        }
+
         if (this._showLogs) {
           logger.raw(this._out(data));
         }
