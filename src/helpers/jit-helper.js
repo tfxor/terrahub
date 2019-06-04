@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
+const hcltojson = require('hcl-to-json');
 const { jitPath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
@@ -21,11 +22,16 @@ class JitHelper {
     if (config.isJit) {
       const componentPath = path.join(config.project.root, config.root);
 
+      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
+      const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
+
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
           name: config.name,
-          path: componentPath
+          path: componentPath,
+          local: localTfstatePath,
+          remote: remoteTfstatePath
         },
         project: {
           path: config.project.root,
@@ -36,6 +42,72 @@ class JitHelper {
     }
 
     return config;
+  }
+
+  /**
+   * Normalize Backend Local config
+   * @param {Object} config
+   * @return {String}
+   * @private
+   */
+  static _normalizeBackendLocalPath(config) {
+    const { template } = config;
+    const { terraform: { backend: { local } } } = template;
+    const { locals } = template;
+    let localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.local) {
+          localTfstatePath = component.local;
+        }
+      });
+    }
+
+    if (local) {
+      Object.keys(local).filter(it => local[it]).map(() => {
+        const { path } = local;
+        if (path) {
+          local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+        }
+      });
+    }
+
+    return localTfstatePath;
+  }
+
+  /**
+   * Normalize Backend S3 config
+   * @param {Object} config
+   * @return {String}
+   * @private
+   */
+  static _normalizeBackendS3Key(config) {
+    const { template } = config;
+    const { terraform: { backend: { s3 } } } = template;
+    const { locals } = template;
+    let remoteTfstatePath = path.join('terraform', config.project.name);
+
+    if (locals) {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
+        const { component } = locals;
+        if (component && component.remote) {
+          localTfstatePath = component.remote;
+        }
+      });
+    }
+
+    if (s3) {
+      Object.keys(s3).filter(it => s3[it]).map(() => {
+        const { key } = s3;
+        if (key) {
+          s3.key = key.replace(/\$\{local.component\["remote"\]\}/g, remoteTfstatePath);
+        }
+      });
+    }
+
+    return remoteTfstatePath;
   }
 
   /**
@@ -56,7 +128,7 @@ class JitHelper {
       .then(() => {
       // add "tfvars" if it is not described in config
       const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
-      if (!template.hasOwnProperty('tfvars') && remoteTfvarsLinks.length > 0) {
+      if (remoteTfvarsLinks.length > 0) {
         return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
       }
     }).then(() => JitHelper._createTerraformFiles(config))
@@ -102,13 +174,16 @@ class JitHelper {
     const bucket = remoteTfvarsLink.match(regExBucket).shift();
     const regExPrefix = new RegExp("(?<=" + bucket + "\/)(.+?)$");
     const prefix = remoteTfvarsLink.match(regExPrefix).shift();
+    const tfvars = config.template.tfvars || {};
 
     const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
       JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
-        template['tfvars'] = yaml.safeLoad(data.toString());
+        template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
+          JSON.stringify(hcltojson(data.toString()))).replace(/}{/g,","));
       }):
       JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
-        template['tfvars'] = yaml.safeLoad(data.Body.toString());
+        template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
+        JSON.stringify(hcltojson(data.Body.toString()))).replace(/}{/g,","));
       });
     
 
