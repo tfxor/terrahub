@@ -272,11 +272,18 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @return {String}
+   */
+  getDependencyOption() {
+    return this.getOption('dependency');
+  }
+
+  /**
    * @returns {AbstractDependencyStrategy}
    */
   getDependencyStrategy() {
     if (!this._dependecyStrategy) {
-      const option = this.getOption('dependency');
+      const option = this.getDependencyOption();
 
       switch (option) {
         case 'auto':
@@ -470,7 +477,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String[]}
    */
   getDependencyIssues(config) {
-    const fullConfig = this.getExtendedConfig();
+    const fullConfig = this.getDependencyOption() === 'auto' ? this.getExtendedConfig() : config;
     const hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
@@ -508,7 +515,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {String[]}
    */
   getReverseDependencyIssues(config) {
-    const fullConfig = this.getExtendedConfig();
+    const fullConfig = this.getDependencyOption() === 'auto' ? this.getExtendedConfig() : config;
     const hashesToCheck = Object.keys(config);
     const checked = Object.assign({}, config);
     const issues = {};
