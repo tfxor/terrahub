@@ -193,7 +193,13 @@ class Terraform {
     return this.run('state', ['pull', '-no-color']).then(result => {
       this._showLogs = true;
       const backupPath = this._metadata.getStateBackupPath();
-      const pullStateContent = JSON.parse(result.toString());
+      const stdout = result.toString();
+      const indexStart = stdout.indexOf('{');
+      const pullStateContent = JSON.parse(
+        stdout[0] !== '{'
+          ? stdout.substring(indexStart, stdout.length)
+          : stdout
+      );
 
       return fse.ensureFile(backupPath)
         .then(() => fse.writeJson(backupPath, pullStateContent))
@@ -430,13 +436,11 @@ class Terraform {
    * @private
    */
   _out(data) {
-    let str = data.toString();
-    
-    if (str.substr(0, 2) === "o:") {
-      str = str.substr(2, str.length - 2);
-    }
+    let stdout = data.toString();
+    const indexStart = stdout.indexOf('{');
+    stdout = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
 
-    return `[${this.getName()}] ${str}`;
+    return `[${this.getName()}] ${stdout}`;
   }
 
   /**
