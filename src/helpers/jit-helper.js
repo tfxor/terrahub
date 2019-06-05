@@ -52,7 +52,6 @@ class JitHelper {
    */
   static _normalizeBackendLocalPath(config) {
     const { template } = config;
-    const { terraform: { backend: { local } } } = template;
     const { locals } = template;
     let localTfstatePath = path.resolve('/tmp/.terrahub/local_tfstate/', config.project.name);
 
@@ -64,14 +63,22 @@ class JitHelper {
         }
       });
     }
+    
+    const { terraform } = template;
 
-    if (local) {
-      Object.keys(local).filter(it => local[it]).map(() => {
-        const { path } = local;
-        if (path) {
-          local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+    if (terraform) {
+      const { backend } = terraform;
+      if (backend) {
+        const { local } = backend;
+        if (local) {
+          Object.keys(local).filter(it => local[it]).map(() => {
+            const { path } = local;
+            if (path) {
+              local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+            }
+          });
         }
-      });
+      }
     }
 
     return localTfstatePath;
@@ -85,7 +92,6 @@ class JitHelper {
    */
   static _normalizeBackendS3Key(config) {
     const { template } = config;
-    const { terraform: { backend: { s3 } } } = template;
     const { locals } = template;
     let remoteTfstatePath = path.join('terraform', config.project.name);
 
@@ -98,13 +104,21 @@ class JitHelper {
       });
     }
 
-    if (s3) {
-      Object.keys(s3).filter(it => s3[it]).map(() => {
-        const { key } = s3;
-        if (key) {
-          s3.key = key.replace(/\$\{local.component\["remote"\]\}/g, remoteTfstatePath);
+    
+    const { terraform } = template;
+    if (terraform) {
+      const { backend } = terraform;
+      if (backend) {
+        const { s3 } = backend;
+        if (s3) {
+          Object.keys(s3).filter(it => s3[it]).map(() => {
+            const { key } = s3;
+            if (key) {
+              s3.key = key.replace(/\$\{local.component\["remote"\]\}/g, remoteTfstatePath);
+            }
+          });
         }
-      });
+      }
     }
 
     return remoteTfstatePath;
