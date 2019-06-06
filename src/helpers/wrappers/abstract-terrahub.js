@@ -244,8 +244,7 @@ class AbstractTerrahub {
    */
   _sendWorkflowToApi(status, ...args) {
     const url = 'thub/';
-
-    console.log({ runId: this._runId, name: this._action, status: status, time: + new Date() });
+    console.log({ runId: this._runId, component: this._config.name, name: this._action, status: status, time: + new Date() });
 
     // fetch.post(`${url}`, {
     //   body: JSON.stringify({

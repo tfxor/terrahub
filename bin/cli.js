@@ -4,10 +4,10 @@
 
 const path = require('path');
 const semver = require('semver');
-const logger = require('../src/helpers/logger');
-const HelpParser = require('../src/helpers/help-parser');
 const { engines } = require('../package');
+const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
+const HelpParser = require('../src/helpers/help-parser');
 const { commandsPath, config, args, fetch } = require('../src/parameters');
 
 /**
@@ -59,8 +59,10 @@ try {
  */
 function fetchCommandStatusToApi(status) {
   const url = 'thub/';
+  const config = command._extendedConfig;
+  const components = Object.keys(config).map(it => config[it].name);
 
-  console.log({ runId: command._runId, name: command._name, status: status, time: + new Date() });
+  console.log({ runId: command._runId, component: components, name: command._name, status: status, time: + new Date() });
 
   // fetch.post(`${url}`, {
   //   body: JSON.stringify({
