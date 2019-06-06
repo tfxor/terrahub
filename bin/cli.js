@@ -8,7 +8,7 @@ const logger = require('../src/helpers/logger');
 const HelpParser = require('../src/helpers/help-parser');
 const { engines } = require('../package');
 const HelpCommand = require('../src/commands/.help');
-const { commandsPath, config, args } = require('../src/parameters');
+const { commandsPath, config, args, fetch } = require('../src/parameters');
 
 /**
  * Validate node version
@@ -53,9 +53,32 @@ try {
   process.exit(1);
 }
 
+/**
+ * @param {String} status
+ * @return {Promise}
+ */
+function fetchCommandStatusToApi(status) {
+  const url = 'thub/';
+
+  console.log({ runId: command._runId, name: command._name, status: status, time: + new Date() });
+
+  // fetch.post(`${url}`, {
+  //   body: JSON.stringify({
+  //     runId: this._runId,
+  //     name: this._action,
+  //     status: status,
+  //     time: + new Date()
+  //   })
+  // }).catch(error => console.log(error));
+
+  return Promise.resolve();
+}
+
 command
   .validate()
+  .then(() => fetchCommandStatusToApi('start'))
   .then(() => command.run())
+  .then(() => fetchCommandStatusToApi('stop'))
   .then(message => {
     if (message) {
       logger.info(message);

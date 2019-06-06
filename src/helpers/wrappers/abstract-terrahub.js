@@ -4,8 +4,8 @@ const path = require('path');
 const logger = require('../logger');
 const Terraform = require('./terraform');
 const Dictionary = require('../dictionary');
-const { config } = require('../../parameters');
 const ConfigLoader = require('../../config-loader');
+const { config, fetch } = require('../../parameters');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
 
 class AbstractTerrahub {
@@ -49,7 +49,9 @@ class AbstractTerrahub {
       }
 
       if (options.skip) {
+
         return this.on({ status: Dictionary.REALTIME.SKIP })
+          .then(res => this._sendWorkflowToApi('skipped', res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -205,9 +207,11 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
+      .then(() => this._sendWorkflowToApi('start'))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
+      .then(res => this._sendWorkflowToApi('stop', res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -230,6 +234,29 @@ class AbstractTerrahub {
    */
   _addNameToMessage(message) {
     return `[${this._config.name}] ${message}`;
+  }
+
+  /**
+   * @param {String} status
+   * @param {*} args
+   * @returns {Promise<args>}
+   * @private
+   */
+  _sendWorkflowToApi(status, ...args) {
+    const url = 'thub/';
+
+    console.log({ runId: this._runId, name: this._action, status: status, time: + new Date() });
+
+    // fetch.post(`${url}`, {
+    //   body: JSON.stringify({
+    //     runId: this._runId,
+    //     name: this._action,
+    //     status: status,
+    //     time: + new Date()
+    //   })
+    // }).catch(error => console.log(error));
+
+    return Promise.resolve(...args);
   }
 }
 

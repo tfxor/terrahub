@@ -1,10 +1,10 @@
 'use strict';
 
 const URL = require('url');
+const fs = require('fs-extra');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;
 const AuthenticationException = require('../exceptions/authentication-exception');
-const fs = require('fs-extra');
 
 class Fetch {
   /**
@@ -73,7 +73,7 @@ class Fetch {
   _handleResponse(result) {
     return result.json().then(json => {
 
-      fs.appendFileSync('/Users/maximchukitu/log.txt', JSON.stringify({
+      fs.appendFileSync('/Users/andreyluchianic/Documents/log.txt', JSON.stringify({
         url: result.url,
         status: result.status,
         body: json
