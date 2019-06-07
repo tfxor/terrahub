@@ -18,6 +18,7 @@ if (!semver.satisfies(process.version, engines.node)) {
   process.exit(1);
 }
 
+
 /**
  * Command create
  * @param {logger|*} logger
@@ -54,33 +55,28 @@ try {
 }
 
 /**
- * @param {String} status
+ * @param {String} action
+ * @param {*} args
  * @return {Promise}
  */
-function fetchCommandStatusToApi(status) {
-  const url = 'thub/';
-  const config = command._extendedConfig;
-  const components = Object.keys(config).map(it => config[it].name);
+function fetchCommandStatusToApi(action, ...args) {
+  const time = action === 'create' ? 'creadetAt' : 'finishedAt';
 
-  console.log({ runId: command._runId, component: components, name: command._name, status: status, time: + new Date() });
-
-  // fetch.post(`${url}`, {
-  //   body: JSON.stringify({
-  //     runId: this._runId,
-  //     name: this._action,
-  //     status: status,
-  //     time: + new Date()
-  //   })
-  // }).catch(error => console.log(error));
-
-  return Promise.resolve();
+  fetch.post('thub/terraform-run/create', {
+    body: JSON.stringify({
+      'terraformRunId': command._runId,
+      [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    })
+  })
+    .then(() => Promise.resolve(...args))
+    .catch(() => Promise.resolve(...args));
 }
 
 command
   .validate()
-  .then(() => fetchCommandStatusToApi('start'))
+  .then(() => fetchCommandStatusToApi('create'))
   .then(() => command.run())
-  .then(() => fetchCommandStatusToApi('stop'))
+  .then(message => fetchCommandStatusToApi('update', message))
   .then(message => {
     if (message) {
       logger.info(message);
