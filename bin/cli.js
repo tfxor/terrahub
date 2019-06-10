@@ -61,8 +61,9 @@ try {
  */
 function fetchCommandStatusToApi(action, ...args) {
   const time = action === 'create' ? 'createdAt' : 'finishedAt';
+  console.log('need to be 2 times here');
 
-  fetch.post('thub/terraform-run/create', {
+  return fetch.post(`thub/terraform-run/${action}`, {
     body: JSON.stringify({
       'terraformRunId': command._runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
