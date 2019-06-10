@@ -222,8 +222,10 @@ class Util {
     const { childProcess } = promise;
 
     childProcess.stderr.on('data', data => {
-      stderr.push(data);
-      onStderr(data);
+      if (data.toString() !== '\n') {
+        stderr.push(data);
+        onStderr(data);
+      }
     });
 
     childProcess.stdout.on('data', data => {
@@ -234,7 +236,8 @@ class Util {
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
 
-      return Promise.reject('Error occurred.');
+      return Promise.reject('Error occurred. Please try again. If error is consistent, enable extra debugging ' +
+        '(DEBUG=debug) to see more details and open an issue at https://github.com/TerraHubCorp/terrahub/issues.');
     });
   }
 
