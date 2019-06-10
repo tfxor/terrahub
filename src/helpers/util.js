@@ -234,7 +234,7 @@ class Util {
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
 
-      return Promise.reject(err);
+      return Promise.reject('Error occurred.');
     });
   }
 
