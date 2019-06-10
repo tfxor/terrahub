@@ -438,7 +438,12 @@ class Terraform {
   _out(data) {
     let stdout = data.toString();
     const indexStart = stdout.indexOf('{');
+
     stdout = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
+
+    if (stdout.slice(-3) === `\n\n\n`) {
+      stdout = stdout.slice(0, -1);
+    }
 
     return `[${this.getName()}] ${stdout}`;
   }
