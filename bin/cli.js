@@ -60,7 +60,7 @@ try {
  * @return {Promise}
  */
 function fetchCommandStatusToApi(action, ...args) {
-  const time = action === 'create' ? 'creadetAt' : 'finishedAt';
+  const time = action === 'create' ? 'createdAt' : 'finishedAt';
 
   fetch.post('thub/terraform-run/create', {
     body: JSON.stringify({
@@ -68,8 +68,14 @@ function fetchCommandStatusToApi(action, ...args) {
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
     })
   })
-    .then(() => Promise.resolve(...args))
-    .catch(() => Promise.resolve(...args));
+    .then((res) => {
+      console.log(res);
+      return Promise.resolve(...args)
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.resolve(...args)
+    });
 }
 
 command

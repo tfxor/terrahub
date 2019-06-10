@@ -207,11 +207,11 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
-      .then(() => this._sendWorkflowToApi('start'))
+      .then(() => this._sendWorkflowToApi('create'))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => this._sendWorkflowToApi('stop', res))
+      .then(res => this._sendWorkflowToApi('update', res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -243,17 +243,32 @@ class AbstractTerrahub {
    * @private
    */
   _sendWorkflowToApi(status, ...args) {
-    const url = 'thub/';
-    console.log({ runId: this._runId, component: this._config.name, name: this._action, status: status, time: + new Date() });
+    let url = 'thub/terrahub-component/create';
+    let time = 'createdAt';
 
-    // fetch.post(`${url}`, {
-    //   body: JSON.stringify({
-    //     runId: this._runId,
-    //     name: this._action,
-    //     status: status,
-    //     time: + new Date()
-    //   })
-    // }).catch(error => console.log(error));
+    if(status !== 'create') {
+      url = 'thub/terrahub-component/update';
+      time = 'finishedAt';
+    }
+
+    if(status === 'create' && this._action === 'init' ||
+      status === 'update' && ['apply', 'destroy'].includes(this._action) ||
+      status === 'skipped' && ['apply', 'destroy'].includes(this._action)) {
+
+      fetch.post(`${url}`, {
+        body: JSON.stringify({
+          "terraformHash": this._config.hash,
+          "terraformName": this._config.name,
+          [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        })
+      }).then((res) => {
+        console.log('res', res);
+        return Promise.resolve(...args);
+      }).catch(error => {
+        console.log('error', error);
+        return Promise.resolve(...args)
+      })
+    }
 
     return Promise.resolve(...args);
   }
