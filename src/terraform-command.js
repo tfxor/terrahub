@@ -260,7 +260,8 @@ class TerraformCommand extends AbstractCommand {
       const { dependsOn } = config[componentHash];
 
       if (dependsOn) {
-        Object.keys(dependsOn).filter(path => ConfigLoader.buildComponentHash(path))
+        Object.keys(dependsOn)
+        .filter(path => ConfigLoader.buildComponentHash(path))
         .filter(hash => !result.hasOwnProperty(hash))
         .forEach(hash => {
           newHashes.push(hash);
