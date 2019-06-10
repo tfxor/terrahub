@@ -31,7 +31,7 @@ class ImportCommand extends TerraformCommand {
           .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
             resourceName: resourceData[0],
             importId: resourceData[1]
-          });
+          }).then(() => 'Done');
       })
     );
   }
