@@ -48,7 +48,8 @@ class RunCommand extends TerraformCommand {
           return Promise.reject('Action aborted');
         }
 
-        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
+        return this.fetchCommandStatusToApi('create').then(() =>
+          this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config));
       })
       .then(() => Promise.resolve('Done'));
   }

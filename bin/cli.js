@@ -55,35 +55,34 @@ try {
 }
 
 /**
- * @param {String} action
  * @param {*} args
  * @return {Promise}
  */
-function fetchCommandStatusToApi(action, ...args) {
-  const time = action === 'create' ? 'createdAt' : 'finishedAt';
-  console.log('need to be 2 times here');
+function LogFinishRun(...args) {
+  if (['run', 'destroy'].includes(command._name)) {
+    return fetch.post('thub/terraform-run/update', {
+      body: JSON.stringify({
+        'terraformRunId': command._runId,
+        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      })
+    })
+      .then((res) => {
+        console.log(res);
+        return Promise.resolve(...args);
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve(...args);
+      });
+  }
 
-  return fetch.post(`thub/terraform-run/${action}`, {
-    body: JSON.stringify({
-      'terraformRunId': command._runId,
-      [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-    })
-  })
-    .then((res) => {
-      console.log(res);
-      return Promise.resolve(...args)
-    })
-    .catch((err) => {
-      console.log(err);
-      return Promise.resolve(...args)
-    });
+  return Promise.resolve(...args);
 }
 
 command
   .validate()
-  .then(() => fetchCommandStatusToApi('create'))
   .then(() => command.run())
-  .then(message => fetchCommandStatusToApi('update', message))
+  .then(message => LogFinishRun(message))
   .then(message => {
     if (message) {
       logger.info(message);

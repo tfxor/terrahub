@@ -7,7 +7,7 @@ const GitHelper = require('./helpers/git-helper');
 const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { config: { listLimit, token } } = require('./parameters');
+const { config: { listLimit, token }, fetch } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
 const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
@@ -59,6 +59,30 @@ class TerraformCommand extends AbstractCommand {
     this.logger.updateContext({ sendLogsToES: true });
 
     return this;
+  }
+
+  /**
+   * Logs run action
+   * @param {String} status
+   * @return {Promise<void>}
+   */
+  fetchCommandStatusToApi(status) {
+    const time = status === 'create' ? 'createdAt' : 'finishedAt';
+
+    return fetch.post(`thub/terraform-run/${status}`, {
+      body: JSON.stringify({
+        'terraformRunId': this._runId,
+        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      })
+    })
+      .then((res) => {
+        console.log(res);
+        return Promise.resolve()
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve()
+      });
   }
 
   /**

@@ -251,14 +251,12 @@ class AbstractTerrahub {
       time = 'finishedAt';
     }
 
-    if(status === 'create' && this._action === 'init' ||
-      status === 'update' && ['apply', 'destroy'].includes(this._action) ||
-      status === 'skipped' && ['apply', 'destroy'].includes(this._action)) {
-
-      fetch.post(`${url}`, {
+    if(this._validateWorkflowAction(status)) {
+      return fetch.post(`${url}`, {
         body: JSON.stringify({
-          "terraformHash": this._config.hash,
-          "terraformName": this._config.name,
+          'terraformHash': this._config.hash,
+          'terraformName': this._config.name,
+          'terraformRunId': this._runId,
           [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
         })
       }).then((res) => {
@@ -267,10 +265,15 @@ class AbstractTerrahub {
       }).catch(error => {
         console.log('error', error);
         return Promise.resolve(...args)
-      })
+      });
     }
 
     return Promise.resolve(...args);
+  }
+
+  _validateWorkflowAction(status) {
+    return ((status === 'create' && this._action === 'init') ||
+      (status === 'update' || status === 'skipped') && ['apply', 'destroy'].includes(this._action));
   }
 }
 
