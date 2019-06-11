@@ -5,6 +5,7 @@ const TerraformCommand = require('../terraform-command');
 const { printListAsTree } = require('../helpers/log-helper');
 const Distributor = require('../helpers/distributors/thread-distributor');
 const CloudDistributor = require('../helpers/distributors/cloud-distributor');
+const { sendWorkflowToApi } = require('../helpers/logger');
 
 class RunCommand extends TerraformCommand {
   /**
@@ -48,7 +49,7 @@ class RunCommand extends TerraformCommand {
           return Promise.reject('Action aborted');
         }
 
-        return this.fetchCommandStatusToApi('create').then(() =>
+        return sendWorkflowToApi({ status: 'create', target: 'workflow', runId: this._runId }).then(() =>
           this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config));
       })
       .then(() => Promise.resolve('Done'));

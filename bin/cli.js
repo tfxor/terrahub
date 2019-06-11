@@ -5,6 +5,7 @@
 const path = require('path');
 const semver = require('semver');
 const { engines } = require('../package');
+const { sendWorkflowToApi } = require('../src/helpers/logger');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
 const HelpParser = require('../src/helpers/help-parser');
@@ -60,10 +61,11 @@ try {
  */
 function LogFinishRun(...args) {
   if (['run', 'destroy'].includes(command._name)) {
+
     return fetch.post('thub/terraform-run/update', {
       body: JSON.stringify({
         'terraformRunId': command._runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        'terraformRunFinished': new Date().toISOString().slice(0, 19).replace('T', ' ')
       })
     })
       .then((res) => {
@@ -79,10 +81,17 @@ function LogFinishRun(...args) {
   return Promise.resolve(...args);
 }
 
+const workflowOptions = {
+  status: 'update',
+  target: 'workflow',
+  runId: this._runId
+};
+
 command
   .validate()
   .then(() => command.run())
-  .then(message => LogFinishRun(message))
+  // .then(message => LogFinishRun(message))
+  .then(message => sendWorkflowToApi( workflowOptions, message))
   .then(message => {
     if (message) {
       logger.info(message);

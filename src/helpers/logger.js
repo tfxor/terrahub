@@ -137,6 +137,80 @@ class Logger {
   updateContext(context) {
     Object.assign(this._context, context);
   }
+
+  /**
+   * @param {{ status: String, target: String, runId: String, action: String, name: String, hash: String }} options
+   * @param {*} args
+   * @return {Promise<...*[]>}
+   */
+  sendWorkflowToApi(options, ...args) {
+    const { status, target, action } = options;
+    const url = Logger.composeWorkflowRequestUrl(status, target);
+
+    if (Logger.isWorkflowUseCase(target, status, action)) {
+      const body = Logger.composeWorkflowBody(options);
+
+      return fetch.post(`${url}`, {
+        body: JSON.stringify(body)
+      }).then((res) => {
+        console.log('res', res);
+        return Promise.resolve(...args);
+      }).catch(error => {
+        console.log('error', error);
+        return Promise.resolve(...args);
+      });
+    }
+  }
+
+  /**
+   * @param {String} target
+   * @param {String} status
+   * @param {String} action
+   * @return {boolean}
+   */
+  static isWorkflowUseCase(target, status, action) {
+    if (target === 'workflow') return true;
+    if (target === 'component') {
+      if (status === 'create' && action === 'init') return true;
+      if (status === 'update' && ['apply', 'destroy'].includes(action)) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @param {String} status
+   * @param {String} target
+   * @return {String}
+   */
+  static composeWorkflowRequestUrl(status, target) {
+    return `thub/${target === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
+  }
+
+  /**
+   * @param {{ status: String, target: String, runId: String, action: String, name: String, hash: String }} options
+   * @return {Object}
+   */
+  static composeWorkflowBody(options) {
+    const { status, target, runId, name, hash } = options;
+
+    if (target === 'workflow') {
+      const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
+      return {
+        'terraformRunId': runId,
+        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      };
+    } else {
+      const time = status === 'create' ? 'terraformComponentStarted' : 'terraformComponentFinished';
+      return {
+        'terraformHash': hash,
+        'terraformName': name,
+        'terraformRunUuid': runId,
+        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+      };
+    }
+  }
 }
 
 module.exports = new Logger();

@@ -42,6 +42,14 @@ class AbstractTerrahub {
    */
   getTask(action, options) {
     this._action = action;
+    this._workflowOptions = {
+      status: 'update',
+      target: 'component',
+      runId: this._runId,
+      name: this._config.name,
+      hash: this._config.hash
+    };
+
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
@@ -51,7 +59,7 @@ class AbstractTerrahub {
       if (options.skip) {
 
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          .then(res => this._sendWorkflowToApi('skipped', res))
+          .then(res => logger.sendWorkflowToApi(this._workflowOptions, res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -207,11 +215,13 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
-      .then(() => this._sendWorkflowToApi('create'))
+      // .then(() => this._sendWorkflowToApi('create'))
+      .then(() => logger.sendWorkflowToApi(this._workflowOptions))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => this._sendWorkflowToApi('update', res))
+      // .then(res => this._sendWorkflowToApi('update', res))
+      .then(res => logger.sendWorkflowToApi(this._workflowOptions, res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -244,19 +254,22 @@ class AbstractTerrahub {
    */
   _sendWorkflowToApi(status, ...args) {
     let url = 'thub/terrahub-component/create';
-    let time = 'createdAt';
+    let time = 'terrahubComponentStarted';
 
-    if(status !== 'create') {
+    if (status !== 'create') {
       url = 'thub/terrahub-component/update';
-      time = 'finishedAt';
+      time = 'terrahubComponentFinished';
     }
 
-    if(this._validateWorkflowAction(status)) {
+    if ((status === 'create' && this._action === 'init' ||
+      status === 'update' && ['apply', 'destroy'].includes(this._action) ||
+      status === 'skipped' && ['apply', 'destroy'].includes(this._action))) {
+
       return fetch.post(`${url}`, {
         body: JSON.stringify({
           'terraformHash': this._config.hash,
           'terraformName': this._config.name,
-          'terraformRunId': this._runId,
+          'terraformRunUuid': this._runId,
           [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
         })
       }).then((res) => {
@@ -264,7 +277,7 @@ class AbstractTerrahub {
         return Promise.resolve(...args);
       }).catch(error => {
         console.log('error', error);
-        return Promise.resolve(...args)
+        return Promise.resolve(...args);
       });
     }
 

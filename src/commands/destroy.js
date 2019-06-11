@@ -3,6 +3,7 @@
 const Dictionary = require('../helpers/dictionary');
 const TerraformCommand = require('../terraform-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
+const { sendWorkflowToApi } = require('../helpers/logger');
 
 class DestroyCommand extends TerraformCommand {
   /**
@@ -26,9 +27,10 @@ class DestroyCommand extends TerraformCommand {
 
     this.checkDependencies(config, Dictionary.DIRECTION.REVERSE);
 
+
     return this.askForApprovement(config, this.getOption('auto-approve'))
-      .then(answer => answer ? this.fetchCommandStatusToApi('create').then(() =>
-        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'destroy'], {
+      .then(answer => answer ? sendWorkflowToApi({ status: 'create', target: 'workflow', runId: this._runId }).then(() =>
+        distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'], {
           planDestroy: true,
           dependencyDirection: Dictionary.DIRECTION.REVERSE
         })) : Promise.reject('Action aborted')

@@ -67,7 +67,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {Promise<void>}
    */
   fetchCommandStatusToApi(status) {
-    const time = status === 'create' ? 'createdAt' : 'finishedAt';
+    const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
 
     return fetch.post(`thub/terraform-run/${status}`, {
       body: JSON.stringify({
