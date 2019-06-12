@@ -1,6 +1,7 @@
 'use strict';
 
 const TerraformCommand = require('../terraform-command');
+const { sendWorkflowToApi } = require('../helpers/logger');
 const Distributor = require('../helpers/distributors/thread-distributor');
 
 class InitCommand extends TerraformCommand {
@@ -24,8 +25,8 @@ class InitCommand extends TerraformCommand {
 
     this.warnExecutionStarted(config);
 
-    return distributor
-      .runActions(['prepare', 'init']).then(() => Promise.resolve('Done'));
+    return sendWorkflowToApi({ status: 'create', target: 'workflow', runId: this.runId }).then(() =>
+      distributor.runActions(['prepare', 'init']).then(() => Promise.resolve('Done')));
   }
 }
 
