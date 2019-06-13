@@ -9,7 +9,6 @@ class InitCommand extends TerraformCommand {
    */
   configure() {
     this
-      .enableElasticSearchLogging()
       .setName('init')
       .setDescription('run `terraform init` across multiple terrahub components')
     ;

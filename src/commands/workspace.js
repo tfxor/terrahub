@@ -17,7 +17,6 @@ class WorkspaceCommand extends TerraformCommand {
    */
   configure() {
     this
-      .enableElasticSearchLogging()
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terrahub components')
       .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)

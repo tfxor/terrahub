@@ -10,7 +10,6 @@ class ApplyCommand extends TerraformCommand {
    */
   configure() {
     this
-      .enableElasticSearchLogging()
       .setName('apply')
       .setDescription('run `terraform apply` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)

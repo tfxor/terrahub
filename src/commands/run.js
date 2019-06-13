@@ -12,7 +12,6 @@ class RunCommand extends TerraformCommand {
    */
   configure() {
     this
-      .enableElasticSearchLogging()
       .setName('run')
       .setDescription('execute automated workflow terraform init > workspace > plan > apply > destroy')
       .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
