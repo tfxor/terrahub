@@ -10,9 +10,9 @@ const AbstractCommand = require('./abstract-command');
 const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
 
-const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
-const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
-const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-include');
 
 /**
  * @abstract
@@ -309,25 +309,25 @@ class TerraformCommand extends AbstractCommand {
    * @returns {AbstractDependencyStrategy}
    */
   getDependencyStrategy() {
-    if (!this._dependecyStrategy) {
+    if (!this._dependencyStrategy) {
       const option = this.getDependencyOption();
 
       switch (option) {
         case 'auto':
-          this._dependecyStrategy = new DependeciesAuto();
+          this._dependencyStrategy = new DependenciesAuto();
           break;
         case 'ignore':
-          this._dependecyStrategy = new DependeciesIgnore();
+          this._dependencyStrategy = new DependenciesIgnore();
           break;
         case 'include':
-          this._dependecyStrategy = new DependeciesInclude();
+          this._dependencyStrategy = new DependenciesInclude();
           break;
         default:
           throw new Error('Unknown Error!');
       }
     }
 
-    return this._dependecyStrategy;
+    return this._dependencyStrategy;
   }
 
   /**

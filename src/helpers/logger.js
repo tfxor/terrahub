@@ -169,8 +169,12 @@ class Logger {
     if (target === 'workflow') {
       return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
     }
-    if (target === 'component' && status === 'create') return ['init', 'workspaceSelect'].includes(action);
-    if (target === 'component' && status === 'update') return ['apply', 'destroy'].includes(action);
+    if (target === 'component' && status === 'create') {
+      return ['init', 'workspaceSelect'].includes(action);
+    }
+    if (target === 'component' && status === 'update') {
+      return ['apply', 'destroy'].includes(action);
+    }
 
     return false;
   }
