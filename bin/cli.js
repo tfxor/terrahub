@@ -19,7 +19,6 @@ if (!semver.satisfies(process.version, engines.node)) {
   process.exit(1);
 }
 
-
 /**
  * Command create
  * @param {logger|*} logger
@@ -70,7 +69,8 @@ command
     runId: command.runId,
     action: command._name
   }, message))
-  .then(message => {
+  .then(msg => {
+    const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }

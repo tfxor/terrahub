@@ -55,7 +55,7 @@ function run(config) {
 
       process.send({
         id: cluster.worker.id,
-        data: lastResult,
+        data: Buffer.isBuffer(lastResult) ? lastResult.toString() : lastResult,
         isError: false,
         hash: config.hash
       });

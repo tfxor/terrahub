@@ -47,7 +47,7 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'D', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
+      .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
     ;
   }
 
@@ -317,16 +317,25 @@ class TerraformCommand extends AbstractCommand {
       const componentHash = newHashes.pop();
       const { dependsOn } = config[componentHash];
 
-      dependsOn
-        .map(path => ConfigLoader.buildComponentHash(path))
+      if (dependsOn) {
+        Object.keys(dependsOn)
+        .filter(path => ConfigLoader.buildComponentHash(path))
         .filter(hash => !result.hasOwnProperty(hash))
         .forEach(hash => {
           newHashes.push(hash);
           result[hash] = null;
         });
+      }
     }
 
     return Object.keys(result);
+  }
+
+  /**
+   * @return {String}
+   */
+  getDependencyOption() {
+    return this.getOption('dependency');
   }
 
   /**
@@ -334,7 +343,7 @@ class TerraformCommand extends AbstractCommand {
    */
   getDependencyStrategy() {
     if (!this._dependecyStrategy) {
-      const option = this.getOption('dependency');
+      const option = this.getDependencyOption();
 
       switch (option) {
         case 'auto':
@@ -488,13 +497,27 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Checks if all components' dependencies are included in config
    * @param {Object} config
    * @param {Number} direction
    * @protected
    * @throws {ListException}
    */
   checkDependencies(config, direction = Dictionary.DIRECTION.FORWARD) {
+    if (this.getDependencyOption() === 'auto') {
+      this._checkComponentsDependencies(config, direction);
+    }
+
+    this._checkDependencyCycle(config);
+  }
+
+  /**
+   * Checks if all components' dependencies are included in config
+   * @param {Object} config
+   * @param {Number} direction
+   * @private
+   * @throws {ListException}
+   */
+  _checkComponentsDependencies(config, direction) {
     let issues;
 
     switch (direction) {
@@ -517,8 +540,6 @@ class TerraformCommand extends AbstractCommand {
         style: ListException.NUMBER
       });
     }
-
-    this._checkDependencyCycle(config);
   }
 
   /**
