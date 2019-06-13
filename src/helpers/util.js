@@ -234,9 +234,11 @@ class Util {
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
 
-      return Promise.reject('Error occurred. Please try again. If this problem persists, ' +
-        'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-        'https://github.com/TerraHubCorp/terrahub/issues');
+      if (err) {
+        return Promise.reject('Error occurred. Please try again. If this problem persists, ' +
+          'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
+          'https://github.com/TerraHubCorp/terrahub/issues');
+      }
     });
   }
 
