@@ -5,11 +5,10 @@
 const path = require('path');
 const semver = require('semver');
 const { engines } = require('../package');
-const { sendWorkflowToApi } = require('../src/helpers/logger');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
 const HelpParser = require('../src/helpers/help-parser');
-const { commandsPath, config, args, fetch } = require('../src/parameters');
+const { commandsPath, config, args } = require('../src/parameters');
 
 /**
  * Validate node version
@@ -56,14 +55,14 @@ try {
 
 command
   .validate()
-  .then(() => sendWorkflowToApi({
+  .then(() => logger.sendWorkflowToApi({
     status: 'create',
     target: 'workflow',
     runId: command.runId,
     action: command._name
   }))
   .then(() => command.run())
-  .then(message => sendWorkflowToApi({
+  .then(message => logger.sendWorkflowToApi({
     status: 'update',
     target: 'workflow',
     runId: command.runId,

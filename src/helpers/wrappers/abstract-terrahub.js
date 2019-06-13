@@ -4,8 +4,8 @@ const path = require('path');
 const logger = require('../logger');
 const Terraform = require('./terraform');
 const Dictionary = require('../dictionary');
-const ConfigLoader = require('../../config-loader');
 const { config } = require('../../parameters');
+const ConfigLoader = require('../../config-loader');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
 
 class AbstractTerrahub {
