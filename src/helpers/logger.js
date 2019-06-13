@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const { join } = require('path');
 const logger = require('js-logger');
 // const fetch = require('node-fetch').default;
-const { fetch, config: { token } } = require('../parameters');
+const { fetch, config: { token, api } } = require('../parameters');
 
 class Logger {
   /**
@@ -108,7 +108,7 @@ class Logger {
   _esHandler(messages) {
     const message = Object.keys(messages).map(key => messages[key]).join('');
 
-    const promise = fetch.post(`https://0kd9q7ufs8.execute-api.us-east-1.amazonaws.com/v1/elasticsearch/document/${this._context.runId}?indexMapping=logs`, {
+    const promise = fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/document/${this._context.runId}?indexMapping=logs`, {
       body: JSON.stringify({
         terraformRunId: this._context.runId,
         timestamp: Date.now(),
@@ -152,14 +152,11 @@ class Logger {
 
       return fetch.post(`${url}`, {
         body: JSON.stringify(body)
-      }).then((res) => {
-        console.log('res', res);
-        return Promise.resolve(...args);
-      }).catch(error => {
-        console.log('error', error);
-        return Promise.resolve(...args);
-      });
+      }).then(() => Promise.resolve(...args))
+        .catch(() => Promise.resolve(...args));
     }
+
+    return Promise.resolve(...args);
   }
 
   /**
@@ -169,11 +166,11 @@ class Logger {
    * @return {boolean}
    */
   static isWorkflowUseCase(target, status, action) {
-    if (target === 'workflow') return true;
-    if (target === 'component') {
-      if (status === 'create' && action === 'init') return true;
-      if (status === 'update' && ['apply', 'destroy'].includes(action)) return true;
+    if (target === 'workflow') {
+      return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
     }
+    if (target === 'component' && status === 'create') return ['init', 'workspaceSelect'].includes(action);
+    if (target === 'component' && status === 'update') return ['apply', 'destroy'].includes(action);
 
     return false;
   }
@@ -201,7 +198,7 @@ class Logger {
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
     } else {
-      const time = status === 'create' ? 'terraformComponentStarted' : 'terraformComponentFinished';
+      const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
       return {
         'terraformHash': hash,
         'terraformName': name,

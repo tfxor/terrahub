@@ -5,7 +5,7 @@ const logger = require('../logger');
 const Terraform = require('./terraform');
 const Dictionary = require('../dictionary');
 const ConfigLoader = require('../../config-loader');
-const { config, fetch } = require('../../parameters');
+const { config } = require('../../parameters');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
 
 class AbstractTerrahub {
@@ -215,12 +215,12 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
-      // .then(() => this._sendWorkflowToApi('create'))
-      .then(() => logger.sendWorkflowToApi(this._workflowOptions))
+      .then(() => logger.sendWorkflowToApi({
+        status: 'create', target: 'component', runId: this._runId, name: this._config.name, hash: this._config.hash
+      }))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      // .then(res => this._sendWorkflowToApi('update', res))
       .then(res => logger.sendWorkflowToApi(this._workflowOptions, res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
@@ -244,49 +244,6 @@ class AbstractTerrahub {
    */
   _addNameToMessage(message) {
     return `[${this._config.name}] ${message}`;
-  }
-
-  /**
-   * @param {String} status
-   * @param {*} args
-   * @returns {Promise<args>}
-   * @private
-   */
-  _sendWorkflowToApi(status, ...args) {
-    let url = 'thub/terrahub-component/create';
-    let time = 'terrahubComponentStarted';
-
-    if (status !== 'create') {
-      url = 'thub/terrahub-component/update';
-      time = 'terrahubComponentFinished';
-    }
-
-    if ((status === 'create' && this._action === 'init' ||
-      status === 'update' && ['apply', 'destroy'].includes(this._action) ||
-      status === 'skipped' && ['apply', 'destroy'].includes(this._action))) {
-
-      return fetch.post(`${url}`, {
-        body: JSON.stringify({
-          'terraformHash': this._config.hash,
-          'terraformName': this._config.name,
-          'terraformRunUuid': this._runId,
-          [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-        })
-      }).then((res) => {
-        console.log('res', res);
-        return Promise.resolve(...args);
-      }).catch(error => {
-        console.log('error', error);
-        return Promise.resolve(...args);
-      });
-    }
-
-    return Promise.resolve(...args);
-  }
-
-  _validateWorkflowAction(status) {
-    return ((status === 'create' && this._action === 'init') ||
-      (status === 'update' || status === 'skipped') && ['apply', 'destroy'].includes(this._action));
   }
 }
 

@@ -55,43 +55,21 @@ try {
   process.exit(1);
 }
 
-/**
- * @param {*} args
- * @return {Promise}
- */
-function LogFinishRun(...args) {
-  if (['run', 'destroy'].includes(command._name)) {
-
-    return fetch.post('thub/terraform-run/update', {
-      body: JSON.stringify({
-        'terraformRunId': command._runId,
-        'terraformRunFinished': new Date().toISOString().slice(0, 19).replace('T', ' ')
-      })
-    })
-      .then((res) => {
-        console.log(res);
-        return Promise.resolve(...args);
-      })
-      .catch((err) => {
-        console.log(err);
-        return Promise.resolve(...args);
-      });
-  }
-
-  return Promise.resolve(...args);
-}
-
-const workflowOptions = {
-  status: 'update',
-  target: 'workflow',
-  runId: this._runId
-};
-
 command
   .validate()
+  .then(() => sendWorkflowToApi({
+    status: 'create',
+    target: 'workflow',
+    runId: command.runId,
+    action: command._name
+  }))
   .then(() => command.run())
-  // .then(message => LogFinishRun(message))
-  .then(message => sendWorkflowToApi( workflowOptions, message))
+  .then(message => sendWorkflowToApi({
+    status: 'update',
+    target: 'workflow',
+    runId: command.runId,
+    action: command._name
+  }, message))
   .then(message => {
     if (message) {
       logger.info(message);
