@@ -55,19 +55,11 @@ try {
 
 command
   .validate()
-  .then(() => logger.sendWorkflowToApi({
-    status: 'create',
-    target: 'workflow',
-    runId: command.runId,
-    action: command._name
-  }))
+  .then(() => logger.sendWorkflowToApi(
+    { status: 'create',target: 'workflow',runId: command.runId,action: command._name }))
   .then(() => command.run())
-  .then(message => logger.sendWorkflowToApi({
-    status: 'update',
-    target: 'workflow',
-    runId: command.runId,
-    action: command._name
-  }, message))
+  .then(message => logger.sendWorkflowToApi(
+    { status: 'update', target: 'workflow', runId: command.runId, action: command._name }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {

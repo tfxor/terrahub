@@ -7,8 +7,8 @@ const GitHelper = require('./helpers/git-helper');
 const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
+const { config: { listLimit, logs } } = require('./parameters');
 
 const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
@@ -31,7 +31,6 @@ class TerraformCommand extends AbstractCommand {
       runId: this._runId,
       componentName: 'main',
       action: 'main',
-      sendLogsToES: true
     });
   }
 
@@ -56,7 +55,13 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Promise}
    */
   validate() {
-    return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
+    return super.validate().then(token => {
+      if(token && logs) {
+        this.logger.updateContext({ canLogBeSentToApi: true })
+      }
+
+      return Promise.resolve();
+    }).then(() => this._checkProjectDataMissing()).then(() => {
       if (this._isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');

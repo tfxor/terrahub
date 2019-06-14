@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const { join } = require('path');
 const logger = require('js-logger');
 // const fetch = require('node-fetch').default;
-const { fetch, config: { token, api } } = require('../parameters');
+const { fetch, config: { api } } = require('../parameters');
 
 class Logger {
   /**
@@ -23,8 +23,8 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._isESLogRequired) {
-        this._esHandler(messages);
+      if (this._canLogBeSentToApi) {
+        this._sendLogToApi(messages);
       }
     });
 
@@ -32,7 +32,7 @@ class Logger {
 
     this._promises = [];
     this._context = {
-      sendLogsToES: false,
+      canLogBeSentToApi: false,
       runId: null,
       componentName: null,
       action: null
@@ -46,8 +46,8 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._isESLogRequired) {
-      this._esHandler([message]);
+    if (this._canLogBeSentToApi) {
+      this._sendLogToApi([message]);
     }
   }
 
@@ -105,7 +105,7 @@ class Logger {
    * @param {String[]} messages
    * @private
    */
-  _esHandler(messages) {
+  _sendLogToApi(messages) {
     const message = Object.keys(messages).map(key => messages[key]).join('');
 
     const promise = fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/document/${this._context.runId}?indexMapping=logs`, {
@@ -127,12 +127,12 @@ class Logger {
    * @return {Boolean}
    * @private
    */
-  get _isESLogRequired() {
-    return token && this._context.sendLogsToES;
+  get _canLogBeSentToApi() {
+    return this._context.canLogBeSentToApi;
   }
 
   /**
-   * @param {{ runId: String?, componentName: String?, action: String?, sendLogsToES: Boolean? }} context
+   * @param {{ runId: String?, componentName: String?, action: String?, canLogBeSentToApi: Boolean? }} context
    */
   updateContext(context) {
     Object.assign(this._context, context);
@@ -141,19 +141,22 @@ class Logger {
   /**
    * @param {{ status: String, target: String, runId: String, action: String, name: String, hash: String }} options
    * @param {*} args
-   * @return {Promise<...*[]>}
+   * @return {Promise}
    */
   sendWorkflowToApi(options, ...args) {
-    const { status, target, action } = options;
-    const url = Logger.composeWorkflowRequestUrl(status, target);
+    if (this._canLogBeSentToApi) {
+      const { status, target, action } = options;
+      const url = Logger.composeWorkflowRequestUrl(status, target);
 
-    if (Logger.isWorkflowUseCase(target, status, action)) {
-      const body = Logger.composeWorkflowBody(options);
+      if (Logger.isWorkflowUseCase(target, status, action)) {
+        const body = Logger.composeWorkflowBody(options);
 
-      return fetch.post(`${url}`, {
-        body: JSON.stringify(body)
-      }).then(() => Promise.resolve(...args))
-        .catch(() => Promise.resolve(...args));
+        const promise = fetch.post(`${url}`, {
+          body: JSON.stringify(body)
+        }).catch(error => console.log(error));
+
+        this._promises.push(promise);
+      }
     }
 
     return Promise.resolve(...args);

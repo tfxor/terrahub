@@ -5,7 +5,6 @@ const logger = require('../logger');
 const JitHelper = require('../jit-helper');
 const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
-const { config: { token } } = require('../../parameters');
 const Terrahub = require('../wrappers/terrahub');
 
 /**
@@ -42,7 +41,6 @@ function run(config) {
   logger.updateContext({
     runId: process.env.THUB_RUN_ID,
     componentName: config.name,
-    sendLogsToES: true
   });
 
   JitHelper.jitMiddleware(config)

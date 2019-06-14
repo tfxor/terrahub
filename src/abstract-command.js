@@ -275,13 +275,15 @@ class AbstractCommand {
       return this.onTokenMissingOrInvalid(null);
     }
 
-    return fetch.get('thub/account/retrieve').catch(err => {
-      if (err instanceof AuthenticationException) {
-        return this.onTokenMissingOrInvalid(config.token);
-      }
+    return fetch.get('thub/account/retrieve')
+      .then((res) => Promise.resolve(res))
+      .catch(err => {
+        if (err instanceof AuthenticationException) {
+          return this.onTokenMissingOrInvalid(config.token);
+        }
 
-      throw err;
-    });
+        throw err;
+      });
   }
 
   /**
