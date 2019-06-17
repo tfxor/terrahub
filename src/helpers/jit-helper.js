@@ -188,20 +188,21 @@ class JitHelper {
    */
   static _addTfvars(config, remoteTfvarsLink) {
     const { template } = config;
-    const regExBucket = /(?<=(s3|gs):\/\/)(.+?)([^\/]+)/gm;
-    const bucket = remoteTfvarsLink.match(regExBucket).shift();
-    const regExPrefix = new RegExp("(?<=" + bucket + "\/)(.+?)$");
-    const prefix = remoteTfvarsLink.match(regExPrefix).shift();
+    const regExBucket = new RegExp('((s3|gs):\/\/)(.+?)([^\/]+)', 'gm');
+    const bucket = remoteTfvarsLink.match(regExBucket).shift().replace(/(s3|gs):\/\//g, '');
+    const regExPrefix = new RegExp('(' + bucket + '\/)(.+?)$');
+    const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
+    const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
     const tfvars = config.template.tfvars || {};
 
     const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
       JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
         template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-          JSON.stringify(hcltojson(data.toString()))).replace(/}{/g,",").replace(/{,/g,"{"));
+          JSON.stringify(hcltojson(data.toString()))).replace(/}{/g,',').replace(/{,/g,'{'));
       }):
       JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
         template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-        JSON.stringify(hcltojson(data.Body.toString()))).replace(/}{/g,",").replace(/{,/g,"{"));
+        JSON.stringify(hcltojson(data.Body.toString()))).replace(/}{/g,',').replace(/{,/g,'{'));
       });
     
 

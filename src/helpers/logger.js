@@ -108,7 +108,7 @@ class Logger {
   _sendLogToApi(messages) {
     const message = Object.keys(messages).map(key => messages[key]).join('');
 
-    const promise = fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/document/${this._context.runId}?indexMapping=logs`, {
+    const promise = fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`, {
       body: JSON.stringify({
         terraformRunId: this._context.runId,
         timestamp: Date.now(),
@@ -145,8 +145,8 @@ class Logger {
    */
   sendWorkflowToApi(options, ...args) {
     if (this._canLogBeSentToApi) {
-      const { status, target, action } = options;
-      const url = Logger.composeWorkflowRequestUrl(status, target);
+      const { status, target, action, runId } = options;
+      const url = Logger.composeWorkflowRequestUrl(status, target, runId);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
         const body = Logger.composeWorkflowBody(options);
@@ -169,14 +169,34 @@ class Logger {
    * @return {boolean}
    */
   static isWorkflowUseCase(target, status, action) {
-    if (target === 'workflow') {
-      return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
+    switch (target) {
+      case 's3' :
+        return true;
+      case 'workflow':
+        return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
+      case 'component':
+        return Logger.isComponentUseCase(status, action);
+      default:
+        return false;
     }
-    if (target === 'component' && status === 'create') {
-      return ['init', 'workspaceSelect'].includes(action);
-    }
-    if (target === 'component' && status === 'update') {
-      return ['apply', 'destroy'].includes(action);
+  }
+
+  /**
+   * @param status
+   * @param action
+   * @return {boolean}
+   */
+  static isComponentUseCase(status, action) {
+    const _actions = process.env.TERRAFORM_ACTIONS.split(',');
+
+    if (status === 'create') {
+      const _firstAction = _actions[0] === 'prepare' ? _actions[1] : _actions[0];
+
+      return _firstAction === action && _firstAction !== 'plan';
+    } else if (status === 'update') {
+      const _finalAction = _actions.pop();
+
+      return action === _finalAction;
     }
 
     return false;
@@ -185,9 +205,12 @@ class Logger {
   /**
    * @param {String} status
    * @param {String} target
+   * @param {String} runId
    * @return {String}
    */
-  static composeWorkflowRequestUrl(status, target) {
+  static composeWorkflowRequestUrl(status, target, runId) {
+    if (target === 's3') return `https://${api}.terrahub.io/v1/elasticsearch/logs/save/${runId}`;
+
     return `thub/${target === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
   }
 
@@ -204,6 +227,8 @@ class Logger {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
+    } else if (target === 's3') {
+      return {};
     } else {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
       return {
