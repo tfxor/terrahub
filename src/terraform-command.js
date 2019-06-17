@@ -30,7 +30,7 @@ class TerraformCommand extends AbstractCommand {
     this.logger.updateContext({
       runId: this._runId,
       componentName: 'main',
-      action: 'main',
+      action: 'main'
     });
   }
 
@@ -56,7 +56,7 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(token => {
-      if(token && logs) {
+      if (token && logs) {
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
@@ -220,6 +220,7 @@ class TerraformCommand extends AbstractCommand {
     ].filter(Boolean);
 
     const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
+    process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
 
     if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
@@ -291,12 +292,12 @@ class TerraformCommand extends AbstractCommand {
 
       if (dependsOn) {
         Object.keys(dependsOn)
-        .filter(path => ConfigLoader.buildComponentHash(path))
-        .filter(hash => !result.hasOwnProperty(hash))
-        .forEach(hash => {
-          newHashes.push(hash);
-          result[hash] = null;
-        });
+          .filter(path => ConfigLoader.buildComponentHash(path))
+          .filter(hash => !result.hasOwnProperty(hash))
+          .forEach(hash => {
+            newHashes.push(hash);
+            result[hash] = null;
+          });
       }
     }
 

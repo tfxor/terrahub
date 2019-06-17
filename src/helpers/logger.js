@@ -32,7 +32,7 @@ class Logger {
 
     this._promises = [];
     this._context = {
-      canLogBeSentToApi: false,
+      canLogBeSentToApi: process.env.THUB_TOKEN_IS_VALID || false,
       runId: null,
       componentName: null,
       action: null
@@ -239,6 +239,44 @@ class Logger {
 
       };
     }
+  }
+
+  sendErrorToApi() {
+    if (this._canLogBeSentToApi) {
+
+      const terrahubComponents = process.env.THUB_EXECUTION_LIST.split(',');
+
+      terrahubComponents.map(it => {
+        const options = {
+          status: 'update',
+          target: 'component',
+          runId: this._context.runId,
+          name: it.split(':')[0],
+          hash: it.split(':')[1]
+        };
+
+        const url = Logger.composeWorkflowRequestUrl(options.status, options.target, options.runId);
+        const body = Logger.composeWorkflowBody(options);
+
+        const promise = fetch.post(`${url}`, {
+          body: JSON.stringify(body)
+        }).catch(error => console.log(error));
+
+        this._promises.push(promise);
+      });
+
+      const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
+      const body = Logger.composeWorkflowBody({ status: 'update', target: 'workflow', runId: this._context.runId });
+
+      const promise = fetch.post(`${url}`, {
+        body: JSON.stringify(body)
+      }).catch(error => console.log(error));
+
+      this._promises.push(promise);
+
+    }
+
+
   }
 }
 

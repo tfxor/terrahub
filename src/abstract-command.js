@@ -276,7 +276,10 @@ class AbstractCommand {
     }
 
     return fetch.get('thub/account/retrieve')
-      .then((res) => Promise.resolve(res))
+      .then((res) => {
+        process.env.THUB_TOKEN_IS_VALID = true;
+        return Promise.resolve(res);
+      })
       .catch(err => {
         if (err instanceof AuthenticationException) {
           return this.onTokenMissingOrInvalid(config.token);

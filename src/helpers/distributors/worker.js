@@ -41,7 +41,6 @@ function run(config) {
   logger.updateContext({
     runId: process.env.THUB_RUN_ID,
     componentName: config.name,
-    canLogBeSentToApi: true
   });
 
   JitHelper.jitMiddleware(config)
