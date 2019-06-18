@@ -107,20 +107,16 @@ class Logger {
    */
   _sendLogToApi(messages) {
     const message = Object.keys(messages).map(key => messages[key]).join('');
+    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`;
+    const body = {
+      terraformRunId: this._context.runId,
+      timestamp: Date.now(),
+      component: this._context.componentName,
+      log: message,
+      action: this._context.action
+    };
 
-    const promise = fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`, {
-      body: JSON.stringify({
-        terraformRunId: this._context.runId,
-        timestamp: Date.now(),
-        component: this._context.componentName,
-        log: message,
-        action: this._context.action
-      })
-    }).catch(error => console.log(error));
-
-    // const promise = Promise.resolve();
-
-    this._promises.push(promise);
+    this._pushFetchAsync(url, body);
   }
 
   /**
@@ -139,12 +135,20 @@ class Logger {
   }
 
   /**
-   *
-   * @param {String} [status]
-   * @param {String} [target]
-   * @param {String} [action]
-   * @param {String} [name]
-   * @param {String} [hash]
+   * @param {String} url
+   * @param {Object} body
+   * @private
+   */
+  _pushFetchAsync(url, body) {
+    const promise = fetch.post(`${url}`, {
+      body: JSON.stringify(body)
+    }).catch(error => console.log(error));
+
+    this._promises.push(promise);
+  }
+
+  /**
+   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
@@ -156,11 +160,7 @@ class Logger {
       if (Logger.isWorkflowUseCase(target, status, action)) {
         const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
 
-        const promise = fetch.post(`${url}`, {
-          body: JSON.stringify(body)
-        }).catch(error => console.log(error));
-
-        this._promises.push(promise);
+        this._pushFetchAsync(url, body);
       }
     }
 
@@ -231,20 +231,21 @@ class Logger {
   static composeWorkflowBody(status, target, runId, name, hash) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
+
       return {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
     } else if (target === 's3') {
       return {};
-    } else {
+    } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
+
       return {
         'terraformHash': hash,
         'terraformName': name,
         'terraformRunUuid': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-
       };
     }
   }
@@ -254,34 +255,34 @@ class Logger {
    */
   sendErrorToApi() {
     if (this._canLogBeSentToApi) {
-      const terrahubComponents = process.env.THUB_EXECUTION_LIST.split(',');
       const runId = this._context.runId;
-
-      terrahubComponents.map(it => {
-        const status = 'update',
-              target = 'component',
-              name = it.split(':')[0],
-              hash = it.split(':')[1];
-
-        const url = Logger.composeWorkflowRequestUrl(status, target);
-        const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
-
-        const promise = fetch.post(`${url}`, {
-          body: JSON.stringify(body)
-        }).catch(error => console.log(error));
-
-        this._promises.push(promise);
-      });
-
       const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
       const body = Logger.composeWorkflowBody('update', 'workflow', runId);
 
-      const promise = fetch.post(`${url}`, {
-        body: JSON.stringify(body)
-      }).catch(error => console.log(error));
-
-      this._promises.push(promise);
+      this._endComponentsLogging(runId);
+      this._pushFetchAsync(url, body);
     }
+  }
+
+  /**
+   * Finish components logging
+   * @param {String} runId
+   * @private
+   */
+  _endComponentsLogging(runId) {
+    const terrahubComponents = process.env.THUB_EXECUTION_LIST.split(',');
+
+    terrahubComponents.map(it => {
+      const status = 'update',
+        target = 'component',
+        name = it.split(':')[0],
+        hash = it.split(':')[1];
+
+      const url = Logger.composeWorkflowRequestUrl(status, target);
+      const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
+
+      this._pushFetchAsync(url, body);
+    });
   }
 }
 
