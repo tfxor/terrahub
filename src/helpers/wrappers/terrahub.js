@@ -27,7 +27,6 @@ class Terrahub extends AbstractTerrahub {
     if (err) {
       error = err instanceof Error ? err : new Error(err || 'Unknown error');
       payload.error = error.message.trim();
-      logger.sendErrorToApi();
     }
 
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {

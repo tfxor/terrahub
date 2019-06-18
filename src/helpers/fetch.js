@@ -76,7 +76,7 @@ class Fetch {
       let error;
       switch (result.status) {
         case 403:
-          error = new AuthenticationException('Provided THUB_TOKEN is invalid');
+          error = new AuthenticationException('Provided THUB_TOKEN is invalid.');
           break;
 
         case 500:

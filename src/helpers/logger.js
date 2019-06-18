@@ -155,7 +155,7 @@ class Logger {
   sendWorkflowToApi({ status, target, action, name, hash }, ...args) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
-      const url = Logger.composeWorkflowRequestUrl(status, target, runId);
+      const url = Logger.composeWorkflowRequestUrl(status, target);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
         const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
@@ -175,8 +175,6 @@ class Logger {
    */
   static isWorkflowUseCase(target, status, action) {
     switch (target) {
-      case 's3' :
-        return true;
       case 'workflow':
         return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
       case 'component':
@@ -210,12 +208,9 @@ class Logger {
   /**
    * @param {String} status
    * @param {String} target
-   * @param {String} [runId]
    * @return {String}
    */
-  static composeWorkflowRequestUrl(status, target, runId) {
-    if (target === 's3') return `https://${api}.terrahub.io/v1/elasticsearch/logs/save/${runId}`;
-
+  static composeWorkflowRequestUrl(status, target) {
     return `thub/${target === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
   }
 
@@ -236,8 +231,6 @@ class Logger {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
-    } else if (target === 's3') {
-      return {};
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
@@ -248,6 +241,14 @@ class Logger {
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
     }
+  }
+
+  /**
+   * @return {Promise}
+   */
+  sendLogToS3() {
+    return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this._context.runId}`)
+      .catch(error => console.log(error));
   }
 
   /**

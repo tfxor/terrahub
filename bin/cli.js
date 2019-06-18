@@ -42,7 +42,9 @@ function commandCreate(logger = console) {
  * @return {Promise}
  */
 function syncExitProcess(code) {
-  return Promise.all(logger.promises).then(() => process.exit(code));
+  return Promise.all(logger.promises)
+    .then(() => logger.sendLogToS3())
+    .then(() => process.exit(code));
 }
 
 let command;
@@ -60,7 +62,6 @@ command
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi(
     { status: 'update', target: 'workflow', action: command._name }, message))
-  .then(message => logger.sendWorkflowToApi({ target: 's3' }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
@@ -70,7 +71,7 @@ command
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendWorkflowToApi({ target: 's3' });
+    logger.sendErrorToApi();
     logger.error(err || 'Error occurred');
 
     return syncExitProcess(1);
