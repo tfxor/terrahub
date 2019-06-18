@@ -45,7 +45,6 @@ class AbstractTerrahub {
     this._workflowOptions = {
       status: 'update',
       target: 'component',
-      runId: this._runId,
       name: this._config.name,
       hash: this._config.hash,
       action: this._action

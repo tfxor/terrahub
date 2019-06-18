@@ -139,17 +139,22 @@ class Logger {
   }
 
   /**
-   * @param {{ status: String, target: String, runId: String, action: String, name: String, hash: String }} options
+   *
+   * @param {String} [status]
+   * @param {String} [target]
+   * @param {String} [action]
+   * @param {String} [name]
+   * @param {String} [hash]
    * @param {*} args
-   * @return {Promise}
+   * @return {Promise<...*[]>}
    */
-  sendWorkflowToApi(options, ...args) {
+  sendWorkflowToApi({ status, target, action, name, hash }, ...args) {
     if (this._canLogBeSentToApi) {
-      const { status, target, action, runId } = options;
+      const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl(status, target, runId);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody(options);
+        const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
 
         const promise = fetch.post(`${url}`, {
           body: JSON.stringify(body)
@@ -205,7 +210,7 @@ class Logger {
   /**
    * @param {String} status
    * @param {String} target
-   * @param {String} runId
+   * @param {String} [runId]
    * @return {String}
    */
   static composeWorkflowRequestUrl(status, target, runId) {
@@ -215,12 +220,15 @@ class Logger {
   }
 
   /**
-   * @param {{ status: String, target: String, runId: String, action: String, name: String, hash: String }} options
+   *
+   * @param status
+   * @param target
+   * @param runId
+   * @param name
+   * @param hash
    * @return {Object}
    */
-  static composeWorkflowBody(options) {
-    const { status, target, runId, name, hash } = options;
-
+  static composeWorkflowBody(status, target, runId, name, hash) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
       return {
@@ -241,22 +249,22 @@ class Logger {
     }
   }
 
+  /**
+   * On error sends finish status for all logging executions
+   */
   sendErrorToApi() {
     if (this._canLogBeSentToApi) {
-
       const terrahubComponents = process.env.THUB_EXECUTION_LIST.split(',');
+      const runId = this._context.runId;
 
       terrahubComponents.map(it => {
-        const options = {
-          status: 'update',
-          target: 'component',
-          runId: this._context.runId,
-          name: it.split(':')[0],
-          hash: it.split(':')[1]
-        };
+        const status = 'update',
+              target = 'component',
+              name = it.split(':')[0],
+              hash = it.split(':')[1];
 
-        const url = Logger.composeWorkflowRequestUrl(options.status, options.target, options.runId);
-        const body = Logger.composeWorkflowBody(options);
+        const url = Logger.composeWorkflowRequestUrl(status, target);
+        const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
 
         const promise = fetch.post(`${url}`, {
           body: JSON.stringify(body)
@@ -266,17 +274,14 @@ class Logger {
       });
 
       const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-      const body = Logger.composeWorkflowBody({ status: 'update', target: 'workflow', runId: this._context.runId });
+      const body = Logger.composeWorkflowBody('update', 'workflow', runId);
 
       const promise = fetch.post(`${url}`, {
         body: JSON.stringify(body)
       }).catch(error => console.log(error));
 
       this._promises.push(promise);
-
     }
-
-
   }
 }
 

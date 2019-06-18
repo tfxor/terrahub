@@ -56,11 +56,11 @@ try {
 command
   .validate()
   .then(() => logger.sendWorkflowToApi(
-    { status: 'create', target: 'workflow', runId: command.runId, action: command._name }))
+    { status: 'create', target: 'workflow', action: command._name }))
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi(
-    { status: 'update', target: 'workflow', runId: command.runId, action: command._name }, message))
-  .then(message => logger.sendWorkflowToApi({ target: 's3', runId: command._runId }, message))
+    { status: 'update', target: 'workflow', action: command._name }, message))
+  .then(message => logger.sendWorkflowToApi({ target: 's3' }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
@@ -70,6 +70,7 @@ command
     return syncExitProcess(0);
   })
   .catch(err => {
+    logger.sendWorkflowToApi({ target: 's3' });
     logger.error(err || 'Error occurred');
 
     return syncExitProcess(1);
