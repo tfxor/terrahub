@@ -48,7 +48,8 @@ try {
 command
   .validate()
   .then(() => command.run())
-  .then(message => {
+  .then(msg => {
+    const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
