@@ -77,7 +77,7 @@ class OutputCommand extends TerraformCommand {
           result[it.component] = JSON.parse(json);
         });
 
-        this.logger.log(JSON.stringify(result));
+        this.logger.raw(JSON.stringify(result));
     }
   }
 }
