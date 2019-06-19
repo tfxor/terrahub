@@ -175,17 +175,19 @@ class JitHelper {
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template);
       const regExTfvars = /\$\{tfvar\.terrahub\[\\"+[a-zA-Z0-9_\-\.]+\\"\]\}/gm;
-      Object.keys(templateStringify.match(regExTfvars)).map(it => {
-        const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
-        it.match(regExTfvar).map(variableNameNet => {
-          const variableName = variableNameNet.replace(/\\"/g, '');
-          const { tfvars } = template;
-          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-            tfvars[variableName] : '';
-          templateStringify = templateStringify.replace(it, variableValue);
+      const templateStringifyArr = templateStringify.match(regExTfvars);
+      if (templateStringifyArr) {
+        Object.keys(templateStringifyArr).map(it => {
+          const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
+          it.match(regExTfvar).map(variableNameNet => {
+            const variableName = variableNameNet.replace(/\\"/g, '');
+            const { tfvars } = template;
+            const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
+              tfvars[variableName] : '';
+            templateStringify = templateStringify.replace(it, variableValue);
+          });
         });
-      });
-
+      }
       config['template'] = JSON.parse(templateStringify); 
 
       return Promise.resolve();
