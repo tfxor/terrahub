@@ -149,7 +149,10 @@ class JitHelper {
       if (remoteTfvarsLinks.length > 0) {
         return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
       }
-    }).then(() => JitHelper._createTerraformFiles(config))
+    }).then(() => {
+        return JitHelper._normalizeTfvars(config);
+      })
+      .then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
@@ -158,6 +161,35 @@ class JitHelper {
       })
       .then(() => JitHelper._symLinkNonTerraHubFiles(config))
       .then(() => config);
+  }
+
+  /**
+   * Normalize Tfvars config
+   * @param {Object} config
+   * @return {String}
+   * @private
+   */
+  static _normalizeTfvars(config) {
+    const template = config['template'];
+
+    return Promise.resolve().then(() => {
+      let templateStringify = JSON.stringify(template);
+      const regExTfvars = /\$\{tfvar\.terrahub\[\\"+[a-zA-Z0-9_\-\.]+\\"\]\}/gm;
+      templateStringify.match(regExTfvars).map(it => {
+        const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
+        it.match(regExTfvar).map(variableNameNet => {
+          const variableName = variableNameNet.replace(/\\"/g, '');
+          const { tfvars } = template;
+          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
+            tfvars[variableName] : '';
+          templateStringify = templateStringify.replace(it, variableValue);
+        });
+      });
+
+      config['template'] = JSON.parse(templateStringify); 
+
+      return Promise.resolve();
+    });
   }
 
   /**
