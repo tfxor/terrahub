@@ -66,7 +66,7 @@ module.exports = {
   args: args,
   cfgPath: cfgPath,
   jitPath: path.join('cache', 'jit'),
-  localTfstate: path.join('tfstate', 'local'),
+  tfstatePath: path.join('cache', 'tfstate'),
   fetch: new Fetch(apiBase, cfg.token),
   binPath: path.join(__dirname, '..', 'bin'),
   commandsPath: path.join(__dirname, 'commands'),

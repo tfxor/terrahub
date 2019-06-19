@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
-const { jitPath, localTfstate } = require('../parameters');
+const { jitPath, tfstatePath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
 class JitHelper {
@@ -52,7 +52,7 @@ class JitHelper {
   static _normalizeBackendLocalPath(config) {
     const { template } = config;
     const { locals } = template;
-    let localTfstatePath = homePath(localTfstate, config.project.name);
+    let localTfstatePath = homePath(tfstatePath, config.project.name);
 
     if (locals) {
       Object.keys(locals).filter(it => locals[it]).map(() => {
