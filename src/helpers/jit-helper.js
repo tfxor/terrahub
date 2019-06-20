@@ -177,7 +177,7 @@ class JitHelper {
       const regExTfvars = /\$\{tfvar\.terrahub\[\\"+[a-zA-Z0-9_\-\.]+\\"\]\}/gm;
       const templateStringifyArr = templateStringify.match(regExTfvars);
       if (templateStringifyArr) {
-        Object.keys(templateStringifyArr).map(it => {
+        templateStringifyArr.map(it => {
           const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
           it.match(regExTfvar).map(variableNameNet => {
             const variableName = variableNameNet.replace(/\\"/g, '');
