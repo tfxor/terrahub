@@ -55,10 +55,17 @@ try {
   process.exit(1);
 }
 
+const environment = command.getOption('env') ? command.getOption('env') : 'default';
+
 command
   .validate()
-  .then(() => logger.sendWorkflowToApi(
-    { status: 'create', target: 'workflow', action: command._name }))
+  .then(() => logger.sendWorkflowToApi({
+    status: 'create',
+    target: 'workflow',
+    action: command._name,
+    projectHash: command.getProjectConfig().code,
+    terraformWorkspace: environment
+  }))
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi(
     { status: 'update', target: 'workflow', action: command._name }, message))

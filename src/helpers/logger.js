@@ -109,11 +109,13 @@ class Logger {
     const message = Object.keys(messages).map(key => messages[key]).join('');
     const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`;
     const body = {
-      terraformRunId: this._context.runId,
-      timestamp: Date.now(),
-      component: this._context.componentName,
-      log: message,
-      action: this._context.action
+      bulk: [{
+        terraformRunId: this._context.runId,
+        timestamp: Date.now(),
+        component: this._context.componentName,
+        log: message,
+        action: this._context.action
+      }]
     };
 
     this._pushFetchAsync(url, body);
@@ -148,17 +150,17 @@ class Logger {
   }
 
   /**
-   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String }}
+   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [terraformWorkspace]: String  }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
-  sendWorkflowToApi({ status, target, action, name, hash }, ...args) {
+  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace }, ...args) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl(status, target);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
+        const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace);
 
         this._pushFetchAsync(url, body);
       }
@@ -216,21 +218,27 @@ class Logger {
 
   /**
    *
-   * @param status
-   * @param target
-   * @param runId
-   * @param name
-   * @param hash
+   * @param {String} status
+   * @param {String} target
+   * @param {String} [runId]
+   * @param {String} [name]
+   * @param {String} [hash]
+   * @param {String} [projectHash]
+   * @param {String} [terraformWorkspace]
    * @return {Object}
    */
-  static composeWorkflowBody(status, target, runId, name, hash) {
+  static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
-
-      return {
+      const body = {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
+
+      return projectHash && terraformWorkspace ?
+        Object.assign(body, { projectHash, terraformWorkspace }) :
+        body;
+
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
