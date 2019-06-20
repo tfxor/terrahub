@@ -150,7 +150,7 @@ class Logger {
   }
 
   /**
-   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [terraformWorkspace]: String  }}
+   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [terraformWorkspace]: String }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
@@ -230,13 +230,13 @@ class Logger {
   static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
-
-      return {
+      const body = {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
         projectHash,
-        terraformWorkspace
       };
+
+      return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace' : terraformWorkspace }) : body;
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
@@ -253,18 +253,21 @@ class Logger {
    * @return {Promise}
    */
   sendLogToS3() {
-    return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this._context.runId}`)
-      .catch(error => console.log(error));
+    if (this._canLogBeSentToApi) {
+      return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this._context.runId}`)
+        .catch(error => console.log(error));
+    }
   }
 
   /**
    * On error sends finish status for all logging executions
+   * @param {String} projectHash
    */
-  sendErrorToApi() {
+  sendErrorToApi(projectHash) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-      const body = Logger.composeWorkflowBody('update', 'workflow', runId);
+      const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
 
       this._endComponentsLogging(runId);
       this._pushFetchAsync(url, body);

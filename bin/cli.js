@@ -73,7 +73,6 @@ command
       target: 'workflow',
       action: command._name,
       projectHash: command.getProjectConfig().code,
-      terraformWorkspace: environment
     }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
@@ -84,7 +83,7 @@ command
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendErrorToApi();
+    logger.sendErrorToApi(command.getProjectConfig().code);
     logger.error(err || 'Error occurred');
 
     return syncExitProcess(1);
