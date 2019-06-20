@@ -59,13 +59,13 @@ const environment = command.getOption('env') ? command.getOption('env') : 'defau
 
 command
   .validate()
-  .then(() => logger.sendWorkflowRunSync(
-    'create',
-    'workflow',
-    command._name,
-    command.getProjectConfig().code,
-    environment
-  ))
+  .then(() => logger.sendWorkflowToApi({
+    status: 'create',
+    target: 'workflow',
+    action: command._name,
+    projectHash: command.getProjectConfig().code,
+    terraformWorkspace: environment
+  }))
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi(
     { status: 'update', target: 'workflow', action: command._name }, message))
