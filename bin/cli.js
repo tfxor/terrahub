@@ -68,7 +68,13 @@ command
   }))
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi(
-    { status: 'update', target: 'workflow', action: command._name }, message))
+    {
+      status: 'update',
+      target: 'workflow',
+      action: command._name,
+      projectHash: command.getProjectConfig().code,
+      terraformWorkspace: environment
+    }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {

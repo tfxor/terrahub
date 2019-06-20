@@ -230,15 +230,13 @@ class Logger {
   static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
-      const body = {
+
+      return {
         'terraformRunId': runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        projectHash,
+        terraformWorkspace
       };
-
-      return projectHash && terraformWorkspace ?
-        Object.assign(body, { projectHash, terraformWorkspace }) :
-        body;
-
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
