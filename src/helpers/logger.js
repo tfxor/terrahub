@@ -149,6 +149,32 @@ class Logger {
     this._promises.push(promise);
   }
 
+  // _getDistributor() {
+  //   if (!this.distributor) {
+  //     this.distributor = new Distributor({}, this._context.runId, true);
+  //   }
+  //
+  //   return this.distributor;
+  // }
+
+  sendWorkflowRunSync(status,
+                      target,
+                      action,
+                      projectHash,
+                      terraformWorkspace) {
+
+    return fetch.post('thub/terraform-run/create', {
+      body: JSON.stringify({
+        'terraformRunId': this._context.runId,
+        'terraformRunStarted': new Date().toISOString().slice(0, 19).replace('T', ' '),
+        projectHash,
+        terraformWorkspace
+      })
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
   /**
    * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [terraformWorkspace]: String  }}
    * @param {*} args
