@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const { join } = require('path');
 const logger = require('js-logger');
 // const fetch = require('node-fetch').default;
-const { fetch, config: { api } } = require('../parameters');
+const { fetch, config: { api, logs } } = require('../parameters');
 
 class Logger {
   /**
@@ -23,7 +23,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._canLogBeSentToApi) {
+      if (this._canLogBeSentToApi && logs) {
         this._sendLogToApi(messages);
       }
     });
@@ -46,7 +46,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._canLogBeSentToApi) {
+    if (this._canLogBeSentToApi && logs) {
       this._sendLogToApi([message]);
     }
   }
@@ -155,15 +155,13 @@ class Logger {
    * @return {Promise<...*[]>}
    */
   sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace }, ...args) {
-    if (this._canLogBeSentToApi) {
-      const runId = this._context.runId;
-      const url = Logger.composeWorkflowRequestUrl(status, target);
+    const runId = this._context.runId;
+    const url = Logger.composeWorkflowRequestUrl(status, target);
 
-      if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace);
+    if (Logger.isWorkflowUseCase(target, status, action)) {
+      const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace);
 
-        this._pushFetchAsync(url, body);
-      }
+      this._pushFetchAsync(url, body);
     }
 
     return Promise.resolve(...args);
@@ -233,10 +231,10 @@ class Logger {
       const body = {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        projectHash,
+        projectHash
       };
 
-      return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace' : terraformWorkspace }) : body;
+      return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace': terraformWorkspace }) : body;
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
@@ -264,14 +262,12 @@ class Logger {
    * @param {String} projectHash
    */
   sendErrorToApi(projectHash) {
-    if (this._canLogBeSentToApi) {
-      const runId = this._context.runId;
-      const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-      const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
+    const runId = this._context.runId;
+    const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
+    const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
 
-      this._endComponentsLogging(runId);
-      this._pushFetchAsync(url, body);
-    }
+    this._endComponentsLogging(runId);
+    this._pushFetchAsync(url, body);
   }
 
   /**
