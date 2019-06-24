@@ -290,6 +290,26 @@ class Logger {
       this._pushFetchAsync(url, body);
     });
   }
+
+  /**
+   * this call occures more then 1 time
+   * @param {Object} project
+   * @return {Promise<void>|Promise<void>}
+   */
+  createProject(project) {
+    if (!process.env.THUB_TOKEN_IS_VALID) {
+      return Promise.resolve();
+    }
+
+    const payload = {
+      name: project.name,
+      hash: project.code
+    };
+
+    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+      return Promise.resolve();
+    });
+  }
 }
 
 module.exports = new Logger();

@@ -59,6 +59,7 @@ const environment = command.getOption('env') ? command.getOption('env') : 'defau
 
 command
   .validate()
+  .then(() => logger.createProject(command.getProjectConfig()))
   .then(() => logger.sendWorkflowToApi({
     status: 'create',
     target: 'workflow',
