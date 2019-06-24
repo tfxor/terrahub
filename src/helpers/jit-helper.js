@@ -149,9 +149,9 @@ class JitHelper {
       if (remoteTfvarsLinks.length > 0) {
         return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
       }
-    }).then(() => {
-        return JitHelper._normalizeTfvars(config);
-      })
+    })
+      .then(() => JitHelper._normalizeProviders(config))
+      .then(() => JitHelper._normalizeTfvars(config))
       .then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
         // generate "variable.tf" if it is not described in config
@@ -161,6 +161,119 @@ class JitHelper {
       })
       .then(() => JitHelper._symLinkNonTerraHubFiles(config))
       .then(() => config);
+  }
+
+  /**
+   * 
+   * @param {Object} config 
+   * @return {Promise}
+   * @private
+   */
+  static _normalizeProviders(config) {
+    const { template } = config;
+    const { resource } = template;
+
+    if (resource) {
+      const promises = Object.keys(resource).filter(resourceType => resource[resourceType])
+        .map(resourceType => {
+          const resourcesByType = resource[resourceType];
+          return JitHelper._parsingResourceType(resourcesByType, template);
+        });
+      
+      return Promise.all(promises);
+    }
+
+    return Promise.resolve();
+  }
+
+
+  /**
+   * 
+   * @param {Object} config 
+   * @return {Promise}
+   * @private
+   */
+  static _normalizeProviders1(config) {
+    const { template } = config;
+    const { resource } = template;
+
+    if (resource) {
+      Object.keys(resource).filter(resourceType => resource[resourceType])
+        .map(resourceType => {
+          const resourcesByType = resource[resourceType];
+          Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
+            .map(resourceName => {
+              const resourcesByName = resourcesByType[resourceName];
+              let resourcesByNameCopy = Object.assign({}, resourcesByName);
+              if (resourcesByName.hasOwnProperty('provider')) {
+                const providerTerrahubVariables = JitHelper._extractTerrahubVariables(
+                  JSON.stringify(resourcesByName['provider'])
+                );
+                if (providerTerrahubVariables) {
+                  const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(
+                    providerTerrahubVariables[0]
+                  );
+                  const oldProviderTerrahubVariables = providerTerrahubVariables[0].replace(/\\"/gm, '\"')
+                  const { tfvars } = template;
+                  if (tfvars && tfvars.hasOwnProperty(variableName)) {
+                    const tfvarValue = tfvars[variableName];
+                    if (JitHelper._checkTerrahubVariableType(tfvarValue) == 'list'
+                      && variableNameNetArr[1].replace(/\\"/g, '') == '0') {
+                      const terrahubVariableCount = tfvarValue.length;
+                      for (let index = 1; index < terrahubVariableCount; index++) {
+                        const newProviderTerrahubVariable = providerTerrahubVariables[0].replace(/\\"0\\"/g, `\\"${index}\\"`).replace(/\\"/gm, '\"');
+                        Object.keys(resourcesByName).filter(paramName => resourcesByName[paramName])
+                          .map(paramName => {
+                            const paramByName = resourcesByName[paramName];
+                            if (paramName != 'provider') {
+                              // extract all locals from resource
+                              const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
+                              const localVariables = paramByName.match(regExLocal);
+                              
+                              if (localVariables) {
+                                localVariables.map(localVariable => {
+                                  const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
+                                  const { locals } = template;
+                                  locals[`${localVariableName}_${index}`] = locals[localVariableName].replace(oldProviderTerrahubVariables, newProviderTerrahubVariable);
+                                  resourcesByNameCopy[paramName] = resourcesByName[paramName].replace(
+                                    localVariable.slice(0, -1), `local.${localVariableName}_${index}`
+                                  );
+                                });
+                              }
+                              // extract all datas from resource
+                              // const regExData = /data\.+[a-zA-Z0-9\-_]+(\.)+[a-zA-Z0-9\-_]+(\.)/gm;
+                              // const dataVariables = paramByName.match(regExData);
+
+                              // if (dataVariables) {
+                              //   dataVariables.map(dataVariable => {
+                              //     const dataPath = dataVariable.split('.');
+                              //     const { data } = template;
+                              //     let dataCopy = Object.assign({}, data[dataPath[1]][2]);
+
+                              //     data[dataPath[1]][`${dataPath[2]}_${index}`]
+                              //   });
+                              // }
+
+
+
+                            } else {
+                              resourcesByNameCopy['provider'] = resourcesByName['provider'].replace(oldProviderTerrahubVariables, newProviderTerrahubVariable);
+                            }
+                          });
+
+                          resource[resourceType][`${resourceName}_${index}`] = resourcesByNameCopy;
+                      } 
+                    }
+                  }
+                  
+                }
+              }
+            });
+        });
+    }
+
+    // process.exit();
+    return Promise.resolve();
   }
 
   /**
@@ -174,24 +287,103 @@ class JitHelper {
 
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template);
-      const regExTfvars = /\$\{tfvar\.terrahub\[\\"+[a-zA-Z0-9_\-\.]+\\"\]\}/gm;
-      const templateStringifyArr = templateStringify.match(regExTfvars);
+      const templateStringifyArr = JitHelper._extractTerrahubVariables(templateStringify);
       if (templateStringifyArr) {
-        Object.keys(templateStringifyArr).map(it => {
-          const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
-          it.match(regExTfvar).map(variableNameNet => {
-            const variableName = variableNameNet.replace(/\\"/g, '');
-            const { tfvars } = template;
-            const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-              tfvars[variableName] : '';
-            templateStringify = templateStringify.replace(it, variableValue);
-          });
+        templateStringifyArr.map(terrahubVariable => {
+          const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
+          const { tfvars } = template;
+          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
+            JitHelper._extractValueFronTfvar(tfvars[variableName], variableNameNetArr): '';
+          templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
       config['template'] = JSON.parse(templateStringify); 
 
       return Promise.resolve();
     });
+  }
+
+  /**
+   * 
+   * @param {String} terrahubVariable  
+   * @return {String, Array}
+   * @private
+   */
+  static _extractTerrahubVariableName(terrahubVariable) {
+    const variableNameNetArr = JitHelper._extractTerrahubVariableElements(terrahubVariable);
+    const variableNameNet = variableNameNetArr[0];
+    const variableName = variableNameNet.replace(/\\"/g, '');
+
+    return { variableName, variableNameNetArr };
+  }
+
+  /**
+   * 
+   * @param {Object} terrahubVariable 
+   * @return {Array}
+   * @private
+   */
+  static _extractTerrahubVariableElements(terrahubVariable) {
+    const regExTfvar = /\\"+[a-zA-Z0-9_\-\.]+\\"/gm;
+    const variableNameNetArr = terrahubVariable.match(regExTfvar);
+
+    return variableNameNetArr;
+  }
+
+  /**
+   * 
+   * @param {String} templateStringify 
+   * @return {Array}
+   * @private
+   */
+  static _extractTerrahubVariables(templateStringify) {
+    const regExTfvars = /\$\{tfvar\.terrahub\[\\"+[a-zA-Z0-9_\-\.\[\]\\"]+\\"\]\}/gm;
+    const templateStringifyArr = templateStringify.match(regExTfvars);
+
+    return templateStringifyArr;
+  }
+
+  /**
+   * @param {Object} tfvarValue
+   * @param {Array} variableNameNetArr
+   * @return {String}
+   * @private
+   */
+  static _extractValueFronTfvar(tfvarValue, variableNameNetArr) {
+    let variableValue = '';
+
+    switch (JitHelper._checkTerrahubVariableType(tfvarValue)) {
+      case "list":
+          if (variableNameNetArr.length == 2) {
+            const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
+            variableValue = tfvarValue[indexOfElement];
+          } else {
+            variableValue = tfvarValue.join('|');
+          }
+        break;
+      case 'string':
+        variableValue = tfvarValue;
+        break;
+    }
+
+    return variableValue;
+  }
+
+  /**
+   * 
+   * @param {Object} tfvarValue
+   * @return {String}
+   * @private 
+   */
+  static _checkTerrahubVariableType(tfvarValue) {
+    let type = 'string';
+    if (Array.isArray(tfvarValue)) {
+      type = 'list';
+    }
+    else if (typeof tfvarValue === 'object') {
+      type = 'map';
+    }
+    return type;
   }
 
   /**
@@ -221,24 +413,19 @@ class JitHelper {
    * @return {Promise}
    */
   static _addTfvars(config, remoteTfvarsLink) {
-    const { template } = config;
     const regExBucket = new RegExp('((s3|gs):\/\/)(.+?)([^\/]+)', 'gm');
     const bucket = remoteTfvarsLink.match(regExBucket).shift().replace(/(s3|gs):\/\//g, '');
     const regExPrefix = new RegExp('(' + bucket + '\/)(.+?)$');
     const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
     const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
-    const tfvars = config.template.tfvars || {};
 
     const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
       JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
-        template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-          JSON.stringify(hcltojson(data.toString()))).replace(/}{/g,',').replace(/{,/g,'{'));
+        return JitHelper._parsingTfvars(data.toString(), config);
       }):
       JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
-        template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-        JSON.stringify(hcltojson(data.Body.toString()))).replace(/}{/g,',').replace(/{,/g,'{'));
+        return JitHelper._parsingTfvars(data.Body.toString(), config);
       });
-    
 
     return promise;
   }
@@ -249,19 +436,44 @@ class JitHelper {
    * @return {Promise}
    */
   static _addLocalTfvars(config, localTfvarsLink) {
-    const { template } = config;
     const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
-    const tfvars = config.template.tfvars || {};
 
     if (fse.existsSync(localTfvarsLinkPath)) {
       return fse.readFile(localTfvarsLinkPath).then(content => {
-        template['tfvars'] = JSON.parse((JSON.stringify(tfvars) +
-          JSON.stringify(hcltojson(content.toString()))).replace(/}{/g,",").replace(/{,/g,"{"));
-        return Promise.resolve();
+        return JitHelper._parsingTfvars(content.toString(), config );
       });
     }
     
     return Promise.resolve();
+  }
+
+  /**
+   * 
+   * @param {String} remoteTfvars
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  static _parsingTfvars(remoteTfvars, config) {
+    const { template } = config;
+    const remoteTfvarsJson = hcltojson(remoteTfvars);
+    const tmpPath = JitHelper.buildTmpPath(config);
+    template['tfvars'] = config.template.tfvars || {};
+
+    const promises = Object.keys(remoteTfvarsJson).filter(it => remoteTfvarsJson[it]).map(it => {
+      if (!Array.isArray(remoteTfvarsJson[it]) && typeof remoteTfvarsJson[it] === 'object') {
+        remoteTfvarsJson[it] = {};
+      }
+      let obj = {};
+      obj[it] = remoteTfvarsJson[it];
+      template['tfvars'] = JSON.parse((JSON.stringify(template['tfvars']) +
+        JSON.stringify(obj)).replace(/}{/g, ",").replace(/{,/g, "{"));
+    });
+
+    return Promise.all(promises)
+      .then(() => {
+        return fse.writeFileSync(path.join(tmpPath, 'config.tfvars'), remoteTfvars);
+      });
   }
 
   /**
