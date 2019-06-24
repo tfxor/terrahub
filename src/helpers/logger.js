@@ -150,18 +150,28 @@ class Logger {
   }
 
   /**
-   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [terraformWorkspace]: String }}
+   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [projectName]: String, [terraformWorkspace]: String }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
-  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace }, ...args) {
+  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
     const runId = this._context.runId;
     const url = Logger.composeWorkflowRequestUrl(status, target);
 
     if (Logger.isWorkflowUseCase(target, status, action)) {
-      const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace);
+      const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
 
-      this._pushFetchAsync(url, body);
+      if (status === 'create' && target === 'workflow') {
+
+        return fetch.post(`${url}`, {
+          body: JSON.stringify(body)
+        }).then(res => Promise.resolve(...args))
+          .catch(error => {
+            return Promise.resolve(...args);
+          })
+      } else {
+        this._pushFetchAsync(url, body);
+      }
     }
 
     return Promise.resolve(...args);
@@ -222,16 +232,18 @@ class Logger {
    * @param {String} [name]
    * @param {String} [hash]
    * @param {String} [projectHash]
+   * @param {String} [projectName]
    * @param {String} [terraformWorkspace]
    * @return {Object}
    */
-  static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace) {
+  static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
       const body = {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        projectHash
+        projectHash,
+        projectName
       };
 
       return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace': terraformWorkspace }) : body;
@@ -276,7 +288,7 @@ class Logger {
    * @private
    */
   _endComponentsLogging(runId) {
-    const terrahubComponents = process.env.THUB_EXECUTION_LIST.split(',');
+    const terrahubComponents = process.env.THUB_EXECUTION_LIST ? process.env.THUB_EXECUTION_LIST.split(',') : [];
 
     terrahubComponents.map(it => {
       const status = 'update',
@@ -288,26 +300,6 @@ class Logger {
       const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
 
       this._pushFetchAsync(url, body);
-    });
-  }
-
-  /**
-   * this call occures more then 1 time
-   * @param {Object} project
-   * @return {Promise<void>|Promise<void>}
-   */
-  createProject(project) {
-    if (!process.env.THUB_TOKEN_IS_VALID) {
-      return Promise.resolve();
-    }
-
-    const payload = {
-      name: project.name,
-      hash: project.code
-    };
-
-    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
-      return Promise.resolve();
     });
   }
 }

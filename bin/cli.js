@@ -59,12 +59,12 @@ const environment = command.getOption('env') ? command.getOption('env') : 'defau
 
 command
   .validate()
-  .then(() => logger.createProject(command.getProjectConfig()))
   .then(() => logger.sendWorkflowToApi({
     status: 'create',
     target: 'workflow',
     action: command._name,
     projectHash: command.getProjectConfig().code,
+    projectName: command.getProjectConfig().name,
     terraformWorkspace: environment
   }))
   .then(() => command.run())
