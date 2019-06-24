@@ -155,22 +155,24 @@ class Logger {
    * @return {Promise<...*[]>}
    */
   sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
-    const runId = this._context.runId;
-    const url = Logger.composeWorkflowRequestUrl(status, target);
+    if (this._canLogBeSentToApi) {
+      const runId = this._context.runId;
+      const url = Logger.composeWorkflowRequestUrl(status, target);
 
-    if (Logger.isWorkflowUseCase(target, status, action)) {
-      const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
+      if (Logger.isWorkflowUseCase(target, status, action)) {
+        const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
 
-      if (status === 'create' && target === 'workflow') {
+        if (status === 'create' && target === 'workflow') {
 
-        return fetch.post(`${url}`, {
-          body: JSON.stringify(body)
-        }).then(res => Promise.resolve(...args))
-          .catch(error => {
-            return Promise.resolve(...args);
-          })
-      } else {
-        this._pushFetchAsync(url, body);
+          return fetch.post(`${url}`, {
+            body: JSON.stringify(body)
+          }).then(res => Promise.resolve(...args))
+            .catch(error => {
+              return Promise.resolve(...args);
+            })
+        } else {
+          this._pushFetchAsync(url, body);
+        }
       }
     }
 
@@ -274,12 +276,14 @@ class Logger {
    * @param {String} projectHash
    */
   sendErrorToApi(projectHash) {
-    const runId = this._context.runId;
-    const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-    const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
+    if (this._canLogBeSentToApi) {
+      const runId = this._context.runId;
+      const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
+      const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
 
-    this._endComponentsLogging(runId);
-    this._pushFetchAsync(url, body);
+      this._endComponentsLogging(runId);
+      this._pushFetchAsync(url, body);
+    }
   }
 
   /**
