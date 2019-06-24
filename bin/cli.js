@@ -56,6 +56,7 @@ try {
 }
 
 const environment = command.getOption('env') ? command.getOption('env') : 'default';
+const projectConfig = command.getProjectConfig();
 
 command
   .validate()
@@ -63,29 +64,26 @@ command
     status: 'create',
     target: 'workflow',
     action: command._name,
-    projectHash: command.getProjectConfig().code,
-    projectName: command.getProjectConfig().name,
+    projectHash: projectConfig.code,
+    projectName: projectConfig.name,
     terraformWorkspace: environment
   }))
   .then(() => command.run())
-  .then(message => logger.sendWorkflowToApi(
-    {
-      status: 'update',
-      target: 'workflow',
-      action: command._name,
-      projectHash: command.getProjectConfig().code,
-    }, message))
+  .then(message => logger.sendWorkflowToApi({
+    status: 'update',
+    target: 'workflow',
+    action: command._name,
+    projectHash: projectConfig.code,
+  }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
-
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendErrorToApi(command.getProjectConfig().code);
+    logger.sendErrorToApi(projectConfig.code);
     logger.error(err || 'Error occurred');
-
     return syncExitProcess(1);
   });
