@@ -7,6 +7,7 @@ const semver = require('semver');
 const { engines } = require('../package');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
+const Dictionary = require('../src/helpers/dictionary');
 const HelpParser = require('../src/helpers/help-parser');
 const { commandsPath, config, args } = require('../src/parameters');
 
@@ -74,6 +75,7 @@ command
     target: 'workflow',
     action: command._name,
     projectHash: projectConfig.code,
+    runStatus: Dictionary.REALTIME.SUCCESS
   }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
@@ -83,7 +85,7 @@ command
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendErrorToApi(projectConfig.code);
+    logger.sendErrorToApi(projectConfig.code, Dictionary.REALTIME.ERROR);
     logger.error(err || 'Error occurred');
     return syncExitProcess(1);
   });

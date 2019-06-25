@@ -150,17 +150,26 @@ class Logger {
   }
 
   /**
-   * @param {{ [status]: String, [target]: String, [action]: String, [name]: String, [hash]: String, [projectHash]: String, [projectName]: String, [terraformWorkspace]: String }}
+   * @param {{
+   *  [status]: String,
+   *  [target]: String,
+   *  [action]: String,
+   *  [name]: String,
+   *  [hash]: String,
+   *  [projectHash]: String,
+   *  [projectName]: String,
+   *  [terraformWorkspace]: String,
+   *  [runStatus]: Number }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
-  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
+  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace, projectName, runStatus }, ...args) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl(status, target);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
+        const body = Logger.composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformWorkspace, projectName, runStatus });
 
         if (status === 'create' && target === 'workflow') {
 
@@ -227,25 +236,27 @@ class Logger {
   }
 
   /**
-   *
-   * @param {String} status
-   * @param {String} target
-   * @param {String} [runId]
-   * @param {String} [name]
-   * @param {String} [hash]
-   * @param {String} [projectHash]
-   * @param {String} [projectName]
-   * @param {String} [terraformWorkspace]
+   * @param {{
+   *  [status]: String,
+   *  [target]: String,
+   *  [runId]: String,
+   *  [name]: String,
+   *  [hash]: String,
+   *  [projectHash]: String,
+   *  [projectName]: String,
+   *  [terraformWorkspace]: String
+   *  [runStatus]: String }}
    * @return {Object}
    */
-  static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName) {
+  static composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformWorkspace, projectName, runStatus }) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
       const body = {
         'terraformRunId': runId,
         [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
         projectHash,
-        projectName
+        projectName,
+        terraformRunStatus: runStatus
       };
 
       return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace': terraformWorkspace }) : body;
@@ -274,12 +285,13 @@ class Logger {
   /**
    * On error sends finish status for all logging executions
    * @param {String} projectHash
+   * @param {Number} runStatus
    */
-  sendErrorToApi(projectHash) {
+  sendErrorToApi(projectHash, runStatus) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-      const body = Logger.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
+      const body = Logger.composeWorkflowBody({ status: 'update', target: 'workflow', runId, projectHash, runStatus });
 
       this._endComponentsLogging(runId);
       this._pushFetchAsync(url, body);
@@ -301,7 +313,7 @@ class Logger {
         hash = it.split(':')[1];
 
       const url = Logger.composeWorkflowRequestUrl(status, target);
-      const body = Logger.composeWorkflowBody(status, target, runId, name, hash);
+      const body = Logger.composeWorkflowBody({ status, target, runId, name, hash });
 
       this._pushFetchAsync(url, body);
     });
