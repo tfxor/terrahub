@@ -4,23 +4,33 @@ const { fetch, config: { api } } = require('../parameters');
 
 class ApiHelper {
 
+  constructor() {
+    this._promises = [];
+  }
+
   /**
    * @param {Object} promise
    */
-  static pushToPromises(promise) { //@todo this piece of shit do not work, AbstractTerrahub(Terrahub) run parallel
-    if (!this._promises) {
-      this._promises = [];
-    }
-
+  pushToPromises(promise) { //@todo this piece of shit do not work, AbstractTerrahub(Terrahub) run parallel
     this._promises.push(promise);
   }
 
-  static retrievePromises() {
+  retrievePromises() {
     return this._promises;
   }
 
   static canApiLogsBeSent() {
     return process.env.THUB_TOKEN_IS_VALID;
+  }
+
+  fetchRequests() {
+    const _promises = this._promises.map(({ url, body }) => {
+      return fetch.post(url, {
+        body: JSON.stringify(body)
+      }).catch(err => console.log(err))
+    });
+
+    return Promise.all(_promises);
   }
 
   /**
@@ -38,7 +48,7 @@ class ApiHelper {
    * @param {*} args
    * @return {Promise}
    */
-  static sendWorkflowToApi({ runId, status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
+  sendWorkflowToApi({ runId, status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
     if (ApiHelper.canApiLogsBeSent) {
       const url = ApiHelper.composeWorkflowRequestUrl(status, target);
 
@@ -55,7 +65,7 @@ class ApiHelper {
         //       return Promise.resolve(...args);
         //     })
         // } else {
-          ApiHelper.pushToPromises({ url, body });
+          this.pushToPromises({ url, body });
         // }
       }
     }
@@ -148,10 +158,10 @@ class ApiHelper {
   /**
    * @return {Promise}
    */
-  static sendLogToS3(runId) {
+  sendLogToS3(runId) {
     if (ApiHelper.canApiLogsBeSent) {
-      return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${runId}`)
-        .catch(error => console.log(error));
+      // return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${runId}`)
+      //   .catch(error => console.log(error));
     }
   }
 
@@ -160,13 +170,13 @@ class ApiHelper {
    * @param {String} runId
    * @param {String} projectHash
    */
-  static sendErrorToApi(runId, projectHash) {
+  sendErrorToApi(runId, projectHash) {
     if (ApiHelper.canApiLogsBeSent) {
       const url = ApiHelper.composeWorkflowRequestUrl('update', 'workflow');
       const body = ApiHelper.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
 
-      ApiHelper.endComponentsLogging(runId);
-      ApiHelper.pushToPromises({ url, body });
+      this.endComponentsLogging(runId);
+      this.pushToPromises({ url, body });
     }
   }
 
@@ -175,7 +185,7 @@ class ApiHelper {
    * @param {String} runId
    * @private
    */
-  static endComponentsLogging(runId) {
+  endComponentsLogging(runId) {
     const terrahubComponents = process.env.THUB_EXECUTION_LIST ? process.env.THUB_EXECUTION_LIST.split(',') : [];
 
     terrahubComponents.map(it => {
@@ -187,9 +197,9 @@ class ApiHelper {
       const url = ApiHelper.composeWorkflowRequestUrl(status, target);
       const body = ApiHelper.composeWorkflowBody(status, target, runId, name, hash);
 
-      ApiHelper.pushToPromises({ url, body });
+      this.pushToPromises({ url, body });
     });
   }
 }
 
-module.exports = ApiHelper;
+module.exports = new ApiHelper();

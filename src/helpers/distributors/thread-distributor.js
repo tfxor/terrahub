@@ -6,6 +6,7 @@ const cluster = require('cluster');
 const { config } = require('../../parameters');
 const { physicalCpuCount } = require('../util');
 const AbstractDistributor = require('./abstract-distributor');
+const ApiHelper = require('../api-helper');
 
 class ThreadDistributor extends AbstractDistributor {
   /**
@@ -16,8 +17,14 @@ class ThreadDistributor extends AbstractDistributor {
     super(configObject, thubRunId);
 
     this._worker = path.join(__dirname, 'worker.js');
+    this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._workersCount = 0;
+    this._loggerWorkerCounter = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
+
+    // if (!process.env.THUB_LOGGER_WORKER) {
+    //   this._createLoggerWorker();
+    // }
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -37,7 +44,21 @@ class ThreadDistributor extends AbstractDistributor {
     delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send(cfgThread);
+    worker.send({ workerType: 'default', config: cfgThread});
+  }
+
+  _createLoggerWorker() {
+    cluster.setupMaster({ exec: this._loggerWorker });
+    const loggerWorker = cluster.fork({
+      LOGGER_COUNT: this._loggerWorkerCounter,
+      API_REQUESTS: ApiHelper.retrievePromises()
+    });
+
+    this._workersCount ++;
+    this._loggerWorkerCounter++;
+
+    loggerWorker.send({ workerType: 'logger', config: { count: this._loggerWorkerCounter} });
+    process.env.THUB_LOGGER_WORKER = 1;
   }
 
   /**
@@ -100,7 +121,7 @@ class ThreadDistributor extends AbstractDistributor {
         this._workersCount--;
 
         if (code === 0) {
-          this._distributeConfigs();
+          this._getWorkerType(worker) !== 'logger-worker' ? this._distributeConfigs() : this._createLoggerWorker();
         }
 
         const hashes = Object.keys(this._dependencyTable);
@@ -132,6 +153,19 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+  }
+
+  /**
+   * Returns file name from which was created worker
+   * @param {Object} worker
+   * @return {string}
+   * @private
+   */
+  _getWorkerType(worker) {
+    const fileName = worker.process.spawnargs[1];
+    const extension = path.extname(fileName);
+
+    return path.basename(fileName,extension);
   }
 }
 
