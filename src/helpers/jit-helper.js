@@ -150,7 +150,8 @@ class JitHelper {
         return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
       }
     })
-      .then(() => JitHelper._normalizeProviders(config))
+      .then(() => JitHelper._normalizeProvidersForResource(config))
+      .then(() => JitHelper._normalizeProvidersForData(config))
       .then(() => JitHelper._normalizeTfvars(config))
       .then(() => JitHelper._createTerraformFiles(config))
       .then(() => {
@@ -169,7 +170,7 @@ class JitHelper {
    * @return {Promise}
    * @private
    */
-  static _normalizeProviders(config) {
+  static _normalizeProvidersForResource(config) {
     const { template } = config;
     const { resource } = template;
 
@@ -177,7 +178,30 @@ class JitHelper {
       const promises = Object.keys(resource).filter(resourceType => resource[resourceType])
         .map(resourceType => {
           const resourcesByType = resource[resourceType];
-          return JitHelper._parsingResourceType(resourcesByType, template);
+          return JitHelper._parsingResourceByType(resourcesByType, template);
+        });
+      
+      return Promise.all(promises);
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * 
+   * @param {Object} config 
+   * @return {Promise}
+   * @private
+   */
+  static _normalizeProvidersForData(config) {
+    const { template } = config;
+    const { data } = template;
+
+    if (data) {
+      const promises = Object.keys(data).filter(resourceType => data[resourceType])
+        .map(resourceType => {
+          const resourcesByType = data[resourceType];
+          return JitHelper._parsingResourceByType(resourcesByType, template);
         });
       
       return Promise.all(promises);
@@ -189,91 +213,121 @@ class JitHelper {
 
   /**
    * 
-   * @param {Object} config 
+   * @param {Object} resourcesByType 
+   * @param {Object} template 
    * @return {Promise}
    * @private
    */
-  static _normalizeProviders1(config) {
-    const { template } = config;
-    const { resource } = template;
+  static _parsingResourceByType(resourcesByType, template) {
 
-    if (resource) {
-      Object.keys(resource).filter(resourceType => resource[resourceType])
-        .map(resourceType => {
-          const resourcesByType = resource[resourceType];
-          Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
-            .map(resourceName => {
-              const resourcesByName = resourcesByType[resourceName];
-              let resourcesByNameCopy = Object.assign({}, resourcesByName);
-              if (resourcesByName.hasOwnProperty('provider')) {
-                const providerTerrahubVariables = JitHelper._extractTerrahubVariables(
-                  JSON.stringify(resourcesByName['provider'])
-                );
-                if (providerTerrahubVariables) {
-                  const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(
-                    providerTerrahubVariables[0]
-                  );
-                  const oldProviderTerrahubVariables = providerTerrahubVariables[0].replace(/\\"/gm, '\"')
-                  const { tfvars } = template;
-                  if (tfvars && tfvars.hasOwnProperty(variableName)) {
-                    const tfvarValue = tfvars[variableName];
-                    if (JitHelper._checkTerrahubVariableType(tfvarValue) == 'list'
-                      && variableNameNetArr[1].replace(/\\"/g, '') == '0') {
-                      const terrahubVariableCount = tfvarValue.length;
-                      for (let index = 1; index < terrahubVariableCount; index++) {
-                        const newProviderTerrahubVariable = providerTerrahubVariables[0].replace(/\\"0\\"/g, `\\"${index}\\"`).replace(/\\"/gm, '\"');
-                        Object.keys(resourcesByName).filter(paramName => resourcesByName[paramName])
-                          .map(paramName => {
-                            const paramByName = resourcesByName[paramName];
-                            if (paramName != 'provider') {
-                              // extract all locals from resource
-                              const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
-                              const localVariables = paramByName.match(regExLocal);
-                              
-                              if (localVariables) {
-                                localVariables.map(localVariable => {
-                                  const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
-                                  const { locals } = template;
-                                  locals[`${localVariableName}_${index}`] = locals[localVariableName].replace(oldProviderTerrahubVariables, newProviderTerrahubVariable);
-                                  resourcesByNameCopy[paramName] = resourcesByName[paramName].replace(
-                                    localVariable.slice(0, -1), `local.${localVariableName}_${index}`
-                                  );
-                                });
-                              }
-                              // extract all datas from resource
-                              // const regExData = /data\.+[a-zA-Z0-9\-_]+(\.)+[a-zA-Z0-9\-_]+(\.)/gm;
-                              // const dataVariables = paramByName.match(regExData);
+    const promises = Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
+      .map(resourceName => {
+        const resourceByName = resourcesByType[resourceName];
+        if (! resourceByName.hasOwnProperty('provider')) {
+          return Promise.resolve();
+        }
 
-                              // if (dataVariables) {
-                              //   dataVariables.map(dataVariable => {
-                              //     const dataPath = dataVariable.split('.');
-                              //     const { data } = template;
-                              //     let dataCopy = Object.assign({}, data[dataPath[1]][2]);
+        return JitHelper._parsingResourceByName(resourcesByType, resourceName, template);        
+    });
 
-                              //     data[dataPath[1]][`${dataPath[2]}_${index}`]
-                              //   });
-                              // }
+    return Promise.all(promises);
+  }
 
+    /**
+   * 
+   * @param {Object} resourcesByType 
+   * @param {String} resourceName
+   * @param {Object} template 
+   * @return {Promise}
+   * @private
+   */
+  static _parsingResourceByName(resourcesByType, resourceName, template) {
+    const resourceByName = resourcesByType[resourceName];
+    return Promise.resolve().then(() => {
+      const providerTerrahubVariables = JitHelper._extractTerrahubVariables(
+        JSON.stringify(resourceByName['provider'])
+      );
+      
+      return providerTerrahubVariables;
+    }).then(providerTerrahubVariables => {
 
+      if (!providerTerrahubVariables) {
+        return Promise.resolve();
+      }
+      const providerTerrahubVariable = providerTerrahubVariables[0];
+      const { variableName } = JitHelper._extractTerrahubVariableName(
+        providerTerrahubVariable
+      );
+      const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');        
+      const { tfvars } = template;
+      if (!tfvars && !tfvars.hasOwnProperty(variableName)) {
+        return Promise.resolve();
+      }
 
-                            } else {
-                              resourcesByNameCopy['provider'] = resourcesByName['provider'].replace(oldProviderTerrahubVariables, newProviderTerrahubVariable);
-                            }
-                          });
+      let tfvarValues = tfvars[variableName];
+      if (!JitHelper._checkTerrahubVariableType(tfvarValues) == 'list') {
+        return Promise.resolve();
+      }
+      
+      tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
+        JitHelper._parsingParamLocalsInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName);
+      });
+        
+    });
+  }
 
-                          resource[resourceType][`${resourceName}_${index}`] = resourcesByNameCopy;
-                      } 
-                    }
-                  }
-                  
-                }
-              }
-            });
+  /**
+   * 
+   * @param {*} template 
+   * @param {*} tfvarValue 
+   * @param {*} oldProviderTerrahubVariable 
+   * @param {*} resourcesByType 
+   * @param {*} resourceName 
+   */
+  static _parsingParamLocalsInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
+    const resourceByName = resourcesByType[resourceName];
+    let resourceByNameCopy = Object.assign({}, resourceByName);
+    Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
+      .filter(elem => elem !== 'provider').map(paramName => {
+    
+      const paramByName = JSON.stringify(resourceByName[paramName]);
+      const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
+      const localVariables = paramByName.match(regExLocal);
+
+      if (localVariables) {
+        let unique = [...new Set(localVariables)];
+        unique.map(localVariable => {
+          const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
+          const { locals } = template;
+          locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
+          let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+          resourceByNameStringify = resourceByNameStringify.replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
+          resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
         });
-    }
+      }
 
-    // process.exit();
-    return Promise.resolve();
+      const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
+      const dataVariables = paramByName.match(regExData);
+
+      if (dataVariables) {
+        let unique = [...new Set(dataVariables)];
+        unique.map(dataVariable => {
+          const dataPath = dataVariable.split('.');
+          let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+          resourceByNameStringify = resourceByNameStringify.replace(
+            dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
+          resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
+        });
+        
+      }
+
+      if (resourceByNameCopy.hasOwnProperty('provider')) {
+        resourceByNameCopy['provider'] = resourceByName['provider']
+          .replace(oldProviderTerrahubVariable, tfvarValue);
+      }
+
+      resourcesByType[`${resourceName}_${tfvarValue}`] = resourceByNameCopy;
+    });
   }
 
   /**
@@ -606,7 +660,13 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config) {
-    return homePath(jitPath, `${config.name}_${config.project.code}`);
+    const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
+
+    if (!fse.existsSync(tmpPath)) {
+      fse.mkdirSync(tmpPath);
+    }
+
+    return tmpPath;
   }
 }
 
