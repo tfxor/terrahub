@@ -7,6 +7,7 @@ const semver = require('semver');
 const { engines } = require('../package');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
+const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
 const { commandsPath, config, args } = require('../src/parameters');
 
@@ -43,7 +44,7 @@ function commandCreate(logger = console) {
  */
 function syncExitProcess(code) {
   return Promise.all(logger.promises)
-    .then(() => logger.sendLogToS3())
+    .then(() => ApiHelper.sendLogToS3(command.runId))
     .then(() => process.exit(code));
 }
 
@@ -60,7 +61,8 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => logger.sendWorkflowToApi({
+  .then(() => ApiHelper.sendWorkflowToApi({
+    runId: command.runId,
     status: 'create',
     target: 'workflow',
     action: command._name,
@@ -69,7 +71,8 @@ command
     terraformWorkspace: environment
   }))
   .then(() => command.run())
-  .then(message => logger.sendWorkflowToApi({
+  .then(message => ApiHelper.sendWorkflowToApi({
+    runId: command.runId,
     status: 'update',
     target: 'workflow',
     action: command._name,
@@ -80,10 +83,13 @@ command
     if (message) {
       logger.info(message);
     }
+
+    console.log('Promises :: ', ApiHelper.retrievePromises());
+
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendErrorToApi(projectConfig.code);
+    ApiHelper.sendErrorToApi(command.runId, projectConfig.code);
     logger.error(err || 'Error occurred');
     return syncExitProcess(1);
   });
