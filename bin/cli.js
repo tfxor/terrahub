@@ -61,22 +61,22 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => ApiHelper.sendWorkflowToApi({
-    runId: command.runId,
-    status: 'create',
-    target: 'workflow',
-    action: command._name,
-    projectHash: projectConfig.code,
-    projectName: projectConfig.name,
-    terraformWorkspace: environment
-  }))
+  .then(() => ApiHelper.sendDataToApi({ //ApiHelper.startWorkflow
+      source: 'workflow',
+      status: 'start',
+      runId: command.runId,
+      action: command._name,
+      project: projectConfig,
+      environment: environment
+    })
+  )
   .then(() => command.run())
   .then(message => ApiHelper.sendWorkflowToApi({
     runId: command.runId,
     status: 'update',
     target: 'workflow',
     action: command._name,
-    projectHash: projectConfig.code,
+    projectHash: projectConfig.code
   }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;

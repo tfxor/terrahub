@@ -73,4 +73,4 @@ function run(config) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'default' ? run(msg.config) : null);
+process.on('message', msg => msg.workerType === 'default' ? run(msg.data) : null);

@@ -60,7 +60,7 @@ class AbstractTerrahub {
       if (options.skip) {
 
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          .then(res => ApiHelper.sendWorkflowToApi(this._workflowOptions, res))
+          // .then(res => ApiHelper.sendWorkflowToApi(this._workflowOptions, res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -216,11 +216,11 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
-      .then(() => ApiHelper.sendWorkflowToApi({...this._workflowOptions, status: 'create'}))
+      // .then(() => ApiHelper.sendWorkflowToApi({...this._workflowOptions, status: 'create'}))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => ApiHelper.sendWorkflowToApi(this._workflowOptions, res))
+      // .then(res => ApiHelper.sendWorkflowToApi(this._workflowOptions, res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));

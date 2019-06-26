@@ -6,6 +6,8 @@ class ApiHelper {
 
   constructor() {
     this._promises = [];
+    this._components = {};
+    this._workflow = {};
   }
 
   /**
@@ -14,6 +16,140 @@ class ApiHelper {
   pushToPromises(promise) { //@todo this piece of shit do not work, AbstractTerrahub(Terrahub) run parallel
     this._promises.push(promise);
   }
+
+
+
+  sendDataToApi({ source, status, action, actions, config, runId, project, environment, hash }) {
+    // console.log({ source, status, action, actions, config, runId, project, environment, hash });
+
+    if (runId && !this.runId) {
+      //workflow start
+      this.runId = runId;
+    }
+    if (config && !this.config) {
+      Object.keys(config).forEach(hash => {
+        this._components[hash] = {
+          name: config[hash].root,
+          status: null,
+          error: false
+        }
+      });
+      this.config = config;
+    }
+    if (action && !this.action) {
+      this.action = action;
+    }
+    if (actions && !this.actions) {
+      this.actions = actions;
+    }
+    if (project) {
+      this.projectHash = project.code;
+      this.projectName = project.name;
+    }
+    if (hash) {
+      this.componentName = this.config[hash].root;
+      this.componentHash = hash;
+    }
+
+    if (environment && !this.environment) {
+      this.environment = environment;
+    }
+
+    if (ApiHelper.canApiLogsBeSent) {
+
+      if (this._isUseCaseForApiLogging(source, status)) {
+
+        const url = this.getUrl(source, status);
+        const body = this.getBody(source, status, config);
+
+        // console.log({ url, body });
+      }
+    }
+  }
+
+  _isUseCaseForApiLogging(source, status) {
+    switch (source) {
+      case 'workflow':
+
+        if (status === 'start') {
+          this.loggingStart = ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.action);
+          return this.loggingStart;
+        } else if (status === 'stop') {
+          this.loggingStart = false;
+          return true;
+        }
+
+      case 'component':
+        if (this.loggingStart && this._isComponentUseCase(status)) {
+          return true;
+        }
+      // return this.isComponentUseCase(status, action);
+      default:
+        return false;
+    }
+  }
+
+  _isComponentUseCase(status) {
+    if (status === 'start') return true;
+
+    if (status === 'stop') {
+      // ?
+    }
+  }
+
+  getUrl(source, status) {
+    return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
+  }
+
+  getBody(source, status) {
+    if (source === 'workflow') {
+        return this._composeWorkflowBody(status);
+    } else if (source === 'component') {
+      console.log({ actions: this.actions });
+      return this._composeComponentBody(status);
+    }
+  }
+
+  _composeComponentBody(status) {
+    const time = status === 'start' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
+
+    const body = {
+      'terraformHash': this.componentHash,
+      'terraformName': this.componentName,
+      'terraformRunUuid': this.runId,
+      [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    };
+
+    return this.environment ? Object.assign(body, { 'terraformWorkspace': this.environment }) : body;
+  }
+
+  _composeWorkflowBody(status) {
+    const time = status === 'start' ? 'terraformRunStarted' : 'terraformRunFinished';
+
+    return {
+      'terraformRunId': this.runId,
+      [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      projectHash: this.projectHash,
+      projectName: this.projectName // @todo: in update to not need
+    };
+  }
+
+  _isUseCase(source, status, action) {
+    switch (source) {
+      case 'workflow':
+        return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
+      case 'component':
+        // return this.isComponentUseCase(status, action);
+        if (status === 'start') return true;
+        if (status === 'finish') {
+          //verify
+
+        }
+      default:
+        return false;
+    }
+  }
+
 
   retrievePromises() {
     return this._promises;
@@ -27,7 +163,7 @@ class ApiHelper {
     const _promises = this._promises.map(({ url, body }) => {
       return fetch.post(url, {
         body: JSON.stringify(body)
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(err));
     });
 
     return Promise.all(_promises);
@@ -43,7 +179,7 @@ class ApiHelper {
    *  [hash]: String,
    *  [projectHash]: String,
    *  [projectName]: String,
-   *  [terraformWorkspace]: String
+   *  [terraformWorkspace]: String ?
    *  }}
    * @param {*} args
    * @return {Promise}
@@ -52,7 +188,7 @@ class ApiHelper {
     if (ApiHelper.canApiLogsBeSent) {
       const url = ApiHelper.composeWorkflowRequestUrl(status, target);
 
-      if (ApiHelper.isWorkflowUseCase(target, status, action)) {
+      if (this.isWorkflowUseCase(target, status, action)) {
         const body = ApiHelper.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
 
         //@todo for sync on create
@@ -65,7 +201,7 @@ class ApiHelper {
         //       return Promise.resolve(...args);
         //     })
         // } else {
-          this.pushToPromises({ url, body });
+        this.pushToPromises({ url, body });
         // }
       }
     }
@@ -79,12 +215,12 @@ class ApiHelper {
    * @param {String} action
    * @return {boolean}
    */
-  static isWorkflowUseCase(target, status, action) {
+  isWorkflowUseCase(target, status, action) {
     switch (target) {
       case 'workflow':
         return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
       case 'component':
-        return ApiHelper.isComponentUseCase(status, action);
+        return this.isComponentUseCase(status, action);
       default:
         return false;
     }
@@ -95,8 +231,10 @@ class ApiHelper {
    * @param action
    * @return {boolean}
    */
-  static isComponentUseCase(status, action) {
-    const _actions = process.env.TERRAFORM_ACTIONS.split(',');
+  isComponentUseCase(status, action) {
+    const _actions = this.actions;
+
+    console.log({ status, action, actions: this.actions });
 
     if (status === 'create') {
       const _firstAction = _actions[0] === 'prepare' ? _actions[1] : _actions[0];

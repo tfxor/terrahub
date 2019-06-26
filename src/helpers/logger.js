@@ -6,6 +6,7 @@ const { join } = require('path');
 const logger = require('js-logger');
 // const fetch = require('node-fetch').default;
 const { fetch, config: { api, logs } } = require('../parameters');
+const ApiHelper = require('./api-helper');
 
 class Logger {
   /**
@@ -119,6 +120,7 @@ class Logger {
     };
 
     this._pushFetchAsync(url, body);
+    // ApiHelper.pushToPromises({url, body});
   }
 
   /**

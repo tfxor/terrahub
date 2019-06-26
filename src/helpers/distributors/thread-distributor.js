@@ -26,7 +26,6 @@ class ThreadDistributor extends AbstractDistributor {
     //   this._createLoggerWorker();
     // }
 
-    cluster.setupMaster({ exec: this._worker });
   }
 
   /**
@@ -34,6 +33,8 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _createWorker(hash) {
+    cluster.setupMaster({ exec: this._worker });
+
     const cfgThread = this.config[hash];
 
     const worker = cluster.fork(Object.assign({
@@ -44,20 +45,20 @@ class ThreadDistributor extends AbstractDistributor {
     delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send({ workerType: 'default', config: cfgThread});
+    worker.send({ workerType: 'default', data: cfgThread});
   }
 
-  _createLoggerWorker() {
+  _createLoggerWorker(actions) {
     cluster.setupMaster({ exec: this._loggerWorker });
+
     const loggerWorker = cluster.fork({
-      LOGGER_COUNT: this._loggerWorkerCounter,
-      API_REQUESTS: ApiHelper.retrievePromises()
+      THUB_RUN_ID: this.THUB_RUN_ID,
     });
 
     this._workersCount ++;
     this._loggerWorkerCounter++;
 
-    loggerWorker.send({ workerType: 'logger', config: { count: this._loggerWorkerCounter} });
+    loggerWorker.send({ workerType: 'logger', data: { config: this.config, actions } });
     process.env.THUB_LOGGER_WORKER = 1;
   }
 
@@ -73,8 +74,22 @@ class ThreadDistributor extends AbstractDistributor {
 
       if (!dependsOn.length) {
         this._createWorker(hash);
+        //ApiHelper startComponentExecution
+
+        this._sendInfoToApi(hash);
       }
     }
+  }
+
+  _sendInfoToApi(hash) {
+    ApiHelper.sendDataToApi({
+      source: 'component',
+      status: 'start' ,
+      actions: this.TERRAFORM_ACTIONS,
+      config: this.config,
+      hash: hash
+    }
+    );
   }
 
   /**
@@ -99,7 +114,14 @@ class ThreadDistributor extends AbstractDistributor {
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
+
+    // console.log({ TABLE: this._dependencyTable});
+
     this.TERRAFORM_ACTIONS = actions;
+    // Only Sync !! add dictionary
+
+
+    // this._createLoggerWorker(actions);
 
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
@@ -111,6 +133,8 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.data) {
+          //ApiHelper stopComponentExecution
+          console.log( { data : data } );
           results.push(data.data);
         }
 
