@@ -76,18 +76,17 @@ class ThreadDistributor extends AbstractDistributor {
         this._createWorker(hash);
         //ApiHelper startComponentExecution
 
-        this._sendInfoToApi(hash);
+        this._sendInfoToApi({ hash });
       }
     }
   }
 
-  _sendInfoToApi(hash) {
-    ApiHelper.sendDataToApi({
-      source: 'component',
+  _sendInfoToApi({ hash, action }) {
+    ApiHelper.sendComponentFlow({
       status: 'start' ,
       actions: this.TERRAFORM_ACTIONS,
       config: this.config,
-      hash: hash
+      componentHash: hash
     }
     );
   }
@@ -135,6 +134,7 @@ class ThreadDistributor extends AbstractDistributor {
         if (data.data) {
           //ApiHelper stopComponentExecution
           console.log( { data : data } );
+          this._sendInfoToApi({ status: 'stop', hash: data.hash, action: data.data.action });
           results.push(data.data);
         }
 

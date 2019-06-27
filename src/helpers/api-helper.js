@@ -1,13 +1,15 @@
 'use strict';
 
 const { fetch, config: { api } } = require('../parameters');
+const Dictionary = require('./dictionary');
 
 class ApiHelper {
 
   constructor() {
     this._promises = [];
     this._components = {};
-    this._workflow = {};
+    this.loggingStart = false;
+
   }
 
   /**
@@ -18,82 +20,65 @@ class ApiHelper {
   }
 
 
-
-  sendDataToApi({ source, status, action, actions, config, runId, project, environment, hash }) {
-    // console.log({ source, status, action, actions, config, runId, project, environment, hash });
-
-    if (runId && !this.runId) {
-      //workflow start
+  sendMainWorkflow({ status, runId, commandName, project, environment }, ...args) {
+    if (status === 'start') {
       this.runId = runId;
-    }
-    if (config && !this.config) {
-      Object.keys(config).forEach(hash => {
-        this._components[hash] = {
-          name: config[hash].root,
-          status: null,
-          error: false
-        }
-      });
-      this.config = config;
-    }
-    if (action && !this.action) {
-      this.action = action;
-    }
-    if (actions && !this.actions) {
-      this.actions = actions;
-    }
-    if (project) {
+      this.commandName = commandName;
       this.projectHash = project.code;
       this.projectName = project.name;
-    }
-    if (hash) {
-      this.componentName = this.config[hash].root;
-      this.componentHash = hash;
-    }
-
-    if (environment && !this.environment) {
       this.environment = environment;
     }
 
-    if (ApiHelper.canApiLogsBeSent) {
+    if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
+      status === 'start' ? this.loggingStart = true : this.loggingStart = false;
 
-      if (this._isUseCaseForApiLogging(source, status)) {
-
-        const url = this.getUrl(source, status);
-        const body = this.getBody(source, status, config);
-
-        // console.log({ url, body });
-      }
+      this.sendDataToApi({ source: 'workflow', status });
     }
+
+    return Promise.resolve(...args);
   }
 
-  _isUseCaseForApiLogging(source, status) {
-    switch (source) {
-      case 'workflow':
-
-        if (status === 'start') {
-          this.loggingStart = ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.action);
-          return this.loggingStart;
-        } else if (status === 'stop') {
-          this.loggingStart = false;
-          return true;
-        }
-
-      case 'component':
-        if (this.loggingStart && this._isComponentUseCase(status)) {
-          return true;
-        }
-      // return this.isComponentUseCase(status, action);
-      default:
-        return false;
+  sendComponentFlow({ status, config, actions, action, componentHash }) {
+    if (status === 'start' && !this.actions) {
+      Object.keys(config).forEach(hash => {
+        this._components[hash] = {
+          name: config[hash].root,
+          status: null
+        };
+      });
+      this.config = config;
+      this.actions = actions;
     }
+
+    if (ApiHelper.canApiLogsBeSent && this._isComponentUseCase(status, componentHash, action)) {
+      this.sendDataToApi({ source: 'component', status, componentHash });
+    }
+
+
   }
 
-  _isComponentUseCase(status) {
-    if (status === 'start') return true;
+  sendDataToApi({ source, status, componentHash}) {
+    const url = this.getUrl(source, status);
+    const body = this.getBody(source, status, componentHash);
+
+
+    // console.log({ url, body });
+  }
+
+  _isWorkflowUseCase() {
+    return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.commandName);
+  }
+
+  _isComponentUseCase(status, componentHash, action) {
+    if (status === 'start' && this.loggingStart && this._components[componentHash].status !== Dictionary.REALTIME.START) {
+      return this._components[componentHash].status = Dictionary.REALTIME.START;
+    }
 
     if (status === 'stop') {
-      // ?
+      console.log({ actions: this.actions, action });
+      const _finalAction = this.actions.pop();
+
+      return action === _finalAction && action === 'workspaceSelect';
     }
   }
 
@@ -101,21 +86,20 @@ class ApiHelper {
     return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
   }
 
-  getBody(source, status) {
+  getBody(source, status, componentHash) {
     if (source === 'workflow') {
-        return this._composeWorkflowBody(status);
+      return this._composeWorkflowBody(status);
     } else if (source === 'component') {
-      console.log({ actions: this.actions });
-      return this._composeComponentBody(status);
+      return this._composeComponentBody(status, componentHash);
     }
   }
 
-  _composeComponentBody(status) {
+  _composeComponentBody(status, componentHash) {
     const time = status === 'start' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
     const body = {
-      'terraformHash': this.componentHash,
-      'terraformName': this.componentName,
+      'terraformHash': componentHash,
+      'terraformName': this.config[componentHash].root,
       'terraformRunUuid': this.runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
@@ -132,22 +116,6 @@ class ApiHelper {
       projectHash: this.projectHash,
       projectName: this.projectName // @todo: in update to not need
     };
-  }
-
-  _isUseCase(source, status, action) {
-    switch (source) {
-      case 'workflow':
-        return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
-      case 'component':
-        // return this.isComponentUseCase(status, action);
-        if (status === 'start') return true;
-        if (status === 'finish') {
-          //verify
-
-        }
-      default:
-        return false;
-    }
   }
 
 
@@ -185,28 +153,7 @@ class ApiHelper {
    * @return {Promise}
    */
   sendWorkflowToApi({ runId, status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
-    if (ApiHelper.canApiLogsBeSent) {
-      const url = ApiHelper.composeWorkflowRequestUrl(status, target);
-
-      if (this.isWorkflowUseCase(target, status, action)) {
-        const body = ApiHelper.composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName);
-
-        //@todo for sync on create
-        // if (status === 'create' && target === 'workflow') {
-
-        //   return fetch.post(`${url}`, {
-        //     body: JSON.stringify(body)
-        //   }).then(res => Promise.resolve(...args))
-        //     .catch(error => {
-        //       return Promise.resolve(...args);
-        //     })
-        // } else {
-        this.pushToPromises({ url, body });
-        // }
-      }
-    }
-
-    return Promise.resolve(...args);
+    this.pushToPromises({ url, body });
   }
 
   /**

@@ -61,22 +61,17 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => ApiHelper.sendDataToApi({ //ApiHelper.startWorkflow
-      source: 'workflow',
+  .then(() => ApiHelper.sendMainWorkflow({ //ApiHelper.startWorkflow
       status: 'start',
       runId: command.runId,
-      action: command._name,
+      commandName: command._name,
       project: projectConfig,
       environment: environment
     })
   )
   .then(() => command.run())
-  .then(message => ApiHelper.sendWorkflowToApi({
-    runId: command.runId,
+  .then(message => ApiHelper.sendMainWorkflow({
     status: 'update',
-    target: 'workflow',
-    action: command._name,
-    projectHash: projectConfig.code
   }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
