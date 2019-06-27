@@ -7,6 +7,7 @@ const logger = require('js-logger');
 // const fetch = require('node-fetch').default;
 const { fetch, config: { api, logs } } = require('../parameters');
 const ApiHelper = require('./api-helper');
+const cluster = require('cluster');
 
 class Logger {
   /**
@@ -107,20 +108,15 @@ class Logger {
    * @private
    */
   _sendLogToApi(messages) {
-    const message = Object.keys(messages).map(key => messages[key]).join('');
-    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`;
-    const body = {
-      bulk: [{
-        terraformRunId: this._context.runId,
-        timestamp: Date.now(),
-        component: this._context.componentName,
-        log: message,
-        action: this._context.action
-      }]
-    };
-
-    this._pushFetchAsync(url, body);
-    // ApiHelper.pushToPromises({url, body});
+    if (cluster.isWorker) {
+      process.send({
+        type: 'logs',
+        messages,
+        context: this._context,
+      });
+    } else {
+      ApiHelper.sendLogsToApi({ messages, context: this._context });
+    }
   }
 
   /**
@@ -138,18 +134,6 @@ class Logger {
     Object.assign(this._context, context);
   }
 
-  /**
-   * @param {String} url
-   * @param {Object} body
-   * @private
-   */
-  _pushFetchAsync(url, body) {
-    const promise = fetch.post(`${url}`, {
-      body: JSON.stringify(body)
-    }).catch(error => console.log(error));
-
-    this._promises.push(promise);
-  }
 }
 
 module.exports = new Logger();

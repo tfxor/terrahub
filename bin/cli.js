@@ -43,8 +43,8 @@ function commandCreate(logger = console) {
  * @return {Promise}
  */
 function syncExitProcess(code) {
-  return Promise.all(logger.promises)
-    .then(() => ApiHelper.sendLogToS3(command.runId))
+  return Promise.all(ApiHelper.promises)
+    .then(() => ApiHelper.sendLogToS3())
     .then(() => process.exit(code));
 }
 
@@ -61,8 +61,8 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => ApiHelper.sendMainWorkflow({ //ApiHelper.startWorkflow
-      status: 'start',
+  .then(() => ApiHelper.sendMainWorkflow({
+      status: 'create',
       runId: command.runId,
       commandName: command._name,
       project: projectConfig,
@@ -70,21 +70,23 @@ command
     })
   )
   .then(() => command.run())
-  .then(message => ApiHelper.sendMainWorkflow({
-    status: 'update',
-  }, message))
+  .then(message => {
+    ApiHelper.sendMainWorkflow({
+      status: 'update',
+    });
+
+    return Promise.resolve(message);
+  })
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
 
-    console.log('Promises :: ', ApiHelper.retrievePromises());
-
     return syncExitProcess(0);
   })
   .catch(err => {
-    ApiHelper.sendErrorToApi(command.runId, projectConfig.code);
+    ApiHelper.sendErrorToApi();
     logger.error(err || 'Error occurred');
     return syncExitProcess(1);
   });

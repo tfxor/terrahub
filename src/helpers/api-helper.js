@@ -1,27 +1,65 @@
 'use strict';
 
 const { fetch, config: { api } } = require('../parameters');
-const Dictionary = require('./dictionary');
 
 class ApiHelper {
 
   constructor() {
     this._promises = [];
-    this._components = {};
-    this.loggingStart = false;
+  }
 
+  /**
+   * @return {Array}
+   */
+  get promises() {
+    return this._promises;
+  }
+
+  /**
+   * @return Object[]
+   */
+  retrievePromises() {
+    const _promises = this._promises;
+    this._promises = [];
+
+    return _promises;
   }
 
   /**
    * @param {Object} promise
    */
-  pushToPromises(promise) { //@todo this piece of shit do not work, AbstractTerrahub(Terrahub) run parallel
+  pushToPromises(promise) {
     this._promises.push(promise);
   }
 
+  /**
+   * @param data {{ messages: Object, context: Object }}
+   */
+  sendLogsToApi(data) {
+    const message = Object.keys(data.messages).map(key => data.messages[key]).join('');
+    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
+    const body = {
+      bulk: [{
+        terraformRunId: this.runId,
+        timestamp: Date.now(),
+        component: data.context.componentName,
+        log: message,
+        action: data.context.action
+      }]
+    };
 
-  sendMainWorkflow({ status, runId, commandName, project, environment }, ...args) {
-    if (status === 'start') {
+    this.pushToPromises({ url, body });
+  }
+
+  /**
+   * @param {String} status
+   * @param {String} runId
+   * @param {String} commandName
+   * @param {Object} project
+   * @param {String} environment
+   */
+  sendMainWorkflow({ status, runId, commandName, project, environment }) {
+    if (status === 'create') {
       this.runId = runId;
       this.commandName = commandName;
       this.projectHash = project.code;
@@ -30,165 +68,40 @@ class ApiHelper {
     }
 
     if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
-      status === 'start' ? this.loggingStart = true : this.loggingStart = false;
-
       this.sendDataToApi({ source: 'workflow', status });
     }
-
-    return Promise.resolve(...args);
   }
 
-  sendComponentFlow({ status, config, actions, action, componentHash }) {
-    if (status === 'start' && !this.actions) {
-      Object.keys(config).forEach(hash => {
-        this._components[hash] = {
-          name: config[hash].root,
-          status: null
-        };
-      });
-      this.config = config;
+  /**
+   * @param {String} status
+   * @param {String} [name]
+   * @param {String} [action]
+   * @param {String} [hash]
+   * @param {String[]} [actions]
+   */
+  sendComponentFlow({ status, name, action, hash, actions }) {
+    if (!this.actions) {
       this.actions = actions;
     }
 
-    if (ApiHelper.canApiLogsBeSent && this._isComponentUseCase(status, componentHash, action)) {
-      this.sendDataToApi({ source: 'component', status, componentHash });
+    if (ApiHelper.canApiLogsBeSent && this._isComponentUseCase(status, action, actions)) {
+      this.sendDataToApi({ source: 'component', status, hash, name });
     }
-
-
-  }
-
-  sendDataToApi({ source, status, componentHash}) {
-    const url = this.getUrl(source, status);
-    const body = this.getBody(source, status, componentHash);
-
-
-    // console.log({ url, body });
-  }
-
-  _isWorkflowUseCase() {
-    return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.commandName);
-  }
-
-  _isComponentUseCase(status, componentHash, action) {
-    if (status === 'start' && this.loggingStart && this._components[componentHash].status !== Dictionary.REALTIME.START) {
-      return this._components[componentHash].status = Dictionary.REALTIME.START;
-    }
-
-    if (status === 'stop') {
-      console.log({ actions: this.actions, action });
-      const _finalAction = this.actions.pop();
-
-      return action === _finalAction && action === 'workspaceSelect';
-    }
-  }
-
-  getUrl(source, status) {
-    return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
-  }
-
-  getBody(source, status, componentHash) {
-    if (source === 'workflow') {
-      return this._composeWorkflowBody(status);
-    } else if (source === 'component') {
-      return this._composeComponentBody(status, componentHash);
-    }
-  }
-
-  _composeComponentBody(status, componentHash) {
-    const time = status === 'start' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
-
-    const body = {
-      'terraformHash': componentHash,
-      'terraformName': this.config[componentHash].root,
-      'terraformRunUuid': this.runId,
-      [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-    };
-
-    return this.environment ? Object.assign(body, { 'terraformWorkspace': this.environment }) : body;
-  }
-
-  _composeWorkflowBody(status) {
-    const time = status === 'start' ? 'terraformRunStarted' : 'terraformRunFinished';
-
-    return {
-      'terraformRunId': this.runId,
-      [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
-      projectHash: this.projectHash,
-      projectName: this.projectName // @todo: in update to not need
-    };
-  }
-
-
-  retrievePromises() {
-    return this._promises;
-  }
-
-  static canApiLogsBeSent() {
-    return process.env.THUB_TOKEN_IS_VALID;
-  }
-
-  fetchRequests() {
-    const _promises = this._promises.map(({ url, body }) => {
-      return fetch.post(url, {
-        body: JSON.stringify(body)
-      }).catch(err => console.log(err));
-    });
-
-    return Promise.all(_promises);
   }
 
   /**
-   * @param {{
-   *  [runId]: String,
-   *  [status]: String,
-   *  [target]: String,
-   *  [action]: String,
-   *  [name]: String,
-   *  [hash]: String,
-   *  [projectHash]: String,
-   *  [projectName]: String,
-   *  [terraformWorkspace]: String ?
-   *  }}
-   * @param {*} args
-   * @return {Promise}
-   */
-  sendWorkflowToApi({ runId, status, target, action, name, hash, projectHash, terraformWorkspace, projectName }, ...args) {
-    this.pushToPromises({ url, body });
-  }
-
-  /**
-   * @param {String} target
    * @param {String} status
    * @param {String} action
-   * @return {boolean}
+   * @param {Array} actions
+   * @return {Boolean}
    */
-  isWorkflowUseCase(target, status, action) {
-    switch (target) {
-      case 'workflow':
-        return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
-      case 'component':
-        return this.isComponentUseCase(status, action);
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * @param status
-   * @param action
-   * @return {boolean}
-   */
-  isComponentUseCase(status, action) {
-    const _actions = this.actions;
-
-    console.log({ status, action, actions: this.actions });
-
+  _isComponentUseCase(status, action, actions) {
     if (status === 'create') {
-      const _firstAction = _actions[0] === 'prepare' ? _actions[1] : _actions[0];
+      const _firstAction = actions[0] === 'prepare' ? actions[1] : actions[0];
 
       return _firstAction === action && _firstAction !== 'plan';
     } else if (status === 'update') {
-      const _finalAction = _actions.pop();
+      const _finalAction = actions.pop();
 
       return action === _finalAction;
     }
@@ -197,92 +110,142 @@ class ApiHelper {
   }
 
   /**
+   * @param {String} source
    * @param {String} status
-   * @param {String} target
-   * @return {String}
+   * @param {String} [hash]
+   * @param {String} [name]
    */
-  static composeWorkflowRequestUrl(status, target) {
-    return `thub/${target === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
+  sendDataToApi({ source, status, hash, name }) {
+    const url = this.getUrl(source, status);
+    const body = this.getBody(source, status, hash, name);
+
+    this.pushToPromises({ url, body });
+  }
+
+  /**
+   * @return {Boolean}
+   * @private
+   */
+  _isWorkflowUseCase() {
+    return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.commandName);
+  }
+
+  /**
+   * @param {String} source
+   * @param {String} status
+   * @return {string}
+   */
+  getUrl(source, status) {
+    return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
+  }
+
+  /**
+   * @param {String} source
+   * @param {String} status
+   * @param {String} hash
+   * @param {String} name
+   * @return {Object} body
+   */
+  getBody(source, status, hash, name) {
+    if (source === 'workflow') {
+      return this._composeWorkflowBody(status);
+    } else if (source === 'component') {
+      return this._composeComponentBody(status, hash, name);
+    }
+  }
+
+  /**
+   * @param {String} status
+   * @param {String} hash
+   * @param {String} name
+   * @return {Object} body
+   * @private
+   */
+  _composeComponentBody(status, hash, name) {
+    const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
+
+    return {
+      'terraformHash': hash,
+      'terraformName': name,
+      'terraformRunUuid': this.runId,
+      [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    };
   }
 
   /**
    *
    * @param {String} status
-   * @param {String} target
-   * @param {String} [runId]
-   * @param {String} [name]
-   * @param {String} [hash]
-   * @param {String} [projectHash]
-   * @param {String} [projectName]
-   * @param {String} [terraformWorkspace]
-   * @return {Object}
+   * @return {Object} body
+   * @private
    */
-  static composeWorkflowBody(status, target, runId, name, hash, projectHash, terraformWorkspace, projectName) {
-    if (target === 'workflow') {
-      const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
-      const body = {
-        'terraformRunId': runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        projectHash,
-        projectName // @todo: in update to not need
-      };
+  _composeWorkflowBody(status) {
+    const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
 
-      return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace': terraformWorkspace }) : body;
-    } else if (target === 'component') {
-      const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
-
-      return {
-        'terraformHash': hash,
-        'terraformName': name,
-        'terraformRunUuid': runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-      };
-    }
+    return {
+      'terraformRunId': this.runId,
+      [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      projectHash: this.projectHash,
+      projectName: this.projectName,
+      'terraformRunStatus': status === 'start' ? Dictionary.REALTIME.START : Dictionary.REALTIME.SUCCESS,
+      'terraformRunWorkspace': this.environment || 'default',
+    };
   }
+
+  /**
+   * @return {Boolean}
+   */
+  static canApiLogsBeSent() {
+    return process.env.THUB_TOKEN_IS_VALID;
+  }
+
+  /**
+   * @param {Object[]} promises
+   * @return {Promise}
+   */
+  fetchRequests(promises) {
+    const _promises = promises.map(({ url, body }) => {
+      return fetch.post(url, {
+        body: JSON.stringify(body)
+      }).catch(err => console.log(err));
+    });
+
+    return Promise.all(_promises);
+  }
+
 
   /**
    * @return {Promise}
    */
-  sendLogToS3(runId) {
+  sendLogToS3() {
     if (ApiHelper.canApiLogsBeSent) {
-      // return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${runId}`)
-      //   .catch(error => console.log(error));
+      return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
+        .catch(error => console.log(error));
     }
   }
 
   /**
    * On error sends finish status for all logging executions
-   * @param {String} runId
-   * @param {String} projectHash
    */
-  sendErrorToApi(runId, projectHash) {
+  sendErrorToApi() {
     if (ApiHelper.canApiLogsBeSent) {
-      const url = ApiHelper.composeWorkflowRequestUrl('update', 'workflow');
-      const body = ApiHelper.composeWorkflowBody('update', 'workflow', runId, null, null, projectHash);
-
-      this.endComponentsLogging(runId);
-      this.pushToPromises({ url, body });
+      this.endComponentsLogging();
+      this.sendMainWorkflow({ status: 'update' });
     }
   }
 
   /**
    * Finish components logging
-   * @param {String} runId
-   * @private
    */
-  endComponentsLogging(runId) {
+  endComponentsLogging() {
     const terrahubComponents = process.env.THUB_EXECUTION_LIST ? process.env.THUB_EXECUTION_LIST.split(',') : [];
 
     terrahubComponents.map(it => {
       const status = 'update',
-        target = 'component',
+        source = 'component',
         name = it.split(':')[0],
         hash = it.split(':')[1];
 
-      const url = ApiHelper.composeWorkflowRequestUrl(status, target);
-      const body = ApiHelper.composeWorkflowBody(status, target, runId, name, hash);
-
-      this.pushToPromises({ url, body });
+      this.sendDataToApi({ source, status, name, hash });
     });
   }
 }

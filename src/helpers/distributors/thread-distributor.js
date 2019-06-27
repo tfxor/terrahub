@@ -22,9 +22,9 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorkerCounter = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
 
-    // if (!process.env.THUB_LOGGER_WORKER) {
-    //   this._createLoggerWorker();
-    // }
+    if (!process.env.THUB_LOGGER_WORKER) {
+      this._createLoggerWorker();
+    }
 
   }
 
@@ -48,17 +48,17 @@ class ThreadDistributor extends AbstractDistributor {
     worker.send({ workerType: 'default', data: cfgThread});
   }
 
-  _createLoggerWorker(actions) {
+  _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    const loggerWorker = cluster.fork({
+    this.loggerWorker = cluster.fork({
       THUB_RUN_ID: this.THUB_RUN_ID,
     });
 
     this._workersCount ++;
     this._loggerWorkerCounter++;
 
-    loggerWorker.send({ workerType: 'logger', data: { config: this.config, actions } });
+    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises()  });
     process.env.THUB_LOGGER_WORKER = 1;
   }
 
@@ -74,21 +74,8 @@ class ThreadDistributor extends AbstractDistributor {
 
       if (!dependsOn.length) {
         this._createWorker(hash);
-        //ApiHelper startComponentExecution
-
-        this._sendInfoToApi({ hash });
       }
     }
-  }
-
-  _sendInfoToApi({ hash, action }) {
-    ApiHelper.sendComponentFlow({
-      status: 'start' ,
-      actions: this.TERRAFORM_ACTIONS,
-      config: this.config,
-      componentHash: hash
-    }
-    );
   }
 
   /**
@@ -113,14 +100,7 @@ class ThreadDistributor extends AbstractDistributor {
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
-
-    // console.log({ TABLE: this._dependencyTable});
-
     this.TERRAFORM_ACTIONS = actions;
-    // Only Sync !! add dictionary
-
-
-    // this._createLoggerWorker(actions);
 
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
@@ -131,10 +111,22 @@ class ThreadDistributor extends AbstractDistributor {
           return;
         }
 
+        if (data.isLogger) {
+          this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises()});
+          return;
+        }
+
+        if (data.type === 'logs') {
+          ApiHelper.sendLogsToApi(data);
+          return;
+        }
+
+        if (data.type === 'workflow') {
+          ApiHelper.sendComponentFlow({ ...data.options, actions });
+          return;
+        }
+
         if (data.data) {
-          //ApiHelper stopComponentExecution
-          console.log( { data : data } );
-          this._sendInfoToApi({ status: 'stop', hash: data.hash, action: data.data.action });
           results.push(data.data);
         }
 
