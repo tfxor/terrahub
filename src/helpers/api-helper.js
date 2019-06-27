@@ -1,11 +1,13 @@
 'use strict';
 
+const Dictionary = require('./dictionary');
 const { fetch, config: { api } } = require('../parameters');
 
 class ApiHelper {
 
   constructor() {
     this._promises = [];
+    this._logs = [];
   }
 
   /**
@@ -19,8 +21,9 @@ class ApiHelper {
    * @return Object[]
    */
   retrievePromises() {
-    const _promises = this._promises;
+    const _promises = [...this._promises, ...this._logs];
     this._promises = [];
+    this._logs = [];
 
     return _promises;
   }
@@ -47,6 +50,19 @@ class ApiHelper {
         action: data.context.action
       }]
     };
+
+    // if (this._logs.length < 5) {
+    //   this._logs.push({
+    //     terraformRunId: this.runId,
+    //     timestamp: Date.now(),
+    //     component: data.context.componentName,
+    //     log: message,
+    //     action: data.context.action
+    //   });
+    // } else {
+    //   this._promises.concat(this._logs);
+    //   this._logs = [];
+    // }
 
     this.pushToPromises({ url, body });
   }
@@ -80,7 +96,7 @@ class ApiHelper {
    * @param {String[]} [actions]
    */
   sendComponentFlow({ status, name, action, hash, actions }) {
-    if (!this.actions) {
+    if (!this.actions && actions) {
       this.actions = actions;
     }
 

@@ -20,12 +20,13 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._workersCount = 0;
     this._loggerWorkerCounter = 0;
-    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
 
     if (!process.env.THUB_LOGGER_WORKER) {
       this._createLoggerWorker();
     }
 
+    cluster.setupMaster({ exec: this._worker });
   }
 
   /**
@@ -33,8 +34,6 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _createWorker(hash) {
-    cluster.setupMaster({ exec: this._worker });
-
     const cfgThread = this.config[hash];
 
     const worker = cluster.fork(Object.assign({
@@ -51,9 +50,9 @@ class ThreadDistributor extends AbstractDistributor {
   _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork({
+    this.loggerWorker = cluster.fork(Object.assign({
       THUB_RUN_ID: this.THUB_RUN_ID,
-    });
+    }, this._env));
 
     this._workersCount ++;
     this._loggerWorkerCounter++;
@@ -113,17 +112,14 @@ class ThreadDistributor extends AbstractDistributor {
 
         if (data.isLogger) {
           this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises()});
-          return;
         }
 
         if (data.type === 'logs') {
           ApiHelper.sendLogsToApi(data);
-          return;
         }
 
         if (data.type === 'workflow') {
           ApiHelper.sendComponentFlow({ ...data.options, actions });
-          return;
         }
 
         if (data.data) {

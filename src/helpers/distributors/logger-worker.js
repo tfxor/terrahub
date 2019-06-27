@@ -8,7 +8,6 @@ const ApiHelper = require('../api-helper');
 function run(promises) {
 
   ApiHelper.fetchRequests(promises).then(res => {
-    console.log('Response from worker :', res);
     setTimeout(() => {
       process.send({
         isLogger: true,
