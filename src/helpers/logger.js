@@ -158,18 +158,18 @@ class Logger {
    *  [hash]: String,
    *  [projectHash]: String,
    *  [projectName]: String,
-   *  [terraformWorkspace]: String,
+   *  [terraformRunWorkspace]: String,
    *  [runStatus]: Number }}
    * @param {*} args
    * @return {Promise<...*[]>}
    */
-  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformWorkspace, projectName, runStatus }, ...args) {
+  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus }, ...args) {
     if (this._canLogBeSentToApi) {
       const runId = this._context.runId;
       const url = Logger.composeWorkflowRequestUrl(status, target);
 
       if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformWorkspace, projectName, runStatus });
+        const body = Logger.composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus });
 
         if (status === 'create' && target === 'workflow') {
 
@@ -244,11 +244,11 @@ class Logger {
    *  [hash]: String,
    *  [projectHash]: String,
    *  [projectName]: String,
-   *  [terraformWorkspace]: String
+   *  [terraformRunWorkspace]: String
    *  [runStatus]: String }}
    * @return {Object}
    */
-  static composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformWorkspace, projectName, runStatus }) {
+  static composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus }) {
     if (target === 'workflow') {
       const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
       const body = {
@@ -259,7 +259,7 @@ class Logger {
         terraformRunStatus: runStatus
       };
 
-      return terraformWorkspace ? Object.assign(body, { 'terraformWorkspace': terraformWorkspace }) : body;
+      return terraformRunWorkspace ? Object.assign(body, { 'terraformRunWorkspace': terraformRunWorkspace }) : body;
     } else if (target === 'component') {
       const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 

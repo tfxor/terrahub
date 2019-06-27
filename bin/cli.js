@@ -67,7 +67,8 @@ command
     action: command._name,
     projectHash: projectConfig.code,
     projectName: projectConfig.name,
-    terraformWorkspace: environment
+    terraformRunWorkspace: environment,
+    runStatus: Dictionary.REALTIME.START
   }))
   .then(() => command.run())
   .then(message => logger.sendWorkflowToApi({
@@ -75,6 +76,7 @@ command
     target: 'workflow',
     action: command._name,
     projectHash: projectConfig.code,
+    terraformRunWorkspace: environment,
     runStatus: Dictionary.REALTIME.SUCCESS
   }, message))
   .then(msg => {
