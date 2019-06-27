@@ -210,7 +210,6 @@ class JitHelper {
     return Promise.resolve();
   }
 
-
   /**
    * 
    * @param {Object} resourcesByType 
@@ -219,7 +218,6 @@ class JitHelper {
    * @private
    */
   static _parsingResourceByType(resourcesByType, template) {
-
     const promises = Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
       .map(resourceName => {
         const resourceByName = resourcesByType[resourceName];
@@ -233,7 +231,7 @@ class JitHelper {
     return Promise.all(promises);
   }
 
-    /**
+   /**
    * 
    * @param {Object} resourcesByType 
    * @param {String} resourceName
@@ -242,8 +240,8 @@ class JitHelper {
    * @private
    */
   static _parsingResourceByName(resourcesByType, resourceName, template) {
-    const resourceByName = resourcesByType[resourceName];
     return Promise.resolve().then(() => {
+      const resourceByName = resourcesByType[resourceName];
       const providerTerrahubVariables = JitHelper._extractTerrahubVariables(
         JSON.stringify(resourceByName['provider'])
       );
@@ -270,7 +268,28 @@ class JitHelper {
       }
       
       tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
-        JitHelper._parsingParamLocalsInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName);
+        JitHelper._parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName);
+        const { output } = template;
+
+        if (output) {
+          Object.keys(output).filter(outputName => output[outputName])
+          .filter(elem => output[elem].value.includes(resourceName))
+          .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
+          .map(outputName => {
+              const outputByName = output[outputName];
+              const regExOutput = /map\((.+?)\)/gm;
+              const outputVariables = outputByName.value.match(regExOutput);
+
+              if (outputVariables) {
+                outputVariables.map(outputVariable => {
+                  let outputMap = outputVariable.slice(4,-1).split(',');
+                  outputMap.push(outputMap[0].replace(oldProviderTerrahubVariable, tfvarValue));
+                  outputMap.push(outputMap[1].replace(`.${resourceName}.`, `.${resourceName}_${tfvarValue}.`));
+                  output[outputName].value = output[outputName].value.replace(outputVariable, `map(${outputMap.join(',')})`);
+                });
+              }
+            });
+        }
       });
         
     });
@@ -284,7 +303,7 @@ class JitHelper {
    * @param {*} resourcesByType 
    * @param {*} resourceName 
    */
-  static _parsingParamLocalsInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
+  static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
     let resourceByNameCopy = Object.assign({}, resourceByName);
     Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
