@@ -1,23 +1,28 @@
 'use strict';
 
 const cluster = require('cluster');
-const ApiHelper = require('../api-helper');
-
+const { fetch } = require('../../parameters');
 
 
 function run(promises) {
 
-  ApiHelper.fetchRequests(promises).then(res => {
-    setTimeout(() => {
-      process.send({
-        isLogger: true,
-        isBusy: false,
-        isError: false
-      });
+  const _promises = promises.map(({ url, body }) => {
+    return fetch.post(url, {
+      body: JSON.stringify(body)
+    }).catch(err => console.log(err));
+  });
 
-    }, 2000);
+  return Promise.all(_promises).then(res => {
+    console.log('from worker:', res);
 
-    // process.exit(0);
+    process.send({
+      isLogger: true,
+      isBusy: false,
+      isError: false
+    });
+
+    process.exit(0);
+
   }).catch(err => {
     process.send({
       isLogger: true,
@@ -26,6 +31,27 @@ function run(promises) {
 
     process.exit(1);
   });
+  //
+  // ApiHelper.fetchRequests(promises).then(res => {
+  //   console.log('responses :', res);
+  //   // setTimeout(() => {
+  //     process.send({
+  //       isLogger: true,
+  //       isBusy: false,
+  //       isError: false
+  //     });
+  //     process.exit(0);
+  //
+  //   // }, 2000);
+  //
+  // }).catch(err => {
+  //   process.send({
+  //     isLogger: true,
+  //     isError: true
+  //   });
+  //
+  //   process.exit(1);
+  // });
 
 }
 
@@ -36,4 +62,4 @@ function run(promises) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'logger' ? run(msg.data) : null);
+process.on('message', msg => msg.workerType === 'logger' ? run(msg.promises) : null);

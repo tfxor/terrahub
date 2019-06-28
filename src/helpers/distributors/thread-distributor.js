@@ -22,9 +22,7 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorkerCounter = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
 
-    if (!process.env.THUB_LOGGER_WORKER) {
-      this._createLoggerWorker();
-    }
+    this._createLoggerWorker();
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -34,6 +32,8 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _createWorker(hash) {
+    cluster.setupMaster({ exec: this._worker });
+
     const cfgThread = this.config[hash];
 
     const worker = cluster.fork(Object.assign({
@@ -57,8 +57,8 @@ class ThreadDistributor extends AbstractDistributor {
     this._workersCount ++;
     this._loggerWorkerCounter++;
 
-    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises()  });
-    process.env.THUB_LOGGER_WORKER = 1;
+    this.loggerWorker.send({ workerType: 'logger', promises: ApiHelper.retrievePromises() });
+    // process.env.THUB_LOGGER_WORKER = 1;
   }
 
   /**
@@ -110,8 +110,26 @@ class ThreadDistributor extends AbstractDistributor {
           return;
         }
 
-        if (data.isLogger) {
-          this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises()});
+
+        if (data.isLogger && !data.isBusy) {
+          console.log({ 'dump': 'Message from Worker' });
+          ApiHelper.setIsFree();
+          ApiHelper.once('hasWork', () => {
+            
+            console.log({ 'dump': 'Event gotcha !' });
+            this._createLoggerWorker();
+
+            ApiHelper.noMoreWork();
+          });
+          // console.log('message from Logger', data);
+          // if (ApiHelper.retrievePromises().length) {
+          //   // this.loggerWorker.send({ workerType: 'logger', promises: ApiHelper.retrievePromises()});
+          //   this._createLoggerWorker()
+          // } else {
+          //   const timeout = setTimeout(() => this._createLoggerWorker(), 2000);
+          //
+          //   clearTimeout(timeout);
+          // }
         }
 
         if (data.type === 'logs') {
@@ -133,7 +151,9 @@ class ThreadDistributor extends AbstractDistributor {
         this._workersCount--;
 
         if (code === 0) {
-          this._getWorkerType(worker) !== 'logger-worker' ? this._distributeConfigs() : this._createLoggerWorker();
+          console.log('worker Type :', this._getWorkerType(worker));
+          this._distributeConfigs();
+          // this._getWorkerType(worker) !== 'logger-worker' ? this._distributeConfigs() : this._createLoggerWorker();
         }
 
         const hashes = Object.keys(this._dependencyTable);

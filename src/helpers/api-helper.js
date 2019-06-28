@@ -1,13 +1,47 @@
 'use strict';
 
+const events = require('events');
 const Dictionary = require('./dictionary');
 const { fetch, config: { api } } = require('../parameters');
 
-class ApiHelper {
+class ApiHelper extends events.EventEmitter {
 
   constructor() {
+    super();
     this._promises = [];
     this._logs = [];
+  }
+
+
+  haveWork() {
+    if (this._promises.length && this._promises.find(({ url, body }) => url === 'thub/terraform-run/update')) {
+      this.setIsFinalRequest();
+    }
+
+    if (this.isFinalRequest) {
+      console.log({ 'dump': ' Is Final Request !' });
+    }
+
+    if (this._promises.length > 5) {
+      // process.nextTick(() => this.emit('work'));
+      if (this.isFree) {
+        const counter = this.listenerCount('hasWork', this);
+
+        if (counter < 2) {
+          process.nextTick(() => this.emit('work'));
+        } else {
+          this.removeAllListeners();
+          this.emit('hasWork');
+        }
+      } else {
+        this.noMoreWork()
+      }
+    }
+
+  }
+
+  noMoreWork() {
+    this.off('hasWork', () => {});
   }
 
   /**
@@ -28,11 +62,29 @@ class ApiHelper {
     return _promises;
   }
 
+  setIsFree() {
+    this._isFree = true;
+  }
+
+  get isFree() {
+    return this._isFree;
+  }
+
+  setIsFinalRequest() {
+    this._isFinalRequest = true;
+  }
+
+  get isFinalRequest() {
+    return this._isFinalRequest;
+  }
+
   /**
    * @param {Object} promise
    */
   pushToPromises(promise) {
     this._promises.push(promise);
+
+    return this.haveWork();
   }
 
   /**
@@ -82,6 +134,8 @@ class ApiHelper {
       this.projectName = project.name;
       this.environment = environment;
     }
+
+    console.log(this.runId);
 
     if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
       this.sendDataToApi({ source: 'workflow', status });
@@ -203,7 +257,7 @@ class ApiHelper {
       projectHash: this.projectHash,
       projectName: this.projectName,
       'terraformRunStatus': status === 'start' ? Dictionary.REALTIME.START : Dictionary.REALTIME.SUCCESS,
-      'terraformRunWorkspace': this.environment || 'default',
+      'terraformRunWorkspace': this.environment || 'default'
     };
   }
 

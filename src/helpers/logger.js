@@ -108,6 +108,21 @@ class Logger {
    * @private
    */
   _sendLogToApi(messages) {
+    const message = Object.keys(messages).map(key => messages[key]).join('');
+    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`;
+    const body = {
+      bulk: [{
+        terraformRunId: this._context.runId,
+        timestamp: Date.now(),
+        component: this._context.componentName,
+        log: message,
+        action: this._context.action
+      }]
+    };
+
+    // this._pushFetchAsync(url, body);
+
+
     if (cluster.isWorker) {
       process.send({
         type: 'logs',
@@ -125,6 +140,19 @@ class Logger {
    */
   get _canLogBeSentToApi() {
     return this._context.canLogBeSentToApi;
+  }
+
+  /**
+   * @param {String} url
+   * @param {Object} body
+   * @private
+   */
+  _pushFetchAsync(url, body) {
+    const promise = fetch.post(`${url}`, {
+      body: JSON.stringify(body)
+    }).catch(error => console.log(error));
+
+    this._promises.push(promise);
   }
 
   /**
