@@ -1,6 +1,5 @@
 'use strict';
 
-const { uuid } = require('../util');
 const Dictionary = require('../dictionary');
 
 class AbstractDistributor {
@@ -8,7 +7,7 @@ class AbstractDistributor {
    * @param {Object} configObject
    * @param {String} thubRunId
    */
-  constructor(configObject, { thubRunId = uuid() } = {}) {
+  constructor(configObject, thubRunId) {
     this.THUB_RUN_ID = thubRunId;
     this.config = Object.assign({}, configObject);
   }

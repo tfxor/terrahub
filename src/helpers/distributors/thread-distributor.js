@@ -10,9 +10,10 @@ const AbstractDistributor = require('./abstract-distributor');
 class ThreadDistributor extends AbstractDistributor {
   /**
    * @param {Object} configObject
+   * @param {String} thubRunId
    */
-  constructor(configObject) {
-    super(configObject);
+  constructor(configObject, thubRunId) {
+    super(configObject, thubRunId);
 
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
