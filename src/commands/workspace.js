@@ -125,7 +125,7 @@ class WorkspaceCommand extends TerraformCommand {
    * @private
    */
   _workspace(action, config) {
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 

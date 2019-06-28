@@ -12,9 +12,10 @@ const AbstractDistributor = require('./abstract-distributor');
 class CloudDistributor extends AbstractDistributor {
   /**
    * @param {Object} configObject
+   * @param {String} thubRunId
    */
-  constructor(configObject) {
-    super(configObject);
+  constructor(configObject, thubRunId) {
+    super(configObject, thubRunId);
 
     const firstKey = Object.keys(this.config)[0];
     this._projectRoot = this.config[firstKey].project.root;

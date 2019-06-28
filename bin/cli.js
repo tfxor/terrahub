@@ -4,10 +4,11 @@
 
 const path = require('path');
 const semver = require('semver');
-const logger = require('../src/helpers/logger');
-const HelpParser = require('../src/helpers/help-parser');
 const { engines } = require('../package');
+const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
+const Dictionary = require('../src/helpers/dictionary');
+const HelpParser = require('../src/helpers/help-parser');
 const { commandsPath, config, args } = require('../src/parameters');
 
 /**
@@ -37,6 +38,16 @@ function commandCreate(logger = console) {
   return new Command(args, logger);
 }
 
+/**
+ * @param {Number} code
+ * @return {Promise}
+ */
+function syncExitProcess(code) {
+  return Promise.all(logger.promises)
+    .then(() => logger.sendLogToS3())
+    .then(() => process.exit(code));
+}
+
 let command;
 try {
   command = commandCreate(logger);
@@ -45,17 +56,38 @@ try {
   process.exit(1);
 }
 
+const environment = command.getOption('env') ? command.getOption('env') : 'default';
+const projectConfig = command.getProjectConfig();
+
 command
   .validate()
+  .then(() => logger.sendWorkflowToApi({
+    status: 'create',
+    target: 'workflow',
+    action: command._name,
+    projectHash: projectConfig.code,
+    projectName: projectConfig.name,
+    terraformRunWorkspace: environment,
+    runStatus: Dictionary.REALTIME.START
+  }))
   .then(() => command.run())
+  .then(message => logger.sendWorkflowToApi({
+    status: 'update',
+    target: 'workflow',
+    action: command._name,
+    projectHash: projectConfig.code,
+    terraformRunWorkspace: environment,
+    runStatus: Dictionary.REALTIME.SUCCESS
+  }, message))
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
-    process.exit(0);
+    return syncExitProcess(0);
   })
   .catch(err => {
+    logger.sendErrorToApi(projectConfig.code, Dictionary.REALTIME.ERROR);
     logger.error(err || 'Error occurred');
-    process.exit(1);
+    return syncExitProcess(1);
   });

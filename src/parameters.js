@@ -45,11 +45,12 @@ if (!fse.existsSync(cfgPath)) {
 const def = {
   env: 'default',
   api: 'api',
+  logs: false,
   token: false,
-  format: 'yml',
+  listLimit: 5,
   retryCount: 2,
-  usePhysicalCpu: false,
-  listLimit: 5
+  format: 'yml',
+  usePhysicalCpu: false
 };
 const env = {
   env: _getEnv(args),
@@ -74,14 +75,15 @@ module.exports = {
   config: {
     api: cfg.api,
     env: cfg.env,
+    logs: cfg.logs,
     token: cfg.token,
     format: cfg.format,
     isDefault: isDefault,
     isHelp: _isHelp(args),
+    listLimit: cfg.listLimit,
     retryCount: cfg.retryCount,
     usePhysicalCpu: cfg.usePhysicalCpu,
-    defaultFileName: `.terrahub.${cfg.format}`,
-    listLimit: cfg.listLimit
+    defaultFileName: `.terrahub.${cfg.format}`
   },
   templates: {
     path: path.join(templates, 'templates'),

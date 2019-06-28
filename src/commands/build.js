@@ -26,7 +26,7 @@ class BuildCommand extends TerraformCommand {
     }
 
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config);
+    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 
