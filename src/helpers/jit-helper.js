@@ -263,7 +263,7 @@ class JitHelper {
       }
 
       let tfvarValues = tfvars[variableName];
-      if (!JitHelper._checkTerrahubVariableType(tfvarValues) == 'list') {
+      if (!JitHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
         return Promise.resolve();
       }
       
