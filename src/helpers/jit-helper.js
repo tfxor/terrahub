@@ -291,7 +291,8 @@ class JitHelper {
             });
         }
       });
-        
+      
+      return Promise.resolve();
     });
   }
 
