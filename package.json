@@ -19,8 +19,8 @@
     "url": "https://github.com/TerraHubCorp/terrahub/issues"
   },
   "engines": {
-    "node": ">=8.10",
-    "npm": ">=5.6"
+    "node": ">=8.0",
+    "npm": ">=5.0"
   },
   "dependencies": {
     "aws-sdk": "^2.478.0",

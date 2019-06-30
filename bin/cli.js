@@ -4,7 +4,7 @@
 
 const path = require('path');
 const semver = require('semver');
-const { engines } = require('../package');
+const { engines } = require('../package.json');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
 const Dictionary = require('../src/helpers/dictionary');
