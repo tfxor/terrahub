@@ -22,6 +22,8 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorkerCounter = 0;
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
 
+    this._loggerLastLog = {};
+
     this._createLoggerWorker();
 
     cluster.setupMaster({ exec: this._worker });
@@ -44,21 +46,21 @@ class ThreadDistributor extends AbstractDistributor {
     delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send({ workerType: 'default', data: cfgThread});
+    worker.send({ workerType: 'default', data: cfgThread });
   }
 
   _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
     this.loggerWorker = cluster.fork(Object.assign({
-      THUB_RUN_ID: this.THUB_RUN_ID,
+      THUB_RUN_ID: this.THUB_RUN_ID
     }, this._env));
 
-    this._workersCount ++;
     this._loggerWorkerCounter++;
 
-    this.loggerWorker.send({ workerType: 'logger', promises: ApiHelper.retrievePromises() });
-    // process.env.THUB_LOGGER_WORKER = 1;
+    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises() });
+
+    console.log({ loggerWorkerCount: this._loggerWorkerCounter });
   }
 
   /**
@@ -101,6 +103,13 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
+    ApiHelper.on('hasWork', () => {
+      if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
+        ApiHelper.setIsBusy();
+        return this._createLoggerWorker();
+      }
+    });
+
     return new Promise((resolve, reject) => {
       this._distributeConfigs();
 
@@ -110,34 +119,32 @@ class ThreadDistributor extends AbstractDistributor {
           return;
         }
 
+        if (data.isLogger) {
+          if (this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId) {
+            return;
+          }
+          this._loggerWorkerLastId = data.workerId;
+          this._loggerWorkerCounter--;
 
-        if (data.isLogger && !data.isBusy) {
-          console.log({ 'dump': 'Message from Worker' });
           ApiHelper.setIsFree();
-          ApiHelper.once('hasWork', () => {
-            
-            console.log({ 'dump': 'Event gotcha !' });
-            this._createLoggerWorker();
-
-            ApiHelper.noMoreWork();
-          });
-          // console.log('message from Logger', data);
-          // if (ApiHelper.retrievePromises().length) {
-          //   // this.loggerWorker.send({ workerType: 'logger', promises: ApiHelper.retrievePromises()});
-          //   this._createLoggerWorker()
-          // } else {
-          //   const timeout = setTimeout(() => this._createLoggerWorker(), 2000);
-          //
-          //   clearTimeout(timeout);
-          // }
+          return;
         }
 
         if (data.type === 'logs') {
+          if (this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages) {
+            return;
+          }
+
+          this._loggerLastLog[data.workerId] = data.messages;
+
           ApiHelper.sendLogsToApi(data);
+          return;
         }
 
         if (data.type === 'workflow') {
           ApiHelper.sendComponentFlow({ ...data.options, actions });
+
+          return;
         }
 
         if (data.data) {
@@ -197,7 +204,7 @@ class ThreadDistributor extends AbstractDistributor {
     const fileName = worker.process.spawnargs[1];
     const extension = path.extname(fileName);
 
-    return path.basename(fileName,extension);
+    return path.basename(fileName, extension);
   }
 }
 

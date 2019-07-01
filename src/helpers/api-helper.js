@@ -10,49 +10,50 @@ class ApiHelper extends events.EventEmitter {
     super();
     this._promises = [];
     this._logs = [];
+    this._workerIsFree = true;
   }
 
 
   haveWork() {
-    if (this._promises.length && this._promises.find(({ url, body }) => url === 'thub/terraform-run/update')) {
-      this.setIsFinalRequest();
-    }
-
     if (this.isFinalRequest) {
       console.log({ 'dump': ' Is Final Request !' });
     }
+    if (this.hasWork() && this.isFree) {
+      const counter = this.listenerCount('hasWork', this);
 
-    if (this._promises.length > 5) {
-      // process.nextTick(() => this.emit('work'));
-      if (this.isFree) {
-        const counter = this.listenerCount('hasWork', this);
-
-        if (counter < 2) {
-          process.nextTick(() => this.emit('work'));
-        } else {
-          this.removeAllListeners();
-          this.emit('hasWork');
-        }
+      if (counter < 2) {
+        this.emit('hasWork');
       } else {
-        this.noMoreWork()
+        const eventListeners = this.listeners('hasWork');
+        const [mainListener, ...otherListeners] = eventListeners;
+
+        otherListeners.forEach(it => this.removeListener('hasWork', it));
+
+        this.emit('hasWork');
       }
     }
-
   }
 
-  noMoreWork() {
-    this.off('hasWork', () => {});
+  /**
+   * @return {Boolean}
+   */
+  hasWork() {
+    return this._promises.length > 3 || this.isFinalRequest;
   }
 
   /**
    * @return {Array}
    */
   get promises() {
-    return this._promises;
+    return this._promises.map(({ url, body }) => {
+      return fetch.post(url, {
+        body: JSON.stringify(body)
+      }).catch(err => console.log(err));
+    });
   }
 
   /**
-   * @return Object[]
+   * @return {Promise[]}
    */
   retrievePromises() {
     const _promises = [...this._promises, ...this._logs];
@@ -62,20 +63,32 @@ class ApiHelper extends events.EventEmitter {
     return _promises;
   }
 
+  /**
+   * @return {void}
+   */
   setIsFree() {
-    this._isFree = true;
+    this._workerIsFree = true;
   }
 
+  /**
+   * @return {void}
+   */
+  setIsBusy() {
+    this._workerIsFree = false;
+  }
+
+  /**
+   * @return {Boolean}
+   */
   get isFree() {
-    return this._isFree;
+    return this._workerIsFree;
   }
 
-  setIsFinalRequest() {
-    this._isFinalRequest = true;
-  }
-
+  /**
+   * @return {Boolean}
+   */
   get isFinalRequest() {
-    return this._isFinalRequest;
+    return this._promises.length && this._promises.find(({ url }) => url === 'thub/terraform-run/update');
   }
 
   /**
@@ -103,28 +116,27 @@ class ApiHelper extends events.EventEmitter {
       }]
     };
 
-    // if (this._logs.length < 5) {
-    //   this._logs.push({
-    //     terraformRunId: this.runId,
-    //     timestamp: Date.now(),
-    //     component: data.context.componentName,
-    //     log: message,
-    //     action: data.context.action
-    //   });
-    // } else {
-    //   this._promises.concat(this._logs);
-    //   this._logs = [];
-    // }
-
     this.pushToPromises({ url, body });
+
+    // this.fetchAsync({ url, body });
+  }
+
+  /**
+   * @param {{ url: String, body: Object }}
+   * @return {*}
+   */
+  fetchAsync({ url, body }) {
+    return this.pushToPromises(fetch.post(url, {
+      body: JSON.stringify(body)
+    }).catch(err => console.log(err)));
   }
 
   /**
    * @param {String} status
-   * @param {String} runId
-   * @param {String} commandName
-   * @param {Object} project
-   * @param {String} environment
+   * @param {String} [runId]
+   * @param {String} [commandName]
+   * @param {Object} [project]
+   * @param {String} [environment]
    */
   sendMainWorkflow({ status, runId, commandName, project, environment }) {
     if (status === 'create') {
@@ -134,8 +146,6 @@ class ApiHelper extends events.EventEmitter {
       this.projectName = project.name;
       this.environment = environment;
     }
-
-    console.log(this.runId);
 
     if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
       this.sendDataToApi({ source: 'workflow', status });
@@ -171,7 +181,7 @@ class ApiHelper extends events.EventEmitter {
 
       return _firstAction === action && _firstAction !== 'plan';
     } else if (status === 'update') {
-      const _finalAction = actions.pop();
+      const _finalAction = actions[actions.length - 1];
 
       return action === _finalAction;
     }
@@ -190,6 +200,8 @@ class ApiHelper extends events.EventEmitter {
     const body = this.getBody(source, status, hash, name);
 
     this.pushToPromises({ url, body });
+
+    // return this.fetchAsync({ url, body });
   }
 
   /**
@@ -267,21 +279,6 @@ class ApiHelper extends events.EventEmitter {
   static canApiLogsBeSent() {
     return process.env.THUB_TOKEN_IS_VALID;
   }
-
-  /**
-   * @param {Object[]} promises
-   * @return {Promise}
-   */
-  fetchRequests(promises) {
-    const _promises = promises.map(({ url, body }) => {
-      return fetch.post(url, {
-        body: JSON.stringify(body)
-      }).catch(err => console.log(err));
-    });
-
-    return Promise.all(_promises);
-  }
-
 
   /**
    * @return {Promise}

@@ -71,9 +71,7 @@ command
   )
   .then(() => command.run())
   .then(message => {
-    ApiHelper.sendMainWorkflow({
-      status: 'update',
-    });
+    ApiHelper.sendMainWorkflow({ status: 'update' });
 
     return Promise.resolve(message);
   })

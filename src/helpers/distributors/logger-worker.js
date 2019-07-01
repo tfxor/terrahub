@@ -6,7 +6,9 @@ const { fetch } = require('../../parameters');
 
 function run(promises) {
 
-  const _promises = promises.map(({ url, body }) => {
+  console.log(`In Worker Promises length is : ${promises.length}`);
+
+  const _promises =  promises.map(({ url, body }) => {
     return fetch.post(url, {
       body: JSON.stringify(body)
     }).catch(err => console.log(err));
@@ -17,49 +19,36 @@ function run(promises) {
 
     process.send({
       isLogger: true,
-      isBusy: false,
-      isError: false
+      isError: false,
+      workerId: cluster.worker.id
     });
 
     process.exit(0);
 
-  }).catch(err => {
+  }).catch(error => {
     process.send({
       isLogger: true,
-      isError: true
+      isError: true,
+      error: error.message || error,
+      workerId: cluster.worker.id
     });
 
     process.exit(1);
   });
-  //
-  // ApiHelper.fetchRequests(promises).then(res => {
-  //   console.log('responses :', res);
-  //   // setTimeout(() => {
-  //     process.send({
-  //       isLogger: true,
-  //       isBusy: false,
-  //       isError: false
-  //     });
-  //     process.exit(0);
-  //
-  //   // }, 2000);
-  //
-  // }).catch(err => {
-  //   process.send({
-  //     isLogger: true,
-  //     isError: true
-  //   });
-  //
-  //   process.exit(1);
-  // });
-
 }
 
+function clearExit() {
+  process.send({
+    isLogger: true,
+    isBusy: false,
+    isError: false
+  });
 
-
+  process.exit(0);
+}
 
 
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'logger' ? run(msg.promises) : null);
+process.on('message', msg => msg.workerType === 'logger' ? run(msg.data) : null);

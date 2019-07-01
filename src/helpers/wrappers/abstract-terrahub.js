@@ -59,7 +59,11 @@ class AbstractTerrahub {
       if (options.skip) {
 
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          // .then(res => ApiHelper.sendWorkflowToApi(this._workflowOptions, res)) @todo Does it need ? <-
+          .then(res => {
+            process.send({ type: 'workflow', options: this._workflowOptions });
+
+            return Promise.resolve(res);
+          })
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
