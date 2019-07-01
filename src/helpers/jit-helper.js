@@ -314,8 +314,8 @@ class JitHelper {
     let resourceByNameCopy = Object.assign({}, resourceByName);
     const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
+      const paramByName = JSON.stringify(resourceByName[paramName]);
       return Promise.resolve().then(() => {
-        const paramByName = JSON.stringify(resourceByName[paramName]);
         const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
         const localVariables = paramByName.match(regExLocal);
 
