@@ -149,8 +149,7 @@ class JitHelper {
       if (remoteTfvarsLinks.length > 0) {
         return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
       }
-    })
-      .then(() => JitHelper._normalizeProvidersForResource(config))
+    }).then(() => JitHelper._normalizeProvidersForResource(config))
       .then(() => JitHelper._normalizeProvidersForData(config))
       .then(() => JitHelper._normalizeTfvars(config))
       .then(() => JitHelper._createTerraformFiles(config))
@@ -267,32 +266,38 @@ class JitHelper {
         return Promise.resolve();
       }
       
-      tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
-        JitHelper._parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName);
-        const { output } = template;
+      return Promise.resolve().then(() => {
+        tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
+          JitHelper._parsingParamInResource(
+            template, tfvarValue, oldProviderTerrahubVariable,
+            resourcesByType, resourceName).then(() => {
+            const { output } = template;
 
-        if (output) {
-          Object.keys(output).filter(outputName => output[outputName])
-          .filter(elem => output[elem].value.includes(resourceName))
-          .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
-          .map(outputName => {
-              const outputByName = output[outputName];
-              const regExOutput = /map\((.+?)\)/gm;
-              const outputVariables = outputByName.value.match(regExOutput);
+            if (output) {
+              const promisesOutput = Object.keys(output).filter(outputName => output[outputName])
+              .filter(elem => output[elem].value.includes(resourceName))
+              .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
+              .map(outputName => {
+                  const outputByName = output[outputName];
+                  const regExOutput = /map\((.+?)\)/gm;
+                  const outputVariables = outputByName.value.match(regExOutput);
 
-              if (outputVariables) {
-                outputVariables.map(outputVariable => {
-                  let outputMap = outputVariable.slice(4,-1).split(',');
-                  outputMap.push(outputMap[0].replace(oldProviderTerrahubVariable, tfvarValue));
-                  outputMap.push(outputMap[1].replace(`.${resourceName}.`, `.${resourceName}_${tfvarValue}.`));
-                  output[outputName].value = output[outputName].value.replace(outputVariable, `map(${outputMap.join(',')})`);
+                  if (outputVariables) {
+                    outputVariables.map(outputVariable => {
+                      let outputMap = outputVariable.slice(4,-1).split(',');
+                      outputMap.push(outputMap[0].replace(oldProviderTerrahubVariable, tfvarValue));
+                      outputMap.push(outputMap[1].replace(`.${resourceName}.`, `.${resourceName}_${tfvarValue}.`));
+                      output[outputName].value = output[outputName].value.replace(outputVariable, `map(${outputMap.join(',')})`);
+                    });
+                  }
                 });
-              }
-            });
-        }
+              return Promise.all(promisesOutput);
+            }
+
+            return Promise.resolve();
+          });
+        });
       });
-      
-      return Promise.resolve();
     });
   }
 
@@ -307,47 +312,58 @@ class JitHelper {
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
     let resourceByNameCopy = Object.assign({}, resourceByName);
-    Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
+    const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
-    
-      const paramByName = JSON.stringify(resourceByName[paramName]);
-      const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
-      const localVariables = paramByName.match(regExLocal);
+      return Promise.resolve().then(() => {
+        const paramByName = JSON.stringify(resourceByName[paramName]);
+        const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
+        const localVariables = paramByName.match(regExLocal);
 
-      if (localVariables) {
-        let unique = [...new Set(localVariables)];
-        unique.map(localVariable => {
-          const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
-          const { locals } = template;
-          locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
-          let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-          resourceByNameStringify = resourceByNameStringify.replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
-          resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
-        });
-      }
+        if (localVariables) {
+          let unique = [...new Set(localVariables)];
+          const promises = unique.map(localVariable => {
+            const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
+            const { locals } = template;
+            locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
+            let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+            resourceByNameStringify = resourceByNameStringify.replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
+            resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
+          });
 
-      const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
-      const dataVariables = paramByName.match(regExData);
+          return Promise.all(promises);
+        }
 
-      if (dataVariables) {
-        let unique = [...new Set(dataVariables)];
-        unique.map(dataVariable => {
-          const dataPath = dataVariable.split('.');
-          let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-          resourceByNameStringify = resourceByNameStringify.replace(
-            dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
-          resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
-        });
-        
-      }
+        return Promise.resolve();
+      }).then(() => {
+        const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
+        const dataVariables = paramByName.match(regExData);
 
-      if (resourceByNameCopy.hasOwnProperty('provider')) {
-        resourceByNameCopy['provider'] = resourceByName['provider']
-          .replace(oldProviderTerrahubVariable, tfvarValue);
-      }
+        if (dataVariables) {
+          let unique = [...new Set(dataVariables)];
+          const promises = unique.map(dataVariable => {
+            const dataPath = dataVariable.split('.');
+            let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+            resourceByNameStringify = resourceByNameStringify.replace(
+              dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
+            resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
+          });
+          
+          return Promise.all(promises);
+        }
 
-      resourcesByType[`${resourceName}_${tfvarValue}`] = resourceByNameCopy;
+        return Promise.resolve();
+      }).then(() => {
+        if (resourceByNameCopy.hasOwnProperty('provider')) {
+          resourceByNameCopy['provider'] = resourceByName['provider']
+            .replace(oldProviderTerrahubVariable, tfvarValue);
+        }
+
+        resourcesByType[`${resourceName}_${tfvarValue}`] = resourceByNameCopy;
+        return Promise.resolve();
+      });
     });
+
+    return Promise.all(promises);
   }
 
   /**
