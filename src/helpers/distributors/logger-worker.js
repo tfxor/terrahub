@@ -33,17 +33,6 @@ function run(promises) {
   });
 }
 
-function clearExit() {
-  process.send({
-    isLogger: true,
-    isBusy: false,
-    isError: false
-  });
-
-  process.exit(0);
-}
-
-
 /**
  * Message listener
  */

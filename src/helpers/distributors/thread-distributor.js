@@ -17,12 +17,11 @@ class ThreadDistributor extends AbstractDistributor {
     super(configObject, thubRunId);
 
     this._worker = path.join(__dirname, 'worker.js');
-    this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._workersCount = 0;
-    this._loggerWorkerCounter = 0;
-    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
-
+    this._loggerWorker = path.join(__dirname, 'logger-worker.js');
+    this._loggerWorkerCount = 0;
     this._loggerLastLog = {};
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
 
     this._createLoggerWorker();
 
@@ -56,7 +55,7 @@ class ThreadDistributor extends AbstractDistributor {
       THUB_RUN_ID: this.THUB_RUN_ID
     }, this._env));
 
-    this._loggerWorkerCounter++;
+    this._loggerWorkerCount++;
 
     this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises() });
   }
@@ -122,7 +121,7 @@ class ThreadDistributor extends AbstractDistributor {
             return;
           }
           this._loggerWorkerLastId = data.workerId;
-          this._loggerWorkerCounter--;
+          this._loggerWorkerCount--;
 
           ApiHelper.setIsFree();
           return;
@@ -188,19 +187,6 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
-  }
-
-  /**
-   * Returns file name from which was created worker
-   * @param {Object} worker
-   * @return {string}
-   * @private
-   */
-  _getWorkerType(worker) {
-    const fileName = worker.process.spawnargs[1];
-    const extension = path.extname(fileName);
-
-    return path.basename(fileName, extension);
   }
 }
 

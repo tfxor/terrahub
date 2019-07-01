@@ -10,6 +10,7 @@ class ApiHelper extends events.EventEmitter {
     super();
     this._promises = [];
     this._logs = [];
+    this._logs = [];
     this._workerIsFree = true;
   }
 
@@ -37,14 +38,14 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   isWorkForLogger() {
-    return this._promises.length > 3 || this.isFinalRequest;
+    return this._promises.length || this._logs.length > 10 || this.isFinalRequest;
   }
 
   /**
    * @return {Array}
    */
   get promises() {
-    return this._promises.map(({ url, body }) => {
+    return [...this._promises, ...this._logs].map(({ url, body }) => {
       return fetch.post(url, {
         body: JSON.stringify(body)
       }).catch(err => console.log(err));
@@ -55,9 +56,10 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise[]}
    */
   retrievePromises() {
-    const _promises = [...this._promises, ...this._logs];
+    const _logs = this._logs.splice(0, 10);
+    const _promises = this._promises.concat(_logs);
+
     this._promises = [];
-    this._logs = [];
 
     return _promises;
   }
@@ -99,6 +101,12 @@ class ApiHelper extends events.EventEmitter {
     return this.sendToWorker();
   }
 
+  pushToLogs(promise) {
+    this._logs.push(promise);
+
+    return this.sendToWorker();
+  }
+
   /**
    * @param data {{ messages: Object, context: Object }}
    */
@@ -115,7 +123,8 @@ class ApiHelper extends events.EventEmitter {
       }]
     };
 
-    this.pushToPromises({ url, body });
+    this.pushToLogs({ url, body });
+    // this.pushToPromises({ url, body });
 
     // this.fetchAsync({ url, body });
   }
@@ -187,7 +196,7 @@ class ApiHelper extends events.EventEmitter {
 
   /**
    * @param {{ source: String, status: String, [hash]: String, [name]: String }}
-   * @param {String} [runStatus]
+   * @param {Number} [runStatus]
    */
   sendDataToApi({ source, status, hash, name }, runStatus) {
     const url = this.getUrl(source, status);
