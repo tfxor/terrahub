@@ -383,7 +383,7 @@ class JitHelper {
           const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
           const { tfvars } = template;
           const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-            JitHelper._extractValueFronTfvar(tfvars[variableName], variableNameNetArr): '';
+            JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr): '';
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
@@ -439,7 +439,7 @@ class JitHelper {
    * @return {String}
    * @private
    */
-  static _extractValueFronTfvar(tfvarValue, variableNameNetArr) {
+  static _extractValueFromTfvar(tfvarValue, variableNameNetArr) {
     let variableValue = '';
 
     switch (JitHelper._checkTerrahubVariableType(tfvarValue)) {
