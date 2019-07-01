@@ -66,7 +66,7 @@ command
       runId: command.runId,
       commandName: command._name,
       project: projectConfig,
-      environment: environment
+      environment: environment,
     })
   )
   .then(() => command.run())

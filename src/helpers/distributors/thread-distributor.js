@@ -59,8 +59,6 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorkerCounter++;
 
     this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises() });
-
-    console.log({ loggerWorkerCount: this._loggerWorkerCounter });
   }
 
   /**
@@ -103,7 +101,7 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
-    ApiHelper.on('hasWork', () => {
+    ApiHelper.on('loggerWork', () => {
       if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
         ApiHelper.setIsBusy();
         return this._createLoggerWorker();
@@ -158,9 +156,7 @@ class ThreadDistributor extends AbstractDistributor {
         this._workersCount--;
 
         if (code === 0) {
-          console.log('worker Type :', this._getWorkerType(worker));
           this._distributeConfigs();
-          // this._getWorkerType(worker) !== 'logger-worker' ? this._distributeConfigs() : this._createLoggerWorker();
         }
 
         const hashes = Object.keys(this._dependencyTable);

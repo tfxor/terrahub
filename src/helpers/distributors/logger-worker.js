@@ -6,8 +6,6 @@ const { fetch } = require('../../parameters');
 
 function run(promises) {
 
-  console.log(`In Worker Promises length is : ${promises.length}`);
-
   const _promises =  promises.map(({ url, body }) => {
     return fetch.post(url, {
       body: JSON.stringify(body)
@@ -15,8 +13,6 @@ function run(promises) {
   });
 
   return Promise.all(_promises).then(res => {
-    console.log('from worker:', res);
-
     process.send({
       isLogger: true,
       isError: false,

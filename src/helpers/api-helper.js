@@ -13,23 +13,22 @@ class ApiHelper extends events.EventEmitter {
     this._workerIsFree = true;
   }
 
-
-  haveWork() {
-    if (this.isFinalRequest) {
-      console.log({ 'dump': ' Is Final Request !' });
-    }
-    if (this.hasWork() && this.isFree) {
-      const counter = this.listenerCount('hasWork', this);
+  /**
+   * Sends event to ThreadDistributor to execute logging
+   */
+  sendToWorker() {
+    if (this.isWorkForLogger() && this.loggerIsFree) {
+      const counter = this.listenerCount('loggerWork', this);
 
       if (counter < 2) {
-        this.emit('hasWork');
+        this.emit('loggerWork');
       } else {
-        const eventListeners = this.listeners('hasWork');
+        const eventListeners = this.listeners('loggerWork');
         const [mainListener, ...otherListeners] = eventListeners;
 
-        otherListeners.forEach(it => this.removeListener('hasWork', it));
+        otherListeners.forEach(it => this.removeListener('loggerWork', it));
 
-        this.emit('hasWork');
+        this.emit('loggerWork');
       }
     }
   }
@@ -37,7 +36,7 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @return {Boolean}
    */
-  hasWork() {
+  isWorkForLogger() {
     return this._promises.length > 3 || this.isFinalRequest;
   }
 
@@ -80,7 +79,7 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @return {Boolean}
    */
-  get isFree() {
+  get loggerIsFree() {
     return this._workerIsFree;
   }
 
@@ -97,7 +96,7 @@ class ApiHelper extends events.EventEmitter {
   pushToPromises(promise) {
     this._promises.push(promise);
 
-    return this.haveWork();
+    return this.sendToWorker();
   }
 
   /**
@@ -132,13 +131,10 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {String} status
-   * @param {String} [runId]
-   * @param {String} [commandName]
-   * @param {Object} [project]
-   * @param {String} [environment]
+   * @param {{ status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}}
+   * @param {Number} [runStatus]
    */
-  sendMainWorkflow({ status, runId, commandName, project, environment }) {
+  sendMainWorkflow({ status, runId, commandName, project, environment }, runStatus) {
     if (status === 'create') {
       this.runId = runId;
       this.commandName = commandName;
@@ -190,14 +186,12 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {String} source
-   * @param {String} status
-   * @param {String} [hash]
-   * @param {String} [name]
+   * @param {{ source: String, status: String, [hash]: String, [name]: String }}
+   * @param {String} [runStatus]
    */
-  sendDataToApi({ source, status, hash, name }) {
+  sendDataToApi({ source, status, hash, name }, runStatus) {
     const url = this.getUrl(source, status);
-    const body = this.getBody(source, status, hash, name);
+    const body = this.getBody(source, status, hash, name, runStatus);
 
     this.pushToPromises({ url, body });
 
@@ -226,11 +220,12 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} status
    * @param {String} hash
    * @param {String} name
+   * @param {Number} runStatus
    * @return {Object} body
    */
-  getBody(source, status, hash, name) {
+  getBody(source, status, hash, name, runStatus) {
     if (source === 'workflow') {
-      return this._composeWorkflowBody(status);
+      return this._composeWorkflowBody(status, runStatus);
     } else if (source === 'component') {
       return this._composeComponentBody(status, hash, name);
     }
@@ -255,12 +250,12 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   *
    * @param {String} status
+   * @param {Number} runStatus
    * @return {Object} body
    * @private
    */
-  _composeWorkflowBody(status) {
+  _composeWorkflowBody(status, runStatus) {
     const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
 
     return {
@@ -268,9 +263,22 @@ class ApiHelper extends events.EventEmitter {
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
       projectHash: this.projectHash,
       projectName: this.projectName,
-      'terraformRunStatus': status === 'start' ? Dictionary.REALTIME.START : Dictionary.REALTIME.SUCCESS,
+      'terraformRunStatus': this.getRunStatus(status, runStatus),
       'terraformRunWorkspace': this.environment || 'default'
     };
+  }
+
+  /**
+   * @param {String} status
+   * @param {Number} runStatus
+   * @return {Number}
+   */
+  getRunStatus(status, runStatus) {
+    if (runStatus) {
+      return runStatus;
+    }
+
+    return status === 'start' ? Dictionary.REALTIME.START : Dictionary.REALTIME.SUCCESS;
   }
 
   /**
@@ -295,8 +303,9 @@ class ApiHelper extends events.EventEmitter {
    */
   sendErrorToApi() {
     if (ApiHelper.canApiLogsBeSent) {
+      const runStatus = Dictionary.REALTIME.ERROR;
       this.endComponentsLogging();
-      this.sendMainWorkflow({ status: 'update' });
+      this.sendMainWorkflow({ status: 'update' }, runStatus);
     }
   }
 
