@@ -454,6 +454,9 @@ class JitHelper {
       case 'string':
         variableValue = tfvarValue;
         break;
+      case 'map':
+        // @TODO:
+        break;
     }
 
     return variableValue;
@@ -527,7 +530,6 @@ class JitHelper {
    */
   static _addLocalTfvars(config, localTfvarsLink) {
     const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
-
     if (fse.existsSync(localTfvarsLinkPath)) {
       return fse.readFile(localTfvarsLinkPath).then(content => {
         return JitHelper._parsingTfvars(content.toString(), config );
