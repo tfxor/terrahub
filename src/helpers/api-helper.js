@@ -12,6 +12,7 @@ class ApiHelper extends events.EventEmitter {
     this._logs = [];
     this._logs = [];
     this._workerIsFree = true;
+    this.apiLogginStart = false;
   }
 
   /**
@@ -38,30 +39,56 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   isWorkForLogger() {
-    return this._promises.length || this._logs.length > 10 || this.isFinalRequest;
+    return this.isFinalRequest || this._promises.length || this._logs.length > 15;
   }
 
   /**
    * @return {Array}
    */
   get promises() {
-    return [...this._promises, ...this._logs].map(({ url, body }) => {
+    if (!this.apiLogginStart) {
+      return [];
+    }
+
+    return [...this._promises, this.retrieveLogs(true)].map(({ url, body }) => {
       return fetch.post(url, {
         body: JSON.stringify(body)
       }).catch(err => console.log(err));
     });
+
   }
 
   /**
    * @return {Promise[]}
    */
   retrievePromises() {
-    const _logs = this._logs.splice(0, 10);
+    const _logs = this._logs.length ? this.retrieveLogs() : [];
     const _promises = this._promises.concat(_logs);
 
     this._promises = [];
 
     return _promises;
+  }
+
+  /**
+   * @param {Boolean} all
+   * @return {{ body: {bulk: Object[]}, url: String }}
+   */
+  retrieveLogs(all = false) {
+    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
+    let _logs = [];
+
+    if (!all) {
+      _logs = this._logs.splice(0, 10);
+    } else {
+      _logs = this._logs;
+      this._logs = [];
+    }
+
+    return {
+      url,
+      body: { bulk: [..._logs] }
+    };
   }
 
   /**
@@ -101,8 +128,12 @@ class ApiHelper extends events.EventEmitter {
     return this.sendToWorker();
   }
 
-  pushToLogs(promise) {
-    this._logs.push(promise);
+  /**
+   * @param {Object} body
+   * @return {void||null}
+   */
+  pushToLogs(body) {
+    this._logs.push(body);
 
     return this.sendToWorker();
   }
@@ -111,22 +142,21 @@ class ApiHelper extends events.EventEmitter {
    * @param data {{ messages: Object, context: Object }}
    */
   sendLogsToApi(data) {
+    if (!this.logsTimestampAdder) {
+      this.logsTimestampAdder = 0;
+    }
+    this.logsTimestampAdder++;
+
     const message = Object.keys(data.messages).map(key => data.messages[key]).join('');
-    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
     const body = {
-      bulk: [{
-        terraformRunId: this.runId,
-        timestamp: Date.now(),
-        component: data.context.componentName,
-        log: message,
-        action: data.context.action
-      }]
+      terraformRunId: this.runId,
+      timestamp: Date.now() + this.logsTimestampAdder,
+      component: data.context.componentName,
+      log: message,
+      action: data.context.action
     };
 
-    this.pushToLogs({ url, body });
-    // this.pushToPromises({ url, body });
-
-    // this.fetchAsync({ url, body });
+    this.pushToLogs(body);
   }
 
   /**
@@ -153,6 +183,10 @@ class ApiHelper extends events.EventEmitter {
     }
 
     if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
+      if (status === 'create') {
+        this.apiLogginStart = true;
+      }
+
       this.sendDataToApi({ source: 'workflow', status });
     }
   }
@@ -301,7 +335,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   sendLogToS3() {
-    if (ApiHelper.canApiLogsBeSent) {
+    if (ApiHelper.canApiLogsBeSent && this.apiLogginStart) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
@@ -311,7 +345,7 @@ class ApiHelper extends events.EventEmitter {
    * On error sends finish status for all logging executions
    */
   sendErrorToApi() {
-    if (ApiHelper.canApiLogsBeSent) {
+    if (ApiHelper.canApiLogsBeSent && this.apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
       this.endComponentsLogging();
       this.sendMainWorkflow({ status: 'update' }, runStatus);

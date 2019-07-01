@@ -21,7 +21,7 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._loggerWorkerCount = 0;
     this._loggerLastLog = {};
-    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() - 1 : os.cpus().length - 1;
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
 
     this._createLoggerWorker();
 
