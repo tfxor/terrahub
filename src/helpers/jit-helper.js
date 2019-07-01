@@ -532,7 +532,7 @@ class JitHelper {
     const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
     if (fse.existsSync(localTfvarsLinkPath)) {
       return fse.readFile(localTfvarsLinkPath).then(content => {
-        return JitHelper._parsingTfvars(content.toString(), config );
+        return JitHelper._parsingTfvars(content.toString(), config);
       });
     }
     
