@@ -701,7 +701,7 @@ class JitHelper {
     const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
 
     if (!fse.existsSync(tmpPath)) {
-      fse.mkdirSync(tmpPath);
+      fse.mkdirsSync(tmpPath);
     }
 
     return tmpPath;
