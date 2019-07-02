@@ -1,8 +1,9 @@
 'use strict';
 
 const cluster = require('cluster');
+const logger = require('../logger');
 const JitHelper = require('../jit-helper');
-const { promiseSeries} = require('../util');
+const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
 
@@ -23,7 +24,11 @@ function getTasks(config) {
   const terrahub = new Terrahub(config, process.env.THUB_RUN_ID);
 
   return getActions().map(action =>
-    options => (action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
+    options => {
+      logger.updateContext({ action: action });
+
+      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
+    }
   );
 }
 
@@ -32,8 +37,15 @@ function getTasks(config) {
  * @param {Object} config
  */
 function run(config) {
+
+  logger.updateContext({
+    runId: process.env.THUB_RUN_ID,
+    componentName: config.name,
+  });
+
   JitHelper.jitMiddleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
+    .then(lastResult => Promise.all(logger.promises).then(() => lastResult))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
         delete lastResult.buffer;

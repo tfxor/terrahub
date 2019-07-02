@@ -2,6 +2,7 @@
 
 const glob = require('glob');
 const path = require('path');
+const logger = require('./logger');
 const fs = require('fs-extra');
 const { commandsPath, templates, packageJson } = require('../parameters');
 
@@ -23,7 +24,7 @@ class HelpParser {
   static getCommandsInstances(list = this.getCommandsNameList()) {
     return list.map(commandName => {
       const Command = require(path.join(commandsPath, commandName));
-      return new Command(0);
+      return new Command(0, logger);
     });
   }
 

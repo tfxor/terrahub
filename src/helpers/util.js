@@ -6,8 +6,6 @@ const Twig = require('twig');
 const glob = require('glob');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
-const logger = require('./logger');
-const treeify = require('treeify');
 const ReadLine = require('readline');
 const { createHash } = require('crypto');
 const mergeWith = require('lodash.mergewith');
@@ -236,9 +234,11 @@ class Util {
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
 
-      return Promise.reject('Error occurred. Please try again. If this problem persists, ' +
-        'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-        'https://github.com/TerraHubCorp/terrahub/issues');
+      if (err) {
+        return Promise.reject('Error occurred. Please try again. If this problem persists, ' +
+          'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
+          'https://github.com/TerraHubCorp/terrahub/issues');
+      }
     });
   }
 
@@ -284,45 +284,6 @@ class Util {
    */
   static setTimeoutPromise(timeout) {
     return new Promise(resolve => setTimeout(resolve, timeout));
-  }
-
-  /**
-   * @param {Object|Array} config
-   * @param {String} projectName
-   */
-  static printListCommaSeparated(config, projectName) {
-    const components = Object.keys(config).map(key => config[key].name).join(', ');
-
-    logger.log(`Project: ${projectName} | Component${components.length > 1 ? 's' : ''}: ${components}`);
-  }
-
-  /**
-   * @param {Object|Array} config
-   * @param {Object} projectName
-   */
-  static printListAsTree(config, projectName) {
-    const componentList = Util.arrayToObject(Object.keys(config).map(key => config[key].name));
-
-    logger.log(`Project: ${projectName}`);
-
-    treeify.asLines(componentList, false, line => {
-      logger.log(` ${line}`);
-    });
-  }
-
-  /**
-   * @param {Object|Array} config
-   * @param {String} projectName
-   * @param {Number} listLimit
-   */
-  static printListAuto(config, projectName, listLimit = 5) {
-    const { length } = Object.keys(config);
-
-    if (listLimit < 0 || length < listLimit) {
-      Util.printListAsTree(config, projectName);
-    } else {
-      Util.printListCommaSeparated(config, projectName);
-    }
   }
 
   /**
