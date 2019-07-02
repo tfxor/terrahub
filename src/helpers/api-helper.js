@@ -205,16 +205,6 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {{ url: String, body: Object }}
-   * @return {*}
-   */
-  fetchAsync({ url, body }) {
-    return this.pushToPromises(fetch.post(url, {
-      body: JSON.stringify(body)
-    }).catch(err => console.log(err)));
-  }
-
-  /**
    * @param {{ status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}}
    * @param {Number} [runStatus]
    */
@@ -282,8 +272,6 @@ class ApiHelper extends events.EventEmitter {
     const body = this.getBody(source, status, hash, name, runStatus);
 
     this.pushToPromises({ url, body });
-
-    // return this.fetchAsync({ url, body });
   }
 
   /**
