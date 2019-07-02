@@ -1,18 +1,14 @@
 'use strict';
 
 const cluster = require('cluster');
-const { fetch } = require('../../parameters');
+const ApiHelper = require('../api-helper');
 
 
 function run(promises) {
 
-  const _promises =  promises.map(({ url, body }) => {
-    return fetch.post(url, {
-      body: JSON.stringify(body)
-    }).catch(err => console.log(err));
-  });
+  const _promises =  promises.map(ApiHelper.asyncFetch);
 
-  return Promise.all(_promises).then(res => {
+  return Promise.all(_promises).then(() => {
     process.send({
       isLogger: true,
       isError: false,

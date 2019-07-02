@@ -139,13 +139,10 @@ class ThreadDistributor extends AbstractDistributor {
           this._loggerLastLog[data.workerId] = data.messages;
 
           ApiHelper.sendLogsToApi(data);
-          return;
         }
 
         if (data.type === 'workflow') {
           ApiHelper.sendComponentFlow({ ...data.options, actions });
-
-          return;
         }
 
         if (data.data) {

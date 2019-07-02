@@ -61,22 +61,23 @@ class ApiHelper extends events.EventEmitter {
 
     const _promises = [...this.retrievePromises(), this.retrieveLogs(true)]
       .filter(Boolean)
-      .map(({ url, body }) => {
-        return fetch.post(url, {
-          body: JSON.stringify(body)
-        }).catch(err => console.log(err));
-      });
+      .map(this.asyncFetch);
 
     return Promise.all(_promises).then(() => {
-      const _promises = this.retrievePromises().map(({ url, body }) => {
-
-        return fetch.post(url, {
-          body: JSON.stringify(body)
-        }).catch(err => console.log(err));
-      });
+      const _promises = this.retrievePromises().map(this.asyncFetch);
 
       return Promise.all(_promises);
     });
+  }
+
+  /**
+   * @param {{ url: {String}, body: {Object} }}
+   * @return {Promise}
+   */
+  asyncFetch({ url, body }) {
+    return fetch.post(url, {
+      body: JSON.stringify(body)
+    }).catch(err => console.log(err));
   }
 
   /**
@@ -87,7 +88,6 @@ class ApiHelper extends events.EventEmitter {
     const _promises = this.retrievePromises().concat(_logs);
 
     this._promises = [];
-
 
     return _promises;
   }
