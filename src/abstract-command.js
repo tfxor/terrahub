@@ -24,6 +24,7 @@ class AbstractCommand {
     this._options = {};
     this._description = null;
     this._configLoader = new ConfigLoader();
+    this._tokenIsValid = false;
 
     this.configure();
     this.initialize();
@@ -277,8 +278,11 @@ class AbstractCommand {
 
     return fetch.get('thub/account/retrieve')
       .then((res) => {
-        process.env.THUB_TOKEN_IS_VALID = true;
-        return Promise.resolve(res);
+        if (res) {
+          this._tokenIsValid = true;
+        }
+
+        return Promise.resolve();
       })
       .catch(err => {
         if (err instanceof AuthenticationException) {
