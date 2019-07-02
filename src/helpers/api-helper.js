@@ -399,8 +399,6 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   sendLogToS3() {
-    console.log({ 'dump': 'apihelper Sending To S3' });
-
     if (this.canApiLogsBeSent()) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
