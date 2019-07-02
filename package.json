@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.2.78",
+  "version": "0.2.86",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
   "main": "index.js",
   "preferGlobal": true,
@@ -19,11 +19,11 @@
     "url": "https://github.com/TerraHubCorp/terrahub/issues"
   },
   "engines": {
-    "node": ">=6.0",
-    "npm": ">=3.0"
+    "node": ">=8.0",
+    "npm": ">=5.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.370.0",
+    "aws-sdk": "^2.478.0",
     "@google-cloud/storage": "^2.5.0",
     "child-process-promise": "^2.2.1",
     "download": "^7.1.0",

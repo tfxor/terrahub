@@ -3,7 +3,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('./../src/helpers/logger');
+const logger = require('../src/helpers/logger');
 const { exec } = require('child-process-promise');
 const HelpParser = require('../src/helpers/help-parser');
 
@@ -86,6 +86,7 @@ function npmVersion() {
 function updateJsonFiles() {
   logger.info('Updating json files');
   HelpParser.updateMetadata();
+  // @TODO: add updateRegions();
 
   return Promise.resolve('Done');
 }
