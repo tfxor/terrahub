@@ -128,11 +128,7 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.type === 'logs') {
-          if (!ApiHelper.canApiLogsBeSent()) {
-            return;
-          }
-
-          if (this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages) {
+          if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data.messages)) {
             return;
           }
 
@@ -188,6 +184,15 @@ class ThreadDistributor extends AbstractDistributor {
     this._dependencyTable = {};
 
     return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+  }
+
+  /**
+   * @param {String} messages
+   * @return {Boolean}
+   * @private
+   */
+  _isDuplicate(messages) {
+    return this._loggerLastLog && this._loggerLastLog[data.workerId] === messages;
   }
 }
 
