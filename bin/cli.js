@@ -61,13 +61,18 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => ApiHelper.sendMainWorkflow({
-      status: 'create',
-      runId: command.runId,
-      commandName: command._name,
-      project: projectConfig,
-      environment: environment,
-    })
+  .then(() => {
+
+    ApiHelper.setToken(command._tokenIsValid);
+
+    return ApiHelper.sendMainWorkflow({
+        status: 'create',
+        runId: command.runId,
+        commandName: command._name,
+        project: projectConfig,
+        environment: environment,
+      })
+    }
   )
   .then(() => command.run())
   .then(message => {

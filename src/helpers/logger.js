@@ -1,13 +1,13 @@
 'use strict';
 
-const { EOL } = require('os');
-const fs = require('fs-extra');
-const { join } = require('path');
-const logger = require('js-logger');
-// const fetch = require('node-fetch').default;
-const { fetch, config: { api, logs } } = require('../parameters');
-const ApiHelper = require('./api-helper');
+// const { EOL } = require('os');
+// const { join } = require('path');
+// const fs = require('fs-extra');
+
 const cluster = require('cluster');
+const logger = require('js-logger');
+const ApiHelper = require('./api-helper');
+const { config: { logs } } = require('../parameters');
 
 class Logger {
   /**
@@ -34,7 +34,7 @@ class Logger {
 
     this._promises = [];
     this._context = {
-      canLogBeSentToApi: process.env.THUB_TOKEN_IS_VALID || false,
+      canLogBeSentToApi: ApiHelper.canApiLogsBeSent(),
       runId: null,
       componentName: null,
       action: null

@@ -13,6 +13,7 @@ class ApiHelper extends events.EventEmitter {
     this._logs = [];
     this._workerIsFree = true;
     this.apiLogginStart = false;
+    this._tokenIsValid = false;
   }
 
   /**
@@ -182,7 +183,7 @@ class ApiHelper extends events.EventEmitter {
       this.environment = environment;
     }
 
-    if (ApiHelper.canApiLogsBeSent && this._isWorkflowUseCase()) {
+    if (this.canApiLogsBeSent && this._isWorkflowUseCase()) {
       if (status === 'create') {
         this.apiLogginStart = true;
       }
@@ -203,7 +204,7 @@ class ApiHelper extends events.EventEmitter {
       this.actions = actions;
     }
 
-    if (ApiHelper.canApiLogsBeSent && this._isComponentUseCase(status, action, actions)) {
+    if (this.canApiLogsBeSent && this._isComponentUseCase(status, action, actions)) {
       this.sendDataToApi({ source: 'component', status, hash, name });
     }
   }
@@ -327,15 +328,23 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @return {Boolean}
    */
-  static canApiLogsBeSent() {
-    return process.env.THUB_TOKEN_IS_VALID;
+  canApiLogsBeSent() {
+    return this._tokenIsValid;
+  }
+
+  /**
+   * @param {String} token
+   * @return {void}
+   */
+  setToken(token) {
+    this._tokenIsValid = !!token;
   }
 
   /**
    * @return {Promise}
    */
   sendLogToS3() {
-    if (ApiHelper.canApiLogsBeSent && this.apiLogginStart) {
+    if (this.canApiLogsBeSent && this.apiLogginStart) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
@@ -345,7 +354,7 @@ class ApiHelper extends events.EventEmitter {
    * On error sends finish status for all logging executions
    */
   sendErrorToApi() {
-    if (ApiHelper.canApiLogsBeSent && this.apiLogginStart) {
+    if (this.canApiLogsBeSent && this.apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
       this.endComponentsLogging();
       this.sendMainWorkflow({ status: 'update' }, runStatus);
