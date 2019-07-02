@@ -187,7 +187,7 @@ class ThreadDistributor extends AbstractDistributor {
   }
 
   /**
-   * @param {String} messages
+   * @param {Object} data
    * @return {Boolean}
    * @private
    */
