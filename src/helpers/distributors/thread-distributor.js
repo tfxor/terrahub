@@ -128,7 +128,7 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.type === 'logs') {
-          if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data.messages)) {
+          if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data)) {
             return;
           }
 
@@ -191,8 +191,8 @@ class ThreadDistributor extends AbstractDistributor {
    * @return {Boolean}
    * @private
    */
-  _isDuplicate(messages) {
-    return this._loggerLastLog && this._loggerLastLog[data.workerId] === messages;
+  _isDuplicate(data) {
+    return this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages;
   }
 }
 
