@@ -57,7 +57,7 @@ class ThreadDistributor extends AbstractDistributor {
 
     this._loggerWorkerCount++;
 
-    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrievePromises() });
+    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend() });
   }
 
   /**
@@ -128,6 +128,10 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.type === 'logs') {
+          if (!ApiHelper.canApiLogsBeSent()) {
+            return;
+          }
+
           if (this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages) {
             return;
           }

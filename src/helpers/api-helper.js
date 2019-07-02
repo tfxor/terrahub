@@ -2,7 +2,7 @@
 
 const events = require('events');
 const Dictionary = require('./dictionary');
-const { fetch, config: { api } } = require('../parameters');
+const { fetch, config: { api, logs } } = require('../parameters');
 
 class ApiHelper extends events.EventEmitter {
 
@@ -10,16 +10,21 @@ class ApiHelper extends events.EventEmitter {
     super();
     this._promises = [];
     this._logs = [];
-    this._logs = [];
     this._workerIsFree = true;
     this.apiLogginStart = false;
     this._tokenIsValid = false;
+    this._componentsExecutionList = {};
+    this._errors = null;
   }
 
   /**
    * Sends event to ThreadDistributor to execute logging
    */
   sendToWorker() {
+    if (this._errors) {
+      return;
+    }
+
     if (this.isWorkForLogger() && this.loggerIsFree) {
       const counter = this.listenerCount('loggerWork', this);
 
@@ -44,38 +49,77 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @return {Array}
+   * Returns promises to terminate execution:
+   *  1. `create` & `logs` promises
+   *  2. `update` promises
+   * @return {Promise}
    */
-  get promises() {
+  promisesForSyncExit() {
     if (!this.apiLogginStart) {
-      return [];
+      return Promise.resolve();
     }
 
-    return [...this._promises, this.retrieveLogs(true)].map(({ url, body }) => {
-      return fetch.post(url, {
-        body: JSON.stringify(body)
-      }).catch(err => console.log(err));
-    });
+    const _promises = [...this.retrievePromises(), this.retrieveLogs(true)]
+      .filter(Boolean)
+      .map(({ url, body }) => {
+        return fetch.post(url, {
+          body: JSON.stringify(body)
+        }).catch(err => console.log(err));
+      });
 
+    return Promise.all(_promises).then(() => {
+      const _promises = this.retrievePromises().map(({ url, body }) => {
+
+        return fetch.post(url, {
+          body: JSON.stringify(body)
+        }).catch(err => console.log(err));
+      });
+
+      return Promise.all(_promises);
+    });
   }
 
   /**
    * @return {Promise[]}
    */
-  retrievePromises() {
+  retrieveDataToSend() {
     const _logs = this._logs.length ? this.retrieveLogs() : [];
-    const _promises = this._promises.concat(_logs);
+    const _promises = this.retrievePromises().concat(_logs);
 
     this._promises = [];
+
 
     return _promises;
   }
 
   /**
+   * From the begging returns `create` data then `update`
+   * @return {Array}
+   */
+  retrievePromises() {
+    const _promises = this._promises;
+    const onCreate = _promises.filter(({ url }) => url.split('/')[2] === 'create');
+
+    if (onCreate.length) {
+      this._promises = _promises.filter(({ url }) => url.split('/')[2] !== 'create');
+
+      return onCreate;
+    } else {
+      this._promises = [];
+
+      return _promises;
+    }
+  }
+
+  /**
    * @param {Boolean} all
-   * @return {{ body: {bulk: Object[]}, url: String }}
+   * @return {Boolean | { body: { bulk: Object[]}, url: String }}
    */
   retrieveLogs(all = false) {
+    if (!this._logs.length) {
+      return false;
+    }
+
     const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
     let _logs = [];
 
@@ -183,7 +227,7 @@ class ApiHelper extends events.EventEmitter {
       this.environment = environment;
     }
 
-    if (this.canApiLogsBeSent && this._isWorkflowUseCase()) {
+    if (this.canWorklfowBeSent() && this._isWorkflowUseCase()) {
       if (status === 'create') {
         this.apiLogginStart = true;
       }
@@ -204,7 +248,7 @@ class ApiHelper extends events.EventEmitter {
       this.actions = actions;
     }
 
-    if (this.canApiLogsBeSent && this._isComponentUseCase(status, action, actions)) {
+    if (this.canWorklfowBeSent() && this._isComponentUseCase(status, action, actions)) {
       this.sendDataToApi({ source: 'component', status, hash, name });
     }
   }
@@ -285,6 +329,10 @@ class ApiHelper extends events.EventEmitter {
   _composeComponentBody(status, hash, name) {
     const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
 
+    if (status === 'create') {
+      this._componentsExecutionList[hash] = name;
+    }
+
     return {
       'terraformHash': hash,
       'terraformName': name,
@@ -329,6 +377,13 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   canApiLogsBeSent() {
+    return this._tokenIsValid && logs;
+  }
+
+  /**
+   * @return {Boolean}
+   */
+  canWorklfowBeSent() {
     return this._tokenIsValid;
   }
 
@@ -344,7 +399,9 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   sendLogToS3() {
-    if (this.canApiLogsBeSent && this.apiLogginStart) {
+    console.log({ 'dump': 'apihelper Sending To S3' });
+
+    if (this.canApiLogsBeSent()) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
@@ -354,8 +411,10 @@ class ApiHelper extends events.EventEmitter {
    * On error sends finish status for all logging executions
    */
   sendErrorToApi() {
-    if (this.canApiLogsBeSent && this.apiLogginStart) {
+    if (this.canWorklfowBeSent() && this.apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
+      this._errors = true;
+
       this.endComponentsLogging();
       this.sendMainWorkflow({ status: 'update' }, runStatus);
     }
@@ -365,13 +424,10 @@ class ApiHelper extends events.EventEmitter {
    * Finish components logging
    */
   endComponentsLogging() {
-    const terrahubComponents = process.env.THUB_EXECUTION_LIST ? process.env.THUB_EXECUTION_LIST.split(',') : [];
-
-    terrahubComponents.map(it => {
+    Object.keys(this._componentsExecutionList).map(hash => {
       const status = 'update',
         source = 'component',
-        name = it.split(':')[0],
-        hash = it.split(':')[1];
+        name = this._componentsExecutionList[hash];
 
       this.sendDataToApi({ source, status, name, hash });
     });

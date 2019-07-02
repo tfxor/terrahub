@@ -1,9 +1,5 @@
 'use strict';
 
-// const { EOL } = require('os');
-// const { join } = require('path');
-// const fs = require('fs-extra');
-
 const cluster = require('cluster');
 const logger = require('js-logger');
 const ApiHelper = require('./api-helper');
@@ -25,16 +21,14 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._canLogBeSentToApi && logs) {
+      if (logs) {
         this._sendLogToApi(messages);
       }
     });
 
     this._logger = logger;
 
-    this._promises = [];
     this._context = {
-      canLogBeSentToApi: ApiHelper.canApiLogsBeSent(),
       runId: null,
       componentName: null,
       action: null
@@ -48,7 +42,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._canLogBeSentToApi && logs) {
+    if (logs) {
       this._sendLogToApi([message]);
     }
   }
@@ -97,35 +91,29 @@ class Logger {
   }
 
   /**
-   * @return {Promise[]}
-   */
-  get promises() {
-    return this._promises;
-  }
-
-  /**
    * @param {String[]} messages
    * @private
    */
   _sendLogToApi(messages) {
     if (cluster.isWorker) {
-      process.send({
-        workerId: cluster.worker.id,
-        type: 'logs',
-        messages,
-        context: this._context,
-      });
+      this._sendMessageToMaster(messages);
     } else {
       ApiHelper.sendLogsToApi({ messages, context: this._context });
     }
   }
 
   /**
-   * @return {Boolean}
+   * Send messages to ThreadDistributor to execute logging
+   * @param messages
    * @private
    */
-  get _canLogBeSentToApi() {
-    return this._context.canLogBeSentToApi;
+  _sendMessageToMaster(messages) {
+    process.send({
+      workerId: cluster.worker.id,
+      type: 'logs',
+      messages,
+      context: this._context,
+    });
   }
 
   /**

@@ -43,7 +43,7 @@ function commandCreate(logger = console) {
  * @return {Promise}
  */
 function syncExitProcess(code) {
-  return Promise.all(ApiHelper.promises)
+  return ApiHelper.promisesForSyncExit()
     .then(() => ApiHelper.sendLogToS3())
     .then(() => process.exit(code));
 }
@@ -62,7 +62,6 @@ const projectConfig = command.getProjectConfig();
 command
   .validate()
   .then(() => {
-
     ApiHelper.setToken(command._tokenIsValid);
 
     return ApiHelper.sendMainWorkflow({
@@ -91,5 +90,6 @@ command
   .catch(err => {
     ApiHelper.sendErrorToApi();
     logger.error(err || 'Error occurred');
+
     return syncExitProcess(1);
   });
