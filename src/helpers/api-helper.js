@@ -26,7 +26,7 @@ class ApiHelper extends events.EventEmitter {
     }
 
     if (this.isWorkForLogger() && this.loggerIsFree) {
-      const counter = this.listenerCount('loggerWork', this);
+      const counter = this.listenerCount('loggerWork');
 
       if (counter < 2) {
         this.emit('loggerWork');
@@ -376,18 +376,18 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {String} token
+   * @param {Boolean} token
    * @return {void}
    */
   setToken(token) {
-    this._tokenIsValid = !!token;
+    this._tokenIsValid = token;
   }
 
   /**
    * @return {Promise}
    */
   sendLogToS3() {
-    if (this.canApiLogsBeSent()) {
+    if (this.canApiLogsBeSent() && this.apiLogginStart) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
