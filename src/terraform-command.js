@@ -4,19 +4,36 @@ const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
 const GitHelper = require('./helpers/git-helper');
+const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
-const { config: { listLimit } } = require('./parameters');
 const ListException = require('./exceptions/list-exception');
+const { config: { listLimit, logs } } = require('./parameters');
 
-const DependeciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
-const DependeciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
-const DependeciesInclude = require('./helpers/dependency-strategy/dependencies-include');
+const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
+const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
+const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-include');
 
 /**
  * @abstract
  */
 class TerraformCommand extends AbstractCommand {
+  /**
+   * @param {Object} input
+   * @param {Logger} logger
+   */
+  constructor(input, logger) {
+    super(input, logger);
+
+    this._runId = Util.uuid();
+
+    this.logger.updateContext({
+      runId: this._runId,
+      componentName: 'main',
+      action: 'main'
+    });
+  }
+
   /**
    * Command initialization
    * (post configure action)
@@ -38,7 +55,13 @@ class TerraformCommand extends AbstractCommand {
    * @returns {Promise}
    */
   validate() {
-    return super.validate().then(() => this._checkProjectDataMissing()).then(() => {
+    return super.validate().then(token => {
+      if (token && logs) {
+        this.logger.updateContext({ canLogBeSentToApi: true });
+      }
+
+      return Promise.resolve();
+    }).then(() => this._checkProjectDataMissing()).then(() => {
       if (this._isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
@@ -59,6 +82,13 @@ class TerraformCommand extends AbstractCommand {
 
         return Promise.reject(error);
       });
+  }
+
+  /**
+   * @return {String}
+   */
+  get runId() {
+    return this._runId;
   }
 
   /**
@@ -190,6 +220,7 @@ class TerraformCommand extends AbstractCommand {
     ].filter(Boolean);
 
     const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
+    process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
 
     if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
@@ -261,12 +292,12 @@ class TerraformCommand extends AbstractCommand {
 
       if (dependsOn) {
         Object.keys(dependsOn)
-        .filter(path => ConfigLoader.buildComponentHash(path))
-        .filter(hash => !result.hasOwnProperty(hash))
-        .forEach(hash => {
-          newHashes.push(hash);
-          result[hash] = null;
-        });
+          .filter(path => ConfigLoader.buildComponentHash(path))
+          .filter(hash => !result.hasOwnProperty(hash))
+          .forEach(hash => {
+            newHashes.push(hash);
+            result[hash] = null;
+          });
       }
     }
 
@@ -284,25 +315,25 @@ class TerraformCommand extends AbstractCommand {
    * @returns {AbstractDependencyStrategy}
    */
   getDependencyStrategy() {
-    if (!this._dependecyStrategy) {
+    if (!this._dependencyStrategy) {
       const option = this.getDependencyOption();
 
       switch (option) {
         case 'auto':
-          this._dependecyStrategy = new DependeciesAuto();
+          this._dependencyStrategy = new DependenciesAuto();
           break;
         case 'ignore':
-          this._dependecyStrategy = new DependeciesIgnore();
+          this._dependencyStrategy = new DependenciesIgnore();
           break;
         case 'include':
-          this._dependecyStrategy = new DependeciesInclude();
+          this._dependencyStrategy = new DependenciesInclude();
           break;
         default:
           throw new Error('Unknown Error!');
       }
     }
 
-    return this._dependecyStrategy;
+    return this._dependencyStrategy;
   }
 
   /**
@@ -312,7 +343,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    Util.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
 
     const action = this.getName();
 
@@ -332,7 +363,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object|Array} config
    */
   warnExecutionStarted(config) {
-    Util.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
 
     const action = this.getName();
 
