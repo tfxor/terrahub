@@ -269,7 +269,6 @@ class AbstractCommand {
 
   /**
    * @return {Promise}
-   * @protected
    */
   validateToken() {
     if (!config.token) {
@@ -277,13 +276,7 @@ class AbstractCommand {
     }
 
     return fetch.get('thub/account/retrieve')
-      .then((res) => {
-        if (res) {
-          this._tokenIsValid = true;
-        }
-
-        return Promise.resolve();
-      })
+      .then(res => Promise.resolve(!!res))
       .catch(err => {
         if (err instanceof AuthenticationException) {
           return this.onTokenMissingOrInvalid(config.token);

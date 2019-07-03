@@ -26,7 +26,7 @@ class ApiHelper extends events.EventEmitter {
     }
 
     if (this.isWorkForLogger() && this.loggerIsFree) {
-      const counter = this.listenerCount('loggerWork', this);
+      const counter = this.listenerCount('loggerWork');
 
       if (counter < 2) {
         this.emit('loggerWork');
@@ -376,11 +376,11 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {String} token
+   * @param {Boolean} token
    * @return {void}
    */
   setToken(token) {
-    this._tokenIsValid = !!token;
+    this._tokenIsValid = token;
   }
 
   /**
