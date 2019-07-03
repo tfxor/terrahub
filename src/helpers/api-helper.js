@@ -387,7 +387,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   sendLogToS3() {
-    if (this.canApiLogsBeSent()) {
+    if (this.canApiLogsBeSent() && this.apiLogginStart) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
