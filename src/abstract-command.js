@@ -24,7 +24,6 @@ class AbstractCommand {
     this._options = {};
     this._description = null;
     this._configLoader = new ConfigLoader();
-    this._tokenIsValid = false;
 
     this.configure();
     this.initialize();
