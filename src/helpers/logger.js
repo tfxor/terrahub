@@ -21,7 +21,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (logs) {
+      if (this._isTokenValid() && logs) {
         this._sendLogToApi(messages);
       }
     });
@@ -42,7 +42,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (logs) {
+    if (this._isTokenValid()) {
       this._sendLogToApi([message]);
     }
   }
@@ -91,6 +91,18 @@ class Logger {
   }
 
   /**
+   * @return {Boolean}
+   * @private
+   */
+  _isTokenValid() {
+    if (cluster.isWorker) {
+      return process.env.THUB_TOKEN_IS_VALID;
+    }
+
+    return ApiHelper.tokenIsValid;
+  }
+
+  /**
    * @param {String[]} messages
    * @private
    */
@@ -111,6 +123,7 @@ class Logger {
     process.send({
       workerId: cluster.worker.id,
       type: 'logs',
+      workerLogger: true,
       messages,
       context: this._context,
     });

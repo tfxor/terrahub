@@ -23,7 +23,10 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerLastLog = {};
     this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
 
-    this._createLoggerWorker();
+    if (ApiHelper.tokenIsValid) {
+      this._createLoggerWorker();
+      this._threadsCount--;
+    }
 
     cluster.setupMaster({ exec: this._worker });
   }
@@ -39,7 +42,8 @@ class ThreadDistributor extends AbstractDistributor {
 
     const worker = cluster.fork(Object.assign({
       THUB_RUN_ID: this.THUB_RUN_ID,
-      TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS
+      TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
+      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid
     }, this._env));
 
     delete this._dependencyTable[hash];
@@ -116,29 +120,8 @@ class ThreadDistributor extends AbstractDistributor {
           return;
         }
 
-        if (data.isLogger) {
-          if (this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId) {
-            return;
-          }
-          this._loggerWorkerLastId = data.workerId;
-          this._loggerWorkerCount--;
-
-          ApiHelper.setIsFree();
-          return;
-        }
-
-        if (data.type === 'logs') {
-          if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data)) {
-            return;
-          }
-
-          this._loggerLastLog[data.workerId] = data.messages;
-
-          ApiHelper.sendLogsToApi(data);
-        }
-
-        if (data.type === 'workflow') {
-          ApiHelper.sendComponentFlow({ ...data.options, actions });
+        if (data.isLogger || data.workerLogger) {
+          this._loggerMessageHandler(data);
         }
 
         if (data.data) {
@@ -169,6 +152,37 @@ class ThreadDistributor extends AbstractDistributor {
     });
   }
 
+
+  /**
+   * @param {Object} data
+   * @private
+   */
+  _loggerMessageHandler(data) {
+    if (data.isLogger && !this._isPreviousWorker(data)) {
+      this._loggerWorkerLastId = data.workerId;
+      this._loggerWorkerCount--;
+
+      ApiHelper.setIsFree();
+    }
+
+    if (data.workerLogger) {
+      switch (data.type) {
+        case 'logs':
+          if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data)) {
+            return;
+          }
+
+          this._loggerLastLog[data.workerId] = data.messages;
+
+          ApiHelper.sendLogsToApi(data);
+          break;
+        case 'workflow':
+          ApiHelper.sendComponentFlow({ ...data.options, actions: this.TERRAFORM_ACTIONS });
+          break;
+      }
+    }
+  }
+
   /**
    * Kill parallel workers and build an error
    * @param {Error|Object} err
@@ -193,6 +207,15 @@ class ThreadDistributor extends AbstractDistributor {
    */
   _isDuplicate(data) {
     return this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages;
+  }
+
+  /**
+   * @param {Object} data
+   * @return {Boolean}
+   * @private
+   */
+  _isPreviousWorker(data) {
+    return this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId;
   }
 }
 
