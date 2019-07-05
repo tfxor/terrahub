@@ -120,7 +120,7 @@ class ThreadDistributor extends AbstractDistributor {
           return;
         }
 
-        if (data.isLogger || data.forLoggerWorker) {
+        if (data.isLogger || data.workerLogger) {
           this._loggerMessageHandler(data);
         }
 
@@ -165,7 +165,7 @@ class ThreadDistributor extends AbstractDistributor {
       ApiHelper.setIsFree();
     }
 
-    if (data.forLoggerWorker) {
+    if (data.workerLogger) {
       switch (data.type) {
         case 'logs':
           if (!ApiHelper.canApiLogsBeSent() || this._isDuplicate(data)) {

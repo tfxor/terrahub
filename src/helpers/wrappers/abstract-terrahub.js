@@ -252,7 +252,7 @@ class AbstractTerrahub {
    * @private
    */
   _sendLogsToApi(status, ...args) {
-    process.send({ type: 'workflow', forLoggerWorker: true, options: {...this._workflowOptions, status }});
+    process.send({ type: 'workflow', workerLogger: true, options: {...this._workflowOptions, status }});
 
     return Promise.resolve(...args);
   }

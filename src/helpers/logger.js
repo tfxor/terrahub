@@ -123,7 +123,7 @@ class Logger {
     process.send({
       workerId: cluster.worker.id,
       type: 'logs',
-      forLoggerWorker: true,
+      workerLogger: true,
       messages,
       context: this._context,
     });
