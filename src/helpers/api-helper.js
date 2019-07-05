@@ -15,6 +15,7 @@ class ApiHelper extends events.EventEmitter {
     this._tokenIsValid = false;
     this._componentsExecutionList = {};
     this._errors = null;
+    this._logsRetrieveCount = 8;
   }
 
   /**
@@ -45,7 +46,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   isWorkForLogger() {
-    return this.isFinalRequest || this._promises.length || this._logs.length > 15;
+    return this.isFinalRequest || this._promises.length || this._logs.length > this._logsRetrieveCount;
   }
 
   /**
@@ -124,7 +125,7 @@ class ApiHelper extends events.EventEmitter {
     let _logs = [];
 
     if (!all) {
-      _logs = this._logs.splice(0, 10);
+      _logs = this._logs.splice(0, this._logsRetrieveCount);
     } else {
       _logs = this._logs;
       this._logs = [];
@@ -217,12 +218,12 @@ class ApiHelper extends events.EventEmitter {
       this.environment = environment;
     }
 
-    if (this.canWorklfowBeSent() && this._isWorkflowUseCase()) {
+    if (this.tokenIsValid && this._isWorkflowUseCase()) {
       if (status === 'create') {
         this.apiLogginStart = true;
       }
 
-      this.sendDataToApi({ source: 'workflow', status });
+      this.sendDataToApi({ source: 'workflow', status }, runStatus);
     }
   }
 
@@ -238,7 +239,7 @@ class ApiHelper extends events.EventEmitter {
       this.actions = actions;
     }
 
-    if (this.canWorklfowBeSent() && this._isComponentUseCase(status, action, actions)) {
+    if (this.tokenIsValid && this._isComponentUseCase(status, action, actions)) {
       this.sendDataToApi({ source: 'component', status, hash, name });
     }
   }
@@ -246,7 +247,7 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @param {String} status
    * @param {String} action
-   * @param {Array} actions
+   * @param {String[]} actions
    * @return {Boolean}
    */
   _isComponentUseCase(status, action, actions) {
@@ -365,13 +366,13 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   canApiLogsBeSent() {
-    return this._tokenIsValid && logs;
+    return this.tokenIsValid && logs;
   }
 
   /**
    * @return {Boolean}
    */
-  canWorklfowBeSent() {
+  get tokenIsValid() {
     return this._tokenIsValid;
   }
 
@@ -397,7 +398,7 @@ class ApiHelper extends events.EventEmitter {
    * On error sends finish status for all logging executions
    */
   sendErrorToApi() {
-    if (this.canWorklfowBeSent() && this.apiLogginStart) {
+    if (this.tokenIsValid && this.apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
       this._errors = true;
 
