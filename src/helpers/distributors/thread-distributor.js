@@ -158,10 +158,7 @@ class ThreadDistributor extends AbstractDistributor {
    * @private
    */
   _loggerMessageHandler(data) {
-    if (data.isLogger) {
-      if (this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId) {
-        return;
-      }
+    if (data.isLogger && !this._isPreviousWorker(data)) {
       this._loggerWorkerLastId = data.workerId;
       this._loggerWorkerCount--;
 
@@ -210,6 +207,15 @@ class ThreadDistributor extends AbstractDistributor {
    */
   _isDuplicate(data) {
     return this._loggerLastLog && this._loggerLastLog[data.workerId] === data.messages;
+  }
+
+  /**
+   * @param {Object} data
+   * @return {Boolean}
+   * @private
+   */
+  _isPreviousWorker(data) {
+    return this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId;
   }
 }
 
