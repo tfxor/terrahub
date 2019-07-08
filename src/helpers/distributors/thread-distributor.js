@@ -132,6 +132,13 @@ class ThreadDistributor extends AbstractDistributor {
       });
 
       cluster.on('exit', (worker, code) => {
+
+        console.log({ default: this._workersCount, logger: this._loggerWorkerCount });
+
+        if (this._getWorkerName(worker) === 'logger-worker') {
+          return;
+        }
+
         this._workersCount--;
 
         if (code === 0) {
@@ -216,6 +223,13 @@ class ThreadDistributor extends AbstractDistributor {
    */
   _isPreviousWorker(data) {
     return this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId;
+  }
+
+  _getWorkerName(worker) {
+    const fileName = worker.spawnargs[2];
+    const extension = path.extname(fileName);
+
+    return  path.basename(fileName,extension);
   }
 }
 
