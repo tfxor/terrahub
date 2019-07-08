@@ -234,7 +234,7 @@ class ThreadDistributor extends AbstractDistributor {
     const fileName = worker.process.spawnargs[1];
     const extension = path.extname(fileName);
 
-    return  path.basename(fileName,extension);
+    return  path.basename(fileName, extension);
   }
 }
 
