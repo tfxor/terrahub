@@ -79,6 +79,12 @@ class Fetch {
       //   body: json
       // }, null, 2));
 
+      console.log({
+          url: result.url,
+          status: result.status,
+          body: json
+      });
+
       let error;
       switch (result.status) {
         case 403:
