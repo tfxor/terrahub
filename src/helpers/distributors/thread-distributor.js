@@ -70,8 +70,6 @@ class ThreadDistributor extends AbstractDistributor {
   _distributeConfigs() {
     const hashes = Object.keys(this._dependencyTable);
 
-    console.log({ workersCount: this._workersCount, threads: this._threadsCount });
-
     for (let index = 0; this._workersCount < this._threadsCount && index < hashes.length; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
@@ -136,14 +134,9 @@ class ThreadDistributor extends AbstractDistributor {
       });
 
       cluster.on('exit', (worker, code) => {
-
-        console.log({ default: this._workersCount, logger: this._loggerWorkerCount });
-
         if (this._getWorkerName(worker) === 'logger-worker') {
           return;
         }
-
-        console.log({ onlyWokrker : this._getWorkerName(worker)});
 
         this._workersCount--;
 
@@ -231,6 +224,12 @@ class ThreadDistributor extends AbstractDistributor {
     return this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId;
   }
 
+  /**
+   * Returns worker spawn file name
+   * @param {Object} worker
+   * @return {String}
+   * @private
+   */
   _getWorkerName(worker) {
     const fileName = worker.process.spawnargs[1];
     const extension = path.extname(fileName);

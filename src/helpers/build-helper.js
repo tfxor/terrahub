@@ -15,12 +15,9 @@ class BuildHelper {
     const env = Object.assign({}, process.env, BuildHelper._extractEnvVars(buildConfig));
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
 
-    console.log({ commandsList });
-
     return promiseSeries(commandsList.map(it =>
       () => {
         let fullCommand = it;
-
 
         if (it.constructor === Object) {
           const key = Object.keys(it)[0];
@@ -35,16 +32,6 @@ class BuildHelper {
           env: env,
           shell: true
         };
-
-        console.log({
-          fullCommand: fullCommand,
-          constructor: it.constructor,
-          verbose: process.env.format,
-          command: command,
-          arguments: args,
-          // options: options
-        });
-
 
         return spawner(command, args, options,
           err => {
@@ -92,8 +79,6 @@ class BuildHelper {
    */
   static _extractCommandsList(buildConfig) {
     const { phases } = buildConfig;
-
-    console.log({ phases: phases });
 
     if (!phases) {
       return [];

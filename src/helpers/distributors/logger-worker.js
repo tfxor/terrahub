@@ -6,8 +6,6 @@ const ApiHelper = require('../api-helper');
 
 function run(promises) {
 
-  console.log(promises);
-
   const _promises =  promises.map(ApiHelper.asyncFetch);
 
   return Promise.all(_promises).then(() => {
