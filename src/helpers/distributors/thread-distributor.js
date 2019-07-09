@@ -123,7 +123,7 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.isLogger || data.workerLogger) {
-          this._loggerMessageHandler(data);
+          return this._loggerMessageHandler(data);
         }
 
         if (data.data) {
@@ -146,8 +146,9 @@ class ThreadDistributor extends AbstractDistributor {
 
         const hashes = Object.keys(this._dependencyTable);
         const workersId = Object.keys(cluster.workers);
+        const defaultWorkersLength = workersId.length - this._loggerWorkerCount;
 
-        if (!workersId.length && !hashes.length) {
+        if (!defaultWorkersLength && !hashes.length) {
           if (this._error) {
             reject(this._error);
           } else {
