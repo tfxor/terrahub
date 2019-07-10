@@ -339,6 +339,16 @@ class Util {
   }
 
   /**
+   * @param {Object} config
+   * @return {Number}
+   */
+  static threadsLimitCount(config) {
+    const threadLimit = parseInt(config.threadLimit);
+
+    return threadLimit ? threadLimit : cpus().length;
+  }
+
+  /**
    * @param {Array} array
    * @return {Object}
    * @throws Error;

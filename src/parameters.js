@@ -50,6 +50,7 @@ const def = {
   listLimit: 5,
   retryCount: 2,
   format: 'yml',
+  threadLimit: 0,
   usePhysicalCpu: false
 };
 const env = {
@@ -83,6 +84,7 @@ module.exports = {
     listLimit: cfg.listLimit,
     retryCount: cfg.retryCount,
     usePhysicalCpu: cfg.usePhysicalCpu,
+    threadLimit: cfg.threadLimit,
     defaultFileName: `.terrahub.${cfg.format}`
   },
   templates: {

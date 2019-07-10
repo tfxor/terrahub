@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const { config } = require('../../parameters');
-const { physicalCpuCount } = require('../util');
+const { physicalCpuCount, threadsLimitCount } = require('../util');
 const AbstractDistributor = require('./abstract-distributor');
 const ApiHelper = require('../api-helper');
 
@@ -21,7 +21,7 @@ class ThreadDistributor extends AbstractDistributor {
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._loggerWorkerCount = 0;
     this._loggerLastLog = {};
-    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : os.cpus().length;
+    this._threadsCount = config.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(config);
 
     if (ApiHelper.tokenIsValid) {
       this._createLoggerWorker();
