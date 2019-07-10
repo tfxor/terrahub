@@ -50,7 +50,7 @@ const def = {
   listLimit: 5,
   retryCount: 2,
   format: 'yml',
-  threadLimit: false,
+  threadLimit: 0,
   usePhysicalCpu: false
 };
 const env = {
