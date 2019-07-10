@@ -339,8 +339,8 @@ class Util {
   }
 
   /**
-   * @return {number}
-   * @private
+   * @param {Object} config
+   * @return {Number}
    */
   static threadsLimitCount(config) {
     const threadLimit = parseInt(config.threadLimit);
