@@ -109,6 +109,8 @@ class ThreadDistributor extends AbstractDistributor {
         ApiHelper.setIsBusy();
         return this._createLoggerWorker();
       }
+
+      return false;
     });
 
     return new Promise((resolve, reject) => {
@@ -121,7 +123,7 @@ class ThreadDistributor extends AbstractDistributor {
         }
 
         if (data.isLogger || data.workerLogger) {
-          this._loggerMessageHandler(data);
+          return this._loggerMessageHandler(data);
         }
 
         if (data.data) {
@@ -132,6 +134,10 @@ class ThreadDistributor extends AbstractDistributor {
       });
 
       cluster.on('exit', (worker, code) => {
+        if (this._getWorkerName(worker) === 'logger-worker') {
+          return;
+        }
+
         this._workersCount--;
 
         if (code === 0) {
@@ -140,8 +146,9 @@ class ThreadDistributor extends AbstractDistributor {
 
         const hashes = Object.keys(this._dependencyTable);
         const workersId = Object.keys(cluster.workers);
+        const defaultWorkersLength = workersId.length - this._loggerWorkerCount;
 
-        if (!workersId.length && !hashes.length) {
+        if (!defaultWorkersLength && !hashes.length) {
           if (this._error) {
             reject(this._error);
           } else {
@@ -216,6 +223,19 @@ class ThreadDistributor extends AbstractDistributor {
    */
   _isPreviousWorker(data) {
     return this._loggerWorkerLastId && this._loggerWorkerLastId === data.workerId;
+  }
+
+  /**
+   * Returns worker spawn file name
+   * @param {Object} worker
+   * @return {String}
+   * @private
+   */
+  _getWorkerName(worker) {
+    const fileName = worker.process.spawnargs[1];
+    const extension = path.extname(fileName);
+
+    return  path.basename(fileName, extension);
   }
 }
 
