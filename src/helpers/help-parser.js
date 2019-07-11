@@ -2,8 +2,9 @@
 
 const glob = require('glob');
 const path = require('path');
-const logger = require('./logger');
 const fs = require('fs-extra');
+const logger = require('./logger');
+const exec = require('child-process-promise').exec;
 const { commandsPath, templates, packageJson } = require('../parameters');
 
 class HelpParser {
@@ -86,6 +87,64 @@ class HelpParser {
     const options = metadata.commands.find(it => it.name === command).options;
 
     return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
+  }
+
+  /**
+   * Updates aws regions list
+   * @return {Promise}
+   */
+  static updateAWSRegions() {
+    const regionsPath = path.join(__dirname, '../templates', 'aws', 'regions');
+    const command = `sh ${path.join(regionsPath, 'scripts', 'update.sh')}`;
+
+    return exec(command)
+      .then(result => {
+        const stdout = result.stdout;
+        const stderr = result.stderr;
+
+        if (!stderr) {
+          const parsedResult = JSON.parse(stdout);
+          const allRegions = [].concat(parsedResult, HelpParser.getPrivateAWSRegions());
+
+          fs.writeJsonSync(path.join(regionsPath,  'regions.json'), allRegions, { spaces: 2 });
+        }
+      })
+      .catch(err => {
+        throw new Error(`Failed to update AWS regions: ${err.message || err}`);
+      });
+  }
+
+  /**
+   * Returns private aws regions
+   * @return {Object[]}
+   */
+  static getPrivateAWSRegions() {
+    return [
+      {
+        "code": "cn-north-1",
+        "public": false,
+        "zones": [
+          "cn-north-1a",
+          "cn-north-1b"
+        ]
+      },
+      {
+        "code": "cn-northwest-1",
+        "public": false,
+        "zones": [
+          "cn-northwest-1a",
+          "cn-northwest-1b"
+        ]
+      },
+      {
+        "code": "us-gov-west-1",
+        "public": false,
+        "zones": [
+          "us-gov-west-1a",
+          "us-gov-west-1b",
+          "us-gov-west-1c"
+        ]
+      }];
   }
 }
 

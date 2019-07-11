@@ -1,11 +1,9 @@
 'use strict';
 
-const { EOL } = require('os');
-const fs = require('fs-extra');
-const { join } = require('path');
+const cluster = require('cluster');
 const logger = require('js-logger');
-// const fetch = require('node-fetch').default;
-const { fetch, config: { api, logs } } = require('../parameters');
+const ApiHelper = require('./api-helper');
+const { config: { logs } } = require('../parameters');
 
 class Logger {
   /**
@@ -23,16 +21,14 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._canLogBeSentToApi && logs) {
+      if (this._isTokenValid() && logs) {
         this._sendLogToApi(messages);
       }
     });
 
     this._logger = logger;
 
-    this._promises = [];
     this._context = {
-      canLogBeSentToApi: process.env.THUB_TOKEN_IS_VALID || false,
       runId: null,
       componentName: null,
       action: null
@@ -46,7 +42,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._canLogBeSentToApi && logs) {
+    if (this._isTokenValid()) {
       this._sendLogToApi([message]);
     }
   }
@@ -95,10 +91,15 @@ class Logger {
   }
 
   /**
-   * @return {Promise[]}
+   * @return {Boolean}
+   * @private
    */
-  get promises() {
-    return this._promises;
+  _isTokenValid() {
+    if (cluster.isWorker) {
+      return process.env.THUB_TOKEN_IS_VALID;
+    }
+
+    return ApiHelper.tokenIsValid;
   }
 
   /**
@@ -106,27 +107,26 @@ class Logger {
    * @private
    */
   _sendLogToApi(messages) {
-    const message = Object.keys(messages).map(key => messages[key]).join('');
-    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this._context.runId}?indexMapping=logs`;
-    const body = {
-      bulk: [{
-        terraformRunId: this._context.runId,
-        timestamp: Date.now(),
-        component: this._context.componentName,
-        log: message,
-        action: this._context.action
-      }]
-    };
-
-    this._pushFetchAsync(url, body);
+    if (cluster.isWorker) {
+      this._sendMessageToMaster(messages);
+    } else {
+      ApiHelper.sendLogsToApi({ messages, context: this._context });
+    }
   }
 
   /**
-   * @return {Boolean}
+   * Send messages to ThreadDistributor to execute logging
+   * @param messages
    * @private
    */
-  get _canLogBeSentToApi() {
-    return this._context.canLogBeSentToApi;
+  _sendMessageToMaster(messages) {
+    process.send({
+      workerId: cluster.worker.id,
+      type: 'logs',
+      workerLogger: true,
+      messages,
+      context: this._context,
+    });
   }
 
   /**
@@ -136,188 +136,6 @@ class Logger {
     Object.assign(this._context, context);
   }
 
-  /**
-   * @param {String} url
-   * @param {Object} body
-   * @private
-   */
-  _pushFetchAsync(url, body) {
-    const promise = fetch.post(`${url}`, {
-      body: JSON.stringify(body)
-    }).catch(error => console.log(error));
-
-    this._promises.push(promise);
-  }
-
-  /**
-   * @param {{
-   *  [status]: String,
-   *  [target]: String,
-   *  [action]: String,
-   *  [name]: String,
-   *  [hash]: String,
-   *  [projectHash]: String,
-   *  [projectName]: String,
-   *  [terraformRunWorkspace]: String,
-   *  [runStatus]: Number }}
-   * @param {*} args
-   * @return {Promise<...*[]>}
-   */
-  sendWorkflowToApi({ status, target, action, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus }, ...args) {
-    if (this._canLogBeSentToApi) {
-      const runId = this._context.runId;
-      const url = Logger.composeWorkflowRequestUrl(status, target);
-
-      if (Logger.isWorkflowUseCase(target, status, action)) {
-        const body = Logger.composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus });
-
-        if (status === 'create' && target === 'workflow') {
-
-          return fetch.post(`${url}`, {
-            body: JSON.stringify(body)
-          }).then(res => Promise.resolve(...args))
-            .catch(error => {
-              return Promise.resolve(...args);
-            })
-        } else {
-          this._pushFetchAsync(url, body);
-        }
-      }
-    }
-
-    return Promise.resolve(...args);
-  }
-
-  /**
-   * @param {String} target
-   * @param {String} status
-   * @param {String} action
-   * @return {boolean}
-   */
-  static isWorkflowUseCase(target, status, action) {
-    switch (target) {
-      case 'workflow':
-        return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(action);
-      case 'component':
-        return Logger.isComponentUseCase(status, action);
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * @param status
-   * @param action
-   * @return {boolean}
-   */
-  static isComponentUseCase(status, action) {
-    const _actions = process.env.TERRAFORM_ACTIONS.split(',');
-
-    if (status === 'create') {
-      const _firstAction = _actions[0] === 'prepare' ? _actions[1] : _actions[0];
-
-      return _firstAction === action && _firstAction !== 'plan';
-    } else if (status === 'update') {
-      const _finalAction = _actions.pop();
-
-      return action === _finalAction;
-    }
-
-    return false;
-  }
-
-  /**
-   * @param {String} status
-   * @param {String} target
-   * @return {String}
-   */
-  static composeWorkflowRequestUrl(status, target) {
-    return `thub/${target === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
-  }
-
-  /**
-   * @param {{
-   *  [status]: String,
-   *  [target]: String,
-   *  [runId]: String,
-   *  [name]: String,
-   *  [hash]: String,
-   *  [projectHash]: String,
-   *  [projectName]: String,
-   *  [terraformRunWorkspace]: String
-   *  [runStatus]: String }}
-   * @return {Object}
-   */
-  static composeWorkflowBody({ status, target, runId, name, hash, projectHash, terraformRunWorkspace, projectName, runStatus }) {
-    if (target === 'workflow') {
-      const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
-      const body = {
-        'terraformRunId': runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        projectHash,
-        projectName,
-        terraformRunStatus: runStatus
-      };
-
-      return terraformRunWorkspace ? Object.assign(body, { 'terraformRunWorkspace': terraformRunWorkspace }) : body;
-    } else if (target === 'component') {
-      const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
-
-      return {
-        'terraformHash': hash,
-        'terraformName': name,
-        'terraformRunUuid': runId,
-        [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
-      };
-    }
-  }
-
-  /**
-   * @return {Promise}
-   */
-  sendLogToS3() {
-    if (this._canLogBeSentToApi) {
-      return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this._context.runId}`)
-        .catch(error => console.log(error));
-    }
-  }
-
-  /**
-   * On error sends finish status for all logging executions
-   * @param {String} projectHash
-   * @param {Number} runStatus
-   */
-  sendErrorToApi(projectHash, runStatus) {
-    if (this._canLogBeSentToApi) {
-      const runId = this._context.runId;
-      const url = Logger.composeWorkflowRequestUrl('update', 'workflow');
-      const body = Logger.composeWorkflowBody({ status: 'update', target: 'workflow', runId, projectHash, runStatus });
-
-      this._endComponentsLogging(runId);
-      this._pushFetchAsync(url, body);
-    }
-  }
-
-  /**
-   * Finish components logging
-   * @param {String} runId
-   * @private
-   */
-  _endComponentsLogging(runId) {
-    const terrahubComponents = process.env.THUB_EXECUTION_LIST ? process.env.THUB_EXECUTION_LIST.split(',') : [];
-
-    terrahubComponents.map(it => {
-      const status = 'update',
-        target = 'component',
-        name = it.split(':')[0],
-        hash = it.split(':')[1];
-
-      const url = Logger.composeWorkflowRequestUrl(status, target);
-      const body = Logger.composeWorkflowBody({ status, target, runId, name, hash });
-
-      this._pushFetchAsync(url, body);
-    });
-  }
 }
 
 module.exports = new Logger();

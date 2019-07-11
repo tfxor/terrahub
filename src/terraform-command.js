@@ -56,7 +56,9 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(token => {
-      if (token && logs) {
+      this._tokenIsValid = token;
+
+      if (this._tokenIsValid && logs) {
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
