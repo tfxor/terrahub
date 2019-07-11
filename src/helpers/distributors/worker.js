@@ -45,7 +45,6 @@ function run(config) {
 
   JitHelper.jitMiddleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
-    .then(lastResult => Promise.all(logger.promises).then(() => lastResult))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
         delete lastResult.buffer;
@@ -73,4 +72,4 @@ function run(config) {
 /**
  * Message listener
  */
-process.on('message', run);
+process.on('message', msg => msg.workerType === 'default' ? run(msg.data) : null);

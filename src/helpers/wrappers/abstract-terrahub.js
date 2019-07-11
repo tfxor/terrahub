@@ -43,7 +43,7 @@ class AbstractTerrahub {
   getTask(action, options) {
     this._action = action;
     this._workflowOptions = {
-      status: 'update',
+      status: 'create',
       target: 'component',
       name: this._config.name,
       hash: this._config.hash,
@@ -59,7 +59,7 @@ class AbstractTerrahub {
       if (options.skip) {
 
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          .then(res => logger.sendWorkflowToApi(this._workflowOptions, res))
+          .then(res => this._sendLogsToApi('update',  res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -168,7 +168,7 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/timeout/, /connection reset by peer/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+        return [/timeout/, /connection reset by peer/, /connection refused/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: config.retryCount,
       intermediateAction: (retries, maxRetries) => {
@@ -215,11 +215,11 @@ class AbstractTerrahub {
   _getTask() {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
-      .then(() => logger.sendWorkflowToApi({...this._workflowOptions, status: 'create'}))
+      .then(() => this._sendLogsToApi('create'))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => logger.sendWorkflowToApi(this._workflowOptions, res))
+      .then(res => this._sendLogsToApi('update',  res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -242,6 +242,19 @@ class AbstractTerrahub {
    */
   _addNameToMessage(message) {
     return `[${this._config.name}] ${message}`;
+  }
+
+  /**
+   * Sends logs to Master Process to execute in separate worker
+   * @param {String} status
+   * @param {*} args
+   * @return {Promise}
+   * @private
+   */
+  _sendLogsToApi(status, ...args) {
+    process.send({ type: 'workflow', workerLogger: true, options: {...this._workflowOptions, status }});
+
+    return Promise.resolve(...args);
   }
 }
 
