@@ -5,38 +5,33 @@ regions=($(aws ec2 describe-regions \
     --query 'Regions[].RegionName' \
     --output text))
 
-regionPos=$(( ${#regions[*]} - 1 ))
-regionLast=${regions[$regionPos]}
-
-
+regionLastPosition=$(( ${#regions[*]} - 1 ))
+regionLast=${regions[$regionLastPosition]}
 
 echo "["
 
 for region in "${regions[@]}"
 do
-    echo "{\"code\": \"${region}\", \"public\": true, \"zones\": [ "
+  echo "{\"code\": \"${region}\", \"public\": true, \"zones\": [ "
 
-    zones=($(aws ec2 describe-availability-zones --region ${region} --query 'AvailabilityZones[].[ZoneName]' --output text))
-    pos=$(( ${#zones[*]} - 1 ))
-    last=${zones[$pos]}
+  zones=($(aws ec2 describe-availability-zones --region ${region} --query 'AvailabilityZones[].[ZoneName]' --output text))
+  lastPosition=$(( ${#zones[*]} - 1 ))
+  last=${zones[$lastPosition]}
 
-    for zone in "${zones[@]}"
-    do
-      if [[ ${zone} == ${last} ]]
-      then
-        echo "\"${zone}\""
-      else
-        echo "\"${zone}\","
-      fi
-    done
-
-    if [[ ${region} == ${regionLast} ]]
-    then
-        echo "] }"
-
+  for zone in "${zones[@]}"
+  do
+    if [[ ${zone} == ${last} ]]; then
+      echo "\"${zone}\""
     else
-        echo "] },"
+      echo "\"${zone}\","
     fi
+  done
+
+  if [[ ${region} == ${regionLast} ]]; then
+      echo "] }"
+  else
+      echo "] },"
+  fi
 done
 
 echo "]"
