@@ -254,7 +254,7 @@ class ComponentCommand extends AbstractCommand {
     const keys = this._template.split('_');
     const provider = keys.shift();
     const resourceName = this._template.replace(provider + '_', '');
-    const templateDir = path.join(path.dirname(templates.path), provider, resourceName);
+    const templateDir = path.join(templates.path, provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);
