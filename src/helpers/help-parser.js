@@ -94,8 +94,7 @@ class HelpParser {
    * @return {Promise}
    */
   static updateAWSRegions() {
-    const regionsPath = path.join(templates.path, 'aws', 'regions');
-    const command = `sh ${path.join(regionsPath, 'scripts', 'update.sh')}`;
+    const command = `sh ${path.join(templates.help, 'scripts', 'aws_update.sh')}`;
 
     return exec(command)
       .then(result => {
@@ -106,7 +105,7 @@ class HelpParser {
           const parsedResult = JSON.parse(stdout);
           const allRegions = [].concat(parsedResult, HelpParser.getPrivateAWSRegions());
 
-          fs.writeJsonSync(path.join(regionsPath,  'regions.json'), allRegions, { spaces: 2 });
+          fs.writeJsonSync(path.join(templates.help,  'regions.aws.json'), allRegions, { spaces: 2 });
         }
       })
       .catch(err => {
