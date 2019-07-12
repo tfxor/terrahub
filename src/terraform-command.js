@@ -274,6 +274,10 @@ class TerraformCommand extends AbstractCommand {
 
     const diffList = GitHelper.getGitDiff(commits, this.getAppPath());
 
+    if (!diffList) {
+      return [];
+    }
+
     const config = super.getConfig();
     const result = {};
 
