@@ -172,9 +172,10 @@ class AbstractTerrahub {
       },
       maxRetries: config.retryCount,
       intermediateAction: (retries, maxRetries) => {
-        logger.warn(this._addNameToMessage(`'${this._action}' failed. ` +
-          `Retrying using exponential backoff approach (${retries} out of ${maxRetries}).`));
-      }
+        logger.warn(this._addNameToMessage(`'terraform ${this._action}' failed. ` +
+          `Retrying attempt ${retries} out of ${maxRetries} using exponential backoff approach...`));
+      },
+      component: this._config.name
     });
   }
 

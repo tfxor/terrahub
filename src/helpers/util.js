@@ -240,7 +240,11 @@ class Util {
 
   /**
    * @param {Function<Promise>} promiseFunction
-   * @param {{ conditionFunction: Function<Boolean>?, maxRetries: Number?, intermediateAction: Function? }} options
+   * @param {{
+   *  conditionFunction: Function<Boolean>?,
+   *  maxRetries: Number?,
+   *  intermediateAction: Function?,
+   *  component: String? }} options
    * @return {Promise}
    */
   static exponentialBackoff(promiseFunction, options = {}) {
@@ -260,7 +264,9 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        error.message += `${EOL}✅ Failed after ${maxRetries} retries.`;
+        error.message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
+          `Retried ${maxRetries} times, but still FAILED.`;
+
         return Promise.reject(error);
       }
 
