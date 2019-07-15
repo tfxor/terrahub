@@ -29,7 +29,7 @@ class GitHelper {
   /**
    * @param {String[]} commits
    * @param {String} appPath
-   * @return {String[]}
+   * @return {String[] || void}
    */
   static getGitDiff(commits, appPath) {
     let stdout;
@@ -40,7 +40,7 @@ class GitHelper {
     }
 
     if (!stdout || !stdout.length) {
-      throw new Error('There are no changes between commits, commit and working tree, etc.');
+      return logger.warn('There are no changes between commits, commit and working tree, etc.');
     }
 
     return stdout.toString().split(EOL).slice(0, -1);
