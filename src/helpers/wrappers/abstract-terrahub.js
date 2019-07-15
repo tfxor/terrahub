@@ -53,7 +53,7 @@ class AbstractTerrahub {
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
-        return this._runTerraformCommand(action).catch(err => console.log(err));
+        return this._runTerraformCommand(action).catch(err => console.log(err.message || err));
       }
 
       if (options.skip) {
@@ -166,10 +166,8 @@ class AbstractTerrahub {
    * @private
    */
   _runTerraformCommand(command) {
-    console.log({ _runTerraformCommand: command });
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        console.log({ _runTerraformCommandError: error });
         return [/timeout/, /connection reset by peer/, /connection refused/, /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: config.retryCount,

@@ -197,7 +197,7 @@ class ThreadDistributor extends AbstractDistributor {
 
     this._dependencyTable = {};
 
-    return (err.constructor === Error) ? err : new Error(`Worker error: ${JSON.stringify(err)}`);
+    return (err.constructor === Error) ? err : new Error(`Worker error: ${err}`);
   }
 
   /**
