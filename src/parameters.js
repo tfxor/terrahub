@@ -88,7 +88,8 @@ module.exports = {
     defaultFileName: `.terrahub.${cfg.format}`
   },
   templates: {
-    path: path.join(templates, 'templates'),
+    path: templates,
+    help: path.join(templates, 'help'),
     config: path.join(templates, 'config'),
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),

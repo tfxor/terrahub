@@ -234,17 +234,17 @@ class Util {
     return promise.then(() => Buffer.concat(stdout)).catch(err => {
       err.message = Buffer.concat(stderr).toString();
 
-      if (err) {
-        return Promise.reject('Error occurred. Please try again. If this problem persists, ' +
-          'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-          'https://github.com/TerraHubCorp/terrahub/issues');
-      }
+      return Promise.reject(err);
     });
   }
 
   /**
    * @param {Function<Promise>} promiseFunction
-   * @param {{ conditionFunction: Function<Boolean>?, maxRetries: Number?, intermediateAction: Function? }} options
+   * @param {{
+   *  conditionFunction: Function<Boolean>?,
+   *  maxRetries: Number?,
+   *  intermediateAction: Function?,
+   *  component: String? }} options
    * @return {Promise}
    */
   static exponentialBackoff(promiseFunction, options = {}) {
@@ -264,7 +264,9 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        error.message += `${EOL}Failed after ${maxRetries} retries.`;
+        error.message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
+          `Retried ${maxRetries} times, but still FAILED.`;
+
         return Promise.reject(error);
       }
 

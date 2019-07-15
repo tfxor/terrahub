@@ -53,7 +53,7 @@ class AbstractTerrahub {
 
     return Promise.resolve().then(() => {
       if (!['init', 'workspaceSelect', 'plan', 'apply', 'destroy'].includes(this._action)) {
-        return this._runTerraformCommand(action).catch(err => console.log(err));
+        return this._runTerraformCommand(action).catch(err => console.log(err.message || err));
       }
 
       if (options.skip) {
@@ -168,13 +168,14 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/timeout/, /connection reset by peer/, /connection refused/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+        return [/timeout/, /connection reset by peer/, /connection refused/, /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: config.retryCount,
       intermediateAction: (retries, maxRetries) => {
-        logger.warn(this._addNameToMessage(`'${this._action}' failed. ` +
-          `Retrying using exponential backoff approach (${retries} out of ${maxRetries}).`));
-      }
+        logger.warn(this._addNameToMessage(`'terraform ${this._action}' failed. ` +
+          `Retrying attempt ${retries} out of ${maxRetries} using exponential backoff approach...`));
+      },
+      component: this._config.name
     });
   }
 
