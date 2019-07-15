@@ -7,7 +7,7 @@ const semver = require('semver');
 const { engines } = require('../package.json');
 const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
-const Dictionary = require('../src/helpers/dictionary');
+const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
 const { commandsPath, config, args } = require('../src/parameters');
 
@@ -43,8 +43,8 @@ function commandCreate(logger = console) {
  * @return {Promise}
  */
 function syncExitProcess(code) {
-  return Promise.all(logger.promises)
-    .then(() => logger.sendLogToS3())
+  return ApiHelper.promisesForSyncExit()
+    .then(() => ApiHelper.sendLogToS3())
     .then(() => process.exit(code));
 }
 
@@ -61,33 +61,35 @@ const projectConfig = command.getProjectConfig();
 
 command
   .validate()
-  .then(() => logger.sendWorkflowToApi({
-    status: 'create',
-    target: 'workflow',
-    action: command._name,
-    projectHash: projectConfig.code,
-    projectName: projectConfig.name,
-    terraformRunWorkspace: environment,
-    runStatus: Dictionary.REALTIME.START
-  }))
+  .then(() => {
+    ApiHelper.setToken(command._tokenIsValid);
+
+    return ApiHelper.sendMainWorkflow({
+        status: 'create',
+        runId: command.runId,
+        commandName: command._name,
+        project: projectConfig,
+        environment: environment,
+      })
+    }
+  )
   .then(() => command.run())
-  .then(message => logger.sendWorkflowToApi({
-    status: 'update',
-    target: 'workflow',
-    action: command._name,
-    projectHash: projectConfig.code,
-    terraformRunWorkspace: environment,
-    runStatus: Dictionary.REALTIME.SUCCESS
-  }, message))
+  .then(message => {
+    ApiHelper.sendMainWorkflow({ status: 'update' });
+
+    return Promise.resolve(message);
+  })
   .then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
+
     return syncExitProcess(0);
   })
   .catch(err => {
-    logger.sendErrorToApi(projectConfig.code, Dictionary.REALTIME.ERROR);
-    logger.error(err || 'Error occurred');
+    ApiHelper.sendErrorToApi();
+    logger.error(err.message || err || 'Error occurred');
+
     return syncExitProcess(1);
   });

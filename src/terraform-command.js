@@ -56,7 +56,9 @@ class TerraformCommand extends AbstractCommand {
    */
   validate() {
     return super.validate().then(token => {
-      if (token && logs) {
+      this._tokenIsValid = token;
+
+      if (this._tokenIsValid && logs) {
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
@@ -271,6 +273,10 @@ class TerraformCommand extends AbstractCommand {
     }
 
     const diffList = GitHelper.getGitDiff(commits, this.getAppPath());
+
+    if (!diffList) {
+      return [];
+    }
 
     const config = super.getConfig();
     const result = {};

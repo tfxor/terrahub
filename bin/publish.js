@@ -86,9 +86,8 @@ function npmVersion() {
 function updateJsonFiles() {
   logger.info('Updating json files');
   HelpParser.updateMetadata();
-  // @TODO: add updateRegions();
-
-  return Promise.resolve('Done');
+  HelpParser.updateAWSRegions()
+    .then(() => Promise.resolve('Done'));
 }
 
 /**
