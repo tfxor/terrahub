@@ -260,7 +260,7 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        error.message += `${EOL}Failed after ${maxRetries} retries.`;
+        error.message += `${EOL}❌ Failed after ${maxRetries} retries.`;
         return Promise.reject(error);
       }
 
