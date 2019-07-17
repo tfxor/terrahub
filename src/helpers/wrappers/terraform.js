@@ -90,54 +90,41 @@ class Terraform {
     return Object.keys(this._tf.backend).map(name => `-backend-config='${name}=${this._tf.backend[name]}'`);
   }
 
-  async _accounts() {
+  /**
+   * Updates env vars & config for use cloudAccount, tfvarsAccount, backendAccount
+   * @return {Promise}
+   * @private
+   */
+  async _setupVars() {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
 
     if (!accounts.length) {
-      return;
+      return Promise.resolve();
     }
 
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const provider = Object.keys(this._config.template.provider);
+    const provider = Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];
 
     if (providerAccounts) {
       accounts.forEach(type => {
         const _value = this._tf[type];
-        const _cloudData = providerAccounts.filter(it => it.name === _value).pop(); //[{...}] -> {...}
+        const _cloudData = providerAccounts.find(it => it.name === _value);
 
-        if (type === 'cloudAccount') {
-
-          if (_cloudData.type === 'access') {
-            const cloudEnvVars = {};
-
-            Object.keys(_cloudData.env_var).forEach(it => cloudEnvVars[it] = _cloudData.env_var[it].value);
-
-            Object.assign(this._envVars, cloudEnvVars);
-          } else if (_cloudData.type === 'role') {
-            const { AWS_ROLE_ARN, AWS_ACCOUNT_ID } = _cloudData.env_var;
-            const assume_role = {
-              assume_role: {
-                role_arn: AWS_ROLE_ARN.value,
-                session_name: AWS_ACCOUNT_ID.value,
-                external_id: AWS_ACCOUNT_ID.value
-              }
-            };
-
-            Object.assign(this._config.template.provider[provider], assume_role);
-          }
+        if (!_cloudData) {
+          return;
         }
 
-        if (type === 'backendAccount') {
-          const tmpPath = this._buildTmpPath(this._config);
-          const credentials = '[default]\n' +
-            'aws_access_key_id = "#######"\n' +
-            'aws_secret_access_key = "######"\n' +
-            'aws_session_token = "########"';
-
-          fse.writeFileSync(path.join(tmpPath, 'credentials'), credentials);
-
-          Object.assign(this._tf.backend, { shared_credentials_file: path.join(tmpPath, 'credentials') });
+        switch (type) {
+          case 'cloudAccount':
+            this._setupCloudVars(_cloudData, provider);
+            break;
+          case 'backendAccount':
+            this._setupBackendVars(_cloudData);
+            break;
+          case 'tfvarsAccount':
+            this._setupTfVars(_cloudData);
+            break;
         }
       });
     }
@@ -150,9 +137,64 @@ class Terraform {
     });
 
     return Promise.resolve();
-
   }
 
+  /**
+   * @param {Object} cloudData
+   * @param {String} provider
+   * @private
+   */
+  _setupCloudVars(cloudData, provider) {
+    if (cloudData.type === 'access') {
+      const cloudEnvVars = {};
+
+      Object.keys(cloudData.env_var).forEach(it => cloudEnvVars[it] = cloudData.env_var[it].value);
+
+      Object.assign(this._envVars, cloudEnvVars);
+    } else if (cloudData.type === 'role') {
+      const { AWS_ROLE_ARN, AWS_ACCOUNT_ID } = cloudData.env_var;
+      const assume_role = {
+        assume_role: {
+          role_arn: AWS_ROLE_ARN.value,
+          session_name: AWS_ACCOUNT_ID.value,
+          external_id: AWS_ACCOUNT_ID.value
+        }
+      };
+
+      Object.assign(this._config.template.provider[provider], assume_role);
+    }
+  }
+
+  /**
+   * @param {Object} cloudData
+   * @private
+   */
+  _setupBackendVars(cloudData) {
+    const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = cloudData.env_var;
+    const tmpPath = this._buildTmpPath(this._config);
+    const credsPath = path.join(tmpPath, 'credentials');
+    const credentials = `[${cloudData.name}]\n` +
+      `aws_access_key_id = ${AWS_ACCESS_KEY_ID.value}\n` +
+      `aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY.value}\n`;
+
+    fse.writeFileSync(credsPath, credentials);
+
+    Object.assign(this._tf.backend, { shared_credentials_file: credsPath, profile: cloudData.name });
+  }
+
+  /**
+   * @param {Object} cloudData
+   * @private
+   */
+  _setupTfVars(cloudData) {
+    //@TODO:
+  }
+
+  /**
+   * @param {Object} config
+   * @return {String}
+   * @private
+   */
   _buildTmpPath(config) {
     const tmpPath = homePath('temp', toMd5(config.name + config.project.code));
 
@@ -250,13 +292,11 @@ class Terraform {
    * @return {Promise}
    */
   init() {
-
-    return this._accounts()
-      .then(() => this.run(
-        'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
-      )
-        .then(() => this._reInitPaths())
-        .then(() => ({ status: Dictionary.REALTIME.SUCCESS })));
+    return this.run(
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
+    )
+      .then(() => this._reInitPaths())
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -459,7 +499,9 @@ class Terraform {
    * @param {Array} args
    * @return {Promise}
    */
-  run(cmd, args) {
+  async run(cmd, args) {
+    await this._setupVars();
+
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }

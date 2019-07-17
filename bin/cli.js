@@ -45,6 +45,7 @@ function commandCreate(logger = console) {
 function syncExitProcess(code) {
   return ApiHelper.promisesForSyncExit()
     .then(() => ApiHelper.sendLogToS3())
+    .then(() => ApiHelper.deleteTempFolder())
     .then(() => process.exit(code));
 }
 

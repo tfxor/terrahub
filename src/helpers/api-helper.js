@@ -1,6 +1,8 @@
 'use strict';
 
+const fse = require('fs-extra');
 const events = require('events');
+const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
 const { fetch, config: { api, logs } } = require('../parameters');
 
@@ -424,12 +426,21 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise || Object}
    */
   async retrieveCloudAccounts() {
-    if (!this._accountsEnvVars) {
+    if (!this._cloudAccounts) {
       const result = await fetch.get(`https://${api}.terrahub.io/v1/thub/cloud-account/retrieve`);
-      this._accountsEnvVars = result.data;
+      this._cloudAccounts = result.data;
     }
 
-    return this._accountsEnvVars;
+    return this._cloudAccounts;
+  }
+
+  /**
+   * @return {void}
+   */
+  deleteTempFolder() {
+    const tmpPath = homePath('temp');
+
+    fse.removeSync(tmpPath);
   }
 
 }
