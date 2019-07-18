@@ -727,7 +727,6 @@ class JitHelper {
    * @private
    */
   static _saveToFile(componentPath, data, isHCL2) {
-
     if (!isHCL2) {
       return fse.outputJson(componentPath, data, { spaces: 2 });
     }
