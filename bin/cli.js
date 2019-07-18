@@ -89,7 +89,7 @@ command
   })
   .catch(err => {
     ApiHelper.sendErrorToApi();
-    logger.error(err || 'Error occurred');
+    logger.error(err.message || err || 'Error occurred');
 
     return syncExitProcess(1);
   });

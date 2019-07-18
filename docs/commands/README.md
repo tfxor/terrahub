@@ -11,7 +11,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   The output should look similar to the one below (no need to copy paste):
 
   ```text
-  v3.10.0
+  v5.6.0
   ```
 
   > NOTE: If `npm` is missing, check out [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
@@ -25,7 +25,7 @@ Getting started with TerraHub CLI is pretty straightforward:
   The output should look similar to the one below (no need to copy paste):
 
   ```text
-  ~/.nvm/versions/node/v6.10.0/lib
+  ~/.nvm/versions/node/v8.10.0/lib
   └── terrahub@0.0.1
   ```
 

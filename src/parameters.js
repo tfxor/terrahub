@@ -50,6 +50,7 @@ const def = {
   listLimit: 5,
   retryCount: 2,
   format: 'yml',
+  threadLimit: 0,
   usePhysicalCpu: false
 };
 const env = {
@@ -83,10 +84,12 @@ module.exports = {
     listLimit: cfg.listLimit,
     retryCount: cfg.retryCount,
     usePhysicalCpu: cfg.usePhysicalCpu,
+    threadLimit: cfg.threadLimit,
     defaultFileName: `.terrahub.${cfg.format}`
   },
   templates: {
-    path: path.join(templates, 'templates'),
+    path: templates,
+    help: path.join(templates, 'help'),
     config: path.join(templates, 'config'),
     workspace: path.join(templates, 'terraform', 'workspace'),
     helpMetadata: path.join(templates, 'help', 'metadata.json'),

@@ -330,7 +330,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getRegions() {
-    const list = fse.readJsonSync(path.join(templates.path, 'aws', 'regions.json'), { throws: false }) || [];
+    const list = fse.readJsonSync(path.join(templates.help, 'regions.aws.json'), { throws: false }) || [];
 
     return list
       .filter(region => region.public === true)
