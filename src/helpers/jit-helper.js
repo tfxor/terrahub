@@ -322,7 +322,7 @@ class JitHelper {
       return Promise.resolve().then(() => {
         const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
         const localVariables = paramByName.match(regExLocal);
-
+        
         if (localVariables) {
           let unique = [...new Set(localVariables)];
           const promises = unique.map(localVariable => {
@@ -361,8 +361,14 @@ class JitHelper {
           resourceByNameCopy['provider'] = resourceByName['provider']
             .replace(oldProviderTerrahubVariable, tfvarValue);
         }
-
-        resourcesByType[`${resourceName}_${tfvarValue}`] = resourceByNameCopy;
+        
+        let resourceByNameCopyStringify = JSON.stringify(resourceByNameCopy);
+        const searchValue = JSON.stringify(oldProviderTerrahubVariable);
+        resourceByNameCopyStringify = resourceByNameCopyStringify.replace(
+          searchValue.substring(1, searchValue.length - 1), 
+          tfvarValue
+        );
+        resourcesByType[`${resourceName}_${tfvarValue}`] = JSON.parse(resourceByNameCopyStringify);
         return Promise.resolve();
       });
     });
