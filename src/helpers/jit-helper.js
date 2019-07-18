@@ -560,30 +560,10 @@ class JitHelper {
     const { template } = config;
     const remoteTfvarsJson = hcltojson(remoteTfvars);
 
-    if (JitHelper._checkTfVersion(config)) {
-      template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
-    
-      return Promise.resolve();
-    }
-
-    const tmpPath = JitHelper.buildTmpPath(config);
-    template['tfvars'] = config.template.tfvars || {};
-
-    const promises = Object.keys(remoteTfvarsJson).filter(it => remoteTfvarsJson[it]).map(it => {
-      if (!Array.isArray(remoteTfvarsJson[it]) && typeof remoteTfvarsJson[it] === 'object') {
-        remoteTfvarsJson[it] = {};
-      }
-      let obj = {};
-      obj[it] = remoteTfvarsJson[it];
-      template['tfvars'] = JSON.parse((JSON.stringify(template['tfvars']) +
-        JSON.stringify(obj)).replace(/}{/g, ",").replace(/{,/g, "{"));
-    });
-
-    return Promise.all(promises)
-      .then(() => {
-        return fse.writeFileSync(join(tmpPath, 'config.tfvars'), remoteTfvars);
-      });    
+    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
+    JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+  
+    return Promise.resolve();  
   }
 
   /**
@@ -733,8 +713,9 @@ class JitHelper {
    * @private
    */
   static _saveToFile(componentPath, data, isHCL2) {
+    let formatHCL1 = "";
     if (!isHCL2) {
-      return fse.outputJson(componentPath, data, { spaces: 2 });
+      formatHCL1 = "-F no"
     }
 
     const arch = Downloader.getOsArch();
@@ -746,7 +727,7 @@ class JitHelper {
 
     const dataStringify = JSON.stringify(data);
 
-    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}'`)
+    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}' ${formatHCL1}`)
       .then(result => {
         return fse.writeFileSync(componentPath, result.stdout);
       }).catch(err => {
