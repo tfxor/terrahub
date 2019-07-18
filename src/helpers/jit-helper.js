@@ -1,14 +1,59 @@
 'use strict';
 
-const path = require('path');
 const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
-const { jitPath, tfstatePath } = require('../parameters');
+const objectDepth = require('object-depth');
+const { resolve, join } = require('path');
+const { exec } = require('child-process-promise');
+const Downloader = require('../helpers/downloader');
+const { binPath, jitPath, tfstatePath } = require('../parameters');
 const { homePath, extend } = require('./util');
 
 class JitHelper {
+  /**
+   * JIT middleware (config to files)
+   * @param {Object} config
+   * @return {Promise}
+   */
+  static jitMiddleware(config) {    
+    const transformedConfig = JitHelper._transformConfig(config);
+
+    if (!transformedConfig.isJit) {
+      return Promise.resolve(config);
+    }
+
+    const { template } = transformedConfig;
+
+    return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
+      .then(() => {
+      // add "tfvars" if it is not described in config
+      const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
+      if (localTfvarsLinks.length > 0) {
+        return JitHelper._addLocalTfvars(config, localTfvarsLinks.pop());
+      }
+    }).then(() => {
+      // add "tfvars" if it is not described in config
+      const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
+      if (remoteTfvarsLinks.length > 0) {
+        return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
+      }
+    }).then(() => JitHelper._normalizeProvidersForResource(config))
+      .then(() => JitHelper._normalizeProvidersForData(config))
+      .then(() => JitHelper._normalizeTfvars(config))
+      .then(() => JitHelper._createTerraformFiles(config))
+      .then(() => {
+        // generate "variable.tf" if it is not described in config
+        if (template.hasOwnProperty('tfvars')) {
+          return JitHelper._generateVariable(config);
+        }
+      })
+      .then(() => JitHelper._symLinkNonTerraHubFiles(config))
+      .then(() => config);
+  }
+
+  
   /**
    * Transform template config
    * @param {Object} config
@@ -19,7 +64,7 @@ class JitHelper {
     config.isJit = config.hasOwnProperty('template');
 
     if (config.isJit) {
-      const componentPath = path.join(config.project.root, config.root);
+      const componentPath = join(config.project.root, config.root);
 
       const localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
       const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
@@ -92,7 +137,7 @@ class JitHelper {
   static _normalizeBackendS3Key(config) {
     const { template } = config;
     const { locals } = template;
-    let remoteTfstatePath = path.join('terraform', config.project.name);
+    let remoteTfstatePath = join('terraform', config.project.name);
 
     if (locals) {
       Object.keys(locals).filter(it => locals[it]).map(() => {
@@ -120,47 +165,6 @@ class JitHelper {
     }
 
     return remoteTfstatePath;
-  }
-
-  /**
-   * JIT middleware (config to files)
-   * @param {Object} config
-   * @return {Promise}
-   */
-  static jitMiddleware(config) {
-    const transformedConfig = JitHelper._transformConfig(config);
-
-    if (!transformedConfig.isJit) {
-      return Promise.resolve(config);
-    }
-
-    const { template } = transformedConfig;
-
-    return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
-      .then(() => {
-      // add "tfvars" if it is not described in config
-      const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
-      if (localTfvarsLinks.length > 0) {
-        return JitHelper._addLocalTfvars(config, localTfvarsLinks.pop());
-      }
-    }).then(() => {
-      // add "tfvars" if it is not described in config
-      const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
-      if (remoteTfvarsLinks.length > 0) {
-        return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
-      }
-    }).then(() => JitHelper._normalizeProvidersForResource(config))
-      .then(() => JitHelper._normalizeProvidersForData(config))
-      .then(() => JitHelper._normalizeTfvars(config))
-      .then(() => JitHelper._createTerraformFiles(config))
-      .then(() => {
-        // generate "variable.tf" if it is not described in config
-        if (template.hasOwnProperty('tfvars')) {
-          return JitHelper._generateVariable(config);
-        }
-      })
-      .then(() => JitHelper._symLinkNonTerraHubFiles(config))
-      .then(() => config);
   }
 
   /**
@@ -490,7 +494,7 @@ class JitHelper {
       const promises = Object.keys(module).filter(it => module[it]).map(it => {
         const { source } = module[it];
         if (source) {
-          module[it].source = path.resolve(template.locals.component.path, source);
+          module[it].source = resolve(template.locals.component.path, source);
         }
       });
       
@@ -529,7 +533,7 @@ class JitHelper {
    * @return {Promise}
    */
   static _addLocalTfvars(config, localTfvarsLink) {
-    const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
+    const localTfvarsLinkPath = resolve(config.project.root, localTfvarsLink);
     if (fse.existsSync(localTfvarsLinkPath)) {
       return fse.readFile(localTfvarsLinkPath).then(content => {
         return JitHelper._parsingTfvars(content.toString(), config);
@@ -549,6 +553,14 @@ class JitHelper {
   static _parsingTfvars(remoteTfvars, config) {
     const { template } = config;
     const remoteTfvarsJson = hcltojson(remoteTfvars);
+
+    if (JitHelper._checkTfVersion(config)) {
+      template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
+      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+    
+      return Promise.resolve();
+    }
+
     const tmpPath = JitHelper.buildTmpPath(config);
     template['tfvars'] = config.template.tfvars || {};
 
@@ -564,8 +576,8 @@ class JitHelper {
 
     return Promise.all(promises)
       .then(() => {
-        return fse.writeFileSync(path.join(tmpPath, 'config.tfvars'), remoteTfvars);
-      });
+        return fse.writeFileSync(join(tmpPath, 'config.tfvars'), remoteTfvars);
+      });    
   }
 
   /**
@@ -611,12 +623,12 @@ class JitHelper {
           break;
 
         case 'tfvars':
-          name = path.join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
+          name = join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
           data = template[it];
           break;
       }
 
-      return fse.outputJson(path.join(tmpPath, name), data, { spaces: 2 });
+      return JitHelper._saveToFile(join(tmpPath, name), data, JitHelper._checkTfVersion(config));
     });
 
     return Promise.all(promises);
@@ -638,20 +650,23 @@ class JitHelper {
 
       if (Array.isArray(tfvars[it])) {
         type = 'list';
+      } else if (typeof tfvars[it] === 'object' && JitHelper._checkTfVersion(config)) {
+        for (let index = 0; index < objectDepth(tfvars[it]); index++) {
+          type = `map(${type})`;          
+        }
       } else if (typeof tfvars[it] === 'object') {
-        type = 'map';
+        type = 'map';        
       }
 
       variable[it] = { type };
     });
-
-    return fse.outputJson(path.join(tmpPath, 'variable.tf'), { variable }, { spaces: 2 });
+    return JitHelper._saveToFile(join(tmpPath, 'variable.tf'), { variable }, JitHelper._checkTfVersion(config));
   }
 
   static _symLinkNonTerraHubFiles(config) {
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
     const tmpPath = JitHelper.buildTmpPath(config);
-    const src = path.join(config.project.root, config.root);
+    const src = join(config.project.root, config.root);
 
     return fse.ensureDir(tmpPath)
       .then(() => fse.readdir(src))
@@ -659,7 +674,7 @@ class JitHelper {
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
         const promises = nonTerrahubFiles.map(file =>
-          fse.ensureSymlink(path.join(src, file), path.join(tmpPath, file)).catch(() => {})
+          fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {})
         );
 
         return Promise.all(promises);
@@ -699,12 +714,57 @@ class JitHelper {
    */
   static buildTmpPath(config) {
     const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
-
-    if (!fse.existsSync(tmpPath)) {
-      fse.mkdirsSync(tmpPath);
-    }
+    fse.ensureDirSync(tmpPath);
 
     return tmpPath;
+  }
+
+  /**
+   * @param {String} componentPath
+   * @param {Object} data
+   * @param {Boolean} isHCL2
+   * @return {Promise}
+   * @private
+   */
+  static _saveToFile(componentPath, data, isHCL2) {
+
+    if (!isHCL2) {
+      return fse.outputJson(componentPath, data, { spaces: 2 });
+    }
+
+    const arch = Downloader.getOsArch();
+    const componentBinPath = join(binPath, arch);
+
+    let extension = '';
+    if (arch.indexOf("windows") > -1)
+      extension = '.exe';
+
+    const dataStringify = JSON.stringify(data);
+
+    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}'`)
+      .then(result => {
+        return fse.writeFileSync(componentPath, result.stdout);
+      }).catch(err => {
+        return Promise.reject(err);
+      });
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Boolean}
+   * @private
+   */
+  static _checkTfVersion(config) {
+    const { terraform } = config;
+    if (terraform) {
+      const { version } = terraform;
+      const regExVersion = /0\.11/gm;
+      if (version && version.match(regExVersion).length > 0) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 

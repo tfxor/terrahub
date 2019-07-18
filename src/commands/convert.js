@@ -189,7 +189,7 @@ class ConvertCommand extends TerraformCommand {
    */
   _checkIfFilesIsJson(config) {
     const configPath = ConvertCommand._buildComponentPath(config);
-    const mainFilePath = `${configPath}${sep}main.tf`;
+    const mainFilePath = `${configPath}${sep}main.tf.json`;
 
     try {
       const rawData = fse.readFileSync(mainFilePath, 'utf8');
