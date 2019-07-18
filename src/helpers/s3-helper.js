@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const ApiHelper = require('./api-helper');
 
 class S3Helper {
   /**
@@ -37,11 +38,49 @@ class S3Helper {
    * Get s3 object
    * @param {String} bucketName
    * @param {String} objectKey
+   * @param {Object} config
    * @returns {Promise}
    */
-  getObject(bucketName, objectKey) {
-    return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
+  getObject(bucketName, objectKey, config) {
+    return this.retriveCredsForTfVars(config).then(credentials => {
+      if (credentials) {
+        const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = credentials;
+        this._s3 = new AWS.S3({ accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+      }
+
+      return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
+    });
   }
+
+  /**
+   * @param {Object} [config]
+   * @return {Promise || void}
+   */
+  async retriveCredsForTfVars(config) {
+    if (!config) {
+      return Promise.resolve();
+    }
+
+    const { tfvarsAccount } = config.terraform;
+
+    if (tfvarsAccount) {
+      const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+      const configAccount = cloudAccounts.aws.find(it => it.name === tfvarsAccount);
+
+      if (configAccount) {
+        const sourceProfile = configAccount.type === 'role'
+          ? cloudAccounts.aws.find(it => it.id === configAccount.env_var.AWS_SOURCE_PROFILE.id) : null;
+
+        return Promise.resolve({
+          AWS_ACCESS_KEY_ID: sourceProfile ? sourceProfile.env_var.AWS_ACCESS_KEY_ID.value : configAccount.env_var.AWS_ACCESS_KEY_ID.value,
+          AWS_SECRET_ACCESS_KEY: sourceProfile ? sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value : configAccount.env_var.AWS_SECRET_ACCESS_KEY.value
+        });
+      }
+    }
+
+    return Promise.resolve();
+  }
+
 
   /**
    * Metadata bucket name

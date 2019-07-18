@@ -126,9 +126,6 @@ class Terraform {
           case 'backendAccount':
             this._setupBackendVars(credentials);
             break;
-          case 'tfvarsAccount':
-            this._setupTfVars(credentials);
-            break;
         }
       });
     }
@@ -185,17 +182,6 @@ class Terraform {
   }
 
   /**
-   * @param {String} credentials
-   * @private
-   */
-  _setupTfVars(credentials) {
-    const credsPath = this._saveCredentials(credentials, 'tfvars');
-
-    //pass credsPath to s3.helper
-    // Object.assign(this._tf.backend, { shared_credentials_file: credsPath });
-  }
-
-  /**
    * @param {Object} config
    * @return {String}
    * @private
@@ -208,6 +194,12 @@ class Terraform {
     return tmpPath;
   }
 
+  /**
+   * @param {String} credentials
+   * @param {String} prefix
+   * @return {string}
+   * @private
+   */
   _saveCredentials(credentials, prefix) {
     const tmpPath = this._buildTmpPath(this._config);
     const credsPath = path.join(tmpPath, `aws_credentials_${prefix}`);
@@ -517,12 +509,12 @@ class Terraform {
   async run(cmd, args) {
     await this._setupVars();
 
-    console.log({ command: cmd, args, env: {
-        AWS_SHARED_CREDENTIALS_FILE: this._envVars.AWS_SHARED_CREDENTIALS_FILE,
-        AWS_ACCESS_KEY_ID: this._envVars.AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY: this._envVars.AWS_SECRET_ACCESS_KEY,
-        AWS_SESSION_TOKEN: this._envVars.AWS_SESSION_TOKEN,
-      } });
+    // console.log({ command: cmd, args, env: {
+    //     AWS_SHARED_CREDENTIALS_FILE: this._envVars.AWS_SHARED_CREDENTIALS_FILE,
+    //     AWS_ACCESS_KEY_ID: this._envVars.AWS_ACCESS_KEY_ID,
+    //     AWS_SECRET_ACCESS_KEY: this._envVars.AWS_SECRET_ACCESS_KEY,
+    //     AWS_SESSION_TOKEN: this._envVars.AWS_SESSION_TOKEN,
+    //   } });
 
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);

@@ -7,6 +7,7 @@ const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
 const { jitPath, tfstatePath } = require('../parameters');
 const { homePath, extend } = require('./util');
+const ApiHelper = require('./api-helper');
 
 class JitHelper {
   /**
@@ -516,7 +517,7 @@ class JitHelper {
       JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
         return JitHelper._parsingTfvars(data.toString(), config);
       }):
-      JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
+      JitHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
         return JitHelper._parsingTfvars(data.Body.toString(), config);
       });
 
