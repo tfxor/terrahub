@@ -728,7 +728,7 @@ class JitHelper {
     const dataStringify = JSON.stringify(data);
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}' ${formatHCL1}`)
       .then(result => {
-        return fse.writeFileSync(componentPath, result.stdout);
+        return fse.outputFileSync(componentPath, result.stdout);
       }).catch(err => {
         return Promise.reject(err);
       });
