@@ -91,7 +91,7 @@ class Terraform {
   }
 
   /**
-   * Updates env vars & config for use cloudAccount, tfvarsAccount, backendAccount
+   * Setup env vars for use cloudAccount & terraform backend for backendAccount properties
    * @return {Promise}
    * @private
    */
@@ -150,8 +150,8 @@ class Terraform {
       credentials += `aws_access_key_id = ${cloudData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${cloudData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
     }
-    credentials += `session_name = ${cloudData.name}_${cloudData.env_var.AWS_ACCOUNT_ID.value}`;
 
+    credentials += `session_name = ${cloudData.name}_${cloudData.env_var.AWS_ACCOUNT_ID.value}`;
 
     return credentials;
   }
@@ -163,10 +163,7 @@ class Terraform {
   _setupCloudVars(credentials) {
     const credsPath = this._saveCredentials(credentials, 'cloud');
 
-    delete this._envVars.AWS_ACCESS_KEY_ID;
-    delete this._envVars.AWS_SECRET_ACCESS_KEY;
-    delete this._envVars.AWS_SESSION_TOKEN;
-    delete this._envVars.AWS_PROFILE;
+    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE'].forEach(it => delete this._envVars[it]);
 
     Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: credsPath });
   }
@@ -508,13 +505,6 @@ class Terraform {
    */
   async run(cmd, args) {
     await this._setupVars();
-
-    // console.log({ command: cmd, args, env: {
-    //     AWS_SHARED_CREDENTIALS_FILE: this._envVars.AWS_SHARED_CREDENTIALS_FILE,
-    //     AWS_ACCESS_KEY_ID: this._envVars.AWS_ACCESS_KEY_ID,
-    //     AWS_SECRET_ACCESS_KEY: this._envVars.AWS_SECRET_ACCESS_KEY,
-    //     AWS_SESSION_TOKEN: this._envVars.AWS_SESSION_TOKEN,
-    //   } });
 
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
