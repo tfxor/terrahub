@@ -5,9 +5,8 @@ const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
-const { jitPath, tfstatePath } = require('../parameters');
 const { homePath, extend } = require('./util');
-const ApiHelper = require('./api-helper');
+const { jitPath, tfstatePath } = require('../parameters');
 
 class JitHelper {
   /**

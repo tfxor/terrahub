@@ -7,13 +7,12 @@ const fse = require('fs-extra');
 const semver = require('semver');
 const logger = require('../logger');
 const Metadata = require('../metadata');
+const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../../parameters');
-const { extend, spawner, homePath, toMd5 } = require('../util');
-
-const ApiHelper = require('../api-helper');
+const { extend, spawner, homePath } = require('../util');
 
 class Terraform {
   /**
