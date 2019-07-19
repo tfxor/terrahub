@@ -116,14 +116,16 @@ class Terraform {
 
         const sourceProfile = _cloudData.type === 'role'
           ? providerAccounts.find(it => it.id === _cloudData.env_var.AWS_SOURCE_PROFILE.id) : null;
-        const credentials = this._retrieveEnvVars(_cloudData, sourceProfile);
+        const credentials = Terraform.retrieveEnvVars(_cloudData, sourceProfile);
 
         switch (type) {
           case 'cloudAccount':
-            this._setupCloudVars(credentials);
+            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE'].forEach(it => delete this._envVars[it]);
+
+            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: this._saveCredentials(credentials, 'cloud') });
             break;
           case 'backendAccount':
-            this._setupBackendVars(credentials);
+            Object.assign(this._tf.backend, { shared_credentials_file: this._saveCredentials(credentials, 'backend') });
             break;
         }
       });
@@ -136,9 +138,9 @@ class Terraform {
    * @param {Object} cloudData
    * @param {Object} sourceProfile
    * @return {String}
-   * @private
+   * @static
    */
-  _retrieveEnvVars(cloudData, sourceProfile) {
+  static retrieveEnvVars(cloudData, sourceProfile) {
     let credentials = `[default]\n`;
 
     if (sourceProfile) {
@@ -157,47 +159,15 @@ class Terraform {
 
   /**
    * @param {String} credentials
-   * @private
-   */
-  _setupCloudVars(credentials) {
-    const credsPath = this._saveCredentials(credentials, 'cloud');
-
-    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE'].forEach(it => delete this._envVars[it]);
-
-    Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: credsPath });
-  }
-
-  /**
-   * @param {String} credentials
-   * @private
-   */
-  _setupBackendVars(credentials) {
-    const credsPath = this._saveCredentials(credentials, 'backend');
-
-    Object.assign(this._tf.backend, { shared_credentials_file: credsPath });
-  }
-
-  /**
-   * @param {Object} config
-   * @return {String}
-   * @private
-   */
-  _buildTmpPath(config) {
-    const tmpPath = homePath('temp', config.project.code, config.name);
-
-    fse.ensureDirSync(tmpPath);
-
-    return tmpPath;
-  }
-
-  /**
-   * @param {String} credentials
    * @param {String} prefix
    * @return {string}
    * @private
    */
   _saveCredentials(credentials, prefix) {
-    const tmpPath = this._buildTmpPath(this._config);
+    const tmpPath = homePath('temp', this._config.project.code, this._config.name);
+
+    fse.ensureDirSync(tmpPath);
+
     const credsPath = path.join(tmpPath, `aws_credentials_${prefix}`);
 
     fse.writeFileSync(credsPath, credentials);

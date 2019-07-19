@@ -42,7 +42,7 @@ class S3Helper {
    * @returns {Promise}
    */
   getObject(bucketName, objectKey, config) {
-    return this.retriveCredsForTfVars(config).then(credentials => {
+    return this._retriveCredsForTfVars(config).then(credentials => {
       if (credentials) {
         const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = credentials;
         this._s3 = new AWS.S3({ accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
@@ -54,31 +54,52 @@ class S3Helper {
 
   /**
    * @param {Object} [config]
-   * @return {Promise || void}
+   * @return {Promise}
+   * @private
    */
-  async retriveCredsForTfVars(config) {
+  _retriveCredsForTfVars(config) {
     if (!config) {
       return Promise.resolve();
     }
-
     const { tfvarsAccount } = config.terraform;
 
-    if (tfvarsAccount) {
-      const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-      const configAccount = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
+    return this._findCloudAccount(tfvarsAccount);
+  }
 
-      if (configAccount) {
-        const sourceProfile = configAccount.type === 'role'
-          ? cloudAccounts.aws.find(it => it.id === configAccount.env_var.AWS_SOURCE_PROFILE.id) : null;
-
-        return Promise.resolve({
-          AWS_ACCESS_KEY_ID: sourceProfile ? sourceProfile.env_var.AWS_ACCESS_KEY_ID.value : configAccount.env_var.AWS_ACCESS_KEY_ID.value,
-          AWS_SECRET_ACCESS_KEY: sourceProfile ? sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value : configAccount.env_var.AWS_SECRET_ACCESS_KEY.value
-        });
-      }
+  /**
+   * @param {String} tfvarsAccount
+   * @return {Promise}
+   * @private
+   */
+  async _findCloudAccount(tfvarsAccount) {
+    if (!tfvarsAccount) {
+      return Promise.resolve();
     }
 
-    return Promise.resolve();
+    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    const configAccount = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
+
+    return this._retrieveAccessCreds(configAccount, cloudAccounts);
+  }
+
+  /**
+   * @param {Object} configAccount - AWS account from config
+   * @param {Object} cloudAccounts - all CloudAccounts
+   * @return {Promise}
+   * @private
+   */
+  _retrieveAccessCreds(configAccount, cloudAccounts) {
+    if (!configAccount) {
+      return Promise.resolve();
+    }
+
+    const sourceProfile = configAccount.type === 'role'
+      ? cloudAccounts.aws.find(it => it.id === configAccount.env_var.AWS_SOURCE_PROFILE.id) : null;
+
+    return Promise.resolve({
+      AWS_ACCESS_KEY_ID: sourceProfile ? sourceProfile.env_var.AWS_ACCESS_KEY_ID.value : configAccount.env_var.AWS_ACCESS_KEY_ID.value,
+      AWS_SECRET_ACCESS_KEY: sourceProfile ? sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value : configAccount.env_var.AWS_SECRET_ACCESS_KEY.value
+    });
   }
 
 
