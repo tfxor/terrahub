@@ -16,8 +16,10 @@ type Map map[string]json.RawMessage
 type Array []json.RawMessage
 
 var (
-	input   = ""
-	Version = "development"
+	input = ""
+	version = false
+	versionInfo = "development"
+	tf12format = "yes"
 	interpolation = ""
 	interpolationList = []string{
 		"provider",
@@ -48,25 +50,34 @@ var (
 	resourceDoNotPrint = []string{
 		"locals", "terraform", "data", "resource",
 	}
+	doubleScope = []string{
+		"provider", "variable",
+	}
 )
 
 func init() {
-	version := flag.Bool("v", false, "Prints current app version")
-	flag.StringVar(&input, "i", "", "Input string")
+	flag.BoolVar(&version, "v", false, "Prints current app version")
+	flag.StringVar(&input, "i", "", "Input string that contains the JSON configuration to convert.")
+	flag.StringVar(&tf12format, "F", "", "Use Terraform 0.12 formatter. Default value is 'yes'.")
 	
 	flag.Parse()
-
-	if *version {
-		fmt.Println(Version)
-		return
-	}
 }
 
 func main() {
+	if version {
+		fmt.Println(versionInfo)
+		return
+	}
 	// inputFile, _ := ioutil.ReadFile(input)
 	
 	// var tmpJ json.RawMessage
 	// json.Unmarshal(inputFile, &tmpJ)
+	if strings.Index(input, "{\\\"") > -1 {
+		input = strings.Replace(input, "{\\\"", "{'", -1)
+		input = strings.Replace(input, ", \\\"", ", '", -1)
+		input = strings.Replace(input, "\\\": ", "': ", -1)
+		input = strings.Replace(input, "\\\":", "':", -1)
+	}
 	var outHCL2 = hclwrite.Format([]byte(walkJson([]byte(input), 0, "", "", "")))
 	// var outHCL2 = hclwrite.Format([]byte(walkJson(tmpJ, 0, "", "", "")))
 	os.Stdout.WriteString(string(outHCL2))
@@ -82,12 +93,24 @@ func Contains(a []string, x string) bool {
     return false
 }
 
+func ContainsOneOfElement(x string, a []string) bool {
+    for _, n := range a {
+		for index := 0; index < len(x); index++ {
+			if string(x[index]) == n {
+				return true
+			}
+		}
+	}
+	
+    return false
+}
+
 func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType string, lastIndex string) string {
 	if raw[0] == 123 { //  123 is `{` => object
 		var cont Map
 		json.Unmarshal(raw, &cont)
 		for i, v := range cont {
-			if Contains(resourceTypeList, i) {
+			if Contains(resourceTypeList, i) && ((Contains(doubleScope ,i) && (v[0] == 91 || v[0] == 123)) || !Contains(doubleScope ,i)) {
 				interpolation = ""
 				if !Contains(interpolationList, resourceType) {
 					level = 0
@@ -108,7 +131,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 					outHCL2 += mapIn1Level(i, level, v)
 				case "terraform":
 					outHCL2 += mapIn1LevelAndSubLevel(i, level, v)
-				case "module", "output", "variable":
+				case "module", "output", "variable", "provider":
 					outHCL2 += mapIn2Level(i, level, v)
 				case "resource", "data":
 					outHCL2 += mapIn3Level(i, level, v, lastIndex, resourceType)
@@ -123,7 +146,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 					outHCL2 += mapOut1Level(v)
 				case "terraform":
 					outHCL2 += mapOut1LevelAndSubLevel(level, v)
-				case "module", "output", "variable":
+				case "module", "output", "variable", "provider":
 					outHCL2 += mapOut2Level(level, v)
 				case "resource", "data":
 					outHCL2 += mapOut3Level(level, v)
@@ -137,6 +160,14 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		for i, v := range cont {
 			if interpolation != "" && level < 2 {
 				outHCL2 += walkJson(v, 1, "", resourceType, "")
+			} else if v[0] == 123 {
+				if i == 0 {
+					outHCL2 += " {\n"
+				}
+				outHCL2 += walkJson(v, level, "", resourceType, "")
+				if i == len(cont)-1 {
+					outHCL2 += "}\n"
+				}
 			} else {			
 				if i == 0 {
 					outHCL2 += " [\n"
@@ -153,17 +184,26 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 	} else {
 		var val interface{}
 		json.Unmarshal(raw, &val)
+		
 		switch v := val.(type) {
 			case float64:
-				outHCL2 += strconv.Itoa(int(v)) + "\n"
+				if tf12format == "no" {
+					outHCL2 +="\"" + strconv.Itoa(int(v)) + "\"\n"
+				} else {
+					outHCL2 += strconv.Itoa(int(v)) + "\n"
+				}
 			case string:
-				if isFunction(v) {
+				if isFunction(v) && tf12format != "no" {
 					outHCL2 += v + "\n"
 				} else {
 					outHCL2 +="\"" + v + "\"\n"
 				}			
 			case bool:
-				outHCL2 += strconv.FormatBool(v) + "\n"
+				if tf12format == "no" {
+					outHCL2 +="\"" + strconv.FormatBool(v) + "\"\n"
+				} else {
+					outHCL2 += strconv.FormatBool(v) + "\n"
+				}
 			case nil:
 				outHCL2 += ""
 			default:
@@ -230,7 +270,12 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 		case 2:
 			outHCL2 = resourceType + " \"" + lastIndex + "\" \"" + i + "\""
 		default:
-			outHCL2 = i + " ="
+			if ContainsOneOfElement(i, []string{"/", ",", "."}) {
+				outHCL2 = "\"" + i + "\" ="
+			} else {
+				outHCL2 = i + " ="
+			}
+			
 	}
 	if raw[0] == 123 && level >= 2 {
 		outHCL2 += " {\n"

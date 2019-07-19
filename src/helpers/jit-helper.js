@@ -726,7 +726,6 @@ class JitHelper {
       extension = '.exe';
 
     const dataStringify = JSON.stringify(data);
-
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}' ${formatHCL1}`)
       .then(result => {
         return fse.writeFileSync(componentPath, result.stdout);
