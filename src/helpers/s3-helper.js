@@ -65,7 +65,7 @@ class S3Helper {
 
     if (tfvarsAccount) {
       const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-      const configAccount = cloudAccounts.aws.find(it => it.name === tfvarsAccount);
+      const configAccount = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
 
       if (configAccount) {
         const sourceProfile = configAccount.type === 'role'
