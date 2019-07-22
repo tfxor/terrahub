@@ -118,7 +118,7 @@ class JitHelper {
           Object.keys(local).filter(it => local[it]).map(() => {
             const { path } = local;
             if (path) {
-              local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+              local.path = replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
             }
           });
         }
@@ -545,7 +545,7 @@ class JitHelper {
    */
   static _addLocalTfvars(config, localTfvarsLinks) {
     const promises = Object.keys(localTfvarsLinks).map(it => {
-      const localTfvarsLinkPath = path.resolve(config.project.root, config.root, localTfvarsLinks[it]);
+      const localTfvarsLinkPath = resolve(config.project.root, config.root, localTfvarsLinks[it]);
       if (fse.existsSync(localTfvarsLinkPath)) {
         return fse.readFile(localTfvarsLinkPath).then(content => {
           return JitHelper._parsingTfvars(content.toString(), config);
