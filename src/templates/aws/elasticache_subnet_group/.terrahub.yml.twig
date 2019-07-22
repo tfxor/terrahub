@@ -8,16 +8,16 @@
     resource:
       aws_elasticache_subnet_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
+          name: var.{{ name }}_name
+          subnet_ids: var.{{ name }}_subnet_ids
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_subnet_ids:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_elasticache_subnet_group.{{ name }}.id}'
+        value: aws_elasticache_subnet_group.{{ name }}.id
       thub_id:
-        value: '${aws_elasticache_subnet_group.{{ name }}.id}'
+        value: aws_elasticache_subnet_group.{{ name }}.id

@@ -8,19 +8,19 @@
     resource:
       aws_glacier_vault_lock:
         {{ name }}:
-          complete_lock: '${var.{{ name }}_complete_lock}'
-          policy: '${var.{{ name }}_policy}'
-          vault_name: '${var.{{ name }}_vault_name}'
+          policy: var.{{ name }}_policy
+          vault_name: var.{{ name }}_vault_name
+          complete_lock: var.{{ name }}_complete_lock
           # ignore_deletion_error: false
     variable:
-      {{ name }}_complete_lock:
-        type: 'bool'
       {{ name }}_policy:
-        type: 'string'
+        type: string
       {{ name }}_vault_name:
-        type: 'string'
+        type: string
+      {{ name }}_complete_lock:
+        type: bool
     output:
       id:
-        value: '${aws_glacier_vault_lock.{{ name }}.id}'
+        value: aws_glacier_vault_lock.{{ name }}.id
       thub_id:
-        value: '${aws_glacier_vault_lock.{{ name }}.id}'
+        value: aws_glacier_vault_lock.{{ name }}.id

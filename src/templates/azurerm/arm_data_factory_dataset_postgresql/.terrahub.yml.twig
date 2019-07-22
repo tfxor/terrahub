@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_data_factory_dataset_postgresql:
+        {{ name }}:
+          name: var.{{ name }}_name
+          data_factory_name: var.{{ name }}_data_factory_name
+          linked_service_name: var.{{ name }}_linked_service_name
+          # table_name: ''
+          # folder: ''
+          # additional_properties: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+          # annotations: []
+          # schema_column: 
+          #   -
+          #     name: ''
+          #     description: ''
+          #     type: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_data_factory_name:
+        type: string
+      {{ name }}_linked_service_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_data_factory_dataset_postgresql.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_data_factory_dataset_postgresql.{{ name }}.id

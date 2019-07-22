@@ -8,16 +8,17 @@
     resource:
       aws_ses_identity_notification_topic:
         {{ name }}:
-          notification_type: '${var.{{ name }}_notification_type}'
-          identity: '${var.{{ name }}_identity}'
+          notification_type: var.{{ name }}_notification_type
+          identity: var.{{ name }}_identity
+          # include_original_headers: false
           # topic_arn: ''
     variable:
       {{ name }}_notification_type:
-        type: 'string'
+        type: string
       {{ name }}_identity:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_identity_notification_topic.{{ name }}.id}'
+        value: aws_ses_identity_notification_topic.{{ name }}.id
       thub_id:
-        value: '${aws_ses_identity_notification_topic.{{ name }}.id}'
+        value: aws_ses_identity_notification_topic.{{ name }}.id

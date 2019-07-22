@@ -8,26 +8,30 @@
     resource:
       aws_dx_lag:
         {{ name }}:
-          location: '${var.{{ name }}_location}'
-          name: '${var.{{ name }}_name}'
-          connections_bandwidth: '${var.{{ name }}_connections_bandwidth}'
+          name: var.{{ name }}_name
+          connections_bandwidth: var.{{ name }}_connections_bandwidth
+          location: var.{{ name }}_location
           # number_of_connections: 0
           # force_destroy: false
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_location:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_connections_bandwidth:
-        type: 'string'
+        type: string
+      {{ name }}_location:
+        type: string
     output:
       id:
-        value: '${aws_dx_lag.{{ name }}.id}'
+        value: aws_dx_lag.{{ name }}.id
       thub_id:
-        value: '${aws_dx_lag.{{ name }}.id}'
+        value: aws_dx_lag.{{ name }}.id
       number_of_connections:
-        value: '${aws_dx_lag.{{ name }}.number_of_connections}'
+        value: aws_dx_lag.{{ name }}.number_of_connections
+      jumbo_frame_capable:
+        value: aws_dx_lag.{{ name }}.jumbo_frame_capable
       arn:
-        value: '${aws_dx_lag.{{ name }}.arn}'
+        value: aws_dx_lag.{{ name }}.arn
+      has_logical_redundancy:
+        value: aws_dx_lag.{{ name }}.has_logical_redundancy

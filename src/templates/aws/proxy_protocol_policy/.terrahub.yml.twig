@@ -8,15 +8,15 @@
     resource:
       aws_proxy_protocol_policy:
         {{ name }}:
-          load_balancer: '${var.{{ name }}_load_balancer}'
-          instance_ports: '${var.{{ name }}_instance_ports}'
+          load_balancer: var.{{ name }}_load_balancer
+          instance_ports: var.{{ name }}_instance_ports
     variable:
       {{ name }}_load_balancer:
-        type: 'string'
+        type: string
       {{ name }}_instance_ports:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_proxy_protocol_policy.{{ name }}.id}'
+        value: aws_proxy_protocol_policy.{{ name }}.id
       thub_id:
-        value: '${aws_proxy_protocol_policy.{{ name }}.id}'
+        value: aws_proxy_protocol_policy.{{ name }}.id

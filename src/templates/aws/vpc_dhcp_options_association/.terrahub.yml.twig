@@ -8,15 +8,15 @@
     resource:
       aws_vpc_dhcp_options_association:
         {{ name }}:
-          vpc_id: '${var.{{ name }}_vpc_id}'
-          dhcp_options_id: '${var.{{ name }}_dhcp_options_id}'
+          vpc_id: var.{{ name }}_vpc_id
+          dhcp_options_id: var.{{ name }}_dhcp_options_id
     variable:
       {{ name }}_vpc_id:
-        type: 'string'
+        type: string
       {{ name }}_dhcp_options_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_vpc_dhcp_options_association.{{ name }}.id}'
+        value: aws_vpc_dhcp_options_association.{{ name }}.id
       thub_id:
-        value: '${aws_vpc_dhcp_options_association.{{ name }}.id}'
+        value: aws_vpc_dhcp_options_association.{{ name }}.id

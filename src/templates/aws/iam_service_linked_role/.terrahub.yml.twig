@@ -8,24 +8,24 @@
     resource:
       aws_iam_service_linked_role:
         {{ name }}:
-          aws_service_name: '${var.{{ name }}_aws_service_name}'
+          aws_service_name: var.{{ name }}_aws_service_name
           # custom_suffix: ''
           # description: ''
     variable:
       {{ name }}_aws_service_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_service_linked_role.{{ name }}.id}'
+        value: aws_iam_service_linked_role.{{ name }}.id
       thub_id:
-        value: '${aws_iam_service_linked_role.{{ name }}.id}'
-      unique_id:
-        value: '${aws_iam_service_linked_role.{{ name }}.unique_id}'
-      name:
-        value: '${aws_iam_service_linked_role.{{ name }}.name}'
-      path:
-        value: '${aws_iam_service_linked_role.{{ name }}.path}'
-      arn:
-        value: '${aws_iam_service_linked_role.{{ name }}.arn}'
+        value: aws_iam_service_linked_role.{{ name }}.id
       create_date:
-        value: '${aws_iam_service_linked_role.{{ name }}.create_date}'
+        value: aws_iam_service_linked_role.{{ name }}.create_date
+      unique_id:
+        value: aws_iam_service_linked_role.{{ name }}.unique_id
+      name:
+        value: aws_iam_service_linked_role.{{ name }}.name
+      path:
+        value: aws_iam_service_linked_role.{{ name }}.path
+      arn:
+        value: aws_iam_service_linked_role.{{ name }}.arn

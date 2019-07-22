@@ -6,29 +6,32 @@
     resource:
       google_sql_ssl_cert:
         {{ name }}:
-          common_name: '${var.{{ name }}_common_name}'
-          instance: '${var.{{ name }}_instance}'
+          common_name: var.{{ name }}_common_name
+          instance: var.{{ name }}_instance
+          # project: ''
     variable:
       {{ name }}_common_name:
-        type: 'string'
+        type: string
       {{ name }}_instance:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_sql_ssl_cert.{{ name }}.id}'
+        value: google_sql_ssl_cert.{{ name }}.id
       thub_id:
-        value: '${google_sql_ssl_cert.{{ name }}.id}'
-      create_time:
-        value: '${google_sql_ssl_cert.{{ name }}.create_time}'
-      expiration_time:
-        value: '${google_sql_ssl_cert.{{ name }}.expiration_time}'
-      private_key:
-        value: '${google_sql_ssl_cert.{{ name }}.private_key}'
-      cert_serial_number:
-        value: '${google_sql_ssl_cert.{{ name }}.cert_serial_number}'
+        value: google_sql_ssl_cert.{{ name }}.id
+      project:
+        value: google_sql_ssl_cert.{{ name }}.project
       cert:
-        value: '${google_sql_ssl_cert.{{ name }}.cert}'
-      server_ca_cert:
-        value: '${google_sql_ssl_cert.{{ name }}.server_ca_cert}'
+        value: google_sql_ssl_cert.{{ name }}.cert
+      private_key:
+        value: google_sql_ssl_cert.{{ name }}.private_key
       sha1_fingerprint:
-        value: '${google_sql_ssl_cert.{{ name }}.sha1_fingerprint}'
+        value: google_sql_ssl_cert.{{ name }}.sha1_fingerprint
+      cert_serial_number:
+        value: google_sql_ssl_cert.{{ name }}.cert_serial_number
+      create_time:
+        value: google_sql_ssl_cert.{{ name }}.create_time
+      expiration_time:
+        value: google_sql_ssl_cert.{{ name }}.expiration_time
+      server_ca_cert:
+        value: google_sql_ssl_cert.{{ name }}.server_ca_cert

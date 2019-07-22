@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_stream_analytics_stream_input_eventhub:
+        {{ name }}:
+          name: var.{{ name }}_name
+          shared_access_policy_name: var.{{ name }}_shared_access_policy_name
+          stream_analytics_job_name: var.{{ name }}_stream_analytics_job_name
+          eventhub_consumer_group_name: var.{{ name }}_eventhub_consumer_group_name
+          eventhub_name: var.{{ name }}_eventhub_name
+          servicebus_namespace: var.{{ name }}_servicebus_namespace
+          shared_access_policy_key: var.{{ name }}_shared_access_policy_key
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_shared_access_policy_name:
+        type: string
+      {{ name }}_stream_analytics_job_name:
+        type: string
+      {{ name }}_eventhub_consumer_group_name:
+        type: string
+      {{ name }}_eventhub_name:
+        type: string
+      {{ name }}_servicebus_namespace:
+        type: string
+      {{ name }}_shared_access_policy_key:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_stream_analytics_stream_input_eventhub.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_stream_analytics_stream_input_eventhub.{{ name }}.id

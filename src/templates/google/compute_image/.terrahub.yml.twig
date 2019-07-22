@@ -6,39 +6,39 @@
     resource:
       google_compute_image:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # description: ''
-          # disk_size_gb: 0
-          # source_disk: ''
-          # labels:
+          name: var.{{ name }}_name
+          # labels: 
           #   '[TO_BE_REPLACED]': ''
           # licenses: []
-          # raw_disk:
+          # source_disk: ''
+          # description: ''
+          # disk_size_gb: 0
+          # family: ''
+          # raw_disk: 
           #   -
           #     source: ''
-          #     sha1: ''
           #     container_type: ''
+          #     sha1: ''
           # project: ''
-          # family: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_image.{{ name }}.id}'
+        value: google_compute_image.{{ name }}.id
       thub_id:
-        value: '${google_compute_image.{{ name }}.id}'
-      disk_size_gb:
-        value: '${google_compute_image.{{ name }}.disk_size_gb}'
-      label_fingerprint:
-        value: '${google_compute_image.{{ name }}.label_fingerprint}'
+        value: google_compute_image.{{ name }}.id
       licenses:
-        value: '${google_compute_image.{{ name }}.licenses}'
+        value: google_compute_image.{{ name }}.licenses
+      disk_size_gb:
+        value: google_compute_image.{{ name }}.disk_size_gb
       archive_size_bytes:
-        value: '${google_compute_image.{{ name }}.archive_size_bytes}'
+        value: google_compute_image.{{ name }}.archive_size_bytes
       creation_timestamp:
-        value: '${google_compute_image.{{ name }}.creation_timestamp}'
+        value: google_compute_image.{{ name }}.creation_timestamp
+      label_fingerprint:
+        value: google_compute_image.{{ name }}.label_fingerprint
       project:
-        value: '${google_compute_image.{{ name }}.project}'
+        value: google_compute_image.{{ name }}.project
       self_link:
-        value: '${google_compute_image.{{ name }}.self_link}'
+        value: google_compute_image.{{ name }}.self_link

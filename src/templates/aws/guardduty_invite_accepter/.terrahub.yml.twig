@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_guardduty_invite_accepter:
+        {{ name }}:
+          detector_id: var.{{ name }}_detector_id
+          master_account_id: var.{{ name }}_master_account_id
+    variable:
+      {{ name }}_detector_id:
+        type: string
+      {{ name }}_master_account_id:
+        type: string
+    output:
+      id:
+        value: aws_guardduty_invite_accepter.{{ name }}.id
+      thub_id:
+        value: aws_guardduty_invite_accepter.{{ name }}.id

@@ -8,38 +8,38 @@
     resource:
       aws_s3_bucket_inventory:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          name: '${var.{{ name }}_name}'
-          destination:
+          destination: 
             -
-              bucket:
+              bucket: 
                 -
                   format: ''
                   bucket_arn: ''
           #         account_id: ''
           #         prefix: ''
-          #         encryption:
+          #         encryption: 
           #           -
-          #             sse_kms:
+          #             sse_kms: 
           #               -
           #                 key_id: ''
-          schedule:
+          schedule: 
             -
               frequency: ''
-          included_object_versions: '${var.{{ name }}_included_object_versions}'
-          # filter:
+          included_object_versions: var.{{ name }}_included_object_versions
+          bucket: var.{{ name }}_bucket
+          name: var.{{ name }}_name
+          # filter: 
           #   -
           #     prefix: ''
           # optional_fields: []
     variable:
-      {{ name }}_bucket:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_included_object_versions:
-        type: 'string'
+        type: string
+      {{ name }}_bucket:
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_inventory.{{ name }}.id}'
+        value: aws_s3_bucket_inventory.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_inventory.{{ name }}.id}'
+        value: aws_s3_bucket_inventory.{{ name }}.id

@@ -8,38 +8,38 @@
     resource:
       aws_sagemaker_model:
         {{ name }}:
-          execution_role_arn: '${var.{{ name }}_execution_role_arn}'
-          # primary_container:
+          execution_role_arn: var.{{ name }}_execution_role_arn
+          # enable_network_isolation: false
+          # container: 
           #   -
           #     image: ''
           #     container_hostname: ''
           #     model_data_url: ''
-          #     environment:
+          #     environment: 
           #       '[TO_BE_REPLACED]': ''
-          # vpc_config:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # primary_container: 
+          #   -
+          #     image: ''
+          #     model_data_url: ''
+          #     environment: 
+          #       '[TO_BE_REPLACED]': ''
+          #     container_hostname: ''
+          # vpc_config: 
           #   -
           #     subnets: []
           #     security_group_ids: []
-          # enable_network_isolation: false
-          # container:
-          #   -
-          #     image: ''
-          #     environment:
-          #       '[TO_BE_REPLACED]': ''
-          #     container_hostname: ''
-          #     model_data_url: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # name: ''
     variable:
       {{ name }}_execution_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_sagemaker_model.{{ name }}.id}'
+        value: aws_sagemaker_model.{{ name }}.id
       thub_id:
-        value: '${aws_sagemaker_model.{{ name }}.id}'
+        value: aws_sagemaker_model.{{ name }}.id
       arn:
-        value: '${aws_sagemaker_model.{{ name }}.arn}'
+        value: aws_sagemaker_model.{{ name }}.arn
       name:
-        value: '${aws_sagemaker_model.{{ name }}.name}'
+        value: aws_sagemaker_model.{{ name }}.name

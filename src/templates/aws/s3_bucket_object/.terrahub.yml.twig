@@ -8,40 +8,40 @@
     resource:
       aws_s3_bucket_object:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          key: '${var.{{ name }}_key}'
-          # content: ''
+          bucket: var.{{ name }}_bucket
+          key: var.{{ name }}_key
           # kms_key_id: ''
-          # etag: ''
-          # content_disposition: ''
-          # content_encoding: ''
-          # content_type: ''
-          # storage_class: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # content_language: ''
-          # source: ''
+          # content_encoding: ''
           # content_base64: ''
+          # storage_class: ''
           # website_redirect: ''
           # cache_control: ''
+          # content_disposition: ''
+          # content_language: ''
+          # content_type: ''
+          # source: ''
+          # content: ''
           # server_side_encryption: ''
+          # etag: ''
     variable:
       {{ name }}_bucket:
-        type: 'string'
+        type: string
       {{ name }}_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_object.{{ name }}.id}'
+        value: aws_s3_bucket_object.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_object.{{ name }}.id}'
-      etag:
-        value: '${aws_s3_bucket_object.{{ name }}.etag}'
-      content_type:
-        value: '${aws_s3_bucket_object.{{ name }}.content_type}'
+        value: aws_s3_bucket_object.{{ name }}.id
       storage_class:
-        value: '${aws_s3_bucket_object.{{ name }}.storage_class}'
-      version_id:
-        value: '${aws_s3_bucket_object.{{ name }}.version_id}'
+        value: aws_s3_bucket_object.{{ name }}.storage_class
+      content_type:
+        value: aws_s3_bucket_object.{{ name }}.content_type
       server_side_encryption:
-        value: '${aws_s3_bucket_object.{{ name }}.server_side_encryption}'
+        value: aws_s3_bucket_object.{{ name }}.server_side_encryption
+      etag:
+        value: aws_s3_bucket_object.{{ name }}.etag
+      version_id:
+        value: aws_s3_bucket_object.{{ name }}.version_id

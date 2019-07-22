@@ -8,12 +8,14 @@
     resource:
       aws_guardduty_detector:
         {{ name }}:
-          # finding_publishing_frequency: ''
           # enable: false
+          # finding_publishing_frequency: ''
     output:
       id:
-        value: '${aws_guardduty_detector.{{ name }}.id}'
+        value: aws_guardduty_detector.{{ name }}.id
       thub_id:
-        value: '${aws_guardduty_detector.{{ name }}.id}'
+        value: aws_guardduty_detector.{{ name }}.id
       account_id:
-        value: '${aws_guardduty_detector.{{ name }}.account_id}'
+        value: aws_guardduty_detector.{{ name }}.account_id
+      finding_publishing_frequency:
+        value: aws_guardduty_detector.{{ name }}.finding_publishing_frequency

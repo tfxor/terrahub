@@ -121,6 +121,10 @@ class ConvertCommand extends TerraformCommand {
         promise = this._toHcl(config);
         break;
 
+      case 'hcl2':
+        promise = this._toHcl(config);
+        break;
+
       case 'json':
         promise = this._toJson(config);
         break;
@@ -243,7 +247,7 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   static get _supportedFormats() {
-    return ['yml', 'yaml', 'hcl', 'json'];
+    return ['yml', 'yaml', 'hcl', 'hcl2', 'json'];
   }
 }
 

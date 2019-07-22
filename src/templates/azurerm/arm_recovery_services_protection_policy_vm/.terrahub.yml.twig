@@ -7,41 +7,41 @@
     resource:
       azurerm_arm_recovery_services_protection_policy_vm:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          recovery_vault_name: '${var.{{ name }}_recovery_vault_name}'
-          backup:
+          recovery_vault_name: var.{{ name }}_recovery_vault_name
+          backup: 
             -
               frequency: ''
               time: ''
-          #     weekdays:
-          # retention_daily:
+          #     weekdays: 
+          name: var.{{ name }}_name
+          # retention_daily: 
           #   -
           #     count: 0
-          # retention_weekly:
+          # retention_monthly: 
+          #   -
+          #     count: 0
+          #     weeks: []
+          #     weekdays: []
+          # retention_weekly: 
           #   -
           #     count: 0
           #     weekdays: []
-          # retention_yearly:
+          # retention_yearly: 
           #   -
           #     count: 0
           #     months: []
           #     weeks: []
           #     weekdays: []
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # timezone: ''
-          # retention_monthly:
-          #   -
-          #     weeks: []
-          #     weekdays: []
-          #     count: 0
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_recovery_vault_name:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id}'
+        value: azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id}'
+        value: azurerm_arm_recovery_services_protection_policy_vm.{{ name }}.id

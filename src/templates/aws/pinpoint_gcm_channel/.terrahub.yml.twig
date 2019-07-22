@@ -8,16 +8,16 @@
     resource:
       aws_pinpoint_gcm_channel:
         {{ name }}:
-          application_id: '${var.{{ name }}_application_id}'
-          api_key: '${var.{{ name }}_api_key}'
+          application_id: var.{{ name }}_application_id
+          api_key: var.{{ name }}_api_key
           # enabled: false
     variable:
       {{ name }}_application_id:
-        type: 'string'
+        type: string
       {{ name }}_api_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_gcm_channel.{{ name }}.id}'
+        value: aws_pinpoint_gcm_channel.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_gcm_channel.{{ name }}.id}'
+        value: aws_pinpoint_gcm_channel.{{ name }}.id

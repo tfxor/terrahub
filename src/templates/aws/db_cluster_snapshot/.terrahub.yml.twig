@@ -8,41 +8,41 @@
     resource:
       aws_db_cluster_snapshot:
         {{ name }}:
-          db_cluster_snapshot_identifier: '${var.{{ name }}_db_cluster_snapshot_identifier}'
-          db_cluster_identifier: '${var.{{ name }}_db_cluster_identifier}'
+          db_cluster_snapshot_identifier: var.{{ name }}_db_cluster_snapshot_identifier
+          db_cluster_identifier: var.{{ name }}_db_cluster_identifier
     variable:
       {{ name }}_db_cluster_snapshot_identifier:
-        type: 'string'
+        type: string
       {{ name }}_db_cluster_identifier:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_db_cluster_snapshot.{{ name }}.id}'
+        value: aws_db_cluster_snapshot.{{ name }}.id
       thub_id:
-        value: '${aws_db_cluster_snapshot.{{ name }}.id}'
-      license_model:
-        value: '${aws_db_cluster_snapshot.{{ name }}.license_model}'
-      port:
-        value: '${aws_db_cluster_snapshot.{{ name }}.port}'
-      source_db_cluster_snapshot_arn:
-        value: '${aws_db_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'
-      status:
-        value: '${aws_db_cluster_snapshot.{{ name }}.status}'
-      vpc_id:
-        value: '${aws_db_cluster_snapshot.{{ name }}.vpc_id}'
-      storage_encrypted:
-        value: '${aws_db_cluster_snapshot.{{ name }}.storage_encrypted}'
-      kms_key_id:
-        value: '${aws_db_cluster_snapshot.{{ name }}.kms_key_id}'
-      snapshot_type:
-        value: '${aws_db_cluster_snapshot.{{ name }}.snapshot_type}'
+        value: aws_db_cluster_snapshot.{{ name }}.id
       availability_zones:
-        value: '${aws_db_cluster_snapshot.{{ name }}.availability_zones}'
-      engine_version:
-        value: '${aws_db_cluster_snapshot.{{ name }}.engine_version}'
-      allocated_storage:
-        value: '${aws_db_cluster_snapshot.{{ name }}.allocated_storage}'
-      db_cluster_snapshot_arn:
-        value: '${aws_db_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
+        value: aws_db_cluster_snapshot.{{ name }}.availability_zones
+      snapshot_type:
+        value: aws_db_cluster_snapshot.{{ name }}.snapshot_type
+      status:
+        value: aws_db_cluster_snapshot.{{ name }}.status
+      storage_encrypted:
+        value: aws_db_cluster_snapshot.{{ name }}.storage_encrypted
       engine:
-        value: '${aws_db_cluster_snapshot.{{ name }}.engine}'
+        value: aws_db_cluster_snapshot.{{ name }}.engine
+      license_model:
+        value: aws_db_cluster_snapshot.{{ name }}.license_model
+      port:
+        value: aws_db_cluster_snapshot.{{ name }}.port
+      source_db_cluster_snapshot_arn:
+        value: aws_db_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn
+      allocated_storage:
+        value: aws_db_cluster_snapshot.{{ name }}.allocated_storage
+      db_cluster_snapshot_arn:
+        value: aws_db_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn
+      engine_version:
+        value: aws_db_cluster_snapshot.{{ name }}.engine_version
+      vpc_id:
+        value: aws_db_cluster_snapshot.{{ name }}.vpc_id
+      kms_key_id:
+        value: aws_db_cluster_snapshot.{{ name }}.kms_key_id

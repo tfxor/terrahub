@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_access_context_manager_access_level:
+        {{ name }}:
+          name: var.{{ name }}_name
+          parent: var.{{ name }}_parent
+          title: var.{{ name }}_title
+          # basic: 
+          #   -
+          #     conditions: 
+          #       -
+          #         device_policy: 
+          #           -
+          #             allowed_device_management_levels: 
+          #               -
+          #             allowed_encryption_statuses: 
+          #               -
+          #             os_constraints: 
+          #               -
+          #                 minimum_version: ''
+          #                 os_type: ''
+          #     ip_subnetworks: 
+          #       -
+          #     members: 
+          #       -
+          #     negate: false
+          #     required_access_levels: 
+          #       -
+          # combining_function: ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_parent:
+        type: string
+      {{ name }}_title:
+        type: string
+    output:
+      id:
+        value: google_access_context_manager_access_level.{{ name }}.id
+      thub_id:
+        value: google_access_context_manager_access_level.{{ name }}.id

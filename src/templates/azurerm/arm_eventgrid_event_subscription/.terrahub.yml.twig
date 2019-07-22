@@ -1,0 +1,57 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_eventgrid_event_subscription:
+        {{ name }}:
+          name: var.{{ name }}_name
+          scope: var.{{ name }}_scope
+          # labels: []
+          # event_delivery_schema: ''
+          # storage_queue_endpoint: 
+          #   -
+          #     storage_account_id: ''
+          #     queue_name: ''
+          # eventhub_endpoint: 
+          #   -
+          #     eventhub_id: ''
+          # webhook_endpoint: 
+          #   -
+          #     url: ''
+          # subject_filter: 
+          #   -
+          #     subject_begins_with: ''
+          #     subject_ends_with: ''
+          #     case_sensitive: false
+          # retry_policy: 
+          #   -
+          #     max_delivery_attempts: 0
+          #     event_time_to_live: 0
+          # topic_name: ''
+          # hybrid_connection_endpoint: 
+          #   -
+          #     hybrid_connection_id: ''
+          # included_event_types: []
+          # storage_blob_dead_letter_destination: 
+          #   -
+          #     storage_account_id: ''
+          #     storage_blob_container_name: ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_scope:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_eventgrid_event_subscription.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_eventgrid_event_subscription.{{ name }}.id
+      retry_policy:
+        value: azurerm_arm_eventgrid_event_subscription.{{ name }}.retry_policy
+      topic_name:
+        value: azurerm_arm_eventgrid_event_subscription.{{ name }}.topic_name
+      included_event_types:
+        value: azurerm_arm_eventgrid_event_subscription.{{ name }}.included_event_types

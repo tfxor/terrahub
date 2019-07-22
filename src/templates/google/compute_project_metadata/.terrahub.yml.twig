@@ -6,15 +6,15 @@
     resource:
       google_compute_project_metadata:
         {{ name }}:
-          metadata: '${var.{{ name }}_metadata}'
+          metadata: var.{{ name }}_metadata
           # project: ''
     variable:
       {{ name }}_metadata:
-        type: 'map'
+        type: map
     output:
       id:
-        value: '${google_compute_project_metadata.{{ name }}.id}'
+        value: google_compute_project_metadata.{{ name }}.id
       thub_id:
-        value: '${google_compute_project_metadata.{{ name }}.id}'
+        value: google_compute_project_metadata.{{ name }}.id
       project:
-        value: '${google_compute_project_metadata.{{ name }}.project}'
+        value: google_compute_project_metadata.{{ name }}.project

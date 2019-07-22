@@ -8,43 +8,63 @@
     resource:
       aws_ssm_maintenance_window_task:
         {{ name }}:
-          max_errors: '${var.{{ name }}_max_errors}'
-          task_type: '${var.{{ name }}_task_type}'
-          targets:
+          window_id: var.{{ name }}_window_id
+          max_errors: var.{{ name }}_max_errors
+          task_arn: var.{{ name }}_task_arn
+          targets: 
             -
               key: ''
               values: []
-          max_concurrency: '${var.{{ name }}_max_concurrency}'
-          task_arn: '${var.{{ name }}_task_arn}'
-          service_role_arn: '${var.{{ name }}_service_role_arn}'
-          window_id: '${var.{{ name }}_window_id}'
-          # name: ''
-          # task_parameters:
+          max_concurrency: var.{{ name }}_max_concurrency
+          task_type: var.{{ name }}_task_type
+          # description: ''
+          # task_invocation_parameters: 
+          #   -
+          #     automation_parameters: 
+          #       -
+          #         document_version: ''
+          #         parameter: 
+          #       name: ''
+          #       values: []
+          # lambda_parameters: 
+          #   -
+          #     client_context: ''
+          #     payload: ''
+          #     qualifier: ''
+          # run_command_parameters: 
+          #   -
+          #     document_hash: ''
+          #     document_hash_type: ''
+          #     notification_config: 
+          #       -
+          #         notification_events: 
+          #           -
+          #         notification_type: ''
+          #         notification_arn: ''
+          #     comment: ''
+          # timeout_seconds: 0
+          # service_role_arn: ''
+          # priority: 0
+          # logging_info: []
+          # step_functions_parameters: 
           #   -
           #     name: ''
-          #     values: []
-          # description: ''
-          # priority: 0
-          # logging_info:
-          #   -
-          #     s3_bucket_name: ''
-          #     s3_region: ''
-          #     s3_bucket_prefix: ''
+          #     input: ''
+          # name: ''
+          # task_parameters: []
     variable:
-      {{ name }}_max_errors:
-        type: 'string'
-      {{ name }}_task_type:
-        type: 'string'
-      {{ name }}_max_concurrency:
-        type: 'string'
-      {{ name }}_task_arn:
-        type: 'string'
-      {{ name }}_service_role_arn:
-        type: 'string'
       {{ name }}_window_id:
-        type: 'string'
+        type: string
+      {{ name }}_max_errors:
+        type: string
+      {{ name }}_task_arn:
+        type: string
+      {{ name }}_max_concurrency:
+        type: string
+      {{ name }}_task_type:
+        type: string
     output:
       id:
-        value: '${aws_ssm_maintenance_window_task.{{ name }}.id}'
+        value: aws_ssm_maintenance_window_task.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_maintenance_window_task.{{ name }}.id}'
+        value: aws_ssm_maintenance_window_task.{{ name }}.id

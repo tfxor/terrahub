@@ -8,24 +8,24 @@
     resource:
       aws_datasync_location_s3:
         {{ name }}:
-          s3_config:
+          s3_bucket_arn: var.{{ name }}_s3_bucket_arn
+          s3_config: 
             -
               bucket_access_role_arn: ''
-          subdirectory: '${var.{{ name }}_subdirectory}'
-          s3_bucket_arn: '${var.{{ name }}_s3_bucket_arn}'
-          # tags:
+          subdirectory: var.{{ name }}_subdirectory
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_subdirectory:
-        type: 'string'
       {{ name }}_s3_bucket_arn:
-        type: 'string'
+        type: string
+      {{ name }}_subdirectory:
+        type: string
     output:
       id:
-        value: '${aws_datasync_location_s3.{{ name }}.id}'
+        value: aws_datasync_location_s3.{{ name }}.id
       thub_id:
-        value: '${aws_datasync_location_s3.{{ name }}.id}'
-      uri:
-        value: '${aws_datasync_location_s3.{{ name }}.uri}'
+        value: aws_datasync_location_s3.{{ name }}.id
       arn:
-        value: '${aws_datasync_location_s3.{{ name }}.arn}'
+        value: aws_datasync_location_s3.{{ name }}.arn
+      uri:
+        value: aws_datasync_location_s3.{{ name }}.uri

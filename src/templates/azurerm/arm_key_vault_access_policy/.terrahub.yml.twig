@@ -7,19 +7,25 @@
     resource:
       azurerm_arm_key_vault_access_policy:
         {{ name }}:
-          tenant_id: '${var.{{ name }}_tenant_id}'
-          object_id: '${var.{{ name }}_object_id}'
-          vault_name: '${var.{{ name }}_vault_name}'
+          tenant_id: var.{{ name }}_tenant_id
+          object_id: var.{{ name }}_object_id
+          # vault_name: ''
+          # resource_group_name: ''
           # application_id: ''
+          # key_vault_id: ''
     variable:
       {{ name }}_tenant_id:
-        type: 'string'
+        type: string
       {{ name }}_object_id:
-        type: 'string'
-      {{ name }}_vault_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_key_vault_access_policy.{{ name }}.id}'
+        value: azurerm_arm_key_vault_access_policy.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_key_vault_access_policy.{{ name }}.id}'
+        value: azurerm_arm_key_vault_access_policy.{{ name }}.id
+      vault_name:
+        value: azurerm_arm_key_vault_access_policy.{{ name }}.vault_name
+      resource_group_name:
+        value: azurerm_arm_key_vault_access_policy.{{ name }}.resource_group_name
+      key_vault_id:
+        value: azurerm_arm_key_vault_access_policy.{{ name }}.key_vault_id

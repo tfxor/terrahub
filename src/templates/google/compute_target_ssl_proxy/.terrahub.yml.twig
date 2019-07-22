@@ -6,30 +6,30 @@
     resource:
       google_compute_target_ssl_proxy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          ssl_certificates: '${var.{{ name }}_ssl_certificates}'
-          backend_service: '${var.{{ name }}_backend_service}'
-          # project: ''
+          backend_service: var.{{ name }}_backend_service
+          name: var.{{ name }}_name
+          ssl_certificates: var.{{ name }}_ssl_certificates
+          # ssl_policy: ''
           # description: ''
           # proxy_header: ''
-          # ssl_policy: ''
+          # project: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_ssl_certificates:
-        type: 'list'
       {{ name }}_backend_service:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_ssl_certificates:
+        type: list
     output:
       id:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.id}'
+        value: google_compute_target_ssl_proxy.{{ name }}.id
       thub_id:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.id}'
+        value: google_compute_target_ssl_proxy.{{ name }}.id
       self_link:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.self_link}'
+        value: google_compute_target_ssl_proxy.{{ name }}.self_link
       creation_timestamp:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.creation_timestamp}'
-      project:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.project}'
+        value: google_compute_target_ssl_proxy.{{ name }}.creation_timestamp
       proxy_id:
-        value: '${google_compute_target_ssl_proxy.{{ name }}.proxy_id}'
+        value: google_compute_target_ssl_proxy.{{ name }}.proxy_id
+      project:
+        value: google_compute_target_ssl_proxy.{{ name }}.project

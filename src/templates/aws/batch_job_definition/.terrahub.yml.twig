@@ -8,28 +8,28 @@
     resource:
       aws_batch_job_definition:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
-          name: '${var.{{ name }}_name}'
-          # retry_strategy:
-          #   -
-          #     attempts: 0
-          # timeout:
+          type: var.{{ name }}_type
+          name: var.{{ name }}_name
+          # timeout: 
           #   -
           #     attempt_duration_seconds: 0
           # container_properties: ''
-          # parameters:
+          # parameters: 
           #   '[TO_BE_REPLACED]': ''
+          # retry_strategy: 
+          #   -
+          #     attempts: 0
     variable:
       {{ name }}_type:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_batch_job_definition.{{ name }}.id}'
+        value: aws_batch_job_definition.{{ name }}.id
       thub_id:
-        value: '${aws_batch_job_definition.{{ name }}.id}'
+        value: aws_batch_job_definition.{{ name }}.id
       revision:
-        value: '${aws_batch_job_definition.{{ name }}.revision}'
+        value: aws_batch_job_definition.{{ name }}.revision
       arn:
-        value: '${aws_batch_job_definition.{{ name }}.arn}'
+        value: aws_batch_job_definition.{{ name }}.arn

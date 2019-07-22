@@ -8,16 +8,12 @@
     resource:
       aws_ssm_patch_baseline:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
-          # global_filter:
-          #   -
-          #     key: ''
-          #     values: []
-          # approval_rule:
+          # approval_rule: 
           #   -
           #     approve_after_days: 0
-          #     patch_filter:
+          #     patch_filter: 
           #       -
           #         key: ''
           #         values: []
@@ -25,13 +21,19 @@
           #     enable_non_security: false
           # approved_patches: []
           # rejected_patches: []
-          # operating_system: ''
           # approved_patches_compliance_level: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # operating_system: ''
+          # global_filter: 
+          #   -
+          #     key: ''
+          #     values: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ssm_patch_baseline.{{ name }}.id}'
+        value: aws_ssm_patch_baseline.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_patch_baseline.{{ name }}.id}'
+        value: aws_ssm_patch_baseline.{{ name }}.id

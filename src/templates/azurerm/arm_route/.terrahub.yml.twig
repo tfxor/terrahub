@@ -7,22 +7,22 @@
     resource:
       azurerm_arm_route:
         {{ name }}:
-          next_hop_type: '${var.{{ name }}_next_hop_type}'
-          name: '${var.{{ name }}_name}'
-          route_table_name: '${var.{{ name }}_route_table_name}'
-          address_prefix: '${var.{{ name }}_address_prefix}'
+          name: var.{{ name }}_name
+          route_table_name: var.{{ name }}_route_table_name
+          address_prefix: var.{{ name }}_address_prefix
+          next_hop_type: var.{{ name }}_next_hop_type
           # next_hop_in_ip_address: ''
     variable:
-      {{ name }}_next_hop_type:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_route_table_name:
-        type: 'string'
+        type: string
       {{ name }}_address_prefix:
-        type: 'string'
+        type: string
+      {{ name }}_next_hop_type:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_route.{{ name }}.id}'
+        value: azurerm_arm_route.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_route.{{ name }}.id}'
+        value: azurerm_arm_route.{{ name }}.id

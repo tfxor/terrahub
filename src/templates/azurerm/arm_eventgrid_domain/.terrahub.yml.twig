@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_eventgrid_domain:
+        {{ name }}:
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # input_schema: ''
+          # input_mapping_fields: 
+          #   -
+          #     data_version: ''
+          #     id: ''
+          #     topic: ''
+          #     event_time: ''
+          #     event_type: ''
+          #     subject: ''
+          # input_mapping_default_values: 
+          #   -
+          #     event_type: ''
+          #     subject: ''
+          #     data_version: ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_eventgrid_domain.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_eventgrid_domain.{{ name }}.id
+      endpoint:
+        value: azurerm_arm_eventgrid_domain.{{ name }}.endpoint

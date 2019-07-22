@@ -7,17 +7,17 @@
     resource:
       azurerm_arm_availability_set:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # managed: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # platform_update_domain_count: 0
           # platform_fault_domain_count: 0
-          # managed: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_availability_set.{{ name }}.id}'
+        value: azurerm_arm_availability_set.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_availability_set.{{ name }}.id}'
+        value: azurerm_arm_availability_set.{{ name }}.id

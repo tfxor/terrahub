@@ -8,19 +8,19 @@
     resource:
       aws_iam_group_policy:
         {{ name }}:
-          group: '${var.{{ name }}_group}'
-          policy: '${var.{{ name }}_policy}'
+          policy: var.{{ name }}_policy
+          group: var.{{ name }}_group
           # name: ''
           # name_prefix: ''
     variable:
-      {{ name }}_group:
-        type: 'string'
       {{ name }}_policy:
-        type: 'string'
+        type: string
+      {{ name }}_group:
+        type: string
     output:
       id:
-        value: '${aws_iam_group_policy.{{ name }}.id}'
+        value: aws_iam_group_policy.{{ name }}.id
       thub_id:
-        value: '${aws_iam_group_policy.{{ name }}.id}'
+        value: aws_iam_group_policy.{{ name }}.id
       name:
-        value: '${aws_iam_group_policy.{{ name }}.name}'
+        value: aws_iam_group_policy.{{ name }}.name

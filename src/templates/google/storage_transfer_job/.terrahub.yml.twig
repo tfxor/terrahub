@@ -6,12 +6,12 @@
     resource:
       google_storage_transfer_job:
         {{ name }}:
-          list_url: '${var.{{ name }}_list_url}'
+          list_url: var.{{ name }}_list_url
     variable:
       {{ name }}_list_url:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_storage_transfer_job.{{ name }}.id}'
+        value: google_storage_transfer_job.{{ name }}.id
       thub_id:
-        value: '${google_storage_transfer_job.{{ name }}.id}'
+        value: google_storage_transfer_job.{{ name }}.id

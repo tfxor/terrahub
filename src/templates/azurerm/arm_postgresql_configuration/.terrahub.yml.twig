@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_postgresql_configuration:
         {{ name }}:
-          server_name: '${var.{{ name }}_server_name}'
-          value: '${var.{{ name }}_value}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          server_name: var.{{ name }}_server_name
+          value: var.{{ name }}_value
     variable:
-      {{ name }}_server_name:
-        type: 'string'
-      {{ name }}_value:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_server_name:
+        type: string
+      {{ name }}_value:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_postgresql_configuration.{{ name }}.id}'
+        value: azurerm_arm_postgresql_configuration.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_postgresql_configuration.{{ name }}.id}'
+        value: azurerm_arm_postgresql_configuration.{{ name }}.id

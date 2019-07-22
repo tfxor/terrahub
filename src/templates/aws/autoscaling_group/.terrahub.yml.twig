@@ -8,83 +8,83 @@
     resource:
       aws_autoscaling_group:
         {{ name }}:
-          min_size: '${var.{{ name }}_min_size}'
-          max_size: '${var.{{ name }}_max_size}'
-          # force_delete: false
-          # enabled_metrics: []
-          # default_cooldown: 0
-          # wait_for_elb_capacity: 0
+          max_size: var.{{ name }}_max_size
+          min_size: var.{{ name }}_min_size
+          # health_check_grace_period: 0
           # tag: []
-          # min_elb_capacity: 0
-          # initial_lifecycle_hook:
-          #   name: ''
+          # default_cooldown: 0
+          # termination_policies: []
+          # health_check_type: ''
+          # availability_zones: []
+          # placement_group: ''
+          # vpc_zone_identifier: []
+          # protect_from_scale_in: false
+          # target_group_arns: []
+          # initial_lifecycle_hook: 
           #   lifecycle_transition: ''
-          #   role_arn: ''
-          #   default_result: ''
+          #   name: ''
           #   heartbeat_timeout: 0
           #   notification_metadata: ''
           #   notification_target_arn: ''
-          # tags:
-          #   -
+          #   role_arn: ''
+          #   default_result: ''
           # name: ''
-          # launch_template:
+          # name_prefix: ''
+          # launch_template: 
           #   -
-          #     name: ''
           #     version: ''
           #     id: ''
-          # placement_group: ''
-          # service_linked_role_arn: ''
-          # health_check_grace_period: 0
-          # metrics_granularity: ''
-          # target_group_arns: []
-          # termination_policies: []
-          # wait_for_capacity_timeout: ''
+          #     name: ''
           # desired_capacity: 0
-          # vpc_zone_identifier: []
-          # health_check_type: ''
-          # availability_zones: []
-          # load_balancers: []
-          # suspended_processes: []
-          # protect_from_scale_in: false
-          # name_prefix: ''
-          # launch_configuration: ''
-          # mixed_instances_policy:
+          # force_delete: false
+          # enabled_metrics: []
+          # mixed_instances_policy: 
           #   -
-          #     instances_distribution:
+          #     instances_distribution: 
           #       -
-          #         on_demand_base_capacity: 0
-          #         on_demand_percentage_above_base_capacity: 0
           #         spot_allocation_strategy: ''
           #         spot_instance_pools: 0
           #         spot_max_price: ''
           #         on_demand_allocation_strategy: ''
+          #         on_demand_base_capacity: 0
+          #         on_demand_percentage_above_base_capacity: 0
+          # min_elb_capacity: 0
+          # tags: 
+          #   -
+          # wait_for_elb_capacity: 0
+          # load_balancers: []
+          # suspended_processes: []
+          # metrics_granularity: ''
+          # launch_configuration: ''
+          # wait_for_capacity_timeout: ''
+          # service_linked_role_arn: ''
     variable:
-      {{ name }}_min_size:
-        type: 'int'
       {{ name }}_max_size:
-        type: 'int'
+        type: int
+      {{ name }}_min_size:
+        type: int
     output:
       id:
-        value: '${aws_autoscaling_group.{{ name }}.id}'
+        value: aws_autoscaling_group.{{ name }}.id
       thub_id:
-        value: '${aws_autoscaling_group.{{ name }}.id}'
-      default_cooldown:
-        value: '${aws_autoscaling_group.{{ name }}.default_cooldown}'
-      name:
-        value: '${aws_autoscaling_group.{{ name }}.name}'
-      service_linked_role_arn:
-        value: '${aws_autoscaling_group.{{ name }}.service_linked_role_arn}'
-      target_group_arns:
-        value: '${aws_autoscaling_group.{{ name }}.target_group_arns}'
-      desired_capacity:
-        value: '${aws_autoscaling_group.{{ name }}.desired_capacity}'
-      vpc_zone_identifier:
-        value: '${aws_autoscaling_group.{{ name }}.vpc_zone_identifier}'
-      health_check_type:
-        value: '${aws_autoscaling_group.{{ name }}.health_check_type}'
-      availability_zones:
-        value: '${aws_autoscaling_group.{{ name }}.availability_zones}'
-      load_balancers:
-        value: '${aws_autoscaling_group.{{ name }}.load_balancers}'
+        value: aws_autoscaling_group.{{ name }}.id
       arn:
-        value: '${aws_autoscaling_group.{{ name }}.arn}'
+        value: aws_autoscaling_group.{{ name }}.arn
+      default_cooldown:
+        value: aws_autoscaling_group.{{ name }}.default_cooldown
+      health_check_type:
+        value: aws_autoscaling_group.{{ name }}.health_check_type
+      availability_zones:
+        value: aws_autoscaling_group.{{ name }}.availability_zones
+      vpc_zone_identifier:
+        value: aws_autoscaling_group.{{ name }}.vpc_zone_identifier
+      target_group_arns:
+        value: aws_autoscaling_group.{{ name }}.target_group_arns
+      name:
+        value: aws_autoscaling_group.{{ name }}.name
+      desired_capacity:
+        value: aws_autoscaling_group.{{ name }}.desired_capacity
+      load_balancers:
+        value: aws_autoscaling_group.{{ name }}.load_balancers
+      service_linked_role_arn:
+        value: aws_autoscaling_group.{{ name }}.service_linked_role_arn

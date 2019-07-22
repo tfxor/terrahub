@@ -8,27 +8,27 @@
     resource:
       aws_glue_connection:
         {{ name }}:
-          connection_properties: '${var.{{ name }}_connection_properties}'
-          name: '${var.{{ name }}_name}'
+          connection_properties: var.{{ name }}_connection_properties
+          name: var.{{ name }}_name
           # connection_type: ''
           # description: ''
           # match_criteria: []
-          # physical_connection_requirements:
+          # physical_connection_requirements: 
           #   -
           #     availability_zone: ''
-          #     security_group_id_list:
+          #     security_group_id_list: 
           #       -
           #     subnet_id: ''
           # catalog_id: ''
     variable:
       {{ name }}_connection_properties:
-        type: 'map'
+        type: map
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_glue_connection.{{ name }}.id}'
+        value: aws_glue_connection.{{ name }}.id
       thub_id:
-        value: '${aws_glue_connection.{{ name }}.id}'
+        value: aws_glue_connection.{{ name }}.id
       catalog_id:
-        value: '${aws_glue_connection.{{ name }}.catalog_id}'
+        value: aws_glue_connection.{{ name }}.catalog_id

@@ -7,22 +7,22 @@
     resource:
       azurerm_arm_databricks_workspace:
         {{ name }}:
-          sku: '${var.{{ name }}_sku}'
-          name: '${var.{{ name }}_name}'
-          # tags:
+          sku: var.{{ name }}_sku
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # managed_resource_group_name: ''
     variable:
       {{ name }}_sku:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_databricks_workspace.{{ name }}.id}'
+        value: azurerm_arm_databricks_workspace.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_databricks_workspace.{{ name }}.id}'
+        value: azurerm_arm_databricks_workspace.{{ name }}.id
       managed_resource_group_name:
-        value: '${azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_name}'
+        value: azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_name
       managed_resource_group_id:
-        value: '${azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_id}'
+        value: azurerm_arm_databricks_workspace.{{ name }}.managed_resource_group_id

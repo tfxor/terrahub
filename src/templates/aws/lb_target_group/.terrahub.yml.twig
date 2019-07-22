@@ -8,44 +8,46 @@
     resource:
       aws_lb_target_group:
         {{ name }}:
-          # stickiness:
+          # proxy_protocol_v2: false
+          # target_type: ''
+          # name: ''
+          # vpc_id: ''
+          # deregistration_delay: 0
+          # slow_start: 0
+          # health_check: 
+          #   -
+          #     protocol: ''
+          #     matcher: ''
+          #     port: ''
+          #     interval: 0
+          #     path: ''
+          #     timeout: 0
+          #     healthy_threshold: 0
+          #     unhealthy_threshold: 0
+          #     enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name_prefix: ''
+          # port: 0
+          # protocol: ''
+          # stickiness: 
           #   -
           #     type: ''
           #     enabled: false
           #     cookie_duration: 0
-          # health_check:
-          #   -
-          #     protocol: ''
-          #     timeout: 0
-          #     healthy_threshold: 0
-          #     matcher: ''
-          #     unhealthy_threshold: 0
-          #     interval: 0
-          #     path: ''
-          #     port: ''
-          # protocol: ''
-          # slow_start: 0
-          # port: 0
-          # vpc_id: ''
-          # deregistration_delay: 0
-          # proxy_protocol_v2: false
-          # name: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # target_type: ''
-          # name_prefix: ''
+          # lambda_multi_value_headers_enabled: false
     output:
       id:
-        value: '${aws_lb_target_group.{{ name }}.id}'
+        value: aws_lb_target_group.{{ name }}.id
       thub_id:
-        value: '${aws_lb_target_group.{{ name }}.id}'
-      stickiness:
-        value: '${aws_lb_target_group.{{ name }}.stickiness}'
-      health_check:
-        value: '${aws_lb_target_group.{{ name }}.health_check}'
-      arn_suffix:
-        value: '${aws_lb_target_group.{{ name }}.arn_suffix}'
-      name:
-        value: '${aws_lb_target_group.{{ name }}.name}'
+        value: aws_lb_target_group.{{ name }}.id
       arn:
-        value: '${aws_lb_target_group.{{ name }}.arn}'
+        value: aws_lb_target_group.{{ name }}.arn
+      arn_suffix:
+        value: aws_lb_target_group.{{ name }}.arn_suffix
+      name:
+        value: aws_lb_target_group.{{ name }}.name
+      health_check:
+        value: aws_lb_target_group.{{ name }}.health_check
+      stickiness:
+        value: aws_lb_target_group.{{ name }}.stickiness

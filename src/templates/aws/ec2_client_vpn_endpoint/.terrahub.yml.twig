@@ -8,32 +8,34 @@
     resource:
       aws_ec2_client_vpn_endpoint:
         {{ name }}:
-          server_certificate_arn: '${var.{{ name }}_server_certificate_arn}'
-          authentication_options:
+          client_cidr_block: var.{{ name }}_client_cidr_block
+          server_certificate_arn: var.{{ name }}_server_certificate_arn
+          authentication_options: 
             -
               type: ''
           #     active_directory_id: ''
           #     root_certificate_chain_arn: ''
-          client_cidr_block: '${var.{{ name }}_client_cidr_block}'
-          connection_log_options:
+          connection_log_options: 
             -
               enabled: false
           #     cloudwatch_log_group: ''
           #     cloudwatch_log_stream: ''
+          # dns_servers: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # description: ''
           # transport_protocol: ''
-          # dns_servers: []
     variable:
-      {{ name }}_server_certificate_arn:
-        type: 'string'
       {{ name }}_client_cidr_block:
-        type: 'string'
+        type: string
+      {{ name }}_server_certificate_arn:
+        type: string
     output:
       id:
-        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.id}'
+        value: aws_ec2_client_vpn_endpoint.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.id}'
+        value: aws_ec2_client_vpn_endpoint.{{ name }}.id
       dns_name:
-        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.dns_name}'
+        value: aws_ec2_client_vpn_endpoint.{{ name }}.dns_name
       status:
-        value: '${aws_ec2_client_vpn_endpoint.{{ name }}.status}'
+        value: aws_ec2_client_vpn_endpoint.{{ name }}.status

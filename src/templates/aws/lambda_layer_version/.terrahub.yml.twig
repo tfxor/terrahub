@@ -8,32 +8,32 @@
     resource:
       aws_lambda_layer_version:
         {{ name }}:
-          layer_name: '${var.{{ name }}_layer_name}'
-          # filename: ''
-          # s3_object_version: ''
+          layer_name: var.{{ name }}_layer_name
           # source_code_hash: ''
-          # license_info: ''
-          # s3_bucket: ''
-          # description: ''
+          # filename: ''
           # s3_key: ''
+          # s3_bucket: ''
           # compatible_runtimes: []
+          # description: ''
+          # license_info: ''
+          # s3_object_version: ''
     variable:
       {{ name }}_layer_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_lambda_layer_version.{{ name }}.id}'
+        value: aws_lambda_layer_version.{{ name }}.id
       thub_id:
-        value: '${aws_lambda_layer_version.{{ name }}.id}'
-      source_code_size:
-        value: '${aws_lambda_layer_version.{{ name }}.source_code_size}'
-      layer_arn:
-        value: '${aws_lambda_layer_version.{{ name }}.layer_arn}'
+        value: aws_lambda_layer_version.{{ name }}.id
       created_date:
-        value: '${aws_lambda_layer_version.{{ name }}.created_date}'
+        value: aws_lambda_layer_version.{{ name }}.created_date
       source_code_hash:
-        value: '${aws_lambda_layer_version.{{ name }}.source_code_hash}'
-      version:
-        value: '${aws_lambda_layer_version.{{ name }}.version}'
+        value: aws_lambda_layer_version.{{ name }}.source_code_hash
       arn:
-        value: '${aws_lambda_layer_version.{{ name }}.arn}'
+        value: aws_lambda_layer_version.{{ name }}.arn
+      version:
+        value: aws_lambda_layer_version.{{ name }}.version
+      layer_arn:
+        value: aws_lambda_layer_version.{{ name }}.layer_arn
+      source_code_size:
+        value: aws_lambda_layer_version.{{ name }}.source_code_size

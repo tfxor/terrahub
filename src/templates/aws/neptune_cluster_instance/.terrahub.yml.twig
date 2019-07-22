@@ -8,61 +8,61 @@
     resource:
       aws_neptune_cluster_instance:
         {{ name }}:
-          instance_class: '${var.{{ name }}_instance_class}'
-          cluster_identifier: '${var.{{ name }}_cluster_identifier}'
-          # auto_minor_version_upgrade: false
-          # neptune_parameter_group_name: ''
+          instance_class: var.{{ name }}_instance_class
+          cluster_identifier: var.{{ name }}_cluster_identifier
+          # preferred_backup_window: ''
+          # publicly_accessible: false
+          # availability_zone: ''
+          # identifier_prefix: ''
           # neptune_subnet_group_name: ''
           # port: 0
-          # preferred_maintenance_window: ''
-          # identifier: ''
-          # promotion_tier: 0
-          # availability_zone: ''
-          # engine: ''
-          # identifier_prefix: ''
-          # preferred_backup_window: ''
-          # apply_immediately: false
-          # engine_version: ''
-          # publicly_accessible: false
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # engine: ''
+          # engine_version: ''
+          # auto_minor_version_upgrade: false
+          # identifier: ''
+          # preferred_maintenance_window: ''
+          # apply_immediately: false
+          # neptune_parameter_group_name: ''
+          # promotion_tier: 0
     variable:
       {{ name }}_instance_class:
-        type: 'string'
+        type: string
       {{ name }}_cluster_identifier:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_neptune_cluster_instance.{{ name }}.id}'
+        value: aws_neptune_cluster_instance.{{ name }}.id
       thub_id:
-        value: '${aws_neptune_cluster_instance.{{ name }}.id}'
-      writer:
-        value: '${aws_neptune_cluster_instance.{{ name }}.writer}'
-      neptune_subnet_group_name:
-        value: '${aws_neptune_cluster_instance.{{ name }}.neptune_subnet_group_name}'
-      preferred_maintenance_window:
-        value: '${aws_neptune_cluster_instance.{{ name }}.preferred_maintenance_window}'
-      arn:
-        value: '${aws_neptune_cluster_instance.{{ name }}.arn}'
-      endpoint:
-        value: '${aws_neptune_cluster_instance.{{ name }}.endpoint}'
-      identifier:
-        value: '${aws_neptune_cluster_instance.{{ name }}.identifier}'
-      kms_key_arn:
-        value: '${aws_neptune_cluster_instance.{{ name }}.kms_key_arn}'
-      availability_zone:
-        value: '${aws_neptune_cluster_instance.{{ name }}.availability_zone}'
-      identifier_prefix:
-        value: '${aws_neptune_cluster_instance.{{ name }}.identifier_prefix}'
+        value: aws_neptune_cluster_instance.{{ name }}.id
       preferred_backup_window:
-        value: '${aws_neptune_cluster_instance.{{ name }}.preferred_backup_window}'
+        value: aws_neptune_cluster_instance.{{ name }}.preferred_backup_window
+      arn:
+        value: aws_neptune_cluster_instance.{{ name }}.arn
+      availability_zone:
+        value: aws_neptune_cluster_instance.{{ name }}.availability_zone
+      endpoint:
+        value: aws_neptune_cluster_instance.{{ name }}.endpoint
+      identifier_prefix:
+        value: aws_neptune_cluster_instance.{{ name }}.identifier_prefix
+      neptune_subnet_group_name:
+        value: aws_neptune_cluster_instance.{{ name }}.neptune_subnet_group_name
       storage_encrypted:
-        value: '${aws_neptune_cluster_instance.{{ name }}.storage_encrypted}'
-      address:
-        value: '${aws_neptune_cluster_instance.{{ name }}.address}'
-      apply_immediately:
-        value: '${aws_neptune_cluster_instance.{{ name }}.apply_immediately}'
+        value: aws_neptune_cluster_instance.{{ name }}.storage_encrypted
       dbi_resource_id:
-        value: '${aws_neptune_cluster_instance.{{ name }}.dbi_resource_id}'
+        value: aws_neptune_cluster_instance.{{ name }}.dbi_resource_id
       engine_version:
-        value: '${aws_neptune_cluster_instance.{{ name }}.engine_version}'
+        value: aws_neptune_cluster_instance.{{ name }}.engine_version
+      kms_key_arn:
+        value: aws_neptune_cluster_instance.{{ name }}.kms_key_arn
+      address:
+        value: aws_neptune_cluster_instance.{{ name }}.address
+      identifier:
+        value: aws_neptune_cluster_instance.{{ name }}.identifier
+      preferred_maintenance_window:
+        value: aws_neptune_cluster_instance.{{ name }}.preferred_maintenance_window
+      apply_immediately:
+        value: aws_neptune_cluster_instance.{{ name }}.apply_immediately
+      writer:
+        value: aws_neptune_cluster_instance.{{ name }}.writer

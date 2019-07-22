@@ -7,54 +7,71 @@
     resource:
       azurerm_arm_batch_pool:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          account_name: '${var.{{ name }}_account_name}'
-          vm_size: '${var.{{ name }}_vm_size}'
-          node_agent_sku_id: '${var.{{ name }}_node_agent_sku_id}'
-          storage_image_reference:
+          account_name: var.{{ name }}_account_name
+          vm_size: var.{{ name }}_vm_size
+          storage_image_reference: 
             -
-              publisher: ''
-              offer: ''
-              sku: ''
-              version: ''
+          #     offer: ''
+          #     sku: ''
+          #     version: ''
           #     id: ''
-          # stop_pending_resize_operation: false
-          # display_name: ''
-          # fixed_scale:
+          #     publisher: ''
+          name: var.{{ name }}_name
+          node_agent_sku_id: var.{{ name }}_node_agent_sku_id
+          # certificate: 
           #   -
-          #     resize_timeout: ''
-          #     target_dedicated_nodes: 0
-          #     target_low_priority_nodes: 0
-          # max_tasks_per_node: 0
-          # auto_scale:
+          #     id: ''
+          #     store_location: ''
+          #     visibility: 
+          #     store_name: ''
+          # auto_scale: 
           #   -
           #     formula: ''
           #     evaluation_interval: ''
-          # start_task:
+          # stop_pending_resize_operation: false
+          # max_tasks_per_node: 0
+          # start_task: 
           #   -
-          #     command_line: ''
-          #     user_identity:
+          #     user_identity: 
           #       -
           #         user_name: ''
-          #         auto_user:
+          #         auto_user: 
           #           -
           #             elevation_level: ''
           #             scope: ''
+          #     command_line: ''
+          #     environment: 
+          #       '[TO_BE_REPLACED]': ''
           #     max_task_retry_count: 0
           #     wait_for_success: false
-          #     environment:
-          #       '[TO_BE_REPLACED]': ''
+          # display_name: ''
+          # fixed_scale: 
+          #   -
+          #     target_low_priority_nodes: 0
+          #     resize_timeout: ''
+          #     target_dedicated_nodes: 0
+          # container_configuration: 
+          #   -
+          #     type: ''
+          # resource_file: 
+          #   -
+          #     http_url: ''
+          #     storage_container_url: ''
+          #     auto_storage_container_name: ''
+          #     blob_prefix: ''
+          #     file_mode: ''
+          #     file_path: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_account_name:
-        type: 'string'
+        type: string
       {{ name }}_vm_size:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
       {{ name }}_node_agent_sku_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_batch_pool.{{ name }}.id}'
+        value: azurerm_arm_batch_pool.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_batch_pool.{{ name }}.id}'
+        value: azurerm_arm_batch_pool.{{ name }}.id

@@ -6,90 +6,94 @@
     resource:
       google_sql_database_instance:
         {{ name }}:
-          settings:
+          settings: 
             -
               tier: ''
-          #     authorized_gae_applications:
+          #     authorized_gae_applications: 
           #       -
           #     availability_type: ''
-          #     backup_configuration:
+          #     backup_configuration: 
           #       -
           #         binary_log_enabled: false
           #         enabled: false
           #         start_time: ''
           #     activation_policy: ''
-          # ip_configuration:
-          #   -
-          #     private_network: ''
-          #     authorized_networks:
-          #     ipv4_enabled: false
-          #     require_ssl: false
-          # maintenance_window:
+          # disk_autoresize: false
+          # disk_size: 0
+          # region: ''
+          # disk_type: ''
+          # maintenance_window: 
           #   -
           #     day: 0
           #     hour: 0
           #     update_track: ''
-          # region: ''
           # pricing_plan: ''
-          # user_labels:
-          #   '[TO_BE_REPLACED]': ''
-          # replica_configuration:
+          # name: ''
+          # project: ''
+          # ip_configuration: 
           #   -
+          #     authorized_networks: 
+          #     ipv4_enabled: false
+          #     require_ssl: false
+          #     private_network: ''
+          # replication_type: ''
+          # master_instance_name: ''
+          # replica_configuration: 
+          #   -
+          #     dump_file_path: ''
+          #     master_heartbeat_period: 0
+          #     ca_certificate: ''
           #     client_certificate: ''
           #     connect_retry_interval: 0
-          #     dump_file_path: ''
-          #     username: ''
-          #     password: ''
           #     ssl_cipher: ''
+          #     username: ''
           #     verify_server_certificate: false
-          #     ca_certificate: ''
           #     client_key: ''
           #     failover_target: false
-          #     master_heartbeat_period: 0
-          # disk_autoresize: false
-          # disk_type: ''
-          # location_preference:
+          #     password: ''
+          # location_preference: 
           #   -
           #     zone: ''
           #     follow_gae_application: ''
-          # replication_type: ''
-          # master_instance_name: ''
-          # project: ''
-          # disk_size: 0
+          # user_labels: 
+          #   '[TO_BE_REPLACED]': ''
           # database_version: ''
-          # name: ''
     output:
       id:
-        value: '${google_sql_database_instance.{{ name }}.id}'
+        value: google_sql_database_instance.{{ name }}.id
       thub_id:
-        value: '${google_sql_database_instance.{{ name }}.id}'
-      ip_configuration:
-        value: '${google_sql_database_instance.{{ name }}.ip_configuration}'
-      self_link:
-        value: '${google_sql_database_instance.{{ name }}.self_link}'
-      region:
-        value: '${google_sql_database_instance.{{ name }}.region}'
-      connection_name:
-        value: '${google_sql_database_instance.{{ name }}.connection_name}'
-      ip_address:
-        value: '${google_sql_database_instance.{{ name }}.ip_address}'
-      replica_configuration:
-        value: '${google_sql_database_instance.{{ name }}.replica_configuration}'
-      service_account_email_address:
-        value: '${google_sql_database_instance.{{ name }}.service_account_email_address}'
-      disk_type:
-        value: '${google_sql_database_instance.{{ name }}.disk_type}'
-      location_preference:
-        value: '${google_sql_database_instance.{{ name }}.location_preference}'
-      master_instance_name:
-        value: '${google_sql_database_instance.{{ name }}.master_instance_name}'
-      project:
-        value: '${google_sql_database_instance.{{ name }}.project}'
-      server_ca_cert:
-        value: '${google_sql_database_instance.{{ name }}.server_ca_cert}'
+        value: google_sql_database_instance.{{ name }}.id
       disk_size:
-        value: '${google_sql_database_instance.{{ name }}.disk_size}'
-      first_ip_address:
-        value: '${google_sql_database_instance.{{ name }}.first_ip_address}'
+        value: google_sql_database_instance.{{ name }}.disk_size
+      connection_name:
+        value: google_sql_database_instance.{{ name }}.connection_name
+      self_link:
+        value: google_sql_database_instance.{{ name }}.self_link
+      region:
+        value: google_sql_database_instance.{{ name }}.region
+      disk_type:
+        value: google_sql_database_instance.{{ name }}.disk_type
       name:
-        value: '${google_sql_database_instance.{{ name }}.name}'
+        value: google_sql_database_instance.{{ name }}.name
+      project:
+        value: google_sql_database_instance.{{ name }}.project
+      service_account_email_address:
+        value: google_sql_database_instance.{{ name }}.service_account_email_address
+      ip_configuration:
+        value: google_sql_database_instance.{{ name }}.ip_configuration
+      private_ip_address:
+        value: google_sql_database_instance.{{ name }}.private_ip_address
+      first_ip_address:
+        value: google_sql_database_instance.{{ name }}.first_ip_address
+      public_ip_address:
+        value: google_sql_database_instance.{{ name }}.public_ip_address
+      master_instance_name:
+        value: google_sql_database_instance.{{ name }}.master_instance_name
+      replica_configuration:
+        value: google_sql_database_instance.{{ name }}.replica_configuration
+      location_preference:
+        value: google_sql_database_instance.{{ name }}.location_preference
+      ip_address:
+        value: google_sql_database_instance.{{ name }}.ip_address
+      server_ca_cert:
+        value: google_sql_database_instance.{{ name }}.server_ca_cert

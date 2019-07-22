@@ -8,20 +8,22 @@
     resource:
       aws_ssm_maintenance_window_target:
         {{ name }}:
-          window_id: '${var.{{ name }}_window_id}'
-          resource_type: '${var.{{ name }}_resource_type}'
-          targets:
+          resource_type: var.{{ name }}_resource_type
+          targets: 
             -
-              key: ''
               values: []
+              key: ''
+          window_id: var.{{ name }}_window_id
+          # name: ''
+          # description: ''
           # owner_information: ''
     variable:
-      {{ name }}_window_id:
-        type: 'string'
       {{ name }}_resource_type:
-        type: 'string'
+        type: string
+      {{ name }}_window_id:
+        type: string
     output:
       id:
-        value: '${aws_ssm_maintenance_window_target.{{ name }}.id}'
+        value: aws_ssm_maintenance_window_target.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_maintenance_window_target.{{ name }}.id}'
+        value: aws_ssm_maintenance_window_target.{{ name }}.id

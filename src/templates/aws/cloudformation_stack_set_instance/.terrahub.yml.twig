@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudformation_stack_set_instance:
+        {{ name }}:
+          stack_set_name: var.{{ name }}_stack_set_name
+          # account_id: ''
+          # parameter_overrides: 
+          #   '[TO_BE_REPLACED]': ''
+          # retain_stack: false
+          # region: ''
+    variable:
+      {{ name }}_stack_set_name:
+        type: string
+    output:
+      id:
+        value: aws_cloudformation_stack_set_instance.{{ name }}.id
+      thub_id:
+        value: aws_cloudformation_stack_set_instance.{{ name }}.id
+      account_id:
+        value: aws_cloudformation_stack_set_instance.{{ name }}.account_id
+      region:
+        value: aws_cloudformation_stack_set_instance.{{ name }}.region
+      stack_id:
+        value: aws_cloudformation_stack_set_instance.{{ name }}.stack_id

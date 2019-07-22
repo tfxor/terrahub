@@ -8,15 +8,15 @@
     resource:
       aws_sns_topic_policy:
         {{ name }}:
-          arn: '${var.{{ name }}_arn}'
-          policy: '${var.{{ name }}_policy}'
+          arn: var.{{ name }}_arn
+          policy: var.{{ name }}_policy
     variable:
       {{ name }}_arn:
-        type: 'string'
+        type: string
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_sns_topic_policy.{{ name }}.id}'
+        value: aws_sns_topic_policy.{{ name }}.id
       thub_id:
-        value: '${aws_sns_topic_policy.{{ name }}.id}'
+        value: aws_sns_topic_policy.{{ name }}.id

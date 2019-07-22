@@ -1,0 +1,43 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_tpu_node:
+        {{ name }}:
+          tensorflow_version: var.{{ name }}_tensorflow_version
+          accelerator_type: var.{{ name }}_accelerator_type
+          name: var.{{ name }}_name
+          zone: var.{{ name }}_zone
+          cidr_block: var.{{ name }}_cidr_block
+          # scheduling_config: []
+          # project: ''
+          # description: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # network: ''
+    variable:
+      {{ name }}_tensorflow_version:
+        type: string
+      {{ name }}_accelerator_type:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_zone:
+        type: string
+      {{ name }}_cidr_block:
+        type: string
+    output:
+      id:
+        value: google_tpu_node.{{ name }}.id
+      thub_id:
+        value: google_tpu_node.{{ name }}.id
+      service_account:
+        value: google_tpu_node.{{ name }}.service_account
+      project:
+        value: google_tpu_node.{{ name }}.project
+      network:
+        value: google_tpu_node.{{ name }}.network
+      network_endpoints:
+        value: google_tpu_node.{{ name }}.network_endpoints

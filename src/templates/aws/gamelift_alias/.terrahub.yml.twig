@@ -8,20 +8,20 @@
     resource:
       aws_gamelift_alias:
         {{ name }}:
-          routing_strategy:
+          routing_strategy: 
             -
               type: ''
           #     fleet_id: ''
           #     message: ''
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_gamelift_alias.{{ name }}.id}'
+        value: aws_gamelift_alias.{{ name }}.id
       thub_id:
-        value: '${aws_gamelift_alias.{{ name }}.id}'
+        value: aws_gamelift_alias.{{ name }}.id
       arn:
-        value: '${aws_gamelift_alias.{{ name }}.arn}'
+        value: aws_gamelift_alias.{{ name }}.arn

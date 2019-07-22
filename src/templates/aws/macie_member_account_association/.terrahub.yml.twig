@@ -8,12 +8,12 @@
     resource:
       aws_macie_member_account_association:
         {{ name }}:
-          member_account_id: '${var.{{ name }}_member_account_id}'
+          member_account_id: var.{{ name }}_member_account_id
     variable:
       {{ name }}_member_account_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_macie_member_account_association.{{ name }}.id}'
+        value: aws_macie_member_account_association.{{ name }}.id
       thub_id:
-        value: '${aws_macie_member_account_association.{{ name }}.id}'
+        value: aws_macie_member_account_association.{{ name }}.id

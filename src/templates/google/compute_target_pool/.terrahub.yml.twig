@@ -6,28 +6,28 @@
     resource:
       google_compute_target_pool:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # backup_pool: ''
-          # failover_ratio: ''
+          name: var.{{ name }}_name
           # health_checks: []
-          # region: ''
-          # session_affinity: ''
-          # description: ''
-          # instances: []
           # project: ''
+          # region: ''
+          # backup_pool: ''
+          # description: ''
+          # failover_ratio: ''
+          # instances: []
+          # session_affinity: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_target_pool.{{ name }}.id}'
+        value: google_compute_target_pool.{{ name }}.id
       thub_id:
-        value: '${google_compute_target_pool.{{ name }}.id}'
-      self_link:
-        value: '${google_compute_target_pool.{{ name }}.self_link}'
-      region:
-        value: '${google_compute_target_pool.{{ name }}.region}'
-      instances:
-        value: '${google_compute_target_pool.{{ name }}.instances}'
+        value: google_compute_target_pool.{{ name }}.id
       project:
-        value: '${google_compute_target_pool.{{ name }}.project}'
+        value: google_compute_target_pool.{{ name }}.project
+      region:
+        value: google_compute_target_pool.{{ name }}.region
+      instances:
+        value: google_compute_target_pool.{{ name }}.instances
+      self_link:
+        value: google_compute_target_pool.{{ name }}.self_link

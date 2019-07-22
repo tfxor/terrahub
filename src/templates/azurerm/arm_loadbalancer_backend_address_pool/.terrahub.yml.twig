@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_loadbalancer_backend_address_pool:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
+          loadbalancer_id: var.{{ name }}_loadbalancer_id
+          name: var.{{ name }}_name
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_loadbalancer_id:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.id}'
+        value: azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.id}'
+        value: azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.id
       backend_ip_configurations:
-        value: '${azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.backend_ip_configurations}'
+        value: azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.backend_ip_configurations
       load_balancing_rules:
-        value: '${azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.load_balancing_rules}'
+        value: azurerm_arm_loadbalancer_backend_address_pool.{{ name }}.load_balancing_rules

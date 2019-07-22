@@ -8,36 +8,36 @@
     resource:
       aws_api_gateway_stage:
         {{ name }}:
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
-          stage_name: '${var.{{ name }}_stage_name}'
-          deployment_id: '${var.{{ name }}_deployment_id}'
-          # cache_cluster_enabled: false
+          stage_name: var.{{ name }}_stage_name
+          deployment_id: var.{{ name }}_deployment_id
+          rest_api_id: var.{{ name }}_rest_api_id
+          # client_certificate_id: ''
           # description: ''
-          # xray_tracing_enabled: false
-          # variables:
+          # cache_cluster_size: ''
+          # documentation_version: ''
+          # variables: 
           #   '[TO_BE_REPLACED]': ''
-          # access_log_settings:
+          # xray_tracing_enabled: false
+          # cache_cluster_enabled: false
+          # access_log_settings: 
           #   -
           #     destination_arn: ''
           #     format: ''
-          # documentation_version: ''
-          # cache_cluster_size: ''
-          # client_certificate_id: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_rest_api_id:
-        type: 'string'
       {{ name }}_stage_name:
-        type: 'string'
+        type: string
       {{ name }}_deployment_id:
-        type: 'string'
+        type: string
+      {{ name }}_rest_api_id:
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_stage.{{ name }}.id}'
+        value: aws_api_gateway_stage.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_stage.{{ name }}.id}'
+        value: aws_api_gateway_stage.{{ name }}.id
       execution_arn:
-        value: '${aws_api_gateway_stage.{{ name }}.execution_arn}'
+        value: aws_api_gateway_stage.{{ name }}.execution_arn
       invoke_url:
-        value: '${aws_api_gateway_stage.{{ name }}.invoke_url}'
+        value: aws_api_gateway_stage.{{ name }}.invoke_url

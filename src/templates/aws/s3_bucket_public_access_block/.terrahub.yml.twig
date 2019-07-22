@@ -8,16 +8,16 @@
     resource:
       aws_s3_bucket_public_access_block:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          # restrict_public_buckets: false
+          bucket: var.{{ name }}_bucket
           # block_public_acls: false
           # block_public_policy: false
           # ignore_public_acls: false
+          # restrict_public_buckets: false
     variable:
       {{ name }}_bucket:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_public_access_block.{{ name }}.id}'
+        value: aws_s3_bucket_public_access_block.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_public_access_block.{{ name }}.id}'
+        value: aws_s3_bucket_public_access_block.{{ name }}.id

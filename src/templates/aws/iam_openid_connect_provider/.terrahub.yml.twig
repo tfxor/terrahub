@@ -8,22 +8,20 @@
     resource:
       aws_iam_openid_connect_provider:
         {{ name }}:
-          url: '${var.{{ name }}_url}'
-          client_id_list: '${var.{{ name }}_client_id_list}'
-          thumbprint_list: '${var.{{ name }}_thumbprint_list}'
+          client_id_list: var.{{ name }}_client_id_list
+          thumbprint_list: var.{{ name }}_thumbprint_list
+          url: var.{{ name }}_url
     variable:
-      {{ name }}_url:
-        type: 'string'
       {{ name }}_client_id_list:
-        type: 'list'
+        type: list
       {{ name }}_thumbprint_list:
-        type: 'list'
+        type: list
+      {{ name }}_url:
+        type: string
     output:
       id:
-        value: '${aws_iam_openid_connect_provider.{{ name }}.id}'
+        value: aws_iam_openid_connect_provider.{{ name }}.id
       thub_id:
-        value: '${aws_iam_openid_connect_provider.{{ name }}.id}'
+        value: aws_iam_openid_connect_provider.{{ name }}.id
       arn:
-        value: '${aws_iam_openid_connect_provider.{{ name }}.arn}'
-      url:
-        value: '${aws_iam_openid_connect_provider.{{ name }}.url}'
+        value: aws_iam_openid_connect_provider.{{ name }}.arn

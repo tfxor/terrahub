@@ -8,41 +8,43 @@
     resource:
       aws_dx_private_virtual_interface:
         {{ name }}:
-          bgp_asn: '${var.{{ name }}_bgp_asn}'
-          connection_id: '${var.{{ name }}_connection_id}'
-          address_family: '${var.{{ name }}_address_family}'
-          vlan: '${var.{{ name }}_vlan}'
-          name: '${var.{{ name }}_name}'
-          # dx_gateway_id: ''
-          # bgp_auth_key: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # vpn_gateway_id: ''
-          # customer_address: ''
+          bgp_asn: var.{{ name }}_bgp_asn
+          address_family: var.{{ name }}_address_family
+          name: var.{{ name }}_name
+          connection_id: var.{{ name }}_connection_id
+          vlan: var.{{ name }}_vlan
           # amazon_address: ''
+          # dx_gateway_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # bgp_auth_key: ''
+          # customer_address: ''
+          # vpn_gateway_id: ''
     variable:
       {{ name }}_bgp_asn:
-        type: 'int'
-      {{ name }}_connection_id:
-        type: 'string'
+        type: int
       {{ name }}_address_family:
-        type: 'string'
-      {{ name }}_vlan:
-        type: 'int'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_connection_id:
+        type: string
+      {{ name }}_vlan:
+        type: int
     output:
       id:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
+        value: aws_dx_private_virtual_interface.{{ name }}.id
       thub_id:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.id}'
-      jumbo_frame_capable:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.jumbo_frame_capable}'
-      bgp_auth_key:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.bgp_auth_key}'
-      customer_address:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.customer_address}'
+        value: aws_dx_private_virtual_interface.{{ name }}.id
       amazon_address:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.amazon_address}'
+        value: aws_dx_private_virtual_interface.{{ name }}.amazon_address
+      jumbo_frame_capable:
+        value: aws_dx_private_virtual_interface.{{ name }}.jumbo_frame_capable
       arn:
-        value: '${aws_dx_private_virtual_interface.{{ name }}.arn}'
+        value: aws_dx_private_virtual_interface.{{ name }}.arn
+      bgp_auth_key:
+        value: aws_dx_private_virtual_interface.{{ name }}.bgp_auth_key
+      customer_address:
+        value: aws_dx_private_virtual_interface.{{ name }}.customer_address
+      aws_device:
+        value: aws_dx_private_virtual_interface.{{ name }}.aws_device

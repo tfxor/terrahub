@@ -6,21 +6,21 @@
     resource:
       google_bigtable_table:
         {{ name }}:
-          instance_name: '${var.{{ name }}_instance_name}'
-          name: '${var.{{ name }}_name}'
-          # column_family:
+          name: var.{{ name }}_name
+          instance_name: var.{{ name }}_instance_name
+          # column_family: 
           #   family: ''
           # split_keys: []
           # project: ''
     variable:
-      {{ name }}_instance_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_instance_name:
+        type: string
     output:
       id:
-        value: '${google_bigtable_table.{{ name }}.id}'
+        value: google_bigtable_table.{{ name }}.id
       thub_id:
-        value: '${google_bigtable_table.{{ name }}.id}'
+        value: google_bigtable_table.{{ name }}.id
       project:
-        value: '${google_bigtable_table.{{ name }}.project}'
+        value: google_bigtable_table.{{ name }}.project

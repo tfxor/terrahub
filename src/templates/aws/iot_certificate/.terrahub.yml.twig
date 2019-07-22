@@ -8,17 +8,17 @@
     resource:
       aws_iot_certificate:
         {{ name }}:
-          csr: '${var.{{ name }}_csr}'
-          active: '${var.{{ name }}_active}'
+          csr: var.{{ name }}_csr
+          active: var.{{ name }}_active
     variable:
       {{ name }}_csr:
-        type: 'string'
+        type: string
       {{ name }}_active:
-        type: 'bool'
+        type: bool
     output:
       id:
-        value: '${aws_iot_certificate.{{ name }}.id}'
+        value: aws_iot_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_iot_certificate.{{ name }}.id}'
+        value: aws_iot_certificate.{{ name }}.id
       arn:
-        value: '${aws_iot_certificate.{{ name }}.arn}'
+        value: aws_iot_certificate.{{ name }}.arn

@@ -7,29 +7,29 @@
     resource:
       azurerm_arm_traffic_manager_profile:
         {{ name }}:
-          monitor_config:
-            protocol: ''
+          monitor_config: 
             port: 0
+            protocol: ''
           #   path: ''
-          dns_config:
+          name: var.{{ name }}_name
+          dns_config: 
             relative_name: ''
             ttl: 0
-          traffic_routing_method: '${var.{{ name }}_traffic_routing_method}'
-          name: '${var.{{ name }}_name}'
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          traffic_routing_method: var.{{ name }}_traffic_routing_method
           # profile_status: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_traffic_routing_method:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_traffic_routing_method:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.id}'
+        value: azurerm_arm_traffic_manager_profile.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.id}'
+        value: azurerm_arm_traffic_manager_profile.{{ name }}.id
       fqdn:
-        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.fqdn}'
+        value: azurerm_arm_traffic_manager_profile.{{ name }}.fqdn
       profile_status:
-        value: '${azurerm_arm_traffic_manager_profile.{{ name }}.profile_status}'
+        value: azurerm_arm_traffic_manager_profile.{{ name }}.profile_status

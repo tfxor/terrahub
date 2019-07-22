@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_backup_selection:
+        {{ name }}:
+          iam_role_arn: var.{{ name }}_iam_role_arn
+          name: var.{{ name }}_name
+          plan_id: var.{{ name }}_plan_id
+          # selection_tag: 
+          #   type: ''
+          #   key: ''
+          #   value: ''
+          # resources: []
+    variable:
+      {{ name }}_iam_role_arn:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_plan_id:
+        type: string
+    output:
+      id:
+        value: aws_backup_selection.{{ name }}.id
+      thub_id:
+        value: aws_backup_selection.{{ name }}.id

@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_iothub_consumer_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          iothub_name: '${var.{{ name }}_iothub_name}'
-          eventhub_endpoint_name: '${var.{{ name }}_eventhub_endpoint_name}'
+          name: var.{{ name }}_name
+          iothub_name: var.{{ name }}_iothub_name
+          eventhub_endpoint_name: var.{{ name }}_eventhub_endpoint_name
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_iothub_name:
-        type: 'string'
+        type: string
       {{ name }}_eventhub_endpoint_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_iothub_consumer_group.{{ name }}.id}'
+        value: azurerm_arm_iothub_consumer_group.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_iothub_consumer_group.{{ name }}.id}'
+        value: azurerm_arm_iothub_consumer_group.{{ name }}.id

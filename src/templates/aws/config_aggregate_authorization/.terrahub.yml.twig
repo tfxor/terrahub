@@ -8,17 +8,17 @@
     resource:
       aws_config_aggregate_authorization:
         {{ name }}:
-          account_id: '${var.{{ name }}_account_id}'
-          region: '${var.{{ name }}_region}'
+          account_id: var.{{ name }}_account_id
+          region: var.{{ name }}_region
     variable:
       {{ name }}_account_id:
-        type: 'string'
+        type: string
       {{ name }}_region:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_config_aggregate_authorization.{{ name }}.id}'
+        value: aws_config_aggregate_authorization.{{ name }}.id
       thub_id:
-        value: '${aws_config_aggregate_authorization.{{ name }}.id}'
+        value: aws_config_aggregate_authorization.{{ name }}.id
       arn:
-        value: '${aws_config_aggregate_authorization.{{ name }}.arn}'
+        value: aws_config_aggregate_authorization.{{ name }}.arn

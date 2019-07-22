@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_resolver_rule:
+        {{ name }}:
+          rule_type: var.{{ name }}_rule_type
+          domain_name: var.{{ name }}_domain_name
+          # target_ip: 
+          #   ip: ''
+          #   port: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # resolver_endpoint_id: ''
+    variable:
+      {{ name }}_rule_type:
+        type: string
+      {{ name }}_domain_name:
+        type: string
+    output:
+      id:
+        value: aws_route53_resolver_rule.{{ name }}.id
+      thub_id:
+        value: aws_route53_resolver_rule.{{ name }}.id
+      arn:
+        value: aws_route53_resolver_rule.{{ name }}.arn
+      owner_id:
+        value: aws_route53_resolver_rule.{{ name }}.owner_id
+      share_status:
+        value: aws_route53_resolver_rule.{{ name }}.share_status

@@ -7,15 +7,22 @@
     resource:
       azurerm_arm_storage_table:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          storage_account_name: '${var.{{ name }}_storage_account_name}'
+          name: var.{{ name }}_name
+          storage_account_name: var.{{ name }}_storage_account_name
+          # acl: 
+          #   id: ''
+          #   access_policy: 
+          #     -
+          #       start: ''
+          #       expiry: ''
+          #       permissions: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_storage_account_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_storage_table.{{ name }}.id}'
+        value: azurerm_arm_storage_table.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_storage_table.{{ name }}.id}'
+        value: azurerm_arm_storage_table.{{ name }}.id

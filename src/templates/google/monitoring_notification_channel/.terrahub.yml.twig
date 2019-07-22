@@ -6,28 +6,28 @@
     resource:
       google_monitoring_notification_channel:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
-          display_name: '${var.{{ name }}_display_name}'
+          display_name: var.{{ name }}_display_name
+          type: var.{{ name }}_type
           # enabled: false
-          # labels:
-          #   '[TO_BE_REPLACED]': ''
-          # user_labels:
+          # labels: 
           #   '[TO_BE_REPLACED]': ''
           # project: ''
           # description: ''
+          # user_labels: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_display_name:
-        type: 'string'
+        type: string
+      {{ name }}_type:
+        type: string
     output:
       id:
-        value: '${google_monitoring_notification_channel.{{ name }}.id}'
+        value: google_monitoring_notification_channel.{{ name }}.id
       thub_id:
-        value: '${google_monitoring_notification_channel.{{ name }}.id}'
-      project:
-        value: '${google_monitoring_notification_channel.{{ name }}.project}'
+        value: google_monitoring_notification_channel.{{ name }}.id
       name:
-        value: '${google_monitoring_notification_channel.{{ name }}.name}'
+        value: google_monitoring_notification_channel.{{ name }}.name
+      project:
+        value: google_monitoring_notification_channel.{{ name }}.project
       verification_status:
-        value: '${google_monitoring_notification_channel.{{ name }}.verification_status}'
+        value: google_monitoring_notification_channel.{{ name }}.verification_status

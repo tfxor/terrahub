@@ -7,35 +7,35 @@
     resource:
       azurerm_arm_monitor_activity_log_alert:
         {{ name }}:
-          scopes: '${var.{{ name }}_scopes}'
-          criteria:
+          name: var.{{ name }}_name
+          criteria: 
             -
               category: ''
-          #     resource_type: ''
-          #     resource_group: ''
+          #     operation_name: ''
+          #     level: ''
+          #     sub_status: ''
           #     resource_id: ''
           #     status: ''
           #     caller: ''
-          #     level: ''
           #     resource_provider: ''
-          #     operation_name: ''
-          #     sub_status: ''
-          name: '${var.{{ name }}_name}'
-          # action:
-          #   action_group_id: ''
-          #   webhook_properties:
-          #     '[TO_BE_REPLACED]': ''
-          # enabled: false
-          # tags:
+          #     resource_type: ''
+          #     resource_group: ''
+          scopes: var.{{ name }}_scopes
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''
+          # enabled: false
+          # action: 
+          #   action_group_id: ''
+          #   webhook_properties: 
+          #     '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_scopes:
-        type: 'set'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_scopes:
+        type: set
     output:
       id:
-        value: '${azurerm_arm_monitor_activity_log_alert.{{ name }}.id}'
+        value: azurerm_arm_monitor_activity_log_alert.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_monitor_activity_log_alert.{{ name }}.id}'
+        value: azurerm_arm_monitor_activity_log_alert.{{ name }}.id

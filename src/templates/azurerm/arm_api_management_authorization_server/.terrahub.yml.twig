@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_authorization_server:
+        {{ name }}:
+          client_registration_endpoint: var.{{ name }}_client_registration_endpoint
+          grant_types: var.{{ name }}_grant_types
+          authorization_endpoint: var.{{ name }}_authorization_endpoint
+          authorization_methods: var.{{ name }}_authorization_methods
+          display_name: var.{{ name }}_display_name
+          client_id: var.{{ name }}_client_id
+          # client_authentication_method: []
+          # client_secret: ''
+          # resource_owner_password: ''
+          # bearer_token_sending_methods: []
+          # support_state: false
+          # token_body_parameter: 
+          #   -
+          #     value: ''
+          #     name: ''
+          # token_endpoint: ''
+          # default_scope: ''
+          # description: ''
+          # resource_owner_username: ''
+    variable:
+      {{ name }}_client_registration_endpoint:
+        type: string
+      {{ name }}_grant_types:
+        type: set
+      {{ name }}_authorization_endpoint:
+        type: string
+      {{ name }}_authorization_methods:
+        type: set
+      {{ name }}_display_name:
+        type: string
+      {{ name }}_client_id:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_authorization_server.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_authorization_server.{{ name }}.id

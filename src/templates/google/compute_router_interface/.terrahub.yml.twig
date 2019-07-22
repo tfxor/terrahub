@@ -6,25 +6,24 @@
     resource:
       google_compute_router_interface:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          router: '${var.{{ name }}_router}'
-          vpn_tunnel: '${var.{{ name }}_vpn_tunnel}'
-          # ip_range: ''
+          name: var.{{ name }}_name
+          router: var.{{ name }}_router
           # project: ''
           # region: ''
+          # vpn_tunnel: ''
+          # interconnect_attachment: ''
+          # ip_range: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_router:
-        type: 'string'
-      {{ name }}_vpn_tunnel:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_router_interface.{{ name }}.id}'
+        value: google_compute_router_interface.{{ name }}.id
       thub_id:
-        value: '${google_compute_router_interface.{{ name }}.id}'
+        value: google_compute_router_interface.{{ name }}.id
       project:
-        value: '${google_compute_router_interface.{{ name }}.project}'
+        value: google_compute_router_interface.{{ name }}.project
       region:
-        value: '${google_compute_router_interface.{{ name }}.region}'
+        value: google_compute_router_interface.{{ name }}.region

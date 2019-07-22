@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cur_report_definition:
+        {{ name }}:
+          s3_bucket: var.{{ name }}_s3_bucket
+          s3_region: var.{{ name }}_s3_region
+          format: var.{{ name }}_format
+          compression: var.{{ name }}_compression
+          additional_schema_elements: var.{{ name }}_additional_schema_elements
+          report_name: var.{{ name }}_report_name
+          time_unit: var.{{ name }}_time_unit
+          # s3_prefix: ''
+          # additional_artifacts: []
+    variable:
+      {{ name }}_s3_bucket:
+        type: string
+      {{ name }}_s3_region:
+        type: string
+      {{ name }}_format:
+        type: string
+      {{ name }}_compression:
+        type: string
+      {{ name }}_additional_schema_elements:
+        type: set
+      {{ name }}_report_name:
+        type: string
+      {{ name }}_time_unit:
+        type: string
+    output:
+      id:
+        value: aws_cur_report_definition.{{ name }}.id
+      thub_id:
+        value: aws_cur_report_definition.{{ name }}.id

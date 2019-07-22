@@ -7,25 +7,25 @@
     resource:
       azurerm_arm_sql_server:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          version: '${var.{{ name }}_version}'
-          administrator_login: '${var.{{ name }}_administrator_login}'
-          administrator_login_password: '${var.{{ name }}_administrator_login_password}'
-          # tags:
+          name: var.{{ name }}_name
+          version: var.{{ name }}_version
+          administrator_login: var.{{ name }}_administrator_login
+          administrator_login_password: var.{{ name }}_administrator_login_password
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_version:
-        type: 'string'
+        type: string
       {{ name }}_administrator_login:
-        type: 'string'
+        type: string
       {{ name }}_administrator_login_password:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_sql_server.{{ name }}.id}'
+        value: azurerm_arm_sql_server.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_sql_server.{{ name }}.id}'
+        value: azurerm_arm_sql_server.{{ name }}.id
       fully_qualified_domain_name:
-        value: '${azurerm_arm_sql_server.{{ name }}.fully_qualified_domain_name}'
+        value: azurerm_arm_sql_server.{{ name }}.fully_qualified_domain_name

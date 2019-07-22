@@ -8,15 +8,15 @@
     resource:
       aws_media_store_container_policy:
         {{ name }}:
-          container_name: '${var.{{ name }}_container_name}'
-          policy: '${var.{{ name }}_policy}'
+          container_name: var.{{ name }}_container_name
+          policy: var.{{ name }}_policy
     variable:
       {{ name }}_container_name:
-        type: 'string'
+        type: string
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_media_store_container_policy.{{ name }}.id}'
+        value: aws_media_store_container_policy.{{ name }}.id
       thub_id:
-        value: '${aws_media_store_container_policy.{{ name }}.id}'
+        value: aws_media_store_container_policy.{{ name }}.id

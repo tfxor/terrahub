@@ -7,32 +7,32 @@
     resource:
       azurerm_arm_express_route_circuit:
         {{ name }}:
-          sku:
+          service_provider_name: var.{{ name }}_service_provider_name
+          bandwidth_in_mbps: var.{{ name }}_bandwidth_in_mbps
+          sku: 
             -
               tier: ''
               family: ''
-          service_provider_name: '${var.{{ name }}_service_provider_name}'
-          peering_location: '${var.{{ name }}_peering_location}'
-          bandwidth_in_mbps: '${var.{{ name }}_bandwidth_in_mbps}'
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          peering_location: var.{{ name }}_peering_location
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # allow_classic_operations: false
     variable:
       {{ name }}_service_provider_name:
-        type: 'string'
-      {{ name }}_peering_location:
-        type: 'string'
+        type: string
       {{ name }}_bandwidth_in_mbps:
-        type: 'int'
+        type: int
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_peering_location:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_express_route_circuit.{{ name }}.id}'
+        value: azurerm_arm_express_route_circuit.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_express_route_circuit.{{ name }}.id}'
-      service_key:
-        value: '${azurerm_arm_express_route_circuit.{{ name }}.service_key}'
+        value: azurerm_arm_express_route_circuit.{{ name }}.id
       service_provider_provisioning_state:
-        value: '${azurerm_arm_express_route_circuit.{{ name }}.service_provider_provisioning_state}'
+        value: azurerm_arm_express_route_circuit.{{ name }}.service_provider_provisioning_state
+      service_key:
+        value: azurerm_arm_express_route_circuit.{{ name }}.service_key

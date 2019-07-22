@@ -8,21 +8,21 @@
     resource:
       aws_licensemanager_license_configuration:
         {{ name }}:
-          license_counting_type: '${var.{{ name }}_license_counting_type}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          license_counting_type: var.{{ name }}_license_counting_type
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # description: ''
           # license_count: 0
           # license_count_hard_limit: false
           # license_rules: []
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_license_counting_type:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_license_counting_type:
+        type: string
     output:
       id:
-        value: '${aws_licensemanager_license_configuration.{{ name }}.id}'
+        value: aws_licensemanager_license_configuration.{{ name }}.id
       thub_id:
-        value: '${aws_licensemanager_license_configuration.{{ name }}.id}'
+        value: aws_licensemanager_license_configuration.{{ name }}.id

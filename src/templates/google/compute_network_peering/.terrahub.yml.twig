@@ -6,23 +6,23 @@
     resource:
       google_compute_network_peering:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          network: '${var.{{ name }}_network}'
-          peer_network: '${var.{{ name }}_peer_network}'
+          network: var.{{ name }}_network
+          peer_network: var.{{ name }}_peer_network
+          name: var.{{ name }}_name
           # auto_create_routes: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_network:
-        type: 'string'
+        type: string
       {{ name }}_peer_network:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${google_compute_network_peering.{{ name }}.id}'
+        value: google_compute_network_peering.{{ name }}.id
       thub_id:
-        value: '${google_compute_network_peering.{{ name }}.id}'
-      state_details:
-        value: '${google_compute_network_peering.{{ name }}.state_details}'
+        value: google_compute_network_peering.{{ name }}.id
       state:
-        value: '${google_compute_network_peering.{{ name }}.state}'
+        value: google_compute_network_peering.{{ name }}.state
+      state_details:
+        value: google_compute_network_peering.{{ name }}.state_details
