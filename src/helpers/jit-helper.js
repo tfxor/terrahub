@@ -559,6 +559,7 @@ class JitHelper {
     const remoteTfvarsJson = hcltojson(remoteTfvars);
     const tmpPath = JitHelper.buildTmpPath(config);
     template['tfvars'] = config.template.tfvars || {};
+    
     const promises = Object.keys(remoteTfvarsJson).filter(it => remoteTfvarsJson[it]).map(it => {
       if (!Array.isArray(remoteTfvarsJson[it]) && typeof remoteTfvarsJson[it] === 'object') {
         remoteTfvarsJson[it] = {};
