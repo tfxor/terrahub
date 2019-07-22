@@ -134,3 +134,45 @@
         value: aws_s3_bucket.{{ name }}.hosted_zone_id
       website_domain:
         value: aws_s3_bucket.{{ name }}.website_domain
+
+## build config
+# build:
+#   env:
+#     variables:
+#       THUB_ENV: "dev"
+#       THUB_INDEX_FILE: "index.txt"
+#       THUB_DEEP_BUCKET: "s3://"
+#       THUB_PARAMETERS_PATH: ".terrahub_build.env"
+#       THUB_S3_PATH: "s3://"
+#       THUB_BUILD_PATH: "build"
+#       THUB_SOURCE_PATH: ""
+#       THUB_BUILD_OK: "false"
+#       THUB_MAX_AGE: "600"
+#   phases:
+#     pre_build:
+#       commands:
+#         - echo "BUILD: Running pre_build step"
+#         - ./scripts/download.sh $THUB_PARAMETERS_PATH $THUB_DEEP_BUCKET
+#         - ./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE
+#         - ./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH
+#       finally:
+#         - echo "BUILD: pre_build step successful"
+#     build:
+#       commands:
+#         - echo "BUILD: Running build step"
+#         - ./scripts/compile.sh
+#       finally:
+#         - echo "BUILD: build step successful"
+#     post_build:
+#       commands:
+#         - echo "BUILD: Running post_build step"
+#         - ./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE
+#         - ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
+#         - rm -f .terrahub_build.env $THUB_INDEX_FILE
+#       finally:
+#         - echo "BUILD: post_build step successful"
+
+## hook config
+#  hook:
+#    apply:
+#      after: ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
