@@ -118,7 +118,7 @@ class JitHelper {
           Object.keys(local).filter(it => local[it]).map(() => {
             const { path } = local;
             if (path) {
-              local.path = replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
+              local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
             }
           });
         }
