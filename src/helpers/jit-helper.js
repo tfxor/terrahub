@@ -31,7 +31,7 @@ class JitHelper {
       // add "tfvars" if it is not described in config
       const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
       if (localTfvarsLinks.length > 0) {
-        return JitHelper._addLocalTfvars(config, localTfvarsLinks.pop());
+        return JitHelper._addLocalTfvars(config, localTfvarsLinks);
       }
     }).then(() => {
       // add "tfvars" if it is not described in config
@@ -535,18 +535,20 @@ class JitHelper {
 
   /**
    * @param {Object} config
-   * @param {String} localTfvarsLink
+   * @param {Array} localTfvarsLinks
    * @return {Promise}
    */
-  static _addLocalTfvars(config, localTfvarsLink) {
-    const localTfvarsLinkPath = resolve(config.project.root, localTfvarsLink);
-    if (fse.existsSync(localTfvarsLinkPath)) {
-      return fse.readFile(localTfvarsLinkPath).then(content => {
-        return JitHelper._parsingTfvars(content.toString(), config);
-      });
-    }
+  static _addLocalTfvars(config, localTfvarsLinks) {
+    const promises = Object.keys(localTfvarsLinks).map(it => {
+      const localTfvarsLinkPath = path.resolve(config.project.root, config.root, localTfvarsLinks[it]);
+      if (fse.existsSync(localTfvarsLinkPath)) {
+        return fse.readFile(localTfvarsLinkPath).then(content => {
+          return JitHelper._parsingTfvars(content.toString(), config);
+        });
+      }
+    });
     
-    return Promise.resolve();
+    return Promise.all(promises);
   }
 
   /**
