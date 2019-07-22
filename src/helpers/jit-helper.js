@@ -141,7 +141,7 @@ class JitHelper {
       // add "tfvars" if it is not described in config
       const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
       if (localTfvarsLinks.length > 0) {
-        return JitHelper._addLocalTfvars(config, localTfvarsLinks.pop());
+        return JitHelper._addLocalTfvars(config, localTfvarsLinks);
       }
     }).then(() => {
       // add "tfvars" if it is not described in config
@@ -528,15 +528,18 @@ class JitHelper {
    * @param {String} localTfvarsLink
    * @return {Promise}
    */
-  static _addLocalTfvars(config, localTfvarsLink) {
-    const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
-    if (fse.existsSync(localTfvarsLinkPath)) {
-      return fse.readFile(localTfvarsLinkPath).then(content => {
-        return JitHelper._parsingTfvars(content.toString(), config);
-      });
-    }
+  static _addLocalTfvars(config, localTfvarsLinks) {
+    const promises = Object.keys(localTfvarsLinks).map(it => {
+      const localTfvarsLinkPath = path.resolve(config.project.root, config.root, localTfvarsLinks[it]);
+      
+      if (fse.existsSync(localTfvarsLinkPath)) {
+        return fse.readFile(localTfvarsLinkPath).then(content => {
+          return JitHelper._parsingTfvars(content.toString(), config);
+        });
+      }
+    });
     
-    return Promise.resolve();
+    return Promise.all(promises);
   }
 
   /**
@@ -551,7 +554,7 @@ class JitHelper {
     const remoteTfvarsJson = hcltojson(remoteTfvars);
     const tmpPath = JitHelper.buildTmpPath(config);
     template['tfvars'] = config.template.tfvars || {};
-
+    
     const promises = Object.keys(remoteTfvarsJson).filter(it => remoteTfvarsJson[it]).map(it => {
       if (!Array.isArray(remoteTfvarsJson[it]) && typeof remoteTfvarsJson[it] === 'object') {
         remoteTfvarsJson[it] = {};
@@ -559,7 +562,7 @@ class JitHelper {
       let obj = {};
       obj[it] = remoteTfvarsJson[it];
       template['tfvars'] = JSON.parse((JSON.stringify(template['tfvars']) +
-        JSON.stringify(obj)).replace(/}{/g, ",").replace(/{,/g, "{"));
+        JSON.stringify(obj)).replace(/}{/g, ",").replace(/{,/g, "{"));        
     });
 
     return Promise.all(promises)
