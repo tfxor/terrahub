@@ -733,7 +733,10 @@ class JitHelper {
       extension = '.exe';
 
     const dataStringify = JSON.stringify(data);
-    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${dataStringify}' ${formatHCL1}`)
+    const buff = new Buffer(dataStringify);
+    const base64data = buff.toString('base64');
+
+    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)
       .then(result => {
         return fse.outputFileSync(componentPath, result.stdout);
       }).catch(err => {
