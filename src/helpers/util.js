@@ -376,6 +376,54 @@ class Util {
       glob(pattern, options, (error, files) => error ? reject(error) : resolve(files))
     );
   }
+
+  /**
+   * Compose AWS credentials string
+   * @param {Object} accountData
+   * @param {Object} [sourceProfile]
+   * @param {Boolean} tfvars
+   * @return {String}
+   */
+  static prepareCredentialsFile({ accountData, sourceProfile, tfvars = false }) {
+    let credentials = `[default]\n`;
+
+    if (sourceProfile) {
+      credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
+        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n` +
+        `role_arn = ${accountData.env_var.AWS_ROLE_ARN.value}\n`;
+    } else {
+      credentials += `aws_access_key_id = ${accountData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
+        `aws_secret_access_key = ${accountData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
+    }
+
+    if (tfvars) {
+      credentials += `output = json\n` +
+        `region = us-east-1\n`;
+    }
+
+    credentials += `session_name = ${accountData.name}_${accountData.env_var.AWS_ACCOUNT_ID.value}`;
+
+    return credentials;
+  }
+
+  /**
+   * Creates AWS credentials file in temp directory
+   * @param credentials
+   * @param config
+   * @param prefix
+   * @return {string}
+   */
+  static createCredentialsFile(credentials, config, prefix) {
+    const tmpPath = Util.homePath('temp', config.project.code, config.name);
+
+    fse.ensureDirSync(tmpPath);
+
+    const credsPath = path.join(tmpPath, `aws_credentials_${prefix}`);
+
+    fse.writeFileSync(credsPath, credentials);
+
+    return credsPath;
+  }
 }
 
 module.exports = Util;

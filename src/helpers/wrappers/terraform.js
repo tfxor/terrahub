@@ -12,7 +12,7 @@ const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../../parameters');
-const { extend, spawner, homePath } = require('../util');
+const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile } = require('../util');
 
 class Terraform {
   /**
@@ -108,71 +108,34 @@ class Terraform {
     if (providerAccounts) {
       accounts.forEach(type => {
         const _value = this._tf[type];
-        const _cloudData = providerAccounts.find(it => it.name === _value);
+        const accountData = providerAccounts.find(it => it.name === _value);
 
-        if (!_cloudData) {
+        if (!accountData) {
           return;
         }
 
-        const sourceProfile = _cloudData.type === 'role'
-          ? providerAccounts.find(it => it.id === _cloudData.env_var.AWS_SOURCE_PROFILE.id) : null;
-        const credentials = Terraform.retrieveEnvVars(_cloudData, sourceProfile);
+        const sourceProfile = accountData.type === 'role'
+          ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+
+        const credentials = prepareCredentialsFile({ accountData, sourceProfile });
 
         switch (type) {
           case 'cloudAccount':
-            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE'].forEach(it => delete this._envVars[it]);
+            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
+              .forEach(it => delete this._envVars[it]);
 
-            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: this._saveCredentials(credentials, 'cloud') });
+            Object.assign(this._envVars,
+              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud') });
             break;
           case 'backendAccount':
-            Object.assign(this._tf.backend, { shared_credentials_file: this._saveCredentials(credentials, 'backend') });
+            Object.assign(this._tf.backend,
+              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend') });
             break;
         }
       });
     }
 
     return Promise.resolve();
-  }
-
-  /**
-   * @param {Object} cloudData
-   * @param {Object} sourceProfile
-   * @return {String}
-   * @static
-   */
-  static retrieveEnvVars(cloudData, sourceProfile) {
-    let credentials = `[default]\n`;
-
-    if (sourceProfile) {
-      credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
-        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n` +
-        `role_arn = ${cloudData.env_var.AWS_ROLE_ARN.value}\n`;
-    } else {
-      credentials += `aws_access_key_id = ${cloudData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
-        `aws_secret_access_key = ${cloudData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
-    }
-
-    credentials += `session_name = ${cloudData.name}_${cloudData.env_var.AWS_ACCOUNT_ID.value}`;
-
-    return credentials;
-  }
-
-  /**
-   * @param {String} credentials
-   * @param {String} prefix
-   * @return {string}
-   * @private
-   */
-  _saveCredentials(credentials, prefix) {
-    const tmpPath = homePath('temp', this._config.project.code, this._config.name);
-
-    fse.ensureDirSync(tmpPath);
-
-    const credsPath = path.join(tmpPath, `aws_credentials_${prefix}`);
-
-    fse.writeFileSync(credsPath, credentials);
-
-    return credsPath;
   }
 
   /**
