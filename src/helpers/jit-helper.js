@@ -141,13 +141,13 @@ class JitHelper {
       // add "tfvars" if it is not described in config
       const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
       if (localTfvarsLinks.length > 0) {
-        return JitHelper._addLocalTfvars(config, localTfvarsLinks.pop());
+        return JitHelper._addLocalTfvars(config, localTfvarsLinks);
       }
     }).then(() => {
       // add "tfvars" if it is not described in config
       const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
       if (remoteTfvarsLinks.length > 0) {
-        return JitHelper._addTfvars(config, remoteTfvarsLinks.shift().replace(/'/g, ''));
+        return JitHelper._addTfvars(config, remoteTfvarsLinks);
       }
     }).then(() => JitHelper._normalizeProvidersForResource(config))
       .then(() => JitHelper._normalizeProvidersForData(config))
@@ -502,41 +502,49 @@ class JitHelper {
 
   /**
    * @param {Object} config
-   * @param {String} remoteTfvarsLink
+   * @param {Array} remoteTfvarsLinks
    * @return {Promise}
    */
-  static _addTfvars(config, remoteTfvarsLink) {
-    const regExBucket = new RegExp('((s3|gs):\/\/)(.+?)([^\/]+)', 'gm');
-    const bucket = remoteTfvarsLink.match(regExBucket).shift().replace(/(s3|gs):\/\//g, '');
-    const regExPrefix = new RegExp('(' + bucket + '\/)(.+?)$');
-    const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
-    const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
+  static _addTfvars(config, remoteTfvarsLinks) {
+    const promises = Object.keys(remoteTfvarsLinks).map(it => {
+      const remoteTfvarsLink = remoteTfvarsLinks[it].replace(/'/g, '');
+      const regExBucket = new RegExp('((s3|gs):\/\/)(.+?)([^\/]+)', 'gm');
+      const bucket = remoteTfvarsLink.match(regExBucket).shift().replace(/(s3|gs):\/\//g, '');
+      const regExPrefix = new RegExp('(' + bucket + '\/)(.+?)$');
+      const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
+      const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
 
-    const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
-      JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
-        return JitHelper._parsingTfvars(data.toString(), config);
-      }):
-      JitHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
-        return JitHelper._parsingTfvars(data.Body.toString(), config);
-      });
+      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
+        JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
+          return JitHelper._parsingTfvars(data.toString(), config);
+        }):
+        JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
+          return JitHelper._parsingTfvars(data.Body.toString(), config);
+        });
 
-    return promise;
+      return promise;
+    });
+
+    return Promise.all(promises);
   }
 
   /**
    * @param {Object} config
-   * @param {String} localTfvarsLink
+   * @param {Array} localTfvarsLinks
    * @return {Promise}
    */
-  static _addLocalTfvars(config, localTfvarsLink) {
-    const localTfvarsLinkPath = path.resolve(config.project.root, localTfvarsLink);
-    if (fse.existsSync(localTfvarsLinkPath)) {
-      return fse.readFile(localTfvarsLinkPath).then(content => {
-        return JitHelper._parsingTfvars(content.toString(), config);
-      });
-    }
+  static _addLocalTfvars(config, localTfvarsLinks) {
+    const promises = Object.keys(localTfvarsLinks).map(it => {
+      const localTfvarsLinkPath = path.resolve(config.project.root, config.root, localTfvarsLinks[it]);
+
+      if (fse.existsSync(localTfvarsLinkPath)) {
+        return fse.readFile(localTfvarsLinkPath).then(content => {
+          return JitHelper._parsingTfvars(content.toString(), config);
+        });
+      }
+    });
     
-    return Promise.resolve();
+    return Promise.all(promises);
   }
 
   /**
