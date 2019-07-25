@@ -397,8 +397,11 @@ class Util {
     }
 
     if (tfvars) {
+      const region = accountData.env_var.AWS_DEFAULT_REGION
+        || sourceProfile.env_var.AWS_DEFAULT_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1';
+
       credentials += `output = json\n` +
-        `region = us-east-1\n`;
+        `region = ${region.value || region}\n`;
     }
 
     credentials += `session_name = ${accountData.name}_${accountData.env_var.AWS_ACCOUNT_ID.value}`;
