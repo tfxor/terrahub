@@ -1,6 +1,7 @@
 'use strict';
 
 const fse = require('fs-extra');
+const semver = require('semver');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
@@ -648,7 +649,7 @@ class JitHelper {
           type = `map(${type})`;          
         }
       } else if (typeof tfvars[it] === 'object') {
-        type = 'map';        
+        type = 'map';
       }
 
       variable[it] = { type };
@@ -729,8 +730,9 @@ class JitHelper {
     const componentBinPath = join(binPath, arch);
 
     let extension = '';
-    if (arch.indexOf("windows") > -1)
+    if (arch.indexOf("windows") > -1) {
       extension = '.exe';
+    }
 
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
@@ -748,12 +750,11 @@ class JitHelper {
    * @param {Object} config
    * @return {Boolean}
    */
-  static checkTfVersion(config) {
+  static checkTfVersion(config) {    
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;
-      const regExVersion = /0\.11/gm;
-      if (version && version.match(regExVersion).length > 0) {
+      if (version && semver.satisfies(version, '0.x.x || <0.12.0')) {
         return false;
       }
     }

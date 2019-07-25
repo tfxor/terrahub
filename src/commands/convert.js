@@ -91,7 +91,7 @@ class ConvertCommand extends TerraformCommand {
    */
   _toJson(cfg) {
     const currentFormat = this._checkCurrentFormat(cfg);
-    if (currentFormat != 'json') {
+    if (currentFormat !== 'json') {
       switch (currentFormat) {
         case 'yaml':
           return this._toJsonFromYaml(cfg);
@@ -165,7 +165,7 @@ class ConvertCommand extends TerraformCommand {
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
     if (rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
-      return ConvertCommand._saveComponent(cfg).then(() => {this.logSuccess(cfg.name, 'HCL'); });
+      return ConvertCommand._saveComponent(cfg).then(() => { this.logSuccess(cfg.name, 'HCL'); });
     }
 
     return Promise.resolve();
