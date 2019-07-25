@@ -621,7 +621,7 @@ class JitHelper {
           break;
       }
 
-      return JitHelper._saveToFile(join(tmpPath, name), data, JitHelper._checkTfVersion(config));
+      return JitHelper._saveToFile(join(tmpPath, name), data, JitHelper.checkTfVersion(config));
     });
 
     return Promise.all(promises);
@@ -643,7 +643,7 @@ class JitHelper {
 
       if (Array.isArray(tfvars[it])) {
         type = 'list';
-      } else if (typeof tfvars[it] === 'object' && JitHelper._checkTfVersion(config)) {
+      } else if (typeof tfvars[it] === 'object' && JitHelper.checkTfVersion(config)) {
         for (let index = 0; index < objectDepth(tfvars[it]); index++) {
           type = `map(${type})`;          
         }
@@ -653,7 +653,7 @@ class JitHelper {
 
       variable[it] = { type };
     });
-    return JitHelper._saveToFile(join(tmpPath, 'variable.tf'), { variable }, JitHelper._checkTfVersion(config));
+    return JitHelper._saveToFile(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config));
   }
 
   static _symLinkNonTerraHubFiles(config) {
@@ -747,9 +747,8 @@ class JitHelper {
   /**
    * @param {Object} config
    * @return {Boolean}
-   * @private
    */
-  static _checkTfVersion(config) {
+  static checkTfVersion(config) {
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;
