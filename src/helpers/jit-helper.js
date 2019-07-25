@@ -322,7 +322,7 @@ class JitHelper {
       return Promise.resolve().then(() => {
         const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
         const localVariables = paramByName.match(regExLocal);
-        
+
         if (localVariables) {
           let unique = [...new Set(localVariables)];
           const promises = unique.map(localVariable => {
