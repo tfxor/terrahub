@@ -4,12 +4,12 @@ const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
-const objectDepth = require('object-depth');
 const { resolve, join } = require('path');
+const objectDepth = require('object-depth');
+const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const { binPath, jitPath, tfstatePath } = require('../parameters');
-const { homePath, extend } = require('./util');
 
 class JitHelper {
   /**
@@ -524,11 +524,11 @@ class JitHelper {
       const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
       const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
 
-      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
+      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
         JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
           return JitHelper._parsingTfvars(data.toString(), config);
         }):
-        JitHelper.s3Helper.getObject(bucket, prefix).then(data => {
+        JitHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
           return JitHelper._parsingTfvars(data.Body.toString(), config);
         });
 
