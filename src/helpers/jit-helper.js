@@ -749,7 +749,7 @@ class JitHelper {
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;
-      if (version && semver.satisfies(version, '0.x.x || <0.12.0')) {
+      if (version && semver.satisfies(version, '<0.12.0')) {
         return false;
       }
     }
