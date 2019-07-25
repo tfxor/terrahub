@@ -8,24 +8,24 @@
     resource:
       aws_transfer_user:
         {{ name }}:
-          role: '${var.{{ name }}_role}'
-          server_id: '${var.{{ name }}_server_id}'
-          user_name: '${var.{{ name }}_user_name}'
+          user_name: var.{{ name }}_user_name
+          role: var.{{ name }}_role
+          server_id: var.{{ name }}_server_id
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # home_directory: ''
           # policy: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_role:
-        type: 'string'
-      {{ name }}_server_id:
-        type: 'string'
       {{ name }}_user_name:
-        type: 'string'
+        type: string
+      {{ name }}_role:
+        type: string
+      {{ name }}_server_id:
+        type: string
     output:
       id:
-        value: '${aws_transfer_user.{{ name }}.id}'
+        value: aws_transfer_user.{{ name }}.id
       thub_id:
-        value: '${aws_transfer_user.{{ name }}.id}'
+        value: aws_transfer_user.{{ name }}.id
       arn:
-        value: '${aws_transfer_user.{{ name }}.arn}'
+        value: aws_transfer_user.{{ name }}.arn

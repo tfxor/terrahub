@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_batch_certificate:
+        {{ name }}:
+          account_name: var.{{ name }}_account_name
+          thumbprint: var.{{ name }}_thumbprint
+          thumbprint_algorithm: var.{{ name }}_thumbprint_algorithm
+          certificate: var.{{ name }}_certificate
+          format: var.{{ name }}_format
+          # password: ''
+    variable:
+      {{ name }}_account_name:
+        type: string
+      {{ name }}_thumbprint:
+        type: string
+      {{ name }}_thumbprint_algorithm:
+        type: string
+      {{ name }}_certificate:
+        type: string
+      {{ name }}_format:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_batch_certificate.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_batch_certificate.{{ name }}.id
+      name:
+        value: azurerm_arm_batch_certificate.{{ name }}.name
+      public_data:
+        value: azurerm_arm_batch_certificate.{{ name }}.public_data

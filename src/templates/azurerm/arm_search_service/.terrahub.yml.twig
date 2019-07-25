@@ -7,25 +7,27 @@
     resource:
       azurerm_arm_search_service:
         {{ name }}:
-          sku: '${var.{{ name }}_sku}'
-          name: '${var.{{ name }}_name}'
+          sku: var.{{ name }}_sku
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # replica_count: 0
           # partition_count: 0
     variable:
       {{ name }}_sku:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_search_service.{{ name }}.id}'
+        value: azurerm_arm_search_service.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_search_service.{{ name }}.id}'
-      replica_count:
-        value: '${azurerm_arm_search_service.{{ name }}.replica_count}'
-      secondary_key:
-        value: '${azurerm_arm_search_service.{{ name }}.secondary_key}'
-      partition_count:
-        value: '${azurerm_arm_search_service.{{ name }}.partition_count}'
+        value: azurerm_arm_search_service.{{ name }}.id
       primary_key:
-        value: '${azurerm_arm_search_service.{{ name }}.primary_key}'
+        value: azurerm_arm_search_service.{{ name }}.primary_key
+      replica_count:
+        value: azurerm_arm_search_service.{{ name }}.replica_count
+      partition_count:
+        value: azurerm_arm_search_service.{{ name }}.partition_count
+      secondary_key:
+        value: azurerm_arm_search_service.{{ name }}.secondary_key

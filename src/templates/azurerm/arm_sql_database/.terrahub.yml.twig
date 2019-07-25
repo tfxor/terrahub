@@ -7,72 +7,73 @@
     resource:
       azurerm_arm_sql_database:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          server_name: '${var.{{ name }}_server_name}'
-          # requested_service_objective_id: ''
-          # source_database_deletion_date: ''
-          # create_mode: ''
-          # source_database_id: ''
+          server_name: var.{{ name }}_server_name
+          name: var.{{ name }}_name
           # max_size_bytes: ''
-          # restore_point_in_time: ''
-          # edition: ''
-          # threat_detection_policy:
+          # threat_detection_policy: 
           #   -
-          #     email_addresses:
+          #     use_server_default: ''
+          #     disabled_alerts: 
+          #     email_account_admins: ''
+          #     email_addresses: 
           #     retention_days: 0
           #     state: ''
           #     storage_account_access_key: ''
           #     storage_endpoint: ''
-          #     use_server_default: ''
-          #     disabled_alerts:
-          #     email_account_admins: ''
+          # restore_point_in_time: ''
           # collation: ''
-          # tags:
+          # requested_service_objective_id: ''
+          # elastic_pool_name: ''
+          # create_mode: ''
+          # read_scale: false
+          # source_database_id: ''
+          # edition: ''
+          # requested_service_objective_name: ''
+          # source_database_deletion_date: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # import:
+          # import: 
           #   -
-          #     storage_key: ''
-          #     storage_key_type: ''
           #     administrator_login: ''
           #     administrator_login_password: ''
           #     authentication_type: ''
           #     storage_uri: ''
+          #     storage_key: ''
+          #     storage_key_type: ''
           #     operation_mode: ''
-          # requested_service_objective_name: ''
-          # elastic_pool_name: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_server_name:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_sql_database.{{ name }}.id}'
+        value: azurerm_arm_sql_database.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_sql_database.{{ name }}.id}'
-      requested_service_objective_id:
-        value: '${azurerm_arm_sql_database.{{ name }}.requested_service_objective_id}'
-      source_database_deletion_date:
-        value: '${azurerm_arm_sql_database.{{ name }}.source_database_deletion_date}'
-      source_database_id:
-        value: '${azurerm_arm_sql_database.{{ name }}.source_database_id}'
+        value: azurerm_arm_sql_database.{{ name }}.id
       max_size_bytes:
-        value: '${azurerm_arm_sql_database.{{ name }}.max_size_bytes}'
-      creation_date:
-        value: '${azurerm_arm_sql_database.{{ name }}.creation_date}'
-      restore_point_in_time:
-        value: '${azurerm_arm_sql_database.{{ name }}.restore_point_in_time}'
-      edition:
-        value: '${azurerm_arm_sql_database.{{ name }}.edition}'
-      default_secondary_location:
-        value: '${azurerm_arm_sql_database.{{ name }}.default_secondary_location}'
+        value: azurerm_arm_sql_database.{{ name }}.max_size_bytes
       threat_detection_policy:
-        value: '${azurerm_arm_sql_database.{{ name }}.threat_detection_policy}'
+        value: azurerm_arm_sql_database.{{ name }}.threat_detection_policy
+      restore_point_in_time:
+        value: azurerm_arm_sql_database.{{ name }}.restore_point_in_time
       collation:
-        value: '${azurerm_arm_sql_database.{{ name }}.collation}'
-      encryption:
-        value: '${azurerm_arm_sql_database.{{ name }}.encryption}'
-      requested_service_objective_name:
-        value: '${azurerm_arm_sql_database.{{ name }}.requested_service_objective_name}'
+        value: azurerm_arm_sql_database.{{ name }}.collation
+      requested_service_objective_id:
+        value: azurerm_arm_sql_database.{{ name }}.requested_service_objective_id
       elastic_pool_name:
-        value: '${azurerm_arm_sql_database.{{ name }}.elastic_pool_name}'
+        value: azurerm_arm_sql_database.{{ name }}.elastic_pool_name
+      encryption:
+        value: azurerm_arm_sql_database.{{ name }}.encryption
+      source_database_id:
+        value: azurerm_arm_sql_database.{{ name }}.source_database_id
+      edition:
+        value: azurerm_arm_sql_database.{{ name }}.edition
+      requested_service_objective_name:
+        value: azurerm_arm_sql_database.{{ name }}.requested_service_objective_name
+      source_database_deletion_date:
+        value: azurerm_arm_sql_database.{{ name }}.source_database_deletion_date
+      creation_date:
+        value: azurerm_arm_sql_database.{{ name }}.creation_date
+      default_secondary_location:
+        value: azurerm_arm_sql_database.{{ name }}.default_secondary_location

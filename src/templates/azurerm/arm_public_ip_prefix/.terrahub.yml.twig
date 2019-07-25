@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_public_ip_prefix:
+        {{ name }}:
+          name: var.{{ name }}_name
+          # sku: ''
+          # prefix_length: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_public_ip_prefix.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_public_ip_prefix.{{ name }}.id
+      ip_prefix:
+        value: azurerm_arm_public_ip_prefix.{{ name }}.ip_prefix

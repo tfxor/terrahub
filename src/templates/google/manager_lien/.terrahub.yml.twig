@@ -6,25 +6,25 @@
     resource:
       google_manager_lien:
         {{ name }}:
-          origin: '${var.{{ name }}_origin}'
-          parent: '${var.{{ name }}_parent}'
-          reason: '${var.{{ name }}_reason}'
-          restrictions: '${var.{{ name }}_restrictions}'
+          origin: var.{{ name }}_origin
+          parent: var.{{ name }}_parent
+          reason: var.{{ name }}_reason
+          restrictions: var.{{ name }}_restrictions
     variable:
       {{ name }}_origin:
-        type: 'string'
+        type: string
       {{ name }}_parent:
-        type: 'string'
+        type: string
       {{ name }}_reason:
-        type: 'string'
+        type: string
       {{ name }}_restrictions:
-        type: 'list'
+        type: list
     output:
       id:
-        value: '${google_manager_lien.{{ name }}.id}'
+        value: google_manager_lien.{{ name }}.id
       thub_id:
-        value: '${google_manager_lien.{{ name }}.id}'
-      create_time:
-        value: '${google_manager_lien.{{ name }}.create_time}'
+        value: google_manager_lien.{{ name }}.id
       name:
-        value: '${google_manager_lien.{{ name }}.name}'
+        value: google_manager_lien.{{ name }}.name
+      create_time:
+        value: google_manager_lien.{{ name }}.create_time

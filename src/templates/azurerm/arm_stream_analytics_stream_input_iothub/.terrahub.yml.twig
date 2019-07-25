@@ -1,0 +1,36 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_stream_analytics_stream_input_iothub:
+        {{ name }}:
+          eventhub_consumer_group_name: var.{{ name }}_eventhub_consumer_group_name
+          stream_analytics_job_name: var.{{ name }}_stream_analytics_job_name
+          iothub_namespace: var.{{ name }}_iothub_namespace
+          endpoint: var.{{ name }}_endpoint
+          shared_access_policy_key: var.{{ name }}_shared_access_policy_key
+          shared_access_policy_name: var.{{ name }}_shared_access_policy_name
+          name: var.{{ name }}_name
+    variable:
+      {{ name }}_eventhub_consumer_group_name:
+        type: string
+      {{ name }}_stream_analytics_job_name:
+        type: string
+      {{ name }}_iothub_namespace:
+        type: string
+      {{ name }}_endpoint:
+        type: string
+      {{ name }}_shared_access_policy_key:
+        type: string
+      {{ name }}_shared_access_policy_name:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_stream_analytics_stream_input_iothub.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_stream_analytics_stream_input_iothub.{{ name }}.id

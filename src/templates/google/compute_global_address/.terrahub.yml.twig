@@ -6,25 +6,28 @@
     resource:
       google_compute_global_address:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # project: ''
-          # address: ''
+          name: var.{{ name }}_name
           # address_type: ''
           # description: ''
           # ip_version: ''
+          # prefix_length: 0
+          # purpose: ''
+          # project: ''
+          # network: ''
+          # address: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_global_address.{{ name }}.id}'
+        value: google_compute_global_address.{{ name }}.id
       thub_id:
-        value: '${google_compute_global_address.{{ name }}.id}'
-      creation_timestamp:
-        value: '${google_compute_global_address.{{ name }}.creation_timestamp}'
+        value: google_compute_global_address.{{ name }}.id
       project:
-        value: '${google_compute_global_address.{{ name }}.project}'
+        value: google_compute_global_address.{{ name }}.project
       self_link:
-        value: '${google_compute_global_address.{{ name }}.self_link}'
+        value: google_compute_global_address.{{ name }}.self_link
+      creation_timestamp:
+        value: google_compute_global_address.{{ name }}.creation_timestamp
       address:
-        value: '${google_compute_global_address.{{ name }}.address}'
+        value: google_compute_global_address.{{ name }}.address

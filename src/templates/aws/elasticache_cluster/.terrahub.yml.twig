@@ -8,69 +8,69 @@
     resource:
       aws_elasticache_cluster:
         {{ name }}:
-          cluster_id: '${var.{{ name }}_cluster_id}'
-          # security_group_names: []
-          # snapshot_arns: []
-          # snapshot_retention_limit: 0
-          # snapshot_window: ''
-          # apply_immediately: false
-          # engine_version: ''
-          # notification_topic_arn: ''
-          # preferred_availability_zones: []
-          # replication_group_id: ''
+          cluster_id: var.{{ name }}_cluster_id
           # snapshot_name: ''
-          # subnet_group_name: ''
-          # az_mode: ''
-          # node_type: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # availability_zone: ''
-          # num_cache_nodes: 0
-          # parameter_group_name: ''
-          # port: 0
-          # security_group_ids: []
-          # availability_zones: []
-          # engine: ''
           # maintenance_window: ''
+          # snapshot_window: ''
+          # port: 0
+          # security_group_names: []
+          # availability_zones: []
+          # engine_version: ''
+          # node_type: ''
+          # notification_topic_arn: ''
+          # num_cache_nodes: 0
+          # snapshot_retention_limit: 0
+          # replication_group_id: ''
+          # snapshot_arns: []
+          # subnet_group_name: ''
+          # apply_immediately: false
+          # az_mode: ''
+          # engine: ''
+          # parameter_group_name: ''
+          # preferred_availability_zones: []
+          # security_group_ids: []
     variable:
       {{ name }}_cluster_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elasticache_cluster.{{ name }}.id}'
+        value: aws_elasticache_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_elasticache_cluster.{{ name }}.id}'
-      security_group_names:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_names}'
-      snapshot_window:
-        value: '${aws_elasticache_cluster.{{ name }}.snapshot_window}'
-      apply_immediately:
-        value: '${aws_elasticache_cluster.{{ name }}.apply_immediately}'
-      configuration_endpoint:
-        value: '${aws_elasticache_cluster.{{ name }}.configuration_endpoint}'
-      engine_version:
-        value: '${aws_elasticache_cluster.{{ name }}.engine_version}'
-      replication_group_id:
-        value: '${aws_elasticache_cluster.{{ name }}.replication_group_id}'
-      subnet_group_name:
-        value: '${aws_elasticache_cluster.{{ name }}.subnet_group_name}'
-      az_mode:
-        value: '${aws_elasticache_cluster.{{ name }}.az_mode}'
-      cache_nodes:
-        value: '${aws_elasticache_cluster.{{ name }}.cache_nodes}'
-      cluster_address:
-        value: '${aws_elasticache_cluster.{{ name }}.cluster_address}'
-      node_type:
-        value: '${aws_elasticache_cluster.{{ name }}.node_type}'
+        value: aws_elasticache_cluster.{{ name }}.id
       availability_zone:
-        value: '${aws_elasticache_cluster.{{ name }}.availability_zone}'
-      num_cache_nodes:
-        value: '${aws_elasticache_cluster.{{ name }}.num_cache_nodes}'
-      parameter_group_name:
-        value: '${aws_elasticache_cluster.{{ name }}.parameter_group_name}'
-      security_group_ids:
-        value: '${aws_elasticache_cluster.{{ name }}.security_group_ids}'
-      engine:
-        value: '${aws_elasticache_cluster.{{ name }}.engine}'
+        value: aws_elasticache_cluster.{{ name }}.availability_zone
+      cache_nodes:
+        value: aws_elasticache_cluster.{{ name }}.cache_nodes
+      cluster_address:
+        value: aws_elasticache_cluster.{{ name }}.cluster_address
       maintenance_window:
-        value: '${aws_elasticache_cluster.{{ name }}.maintenance_window}'
+        value: aws_elasticache_cluster.{{ name }}.maintenance_window
+      snapshot_window:
+        value: aws_elasticache_cluster.{{ name }}.snapshot_window
+      security_group_names:
+        value: aws_elasticache_cluster.{{ name }}.security_group_names
+      configuration_endpoint:
+        value: aws_elasticache_cluster.{{ name }}.configuration_endpoint
+      engine_version:
+        value: aws_elasticache_cluster.{{ name }}.engine_version
+      node_type:
+        value: aws_elasticache_cluster.{{ name }}.node_type
+      num_cache_nodes:
+        value: aws_elasticache_cluster.{{ name }}.num_cache_nodes
+      replication_group_id:
+        value: aws_elasticache_cluster.{{ name }}.replication_group_id
+      subnet_group_name:
+        value: aws_elasticache_cluster.{{ name }}.subnet_group_name
+      apply_immediately:
+        value: aws_elasticache_cluster.{{ name }}.apply_immediately
+      az_mode:
+        value: aws_elasticache_cluster.{{ name }}.az_mode
+      engine:
+        value: aws_elasticache_cluster.{{ name }}.engine
+      parameter_group_name:
+        value: aws_elasticache_cluster.{{ name }}.parameter_group_name
+      security_group_ids:
+        value: aws_elasticache_cluster.{{ name }}.security_group_ids

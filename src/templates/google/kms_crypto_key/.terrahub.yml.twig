@@ -6,24 +6,17 @@
     resource:
       google_kms_crypto_key:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          key_ring: '${var.{{ name }}_key_ring}'
+          name: var.{{ name }}_name
+          key_ring: var.{{ name }}_key_ring
+          # version_template: []
           # rotation_period: ''
-          # version_template:
-          #   -
-          #     algorithm: ''
-          #     protection_level: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_key_ring:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_kms_crypto_key.{{ name }}.id}'
+        value: google_kms_crypto_key.{{ name }}.id
       thub_id:
-        value: '${google_kms_crypto_key.{{ name }}.id}'
-      self_link:
-        value: '${google_kms_crypto_key.{{ name }}.self_link}'
-      version_template:
-        value: '${google_kms_crypto_key.{{ name }}.version_template}'
+        value: google_kms_crypto_key.{{ name }}.id

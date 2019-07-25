@@ -8,26 +8,26 @@
     resource:
       aws_codedeploy_deployment_config:
         {{ name }}:
-          deployment_config_name: '${var.{{ name }}_deployment_config_name}'
-          # minimum_healthy_hosts:
+          deployment_config_name: var.{{ name }}_deployment_config_name
+          # compute_platform: ''
+          # minimum_healthy_hosts: 
           #   -
           #     type: ''
           #     value: 0
-          # traffic_routing_config:
+          # traffic_routing_config: 
           #   -
           #     type: ''
-          #     time_based_canary:
+          #     time_based_canary: 
           #       -
           #         interval: 0
           #         percentage: 0
-          # compute_platform: ''
     variable:
       {{ name }}_deployment_config_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_codedeploy_deployment_config.{{ name }}.id}'
+        value: aws_codedeploy_deployment_config.{{ name }}.id
       thub_id:
-        value: '${aws_codedeploy_deployment_config.{{ name }}.id}'
+        value: aws_codedeploy_deployment_config.{{ name }}.id
       deployment_config_id:
-        value: '${aws_codedeploy_deployment_config.{{ name }}.deployment_config_id}'
+        value: aws_codedeploy_deployment_config.{{ name }}.deployment_config_id

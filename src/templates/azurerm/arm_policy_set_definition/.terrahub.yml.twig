@@ -7,23 +7,23 @@
     resource:
       azurerm_arm_policy_set_definition:
         {{ name }}:
-          policy_type: '${var.{{ name }}_policy_type}'
-          display_name: '${var.{{ name }}_display_name}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          policy_type: var.{{ name }}_policy_type
+          display_name: var.{{ name }}_display_name
+          # parameters: ''
+          # policy_definitions: ''
           # management_group_id: ''
           # description: ''
           # metadata: ''
-          # parameters: ''
-          # policy_definitions: ''
     variable:
-      {{ name }}_policy_type:
-        type: 'string'
-      {{ name }}_display_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_policy_type:
+        type: string
+      {{ name }}_display_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_policy_set_definition.{{ name }}.id}'
+        value: azurerm_arm_policy_set_definition.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_policy_set_definition.{{ name }}.id}'
+        value: azurerm_arm_policy_set_definition.{{ name }}.id

@@ -8,17 +8,19 @@
     resource:
       aws_media_package_channel:
         {{ name }}:
-          channel_id: '${var.{{ name }}_channel_id}'
+          channel_id: var.{{ name }}_channel_id
           # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_channel_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_media_package_channel.{{ name }}.id}'
+        value: aws_media_package_channel.{{ name }}.id
       thub_id:
-        value: '${aws_media_package_channel.{{ name }}.id}'
+        value: aws_media_package_channel.{{ name }}.id
       hls_ingest:
-        value: '${aws_media_package_channel.{{ name }}.hls_ingest}'
+        value: aws_media_package_channel.{{ name }}.hls_ingest
       arn:
-        value: '${aws_media_package_channel.{{ name }}.arn}'
+        value: aws_media_package_channel.{{ name }}.arn

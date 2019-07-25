@@ -7,34 +7,34 @@
     resource:
       azurerm_arm_servicebus_queue:
         {{ name }}:
-          namespace_name: '${var.{{ name }}_namespace_name}'
-          name: '${var.{{ name }}_name}'
-          # default_message_ttl: ''
-          # duplicate_detection_history_time_window: ''
-          # support_ordering: false
-          # auto_delete_on_idle: ''
+          name: var.{{ name }}_name
+          namespace_name: var.{{ name }}_namespace_name
           # max_delivery_count: 0
+          # auto_delete_on_idle: ''
+          # max_size_in_megabytes: 0
+          # enable_batched_operations: false
+          # support_ordering: false
           # lock_duration: ''
           # requires_session: false
-          # enable_batched_operations: false
-          # max_size_in_megabytes: 0
+          # default_message_ttl: ''
+          # duplicate_detection_history_time_window: ''
     variable:
-      {{ name }}_namespace_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_namespace_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.id}'
+        value: azurerm_arm_servicebus_queue.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.id}'
-      default_message_ttl:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.default_message_ttl}'
-      duplicate_detection_history_time_window:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.duplicate_detection_history_time_window}'
+        value: azurerm_arm_servicebus_queue.{{ name }}.id
       auto_delete_on_idle:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.auto_delete_on_idle}'
-      lock_duration:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.lock_duration}'
+        value: azurerm_arm_servicebus_queue.{{ name }}.auto_delete_on_idle
       max_size_in_megabytes:
-        value: '${azurerm_arm_servicebus_queue.{{ name }}.max_size_in_megabytes}'
+        value: azurerm_arm_servicebus_queue.{{ name }}.max_size_in_megabytes
+      lock_duration:
+        value: azurerm_arm_servicebus_queue.{{ name }}.lock_duration
+      default_message_ttl:
+        value: azurerm_arm_servicebus_queue.{{ name }}.default_message_ttl
+      duplicate_detection_history_time_window:
+        value: azurerm_arm_servicebus_queue.{{ name }}.duplicate_detection_history_time_window

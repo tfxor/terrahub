@@ -8,31 +8,41 @@
     resource:
       aws_waf_web_acl:
         {{ name }}:
-          default_action:
+          metric_name: var.{{ name }}_metric_name
+          priority: var.{{ name }}_priority
+          rule_id: var.{{ name }}_rule_id
+          name: var.{{ name }}_name
+          default_action: 
             type: ''
-          metric_name: '${var.{{ name }}_metric_name}'
-          priority: '${var.{{ name }}_priority}'
-          rule_id: '${var.{{ name }}_rule_id}'
-          name: '${var.{{ name }}_name}'
-          # rules:
-          #   action:
-          #     -
+          # logging_configuration: 
+          #   -
+          #     log_destination: ''
+          #     redacted_fields: 
+          #       -
+          #         field_to_match: 
           #       type: ''
-          # override_action:
+          #       data: ''
+          # override_action: 
           #   -
           #     type: ''
           # type: ''
+          # rules: 
+          #   action: 
+          #     -
+          #       type: ''
     variable:
       {{ name }}_metric_name:
-        type: 'string'
+        type: string
       {{ name }}_priority:
-        type: 'int'
+        type: int
       {{ name }}_rule_id:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_waf_web_acl.{{ name }}.id}'
+        value: aws_waf_web_acl.{{ name }}.id
       thub_id:
-        value: '${aws_waf_web_acl.{{ name }}.id}'
+        value: aws_waf_web_acl.{{ name }}.id
+      arn:
+        value: aws_waf_web_acl.{{ name }}.arn

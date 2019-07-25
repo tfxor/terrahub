@@ -6,18 +6,32 @@
     resource:
       google_compute_instance_group_manager:
         {{ name }}:
-          base_instance_name: '${var.{{ name }}_base_instance_name}'
-          name: '${var.{{ name }}_name}'
-          # update_strategy: ''
+          base_instance_name: var.{{ name }}_base_instance_name
+          instance_template: var.{{ name }}_instance_template
+          name: var.{{ name }}_name
           # target_pools: []
-          # auto_healing_policies:
+          # version: 
           #   -
-          #     initial_delay_sec: 0
-          #     health_check: ''
-          # instance_template: ''
+          #     name: ''
+          #     instance_template: ''
+          #     target_size: 
+          #       -
+          #         fixed: 0
+          #         percent: 0
+          # zone: ''
           # project: ''
+          # update_strategy: ''
+          # wait_for_instances: false
+          # named_port: 
+          #   name: ''
+          #   port: 0
+          # description: ''
           # target_size: 0
-          # rolling_update_policy:
+          # auto_healing_policies: 
+          #   -
+          #     health_check: ''
+          #     initial_delay_sec: 0
+          # rolling_update_policy: 
           #   -
           #     minimal_action: ''
           #     type: ''
@@ -26,43 +40,31 @@
           #     max_unavailable_fixed: 0
           #     max_unavailable_percent: 0
           #     min_ready_sec: 0
-          # version:
-          #   -
-          #     name: ''
-          #     instance_template: ''
-          #     target_size:
-          #       -
-          #         fixed: 0
-          #         percent: 0
-          # zone: ''
-          # description: ''
-          # named_port:
-          #   port: 0
-          #   name: ''
-          # wait_for_instances: false
     variable:
       {{ name }}_base_instance_name:
-        type: 'string'
+        type: string
+      {{ name }}_instance_template:
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_instance_group_manager.{{ name }}.id}'
+        value: google_compute_instance_group_manager.{{ name }}.id
       thub_id:
-        value: '${google_compute_instance_group_manager.{{ name }}.id}'
-      fingerprint:
-        value: '${google_compute_instance_group_manager.{{ name }}.fingerprint}'
-      instance_group:
-        value: '${google_compute_instance_group_manager.{{ name }}.instance_group}'
-      project:
-        value: '${google_compute_instance_group_manager.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_instance_group_manager.{{ name }}.self_link}'
-      target_size:
-        value: '${google_compute_instance_group_manager.{{ name }}.target_size}'
-      rolling_update_policy:
-        value: '${google_compute_instance_group_manager.{{ name }}.rolling_update_policy}'
+        value: google_compute_instance_group_manager.{{ name }}.id
       version:
-        value: '${google_compute_instance_group_manager.{{ name }}.version}'
+        value: google_compute_instance_group_manager.{{ name }}.version
       zone:
-        value: '${google_compute_instance_group_manager.{{ name }}.zone}'
+        value: google_compute_instance_group_manager.{{ name }}.zone
+      project:
+        value: google_compute_instance_group_manager.{{ name }}.project
+      fingerprint:
+        value: google_compute_instance_group_manager.{{ name }}.fingerprint
+      self_link:
+        value: google_compute_instance_group_manager.{{ name }}.self_link
+      instance_group:
+        value: google_compute_instance_group_manager.{{ name }}.instance_group
+      target_size:
+        value: google_compute_instance_group_manager.{{ name }}.target_size
+      rolling_update_policy:
+        value: google_compute_instance_group_manager.{{ name }}.rolling_update_policy

@@ -8,81 +8,81 @@
     resource:
       aws_spot_fleet_request:
         {{ name }}:
-          ami: '${var.{{ name }}_ami}'
-          launch_specification:
-          #   vpc_security_group_ids:
+          target_capacity: var.{{ name }}_target_capacity
+          ami: var.{{ name }}_ami
+          instance_type: var.{{ name }}_instance_type
+          iam_fleet_role: var.{{ name }}_iam_fleet_role
+          launch_specification: 
+          #   vpc_security_group_ids: 
           #   associate_public_ip_address: false
-          #   ebs_block_device:
+          #   ebs_block_device: 
           #     device_name: ''
-          #     delete_on_termination: false
           #     encrypted: false
           #     iops: 0
           #     snapshot_id: ''
           #     volume_size: 0
           #     volume_type: ''
-          target_capacity: '${var.{{ name }}_target_capacity}'
-          iam_fleet_role: '${var.{{ name }}_iam_fleet_role}'
-          instance_type: '${var.{{ name }}_instance_type}'
-          # placement_group: ''
-          # weighted_capacity: ''
-          # valid_until: ''
-          # fleet_type: ''
-          # spot_price: ''
-          # ebs_optimized: false
-          # iam_instance_profile: ''
+          #     delete_on_termination: false
+          # user_data: ''
           # instance_interruption_behaviour: ''
-          # excess_capacity_termination_policy: ''
-          # valid_from: ''
-          # target_group_arns: []
-          # root_block_device:
-          #   volume_size: 0
-          #   volume_type: ''
+          # subnet_id: ''
+          # instance_pools_to_use_count: 0
+          # fleet_type: ''
+          # iam_instance_profile: ''
+          # placement_tenancy: ''
+          # availability_zone: ''
+          # root_block_device: 
           #   delete_on_termination: false
           #   iops: 0
-          # key_name: ''
-          # subnet_id: ''
-          # availability_zone: ''
-          # user_data: ''
+          #   volume_size: 0
+          #   volume_type: ''
+          # monitoring: false
           # allocation_strategy: ''
-          # terminate_instances_with_expiration: false
+          # ebs_optimized: false
+          # key_name: ''
+          # spot_price: ''
+          # weighted_capacity: ''
+          # target_group_arns: []
           # replace_unhealthy_instances: false
           # iam_instance_profile_arn: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # instance_pools_to_use_count: 0
           # wait_for_fulfillment: false
-          # monitoring: false
-          # placement_tenancy: ''
+          # excess_capacity_termination_policy: ''
+          # valid_from: ''
+          # valid_until: ''
           # load_balancers: []
+          # placement_group: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # terminate_instances_with_expiration: false
     variable:
-      {{ name }}_ami:
-        type: 'string'
       {{ name }}_target_capacity:
-        type: 'int'
-      {{ name }}_iam_fleet_role:
-        type: 'string'
+        type: int
+      {{ name }}_ami:
+        type: string
       {{ name }}_instance_type:
-        type: 'string'
+        type: string
+      {{ name }}_iam_fleet_role:
+        type: string
     output:
       id:
-        value: '${aws_spot_fleet_request.{{ name }}.id}'
+        value: aws_spot_fleet_request.{{ name }}.id
       thub_id:
-        value: '${aws_spot_fleet_request.{{ name }}.id}'
-      placement_group:
-        value: '${aws_spot_fleet_request.{{ name }}.placement_group}'
-      target_group_arns:
-        value: '${aws_spot_fleet_request.{{ name }}.target_group_arns}'
-      root_block_device:
-        value: '${aws_spot_fleet_request.{{ name }}.root_block_device}'
-      key_name:
-        value: '${aws_spot_fleet_request.{{ name }}.key_name}'
-      subnet_id:
-        value: '${aws_spot_fleet_request.{{ name }}.subnet_id}'
-      availability_zone:
-        value: '${aws_spot_fleet_request.{{ name }}.availability_zone}'
+        value: aws_spot_fleet_request.{{ name }}.id
       spot_request_state:
-        value: '${aws_spot_fleet_request.{{ name }}.spot_request_state}'
+        value: aws_spot_fleet_request.{{ name }}.spot_request_state
+      subnet_id:
+        value: aws_spot_fleet_request.{{ name }}.subnet_id
+      availability_zone:
+        value: aws_spot_fleet_request.{{ name }}.availability_zone
+      root_block_device:
+        value: aws_spot_fleet_request.{{ name }}.root_block_device
+      key_name:
+        value: aws_spot_fleet_request.{{ name }}.key_name
+      target_group_arns:
+        value: aws_spot_fleet_request.{{ name }}.target_group_arns
       client_token:
-        value: '${aws_spot_fleet_request.{{ name }}.client_token}'
+        value: aws_spot_fleet_request.{{ name }}.client_token
       load_balancers:
-        value: '${aws_spot_fleet_request.{{ name }}.load_balancers}'
+        value: aws_spot_fleet_request.{{ name }}.load_balancers
+      placement_group:
+        value: aws_spot_fleet_request.{{ name }}.placement_group

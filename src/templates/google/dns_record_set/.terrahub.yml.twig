@@ -6,27 +6,27 @@
     resource:
       google_dns_record_set:
         {{ name }}:
-          managed_zone: '${var.{{ name }}_managed_zone}'
-          name: '${var.{{ name }}_name}'
-          rrdatas: '${var.{{ name }}_rrdatas}'
-          ttl: '${var.{{ name }}_ttl}'
-          type: '${var.{{ name }}_type}'
+          managed_zone: var.{{ name }}_managed_zone
+          name: var.{{ name }}_name
+          rrdatas: var.{{ name }}_rrdatas
+          ttl: var.{{ name }}_ttl
+          type: var.{{ name }}_type
           # project: ''
     variable:
       {{ name }}_managed_zone:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_rrdatas:
-        type: 'list'
+        type: list
       {{ name }}_ttl:
-        type: 'int'
+        type: int
       {{ name }}_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_dns_record_set.{{ name }}.id}'
+        value: google_dns_record_set.{{ name }}.id
       thub_id:
-        value: '${google_dns_record_set.{{ name }}.id}'
+        value: google_dns_record_set.{{ name }}.id
       project:
-        value: '${google_dns_record_set.{{ name }}.project}'
+        value: google_dns_record_set.{{ name }}.project

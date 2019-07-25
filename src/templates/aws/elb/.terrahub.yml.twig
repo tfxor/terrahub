@@ -8,65 +8,65 @@
     resource:
       aws_elb:
         {{ name }}:
-          listener:
-            lb_port: 0
+          listener: 
             lb_protocol: ''
             instance_port: 0
             instance_protocol: ''
+            lb_port: 0
           #   ssl_certificate_id: ''
-          # connection_draining: false
-          # name: ''
-          # name_prefix: ''
-          # source_security_group: ''
           # connection_draining_timeout: 0
-          # access_logs:
+          # access_logs: 
           #   -
           #     bucket: ''
-          #     enabled: false
           #     interval: 0
           #     bucket_prefix: ''
-          # health_check:
+          #     enabled: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # internal: false
+          # source_security_group: ''
+          # connection_draining: false
+          # name_prefix: ''
+          # security_groups: []
+          # subnets: []
+          # instances: []
+          # idle_timeout: 0
+          # health_check: 
           #   -
-          #     healthy_threshold: 0
-          #     unhealthy_threshold: 0
           #     target: ''
           #     interval: 0
           #     timeout: 0
-          # internal: false
+          #     healthy_threshold: 0
+          #     unhealthy_threshold: 0
           # cross_zone_load_balancing: false
-          # instances: []
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
           # availability_zones: []
-          # idle_timeout: 0
-          # security_groups: []
-          # subnets: []
     output:
       id:
-        value: '${aws_elb.{{ name }}.id}'
+        value: aws_elb.{{ name }}.id
       thub_id:
-        value: '${aws_elb.{{ name }}.id}'
-      zone_id:
-        value: '${aws_elb.{{ name }}.zone_id}'
-      name:
-        value: '${aws_elb.{{ name }}.name}'
-      source_security_group:
-        value: '${aws_elb.{{ name }}.source_security_group}'
-      source_security_group_id:
-        value: '${aws_elb.{{ name }}.source_security_group_id}'
-      health_check:
-        value: '${aws_elb.{{ name }}.health_check}'
-      internal:
-        value: '${aws_elb.{{ name }}.internal}'
-      instances:
-        value: '${aws_elb.{{ name }}.instances}'
+        value: aws_elb.{{ name }}.id
       dns_name:
-        value: '${aws_elb.{{ name }}.dns_name}'
-      availability_zones:
-        value: '${aws_elb.{{ name }}.availability_zones}'
-      arn:
-        value: '${aws_elb.{{ name }}.arn}'
+        value: aws_elb.{{ name }}.dns_name
+      name:
+        value: aws_elb.{{ name }}.name
+      internal:
+        value: aws_elb.{{ name }}.internal
+      source_security_group:
+        value: aws_elb.{{ name }}.source_security_group
       security_groups:
-        value: '${aws_elb.{{ name }}.security_groups}'
+        value: aws_elb.{{ name }}.security_groups
+      source_security_group_id:
+        value: aws_elb.{{ name }}.source_security_group_id
       subnets:
-        value: '${aws_elb.{{ name }}.subnets}'
+        value: aws_elb.{{ name }}.subnets
+      instances:
+        value: aws_elb.{{ name }}.instances
+      health_check:
+        value: aws_elb.{{ name }}.health_check
+      zone_id:
+        value: aws_elb.{{ name }}.zone_id
+      arn:
+        value: aws_elb.{{ name }}.arn
+      availability_zones:
+        value: aws_elb.{{ name }}.availability_zones

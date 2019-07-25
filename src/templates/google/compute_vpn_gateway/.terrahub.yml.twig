@@ -6,26 +6,26 @@
     resource:
       google_compute_vpn_gateway:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          network: '${var.{{ name }}_network}'
+          name: var.{{ name }}_name
+          network: var.{{ name }}_network
           # project: ''
           # description: ''
           # region: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_network:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_vpn_gateway.{{ name }}.id}'
+        value: google_compute_vpn_gateway.{{ name }}.id
       thub_id:
-        value: '${google_compute_vpn_gateway.{{ name }}.id}'
-      creation_timestamp:
-        value: '${google_compute_vpn_gateway.{{ name }}.creation_timestamp}'
+        value: google_compute_vpn_gateway.{{ name }}.id
       project:
-        value: '${google_compute_vpn_gateway.{{ name }}.project}'
+        value: google_compute_vpn_gateway.{{ name }}.project
       self_link:
-        value: '${google_compute_vpn_gateway.{{ name }}.self_link}'
+        value: google_compute_vpn_gateway.{{ name }}.self_link
       region:
-        value: '${google_compute_vpn_gateway.{{ name }}.region}'
+        value: google_compute_vpn_gateway.{{ name }}.region
+      creation_timestamp:
+        value: google_compute_vpn_gateway.{{ name }}.creation_timestamp

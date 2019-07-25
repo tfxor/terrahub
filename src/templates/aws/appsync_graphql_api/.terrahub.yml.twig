@@ -8,19 +8,22 @@
     resource:
       aws_appsync_graphql_api:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          authentication_type: '${var.{{ name }}_authentication_type}'
-          # log_config:
+          name: var.{{ name }}_name
+          authentication_type: var.{{ name }}_authentication_type
+          # log_config: 
           #   -
-          #     field_log_level: ''
           #     cloudwatch_logs_role_arn: ''
-          # openid_connect_config:
+          #     field_log_level: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # schema: ''
+          # openid_connect_config: 
           #   -
           #     issuer: ''
+          #     iat_ttl: 0
           #     auth_ttl: 0
           #     client_id: ''
-          #     iat_ttl: 0
-          # user_pool_config:
+          # user_pool_config: 
           #   -
           #     default_action: ''
           #     user_pool_id: ''
@@ -28,15 +31,15 @@
           #     aws_region: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_authentication_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_appsync_graphql_api.{{ name }}.id}'
+        value: aws_appsync_graphql_api.{{ name }}.id
       thub_id:
-        value: '${aws_appsync_graphql_api.{{ name }}.id}'
+        value: aws_appsync_graphql_api.{{ name }}.id
       arn:
-        value: '${aws_appsync_graphql_api.{{ name }}.arn}'
+        value: aws_appsync_graphql_api.{{ name }}.arn
       uris:
-        value: '${aws_appsync_graphql_api.{{ name }}.uris}'
+        value: aws_appsync_graphql_api.{{ name }}.uris

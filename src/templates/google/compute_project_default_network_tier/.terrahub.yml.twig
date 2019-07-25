@@ -1,0 +1,20 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_project_default_network_tier:
+        {{ name }}:
+          network_tier: var.{{ name }}_network_tier
+          # project: ''
+    variable:
+      {{ name }}_network_tier:
+        type: string
+    output:
+      id:
+        value: google_compute_project_default_network_tier.{{ name }}.id
+      thub_id:
+        value: google_compute_project_default_network_tier.{{ name }}.id
+      project:
+        value: google_compute_project_default_network_tier.{{ name }}.project

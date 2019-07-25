@@ -1,0 +1,38 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_network_packet_capture:
+        {{ name }}:
+          network_watcher_name: var.{{ name }}_network_watcher_name
+          storage_location: 
+            -
+          #     file_path: ''
+          #     storage_account_id: ''
+          target_resource_id: var.{{ name }}_target_resource_id
+          name: var.{{ name }}_name
+          # maximum_bytes_per_session: 0
+          # maximum_bytes_per_packet: 0
+          # maximum_capture_duration: 0
+          # filter: 
+          #   -
+          #     protocol: ''
+          #     local_ip_address: ''
+          #     local_port: ''
+          #     remote_ip_address: ''
+          #     remote_port: ''
+    variable:
+      {{ name }}_network_watcher_name:
+        type: string
+      {{ name }}_target_resource_id:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_network_packet_capture.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_network_packet_capture.{{ name }}.id

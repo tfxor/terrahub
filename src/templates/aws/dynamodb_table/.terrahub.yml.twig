@@ -8,62 +8,63 @@
     resource:
       aws_dynamodb_table:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          hash_key: '${var.{{ name }}_hash_key}'
-          attribute:
+          attribute: 
             name: ''
             type: ''
-          # read_capacity: 0
-          # ttl:
-          #   attribute_name: ''
-          #   enabled: false
-          # local_secondary_index:
-          #   name: ''
-          #   range_key: ''
-          #   projection_type: ''
-          #   non_key_attributes:
-          #     -
-          # server_side_encryption:
+          name: var.{{ name }}_name
+          hash_key: var.{{ name }}_hash_key
+          # ttl: 
           #   -
+          #     attribute_name: ''
           #     enabled: false
-          # range_key: ''
-          # billing_mode: ''
-          # write_capacity: 0
-          # global_secondary_index:
+          # global_secondary_index: 
           #   name: ''
           #   hash_key: ''
           #   projection_type: ''
           #   write_capacity: 0
           #   read_capacity: 0
           #   range_key: ''
-          #   non_key_attributes:
+          #   non_key_attributes: 
           #     -
           # stream_view_type: ''
-          # point_in_time_recovery:
+          # billing_mode: ''
+          # local_secondary_index: 
+          #   name: ''
+          #   range_key: ''
+          #   projection_type: ''
+          #   non_key_attributes: 
+          #     -
+          # stream_enabled: false
+          # server_side_encryption: 
           #   -
           #     enabled: false
-          # stream_enabled: false
-          # tags:
+          # point_in_time_recovery: 
+          #   -
+          #     enabled: false
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # range_key: ''
+          # write_capacity: 0
+          # read_capacity: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_hash_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_dynamodb_table.{{ name }}.id}'
+        value: aws_dynamodb_table.{{ name }}.id
       thub_id:
-        value: '${aws_dynamodb_table.{{ name }}.id}'
-      stream_label:
-        value: '${aws_dynamodb_table.{{ name }}.stream_label}'
-      server_side_encryption:
-        value: '${aws_dynamodb_table.{{ name }}.server_side_encryption}'
+        value: aws_dynamodb_table.{{ name }}.id
       stream_view_type:
-        value: '${aws_dynamodb_table.{{ name }}.stream_view_type}'
-      arn:
-        value: '${aws_dynamodb_table.{{ name }}.arn}'
+        value: aws_dynamodb_table.{{ name }}.stream_view_type
       stream_arn:
-        value: '${aws_dynamodb_table.{{ name }}.stream_arn}'
+        value: aws_dynamodb_table.{{ name }}.stream_arn
+      stream_label:
+        value: aws_dynamodb_table.{{ name }}.stream_label
+      arn:
+        value: aws_dynamodb_table.{{ name }}.arn
+      server_side_encryption:
+        value: aws_dynamodb_table.{{ name }}.server_side_encryption
       point_in_time_recovery:
-        value: '${aws_dynamodb_table.{{ name }}.point_in_time_recovery}'
+        value: aws_dynamodb_table.{{ name }}.point_in_time_recovery

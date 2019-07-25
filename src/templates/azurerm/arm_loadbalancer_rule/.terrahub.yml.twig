@@ -7,42 +7,43 @@
     resource:
       azurerm_arm_loadbalancer_rule:
         {{ name }}:
-          protocol: '${var.{{ name }}_protocol}'
-          frontend_port: '${var.{{ name }}_frontend_port}'
-          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
-          frontend_ip_configuration_name: '${var.{{ name }}_frontend_ip_configuration_name}'
-          name: '${var.{{ name }}_name}'
-          backend_port: '${var.{{ name }}_backend_port}'
-          # idle_timeout_in_minutes: 0
-          # probe_id: ''
-          # enable_floating_ip: false
+          frontend_ip_configuration_name: var.{{ name }}_frontend_ip_configuration_name
+          protocol: var.{{ name }}_protocol
+          frontend_port: var.{{ name }}_frontend_port
+          name: var.{{ name }}_name
+          loadbalancer_id: var.{{ name }}_loadbalancer_id
+          backend_port: var.{{ name }}_backend_port
+          # disable_outbound_snat: false
           # load_distribution: ''
+          # enable_floating_ip: false
+          # idle_timeout_in_minutes: 0
           # backend_address_pool_id: ''
+          # probe_id: ''
     variable:
-      {{ name }}_protocol:
-        type: 'string'
-      {{ name }}_frontend_port:
-        type: 'int'
-      {{ name }}_loadbalancer_id:
-        type: 'string'
       {{ name }}_frontend_ip_configuration_name:
-        type: 'string'
+        type: string
+      {{ name }}_protocol:
+        type: string
+      {{ name }}_frontend_port:
+        type: int
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_loadbalancer_id:
+        type: string
       {{ name }}_backend_port:
-        type: 'int'
+        type: int
     output:
       id:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.id}'
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.id}'
-      frontend_ip_configuration_id:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.frontend_ip_configuration_id}'
-      idle_timeout_in_minutes:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.idle_timeout_in_minutes}'
-      probe_id:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.probe_id}'
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.id
       load_distribution:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.load_distribution}'
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.load_distribution
+      frontend_ip_configuration_id:
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.frontend_ip_configuration_id
+      idle_timeout_in_minutes:
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.idle_timeout_in_minutes
       backend_address_pool_id:
-        value: '${azurerm_arm_loadbalancer_rule.{{ name }}.backend_address_pool_id}'
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.backend_address_pool_id
+      probe_id:
+        value: azurerm_arm_loadbalancer_rule.{{ name }}.probe_id

@@ -7,52 +7,52 @@
     resource:
       azurerm_arm_network_interface:
         {{ name }}:
-          ip_configuration:
+          ip_configuration: 
             -
-              name: ''
               private_ip_address_allocation: ''
+              name: ''
           #     primary: false
-          #     subnet_id: ''
           #     public_ip_address_id: ''
           #     application_gateway_backend_address_pools_ids: []
+          #     load_balancer_backend_address_pools_ids: []
           #     load_balancer_inbound_nat_rules_ids: []
-          #     application_security_group_ids: []
+          #     subnet_id: ''
           #     private_ip_address: ''
           #     private_ip_address_version: ''
-          #     load_balancer_backend_address_pools_ids: []
-          name: '${var.{{ name }}_name}'
-          # virtual_machine_id: ''
-          # internal_fqdn: ''
-          # enable_ip_forwarding: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          #     application_security_group_ids: []
+          name: var.{{ name }}_name
           # mac_address: ''
+          # enable_ip_forwarding: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # dns_servers: []
-          # applied_dns_servers: []
           # internal_dns_name_label: ''
+          # internal_fqdn: ''
           # network_security_group_id: ''
+          # virtual_machine_id: ''
+          # applied_dns_servers: []
           # enable_accelerated_networking: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_network_interface.{{ name }}.id}'
+        value: azurerm_arm_network_interface.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_network_interface.{{ name }}.id}'
-      virtual_machine_id:
-        value: '${azurerm_arm_network_interface.{{ name }}.virtual_machine_id}'
-      internal_fqdn:
-        value: '${azurerm_arm_network_interface.{{ name }}.internal_fqdn}'
+        value: azurerm_arm_network_interface.{{ name }}.id
       mac_address:
-        value: '${azurerm_arm_network_interface.{{ name }}.mac_address}'
-      dns_servers:
-        value: '${azurerm_arm_network_interface.{{ name }}.dns_servers}'
-      applied_dns_servers:
-        value: '${azurerm_arm_network_interface.{{ name }}.applied_dns_servers}'
-      private_ip_address:
-        value: '${azurerm_arm_network_interface.{{ name }}.private_ip_address}'
-      internal_dns_name_label:
-        value: '${azurerm_arm_network_interface.{{ name }}.internal_dns_name_label}'
+        value: azurerm_arm_network_interface.{{ name }}.mac_address
       private_ip_addresses:
-        value: '${azurerm_arm_network_interface.{{ name }}.private_ip_addresses}'
+        value: azurerm_arm_network_interface.{{ name }}.private_ip_addresses
+      private_ip_address:
+        value: azurerm_arm_network_interface.{{ name }}.private_ip_address
+      dns_servers:
+        value: azurerm_arm_network_interface.{{ name }}.dns_servers
+      internal_dns_name_label:
+        value: azurerm_arm_network_interface.{{ name }}.internal_dns_name_label
+      internal_fqdn:
+        value: azurerm_arm_network_interface.{{ name }}.internal_fqdn
+      virtual_machine_id:
+        value: azurerm_arm_network_interface.{{ name }}.virtual_machine_id
+      applied_dns_servers:
+        value: azurerm_arm_network_interface.{{ name }}.applied_dns_servers

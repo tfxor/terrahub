@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_binary_authorization_attestor:
+        {{ name }}:
+          attestation_authority_note: 
+            -
+              note_reference: ''
+          #     public_keys: 
+          #       -
+          #         ascii_armored_pgp_public_key: ''
+          #         comment: ''
+          name: var.{{ name }}_name
+          # project: ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: google_binary_authorization_attestor.{{ name }}.id
+      thub_id:
+        value: google_binary_authorization_attestor.{{ name }}.id
+      project:
+        value: google_binary_authorization_attestor.{{ name }}.project

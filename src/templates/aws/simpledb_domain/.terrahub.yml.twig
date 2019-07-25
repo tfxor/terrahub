@@ -8,12 +8,12 @@
     resource:
       aws_simpledb_domain:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_simpledb_domain.{{ name }}.id}'
+        value: aws_simpledb_domain.{{ name }}.id
       thub_id:
-        value: '${aws_simpledb_domain.{{ name }}.id}'
+        value: aws_simpledb_domain.{{ name }}.id

@@ -8,29 +8,29 @@
     resource:
       aws_api_gateway_rest_api:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # policy: ''
-          # minimum_compression_size: 0
-          # endpoint_configuration:
-          #   -
-          #     types: []
+          name: var.{{ name }}_name
           # description: ''
           # api_key_source: ''
-          # body: ''
           # binary_media_types: []
+          # body: ''
+          # minimum_compression_size: 0
+          # endpoint_configuration: 
+          #   -
+          #     types: []
+          # policy: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_rest_api.{{ name }}.id}'
+        value: aws_api_gateway_rest_api.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_rest_api.{{ name }}.id}'
+        value: aws_api_gateway_rest_api.{{ name }}.id
       root_resource_id:
-        value: '${aws_api_gateway_rest_api.{{ name }}.root_resource_id}'
-      execution_arn:
-        value: '${aws_api_gateway_rest_api.{{ name }}.execution_arn}'
-      endpoint_configuration:
-        value: '${aws_api_gateway_rest_api.{{ name }}.endpoint_configuration}'
+        value: aws_api_gateway_rest_api.{{ name }}.root_resource_id
       created_date:
-        value: '${aws_api_gateway_rest_api.{{ name }}.created_date}'
+        value: aws_api_gateway_rest_api.{{ name }}.created_date
+      execution_arn:
+        value: aws_api_gateway_rest_api.{{ name }}.execution_arn
+      endpoint_configuration:
+        value: aws_api_gateway_rest_api.{{ name }}.endpoint_configuration

@@ -8,19 +8,23 @@
     resource:
       aws_transfer_server:
         {{ name }}:
-          # force_destroy: false
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # invocation_role: ''
+          # endpoint_type: ''
+          # endpoint_details: 
+          #   -
+          #     vpc_endpoint_id: ''
           # url: ''
           # identity_provider_type: ''
           # logging_role: ''
+          # force_destroy: false
+          # invocation_role: ''
     output:
       id:
-        value: '${aws_transfer_server.{{ name }}.id}'
+        value: aws_transfer_server.{{ name }}.id
       thub_id:
-        value: '${aws_transfer_server.{{ name }}.id}'
+        value: aws_transfer_server.{{ name }}.id
       arn:
-        value: '${aws_transfer_server.{{ name }}.arn}'
+        value: aws_transfer_server.{{ name }}.arn
       endpoint:
-        value: '${aws_transfer_server.{{ name }}.endpoint}'
+        value: aws_transfer_server.{{ name }}.endpoint

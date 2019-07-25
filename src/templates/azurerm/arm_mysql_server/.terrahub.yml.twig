@@ -7,39 +7,39 @@
     resource:
       azurerm_arm_mysql_server:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          ssl_enforcement: '${var.{{ name }}_ssl_enforcement}'
-          sku:
+          name: var.{{ name }}_name
+          version: var.{{ name }}_version
+          sku: 
             -
-              tier: ''
               family: ''
               name: ''
               capacity: 0
-          administrator_login: '${var.{{ name }}_administrator_login}'
-          administrator_login_password: '${var.{{ name }}_administrator_login_password}'
-          version: '${var.{{ name }}_version}'
-          storage_profile:
+              tier: ''
+          administrator_login: var.{{ name }}_administrator_login
+          administrator_login_password: var.{{ name }}_administrator_login_password
+          storage_profile: 
             -
               storage_mb: 0
           #     backup_retention_days: 0
           #     geo_redundant_backup: ''
-          # tags:
+          ssl_enforcement: var.{{ name }}_ssl_enforcement
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_ssl_enforcement:
-        type: 'string'
-      {{ name }}_administrator_login:
-        type: 'string'
-      {{ name }}_administrator_login_password:
-        type: 'string'
+        type: string
       {{ name }}_version:
-        type: 'string'
+        type: string
+      {{ name }}_administrator_login:
+        type: string
+      {{ name }}_administrator_login_password:
+        type: string
+      {{ name }}_ssl_enforcement:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_mysql_server.{{ name }}.id}'
+        value: azurerm_arm_mysql_server.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_mysql_server.{{ name }}.id}'
+        value: azurerm_arm_mysql_server.{{ name }}.id
       fqdn:
-        value: '${azurerm_arm_mysql_server.{{ name }}.fqdn}'
+        value: azurerm_arm_mysql_server.{{ name }}.fqdn

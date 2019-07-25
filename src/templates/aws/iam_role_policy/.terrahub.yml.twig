@@ -8,19 +8,19 @@
     resource:
       aws_iam_role_policy:
         {{ name }}:
-          policy: '${var.{{ name }}_policy}'
-          role: '${var.{{ name }}_role}'
+          policy: var.{{ name }}_policy
+          role: var.{{ name }}_role
           # name: ''
           # name_prefix: ''
     variable:
       {{ name }}_policy:
-        type: 'string'
+        type: string
       {{ name }}_role:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_role_policy.{{ name }}.id}'
+        value: aws_iam_role_policy.{{ name }}.id
       thub_id:
-        value: '${aws_iam_role_policy.{{ name }}.id}'
+        value: aws_iam_role_policy.{{ name }}.id
       name:
-        value: '${aws_iam_role_policy.{{ name }}.name}'
+        value: aws_iam_role_policy.{{ name }}.name

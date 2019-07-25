@@ -6,16 +6,16 @@
     resource:
       google_runtimeconfig_config:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
           # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_runtimeconfig_config.{{ name }}.id}'
+        value: google_runtimeconfig_config.{{ name }}.id
       thub_id:
-        value: '${google_runtimeconfig_config.{{ name }}.id}'
+        value: google_runtimeconfig_config.{{ name }}.id
       project:
-        value: '${google_runtimeconfig_config.{{ name }}.project}'
+        value: google_runtimeconfig_config.{{ name }}.project

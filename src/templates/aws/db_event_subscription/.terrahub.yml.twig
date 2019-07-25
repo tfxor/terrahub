@@ -8,26 +8,26 @@
     resource:
       aws_db_event_subscription:
         {{ name }}:
-          sns_topic: '${var.{{ name }}_sns_topic}'
+          sns_topic: var.{{ name }}_sns_topic
+          # name_prefix: ''
+          # source_ids: []
+          # source_type: ''
           # name: ''
           # event_categories: []
-          # source_ids: []
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # source_type: ''
           # enabled: false
-          # name_prefix: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_sns_topic:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_db_event_subscription.{{ name }}.id}'
+        value: aws_db_event_subscription.{{ name }}.id
       thub_id:
-        value: '${aws_db_event_subscription.{{ name }}.id}'
-      name:
-        value: '${aws_db_event_subscription.{{ name }}.name}'
+        value: aws_db_event_subscription.{{ name }}.id
       arn:
-        value: '${aws_db_event_subscription.{{ name }}.arn}'
+        value: aws_db_event_subscription.{{ name }}.arn
+      name:
+        value: aws_db_event_subscription.{{ name }}.name
       customer_aws_id:
-        value: '${aws_db_event_subscription.{{ name }}.customer_aws_id}'
+        value: aws_db_event_subscription.{{ name }}.customer_aws_id

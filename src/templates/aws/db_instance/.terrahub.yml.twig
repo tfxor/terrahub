@@ -8,132 +8,135 @@
     resource:
       aws_db_instance:
         {{ name }}:
-          instance_class: '${var.{{ name }}_instance_class}'
-          # publicly_accessible: false
-          # security_group_names: []
-          # engine_version: ''
+          instance_class: var.{{ name }}_instance_class
+          # kms_key_id: ''
+          # storage_encrypted: false
+          # license_model: ''
+          # skip_final_snapshot: false
+          # db_subnet_group_name: ''
+          # snapshot_identifier: ''
+          # performance_insights_enabled: false
+          # vpc_security_group_ids: []
+          # performance_insights_retention_period: 0
+          # identifier: ''
+          # monitoring_role_arn: ''
+          # monitoring_interval: 0
+          # domain_iam_role_name: ''
+          # allow_major_version_upgrade: false
+          # timezone: ''
+          # storage_type: ''
+          # maintenance_window: ''
           # port: 0
           # copy_tags_to_snapshot: false
-          # username: ''
-          # identifier_prefix: ''
-          # db_subnet_group_name: ''
-          # apply_immediately: false
           # deletion_protection: false
+          # apply_immediately: false
+          # iam_database_authentication_enabled: false
           # character_set_name: ''
+          # domain: ''
+          # option_group_name: ''
+          # performance_insights_kms_key_id: ''
+          # max_allocated_storage: 0
+          # publicly_accessible: false
+          # password: ''
+          # engine_version: ''
           # allocated_storage: 0
+          # iops: 0
+          # security_group_names: []
           # availability_zone: ''
           # parameter_group_name: ''
-          # kms_key_id: ''
-          # identifier: ''
-          # iops: 0
-          # domain_iam_role_name: ''
-          # domain: ''
-          # auto_minor_version_upgrade: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # monitoring_role_arn: ''
-          # password: ''
-          # skip_final_snapshot: false
-          # vpc_security_group_ids: []
-          # final_snapshot_identifier: ''
-          # name: ''
-          # enabled_cloudwatch_logs_exports: []
-          # license_model: ''
-          # maintenance_window: ''
-          # timezone: ''
-          # iam_database_authentication_enabled: false
-          # allow_major_version_upgrade: false
-          # monitoring_interval: 0
-          # option_group_name: ''
-          # backup_retention_period: 0
-          # multi_az: false
+          # replicate_source_db: ''
+          # username: ''
+          # engine: ''
+          # identifier_prefix: ''
           # backup_window: ''
-          # s3_import:
+          # enabled_cloudwatch_logs_exports: []
+          # final_snapshot_identifier: ''
+          # s3_import: 
           #   -
+          #     source_engine_version: ''
           #     bucket_name: ''
-          #     bucket_prefix: ''
           #     ingestion_role: ''
           #     source_engine: ''
-          #     source_engine_version: ''
           #     bucket_prefix: ''
-          # engine: ''
-          # snapshot_identifier: ''
-          # storage_type: ''
-          # replicate_source_db: ''
-          # storage_encrypted: false
+          # auto_minor_version_upgrade: false
+          # name: ''
+          # backup_retention_period: 0
+          # multi_az: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_instance_class:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_db_instance.{{ name }}.id}'
+        value: aws_db_instance.{{ name }}.id
       thub_id:
-        value: '${aws_db_instance.{{ name }}.id}'
-      resource_id:
-        value: '${aws_db_instance.{{ name }}.resource_id}'
-      engine_version:
-        value: '${aws_db_instance.{{ name }}.engine_version}'
-      port:
-        value: '${aws_db_instance.{{ name }}.port}'
-      replicas:
-        value: '${aws_db_instance.{{ name }}.replicas}'
-      username:
-        value: '${aws_db_instance.{{ name }}.username}'
-      identifier_prefix:
-        value: '${aws_db_instance.{{ name }}.identifier_prefix}'
-      db_subnet_group_name:
-        value: '${aws_db_instance.{{ name }}.db_subnet_group_name}'
-      endpoint:
-        value: '${aws_db_instance.{{ name }}.endpoint}'
-      apply_immediately:
-        value: '${aws_db_instance.{{ name }}.apply_immediately}'
-      character_set_name:
-        value: '${aws_db_instance.{{ name }}.character_set_name}'
-      allocated_storage:
-        value: '${aws_db_instance.{{ name }}.allocated_storage}'
-      availability_zone:
-        value: '${aws_db_instance.{{ name }}.availability_zone}'
-      parameter_group_name:
-        value: '${aws_db_instance.{{ name }}.parameter_group_name}'
+        value: aws_db_instance.{{ name }}.id
       kms_key_id:
-        value: '${aws_db_instance.{{ name }}.kms_key_id}'
-      identifier:
-        value: '${aws_db_instance.{{ name }}.identifier}'
-      arn:
-        value: '${aws_db_instance.{{ name }}.arn}'
-      monitoring_role_arn:
-        value: '${aws_db_instance.{{ name }}.monitoring_role_arn}'
-      vpc_security_group_ids:
-        value: '${aws_db_instance.{{ name }}.vpc_security_group_ids}'
-      name:
-        value: '${aws_db_instance.{{ name }}.name}'
-      license_model:
-        value: '${aws_db_instance.{{ name }}.license_model}'
-      maintenance_window:
-        value: '${aws_db_instance.{{ name }}.maintenance_window}'
-      hosted_zone_id:
-        value: '${aws_db_instance.{{ name }}.hosted_zone_id}'
-      timezone:
-        value: '${aws_db_instance.{{ name }}.timezone}'
-      allow_major_version_upgrade:
-        value: '${aws_db_instance.{{ name }}.allow_major_version_upgrade}'
-      option_group_name:
-        value: '${aws_db_instance.{{ name }}.option_group_name}'
-      backup_retention_period:
-        value: '${aws_db_instance.{{ name }}.backup_retention_period}'
-      multi_az:
-        value: '${aws_db_instance.{{ name }}.multi_az}'
-      backup_window:
-        value: '${aws_db_instance.{{ name }}.backup_window}'
-      address:
-        value: '${aws_db_instance.{{ name }}.address}'
-      engine:
-        value: '${aws_db_instance.{{ name }}.engine}'
-      snapshot_identifier:
-        value: '${aws_db_instance.{{ name }}.snapshot_identifier}'
-      storage_type:
-        value: '${aws_db_instance.{{ name }}.storage_type}'
+        value: aws_db_instance.{{ name }}.kms_key_id
       ca_cert_identifier:
-        value: '${aws_db_instance.{{ name }}.ca_cert_identifier}'
+        value: aws_db_instance.{{ name }}.ca_cert_identifier
+      license_model:
+        value: aws_db_instance.{{ name }}.license_model
       status:
-        value: '${aws_db_instance.{{ name }}.status}'
+        value: aws_db_instance.{{ name }}.status
+      db_subnet_group_name:
+        value: aws_db_instance.{{ name }}.db_subnet_group_name
+      vpc_security_group_ids:
+        value: aws_db_instance.{{ name }}.vpc_security_group_ids
+      address:
+        value: aws_db_instance.{{ name }}.address
+      performance_insights_retention_period:
+        value: aws_db_instance.{{ name }}.performance_insights_retention_period
+      identifier:
+        value: aws_db_instance.{{ name }}.identifier
+      monitoring_role_arn:
+        value: aws_db_instance.{{ name }}.monitoring_role_arn
+      hosted_zone_id:
+        value: aws_db_instance.{{ name }}.hosted_zone_id
+      timezone:
+        value: aws_db_instance.{{ name }}.timezone
+      resource_id:
+        value: aws_db_instance.{{ name }}.resource_id
+      storage_type:
+        value: aws_db_instance.{{ name }}.storage_type
+      maintenance_window:
+        value: aws_db_instance.{{ name }}.maintenance_window
+      port:
+        value: aws_db_instance.{{ name }}.port
+      apply_immediately:
+        value: aws_db_instance.{{ name }}.apply_immediately
+      arn:
+        value: aws_db_instance.{{ name }}.arn
+      character_set_name:
+        value: aws_db_instance.{{ name }}.character_set_name
+      option_group_name:
+        value: aws_db_instance.{{ name }}.option_group_name
+      performance_insights_kms_key_id:
+        value: aws_db_instance.{{ name }}.performance_insights_kms_key_id
+      engine_version:
+        value: aws_db_instance.{{ name }}.engine_version
+      allocated_storage:
+        value: aws_db_instance.{{ name }}.allocated_storage
+      endpoint:
+        value: aws_db_instance.{{ name }}.endpoint
+      availability_zone:
+        value: aws_db_instance.{{ name }}.availability_zone
+      parameter_group_name:
+        value: aws_db_instance.{{ name }}.parameter_group_name
+      username:
+        value: aws_db_instance.{{ name }}.username
+      engine:
+        value: aws_db_instance.{{ name }}.engine
+      identifier_prefix:
+        value: aws_db_instance.{{ name }}.identifier_prefix
+      replicas:
+        value: aws_db_instance.{{ name }}.replicas
+      backup_window:
+        value: aws_db_instance.{{ name }}.backup_window
+      name:
+        value: aws_db_instance.{{ name }}.name
+      backup_retention_period:
+        value: aws_db_instance.{{ name }}.backup_retention_period
+      multi_az:
+        value: aws_db_instance.{{ name }}.multi_az

@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_firestore_index:
+        {{ name }}:
+          collection: var.{{ name }}_collection
+          fields: 
+            -
+          #     order: ''
+          #     array_config: ''
+          #     field_path: ''
+          # project: ''
+          # database: ''
+          # query_scope: ''
+    variable:
+      {{ name }}_collection:
+        type: string
+    output:
+      id:
+        value: google_firestore_index.{{ name }}.id
+      thub_id:
+        value: google_firestore_index.{{ name }}.id
+      project:
+        value: google_firestore_index.{{ name }}.project
+      name:
+        value: google_firestore_index.{{ name }}.name

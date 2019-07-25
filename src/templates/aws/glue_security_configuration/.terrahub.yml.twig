@@ -8,22 +8,22 @@
     resource:
       aws_glue_security_configuration:
         {{ name }}:
-          encryption_configuration:
+          encryption_configuration: 
             -
-              cloudwatch_encryption:
+              cloudwatch_encryption: 
                 -
           #         cloudwatch_encryption_mode: ''
           #         kms_key_arn: ''
-          s3_encryption:
+          s3_encryption: 
             -
           #     kms_key_arn: ''
           #     s3_encryption_mode: ''
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_glue_security_configuration.{{ name }}.id}'
+        value: aws_glue_security_configuration.{{ name }}.id
       thub_id:
-        value: '${aws_glue_security_configuration.{{ name }}.id}'
+        value: aws_glue_security_configuration.{{ name }}.id

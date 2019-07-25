@@ -8,17 +8,17 @@
     resource:
       aws_ecr_repository_policy:
         {{ name }}:
-          repository: '${var.{{ name }}_repository}'
-          policy: '${var.{{ name }}_policy}'
+          repository: var.{{ name }}_repository
+          policy: var.{{ name }}_policy
     variable:
       {{ name }}_repository:
-        type: 'string'
+        type: string
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ecr_repository_policy.{{ name }}.id}'
+        value: aws_ecr_repository_policy.{{ name }}.id
       thub_id:
-        value: '${aws_ecr_repository_policy.{{ name }}.id}'
+        value: aws_ecr_repository_policy.{{ name }}.id
       registry_id:
-        value: '${aws_ecr_repository_policy.{{ name }}.registry_id}'
+        value: aws_ecr_repository_policy.{{ name }}.registry_id

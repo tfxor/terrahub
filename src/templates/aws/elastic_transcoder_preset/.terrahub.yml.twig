@@ -8,67 +8,67 @@
     resource:
       aws_elastic_transcoder_preset:
         {{ name }}:
-          container: '${var.{{ name }}_container}'
-          # name: ''
-          # type: ''
-          # video:
-          #   display_aspect_ratio: ''
-          #   keyframes_max_dist: ''
-          #   padding_policy: ''
-          #   resolution: ''
-          #   max_height: ''
-          #   max_width: ''
-          #   aspect_ratio: ''
-          #   bit_rate: ''
+          container: var.{{ name }}_container
+          # video: 
           #   codec: ''
           #   fixed_gop: ''
           #   frame_rate: ''
           #   max_frame_rate: ''
-          # video_watermarks:
-          #   max_height: ''
-          #   vertical_align: ''
-          #   vertical_offset: ''
-          #   horizontal_align: ''
-          #   id: ''
           #   max_width: ''
+          #   padding_policy: ''
+          #   resolution: ''
+          #   aspect_ratio: ''
+          #   display_aspect_ratio: ''
+          #   keyframes_max_dist: ''
+          #   max_height: ''
+          #   bit_rate: ''
+          # video_watermarks: 
           #   opacity: ''
           #   sizing_policy: ''
+          #   vertical_offset: ''
+          #   id: ''
+          #   max_width: ''
+          #   max_height: ''
           #   target: ''
+          #   vertical_align: ''
+          #   horizontal_align: ''
           #   horizontal_offset: ''
-          # audio_codec_options:
+          # audio_codec_options: 
+          #   signed: ''
           #   bit_depth: ''
           #   bit_order: ''
           #   profile: ''
-          #   signed: ''
           # description: ''
-          # thumbnails:
+          # thumbnails: 
+          #   resolution: ''
+          #   sizing_policy: ''
           #   aspect_ratio: ''
           #   format: ''
           #   interval: ''
           #   max_height: ''
           #   max_width: ''
           #   padding_policy: ''
-          #   resolution: ''
-          #   sizing_policy: ''
-          # video_codec_options:
-          #   '[TO_BE_REPLACED]': ''
-          # audio:
-          #   codec: ''
-          #   sample_rate: ''
+          # type: ''
+          # audio: 
           #   audio_packing_mode: ''
           #   bit_rate: ''
           #   channels: ''
+          #   codec: ''
+          #   sample_rate: ''
+          # name: ''
+          # video_codec_options: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_container:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
+        value: aws_elastic_transcoder_preset.{{ name }}.id
       thub_id:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.id}'
-      name:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.name}'
-      type:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.type}'
+        value: aws_elastic_transcoder_preset.{{ name }}.id
       arn:
-        value: '${aws_elastic_transcoder_preset.{{ name }}.arn}'
+        value: aws_elastic_transcoder_preset.{{ name }}.arn
+      type:
+        value: aws_elastic_transcoder_preset.{{ name }}.type
+      name:
+        value: aws_elastic_transcoder_preset.{{ name }}.name

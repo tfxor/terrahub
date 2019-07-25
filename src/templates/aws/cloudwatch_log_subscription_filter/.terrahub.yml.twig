@@ -8,25 +8,25 @@
     resource:
       aws_cloudwatch_log_subscription_filter:
         {{ name }}:
-          log_group_name: '${var.{{ name }}_log_group_name}'
-          name: '${var.{{ name }}_name}'
-          destination_arn: '${var.{{ name }}_destination_arn}'
-          filter_pattern: '${var.{{ name }}_filter_pattern}'
+          name: var.{{ name }}_name
+          destination_arn: var.{{ name }}_destination_arn
+          filter_pattern: var.{{ name }}_filter_pattern
+          log_group_name: var.{{ name }}_log_group_name
           # role_arn: ''
           # distribution: ''
     variable:
-      {{ name }}_log_group_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_destination_arn:
-        type: 'string'
+        type: string
       {{ name }}_filter_pattern:
-        type: 'string'
+        type: string
+      {{ name }}_log_group_name:
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_log_subscription_filter.{{ name }}.id}'
+        value: aws_cloudwatch_log_subscription_filter.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_log_subscription_filter.{{ name }}.id}'
+        value: aws_cloudwatch_log_subscription_filter.{{ name }}.id
       role_arn:
-        value: '${aws_cloudwatch_log_subscription_filter.{{ name }}.role_arn}'
+        value: aws_cloudwatch_log_subscription_filter.{{ name }}.role_arn

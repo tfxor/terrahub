@@ -8,15 +8,15 @@
     resource:
       aws_wafregional_web_acl_association:
         {{ name }}:
-          web_acl_id: '${var.{{ name }}_web_acl_id}'
-          resource_arn: '${var.{{ name }}_resource_arn}'
+          web_acl_id: var.{{ name }}_web_acl_id
+          resource_arn: var.{{ name }}_resource_arn
     variable:
       {{ name }}_web_acl_id:
-        type: 'string'
+        type: string
       {{ name }}_resource_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_wafregional_web_acl_association.{{ name }}.id}'
+        value: aws_wafregional_web_acl_association.{{ name }}.id
       thub_id:
-        value: '${aws_wafregional_web_acl_association.{{ name }}.id}'
+        value: aws_wafregional_web_acl_association.{{ name }}.id

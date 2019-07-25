@@ -8,24 +8,24 @@
     resource:
       aws_sfn_state_machine:
         {{ name }}:
-          definition: '${var.{{ name }}_definition}'
-          name: '${var.{{ name }}_name}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          # tags:
+          definition: var.{{ name }}_definition
+          name: var.{{ name }}_name
+          role_arn: var.{{ name }}_role_arn
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_definition:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_sfn_state_machine.{{ name }}.id}'
+        value: aws_sfn_state_machine.{{ name }}.id
       thub_id:
-        value: '${aws_sfn_state_machine.{{ name }}.id}'
+        value: aws_sfn_state_machine.{{ name }}.id
       creation_date:
-        value: '${aws_sfn_state_machine.{{ name }}.creation_date}'
+        value: aws_sfn_state_machine.{{ name }}.creation_date
       status:
-        value: '${aws_sfn_state_machine.{{ name }}.status}'
+        value: aws_sfn_state_machine.{{ name }}.status

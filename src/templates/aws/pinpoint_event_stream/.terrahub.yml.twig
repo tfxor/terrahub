@@ -8,18 +8,18 @@
     resource:
       aws_pinpoint_event_stream:
         {{ name }}:
-          application_id: '${var.{{ name }}_application_id}'
-          destination_stream_arn: '${var.{{ name }}_destination_stream_arn}'
-          role_arn: '${var.{{ name }}_role_arn}'
+          application_id: var.{{ name }}_application_id
+          destination_stream_arn: var.{{ name }}_destination_stream_arn
+          role_arn: var.{{ name }}_role_arn
     variable:
       {{ name }}_application_id:
-        type: 'string'
+        type: string
       {{ name }}_destination_stream_arn:
-        type: 'string'
+        type: string
       {{ name }}_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_event_stream.{{ name }}.id}'
+        value: aws_pinpoint_event_stream.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_event_stream.{{ name }}.id}'
+        value: aws_pinpoint_event_stream.{{ name }}.id

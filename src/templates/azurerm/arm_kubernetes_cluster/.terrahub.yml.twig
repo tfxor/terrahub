@@ -7,81 +7,92 @@
     resource:
       azurerm_arm_kubernetes_cluster:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          agent_pool_profile:
+          service_principal: 
+            client_id: ''
+            client_secret: ''
+          name: var.{{ name }}_name
+          dns_prefix: var.{{ name }}_dns_prefix
+          agent_pool_profile: 
             -
-              vm_size: ''
               name: ''
+              vm_size: ''
+          #     max_pods: 0
+          #     type: ''
           #     os_disk_size_gb: 0
           #     vnet_subnet_id: ''
           #     os_type: ''
-          #     max_pods: 0
+          #     min_count: 0
+          #     availability_zones: 
+          #       -
+          #     enable_auto_scaling: false
+          #     node_taints: 
+          #       -
           #     count: 0
-          service_principal:
-            client_id: ''
-            client_secret: ''
-          dns_prefix: '${var.{{ name }}_dns_prefix}'
-          # kubernetes_version: ''
-          # linux_profile:
+          #     max_count: 0
+          # linux_profile: 
           #   -
-          #     ssh_key:
+          #     ssh_key: 
           #       -
           #         key_data: ''
           #     admin_username: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # addon_profile:
-          #   -
-          #     http_application_routing:
-          #       -
-          #         enabled: false
-          # network_profile:
-          #   -
-          #     network_plugin: ''
-          #     pod_cidr: ''
-          #     service_cidr: ''
-          #     dns_service_ip: ''
-          #     docker_bridge_cidr: ''
-          # role_based_access_control:
+          # role_based_access_control: 
           #   -
           #     enabled: false
-          #     azure_active_directory:
+          #     azure_active_directory: 
           #       -
-          #         server_app_secret: ''
           #         client_app_id: ''
           #         server_app_id: ''
+          #         server_app_secret: ''
           #         tenant_id: ''
-          # aci_connector_linux:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # network_profile: 
           #   -
-          #     enabled: false
+          #     network_plugin: ''
+          #     dns_service_ip: ''
+          #     docker_bridge_cidr: ''
+          #     pod_cidr: ''
+          #     service_cidr: ''
+          #     network_policy: ''
+          # kubernetes_version: ''
+          # aci_connector_linux: 
+          #   -
           #     subnet_name: ''
+          #     enabled: false
+          # node_resource_group: ''
+          # addon_profile: 
+          #   -
+          #     http_application_routing: 
+          #       -
+          #         enabled: false
+          # api_server_authorized_ip_ranges: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_dns_prefix:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.id}'
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.id}'
-      kubernetes_version:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.kubernetes_version}'
-      kube_admin_config_raw:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.kube_admin_config_raw}'
-      kube_config:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.kube_config}'
-      node_resource_group:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.node_resource_group}'
-      addon_profile:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.addon_profile}'
-      network_profile:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.network_profile}'
-      kube_admin_config:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.kube_admin_config}'
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.id
       role_based_access_control:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.role_based_access_control}'
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.role_based_access_control
+      network_profile:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.network_profile
       fqdn:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.fqdn}'
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.fqdn
+      kubernetes_version:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.kubernetes_version
+      kube_admin_config_raw:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.kube_admin_config_raw
+      kube_config:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.kube_config
+      node_resource_group:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.node_resource_group
+      addon_profile:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.addon_profile
+      kube_admin_config:
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.kube_admin_config
       kube_config_raw:
-        value: '${azurerm_arm_kubernetes_cluster.{{ name }}.kube_config_raw}'
+        value: azurerm_arm_kubernetes_cluster.{{ name }}.kube_config_raw

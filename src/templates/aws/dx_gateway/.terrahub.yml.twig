@@ -8,15 +8,17 @@
     resource:
       aws_dx_gateway:
         {{ name }}:
-          amazon_side_asn: '${var.{{ name }}_amazon_side_asn}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          amazon_side_asn: var.{{ name }}_amazon_side_asn
     variable:
-      {{ name }}_amazon_side_asn:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_amazon_side_asn:
+        type: string
     output:
       id:
-        value: '${aws_dx_gateway.{{ name }}.id}'
+        value: aws_dx_gateway.{{ name }}.id
       thub_id:
-        value: '${aws_dx_gateway.{{ name }}.id}'
+        value: aws_dx_gateway.{{ name }}.id
+      owner_account_id:
+        value: aws_dx_gateway.{{ name }}.owner_account_id

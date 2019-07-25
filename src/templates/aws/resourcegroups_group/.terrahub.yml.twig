@@ -8,19 +8,19 @@
     resource:
       aws_resourcegroups_group:
         {{ name }}:
-          resource_query:
+          resource_query: 
             -
               query: ''
           #     type: ''
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_resourcegroups_group.{{ name }}.id}'
+        value: aws_resourcegroups_group.{{ name }}.id
       thub_id:
-        value: '${aws_resourcegroups_group.{{ name }}.id}'
+        value: aws_resourcegroups_group.{{ name }}.id
       arn:
-        value: '${aws_resourcegroups_group.{{ name }}.arn}'
+        value: aws_resourcegroups_group.{{ name }}.arn

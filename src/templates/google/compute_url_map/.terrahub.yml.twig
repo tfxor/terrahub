@@ -6,16 +6,16 @@
     resource:
       google_compute_url_map:
         {{ name }}:
-          hosts: '${var.{{ name }}_hosts}'
-          path_matcher: '${var.{{ name }}_path_matcher}'
+          hosts: var.{{ name }}_hosts
+          path_matcher: var.{{ name }}_path_matcher
           # description: ''
     variable:
       {{ name }}_hosts:
-        type: 'set'
+        type: set
       {{ name }}_path_matcher:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_url_map.{{ name }}.id}'
+        value: google_compute_url_map.{{ name }}.id
       thub_id:
-        value: '${google_compute_url_map.{{ name }}.id}'
+        value: google_compute_url_map.{{ name }}.id

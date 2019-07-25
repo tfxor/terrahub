@@ -8,23 +8,23 @@
     resource:
       aws_db_subnet_group:
         {{ name }}:
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
+          subnet_ids: var.{{ name }}_subnet_ids
+          # name_prefix: ''
           # description: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
-          # name_prefix: ''
     variable:
       {{ name }}_subnet_ids:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_db_subnet_group.{{ name }}.id}'
+        value: aws_db_subnet_group.{{ name }}.id
       thub_id:
-        value: '${aws_db_subnet_group.{{ name }}.id}'
-      arn:
-        value: '${aws_db_subnet_group.{{ name }}.arn}'
-      name:
-        value: '${aws_db_subnet_group.{{ name }}.name}'
+        value: aws_db_subnet_group.{{ name }}.id
       name_prefix:
-        value: '${aws_db_subnet_group.{{ name }}.name_prefix}'
+        value: aws_db_subnet_group.{{ name }}.name_prefix
+      arn:
+        value: aws_db_subnet_group.{{ name }}.arn
+      name:
+        value: aws_db_subnet_group.{{ name }}.name

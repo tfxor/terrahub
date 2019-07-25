@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_route53_resolver_endpoint:
+        {{ name }}:
+          direction: var.{{ name }}_direction
+          ip_address: 
+            subnet_id: ''
+          #   ip: ''
+          security_group_ids: var.{{ name }}_security_group_ids
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
+    variable:
+      {{ name }}_direction:
+        type: string
+      {{ name }}_security_group_ids:
+        type: set
+    output:
+      id:
+        value: aws_route53_resolver_endpoint.{{ name }}.id
+      thub_id:
+        value: aws_route53_resolver_endpoint.{{ name }}.id
+      arn:
+        value: aws_route53_resolver_endpoint.{{ name }}.arn
+      host_vpc_id:
+        value: aws_route53_resolver_endpoint.{{ name }}.host_vpc_id

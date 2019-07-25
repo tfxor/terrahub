@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_data_lake_store_file:
         {{ name }}:
-          account_name: '${var.{{ name }}_account_name}'
-          remote_file_path: '${var.{{ name }}_remote_file_path}'
-          local_file_path: '${var.{{ name }}_local_file_path}'
+          remote_file_path: var.{{ name }}_remote_file_path
+          local_file_path: var.{{ name }}_local_file_path
+          account_name: var.{{ name }}_account_name
     variable:
-      {{ name }}_account_name:
-        type: 'string'
       {{ name }}_remote_file_path:
-        type: 'string'
+        type: string
       {{ name }}_local_file_path:
-        type: 'string'
+        type: string
+      {{ name }}_account_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_data_lake_store_file.{{ name }}.id}'
+        value: azurerm_arm_data_lake_store_file.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_data_lake_store_file.{{ name }}.id}'
+        value: azurerm_arm_data_lake_store_file.{{ name }}.id

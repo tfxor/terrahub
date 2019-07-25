@@ -8,32 +8,32 @@
     resource:
       aws_datasync_task:
         {{ name }}:
-          destination_location_arn: '${var.{{ name }}_destination_location_arn}'
-          source_location_arn: '${var.{{ name }}_source_location_arn}'
-          # tags:
+          source_location_arn: var.{{ name }}_source_location_arn
+          destination_location_arn: var.{{ name }}_destination_location_arn
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # cloudwatch_log_group_arn: ''
           # name: ''
-          # options:
+          # options: 
           #   -
           #     preserve_deleted_files: ''
           #     preserve_devices: ''
-          #     atime: ''
           #     bytes_per_second: 0
+          #     gid: ''
           #     mtime: ''
           #     posix_permissions: ''
-          #     gid: ''
+          #     atime: ''
           #     uid: ''
           #     verify_mode: ''
     variable:
-      {{ name }}_destination_location_arn:
-        type: 'string'
       {{ name }}_source_location_arn:
-        type: 'string'
+        type: string
+      {{ name }}_destination_location_arn:
+        type: string
     output:
       id:
-        value: '${aws_datasync_task.{{ name }}.id}'
+        value: aws_datasync_task.{{ name }}.id
       thub_id:
-        value: '${aws_datasync_task.{{ name }}.id}'
+        value: aws_datasync_task.{{ name }}.id
       arn:
-        value: '${aws_datasync_task.{{ name }}.arn}'
+        value: aws_datasync_task.{{ name }}.arn

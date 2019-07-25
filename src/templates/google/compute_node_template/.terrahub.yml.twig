@@ -1,0 +1,32 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_node_template:
+        {{ name }}:
+          # project: ''
+          # description: ''
+          # name: ''
+          # node_type: ''
+          # node_type_flexibility: 
+          #   -
+          #     cpus: ''
+          #     memory: ''
+          # region: ''
+          # node_affinity_labels: 
+          #   '[TO_BE_REPLACED]': ''
+    output:
+      id:
+        value: google_compute_node_template.{{ name }}.id
+      thub_id:
+        value: google_compute_node_template.{{ name }}.id
+      creation_timestamp:
+        value: google_compute_node_template.{{ name }}.creation_timestamp
+      project:
+        value: google_compute_node_template.{{ name }}.project
+      self_link:
+        value: google_compute_node_template.{{ name }}.self_link
+      region:
+        value: google_compute_node_template.{{ name }}.region

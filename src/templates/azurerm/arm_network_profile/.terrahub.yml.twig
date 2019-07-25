@@ -1,0 +1,29 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_network_profile:
+        {{ name }}:
+          container_network_interface: 
+            -
+              name: ''
+              ip_configuration: 
+                -
+                  name: ''
+                  subnet_id: ''
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_network_profile.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_network_profile.{{ name }}.id
+      container_network_interface_ids:
+        value: azurerm_arm_network_profile.{{ name }}.container_network_interface_ids

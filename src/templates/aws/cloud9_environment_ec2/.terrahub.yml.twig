@@ -8,25 +8,25 @@
     resource:
       aws_cloud9_environment_ec2:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          instance_type: '${var.{{ name }}_instance_type}'
+          name: var.{{ name }}_name
+          instance_type: var.{{ name }}_instance_type
           # automatic_stop_time_minutes: 0
           # description: ''
           # owner_arn: ''
           # subnet_id: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_instance_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloud9_environment_ec2.{{ name }}.id}'
+        value: aws_cloud9_environment_ec2.{{ name }}.id
       thub_id:
-        value: '${aws_cloud9_environment_ec2.{{ name }}.id}'
+        value: aws_cloud9_environment_ec2.{{ name }}.id
       owner_arn:
-        value: '${aws_cloud9_environment_ec2.{{ name }}.owner_arn}'
+        value: aws_cloud9_environment_ec2.{{ name }}.owner_arn
       arn:
-        value: '${aws_cloud9_environment_ec2.{{ name }}.arn}'
+        value: aws_cloud9_environment_ec2.{{ name }}.arn
       type:
-        value: '${aws_cloud9_environment_ec2.{{ name }}.type}'
+        value: aws_cloud9_environment_ec2.{{ name }}.type

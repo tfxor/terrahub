@@ -8,14 +8,14 @@
     resource:
       aws_ses_domain_dkim:
         {{ name }}:
-          domain: '${var.{{ name }}_domain}'
+          domain: var.{{ name }}_domain
     variable:
       {{ name }}_domain:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_domain_dkim.{{ name }}.id}'
+        value: aws_ses_domain_dkim.{{ name }}.id
       thub_id:
-        value: '${aws_ses_domain_dkim.{{ name }}.id}'
+        value: aws_ses_domain_dkim.{{ name }}.id
       dkim_tokens:
-        value: '${aws_ses_domain_dkim.{{ name }}.dkim_tokens}'
+        value: aws_ses_domain_dkim.{{ name }}.dkim_tokens

@@ -8,59 +8,59 @@
     resource:
       aws_mq_broker:
         {{ name }}:
-          engine_type: '${var.{{ name }}_engine_type}'
-          engine_version: '${var.{{ name }}_engine_version}'
-          user:
+          broker_name: var.{{ name }}_broker_name
+          engine_version: var.{{ name }}_engine_version
+          security_groups: var.{{ name }}_security_groups
+          engine_type: var.{{ name }}_engine_type
+          host_instance_type: var.{{ name }}_host_instance_type
+          user: 
             password: ''
             username: ''
+          #   groups: 
           #   console_access: false
-          #   groups:
-          broker_name: '${var.{{ name }}_broker_name}'
-          host_instance_type: '${var.{{ name }}_host_instance_type}'
-          security_groups: '${var.{{ name }}_security_groups}'
-          # configuration:
+          # apply_immediately: false
+          # configuration: 
           #   -
           #     id: ''
           #     revision: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # logs:
+          # deployment_mode: ''
+          # auto_minor_version_upgrade: false
+          # logs: 
           #   -
           #     general: false
           #     audit: false
-          # deployment_mode: ''
-          # maintenance_window_start_time:
+          # subnet_ids: []
+          # maintenance_window_start_time: 
           #   -
+          #     time_zone: ''
           #     day_of_week: ''
           #     time_of_day: ''
-          #     time_zone: ''
           # publicly_accessible: false
-          # apply_immediately: false
-          # auto_minor_version_upgrade: false
-          # subnet_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_engine_type:
-        type: 'string'
-      {{ name }}_engine_version:
-        type: 'string'
       {{ name }}_broker_name:
-        type: 'string'
-      {{ name }}_host_instance_type:
-        type: 'string'
+        type: string
+      {{ name }}_engine_version:
+        type: string
       {{ name }}_security_groups:
-        type: 'set'
+        type: set
+      {{ name }}_engine_type:
+        type: string
+      {{ name }}_host_instance_type:
+        type: string
     output:
       id:
-        value: '${aws_mq_broker.{{ name }}.id}'
+        value: aws_mq_broker.{{ name }}.id
       thub_id:
-        value: '${aws_mq_broker.{{ name }}.id}'
-      configuration:
-        value: '${aws_mq_broker.{{ name }}.configuration}'
-      arn:
-        value: '${aws_mq_broker.{{ name }}.arn}'
+        value: aws_mq_broker.{{ name }}.id
       instances:
-        value: '${aws_mq_broker.{{ name }}.instances}'
-      maintenance_window_start_time:
-        value: '${aws_mq_broker.{{ name }}.maintenance_window_start_time}'
+        value: aws_mq_broker.{{ name }}.instances
+      configuration:
+        value: aws_mq_broker.{{ name }}.configuration
       subnet_ids:
-        value: '${aws_mq_broker.{{ name }}.subnet_ids}'
+        value: aws_mq_broker.{{ name }}.subnet_ids
+      arn:
+        value: aws_mq_broker.{{ name }}.arn
+      maintenance_window_start_time:
+        value: aws_mq_broker.{{ name }}.maintenance_window_start_time

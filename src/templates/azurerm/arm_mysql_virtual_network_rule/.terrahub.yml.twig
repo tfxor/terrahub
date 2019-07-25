@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_mysql_virtual_network_rule:
         {{ name }}:
-          server_name: '${var.{{ name }}_server_name}'
-          subnet_id: '${var.{{ name }}_subnet_id}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          server_name: var.{{ name }}_server_name
+          subnet_id: var.{{ name }}_subnet_id
     variable:
-      {{ name }}_server_name:
-        type: 'string'
-      {{ name }}_subnet_id:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_server_name:
+        type: string
+      {{ name }}_subnet_id:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_mysql_virtual_network_rule.{{ name }}.id}'
+        value: azurerm_arm_mysql_virtual_network_rule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_mysql_virtual_network_rule.{{ name }}.id}'
+        value: azurerm_arm_mysql_virtual_network_rule.{{ name }}.id

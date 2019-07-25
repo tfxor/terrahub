@@ -6,20 +6,20 @@
     resource:
       google_app_engine_firewall_rule:
         {{ name }}:
-          action: '${var.{{ name }}_action}'
-          source_range: '${var.{{ name }}_source_range}'
-          # project: ''
+          action: var.{{ name }}_action
+          source_range: var.{{ name }}_source_range
           # description: ''
           # priority: 0
+          # project: ''
     variable:
       {{ name }}_action:
-        type: 'string'
+        type: string
       {{ name }}_source_range:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_app_engine_firewall_rule.{{ name }}.id}'
+        value: google_app_engine_firewall_rule.{{ name }}.id
       thub_id:
-        value: '${google_app_engine_firewall_rule.{{ name }}.id}'
+        value: google_app_engine_firewall_rule.{{ name }}.id
       project:
-        value: '${google_app_engine_firewall_rule.{{ name }}.project}'
+        value: google_app_engine_firewall_rule.{{ name }}.project

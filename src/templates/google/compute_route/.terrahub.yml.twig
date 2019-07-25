@@ -6,33 +6,33 @@
     resource:
       google_compute_route:
         {{ name }}:
-          dest_range: '${var.{{ name }}_dest_range}'
-          name: '${var.{{ name }}_name}'
-          network: '${var.{{ name }}_network}'
-          # next_hop_gateway: ''
-          # next_hop_instance: ''
+          dest_range: var.{{ name }}_dest_range
+          network: var.{{ name }}_network
+          name: var.{{ name }}_name
           # tags: []
-          # next_hop_ip: ''
           # project: ''
           # next_hop_vpn_tunnel: ''
+          # priority: 0
           # next_hop_instance_zone: ''
           # description: ''
-          # priority: 0
+          # next_hop_gateway: ''
+          # next_hop_instance: ''
+          # next_hop_ip: ''
     variable:
       {{ name }}_dest_range:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_network:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${google_compute_route.{{ name }}.id}'
+        value: google_compute_route.{{ name }}.id
       thub_id:
-        value: '${google_compute_route.{{ name }}.id}'
-      next_hop_network:
-        value: '${google_compute_route.{{ name }}.next_hop_network}'
+        value: google_compute_route.{{ name }}.id
       project:
-        value: '${google_compute_route.{{ name }}.project}'
+        value: google_compute_route.{{ name }}.project
+      next_hop_network:
+        value: google_compute_route.{{ name }}.next_hop_network
       self_link:
-        value: '${google_compute_route.{{ name }}.self_link}'
+        value: google_compute_route.{{ name }}.self_link

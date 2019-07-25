@@ -6,29 +6,29 @@
     resource:
       google_endpoints_service:
         {{ name }}:
-          service_name: '${var.{{ name }}_service_name}'
+          service_name: var.{{ name }}_service_name
           # grpc_config: ''
+          # protoc_output_base64: ''
           # project: ''
           # openapi_config: ''
           # protoc_output: ''
-          # protoc_output_base64: ''
     variable:
       {{ name }}_service_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_endpoints_service.{{ name }}.id}'
+        value: google_endpoints_service.{{ name }}.id
       thub_id:
-        value: '${google_endpoints_service.{{ name }}.id}'
-      project:
-        value: '${google_endpoints_service.{{ name }}.project}'
-      config_id:
-        value: '${google_endpoints_service.{{ name }}.config_id}'
+        value: google_endpoints_service.{{ name }}.id
       apis:
-        value: '${google_endpoints_service.{{ name }}.apis}'
-      protoc_output:
-        value: '${google_endpoints_service.{{ name }}.protoc_output}'
-      dns_address:
-        value: '${google_endpoints_service.{{ name }}.dns_address}'
+        value: google_endpoints_service.{{ name }}.apis
       endpoints:
-        value: '${google_endpoints_service.{{ name }}.endpoints}'
+        value: google_endpoints_service.{{ name }}.endpoints
+      project:
+        value: google_endpoints_service.{{ name }}.project
+      config_id:
+        value: google_endpoints_service.{{ name }}.config_id
+      protoc_output:
+        value: google_endpoints_service.{{ name }}.protoc_output
+      dns_address:
+        value: google_endpoints_service.{{ name }}.dns_address

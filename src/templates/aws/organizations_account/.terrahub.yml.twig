@@ -8,25 +8,30 @@
     resource:
       aws_organizations_account:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          email: '${var.{{ name }}_email}'
-          # iam_user_access_to_billing: ''
+          email: var.{{ name }}_email
+          name: var.{{ name }}_name
           # role_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # iam_user_access_to_billing: ''
+          # parent_id: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_email:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_organizations_account.{{ name }}.id}'
+        value: aws_organizations_account.{{ name }}.id
       thub_id:
-        value: '${aws_organizations_account.{{ name }}.id}'
-      arn:
-        value: '${aws_organizations_account.{{ name }}.arn}'
-      joined_method:
-        value: '${aws_organizations_account.{{ name }}.joined_method}'
-      joined_timestamp:
-        value: '${aws_organizations_account.{{ name }}.joined_timestamp}'
+        value: aws_organizations_account.{{ name }}.id
       status:
-        value: '${aws_organizations_account.{{ name }}.status}'
+        value: aws_organizations_account.{{ name }}.status
+      parent_id:
+        value: aws_organizations_account.{{ name }}.parent_id
+      arn:
+        value: aws_organizations_account.{{ name }}.arn
+      joined_method:
+        value: aws_organizations_account.{{ name }}.joined_method
+      joined_timestamp:
+        value: aws_organizations_account.{{ name }}.joined_timestamp

@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_certificate:
+        {{ name }}:
+          data: var.{{ name }}_data
+          # password: ''
+    variable:
+      {{ name }}_data:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_certificate.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_certificate.{{ name }}.id
+      expiration:
+        value: azurerm_arm_api_management_certificate.{{ name }}.expiration
+      subject:
+        value: azurerm_arm_api_management_certificate.{{ name }}.subject
+      thumbprint:
+        value: azurerm_arm_api_management_certificate.{{ name }}.thumbprint

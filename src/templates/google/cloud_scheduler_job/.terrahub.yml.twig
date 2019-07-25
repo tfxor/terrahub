@@ -1,0 +1,54 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_cloud_scheduler_job:
+        {{ name }}:
+          name: var.{{ name }}_name
+          # app_engine_http_target: 
+          #   -
+          #     relative_uri: ''
+          #     app_engine_routing: 
+          #       -
+          #         version: ''
+          #         instance: ''
+          #         service: ''
+          # http_target: 
+          #   -
+          #     uri: ''
+          #     http_method: ''
+          #     body: ''
+          #     headers: 
+          #       '[TO_BE_REPLACED]': ''
+          # pubsub_target: 
+          #   -
+          #     topic_name: ''
+          #     data: ''
+          #     attributes: 
+          #       '[TO_BE_REPLACED]': ''
+          # time_zone: ''
+          # project: ''
+          # region: ''
+          # description: ''
+          # retry_config: 
+          #   -
+          #     max_backoff_duration: ''
+          #     max_doublings: 0
+          #     max_retry_duration: ''
+          #     min_backoff_duration: ''
+          #     retry_count: 0
+          # schedule: ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: google_cloud_scheduler_job.{{ name }}.id
+      thub_id:
+        value: google_cloud_scheduler_job.{{ name }}.id
+      project:
+        value: google_cloud_scheduler_job.{{ name }}.project
+      region:
+        value: google_cloud_scheduler_job.{{ name }}.region

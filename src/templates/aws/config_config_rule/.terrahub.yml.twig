@@ -8,32 +8,32 @@
     resource:
       aws_config_config_rule:
         {{ name }}:
-          source:
+          source: 
             -
               owner: ''
-          #     source_detail:
+          #     source_detail: 
           #     event_source: ''
           #     maximum_execution_frequency: ''
           #     message_type: ''
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
           # input_parameters: ''
           # maximum_execution_frequency: ''
-          # scope:
+          # scope: 
           #   -
           #     compliance_resource_id: ''
-          #     compliance_resource_types:
+          #     compliance_resource_types: 
           #     tag_key: ''
           #     tag_value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_config_config_rule.{{ name }}.id}'
+        value: aws_config_config_rule.{{ name }}.id
       thub_id:
-        value: '${aws_config_config_rule.{{ name }}.id}'
-      arn:
-        value: '${aws_config_config_rule.{{ name }}.arn}'
+        value: aws_config_config_rule.{{ name }}.id
       rule_id:
-        value: '${aws_config_config_rule.{{ name }}.rule_id}'
+        value: aws_config_config_rule.{{ name }}.rule_id
+      arn:
+        value: aws_config_config_rule.{{ name }}.arn

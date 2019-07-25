@@ -7,23 +7,23 @@
     resource:
       azurerm_arm_log_analytics_solution:
         {{ name }}:
-          solution_name: '${var.{{ name }}_solution_name}'
-          workspace_name: '${var.{{ name }}_workspace_name}'
-          workspace_resource_id: '${var.{{ name }}_workspace_resource_id}'
-          plan:
+          solution_name: var.{{ name }}_solution_name
+          workspace_name: var.{{ name }}_workspace_name
+          workspace_resource_id: var.{{ name }}_workspace_resource_id
+          plan: 
             -
               publisher: ''
               product: ''
           #     promotion_code: ''
     variable:
       {{ name }}_solution_name:
-        type: 'string'
+        type: string
       {{ name }}_workspace_name:
-        type: 'string'
+        type: string
       {{ name }}_workspace_resource_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_log_analytics_solution.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_solution.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_log_analytics_solution.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_solution.{{ name }}.id

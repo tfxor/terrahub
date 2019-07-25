@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_dx_gateway_association_proposal:
+        {{ name }}:
+          dx_gateway_id: var.{{ name }}_dx_gateway_id
+          dx_gateway_owner_account_id: var.{{ name }}_dx_gateway_owner_account_id
+          # allowed_prefixes: []
+          # associated_gateway_id: ''
+          # vpn_gateway_id: ''
+    variable:
+      {{ name }}_dx_gateway_id:
+        type: string
+      {{ name }}_dx_gateway_owner_account_id:
+        type: string
+    output:
+      id:
+        value: aws_dx_gateway_association_proposal.{{ name }}.id
+      thub_id:
+        value: aws_dx_gateway_association_proposal.{{ name }}.id
+      allowed_prefixes:
+        value: aws_dx_gateway_association_proposal.{{ name }}.allowed_prefixes
+      associated_gateway_owner_account_id:
+        value: aws_dx_gateway_association_proposal.{{ name }}.associated_gateway_owner_account_id
+      associated_gateway_type:
+        value: aws_dx_gateway_association_proposal.{{ name }}.associated_gateway_type

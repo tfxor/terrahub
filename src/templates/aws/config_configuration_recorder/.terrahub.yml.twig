@@ -8,20 +8,20 @@
     resource:
       aws_config_configuration_recorder:
         {{ name }}:
-          role_arn: '${var.{{ name }}_role_arn}'
-          # recording_group:
+          role_arn: var.{{ name }}_role_arn
+          # recording_group: 
           #   -
-          #     include_global_resource_types: false
-          #     resource_types:
           #     all_supported: false
+          #     include_global_resource_types: false
+          #     resource_types: 
           # name: ''
     variable:
       {{ name }}_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_config_configuration_recorder.{{ name }}.id}'
+        value: aws_config_configuration_recorder.{{ name }}.id
       thub_id:
-        value: '${aws_config_configuration_recorder.{{ name }}.id}'
+        value: aws_config_configuration_recorder.{{ name }}.id
       recording_group:
-        value: '${aws_config_configuration_recorder.{{ name }}.recording_group}'
+        value: aws_config_configuration_recorder.{{ name }}.recording_group

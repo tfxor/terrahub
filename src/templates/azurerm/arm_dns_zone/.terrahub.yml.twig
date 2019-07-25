@@ -7,22 +7,22 @@
     resource:
       azurerm_arm_dns_zone:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          name: var.{{ name }}_name
           # registration_virtual_network_ids: []
           # resolution_virtual_network_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_dns_zone.{{ name }}.id}'
+        value: azurerm_arm_dns_zone.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_dns_zone.{{ name }}.id}'
+        value: azurerm_arm_dns_zone.{{ name }}.id
       number_of_record_sets:
-        value: '${azurerm_arm_dns_zone.{{ name }}.number_of_record_sets}'
+        value: azurerm_arm_dns_zone.{{ name }}.number_of_record_sets
       max_number_of_record_sets:
-        value: '${azurerm_arm_dns_zone.{{ name }}.max_number_of_record_sets}'
+        value: azurerm_arm_dns_zone.{{ name }}.max_number_of_record_sets
       name_servers:
-        value: '${azurerm_arm_dns_zone.{{ name }}.name_servers}'
+        value: azurerm_arm_dns_zone.{{ name }}.name_servers

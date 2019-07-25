@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_product:
+        {{ name }}:
+          subscription_required: var.{{ name }}_subscription_required
+          published: var.{{ name }}_published
+          display_name: var.{{ name }}_display_name
+          # approval_required: false
+          # description: ''
+          # terms: ''
+          # subscriptions_limit: 0
+    variable:
+      {{ name }}_subscription_required:
+        type: bool
+      {{ name }}_published:
+        type: bool
+      {{ name }}_display_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_product.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_product.{{ name }}.id

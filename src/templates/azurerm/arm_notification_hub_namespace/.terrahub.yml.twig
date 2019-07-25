@@ -7,23 +7,26 @@
     resource:
       azurerm_arm_notification_hub_namespace:
         {{ name }}:
-          sku:
-            -
-              name: ''
-          namespace_type: '${var.{{ name }}_namespace_type}'
-          name: '${var.{{ name }}_name}'
-          # enabled: false
-          # tags:
+          namespace_type: var.{{ name }}_namespace_type
+          name: var.{{ name }}_name
+          # sku: []
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # enabled: false
+          # sku_name: ''
     variable:
       {{ name }}_namespace_type:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_notification_hub_namespace.{{ name }}.id}'
+        value: azurerm_arm_notification_hub_namespace.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_notification_hub_namespace.{{ name }}.id}'
+        value: azurerm_arm_notification_hub_namespace.{{ name }}.id
+      sku:
+        value: azurerm_arm_notification_hub_namespace.{{ name }}.sku
       servicebus_endpoint:
-        value: '${azurerm_arm_notification_hub_namespace.{{ name }}.servicebus_endpoint}'
+        value: azurerm_arm_notification_hub_namespace.{{ name }}.servicebus_endpoint
+      sku_name:
+        value: azurerm_arm_notification_hub_namespace.{{ name }}.sku_name

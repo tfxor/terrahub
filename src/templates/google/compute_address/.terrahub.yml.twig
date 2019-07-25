@@ -6,35 +6,35 @@
     resource:
       google_compute_address:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # description: ''
-          # region: ''
-          # project: ''
+          name: var.{{ name }}_name
+          # network_tier: ''
           # address: ''
           # address_type: ''
-          # network_tier: ''
+          # description: ''
+          # region: ''
           # subnetwork: ''
+          # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_address.{{ name }}.id}'
+        value: google_compute_address.{{ name }}.id
       thub_id:
-        value: '${google_compute_address.{{ name }}.id}'
-      region:
-        value: '${google_compute_address.{{ name }}.region}'
-      project:
-        value: '${google_compute_address.{{ name }}.project}'
-      address:
-        value: '${google_compute_address.{{ name }}.address}'
+        value: google_compute_address.{{ name }}.id
       network_tier:
-        value: '${google_compute_address.{{ name }}.network_tier}'
-      subnetwork:
-        value: '${google_compute_address.{{ name }}.subnetwork}'
-      creation_timestamp:
-        value: '${google_compute_address.{{ name }}.creation_timestamp}'
+        value: google_compute_address.{{ name }}.network_tier
       users:
-        value: '${google_compute_address.{{ name }}.users}'
+        value: google_compute_address.{{ name }}.users
       self_link:
-        value: '${google_compute_address.{{ name }}.self_link}'
+        value: google_compute_address.{{ name }}.self_link
+      address:
+        value: google_compute_address.{{ name }}.address
+      region:
+        value: google_compute_address.{{ name }}.region
+      subnetwork:
+        value: google_compute_address.{{ name }}.subnetwork
+      creation_timestamp:
+        value: google_compute_address.{{ name }}.creation_timestamp
+      project:
+        value: google_compute_address.{{ name }}.project

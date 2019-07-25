@@ -8,36 +8,45 @@
     resource:
       aws_appmesh_route:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          mesh_name: '${var.{{ name }}_mesh_name}'
-          virtual_router_name: '${var.{{ name }}_virtual_router_name}'
-          spec:
+          virtual_router_name: var.{{ name }}_virtual_router_name
+          spec: 
             -
-              match:
+              match: 
                 -
                   prefix: ''
-          #     http_route:
+          #     http_route: 
           #       -
-          #         action:
+          #         action: 
           #           -
-          #             weighted_target:
+          #             weighted_target: 
           #         virtual_node: ''
           #         weight: 0
+          name: var.{{ name }}_name
+          mesh_name: var.{{ name }}_mesh_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # tcp_route: 
+          #   -
+          #     action: 
+          #       -
+          #         weighted_target: 
+          #       virtual_node: ''
+          #       weight: 0
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_mesh_name:
-        type: 'string'
       {{ name }}_virtual_router_name:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_mesh_name:
+        type: string
     output:
       id:
-        value: '${aws_appmesh_route.{{ name }}.id}'
+        value: aws_appmesh_route.{{ name }}.id
       thub_id:
-        value: '${aws_appmesh_route.{{ name }}.id}'
-      arn:
-        value: '${aws_appmesh_route.{{ name }}.arn}'
+        value: aws_appmesh_route.{{ name }}.id
       created_date:
-        value: '${aws_appmesh_route.{{ name }}.created_date}'
+        value: aws_appmesh_route.{{ name }}.created_date
       last_updated_date:
-        value: '${aws_appmesh_route.{{ name }}.last_updated_date}'
+        value: aws_appmesh_route.{{ name }}.last_updated_date
+      arn:
+        value: aws_appmesh_route.{{ name }}.arn

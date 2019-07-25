@@ -8,23 +8,24 @@
     resource:
       aws_iam_access_key:
         {{ name }}:
-          user: '${var.{{ name }}_user}'
+          user: var.{{ name }}_user
+          # status: ''
           # pgp_key: ''
     variable:
       {{ name }}_user:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_access_key.{{ name }}.id}'
+        value: aws_iam_access_key.{{ name }}.id
       thub_id:
-        value: '${aws_iam_access_key.{{ name }}.id}'
-      key_fingerprint:
-        value: '${aws_iam_access_key.{{ name }}.key_fingerprint}'
-      encrypted_secret:
-        value: '${aws_iam_access_key.{{ name }}.encrypted_secret}'
+        value: aws_iam_access_key.{{ name }}.id
       status:
-        value: '${aws_iam_access_key.{{ name }}.status}'
+        value: aws_iam_access_key.{{ name }}.status
       secret:
-        value: '${aws_iam_access_key.{{ name }}.secret}'
+        value: aws_iam_access_key.{{ name }}.secret
       ses_smtp_password:
-        value: '${aws_iam_access_key.{{ name }}.ses_smtp_password}'
+        value: aws_iam_access_key.{{ name }}.ses_smtp_password
+      key_fingerprint:
+        value: aws_iam_access_key.{{ name }}.key_fingerprint
+      encrypted_secret:
+        value: aws_iam_access_key.{{ name }}.encrypted_secret

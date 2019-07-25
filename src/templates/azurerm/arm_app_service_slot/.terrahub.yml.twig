@@ -7,40 +7,39 @@
     resource:
       azurerm_arm_app_service_slot:
         {{ name }}:
-          app_service_name: '${var.{{ name }}_app_service_name}'
-          name: '${var.{{ name }}_name}'
-          app_service_plan_id: '${var.{{ name }}_app_service_plan_id}'
-          # app_settings:
+          name: var.{{ name }}_name
+          app_service_name: var.{{ name }}_app_service_name
+          app_service_plan_id: var.{{ name }}_app_service_plan_id
+          # client_affinity_enabled: false
+          # app_settings: 
           #   '[TO_BE_REPLACED]': ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # https_only: false
           # enabled: false
-          # identity:
-          #   -
-          #     type: ''
-          # client_affinity_enabled: false
-          # connection_string:
+          # connection_string: 
           #   name: ''
           #   value: ''
           #   type: ''
     variable:
-      {{ name }}_app_service_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_app_service_name:
+        type: string
       {{ name }}_app_service_plan_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.id}'
+        value: azurerm_arm_app_service_slot.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.id}'
-      app_settings:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.app_settings}'
-      default_site_hostname:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.default_site_hostname}'
+        value: azurerm_arm_app_service_slot.{{ name }}.id
       client_affinity_enabled:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.client_affinity_enabled}'
+        value: azurerm_arm_app_service_slot.{{ name }}.client_affinity_enabled
+      app_settings:
+        value: azurerm_arm_app_service_slot.{{ name }}.app_settings
       connection_string:
-        value: '${azurerm_arm_app_service_slot.{{ name }}.connection_string}'
+        value: azurerm_arm_app_service_slot.{{ name }}.connection_string
+      site_credential:
+        value: azurerm_arm_app_service_slot.{{ name }}.site_credential
+      default_site_hostname:
+        value: azurerm_arm_app_service_slot.{{ name }}.default_site_hostname

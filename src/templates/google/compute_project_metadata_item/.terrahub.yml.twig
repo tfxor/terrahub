@@ -6,18 +6,18 @@
     resource:
       google_compute_project_metadata_item:
         {{ name }}:
-          value: '${var.{{ name }}_value}'
-          key: '${var.{{ name }}_key}'
+          key: var.{{ name }}_key
+          value: var.{{ name }}_value
           # project: ''
     variable:
-      {{ name }}_value:
-        type: 'string'
       {{ name }}_key:
-        type: 'string'
+        type: string
+      {{ name }}_value:
+        type: string
     output:
       id:
-        value: '${google_compute_project_metadata_item.{{ name }}.id}'
+        value: google_compute_project_metadata_item.{{ name }}.id
       thub_id:
-        value: '${google_compute_project_metadata_item.{{ name }}.id}'
+        value: google_compute_project_metadata_item.{{ name }}.id
       project:
-        value: '${google_compute_project_metadata_item.{{ name }}.project}'
+        value: google_compute_project_metadata_item.{{ name }}.project

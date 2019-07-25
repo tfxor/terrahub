@@ -1,0 +1,51 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_backend:
+        {{ name }}:
+          url: var.{{ name }}_url
+          name: var.{{ name }}_name
+          protocol: var.{{ name }}_protocol
+          # title: ''
+          # tls: 
+          #   -
+          #     validate_certificate_chain: false
+          #     validate_certificate_name: false
+          # description: ''
+          # proxy: 
+          #   -
+          #     url: ''
+          #     username: ''
+          #     password: ''
+          # resource_id: ''
+          # service_fabric_cluster: 
+          #   -
+          #     client_certificate_thumbprint: ''
+          #     management_endpoints: []
+          #     max_partition_resolution_retries: 0
+          #     server_certificate_thumbprints: 
+          #     server_x509_name: 
+          #     issuer_certificate_thumbprint: ''
+          #     name: ''
+          # credentials: 
+          #   -
+          #     authorization: 
+          #       -
+          #         parameter: ''
+          #         scheme: ''
+    variable:
+      {{ name }}_url:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_protocol:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_backend.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_backend.{{ name }}.id

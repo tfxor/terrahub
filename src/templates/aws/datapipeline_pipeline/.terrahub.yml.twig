@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_datapipeline_pipeline:
+        {{ name }}:
+          name: var.{{ name }}_name
+          # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: aws_datapipeline_pipeline.{{ name }}.id
+      thub_id:
+        value: aws_datapipeline_pipeline.{{ name }}.id

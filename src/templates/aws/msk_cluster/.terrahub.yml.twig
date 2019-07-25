@@ -1,0 +1,52 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_msk_cluster:
+        {{ name }}:
+          broker_node_group_info: 
+            -
+              client_subnets: []
+              instance_type: ''
+              security_groups: []
+              ebs_volume_size: 0
+          #     az_distribution: ''
+          cluster_name: var.{{ name }}_cluster_name
+          kafka_version: var.{{ name }}_kafka_version
+          number_of_broker_nodes: var.{{ name }}_number_of_broker_nodes
+          # enhanced_monitoring: ''
+          # configuration_info: []
+          # encryption_info: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # client_authentication: 
+          #   -
+          #     tls: 
+          #       -
+          #         certificate_authority_arns: 
+    variable:
+      {{ name }}_cluster_name:
+        type: string
+      {{ name }}_kafka_version:
+        type: string
+      {{ name }}_number_of_broker_nodes:
+        type: int
+    output:
+      id:
+        value: aws_msk_cluster.{{ name }}.id
+      thub_id:
+        value: aws_msk_cluster.{{ name }}.id
+      bootstrap_brokers_tls:
+        value: aws_msk_cluster.{{ name }}.bootstrap_brokers_tls
+      current_version:
+        value: aws_msk_cluster.{{ name }}.current_version
+      zookeeper_connect_string:
+        value: aws_msk_cluster.{{ name }}.zookeeper_connect_string
+      arn:
+        value: aws_msk_cluster.{{ name }}.arn
+      bootstrap_brokers:
+        value: aws_msk_cluster.{{ name }}.bootstrap_brokers

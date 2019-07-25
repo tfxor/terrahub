@@ -8,19 +8,19 @@
     resource:
       aws_pinpoint_baidu_channel:
         {{ name }}:
-          api_key: '${var.{{ name }}_api_key}'
-          secret_key: '${var.{{ name }}_secret_key}'
-          application_id: '${var.{{ name }}_application_id}'
+          api_key: var.{{ name }}_api_key
+          secret_key: var.{{ name }}_secret_key
+          application_id: var.{{ name }}_application_id
           # enabled: false
     variable:
       {{ name }}_api_key:
-        type: 'string'
+        type: string
       {{ name }}_secret_key:
-        type: 'string'
+        type: string
       {{ name }}_application_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_baidu_channel.{{ name }}.id}'
+        value: aws_pinpoint_baidu_channel.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_baidu_channel.{{ name }}.id}'
+        value: aws_pinpoint_baidu_channel.{{ name }}.id

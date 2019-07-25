@@ -8,21 +8,21 @@
     resource:
       aws_cloudwatch_event_permission:
         {{ name }}:
-          principal: '${var.{{ name }}_principal}'
-          statement_id: '${var.{{ name }}_statement_id}'
+          principal: var.{{ name }}_principal
+          statement_id: var.{{ name }}_statement_id
           # action: ''
-          # condition:
+          # condition: 
           #   -
-          #     key: ''
           #     type: ''
           #     value: ''
+          #     key: ''
     variable:
       {{ name }}_principal:
-        type: 'string'
+        type: string
       {{ name }}_statement_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_event_permission.{{ name }}.id}'
+        value: aws_cloudwatch_event_permission.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_event_permission.{{ name }}.id}'
+        value: aws_cloudwatch_event_permission.{{ name }}.id

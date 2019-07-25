@@ -8,42 +8,44 @@
     resource:
       aws_glue_crawler:
         {{ name }}:
-          role: '${var.{{ name }}_role}'
-          name: '${var.{{ name }}_name}'
-          database_name: '${var.{{ name }}_database_name}'
-          # s3_target:
-          #   -
-          #     path: ''
-          #     exclusions:
-          #       -
-          # dynamodb_target:
-          #   -
-          #     path: ''
-          # description: ''
-          # table_prefix: ''
-          # schedule: ''
-          # classifiers: []
-          # schema_change_policy:
+          name: var.{{ name }}_name
+          role: var.{{ name }}_role
+          database_name: var.{{ name }}_database_name
+          # schema_change_policy: 
           #   -
           #     delete_behavior: ''
           #     update_behavior: ''
-          # jdbc_target:
+          # dynamodb_target: 
           #   -
-          #     connection_name: ''
           #     path: ''
-          #     exclusions:
+          # security_configuration: ''
+          # table_prefix: ''
+          # s3_target: 
+          #   -
+          #     path: ''
+          #     exclusions: 
+          #       -
+          # jdbc_target: 
+          #   -
+          #     path: ''
+          #     connection_name: ''
+          #     exclusions: 
           #       -
           # configuration: ''
-          # security_configuration: ''
+          # description: ''
+          # schedule: ''
+          # classifiers: []
     variable:
-      {{ name }}_role:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_role:
+        type: string
       {{ name }}_database_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_glue_crawler.{{ name }}.id}'
+        value: aws_glue_crawler.{{ name }}.id
       thub_id:
-        value: '${aws_glue_crawler.{{ name }}.id}'
+        value: aws_glue_crawler.{{ name }}.id
+      arn:
+        value: aws_glue_crawler.{{ name }}.arn

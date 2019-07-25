@@ -8,33 +8,33 @@
     resource:
       aws_worklink_fleet:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # audit_stream_arn: ''
-          # network:
+          # network: 
           #   -
           #     vpc_id: ''
           #     security_group_ids: []
           #     subnet_ids: []
-          # device_ca_certificate: ''
+          # optimize_for_end_user_location: false
           # display_name: ''
-          # identity_provider:
+          # device_ca_certificate: ''
+          # identity_provider: 
           #   -
           #     type: ''
           #     saml_metadata: ''
-          # optimize_for_end_user_location: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_worklink_fleet.{{ name }}.id}'
+        value: aws_worklink_fleet.{{ name }}.id
       thub_id:
-        value: '${aws_worklink_fleet.{{ name }}.id}'
-      company_code:
-        value: '${aws_worklink_fleet.{{ name }}.company_code}'
-      last_updated_time:
-        value: '${aws_worklink_fleet.{{ name }}.last_updated_time}'
+        value: aws_worklink_fleet.{{ name }}.id
       arn:
-        value: '${aws_worklink_fleet.{{ name }}.arn}'
+        value: aws_worklink_fleet.{{ name }}.arn
       created_time:
-        value: '${aws_worklink_fleet.{{ name }}.created_time}'
+        value: aws_worklink_fleet.{{ name }}.created_time
+      last_updated_time:
+        value: aws_worklink_fleet.{{ name }}.last_updated_time
+      company_code:
+        value: aws_worklink_fleet.{{ name }}.company_code

@@ -7,77 +7,114 @@
     resource:
       azurerm_arm_storage_account:
         {{ name }}:
-          account_replication_type: '${var.{{ name }}_account_replication_type}'
-          name: '${var.{{ name }}_name}'
-          account_tier: '${var.{{ name }}_account_tier}'
-          # custom_domain:
+          account_replication_type: var.{{ name }}_account_replication_type
+          account_tier: var.{{ name }}_account_tier
+          name: var.{{ name }}_name
+          # custom_domain: 
           #   -
           #     name: ''
           #     use_subdomain: false
+          # enable_advanced_threat_protection: false
+          # account_type: ''
+          # is_hns_enabled: false
+          # enable_file_encryption: false
+          # network_rules: 
+          #   -
+          #     bypass: 
+          #     ip_rules: 
+          #     virtual_network_subnet_ids: 
+          #     default_action: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enable_blob_encryption: false
+          # account_encryption_source: ''
+          # access_tier: ''
           # enable_https_traffic_only: false
-          # identity:
+          # account_kind: ''
+          # identity: 
           #   -
           #     type: ''
-          # enable_blob_encryption: false
-          # network_rules:
-          #   -
-          #     bypass:
-          #     ip_rules:
-          #     virtual_network_subnet_ids:
-          # account_encryption_source: ''
-          # account_kind: ''
-          # account_type: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # access_tier: ''
-          # enable_file_encryption: false
     variable:
       {{ name }}_account_replication_type:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_account_tier:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_storage_account.{{ name }}.id}'
+        value: azurerm_arm_storage_account.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_storage_account.{{ name }}.id}'
-      secondary_table_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_table_endpoint}'
-      secondary_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_connection_string}'
+        value: azurerm_arm_storage_account.{{ name }}.id
       secondary_blob_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_endpoint}'
-      primary_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_connection_string}'
-      secondary_location:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_location}'
-      identity:
-        value: '${azurerm_arm_storage_account.{{ name }}.identity}'
-      secondary_queue_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_queue_endpoint}'
-      primary_blob_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_connection_string}'
-      secondary_blob_connection_string:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_blob_connection_string}'
-      primary_blob_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_blob_endpoint}'
-      primary_queue_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_queue_endpoint}'
-      primary_table_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_table_endpoint}'
-      primary_access_key:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_access_key}'
+        value: azurerm_arm_storage_account.{{ name }}.secondary_blob_endpoint
+      primary_queue_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_queue_host
+      secondary_table_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_table_host
+      secondary_web_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_web_endpoint
+      primary_dfs_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_dfs_host
       account_type:
-        value: '${azurerm_arm_storage_account.{{ name }}.account_type}'
-      primary_location:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_location}'
+        value: azurerm_arm_storage_account.{{ name }}.account_type
+      secondary_location:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_location
+      primary_table_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_table_host
+      secondary_dfs_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_dfs_endpoint
       primary_file_endpoint:
-        value: '${azurerm_arm_storage_account.{{ name }}.primary_file_endpoint}'
+        value: azurerm_arm_storage_account.{{ name }}.primary_file_endpoint
+      secondary_file_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_file_host
+      secondary_queue_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_queue_endpoint
+      primary_dfs_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.primary_dfs_endpoint
+      secondary_connection_string:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_connection_string
       tags:
-        value: '${azurerm_arm_storage_account.{{ name }}.tags}'
+        value: azurerm_arm_storage_account.{{ name }}.tags
+      secondary_web_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_web_host
+      primary_access_key:
+        value: azurerm_arm_storage_account.{{ name }}.primary_access_key
+      secondary_blob_connection_string:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_blob_connection_string
+      primary_queue_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.primary_queue_endpoint
+      primary_web_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_web_host
       access_tier:
-        value: '${azurerm_arm_storage_account.{{ name }}.access_tier}'
+        value: azurerm_arm_storage_account.{{ name }}.access_tier
+      primary_location:
+        value: azurerm_arm_storage_account.{{ name }}.primary_location
+      primary_blob_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.primary_blob_endpoint
+      secondary_queue_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_queue_host
+      secondary_table_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_table_endpoint
+      secondary_dfs_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_dfs_host
+      primary_file_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_file_host
+      primary_blob_host:
+        value: azurerm_arm_storage_account.{{ name }}.primary_blob_host
+      secondary_blob_host:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_blob_host
+      primary_table_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.primary_table_endpoint
       secondary_access_key:
-        value: '${azurerm_arm_storage_account.{{ name }}.secondary_access_key}'
+        value: azurerm_arm_storage_account.{{ name }}.secondary_access_key
+      primary_connection_string:
+        value: azurerm_arm_storage_account.{{ name }}.primary_connection_string
+      primary_web_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.primary_web_endpoint
+      secondary_file_endpoint:
+        value: azurerm_arm_storage_account.{{ name }}.secondary_file_endpoint
+      primary_blob_connection_string:
+        value: azurerm_arm_storage_account.{{ name }}.primary_blob_connection_string
+      identity:
+        value: azurerm_arm_storage_account.{{ name }}.identity

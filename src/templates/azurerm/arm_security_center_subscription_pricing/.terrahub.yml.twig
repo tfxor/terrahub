@@ -7,12 +7,12 @@
     resource:
       azurerm_arm_security_center_subscription_pricing:
         {{ name }}:
-          tier: '${var.{{ name }}_tier}'
+          tier: var.{{ name }}_tier
     variable:
       {{ name }}_tier:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_security_center_subscription_pricing.{{ name }}.id}'
+        value: azurerm_arm_security_center_subscription_pricing.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_security_center_subscription_pricing.{{ name }}.id}'
+        value: azurerm_arm_security_center_subscription_pricing.{{ name }}.id

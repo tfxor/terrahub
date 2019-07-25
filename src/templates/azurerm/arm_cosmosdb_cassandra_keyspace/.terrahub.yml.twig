@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_cosmosdb_cassandra_keyspace:
+        {{ name }}:
+          name: var.{{ name }}_name
+          account_name: var.{{ name }}_account_name
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_account_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_cosmosdb_cassandra_keyspace.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_cosmosdb_cassandra_keyspace.{{ name }}.id

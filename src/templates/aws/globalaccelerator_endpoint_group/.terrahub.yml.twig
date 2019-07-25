@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_globalaccelerator_endpoint_group:
+        {{ name }}:
+          listener_arn: var.{{ name }}_listener_arn
+          # threshold_count: 0
+          # endpoint_group_region: ''
+          # health_check_port: 0
+          # health_check_path: ''
+          # health_check_protocol: ''
+          # traffic_dial_percentage: ''
+          # endpoint_configuration: 
+          #   endpoint_id: ''
+          #   weight: 0
+          # health_check_interval_seconds: 0
+    variable:
+      {{ name }}_listener_arn:
+        type: string
+    output:
+      id:
+        value: aws_globalaccelerator_endpoint_group.{{ name }}.id
+      thub_id:
+        value: aws_globalaccelerator_endpoint_group.{{ name }}.id
+      endpoint_group_region:
+        value: aws_globalaccelerator_endpoint_group.{{ name }}.endpoint_group_region

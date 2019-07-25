@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_appmesh_virtual_service:
+        {{ name }}:
+          name: var.{{ name }}_name
+          mesh_name: var.{{ name }}_mesh_name
+          spec: 
+            -
+          #     provider: 
+          #       -
+          #         virtual_node: 
+          #           -
+          #             virtual_node_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_mesh_name:
+        type: string
+    output:
+      id:
+        value: aws_appmesh_virtual_service.{{ name }}.id
+      thub_id:
+        value: aws_appmesh_virtual_service.{{ name }}.id
+      arn:
+        value: aws_appmesh_virtual_service.{{ name }}.arn
+      created_date:
+        value: aws_appmesh_virtual_service.{{ name }}.created_date
+      last_updated_date:
+        value: aws_appmesh_virtual_service.{{ name }}.last_updated_date

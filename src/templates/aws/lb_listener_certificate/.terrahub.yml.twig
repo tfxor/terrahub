@@ -8,15 +8,15 @@
     resource:
       aws_lb_listener_certificate:
         {{ name }}:
-          listener_arn: '${var.{{ name }}_listener_arn}'
-          certificate_arn: '${var.{{ name }}_certificate_arn}'
+          certificate_arn: var.{{ name }}_certificate_arn
+          listener_arn: var.{{ name }}_listener_arn
     variable:
-      {{ name }}_listener_arn:
-        type: 'string'
       {{ name }}_certificate_arn:
-        type: 'string'
+        type: string
+      {{ name }}_listener_arn:
+        type: string
     output:
       id:
-        value: '${aws_lb_listener_certificate.{{ name }}.id}'
+        value: aws_lb_listener_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_lb_listener_certificate.{{ name }}.id}'
+        value: aws_lb_listener_certificate.{{ name }}.id

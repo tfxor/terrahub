@@ -6,50 +6,50 @@
     resource:
       google_redis_instance:
         {{ name }}:
-          memory_size_gb: '${var.{{ name }}_memory_size_gb}'
-          name: '${var.{{ name }}_name}'
-          # redis_configs:
-          #   '[TO_BE_REPLACED]': ''
-          # authorized_network: ''
-          # labels:
-          #   '[TO_BE_REPLACED]': ''
-          # tier: ''
+          memory_size_gb: var.{{ name }}_memory_size_gb
+          name: var.{{ name }}_name
           # display_name: ''
-          # region: ''
-          # location_id: ''
-          # redis_version: ''
+          # redis_configs: 
+          #   '[TO_BE_REPLACED]': ''
+          # reserved_ip_range: ''
+          # tier: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
           # project: ''
           # alternative_location_id: ''
-          # reserved_ip_range: ''
+          # authorized_network: ''
+          # location_id: ''
+          # redis_version: ''
+          # region: ''
     variable:
       {{ name }}_memory_size_gb:
-        type: 'int'
+        type: int
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_redis_instance.{{ name }}.id}'
+        value: google_redis_instance.{{ name }}.id
       thub_id:
-        value: '${google_redis_instance.{{ name }}.id}'
-      port:
-        value: '${google_redis_instance.{{ name }}.port}'
-      authorized_network:
-        value: '${google_redis_instance.{{ name }}.authorized_network}'
-      region:
-        value: '${google_redis_instance.{{ name }}.region}'
-      location_id:
-        value: '${google_redis_instance.{{ name }}.location_id}'
-      redis_version:
-        value: '${google_redis_instance.{{ name }}.redis_version}'
-      create_time:
-        value: '${google_redis_instance.{{ name }}.create_time}'
-      current_location_id:
-        value: '${google_redis_instance.{{ name }}.current_location_id}'
-      host:
-        value: '${google_redis_instance.{{ name }}.host}'
-      project:
-        value: '${google_redis_instance.{{ name }}.project}'
-      alternative_location_id:
-        value: '${google_redis_instance.{{ name }}.alternative_location_id}'
+        value: google_redis_instance.{{ name }}.id
       reserved_ip_range:
-        value: '${google_redis_instance.{{ name }}.reserved_ip_range}'
+        value: google_redis_instance.{{ name }}.reserved_ip_range
+      host:
+        value: google_redis_instance.{{ name }}.host
+      create_time:
+        value: google_redis_instance.{{ name }}.create_time
+      current_location_id:
+        value: google_redis_instance.{{ name }}.current_location_id
+      project:
+        value: google_redis_instance.{{ name }}.project
+      alternative_location_id:
+        value: google_redis_instance.{{ name }}.alternative_location_id
+      authorized_network:
+        value: google_redis_instance.{{ name }}.authorized_network
+      location_id:
+        value: google_redis_instance.{{ name }}.location_id
+      redis_version:
+        value: google_redis_instance.{{ name }}.redis_version
+      region:
+        value: google_redis_instance.{{ name }}.region
+      port:
+        value: google_redis_instance.{{ name }}.port

@@ -6,32 +6,34 @@
     resource:
       google_compute_router_nat:
         {{ name }}:
-          nat_ip_allocate_option: '${var.{{ name }}_nat_ip_allocate_option}'
-          name: '${var.{{ name }}_name}'
-          router: '${var.{{ name }}_router}'
-          # source_subnetwork_ip_ranges_to_nat: ''
+          name: var.{{ name }}_name
+          nat_ip_allocate_option: var.{{ name }}_nat_ip_allocate_option
+          router: var.{{ name }}_router
+          # udp_idle_timeout_sec: 0
           # tcp_established_idle_timeout_sec: 0
           # region: ''
-          # nat_ips: []
-          # subnetwork:
+          # source_subnetwork_ip_ranges_to_nat: ''
+          # subnetwork: 
           # min_ports_per_vm: 0
-          # udp_idle_timeout_sec: 0
-          # icmp_idle_timeout_sec: 0
           # tcp_transitory_idle_timeout_sec: 0
+          # nat_ips: []
           # project: ''
+          # icmp_idle_timeout_sec: 0
+          # log_config: 
+          #   -
     variable:
-      {{ name }}_nat_ip_allocate_option:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_nat_ip_allocate_option:
+        type: string
       {{ name }}_router:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_router_nat.{{ name }}.id}'
+        value: google_compute_router_nat.{{ name }}.id
       thub_id:
-        value: '${google_compute_router_nat.{{ name }}.id}'
+        value: google_compute_router_nat.{{ name }}.id
       region:
-        value: '${google_compute_router_nat.{{ name }}.region}'
+        value: google_compute_router_nat.{{ name }}.region
       project:
-        value: '${google_compute_router_nat.{{ name }}.project}'
+        value: google_compute_router_nat.{{ name }}.project

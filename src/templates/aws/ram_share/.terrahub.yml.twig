@@ -8,15 +8,17 @@
     resource:
       aws_ram_share:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          name: var.{{ name }}_name
           # allow_external_principals: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ram_share.{{ name }}.id}'
+        value: aws_ram_share.{{ name }}.id
       thub_id:
-        value: '${aws_ram_share.{{ name }}.id}'
+        value: aws_ram_share.{{ name }}.id
+      arn:
+        value: aws_ram_share.{{ name }}.arn

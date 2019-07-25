@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_private_dns_zone:
+        {{ name }}:
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_private_dns_zone.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_private_dns_zone.{{ name }}.id
+      number_of_record_sets:
+        value: azurerm_arm_private_dns_zone.{{ name }}.number_of_record_sets
+      max_number_of_record_sets:
+        value: azurerm_arm_private_dns_zone.{{ name }}.max_number_of_record_sets
+      max_number_of_virtual_network_links:
+        value: azurerm_arm_private_dns_zone.{{ name }}.max_number_of_virtual_network_links
+      max_number_of_virtual_network_links_with_registration:
+        value: azurerm_arm_private_dns_zone.{{ name }}.max_number_of_virtual_network_links_with_registration

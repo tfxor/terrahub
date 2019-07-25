@@ -8,24 +8,24 @@
     resource:
       aws_cognito_identity_pool:
         {{ name }}:
-          identity_pool_name: '${var.{{ name }}_identity_pool_name}'
-          # cognito_identity_providers:
-          #   client_id: ''
+          identity_pool_name: var.{{ name }}_identity_pool_name
+          # supported_login_providers: 
+          #   '[TO_BE_REPLACED]': ''
+          # cognito_identity_providers: 
           #   provider_name: ''
           #   server_side_token_check: false
+          #   client_id: ''
           # developer_provider_name: ''
           # allow_unauthenticated_identities: false
           # openid_connect_provider_arns: []
           # saml_provider_arns: []
-          # supported_login_providers:
-          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_identity_pool_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cognito_identity_pool.{{ name }}.id}'
+        value: aws_cognito_identity_pool.{{ name }}.id
       thub_id:
-        value: '${aws_cognito_identity_pool.{{ name }}.id}'
+        value: aws_cognito_identity_pool.{{ name }}.id
       arn:
-        value: '${aws_cognito_identity_pool.{{ name }}.arn}'
+        value: aws_cognito_identity_pool.{{ name }}.arn

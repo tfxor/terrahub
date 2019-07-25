@@ -8,24 +8,24 @@
     resource:
       aws_pinpoint_app:
         {{ name }}:
-          # quiet_time:
-          #   -
-          #     end: ''
-          #     start: ''
-          # name: ''
-          # name_prefix: ''
-          # limits:
+          # limits: 
           #   -
           #     daily: 0
           #     maximum_duration: 0
           #     messages_per_second: 0
           #     total: 0
+          # quiet_time: 
+          #   -
+          #     end: ''
+          #     start: ''
+          # name: ''
+          # name_prefix: ''
     output:
       id:
-        value: '${aws_pinpoint_app.{{ name }}.id}'
+        value: aws_pinpoint_app.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_app.{{ name }}.id}'
-      name:
-        value: '${aws_pinpoint_app.{{ name }}.name}'
+        value: aws_pinpoint_app.{{ name }}.id
       application_id:
-        value: '${aws_pinpoint_app.{{ name }}.application_id}'
+        value: aws_pinpoint_app.{{ name }}.application_id
+      name:
+        value: aws_pinpoint_app.{{ name }}.name

@@ -6,60 +6,62 @@
     resource:
       google_monitoring_alert_policy:
         {{ name }}:
-          display_name: '${var.{{ name }}_display_name}'
-          combiner: '${var.{{ name }}_combiner}'
-          conditions:
+          combiner: var.{{ name }}_combiner
+          conditions: 
             -
               display_name: ''
-          #     condition_absent:
+          #     condition_absent: 
           #       -
           #         duration: ''
-          #         aggregations:
+          #         aggregations: 
           #           -
           #             alignment_period: ''
           #             cross_series_reducer: ''
-          #             group_by_fields:
+          #             group_by_fields: 
           #               -
           #             per_series_aligner: ''
-          # denominator_filter: ''
-          # filter: ''
-          # condition_threshold:
+          display_name: var.{{ name }}_display_name
+          # condition_threshold: 
           #   -
           #     comparison: ''
           #     duration: ''
-          #     aggregations:
+          #     aggregations: 
           #       -
+          #         per_series_aligner: ''
           #         alignment_period: ''
           #         cross_series_reducer: ''
-          #         group_by_fields:
+          #         group_by_fields: 
           #           -
-          #         per_series_aligner: ''
           # threshold_value: ''
-          # documentation:
-          #   -
-          #     content: ''
-          #     mime_type: ''
-          # enabled: false
           # notification_channels: []
-          # trigger:
+          # labels: []
+          # project: ''
+          # filter: ''
+          # enabled: false
+          # user_labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # denominator_filter: ''
+          # trigger: 
           #   -
           #     count: 0
           #     percent: ''
-          # labels: []
-          # project: ''
+          # documentation: 
+          #   -
+          #     content: ''
+          #     mime_type: ''
     variable:
-      {{ name }}_display_name:
-        type: 'string'
       {{ name }}_combiner:
-        type: 'string'
+        type: string
+      {{ name }}_display_name:
+        type: string
     output:
       id:
-        value: '${google_monitoring_alert_policy.{{ name }}.id}'
+        value: google_monitoring_alert_policy.{{ name }}.id
       thub_id:
-        value: '${google_monitoring_alert_policy.{{ name }}.id}'
-      name:
-        value: '${google_monitoring_alert_policy.{{ name }}.name}'
-      creation_record:
-        value: '${google_monitoring_alert_policy.{{ name }}.creation_record}'
+        value: google_monitoring_alert_policy.{{ name }}.id
       project:
-        value: '${google_monitoring_alert_policy.{{ name }}.project}'
+        value: google_monitoring_alert_policy.{{ name }}.project
+      name:
+        value: google_monitoring_alert_policy.{{ name }}.name
+      creation_record:
+        value: google_monitoring_alert_policy.{{ name }}.creation_record

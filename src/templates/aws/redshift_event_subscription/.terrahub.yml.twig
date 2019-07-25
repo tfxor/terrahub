@@ -8,26 +8,28 @@
     resource:
       aws_redshift_event_subscription:
         {{ name }}:
-          sns_topic_arn: '${var.{{ name }}_sns_topic_arn}'
-          name: '${var.{{ name }}_name}'
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # event_categories: []
+          name: var.{{ name }}_name
+          sns_topic_arn: var.{{ name }}_sns_topic_arn
           # source_ids: []
           # source_type: ''
-          # enabled: false
           # severity: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # event_categories: []
+          # enabled: false
     variable:
-      {{ name }}_sns_topic_arn:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_sns_topic_arn:
+        type: string
     output:
       id:
-        value: '${aws_redshift_event_subscription.{{ name }}.id}'
+        value: aws_redshift_event_subscription.{{ name }}.id
       thub_id:
-        value: '${aws_redshift_event_subscription.{{ name }}.id}'
+        value: aws_redshift_event_subscription.{{ name }}.id
+      arn:
+        value: aws_redshift_event_subscription.{{ name }}.arn
       customer_aws_id:
-        value: '${aws_redshift_event_subscription.{{ name }}.customer_aws_id}'
+        value: aws_redshift_event_subscription.{{ name }}.customer_aws_id
       status:
-        value: '${aws_redshift_event_subscription.{{ name }}.status}'
+        value: aws_redshift_event_subscription.{{ name }}.status

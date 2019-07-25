@@ -8,57 +8,57 @@
     resource:
       aws_launch_configuration:
         {{ name }}:
-          image_id: '${var.{{ name }}_image_id}'
-          instance_type: '${var.{{ name }}_instance_type}'
-          # ephemeral_block_device:
+          instance_type: var.{{ name }}_instance_type
+          image_id: var.{{ name }}_image_id
+          # key_name: ''
+          # vpc_classic_link_security_groups: []
+          # ebs_optimized: false
+          # ephemeral_block_device: 
           #   device_name: ''
           #   virtual_name: ''
           # iam_instance_profile: ''
+          # user_data: ''
           # vpc_classic_link_id: ''
-          # spot_price: ''
-          # placement_tenancy: ''
-          # enable_monitoring: false
-          # ebs_block_device:
-          #   device_name: ''
-          #   volume_type: ''
-          #   encrypted: false
-          #   delete_on_termination: false
-          #   no_device: false
-          #   iops: 0
-          #   snapshot_id: ''
-          #   volume_size: 0
-          # key_name: ''
-          # security_groups: []
-          # name_prefix: ''
-          # vpc_classic_link_security_groups: []
-          # associate_public_ip_address: false
-          # ebs_optimized: false
-          # root_block_device:
+          # root_block_device: 
           #   -
           #     delete_on_termination: false
           #     iops: 0
           #     volume_size: 0
           #     volume_type: ''
-          # name: ''
-          # user_data: ''
           # user_data_base64: ''
+          # security_groups: []
+          # associate_public_ip_address: false
+          # ebs_block_device: 
+          #   device_name: ''
+          #   no_device: false
+          #   iops: 0
+          #   snapshot_id: ''
+          #   volume_size: 0
+          #   volume_type: ''
+          #   encrypted: false
+          #   delete_on_termination: false
+          # name: ''
+          # name_prefix: ''
+          # spot_price: ''
+          # placement_tenancy: ''
+          # enable_monitoring: false
     variable:
-      {{ name }}_image_id:
-        type: 'string'
       {{ name }}_instance_type:
-        type: 'string'
+        type: string
+      {{ name }}_image_id:
+        type: string
     output:
       id:
-        value: '${aws_launch_configuration.{{ name }}.id}'
+        value: aws_launch_configuration.{{ name }}.id
       thub_id:
-        value: '${aws_launch_configuration.{{ name }}.id}'
-      ebs_block_device:
-        value: '${aws_launch_configuration.{{ name }}.ebs_block_device}'
+        value: aws_launch_configuration.{{ name }}.id
       key_name:
-        value: '${aws_launch_configuration.{{ name }}.key_name}'
+        value: aws_launch_configuration.{{ name }}.key_name
       ebs_optimized:
-        value: '${aws_launch_configuration.{{ name }}.ebs_optimized}'
+        value: aws_launch_configuration.{{ name }}.ebs_optimized
       root_block_device:
-        value: '${aws_launch_configuration.{{ name }}.root_block_device}'
+        value: aws_launch_configuration.{{ name }}.root_block_device
+      ebs_block_device:
+        value: aws_launch_configuration.{{ name }}.ebs_block_device
       name:
-        value: '${aws_launch_configuration.{{ name }}.name}'
+        value: aws_launch_configuration.{{ name }}.name

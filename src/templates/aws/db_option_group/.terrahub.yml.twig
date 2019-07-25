@@ -8,31 +8,31 @@
     resource:
       aws_db_option_group:
         {{ name }}:
-          engine_name: '${var.{{ name }}_engine_name}'
-          major_engine_version: '${var.{{ name }}_major_engine_version}'
-          # tags:
+          engine_name: var.{{ name }}_engine_name
+          major_engine_version: var.{{ name }}_major_engine_version
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
-          # name_prefix: ''
           # option_group_description: ''
-          # option:
+          # name_prefix: ''
+          # option: 
           #   option_name: ''
-          #   option_settings:
+          #   option_settings: 
           #     name: ''
           #     value: ''
     variable:
       {{ name }}_engine_name:
-        type: 'string'
+        type: string
       {{ name }}_major_engine_version:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_db_option_group.{{ name }}.id}'
+        value: aws_db_option_group.{{ name }}.id
       thub_id:
-        value: '${aws_db_option_group.{{ name }}.id}'
+        value: aws_db_option_group.{{ name }}.id
       arn:
-        value: '${aws_db_option_group.{{ name }}.arn}'
+        value: aws_db_option_group.{{ name }}.arn
       name:
-        value: '${aws_db_option_group.{{ name }}.name}'
+        value: aws_db_option_group.{{ name }}.name
       name_prefix:
-        value: '${aws_db_option_group.{{ name }}.name_prefix}'
+        value: aws_db_option_group.{{ name }}.name_prefix

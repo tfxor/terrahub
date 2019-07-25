@@ -8,15 +8,15 @@
     resource:
       aws_sqs_queue_policy:
         {{ name }}:
-          queue_url: '${var.{{ name }}_queue_url}'
-          policy: '${var.{{ name }}_policy}'
+          policy: var.{{ name }}_policy
+          queue_url: var.{{ name }}_queue_url
     variable:
-      {{ name }}_queue_url:
-        type: 'string'
       {{ name }}_policy:
-        type: 'string'
+        type: string
+      {{ name }}_queue_url:
+        type: string
     output:
       id:
-        value: '${aws_sqs_queue_policy.{{ name }}.id}'
+        value: aws_sqs_queue_policy.{{ name }}.id
       thub_id:
-        value: '${aws_sqs_queue_policy.{{ name }}.id}'
+        value: aws_sqs_queue_policy.{{ name }}.id

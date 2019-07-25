@@ -7,20 +7,20 @@
     resource:
       azurerm_arm_logic_app_trigger_http_request:
         {{ name }}:
-          logic_app_id: '${var.{{ name }}_logic_app_id}'
-          schema: '${var.{{ name }}_schema}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          logic_app_id: var.{{ name }}_logic_app_id
+          schema: var.{{ name }}_schema
           # method: ''
           # relative_path: ''
     variable:
-      {{ name }}_logic_app_id:
-        type: 'string'
-      {{ name }}_schema:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_logic_app_id:
+        type: string
+      {{ name }}_schema:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_logic_app_trigger_http_request.{{ name }}.id}'
+        value: azurerm_arm_logic_app_trigger_http_request.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_logic_app_trigger_http_request.{{ name }}.id}'
+        value: azurerm_arm_logic_app_trigger_http_request.{{ name }}.id

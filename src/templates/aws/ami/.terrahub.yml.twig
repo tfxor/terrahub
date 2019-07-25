@@ -8,44 +8,44 @@
     resource:
       aws_ami:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # ephemeral_block_device: 
+          #   device_name: ''
+          #   virtual_name: ''
           # kernel_id: ''
           # ramdisk_id: ''
           # sriov_net_support: ''
-          # ephemeral_block_device:
-          #   device_name: ''
-          #   virtual_name: ''
+          # virtualization_type: ''
           # image_location: ''
+          # architecture: ''
           # description: ''
           # ena_support: false
-          # architecture: ''
           # root_device_name: ''
-          # virtualization_type: ''
-          # ebs_block_device:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # ebs_block_device: 
           #   device_name: ''
-          #   encrypted: false
           #   iops: 0
           #   snapshot_id: ''
           #   volume_size: 0
           #   volume_type: ''
           #   delete_on_termination: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          #   encrypted: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ami.{{ name }}.id}'
+        value: aws_ami.{{ name }}.id
       thub_id:
-        value: '${aws_ami.{{ name }}.id}'
-      root_snapshot_id:
-        value: '${aws_ami.{{ name }}.root_snapshot_id}'
+        value: aws_ami.{{ name }}.id
       ephemeral_block_device:
-        value: '${aws_ami.{{ name }}.ephemeral_block_device}'
+        value: aws_ami.{{ name }}.ephemeral_block_device
+      root_snapshot_id:
+        value: aws_ami.{{ name }}.root_snapshot_id
       image_location:
-        value: '${aws_ami.{{ name }}.image_location}'
+        value: aws_ami.{{ name }}.image_location
       ebs_block_device:
-        value: '${aws_ami.{{ name }}.ebs_block_device}'
+        value: aws_ami.{{ name }}.ebs_block_device
       manage_ebs_snapshots:
-        value: '${aws_ami.{{ name }}.manage_ebs_snapshots}'
+        value: aws_ami.{{ name }}.manage_ebs_snapshots

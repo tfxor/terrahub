@@ -6,31 +6,31 @@
     resource:
       google_compute_router_peer:
         {{ name }}:
-          interface: '${var.{{ name }}_interface}'
-          name: '${var.{{ name }}_name}'
-          router: '${var.{{ name }}_router}'
-          peer_asn: '${var.{{ name }}_peer_asn}'
-          # peer_ip_address: ''
-          # project: ''
+          router: var.{{ name }}_router
+          peer_asn: var.{{ name }}_peer_asn
+          name: var.{{ name }}_name
+          interface: var.{{ name }}_interface
           # region: ''
+          # peer_ip_address: ''
           # advertised_route_priority: 0
+          # project: ''
     variable:
-      {{ name }}_interface:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_router:
-        type: 'string'
+        type: string
       {{ name }}_peer_asn:
-        type: 'int'
+        type: int
+      {{ name }}_name:
+        type: string
+      {{ name }}_interface:
+        type: string
     output:
       id:
-        value: '${google_compute_router_peer.{{ name }}.id}'
+        value: google_compute_router_peer.{{ name }}.id
       thub_id:
-        value: '${google_compute_router_peer.{{ name }}.id}'
+        value: google_compute_router_peer.{{ name }}.id
       ip_address:
-        value: '${google_compute_router_peer.{{ name }}.ip_address}'
-      project:
-        value: '${google_compute_router_peer.{{ name }}.project}'
+        value: google_compute_router_peer.{{ name }}.ip_address
       region:
-        value: '${google_compute_router_peer.{{ name }}.region}'
+        value: google_compute_router_peer.{{ name }}.region
+      project:
+        value: google_compute_router_peer.{{ name }}.project

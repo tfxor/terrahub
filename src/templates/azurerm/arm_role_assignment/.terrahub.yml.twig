@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_role_assignment:
         {{ name }}:
-          scope: '${var.{{ name }}_scope}'
-          principal_id: '${var.{{ name }}_principal_id}'
+          principal_id: var.{{ name }}_principal_id
+          scope: var.{{ name }}_scope
+          # role_definition_name: ''
           # name: ''
           # role_definition_id: ''
-          # role_definition_name: ''
     variable:
-      {{ name }}_scope:
-        type: 'string'
       {{ name }}_principal_id:
-        type: 'string'
+        type: string
+      {{ name }}_scope:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_role_assignment.{{ name }}.id}'
+        value: azurerm_arm_role_assignment.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_role_assignment.{{ name }}.id}'
-      name:
-        value: '${azurerm_arm_role_assignment.{{ name }}.name}'
-      role_definition_id:
-        value: '${azurerm_arm_role_assignment.{{ name }}.role_definition_id}'
+        value: azurerm_arm_role_assignment.{{ name }}.id
       role_definition_name:
-        value: '${azurerm_arm_role_assignment.{{ name }}.role_definition_name}'
+        value: azurerm_arm_role_assignment.{{ name }}.role_definition_name
+      name:
+        value: azurerm_arm_role_assignment.{{ name }}.name
+      role_definition_id:
+        value: azurerm_arm_role_assignment.{{ name }}.role_definition_id

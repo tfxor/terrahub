@@ -8,18 +8,25 @@
     resource:
       aws_organizations_organization:
         {{ name }}:
-          # aws_service_access_principals: []
           # feature_set: ''
+          # aws_service_access_principals: []
+          # enabled_policy_types: []
     output:
       id:
-        value: '${aws_organizations_organization.{{ name }}.id}'
+        value: aws_organizations_organization.{{ name }}.id
       thub_id:
-        value: '${aws_organizations_organization.{{ name }}.id}'
-      master_account_id:
-        value: '${aws_organizations_organization.{{ name }}.master_account_id}'
-      arn:
-        value: '${aws_organizations_organization.{{ name }}.arn}'
+        value: aws_organizations_organization.{{ name }}.id
       master_account_arn:
-        value: '${aws_organizations_organization.{{ name }}.master_account_arn}'
+        value: aws_organizations_organization.{{ name }}.master_account_arn
       master_account_email:
-        value: '${aws_organizations_organization.{{ name }}.master_account_email}'
+        value: aws_organizations_organization.{{ name }}.master_account_email
+      accounts:
+        value: aws_organizations_organization.{{ name }}.accounts
+      roots:
+        value: aws_organizations_organization.{{ name }}.roots
+      arn:
+        value: aws_organizations_organization.{{ name }}.arn
+      master_account_id:
+        value: aws_organizations_organization.{{ name }}.master_account_id
+      non_master_accounts:
+        value: aws_organizations_organization.{{ name }}.non_master_accounts

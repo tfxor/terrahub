@@ -6,21 +6,21 @@
     resource:
       google_folder:
         {{ name }}:
-          parent: '${var.{{ name }}_parent}'
-          display_name: '${var.{{ name }}_display_name}'
+          parent: var.{{ name }}_parent
+          display_name: var.{{ name }}_display_name
     variable:
       {{ name }}_parent:
-        type: 'string'
+        type: string
       {{ name }}_display_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_folder.{{ name }}.id}'
+        value: google_folder.{{ name }}.id
       thub_id:
-        value: '${google_folder.{{ name }}.id}'
-      name:
-        value: '${google_folder.{{ name }}.name}'
-      lifecycle_state:
-        value: '${google_folder.{{ name }}.lifecycle_state}'
+        value: google_folder.{{ name }}.id
       create_time:
-        value: '${google_folder.{{ name }}.create_time}'
+        value: google_folder.{{ name }}.create_time
+      name:
+        value: google_folder.{{ name }}.name
+      lifecycle_state:
+        value: google_folder.{{ name }}.lifecycle_state

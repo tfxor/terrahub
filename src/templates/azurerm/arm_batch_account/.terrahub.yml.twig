@@ -7,18 +7,28 @@
     resource:
       azurerm_arm_batch_account:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # pool_allocation_mode: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
           # storage_account_id: ''
+          # key_vault_reference: 
+          #   -
+          #     url: ''
+          #     id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_batch_account.{{ name }}.id}'
+        value: azurerm_arm_batch_account.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_batch_account.{{ name }}.id}'
+        value: azurerm_arm_batch_account.{{ name }}.id
+      primary_access_key:
+        value: azurerm_arm_batch_account.{{ name }}.primary_access_key
+      account_endpoint:
+        value: azurerm_arm_batch_account.{{ name }}.account_endpoint
       storage_account_id:
-        value: '${azurerm_arm_batch_account.{{ name }}.storage_account_id}'
+        value: azurerm_arm_batch_account.{{ name }}.storage_account_id
+      secondary_access_key:
+        value: azurerm_arm_batch_account.{{ name }}.secondary_access_key

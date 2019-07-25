@@ -8,33 +8,33 @@
     resource:
       aws_dlm_lifecycle_policy:
         {{ name }}:
-          target_tags: '${var.{{ name }}_target_tags}'
-          description: '${var.{{ name }}_description}'
-          execution_role_arn: '${var.{{ name }}_execution_role_arn}'
-          policy_details:
+          description: var.{{ name }}_description
+          execution_role_arn: var.{{ name }}_execution_role_arn
+          policy_details: 
             -
               resource_types: []
-              schedule:
+              schedule: 
                 -
-                  create_rule:
+                  create_rule: 
                     -
                       interval: 0
           #             interval_unit: ''
-          #             times:
+          #             times: 
           #               -
           #         copy_tags: false
-          #     tags_to_add:
+          #     tags_to_add: 
           #       '[TO_BE_REPLACED]': ''
+          target_tags: var.{{ name }}_target_tags
           # state: ''
     variable:
-      {{ name }}_target_tags:
-        type: 'map'
       {{ name }}_description:
-        type: 'string'
+        type: string
       {{ name }}_execution_role_arn:
-        type: 'string'
+        type: string
+      {{ name }}_target_tags:
+        type: map
     output:
       id:
-        value: '${aws_dlm_lifecycle_policy.{{ name }}.id}'
+        value: aws_dlm_lifecycle_policy.{{ name }}.id
       thub_id:
-        value: '${aws_dlm_lifecycle_policy.{{ name }}.id}'
+        value: aws_dlm_lifecycle_policy.{{ name }}.id

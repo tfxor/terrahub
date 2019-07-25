@@ -8,43 +8,45 @@
     resource:
       aws_codepipeline:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          artifact_store:
+          name: var.{{ name }}_name
+          role_arn: var.{{ name }}_role_arn
+          artifact_store: 
             -
               location: ''
               type: ''
-          #     encryption_key:
+          #     encryption_key: 
           #       -
-          #         type: ''
           #         id: ''
-          stage:
+          #         type: ''
+          stage: 
             -
-              action:
+              name: ''
+              action: 
                 -
-                  owner: ''
-                  provider: ''
-                  version: ''
-                  name: ''
                   category: ''
+                  provider: ''
+                  name: ''
+                  owner: ''
+                  version: ''
           #         role_arn: ''
-          #         configuration:
+          #         configuration: 
           #           '[TO_BE_REPLACED]': ''
-          #         input_artifacts:
+          #         output_artifacts: 
           #           -
-          #         output_artifacts:
+          #         input_artifacts: 
           #           -
           #         run_order: 0
-              name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_codepipeline.{{ name }}.id}'
+        value: aws_codepipeline.{{ name }}.id
       thub_id:
-        value: '${aws_codepipeline.{{ name }}.id}'
+        value: aws_codepipeline.{{ name }}.id
       arn:
-        value: '${aws_codepipeline.{{ name }}.arn}'
+        value: aws_codepipeline.{{ name }}.arn
