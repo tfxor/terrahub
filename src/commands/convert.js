@@ -104,10 +104,7 @@ class ConvertCommand extends TerraformCommand {
               });
           });
 
-          return Promise.all(promises).then(() => {
-            // const config = new Configure();
-            
-          });
+          return Promise.all(promises);
         })
       .catch(err => {
         throw new Error(err.toString());
