@@ -5,8 +5,8 @@ const fse = require('fs-extra');
 const S3Helper = require('./s3-helper');
 const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
-const { jitPath, tfstatePath } = require('../parameters');
 const { homePath, extend } = require('./util');
+const { jitPath, tfstatePath } = require('../parameters');
 
 class JitHelper {
   /**
@@ -514,7 +514,7 @@ class JitHelper {
       const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
       const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
 
-      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ? 
+      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
         JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
           return JitHelper._parsingTfvars(data.toString(), config);
         }):
@@ -536,7 +536,7 @@ class JitHelper {
   static _addLocalTfvars(config, localTfvarsLinks) {
     const promises = Object.keys(localTfvarsLinks).map(it => {
       const localTfvarsLinkPath = path.resolve(config.project.root, config.root, localTfvarsLinks[it]);
-      
+
       if (fse.existsSync(localTfvarsLinkPath)) {
         return fse.readFile(localTfvarsLinkPath).then(content => {
           return JitHelper._parsingTfvars(content.toString(), config);
