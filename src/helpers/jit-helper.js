@@ -728,12 +728,7 @@ class JitHelper {
 
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
-
-    let extension = '';
-    if (arch.indexOf("windows") > -1) {
-      extension = '.exe';
-    }
-
+    const extension = arch.indexOf("windows") > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
     const base64data = buff.toString('base64');
