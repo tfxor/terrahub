@@ -411,7 +411,7 @@ class Util {
    * @param credentials
    * @param config
    * @param prefix
-   * @return {string}
+   * @return {String}
    */
   static createCredentialsFile(credentials, config, prefix) {
     const tmpPath = Util.homePath('temp', config.project.code, config.name);

@@ -45,7 +45,10 @@ class S3Helper {
   getObject(bucketName, objectKey, config) {
     return this._retriveCredsForTfVars(config).then(credsPath => {
       if (credsPath) {
-        AWS.config.credentials = new AWS.SharedIniFileCredentials({filename: credsPath});
+        ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
+          .forEach(it => delete process.env[it]);
+
+        AWS.config.credentials = new AWS.SharedIniFileCredentials({ filename: credsPath, preferStaticCredentials: true });
 
         this._s3 = new AWS.S3();
       }
@@ -70,6 +73,7 @@ class S3Helper {
 
   /**
    * @param {String} tfvarsAccount
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
