@@ -723,7 +723,7 @@ class JitHelper {
     const formatHCL1 = isHCL2 ? '' : formatHCL1 = '-F no';
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
-    const extension = arch.indexOf("windows") > -1 ? '.exe' : '';
+    const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
     const base64data = buff.toString('base64');
