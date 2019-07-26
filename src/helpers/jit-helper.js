@@ -720,7 +720,7 @@ class JitHelper {
    * @return {Promise}
    */
   static convertJsonToHcl(componentPath, data, isHCL2) {
-    const formatHCL1 = isHCL2 ? '' : formatHCL1 = '-F no';
+    const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
