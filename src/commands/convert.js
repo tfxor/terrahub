@@ -9,7 +9,7 @@ const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
 const { binPath, config, commandsPath } = require('../parameters');
-const { buildTmpPath, checkTfVersion } = require('../helpers/jit-helper');
+const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
 
 class ConvertCommand extends TerraformCommand {
   /**
@@ -52,15 +52,15 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toYml(cfg) {
-    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
-    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
-
-    if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
-      return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
+    switch (this._checkCurrentFormat(cfg)) {
+      case 'json':
+        return this._toYamlFromJson(cfg);
+      case 'hcl':
+        return this._toYamlFromHcl(cfg);
+      case 'yaml':
+        this.logSkip(cfg.name, 'YML');
+        return Promise.resolve();
     }
-
-    this.logSkip(cfg.name, 'YML');
-    return Promise.resolve();
   }
 
   /**
@@ -69,19 +69,15 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toHcl(cfg) {
-    const currentFormat = this._checkCurrentFormat(cfg);
-    if (currentFormat != 'json') {
-      switch (currentFormat) {
-        case 'yaml':
-          return this._toHCLFromYaml(cfg);
-        case 'json':
-          return this._toHCLFromJson(cfg);
-      }
-      return promise;
+    switch (this._checkCurrentFormat(cfg)) {
+      case 'yaml':
+        return this._toHCLFromYaml(cfg);
+      case 'json':
+        return this._toHCLFromJson(cfg);
+      case 'hcl':
+        this.logSkip(cfg.name, 'HCL');
+        return Promise.resolve();
     }
-
-    this.logSkip(cfg.name, 'HCL');
-    return Promise.resolve();
   }
 
   /**
@@ -90,19 +86,15 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toJson(cfg) {
-    const currentFormat = this._checkCurrentFormat(cfg);
-    if (currentFormat !== 'json') {
-      switch (currentFormat) {
-        case 'yaml':
-          return this._toJsonFromYaml(cfg);
-        case 'hcl':
-          return this._toJsonFromHcl(cfg);
-      }
-      return promise;
+    switch (this._checkCurrentFormat(cfg)) {
+      case 'yaml':
+        return this._toJsonFromYaml(cfg);
+      case 'hcl':
+        return this._toJsonFromHcl(cfg);
+      case 'json':
+        this.logSkip(cfg.name, 'JSON');
+        return Promise.resolve();
     }
-
-    this.logSkip(cfg.name, 'JSON');
-    return Promise.resolve();
   }
 
   /**
@@ -113,6 +105,67 @@ class ConvertCommand extends TerraformCommand {
   _toJsonFromYaml(cfg) {   
     return this._initTemplateFromConfig(cfg).then(() => {
       const templatePath = ConvertCommand._buildComponentPath(cfg);
+      const componentPath = buildTmpPath(cfg);
+      return fse.readdir(componentPath)
+        .then(files => {
+          const promises = this._hclToJson(files, componentPath, templatePath);
+  
+          return Promise.all(promises).then(() => {
+            return this._deteleTemplateFromConfig(cfg);
+          });
+        })
+      .catch(err => {
+        throw new Error(err.toString());
+      });
+    });
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _toJsonFromHcl(cfg) {
+    const scriptPath = ConvertCommand._buildComponentPath(cfg);
+    return fse.readdir(scriptPath)
+      .then(files => {
+        const promises = this._hclToJson(files, scriptPath, scriptPath);
+
+        return Promise.all(promises);
+      })
+    .catch(err => {
+      throw new Error(err.toString());
+    });
+  }
+
+  /**
+   * @param {Array} files
+   * @param {String} terraformPath
+   * @param {String} scriptPath
+   * @return {Promise}
+   * @private
+   */
+  _hclToJson(files, terraformPath, scriptPath) {
+    const regEx = /.*(tf|tfvars)$/;
+    const scriptFiles = files.filter(src => regEx.test(src));
+    const promises = scriptFiles.map(file => {
+      return fse.readFile(join(terraformPath, file))
+        .then(dataBuffer => {
+          const jsonContent = hcltojson(dataBuffer.toString());
+          return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
+        });
+    });
+    return promises;
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _toHCLFromYaml(cfg) {
+    return this._initTemplateFromConfig(cfg).then(() => {
+      const templatePath = ConvertCommand._buildComponentPath(cfg);
       const regEx = /.*(tf|tfvars)$/;
       const componentPath = buildTmpPath(cfg);
       return fse.readdir(componentPath)
@@ -120,11 +173,7 @@ class ConvertCommand extends TerraformCommand {
           const terraformFiles = files.filter(src => regEx.test(src));
   
           const promises = terraformFiles.map(file => {
-            return fse.readFile(join(componentPath, file))
-              .then(dataBuffer => {
-                const jsonContent = hcltojson(dataBuffer.toString());
-                return fse.outputJson(join(templatePath, file), jsonContent, { spaces: 2 });
-              });
+            return fse.copySync(join(componentPath, file), join(templatePath, file));
           });
   
           return Promise.all(promises).then(() => {
@@ -142,7 +191,7 @@ class ConvertCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _toJsonFromHcl(cfg) {    
+  _toYamlFromJson(cfg) {
     return Promise.resolve();
   }
 
@@ -151,24 +200,41 @@ class ConvertCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _toHCLFromYaml(cfg) {    
-    return Promise.resolve();
-  }
-
-  /**
-   * @param {Object} cfg
-   * @return {Promise}
-   * @private
-   */
-  _toHCLFromJson(cfg) {    
+  _toYamlFromHcl(cfg) {
     const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
-    if (rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
-      return ConvertCommand._saveComponent(cfg).then(() => { this.logSuccess(cfg.name, 'HCL'); });
+    if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
+      return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
     }
 
     return Promise.resolve();
+  }
+
+  /**
+   * @param {Object} cfg
+   * @return {Promise}
+   * @private
+   */
+  _toHCLFromJson(cfg) {
+    const scriptPath = ConvertCommand._buildComponentPath(cfg);
+    return fse.readdir(scriptPath)
+      .then(files => {
+        const regEx = /.*(tf|tfvars)$/;
+        const scriptFiles = files.filter(src => regEx.test(src));
+        const promises = scriptFiles.map(file => {
+          return fse.readFile(join(scriptPath, file))
+            .then(dataBuffer => {
+              console.log(dataBuffer);
+              return Promise.resolve();
+              // return convertJsonToHcl(join(scriptPath, file), dataBuffer.toString(), checkTfVersion(cfg));
+            });
+        });
+        return Promise.all(promises);
+      })
+    .catch(err => {
+      throw new Error(err.toString());
+    });
   }
 
   /**
@@ -206,13 +272,7 @@ class ConvertCommand extends TerraformCommand {
    */
   _checkCurrentFormat(cfg) {
     if (!this._checkIfFilesIsJson(cfg)) {
-      if (!cfg.hasOwnProperty('template')) {
-        if (checkTfVersion(cfg)) {
-          return 'hcl2';
-        }
-        return 'hcl';
-      }
-      return 'yaml';
+      return (!cfg.hasOwnProperty('template')) ? (checkTfVersion(cfg)) ? 'hcl2' : 'hcl' : 'yaml';
     }
 
     return 'json';
