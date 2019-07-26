@@ -622,7 +622,7 @@ class JitHelper {
           break;
       }
 
-      return JitHelper._saveToFile(join(tmpPath, name), data, JitHelper.checkTfVersion(config));
+      return JitHelper.convertJsonToHcl(join(tmpPath, name), data, JitHelper.checkTfVersion(config));
     });
 
     return Promise.all(promises);
@@ -654,7 +654,7 @@ class JitHelper {
 
       variable[it] = { type };
     });
-    return JitHelper._saveToFile(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config));
+    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config));
   }
 
   static _symLinkNonTerraHubFiles(config) {
@@ -718,17 +718,12 @@ class JitHelper {
    * @param {Object} data
    * @param {Boolean} isHCL2
    * @return {Promise}
-   * @private
    */
-  static _saveToFile(componentPath, data, isHCL2) {
-    let formatHCL1 = "";
-    if (!isHCL2) {
-      formatHCL1 = "-F no"
-    }
-
+  static convertJsonToHcl(componentPath, data, isHCL2) {
+    const formatHCL1 = isHCL2 ? '' : formatHCL1 = '-F no';
     const arch = Downloader.getOsArch();
     const componentBinPath = join(binPath, arch);
-    const extension = arch.indexOf("windows") > -1 ? '.exe' : '';
+    const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
     const base64data = buff.toString('base64');
