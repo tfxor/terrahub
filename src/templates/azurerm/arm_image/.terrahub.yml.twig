@@ -7,30 +7,31 @@
     resource:
       azurerm_arm_image:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # source_virtual_machine_id: ''
-          # os_disk:
-          #   -
-          #     managed_disk_id: ''
-          #     blob_uri: ''
-          #     caching: ''
-          #     size_gb: 0
-          #     os_type: ''
-          #     os_state: ''
-          # data_disk:
+          name: var.{{ name }}_name
+          # data_disk: 
           #   -
           #     lun: 0
           #     managed_disk_id: ''
           #     blob_uri: ''
           #     caching: ''
           #     size_gb: 0
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # zone_resilient: false
+          # source_virtual_machine_id: ''
+          # os_disk: 
+          #   -
+          #     os_type: ''
+          #     os_state: ''
+          #     managed_disk_id: ''
+          #     blob_uri: ''
+          #     caching: ''
+          #     size_gb: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_image.{{ name }}.id}'
+        value: azurerm_arm_image.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_image.{{ name }}.id}'
+        value: azurerm_arm_image.{{ name }}.id

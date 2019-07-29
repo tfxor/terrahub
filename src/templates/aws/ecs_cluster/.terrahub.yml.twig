@@ -8,16 +8,16 @@
     resource:
       aws_ecs_cluster:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ecs_cluster.{{ name }}.id}'
+        value: aws_ecs_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_ecs_cluster.{{ name }}.id}'
+        value: aws_ecs_cluster.{{ name }}.id
       arn:
-        value: '${aws_ecs_cluster.{{ name }}.arn}'
+        value: aws_ecs_cluster.{{ name }}.arn

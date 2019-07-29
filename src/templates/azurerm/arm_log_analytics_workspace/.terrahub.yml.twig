@@ -7,28 +7,28 @@
     resource:
       azurerm_arm_log_analytics_workspace:
         {{ name }}:
-          sku: '${var.{{ name }}_sku}'
-          name: '${var.{{ name }}_name}'
-          # tags:
+          sku: var.{{ name }}_sku
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # retention_in_days: 0
     variable:
       {{ name }}_sku:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.id
       primary_shared_key:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.primary_shared_key}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.primary_shared_key
       secondary_shared_key:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.secondary_shared_key}'
-      retention_in_days:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.retention_in_days}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.secondary_shared_key
       workspace_id:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.workspace_id}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.workspace_id
       portal_url:
-        value: '${azurerm_arm_log_analytics_workspace.{{ name }}.portal_url}'
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.portal_url
+      retention_in_days:
+        value: azurerm_arm_log_analytics_workspace.{{ name }}.retention_in_days

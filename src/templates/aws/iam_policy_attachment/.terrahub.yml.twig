@@ -8,18 +8,18 @@
     resource:
       aws_iam_policy_attachment:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          policy_arn: '${var.{{ name }}_policy_arn}'
+          name: var.{{ name }}_name
+          policy_arn: var.{{ name }}_policy_arn
           # users: []
           # roles: []
           # groups: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_policy_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_policy_attachment.{{ name }}.id}'
+        value: aws_iam_policy_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_iam_policy_attachment.{{ name }}.id}'
+        value: aws_iam_policy_attachment.{{ name }}.id

@@ -8,15 +8,15 @@
     resource:
       aws_ami_launch_permission:
         {{ name }}:
-          image_id: '${var.{{ name }}_image_id}'
-          account_id: '${var.{{ name }}_account_id}'
+          image_id: var.{{ name }}_image_id
+          account_id: var.{{ name }}_account_id
     variable:
       {{ name }}_image_id:
-        type: 'string'
+        type: string
       {{ name }}_account_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ami_launch_permission.{{ name }}.id}'
+        value: aws_ami_launch_permission.{{ name }}.id
       thub_id:
-        value: '${aws_ami_launch_permission.{{ name }}.id}'
+        value: aws_ami_launch_permission.{{ name }}.id

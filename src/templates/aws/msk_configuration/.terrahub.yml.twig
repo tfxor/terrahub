@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_msk_configuration:
+        {{ name }}:
+          kafka_versions: var.{{ name }}_kafka_versions
+          name: var.{{ name }}_name
+          server_properties: var.{{ name }}_server_properties
+          # description: ''
+    variable:
+      {{ name }}_kafka_versions:
+        type: set
+      {{ name }}_name:
+        type: string
+      {{ name }}_server_properties:
+        type: string
+    output:
+      id:
+        value: aws_msk_configuration.{{ name }}.id
+      thub_id:
+        value: aws_msk_configuration.{{ name }}.id
+      latest_revision:
+        value: aws_msk_configuration.{{ name }}.latest_revision
+      arn:
+        value: aws_msk_configuration.{{ name }}.arn

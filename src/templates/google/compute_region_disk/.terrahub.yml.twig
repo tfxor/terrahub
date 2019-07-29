@@ -6,49 +6,52 @@
     resource:
       google_compute_region_disk:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          replica_zones: '${var.{{ name }}_replica_zones}'
-          # labels:
+          name: var.{{ name }}_name
+          replica_zones: var.{{ name }}_replica_zones
+          # physical_block_size_bytes: 0
+          # type: ''
+          # disk_encryption_key: 
+          #   -
+          #     raw_key: ''
+          # labels: 
           #   '[TO_BE_REPLACED]': ''
           # region: ''
           # project: ''
-          # disk_encryption_key:
+          # description: ''
+          # snapshot: ''
+          # source_snapshot_encryption_key: 
           #   -
           #     raw_key: ''
           # size: 0
-          # source_snapshot_encryption_key:
-          #   -
-          #     raw_key: ''
-          # type: ''
-          # description: ''
-          # snapshot: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_replica_zones:
-        type: 'list'
+        type: list
     output:
       id:
-        value: '${google_compute_region_disk.{{ name }}.id}'
+        value: google_compute_region_disk.{{ name }}.id
       thub_id:
-        value: '${google_compute_region_disk.{{ name }}.id}'
-      region:
-        value: '${google_compute_region_disk.{{ name }}.region}'
-      source_snapshot_id:
-        value: '${google_compute_region_disk.{{ name }}.source_snapshot_id}'
-      project:
-        value: '${google_compute_region_disk.{{ name }}.project}'
-      size:
-        value: '${google_compute_region_disk.{{ name }}.size}'
-      last_detach_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.last_detach_timestamp}'
+        value: google_compute_region_disk.{{ name }}.id
+      physical_block_size_bytes:
+        value: google_compute_region_disk.{{ name }}.physical_block_size_bytes
       creation_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.creation_timestamp}'
-      users:
-        value: '${google_compute_region_disk.{{ name }}.users}'
-      label_fingerprint:
-        value: '${google_compute_region_disk.{{ name }}.label_fingerprint}'
-      last_attach_timestamp:
-        value: '${google_compute_region_disk.{{ name }}.last_attach_timestamp}'
+        value: google_compute_region_disk.{{ name }}.creation_timestamp
+      last_detach_timestamp:
+        value: google_compute_region_disk.{{ name }}.last_detach_timestamp
       self_link:
-        value: '${google_compute_region_disk.{{ name }}.self_link}'
+        value: google_compute_region_disk.{{ name }}.self_link
+      region:
+        value: google_compute_region_disk.{{ name }}.region
+      source_snapshot_id:
+        value: google_compute_region_disk.{{ name }}.source_snapshot_id
+      project:
+        value: google_compute_region_disk.{{ name }}.project
+      last_attach_timestamp:
+        value: google_compute_region_disk.{{ name }}.last_attach_timestamp
+      label_fingerprint:
+        value: google_compute_region_disk.{{ name }}.label_fingerprint
+      users:
+        value: google_compute_region_disk.{{ name }}.users
+      size:
+        value: google_compute_region_disk.{{ name }}.size

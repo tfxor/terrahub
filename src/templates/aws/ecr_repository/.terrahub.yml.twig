@@ -8,20 +8,20 @@
     resource:
       aws_ecr_repository:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ecr_repository.{{ name }}.id}'
+        value: aws_ecr_repository.{{ name }}.id
       thub_id:
-        value: '${aws_ecr_repository.{{ name }}.id}'
+        value: aws_ecr_repository.{{ name }}.id
       arn:
-        value: '${aws_ecr_repository.{{ name }}.arn}'
+        value: aws_ecr_repository.{{ name }}.arn
       registry_id:
-        value: '${aws_ecr_repository.{{ name }}.registry_id}'
+        value: aws_ecr_repository.{{ name }}.registry_id
       repository_url:
-        value: '${aws_ecr_repository.{{ name }}.repository_url}'
+        value: aws_ecr_repository.{{ name }}.repository_url

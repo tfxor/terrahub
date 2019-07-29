@@ -8,21 +8,21 @@
     resource:
       aws_backup_vault:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # kms_key_arn: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_backup_vault.{{ name }}.id}'
+        value: aws_backup_vault.{{ name }}.id
       thub_id:
-        value: '${aws_backup_vault.{{ name }}.id}'
+        value: aws_backup_vault.{{ name }}.id
       kms_key_arn:
-        value: '${aws_backup_vault.{{ name }}.kms_key_arn}'
+        value: aws_backup_vault.{{ name }}.kms_key_arn
       arn:
-        value: '${aws_backup_vault.{{ name }}.arn}'
+        value: aws_backup_vault.{{ name }}.arn
       recovery_points:
-        value: '${aws_backup_vault.{{ name }}.recovery_points}'
+        value: aws_backup_vault.{{ name }}.recovery_points

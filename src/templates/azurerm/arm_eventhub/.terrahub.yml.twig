@@ -7,35 +7,36 @@
     resource:
       azurerm_arm_eventhub:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          namespace_name: '${var.{{ name }}_namespace_name}'
-          partition_count: '${var.{{ name }}_partition_count}'
-          message_retention: '${var.{{ name }}_message_retention}'
-          # capture_description:
+          partition_count: var.{{ name }}_partition_count
+          message_retention: var.{{ name }}_message_retention
+          name: var.{{ name }}_name
+          namespace_name: var.{{ name }}_namespace_name
+          # capture_description: 
           #   -
-          #     destination:
+          #     encoding: ''
+          #     destination: 
           #       -
-          #         storage_account_id: ''
           #         name: ''
           #         archive_name_format: ''
           #         blob_container_name: ''
+          #         storage_account_id: ''
           #     enabled: false
-          #     encoding: ''
           #     interval_in_seconds: 0
           #     size_limit_in_bytes: 0
+          #     skip_empty_archives: false
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_namespace_name:
-        type: 'string'
       {{ name }}_partition_count:
-        type: 'int'
+        type: int
       {{ name }}_message_retention:
-        type: 'int'
+        type: int
+      {{ name }}_name:
+        type: string
+      {{ name }}_namespace_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_eventhub.{{ name }}.id}'
+        value: azurerm_arm_eventhub.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_eventhub.{{ name }}.id}'
+        value: azurerm_arm_eventhub.{{ name }}.id
       partition_ids:
-        value: '${azurerm_arm_eventhub.{{ name }}.partition_ids}'
+        value: azurerm_arm_eventhub.{{ name }}.partition_ids

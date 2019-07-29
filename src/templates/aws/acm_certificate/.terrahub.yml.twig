@@ -8,28 +8,28 @@
     resource:
       aws_acm_certificate:
         {{ name }}:
-          # certificate_body: ''
           # private_key: ''
           # domain_name: ''
-          # tags:
+          # validation_method: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # certificate_chain: ''
           # subject_alternative_names: []
-          # validation_method: ''
+          # certificate_body: ''
     output:
       id:
-        value: '${aws_acm_certificate.{{ name }}.id}'
+        value: aws_acm_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_acm_certificate.{{ name }}.id}'
+        value: aws_acm_certificate.{{ name }}.id
       domain_name:
-        value: '${aws_acm_certificate.{{ name }}.domain_name}'
-      subject_alternative_names:
-        value: '${aws_acm_certificate.{{ name }}.subject_alternative_names}'
+        value: aws_acm_certificate.{{ name }}.domain_name
       validation_method:
-        value: '${aws_acm_certificate.{{ name }}.validation_method}'
-      arn:
-        value: '${aws_acm_certificate.{{ name }}.arn}'
-      domain_validation_options:
-        value: '${aws_acm_certificate.{{ name }}.domain_validation_options}'
+        value: aws_acm_certificate.{{ name }}.validation_method
       validation_emails:
-        value: '${aws_acm_certificate.{{ name }}.validation_emails}'
+        value: aws_acm_certificate.{{ name }}.validation_emails
+      subject_alternative_names:
+        value: aws_acm_certificate.{{ name }}.subject_alternative_names
+      arn:
+        value: aws_acm_certificate.{{ name }}.arn
+      domain_validation_options:
+        value: aws_acm_certificate.{{ name }}.domain_validation_options

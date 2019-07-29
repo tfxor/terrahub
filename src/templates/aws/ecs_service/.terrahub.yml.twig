@@ -8,60 +8,64 @@
     resource:
       aws_ecs_service:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          task_definition: '${var.{{ name }}_task_definition}'
-          # cluster: ''
-          # enable_ecs_managed_tags: false
-          # launch_type: ''
-          # placement_strategy: []
-          # desired_count: 0
+          task_definition: var.{{ name }}_task_definition
+          name: var.{{ name }}_name
           # platform_version: ''
-          # scheduling_strategy: ''
-          # iam_role: ''
-          # load_balancer:
+          # propagate_tags: ''
+          # launch_type: ''
+          # deployment_controller: 
+          #   -
+          #     type: ''
+          # deployment_minimum_healthy_percent: 0
+          # network_configuration: 
+          #   -
+          #     subnets: []
+          #     security_groups: 
+          #     assign_public_ip: false
+          # enable_ecs_managed_tags: false
+          # health_check_grace_period_seconds: 0
+          # load_balancer: 
           #   container_name: ''
           #   container_port: 0
           #   elb_name: ''
           #   target_group_arn: ''
-          # placement_constraints:
-          #   type: ''
-          #   expression: ''
-          # health_check_grace_period_seconds: 0
-          # deployment_controller:
-          #   -
-          #     type: ''
-          # deployment_maximum_percent: 0
-          # deployment_minimum_healthy_percent: 0
-          # network_configuration:
-          #   -
-          #     subnets: []
-          #     security_groups:
-          #     assign_public_ip: false
-          # service_registries:
+          # service_registries: 
           #   registry_arn: ''
           #   container_name: ''
           #   container_port: 0
           #   port: 0
-          # ordered_placement_strategy:
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # cluster: ''
+          # iam_role: ''
+          # deployment_maximum_percent: 0
+          # placement_strategy: 
+          #   type: ''
+          #   field: ''
+          # ordered_placement_strategy: 
           #   -
           #     type: ''
           #     field: ''
-          # propagate_tags: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          # placement_constraints: 
+          #   type: ''
+          #   expression: ''
+          # desired_count: 0
+          # scheduling_strategy: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_task_definition:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_ecs_service.{{ name }}.id}'
+        value: aws_ecs_service.{{ name }}.id
       thub_id:
-        value: '${aws_ecs_service.{{ name }}.id}'
-      cluster:
-        value: '${aws_ecs_service.{{ name }}.cluster}'
+        value: aws_ecs_service.{{ name }}.id
       platform_version:
-        value: '${aws_ecs_service.{{ name }}.platform_version}'
+        value: aws_ecs_service.{{ name }}.platform_version
+      cluster:
+        value: aws_ecs_service.{{ name }}.cluster
       iam_role:
-        value: '${aws_ecs_service.{{ name }}.iam_role}'
+        value: aws_ecs_service.{{ name }}.iam_role
+      placement_strategy:
+        value: aws_ecs_service.{{ name }}.placement_strategy

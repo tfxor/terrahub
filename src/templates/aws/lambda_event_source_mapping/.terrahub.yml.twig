@@ -8,31 +8,31 @@
     resource:
       aws_lambda_event_source_mapping:
         {{ name }}:
-          function_name: '${var.{{ name }}_function_name}'
-          event_source_arn: '${var.{{ name }}_event_source_arn}'
-          # batch_size: 0
-          # starting_position_timestamp: ''
+          event_source_arn: var.{{ name }}_event_source_arn
+          function_name: var.{{ name }}_function_name
           # enabled: false
           # starting_position: ''
+          # starting_position_timestamp: ''
+          # batch_size: 0
     variable:
-      {{ name }}_function_name:
-        type: 'string'
       {{ name }}_event_source_arn:
-        type: 'string'
+        type: string
+      {{ name }}_function_name:
+        type: string
     output:
       id:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.id}'
+        value: aws_lambda_event_source_mapping.{{ name }}.id
       thub_id:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.id}'
-      function_arn:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.function_arn}'
-      last_processing_result:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.last_processing_result}'
+        value: aws_lambda_event_source_mapping.{{ name }}.id
       last_modified:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.last_modified}'
-      state:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.state}'
+        value: aws_lambda_event_source_mapping.{{ name }}.last_modified
+      last_processing_result:
+        value: aws_lambda_event_source_mapping.{{ name }}.last_processing_result
       state_transition_reason:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.state_transition_reason}'
+        value: aws_lambda_event_source_mapping.{{ name }}.state_transition_reason
+      function_arn:
+        value: aws_lambda_event_source_mapping.{{ name }}.function_arn
+      state:
+        value: aws_lambda_event_source_mapping.{{ name }}.state
       uuid:
-        value: '${aws_lambda_event_source_mapping.{{ name }}.uuid}'
+        value: aws_lambda_event_source_mapping.{{ name }}.uuid

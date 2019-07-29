@@ -8,34 +8,55 @@
     resource:
       aws_appmesh_virtual_node:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          mesh_name: '${var.{{ name }}_mesh_name}'
-          spec:
+          name: var.{{ name }}_name
+          spec: 
             -
-          #     backends:
-          #     listener:
-          #     port_mapping:
+          #     backends: 
+          #     backend: 
+          #     virtual_service: 
           #       -
-          #         port: 0
-          #         protocol: ''
-          # service_discovery:
+          #         virtual_service_name: ''
+          mesh_name: var.{{ name }}_mesh_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # listener: 
+          #   health_check: 
+          #     -
+          #       protocol: ''
+          #       timeout_millis: 0
+          #       unhealthy_threshold: 0
+          #       healthy_threshold: 0
+          #       interval_millis: 0
+          #       path: ''
+          #       port: 0
+          # logging: 
           #   -
-          #     dns:
+          #     access_log: 
           #       -
+          #         file: 
+          #           -
+          #             path: ''
+          # service_discovery: 
+          #   -
+          #     aws_cloud_map: 
+          #       -
+          #         namespace_name: ''
           #         service_name: ''
+          #         attributes: 
+          #           '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_mesh_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_appmesh_virtual_node.{{ name }}.id}'
+        value: aws_appmesh_virtual_node.{{ name }}.id
       thub_id:
-        value: '${aws_appmesh_virtual_node.{{ name }}.id}'
-      arn:
-        value: '${aws_appmesh_virtual_node.{{ name }}.arn}'
-      created_date:
-        value: '${aws_appmesh_virtual_node.{{ name }}.created_date}'
+        value: aws_appmesh_virtual_node.{{ name }}.id
       last_updated_date:
-        value: '${aws_appmesh_virtual_node.{{ name }}.last_updated_date}'
+        value: aws_appmesh_virtual_node.{{ name }}.last_updated_date
+      created_date:
+        value: aws_appmesh_virtual_node.{{ name }}.created_date
+      arn:
+        value: aws_appmesh_virtual_node.{{ name }}.arn

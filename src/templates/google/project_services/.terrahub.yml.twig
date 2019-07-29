@@ -1,0 +1,21 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_project_services:
+        {{ name }}:
+          services: var.{{ name }}_services
+          # disable_on_destroy: false
+          # project: ''
+    variable:
+      {{ name }}_services:
+        type: set
+    output:
+      id:
+        value: google_project_services.{{ name }}.id
+      thub_id:
+        value: google_project_services.{{ name }}.id
+      project:
+        value: google_project_services.{{ name }}.project

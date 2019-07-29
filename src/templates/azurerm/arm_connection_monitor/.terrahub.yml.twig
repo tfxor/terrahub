@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_connection_monitor:
+        {{ name }}:
+          destination: 
+            -
+              port: 0
+          #     virtual_machine_id: ''
+          #     address: ''
+          name: var.{{ name }}_name
+          source: 
+            -
+              virtual_machine_id: ''
+          #     port: 0
+          network_watcher_name: var.{{ name }}_network_watcher_name
+          # auto_start: false
+          # interval_in_seconds: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_network_watcher_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_connection_monitor.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_connection_monitor.{{ name }}.id

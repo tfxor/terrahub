@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_data_source_ram_share:
+        {{ name }}:
+          name: var.{{ name }}_name
+          resource_owner: var.{{ name }}_resource_owner
+          # filter: 
+          #   name: ''
+          #   values: []
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_resource_owner:
+        type: string
+    output:
+      id:
+        value: aws_data_source_ram_share.{{ name }}.id
+      thub_id:
+        value: aws_data_source_ram_share.{{ name }}.id
+      arn:
+        value: aws_data_source_ram_share.{{ name }}.arn
+      tags:
+        value: aws_data_source_ram_share.{{ name }}.tags
+      id:
+        value: aws_data_source_ram_share.{{ name }}.id
+      status:
+        value: aws_data_source_ram_share.{{ name }}.status

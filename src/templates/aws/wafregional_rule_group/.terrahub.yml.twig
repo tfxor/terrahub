@@ -8,19 +8,19 @@
     resource:
       aws_wafregional_rule_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          metric_name: '${var.{{ name }}_metric_name}'
-          # activated_rule:
-          #   action:
+          name: var.{{ name }}_name
+          metric_name: var.{{ name }}_metric_name
+          # activated_rule: 
+          #   action: 
           #     -
           #       type: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_metric_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_wafregional_rule_group.{{ name }}.id}'
+        value: aws_wafregional_rule_group.{{ name }}.id
       thub_id:
-        value: '${aws_wafregional_rule_group.{{ name }}.id}'
+        value: aws_wafregional_rule_group.{{ name }}.id

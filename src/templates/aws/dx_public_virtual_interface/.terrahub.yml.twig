@@ -8,40 +8,42 @@
     resource:
       aws_dx_public_virtual_interface:
         {{ name }}:
-          bgp_asn: '${var.{{ name }}_bgp_asn}'
-          route_filter_prefixes: '${var.{{ name }}_route_filter_prefixes}'
-          vlan: '${var.{{ name }}_vlan}'
-          connection_id: '${var.{{ name }}_connection_id}'
-          name: '${var.{{ name }}_name}'
-          address_family: '${var.{{ name }}_address_family}'
-          # bgp_auth_key: ''
+          route_filter_prefixes: var.{{ name }}_route_filter_prefixes
+          connection_id: var.{{ name }}_connection_id
+          name: var.{{ name }}_name
+          vlan: var.{{ name }}_vlan
+          bgp_asn: var.{{ name }}_bgp_asn
+          address_family: var.{{ name }}_address_family
           # customer_address: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          # bgp_auth_key: ''
           # amazon_address: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_bgp_asn:
-        type: 'int'
       {{ name }}_route_filter_prefixes:
-        type: 'set'
-      {{ name }}_vlan:
-        type: 'int'
+        type: set
       {{ name }}_connection_id:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_vlan:
+        type: int
+      {{ name }}_bgp_asn:
+        type: int
       {{ name }}_address_family:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.id}'
+        value: aws_dx_public_virtual_interface.{{ name }}.id
       thub_id:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.id}'
-      bgp_auth_key:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.bgp_auth_key}'
+        value: aws_dx_public_virtual_interface.{{ name }}.id
       customer_address:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.customer_address}'
-      amazon_address:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.amazon_address}'
+        value: aws_dx_public_virtual_interface.{{ name }}.customer_address
+      aws_device:
+        value: aws_dx_public_virtual_interface.{{ name }}.aws_device
+      bgp_auth_key:
+        value: aws_dx_public_virtual_interface.{{ name }}.bgp_auth_key
       arn:
-        value: '${aws_dx_public_virtual_interface.{{ name }}.arn}'
+        value: aws_dx_public_virtual_interface.{{ name }}.arn
+      amazon_address:
+        value: aws_dx_public_virtual_interface.{{ name }}.amazon_address

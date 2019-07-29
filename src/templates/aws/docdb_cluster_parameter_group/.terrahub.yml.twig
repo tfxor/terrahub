@@ -8,27 +8,27 @@
     resource:
       aws_docdb_cluster_parameter_group:
         {{ name }}:
-          family: '${var.{{ name }}_family}'
-          # name_prefix: ''
+          family: var.{{ name }}_family
           # description: ''
-          # parameter:
+          # parameter: 
           #   name: ''
           #   value: ''
           #   apply_method: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # name: ''
+          # name_prefix: ''
     variable:
       {{ name }}_family:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.id}'
+        value: aws_docdb_cluster_parameter_group.{{ name }}.id
       thub_id:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.id}'
-      name_prefix:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.name_prefix}'
+        value: aws_docdb_cluster_parameter_group.{{ name }}.id
       arn:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.arn}'
+        value: aws_docdb_cluster_parameter_group.{{ name }}.arn
       name:
-        value: '${aws_docdb_cluster_parameter_group.{{ name }}.name}'
+        value: aws_docdb_cluster_parameter_group.{{ name }}.name
+      name_prefix:
+        value: aws_docdb_cluster_parameter_group.{{ name }}.name_prefix

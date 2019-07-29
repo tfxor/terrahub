@@ -8,17 +8,17 @@
     resource:
       aws_opsworks_user_profile:
         {{ name }}:
-          user_arn: '${var.{{ name }}_user_arn}'
-          ssh_username: '${var.{{ name }}_ssh_username}'
+          user_arn: var.{{ name }}_user_arn
+          ssh_username: var.{{ name }}_ssh_username
           # allow_self_management: false
           # ssh_public_key: ''
     variable:
       {{ name }}_user_arn:
-        type: 'string'
+        type: string
       {{ name }}_ssh_username:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_opsworks_user_profile.{{ name }}.id}'
+        value: aws_opsworks_user_profile.{{ name }}.id
       thub_id:
-        value: '${aws_opsworks_user_profile.{{ name }}.id}'
+        value: aws_opsworks_user_profile.{{ name }}.id

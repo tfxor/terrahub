@@ -7,20 +7,20 @@
     resource:
       azurerm_arm_logic_app_workflow:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # workflow_version: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # parameters:
+          name: var.{{ name }}_name
+          # parameters: 
           #   '[TO_BE_REPLACED]': ''
           # workflow_schema: ''
+          # workflow_version: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_logic_app_workflow.{{ name }}.id}'
+        value: azurerm_arm_logic_app_workflow.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_logic_app_workflow.{{ name }}.id}'
+        value: azurerm_arm_logic_app_workflow.{{ name }}.id
       access_endpoint:
-        value: '${azurerm_arm_logic_app_workflow.{{ name }}.access_endpoint}'
+        value: azurerm_arm_logic_app_workflow.{{ name }}.access_endpoint

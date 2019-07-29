@@ -8,36 +8,36 @@
     resource:
       aws_ec2_fleet:
         {{ name }}:
-          target_capacity_specification:
+          target_capacity_specification: 
             -
               default_target_capacity_type: ''
               total_target_capacity: 0
           #     on_demand_target_capacity: 0
           #     spot_target_capacity: 0
-          launch_template_config:
+          launch_template_config: 
             -
-              launch_template_specification:
+              launch_template_specification: 
                 -
                   version: ''
           #         launch_template_id: ''
           #         launch_template_name: ''
-          # spot_options:
+          # spot_options: 
           #   -
           #     allocation_strategy: ''
           #     instance_interruption_behavior: ''
           #     instance_pools_to_use_count: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
           # terminate_instances: false
+          # on_demand_options: 
+          #   -
+          #     allocation_strategy: ''
+          # replace_unhealthy_instances: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # terminate_instances_with_expiration: false
           # type: ''
           # excess_capacity_termination_policy: ''
-          # replace_unhealthy_instances: false
-          # on_demand_options:
-          #   -
-          #     allocation_strategy: ''
     output:
       id:
-        value: '${aws_ec2_fleet.{{ name }}.id}'
+        value: aws_ec2_fleet.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_fleet.{{ name }}.id}'
+        value: aws_ec2_fleet.{{ name }}.id

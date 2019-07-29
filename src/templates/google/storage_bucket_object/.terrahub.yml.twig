@@ -6,37 +6,37 @@
     resource:
       google_storage_bucket_object:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          name: '${var.{{ name }}_name}'
+          bucket: var.{{ name }}_bucket
+          name: var.{{ name }}_name
+          # content_disposition: ''
+          # content_encoding: ''
+          # predefined_acl: ''
+          # source: ''
+          # cache_control: ''
           # content_language: ''
+          # detect_md5hash: ''
           # content_type: ''
           # content: ''
-          # source: ''
-          # detect_md5hash: ''
-          # cache_control: ''
-          # content_disposition: ''
-          # predefined_acl: ''
-          # content_encoding: ''
           # storage_class: ''
     variable:
       {{ name }}_bucket:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_storage_bucket_object.{{ name }}.id}'
+        value: google_storage_bucket_object.{{ name }}.id
       thub_id:
-        value: '${google_storage_bucket_object.{{ name }}.id}'
-      content_type:
-        value: '${google_storage_bucket_object.{{ name }}.content_type}'
-      md5hash:
-        value: '${google_storage_bucket_object.{{ name }}.md5hash}'
-      output_name:
-        value: '${google_storage_bucket_object.{{ name }}.output_name}'
+        value: google_storage_bucket_object.{{ name }}.id
       crc32c:
-        value: '${google_storage_bucket_object.{{ name }}.crc32c}'
+        value: google_storage_bucket_object.{{ name }}.crc32c
+      output_name:
+        value: google_storage_bucket_object.{{ name }}.output_name
+      md5hash:
+        value: google_storage_bucket_object.{{ name }}.md5hash
       self_link:
-        value: '${google_storage_bucket_object.{{ name }}.self_link}'
+        value: google_storage_bucket_object.{{ name }}.self_link
+      content_type:
+        value: google_storage_bucket_object.{{ name }}.content_type
       storage_class:
-        value: '${google_storage_bucket_object.{{ name }}.storage_class}'
+        value: google_storage_bucket_object.{{ name }}.storage_class

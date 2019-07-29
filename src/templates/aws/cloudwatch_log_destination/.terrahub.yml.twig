@@ -8,20 +8,20 @@
     resource:
       aws_cloudwatch_log_destination:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          target_arn: '${var.{{ name }}_target_arn}'
+          target_arn: var.{{ name }}_target_arn
+          name: var.{{ name }}_name
+          role_arn: var.{{ name }}_role_arn
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_target_arn:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_role_arn:
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_log_destination.{{ name }}.id}'
+        value: aws_cloudwatch_log_destination.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_log_destination.{{ name }}.id}'
+        value: aws_cloudwatch_log_destination.{{ name }}.id
       arn:
-        value: '${aws_cloudwatch_log_destination.{{ name }}.arn}'
+        value: aws_cloudwatch_log_destination.{{ name }}.arn

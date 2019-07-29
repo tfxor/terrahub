@@ -7,31 +7,31 @@
     resource:
       azurerm_arm_eventhub_namespace:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          sku: '${var.{{ name }}_sku}'
-          # auto_inflate_enabled: false
-          # kafka_enabled: false
-          # capacity: 0
-          # maximum_throughput_units: 0
-          # tags:
+          name: var.{{ name }}_name
+          sku: var.{{ name }}_sku
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # kafka_enabled: false
+          # auto_inflate_enabled: false
+          # maximum_throughput_units: 0
+          # capacity: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_sku:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.id}'
+        value: azurerm_arm_eventhub_namespace.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.id}'
-      default_primary_connection_string:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_primary_connection_string}'
-      maximum_throughput_units:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.maximum_throughput_units}'
+        value: azurerm_arm_eventhub_namespace.{{ name }}.id
       default_secondary_connection_string:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_connection_string}'
+        value: azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_connection_string
       default_primary_key:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_primary_key}'
+        value: azurerm_arm_eventhub_namespace.{{ name }}.default_primary_key
+      maximum_throughput_units:
+        value: azurerm_arm_eventhub_namespace.{{ name }}.maximum_throughput_units
+      default_primary_connection_string:
+        value: azurerm_arm_eventhub_namespace.{{ name }}.default_primary_connection_string
       default_secondary_key:
-        value: '${azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_key}'
+        value: azurerm_arm_eventhub_namespace.{{ name }}.default_secondary_key

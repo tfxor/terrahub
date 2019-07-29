@@ -8,16 +8,16 @@
     resource:
       aws_load_balancer_listener_policy:
         {{ name }}:
-          load_balancer_name: '${var.{{ name }}_load_balancer_name}'
-          load_balancer_port: '${var.{{ name }}_load_balancer_port}'
+          load_balancer_name: var.{{ name }}_load_balancer_name
+          load_balancer_port: var.{{ name }}_load_balancer_port
           # policy_names: []
     variable:
       {{ name }}_load_balancer_name:
-        type: 'string'
+        type: string
       {{ name }}_load_balancer_port:
-        type: 'int'
+        type: int
     output:
       id:
-        value: '${aws_load_balancer_listener_policy.{{ name }}.id}'
+        value: aws_load_balancer_listener_policy.{{ name }}.id
       thub_id:
-        value: '${aws_load_balancer_listener_policy.{{ name }}.id}'
+        value: aws_load_balancer_listener_policy.{{ name }}.id

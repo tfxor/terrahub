@@ -7,25 +7,25 @@
     resource:
       azurerm_arm_log_analytics_workspace_linked_service:
         {{ name }}:
-          workspace_name: '${var.{{ name }}_workspace_name}'
+          workspace_name: var.{{ name }}_workspace_name
           # linked_service_name: ''
           # resource_id: ''
-          # linked_service_properties:
-          #   '[TO_BE_REPLACED]': ''
-          #   'resource_id': ''
-          # tags:
+          # linked_service_properties: 
+          #   -
+          #     resource_id: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_workspace_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.id}'
+        value: azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.id
       resource_id:
-        value: '${azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.resource_id}'
+        value: azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.resource_id
       linked_service_properties:
-        value: '${azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.linked_service_properties}'
+        value: azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.linked_service_properties
       name:
-        value: '${azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.name}'
+        value: azurerm_arm_log_analytics_workspace_linked_service.{{ name }}.name

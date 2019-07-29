@@ -8,46 +8,51 @@
     resource:
       aws_ecs_task_definition:
         {{ name }}:
-          family: '${var.{{ name }}_family}'
-          container_definitions: '${var.{{ name }}_container_definitions}'
-          # volume:
+          container_definitions: var.{{ name }}_container_definitions
+          family: var.{{ name }}_family
+          # ipc_mode: ''
+          # execution_role_arn: ''
+          # memory: ''
+          # volume: 
           #   name: ''
           #   host_path: ''
-          #   docker_volume_configuration:
+          #   docker_volume_configuration: 
           #     -
-          #       driver: ''
-          #       driver_opts:
+          #       driver_opts: 
           #           '[TO_BE_REPLACED]': ''
-          #       labels:
+          #       labels: 
           #           '[TO_BE_REPLACED]': ''
           #       scope: ''
           #       autoprovision: false
-          # placement_constraints:
+          #       driver: ''
+          # placement_constraints: 
           #   type: ''
           #   expression: ''
-          # execution_role_arn: ''
-          # memory: ''
-          # ipc_mode: ''
-          # task_role_arn: ''
-          # network_mode: ''
           # requires_compatibilities: []
           # cpu: ''
-          # pid_mode: ''
-          # tags:
+          # network_mode: ''
+          # proxy_configuration: 
+          #   -
+          #     container_name: ''
+          #     properties: 
+          #       '[TO_BE_REPLACED]': ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # task_role_arn: ''
+          # pid_mode: ''
     variable:
-      {{ name }}_family:
-        type: 'string'
       {{ name }}_container_definitions:
-        type: 'string'
+        type: string
+      {{ name }}_family:
+        type: string
     output:
       id:
-        value: '${aws_ecs_task_definition.{{ name }}.id}'
+        value: aws_ecs_task_definition.{{ name }}.id
       thub_id:
-        value: '${aws_ecs_task_definition.{{ name }}.id}'
+        value: aws_ecs_task_definition.{{ name }}.id
       revision:
-        value: '${aws_ecs_task_definition.{{ name }}.revision}'
+        value: aws_ecs_task_definition.{{ name }}.revision
       network_mode:
-        value: '${aws_ecs_task_definition.{{ name }}.network_mode}'
+        value: aws_ecs_task_definition.{{ name }}.network_mode
       arn:
-        value: '${aws_ecs_task_definition.{{ name }}.arn}'
+        value: aws_ecs_task_definition.{{ name }}.arn

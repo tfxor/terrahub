@@ -8,29 +8,32 @@
     resource:
       aws_ssm_parameter:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          value: '${var.{{ name }}_value}'
-          type: '${var.{{ name }}_type}'
-          # arn: ''
+          name: var.{{ name }}_name
+          type: var.{{ name }}_type
+          value: var.{{ name }}_value
+          # tier: ''
           # key_id: ''
-          # tags:
+          # overwrite: false
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''
-          # overwrite: false
+          # arn: ''
           # allowed_pattern: ''
     variable:
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_value:
-        type: 'string'
+        type: string
       {{ name }}_type:
-        type: 'string'
+        type: string
+      {{ name }}_value:
+        type: string
     output:
       id:
-        value: '${aws_ssm_parameter.{{ name }}.id}'
+        value: aws_ssm_parameter.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_parameter.{{ name }}.id}'
-      arn:
-        value: '${aws_ssm_parameter.{{ name }}.arn}'
+        value: aws_ssm_parameter.{{ name }}.id
       key_id:
-        value: '${aws_ssm_parameter.{{ name }}.key_id}'
+        value: aws_ssm_parameter.{{ name }}.key_id
+      version:
+        value: aws_ssm_parameter.{{ name }}.version
+      arn:
+        value: aws_ssm_parameter.{{ name }}.arn

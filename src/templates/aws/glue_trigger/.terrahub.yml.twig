@@ -8,31 +8,31 @@
     resource:
       aws_glue_trigger:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
-          actions:
+          name: var.{{ name }}_name
+          type: var.{{ name }}_type
+          actions: 
             -
               job_name: ''
-          #     arguments:
+          #     arguments: 
           #       '[TO_BE_REPLACED]': ''
           #     timeout: 0
-          name: '${var.{{ name }}_name}'
-          # schedule: ''
           # description: ''
           # enabled: false
-          # predicate:
+          # predicate: 
           #   -
-          #     conditions:
+          #     conditions: 
           #       -
           #         job_name: ''
           #         state: ''
           #         logical_operator: ''
+          # schedule: ''
     variable:
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_type:
+        type: string
     output:
       id:
-        value: '${aws_glue_trigger.{{ name }}.id}'
+        value: aws_glue_trigger.{{ name }}.id
       thub_id:
-        value: '${aws_glue_trigger.{{ name }}.id}'
+        value: aws_glue_trigger.{{ name }}.id

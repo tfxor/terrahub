@@ -8,14 +8,14 @@
     resource:
       aws_autoscaling_attachment:
         {{ name }}:
-          autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
-          # elb: ''
+          autoscaling_group_name: var.{{ name }}_autoscaling_group_name
           # alb_target_group_arn: ''
+          # elb: ''
     variable:
       {{ name }}_autoscaling_group_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_autoscaling_attachment.{{ name }}.id}'
+        value: aws_autoscaling_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_autoscaling_attachment.{{ name }}.id}'
+        value: aws_autoscaling_attachment.{{ name }}.id

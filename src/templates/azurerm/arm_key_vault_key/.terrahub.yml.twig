@@ -7,32 +7,40 @@
     resource:
       azurerm_arm_key_vault_key:
         {{ name }}:
-          key_opts: '${var.{{ name }}_key_opts}'
-          key_type: '${var.{{ name }}_key_type}'
-          key_size: '${var.{{ name }}_key_size}'
-          name: '${var.{{ name }}_name}'
-          vault_uri: '${var.{{ name }}_vault_uri}'
-          # tags:
+          key_type: var.{{ name }}_key_type
+          name: var.{{ name }}_name
+          key_opts: var.{{ name }}_key_opts
+          # vault_uri: ''
+          # curve: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # key_vault_id: ''
+          # key_size: 0
     variable:
-      {{ name }}_key_opts:
-        type: 'list'
       {{ name }}_key_type:
-        type: 'string'
-      {{ name }}_key_size:
-        type: 'int'
+        type: string
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_vault_uri:
-        type: 'string'
+        type: string
+      {{ name }}_key_opts:
+        type: list
     output:
       id:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.id}'
+        value: azurerm_arm_key_vault_key.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.id}'
+        value: azurerm_arm_key_vault_key.{{ name }}.id
+      vault_uri:
+        value: azurerm_arm_key_vault_key.{{ name }}.vault_uri
+      curve:
+        value: azurerm_arm_key_vault_key.{{ name }}.curve
+      y:
+        value: azurerm_arm_key_vault_key.{{ name }}.y
       n:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.n}'
+        value: azurerm_arm_key_vault_key.{{ name }}.n
       e:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.e}'
+        value: azurerm_arm_key_vault_key.{{ name }}.e
+      x:
+        value: azurerm_arm_key_vault_key.{{ name }}.x
+      key_vault_id:
+        value: azurerm_arm_key_vault_key.{{ name }}.key_vault_id
       version:
-        value: '${azurerm_arm_key_vault_key.{{ name }}.version}'
+        value: azurerm_arm_key_vault_key.{{ name }}.version

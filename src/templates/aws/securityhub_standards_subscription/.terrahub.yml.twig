@@ -8,12 +8,12 @@
     resource:
       aws_securityhub_standards_subscription:
         {{ name }}:
-          standards_arn: '${var.{{ name }}_standards_arn}'
+          standards_arn: var.{{ name }}_standards_arn
     variable:
       {{ name }}_standards_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_securityhub_standards_subscription.{{ name }}.id}'
+        value: aws_securityhub_standards_subscription.{{ name }}.id
       thub_id:
-        value: '${aws_securityhub_standards_subscription.{{ name }}.id}'
+        value: aws_securityhub_standards_subscription.{{ name }}.id

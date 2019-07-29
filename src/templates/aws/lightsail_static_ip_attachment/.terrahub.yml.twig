@@ -8,15 +8,15 @@
     resource:
       aws_lightsail_static_ip_attachment:
         {{ name }}:
-          instance_name: '${var.{{ name }}_instance_name}'
-          static_ip_name: '${var.{{ name }}_static_ip_name}'
+          static_ip_name: var.{{ name }}_static_ip_name
+          instance_name: var.{{ name }}_instance_name
     variable:
-      {{ name }}_instance_name:
-        type: 'string'
       {{ name }}_static_ip_name:
-        type: 'string'
+        type: string
+      {{ name }}_instance_name:
+        type: string
     output:
       id:
-        value: '${aws_lightsail_static_ip_attachment.{{ name }}.id}'
+        value: aws_lightsail_static_ip_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_lightsail_static_ip_attachment.{{ name }}.id}'
+        value: aws_lightsail_static_ip_attachment.{{ name }}.id

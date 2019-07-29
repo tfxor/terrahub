@@ -8,18 +8,21 @@
     resource:
       aws_appmesh_mesh:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # spec: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_appmesh_mesh.{{ name }}.id}'
+        value: aws_appmesh_mesh.{{ name }}.id
       thub_id:
-        value: '${aws_appmesh_mesh.{{ name }}.id}'
+        value: aws_appmesh_mesh.{{ name }}.id
       arn:
-        value: '${aws_appmesh_mesh.{{ name }}.arn}'
+        value: aws_appmesh_mesh.{{ name }}.arn
       created_date:
-        value: '${aws_appmesh_mesh.{{ name }}.created_date}'
+        value: aws_appmesh_mesh.{{ name }}.created_date
       last_updated_date:
-        value: '${aws_appmesh_mesh.{{ name }}.last_updated_date}'
+        value: aws_appmesh_mesh.{{ name }}.last_updated_date

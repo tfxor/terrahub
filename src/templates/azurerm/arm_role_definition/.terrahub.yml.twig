@@ -7,30 +7,30 @@
     resource:
       azurerm_arm_role_definition:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          scope: '${var.{{ name }}_scope}'
-          permissions:
+          name: var.{{ name }}_name
+          scope: var.{{ name }}_scope
+          permissions: 
             -
-          #     data_actions:
-          #     not_data_actions:
-          #     actions:
+          #     actions: 
           #       -
-          #     not_actions:
+          #     not_actions: 
           #       -
-          assignable_scopes: '${var.{{ name }}_assignable_scopes}'
+          #     data_actions: 
+          #     not_data_actions: 
+          assignable_scopes: var.{{ name }}_assignable_scopes
           # role_definition_id: ''
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_scope:
-        type: 'string'
+        type: string
       {{ name }}_assignable_scopes:
-        type: 'list'
+        type: list
     output:
       id:
-        value: '${azurerm_arm_role_definition.{{ name }}.id}'
+        value: azurerm_arm_role_definition.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_role_definition.{{ name }}.id}'
+        value: azurerm_arm_role_definition.{{ name }}.id
       role_definition_id:
-        value: '${azurerm_arm_role_definition.{{ name }}.role_definition_id}'
+        value: azurerm_arm_role_definition.{{ name }}.role_definition_id

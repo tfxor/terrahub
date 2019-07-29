@@ -7,38 +7,47 @@
     resource:
       azurerm_arm_traffic_manager_endpoint:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
-          profile_name: '${var.{{ name }}_profile_name}'
-          name: '${var.{{ name }}_name}'
-          # target: ''
-          # target_resource_id: ''
-          # min_child_endpoints: 0
-          # endpoint_status: ''
-          # weight: 0
-          # priority: 0
+          name: var.{{ name }}_name
+          profile_name: var.{{ name }}_profile_name
+          type: var.{{ name }}_type
           # endpoint_location: ''
           # geo_mappings: []
+          # subnet: 
+          #   -
+          #     first: ''
+          #     scope: 0
+          #     last: ''
+          # target_resource_id: ''
+          # endpoint_status: ''
+          # priority: 0
+          # min_child_endpoints: 0
+          # target: ''
+          # weight: 0
+          # custom_header: 
+          #   -
+          #     name: ''
+          #     value: ''
     variable:
-      {{ name }}_type:
-        type: 'string'
-      {{ name }}_profile_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_profile_name:
+        type: string
+      {{ name }}_type:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.id}'
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.id}'
-      target:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.target}'
-      endpoint_monitor_status:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_monitor_status}'
-      endpoint_status:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_status}'
-      weight:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.weight}'
-      priority:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.priority}'
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.id
       endpoint_location:
-        value: '${azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_location}'
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_location
+      endpoint_monitor_status:
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_monitor_status
+      endpoint_status:
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.endpoint_status
+      priority:
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.priority
+      target:
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.target
+      weight:
+        value: azurerm_arm_traffic_manager_endpoint.{{ name }}.weight

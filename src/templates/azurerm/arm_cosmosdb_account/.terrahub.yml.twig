@@ -1,0 +1,59 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_cosmosdb_account:
+        {{ name }}:
+          consistency_policy: 
+            -
+              consistency_level: ''
+          #     max_interval_in_seconds: 0
+          #     max_staleness_prefix: 0
+          offer_type: var.{{ name }}_offer_type
+          name: var.{{ name }}_name
+          # enable_multiple_write_locations: false
+          # kind: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enable_automatic_failover: false
+          # failover_policy: []
+          # virtual_network_rule: 
+          #   id: ''
+          # geo_location: 
+          #   failover_priority: 0
+          #   prefix: ''
+          # capabilities: 
+          #   name: ''
+          # is_virtual_network_filter_enabled: false
+          # ip_range_filter: ''
+    variable:
+      {{ name }}_offer_type:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.id
+      secondary_master_key:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.secondary_master_key
+      connection_strings:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.connection_strings
+      primary_readonly_master_key:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.primary_readonly_master_key
+      endpoint:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.endpoint
+      secondary_readonly_master_key:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.secondary_readonly_master_key
+      geo_location:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.geo_location
+      primary_master_key:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.primary_master_key
+      read_endpoints:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.read_endpoints
+      write_endpoints:
+        value: azurerm_arm_cosmosdb_account.{{ name }}.write_endpoints

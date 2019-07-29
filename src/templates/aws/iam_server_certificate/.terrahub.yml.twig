@@ -8,24 +8,24 @@
     resource:
       aws_iam_server_certificate:
         {{ name }}:
-          certificate_body: '${var.{{ name }}_certificate_body}'
-          private_key: '${var.{{ name }}_private_key}'
-          # certificate_chain: ''
-          # path: ''
+          certificate_body: var.{{ name }}_certificate_body
+          private_key: var.{{ name }}_private_key
           # name: ''
           # name_prefix: ''
           # arn: ''
+          # certificate_chain: ''
+          # path: ''
     variable:
       {{ name }}_certificate_body:
-        type: 'string'
+        type: string
       {{ name }}_private_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_server_certificate.{{ name }}.id}'
+        value: aws_iam_server_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_iam_server_certificate.{{ name }}.id}'
+        value: aws_iam_server_certificate.{{ name }}.id
       name:
-        value: '${aws_iam_server_certificate.{{ name }}.name}'
+        value: aws_iam_server_certificate.{{ name }}.name
       arn:
-        value: '${aws_iam_server_certificate.{{ name }}.arn}'
+        value: aws_iam_server_certificate.{{ name }}.arn

@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_api_operation:
+        {{ name }}:
+          method: var.{{ name }}_method
+          url_template: var.{{ name }}_url_template
+          display_name: var.{{ name }}_display_name
+          # description: ''
+          # request: 
+          #   -
+          #     description: ''
+          # response: 
+          #   -
+          #     status_code: 0
+          #     description: ''
+    variable:
+      {{ name }}_method:
+        type: string
+      {{ name }}_url_template:
+        type: string
+      {{ name }}_display_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_api_operation.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_api_operation.{{ name }}.id
+      request:
+        value: azurerm_arm_api_management_api_operation.{{ name }}.request

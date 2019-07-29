@@ -8,18 +8,18 @@
     resource:
       aws_autoscaling_notification:
         {{ name }}:
-          topic_arn: '${var.{{ name }}_topic_arn}'
-          group_names: '${var.{{ name }}_group_names}'
-          notifications: '${var.{{ name }}_notifications}'
+          notifications: var.{{ name }}_notifications
+          topic_arn: var.{{ name }}_topic_arn
+          group_names: var.{{ name }}_group_names
     variable:
-      {{ name }}_topic_arn:
-        type: 'string'
-      {{ name }}_group_names:
-        type: 'set'
       {{ name }}_notifications:
-        type: 'set'
+        type: set
+      {{ name }}_topic_arn:
+        type: string
+      {{ name }}_group_names:
+        type: set
     output:
       id:
-        value: '${aws_autoscaling_notification.{{ name }}.id}'
+        value: aws_autoscaling_notification.{{ name }}.id
       thub_id:
-        value: '${aws_autoscaling_notification.{{ name }}.id}'
+        value: aws_autoscaling_notification.{{ name }}.id

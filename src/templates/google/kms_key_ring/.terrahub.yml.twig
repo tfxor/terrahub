@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_kms_key_ring:
+        {{ name }}:
+          location: var.{{ name }}_location
+          name: var.{{ name }}_name
+          # project: ''
+    variable:
+      {{ name }}_location:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: google_kms_key_ring.{{ name }}.id
+      thub_id:
+        value: google_kms_key_ring.{{ name }}.id
+      self_link:
+        value: google_kms_key_ring.{{ name }}.self_link
+      project:
+        value: google_kms_key_ring.{{ name }}.project

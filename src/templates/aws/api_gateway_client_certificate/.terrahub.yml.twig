@@ -11,12 +11,12 @@
           # description: ''
     output:
       id:
-        value: '${aws_api_gateway_client_certificate.{{ name }}.id}'
+        value: aws_api_gateway_client_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_client_certificate.{{ name }}.id}'
+        value: aws_api_gateway_client_certificate.{{ name }}.id
       created_date:
-        value: '${aws_api_gateway_client_certificate.{{ name }}.created_date}'
+        value: aws_api_gateway_client_certificate.{{ name }}.created_date
       expiration_date:
-        value: '${aws_api_gateway_client_certificate.{{ name }}.expiration_date}'
+        value: aws_api_gateway_client_certificate.{{ name }}.expiration_date
       pem_encoded_certificate:
-        value: '${aws_api_gateway_client_certificate.{{ name }}.pem_encoded_certificate}'
+        value: aws_api_gateway_client_certificate.{{ name }}.pem_encoded_certificate

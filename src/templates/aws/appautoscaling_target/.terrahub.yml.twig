@@ -8,27 +8,27 @@
     resource:
       aws_appautoscaling_target:
         {{ name }}:
-          scalable_dimension: '${var.{{ name }}_scalable_dimension}'
-          service_namespace: '${var.{{ name }}_service_namespace}'
-          max_capacity: '${var.{{ name }}_max_capacity}'
-          min_capacity: '${var.{{ name }}_min_capacity}'
-          resource_id: '${var.{{ name }}_resource_id}'
+          resource_id: var.{{ name }}_resource_id
+          scalable_dimension: var.{{ name }}_scalable_dimension
+          service_namespace: var.{{ name }}_service_namespace
+          max_capacity: var.{{ name }}_max_capacity
+          min_capacity: var.{{ name }}_min_capacity
           # role_arn: ''
     variable:
-      {{ name }}_scalable_dimension:
-        type: 'string'
-      {{ name }}_service_namespace:
-        type: 'string'
-      {{ name }}_max_capacity:
-        type: 'int'
-      {{ name }}_min_capacity:
-        type: 'int'
       {{ name }}_resource_id:
-        type: 'string'
+        type: string
+      {{ name }}_scalable_dimension:
+        type: string
+      {{ name }}_service_namespace:
+        type: string
+      {{ name }}_max_capacity:
+        type: int
+      {{ name }}_min_capacity:
+        type: int
     output:
       id:
-        value: '${aws_appautoscaling_target.{{ name }}.id}'
+        value: aws_appautoscaling_target.{{ name }}.id
       thub_id:
-        value: '${aws_appautoscaling_target.{{ name }}.id}'
+        value: aws_appautoscaling_target.{{ name }}.id
       role_arn:
-        value: '${aws_appautoscaling_target.{{ name }}.role_arn}'
+        value: aws_appautoscaling_target.{{ name }}.role_arn

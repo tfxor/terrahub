@@ -8,20 +8,20 @@
     resource:
       aws_athena_database:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          bucket: '${var.{{ name }}_bucket}'
-          # force_destroy: false
-          # encryption_configuration:
+          name: var.{{ name }}_name
+          bucket: var.{{ name }}_bucket
+          # encryption_configuration: 
           #   -
           #     encryption_option: ''
           #     kms_key: ''
+          # force_destroy: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_bucket:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_athena_database.{{ name }}.id}'
+        value: aws_athena_database.{{ name }}.id
       thub_id:
-        value: '${aws_athena_database.{{ name }}.id}'
+        value: aws_athena_database.{{ name }}.id

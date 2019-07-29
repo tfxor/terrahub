@@ -6,15 +6,15 @@
     resource:
       google_dataproc_cluster:
         {{ name }}:
-          accelerator_count: '${var.{{ name }}_accelerator_count}'
-          accelerator_type: '${var.{{ name }}_accelerator_type}'
+          accelerator_type: var.{{ name }}_accelerator_type
+          accelerator_count: var.{{ name }}_accelerator_count
     variable:
-      {{ name }}_accelerator_count:
-        type: 'int'
       {{ name }}_accelerator_type:
-        type: 'string'
+        type: string
+      {{ name }}_accelerator_count:
+        type: int
     output:
       id:
-        value: '${google_dataproc_cluster.{{ name }}.id}'
+        value: google_dataproc_cluster.{{ name }}.id
       thub_id:
-        value: '${google_dataproc_cluster.{{ name }}.id}'
+        value: google_dataproc_cluster.{{ name }}.id

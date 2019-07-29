@@ -1,0 +1,57 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_api:
+        {{ name }}:
+          path: var.{{ name }}_path
+          protocols: var.{{ name }}_protocols
+          revision: var.{{ name }}_revision
+          name: var.{{ name }}_name
+          display_name: var.{{ name }}_display_name
+          # import: 
+          #   -
+          #     content_value: ''
+          #     content_format: ''
+          #     wsdl_selector: 
+          #       -
+          #         service_name: ''
+          #         endpoint_name: ''
+          # description: ''
+          # service_url: ''
+          # subscription_key_parameter_names: 
+          #   -
+          #     header: ''
+          #     query: ''
+          # soap_pass_through: false
+    variable:
+      {{ name }}_path:
+        type: string
+      {{ name }}_protocols:
+        type: set
+      {{ name }}_revision:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_display_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_api.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_api.{{ name }}.id
+      version:
+        value: azurerm_arm_api_management_api.{{ name }}.version
+      version_set_id:
+        value: azurerm_arm_api_management_api.{{ name }}.version_set_id
+      service_url:
+        value: azurerm_arm_api_management_api.{{ name }}.service_url
+      subscription_key_parameter_names:
+        value: azurerm_arm_api_management_api.{{ name }}.subscription_key_parameter_names
+      is_current:
+        value: azurerm_arm_api_management_api.{{ name }}.is_current
+      is_online:
+        value: azurerm_arm_api_management_api.{{ name }}.is_online

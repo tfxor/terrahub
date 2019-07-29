@@ -8,40 +8,46 @@
     resource:
       aws_vpc_endpoint:
         {{ name }}:
-          service_name: '${var.{{ name }}_service_name}'
-          vpc_id: '${var.{{ name }}_vpc_id}'
-          # auto_accept: false
+          service_name: var.{{ name }}_service_name
+          vpc_id: var.{{ name }}_vpc_id
           # route_table_ids: []
           # security_group_ids: []
-          # private_dns_enabled: false
           # vpc_endpoint_type: ''
+          # private_dns_enabled: false
           # policy: ''
           # subnet_ids: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # auto_accept: false
     variable:
       {{ name }}_service_name:
-        type: 'string'
+        type: string
       {{ name }}_vpc_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_vpc_endpoint.{{ name }}.id}'
+        value: aws_vpc_endpoint.{{ name }}.id
       thub_id:
-        value: '${aws_vpc_endpoint.{{ name }}.id}'
+        value: aws_vpc_endpoint.{{ name }}.id
       route_table_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.route_table_ids}'
+        value: aws_vpc_endpoint.{{ name }}.route_table_ids
       security_group_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.security_group_ids}'
+        value: aws_vpc_endpoint.{{ name }}.security_group_ids
       state:
-        value: '${aws_vpc_endpoint.{{ name }}.state}'
-      cidr_blocks:
-        value: '${aws_vpc_endpoint.{{ name }}.cidr_blocks}'
-      dns_entry:
-        value: '${aws_vpc_endpoint.{{ name }}.dns_entry}'
-      policy:
-        value: '${aws_vpc_endpoint.{{ name }}.policy}'
-      prefix_list_id:
-        value: '${aws_vpc_endpoint.{{ name }}.prefix_list_id}'
-      subnet_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.subnet_ids}'
+        value: aws_vpc_endpoint.{{ name }}.state
       network_interface_ids:
-        value: '${aws_vpc_endpoint.{{ name }}.network_interface_ids}'
+        value: aws_vpc_endpoint.{{ name }}.network_interface_ids
+      policy:
+        value: aws_vpc_endpoint.{{ name }}.policy
+      subnet_ids:
+        value: aws_vpc_endpoint.{{ name }}.subnet_ids
+      cidr_blocks:
+        value: aws_vpc_endpoint.{{ name }}.cidr_blocks
+      owner_id:
+        value: aws_vpc_endpoint.{{ name }}.owner_id
+      prefix_list_id:
+        value: aws_vpc_endpoint.{{ name }}.prefix_list_id
+      requester_managed:
+        value: aws_vpc_endpoint.{{ name }}.requester_managed
+      dns_entry:
+        value: aws_vpc_endpoint.{{ name }}.dns_entry

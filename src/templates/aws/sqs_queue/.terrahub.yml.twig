@@ -8,29 +8,29 @@
     resource:
       aws_sqs_queue:
         {{ name }}:
-          # kms_master_key_id: ''
+          # visibility_timeout_seconds: 0
+          # redrive_policy: ''
+          # delay_seconds: 0
+          # message_retention_seconds: 0
+          # policy: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
           # name_prefix: ''
           # receive_wait_time_seconds: 0
-          # visibility_timeout_seconds: 0
-          # name: ''
-          # policy: ''
-          # redrive_policy: ''
+          # kms_master_key_id: ''
           # kms_data_key_reuse_period_seconds: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # delay_seconds: 0
           # max_message_size: 0
-          # message_retention_seconds: 0
     output:
       id:
-        value: '${aws_sqs_queue.{{ name }}.id}'
+        value: aws_sqs_queue.{{ name }}.id
       thub_id:
-        value: '${aws_sqs_queue.{{ name }}.id}'
-      arn:
-        value: '${aws_sqs_queue.{{ name }}.arn}'
-      name:
-        value: '${aws_sqs_queue.{{ name }}.name}'
+        value: aws_sqs_queue.{{ name }}.id
       policy:
-        value: '${aws_sqs_queue.{{ name }}.policy}'
+        value: aws_sqs_queue.{{ name }}.policy
+      name:
+        value: aws_sqs_queue.{{ name }}.name
       kms_data_key_reuse_period_seconds:
-        value: '${aws_sqs_queue.{{ name }}.kms_data_key_reuse_period_seconds}'
+        value: aws_sqs_queue.{{ name }}.kms_data_key_reuse_period_seconds
+      arn:
+        value: aws_sqs_queue.{{ name }}.arn

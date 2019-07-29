@@ -8,16 +8,16 @@
     resource:
       aws_dms_certificate:
         {{ name }}:
-          certificate_id: '${var.{{ name }}_certificate_id}'
+          certificate_id: var.{{ name }}_certificate_id
           # certificate_pem: ''
           # certificate_wallet: ''
     variable:
       {{ name }}_certificate_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_dms_certificate.{{ name }}.id}'
+        value: aws_dms_certificate.{{ name }}.id
       thub_id:
-        value: '${aws_dms_certificate.{{ name }}.id}'
+        value: aws_dms_certificate.{{ name }}.id
       certificate_arn:
-        value: '${aws_dms_certificate.{{ name }}.certificate_arn}'
+        value: aws_dms_certificate.{{ name }}.certificate_arn

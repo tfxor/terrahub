@@ -7,15 +7,15 @@
     resource:
       azurerm_arm_storage_queue:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          storage_account_name: '${var.{{ name }}_storage_account_name}'
+          name: var.{{ name }}_name
+          storage_account_name: var.{{ name }}_storage_account_name
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_storage_account_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_storage_queue.{{ name }}.id}'
+        value: azurerm_arm_storage_queue.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_storage_queue.{{ name }}.id}'
+        value: azurerm_arm_storage_queue.{{ name }}.id

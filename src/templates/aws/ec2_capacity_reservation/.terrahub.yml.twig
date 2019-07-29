@@ -8,29 +8,29 @@
     resource:
       aws_ec2_capacity_reservation:
         {{ name }}:
-          instance_platform: '${var.{{ name }}_instance_platform}'
-          availability_zone: '${var.{{ name }}_availability_zone}'
-          instance_count: '${var.{{ name }}_instance_count}'
-          instance_type: '${var.{{ name }}_instance_type}'
-          # end_date_type: ''
+          availability_zone: var.{{ name }}_availability_zone
+          instance_count: var.{{ name }}_instance_count
+          instance_platform: var.{{ name }}_instance_platform
+          instance_type: var.{{ name }}_instance_type
+          # ephemeral_storage: false
           # instance_match_criteria: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
           # tenancy: ''
           # ebs_optimized: false
           # end_date: ''
-          # ephemeral_storage: false
+          # end_date_type: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_instance_platform:
-        type: 'string'
       {{ name }}_availability_zone:
-        type: 'string'
+        type: string
       {{ name }}_instance_count:
-        type: 'int'
+        type: int
+      {{ name }}_instance_platform:
+        type: string
       {{ name }}_instance_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ec2_capacity_reservation.{{ name }}.id}'
+        value: aws_ec2_capacity_reservation.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_capacity_reservation.{{ name }}.id}'
+        value: aws_ec2_capacity_reservation.{{ name }}.id

@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_stream_analytics_function_javascript_udf:
+        {{ name }}:
+          script: var.{{ name }}_script
+          name: var.{{ name }}_name
+          stream_analytics_job_name: var.{{ name }}_stream_analytics_job_name
+          input: 
+            -
+              type: ''
+          output: 
+            -
+              type: ''
+    variable:
+      {{ name }}_script:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_stream_analytics_job_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_stream_analytics_function_javascript_udf.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_stream_analytics_function_javascript_udf.{{ name }}.id

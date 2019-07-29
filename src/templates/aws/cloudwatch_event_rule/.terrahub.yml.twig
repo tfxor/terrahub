@@ -8,19 +8,21 @@
     resource:
       aws_cloudwatch_event_rule:
         {{ name }}:
-          # is_enabled: false
-          # name: ''
-          # name_prefix: ''
-          # schedule_expression: ''
           # event_pattern: ''
           # description: ''
+          # is_enabled: false
+          # schedule_expression: ''
+          # name_prefix: ''
           # role_arn: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # name: ''
     output:
       id:
-        value: '${aws_cloudwatch_event_rule.{{ name }}.id}'
+        value: aws_cloudwatch_event_rule.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_event_rule.{{ name }}.id}'
+        value: aws_cloudwatch_event_rule.{{ name }}.id
       arn:
-        value: '${aws_cloudwatch_event_rule.{{ name }}.arn}'
+        value: aws_cloudwatch_event_rule.{{ name }}.arn
       name:
-        value: '${aws_cloudwatch_event_rule.{{ name }}.name}'
+        value: aws_cloudwatch_event_rule.{{ name }}.name

@@ -7,34 +7,34 @@
     resource:
       azurerm_arm_sql_elasticpool:
         {{ name }}:
-          server_name: '${var.{{ name }}_server_name}'
-          edition: '${var.{{ name }}_edition}'
-          dtu: '${var.{{ name }}_dtu}'
-          name: '${var.{{ name }}_name}'
+          server_name: var.{{ name }}_server_name
+          edition: var.{{ name }}_edition
+          dtu: var.{{ name }}_dtu
+          name: var.{{ name }}_name
+          # db_dtu_min: 0
           # db_dtu_max: 0
           # pool_size: 0
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # db_dtu_min: 0
     variable:
       {{ name }}_server_name:
-        type: 'string'
+        type: string
       {{ name }}_edition:
-        type: 'string'
+        type: string
       {{ name }}_dtu:
-        type: 'int'
+        type: int
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.id}'
+        value: azurerm_arm_sql_elasticpool.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.id}'
-      db_dtu_max:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_max}'
-      pool_size:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.pool_size}'
-      creation_date:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.creation_date}'
+        value: azurerm_arm_sql_elasticpool.{{ name }}.id
       db_dtu_min:
-        value: '${azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_min}'
+        value: azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_min
+      db_dtu_max:
+        value: azurerm_arm_sql_elasticpool.{{ name }}.db_dtu_max
+      creation_date:
+        value: azurerm_arm_sql_elasticpool.{{ name }}.creation_date
+      pool_size:
+        value: azurerm_arm_sql_elasticpool.{{ name }}.pool_size

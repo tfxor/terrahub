@@ -8,16 +8,16 @@
     resource:
       aws_ses_domain_mail_from:
         {{ name }}:
-          domain: '${var.{{ name }}_domain}'
-          mail_from_domain: '${var.{{ name }}_mail_from_domain}'
+          domain: var.{{ name }}_domain
+          mail_from_domain: var.{{ name }}_mail_from_domain
           # behavior_on_mx_failure: ''
     variable:
       {{ name }}_domain:
-        type: 'string'
+        type: string
       {{ name }}_mail_from_domain:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_domain_mail_from.{{ name }}.id}'
+        value: aws_ses_domain_mail_from.{{ name }}.id
       thub_id:
-        value: '${aws_ses_domain_mail_from.{{ name }}.id}'
+        value: aws_ses_domain_mail_from.{{ name }}.id

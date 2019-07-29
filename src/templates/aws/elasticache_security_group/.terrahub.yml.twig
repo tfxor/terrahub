@@ -8,16 +8,16 @@
     resource:
       aws_elasticache_security_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          security_group_names: '${var.{{ name }}_security_group_names}'
+          name: var.{{ name }}_name
+          security_group_names: var.{{ name }}_security_group_names
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_security_group_names:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_elasticache_security_group.{{ name }}.id}'
+        value: aws_elasticache_security_group.{{ name }}.id
       thub_id:
-        value: '${aws_elasticache_security_group.{{ name }}.id}'
+        value: aws_elasticache_security_group.{{ name }}.id

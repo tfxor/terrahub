@@ -8,30 +8,34 @@
     resource:
       aws_vpc_endpoint_service:
         {{ name }}:
-          acceptance_required: '${var.{{ name }}_acceptance_required}'
-          network_load_balancer_arns: '${var.{{ name }}_network_load_balancer_arns}'
+          network_load_balancer_arns: var.{{ name }}_network_load_balancer_arns
+          acceptance_required: var.{{ name }}_acceptance_required
           # allowed_principals: []
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_acceptance_required:
-        type: 'bool'
       {{ name }}_network_load_balancer_arns:
-        type: 'set'
+        type: set
+      {{ name }}_acceptance_required:
+        type: bool
     output:
       id:
-        value: '${aws_vpc_endpoint_service.{{ name }}.id}'
+        value: aws_vpc_endpoint_service.{{ name }}.id
       thub_id:
-        value: '${aws_vpc_endpoint_service.{{ name }}.id}'
-      service_name:
-        value: '${aws_vpc_endpoint_service.{{ name }}.service_name}'
+        value: aws_vpc_endpoint_service.{{ name }}.id
       allowed_principals:
-        value: '${aws_vpc_endpoint_service.{{ name }}.allowed_principals}'
-      state:
-        value: '${aws_vpc_endpoint_service.{{ name }}.state}'
-      service_type:
-        value: '${aws_vpc_endpoint_service.{{ name }}.service_type}'
+        value: aws_vpc_endpoint_service.{{ name }}.allowed_principals
       availability_zones:
-        value: '${aws_vpc_endpoint_service.{{ name }}.availability_zones}'
-      private_dns_name:
-        value: '${aws_vpc_endpoint_service.{{ name }}.private_dns_name}'
+        value: aws_vpc_endpoint_service.{{ name }}.availability_zones
       base_endpoint_dns_names:
-        value: '${aws_vpc_endpoint_service.{{ name }}.base_endpoint_dns_names}'
+        value: aws_vpc_endpoint_service.{{ name }}.base_endpoint_dns_names
+      manages_vpc_endpoints:
+        value: aws_vpc_endpoint_service.{{ name }}.manages_vpc_endpoints
+      private_dns_name:
+        value: aws_vpc_endpoint_service.{{ name }}.private_dns_name
+      service_name:
+        value: aws_vpc_endpoint_service.{{ name }}.service_name
+      service_type:
+        value: aws_vpc_endpoint_service.{{ name }}.service_type
+      state:
+        value: aws_vpc_endpoint_service.{{ name }}.state

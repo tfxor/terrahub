@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_access_context_manager_service_perimeter:
+        {{ name }}:
+          parent: var.{{ name }}_parent
+          title: var.{{ name }}_title
+          name: var.{{ name }}_name
+          # description: ''
+          # perimeter_type: ''
+          # status: 
+          #   -
+          #     restricted_services: 
+          #       -
+          #     access_levels: 
+          #       -
+          #     resources: 
+          #       -
+    variable:
+      {{ name }}_parent:
+        type: string
+      {{ name }}_title:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: google_access_context_manager_service_perimeter.{{ name }}.id
+      thub_id:
+        value: google_access_context_manager_service_perimeter.{{ name }}.id
+      create_time:
+        value: google_access_context_manager_service_perimeter.{{ name }}.create_time
+      update_time:
+        value: google_access_context_manager_service_perimeter.{{ name }}.update_time

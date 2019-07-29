@@ -8,76 +8,76 @@
     resource:
       aws_iot_topic_rule:
         {{ name }}:
-          sql_version: '${var.{{ name }}_sql_version}'
-          enabled: '${var.{{ name }}_enabled}'
-          sql: '${var.{{ name }}_sql}'
-          name: '${var.{{ name }}_name}'
-          # s3:
-          #   bucket_name: ''
-          #   key: ''
-          #   role_arn: ''
-          # elasticsearch:
-          #   index: ''
-          #   role_arn: ''
-          #   type: ''
-          #   endpoint: ''
-          #   id: ''
-          # republish:
-          #   role_arn: ''
-          #   topic: ''
-          # dynamodb:
-          #   hash_key_field: ''
-          #   range_key_field: ''
-          #   role_arn: ''
-          #   hash_key_value: ''
-          #   range_key_value: ''
-          #   table_name: ''
-          #   payload_field: ''
-          #   range_key_type: ''
-          #   hash_key_type: ''
-          # description: ''
-          # cloudwatch_alarm:
-          #   role_arn: ''
-          #   state_reason: ''
-          #   state_value: ''
-          #   alarm_name: ''
-          # kinesis:
-          #   role_arn: ''
-          #   stream_name: ''
-          #   partition_key: ''
-          # lambda:
-          #   function_arn: ''
-          # sns:
-          #   target_arn: ''
-          #   role_arn: ''
-          # cloudwatch_metric:
-          #   metric_name: ''
-          #   metric_namespace: ''
-          #   metric_unit: ''
-          #   metric_value: ''
-          #   role_arn: ''
-          #   metric_timestamp: ''
-          # firehose:
+          enabled: var.{{ name }}_enabled
+          sql_version: var.{{ name }}_sql_version
+          name: var.{{ name }}_name
+          sql: var.{{ name }}_sql
+          # firehose: 
           #   delivery_stream_name: ''
           #   role_arn: ''
           #   separator: ''
-          # sqs:
-          #   use_base64: false
+          # republish: 
+          #   role_arn: ''
+          #   topic: ''
+          # sqs: 
           #   queue_url: ''
           #   role_arn: ''
+          #   use_base64: false
+          # description: ''
+          # dynamodb: 
+          #   hash_key_value: ''
+          #   hash_key_field: ''
+          #   role_arn: ''
+          #   table_name: ''
+          #   hash_key_type: ''
+          #   range_key_field: ''
+          #   range_key_value: ''
+          #   range_key_type: ''
+          #   payload_field: ''
+          # cloudwatch_metric: 
+          #   metric_value: ''
+          #   role_arn: ''
+          #   metric_name: ''
+          #   metric_namespace: ''
+          #   metric_unit: ''
+          #   metric_timestamp: ''
+          # kinesis: 
+          #   role_arn: ''
+          #   stream_name: ''
+          #   partition_key: ''
+          # cloudwatch_alarm: 
+          #   alarm_name: ''
+          #   role_arn: ''
+          #   state_reason: ''
+          #   state_value: ''
+          # elasticsearch: 
+          #   endpoint: ''
+          #   id: ''
+          #   index: ''
+          #   role_arn: ''
+          #   type: ''
+          # lambda: 
+          #   function_arn: ''
+          # s3: 
+          #   bucket_name: ''
+          #   key: ''
+          #   role_arn: ''
+          # sns: 
+          #   target_arn: ''
+          #   role_arn: ''
     variable:
-      {{ name }}_sql_version:
-        type: 'string'
       {{ name }}_enabled:
-        type: 'bool'
-      {{ name }}_sql:
-        type: 'string'
+        type: bool
+      {{ name }}_sql_version:
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_sql:
+        type: string
     output:
       id:
-        value: '${aws_iot_topic_rule.{{ name }}.id}'
+        value: aws_iot_topic_rule.{{ name }}.id
       thub_id:
-        value: '${aws_iot_topic_rule.{{ name }}.id}'
+        value: aws_iot_topic_rule.{{ name }}.id
       arn:
-        value: '${aws_iot_topic_rule.{{ name }}.arn}'
+        value: aws_iot_topic_rule.{{ name }}.arn

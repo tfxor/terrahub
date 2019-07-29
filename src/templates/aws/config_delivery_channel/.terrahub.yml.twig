@@ -8,18 +8,18 @@
     resource:
       aws_config_delivery_channel:
         {{ name }}:
-          s3_bucket_name: '${var.{{ name }}_s3_bucket_name}'
-          # s3_key_prefix: ''
-          # sns_topic_arn: ''
-          # snapshot_delivery_properties:
+          s3_bucket_name: var.{{ name }}_s3_bucket_name
+          # snapshot_delivery_properties: 
           #   -
           #     delivery_frequency: ''
           # name: ''
+          # s3_key_prefix: ''
+          # sns_topic_arn: ''
     variable:
       {{ name }}_s3_bucket_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_config_delivery_channel.{{ name }}.id}'
+        value: aws_config_delivery_channel.{{ name }}.id
       thub_id:
-        value: '${aws_config_delivery_channel.{{ name }}.id}'
+        value: aws_config_delivery_channel.{{ name }}.id

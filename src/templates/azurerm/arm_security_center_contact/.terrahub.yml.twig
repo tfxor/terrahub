@@ -7,21 +7,19 @@
     resource:
       azurerm_arm_security_center_contact:
         {{ name }}:
-          email: '${var.{{ name }}_email}'
-          phone: '${var.{{ name }}_phone}'
-          alert_notifications: '${var.{{ name }}_alert_notifications}'
-          alerts_to_admins: '${var.{{ name }}_alerts_to_admins}'
+          email: var.{{ name }}_email
+          alert_notifications: var.{{ name }}_alert_notifications
+          alerts_to_admins: var.{{ name }}_alerts_to_admins
+          # phone: ''
     variable:
       {{ name }}_email:
-        type: 'string'
-      {{ name }}_phone:
-        type: 'string'
+        type: string
       {{ name }}_alert_notifications:
-        type: 'bool'
+        type: bool
       {{ name }}_alerts_to_admins:
-        type: 'bool'
+        type: bool
     output:
       id:
-        value: '${azurerm_arm_security_center_contact.{{ name }}.id}'
+        value: azurerm_arm_security_center_contact.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_security_center_contact.{{ name }}.id}'
+        value: azurerm_arm_security_center_contact.{{ name }}.id

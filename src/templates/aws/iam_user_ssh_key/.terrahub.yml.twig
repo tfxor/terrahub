@@ -8,25 +8,25 @@
     resource:
       aws_iam_user_ssh_key:
         {{ name }}:
-          username: '${var.{{ name }}_username}'
-          public_key: '${var.{{ name }}_public_key}'
-          encoding: '${var.{{ name }}_encoding}'
+          encoding: var.{{ name }}_encoding
+          username: var.{{ name }}_username
+          public_key: var.{{ name }}_public_key
           # status: ''
     variable:
-      {{ name }}_username:
-        type: 'string'
-      {{ name }}_public_key:
-        type: 'string'
       {{ name }}_encoding:
-        type: 'string'
+        type: string
+      {{ name }}_username:
+        type: string
+      {{ name }}_public_key:
+        type: string
     output:
       id:
-        value: '${aws_iam_user_ssh_key.{{ name }}.id}'
+        value: aws_iam_user_ssh_key.{{ name }}.id
       thub_id:
-        value: '${aws_iam_user_ssh_key.{{ name }}.id}'
-      ssh_public_key_id:
-        value: '${aws_iam_user_ssh_key.{{ name }}.ssh_public_key_id}'
-      fingerprint:
-        value: '${aws_iam_user_ssh_key.{{ name }}.fingerprint}'
+        value: aws_iam_user_ssh_key.{{ name }}.id
       status:
-        value: '${aws_iam_user_ssh_key.{{ name }}.status}'
+        value: aws_iam_user_ssh_key.{{ name }}.status
+      ssh_public_key_id:
+        value: aws_iam_user_ssh_key.{{ name }}.ssh_public_key_id
+      fingerprint:
+        value: aws_iam_user_ssh_key.{{ name }}.fingerprint

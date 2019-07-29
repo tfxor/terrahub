@@ -8,16 +8,16 @@
     resource:
       aws_api_gateway_documentation_version:
         {{ name }}:
-          version: '${var.{{ name }}_version}'
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          version: var.{{ name }}_version
+          rest_api_id: var.{{ name }}_rest_api_id
           # description: ''
     variable:
       {{ name }}_version:
-        type: 'string'
+        type: string
       {{ name }}_rest_api_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_documentation_version.{{ name }}.id}'
+        value: aws_api_gateway_documentation_version.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_documentation_version.{{ name }}.id}'
+        value: aws_api_gateway_documentation_version.{{ name }}.id

@@ -6,36 +6,36 @@
     resource:
       google_bigtable_instance:
         {{ name }}:
-          cluster:
-            zone: ''
+          name: var.{{ name }}_name
+          cluster: 
             cluster_id: ''
+            zone: ''
           #   num_nodes: 0
           #   storage_type: ''
-          name: '${var.{{ name }}_name}'
-          # display_name: ''
-          # instance_type: ''
+          # num_nodes: 0
           # storage_type: ''
+          # instance_type: ''
           # project: ''
           # cluster_id: ''
           # zone: ''
-          # num_nodes: 0
+          # display_name: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_bigtable_instance.{{ name }}.id}'
+        value: google_bigtable_instance.{{ name }}.id
       thub_id:
-        value: '${google_bigtable_instance.{{ name }}.id}'
-      display_name:
-        value: '${google_bigtable_instance.{{ name }}.display_name}'
-      storage_type:
-        value: '${google_bigtable_instance.{{ name }}.storage_type}'
-      project:
-        value: '${google_bigtable_instance.{{ name }}.project}'
-      cluster_id:
-        value: '${google_bigtable_instance.{{ name }}.cluster_id}'
-      zone:
-        value: '${google_bigtable_instance.{{ name }}.zone}'
+        value: google_bigtable_instance.{{ name }}.id
       num_nodes:
-        value: '${google_bigtable_instance.{{ name }}.num_nodes}'
+        value: google_bigtable_instance.{{ name }}.num_nodes
+      storage_type:
+        value: google_bigtable_instance.{{ name }}.storage_type
+      project:
+        value: google_bigtable_instance.{{ name }}.project
+      cluster_id:
+        value: google_bigtable_instance.{{ name }}.cluster_id
+      zone:
+        value: google_bigtable_instance.{{ name }}.zone
+      display_name:
+        value: google_bigtable_instance.{{ name }}.display_name

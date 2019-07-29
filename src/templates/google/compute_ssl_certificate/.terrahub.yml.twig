@@ -6,31 +6,31 @@
     resource:
       google_compute_ssl_certificate:
         {{ name }}:
-          certificate: '${var.{{ name }}_certificate}'
-          private_key: '${var.{{ name }}_private_key}'
+          certificate: var.{{ name }}_certificate
+          private_key: var.{{ name }}_private_key
           # name_prefix: ''
           # project: ''
           # description: ''
           # name: ''
     variable:
       {{ name }}_certificate:
-        type: 'string'
+        type: string
       {{ name }}_private_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_ssl_certificate.{{ name }}.id}'
+        value: google_compute_ssl_certificate.{{ name }}.id
       thub_id:
-        value: '${google_compute_ssl_certificate.{{ name }}.id}'
+        value: google_compute_ssl_certificate.{{ name }}.id
       certificate_id:
-        value: '${google_compute_ssl_certificate.{{ name }}.certificate_id}'
+        value: google_compute_ssl_certificate.{{ name }}.certificate_id
       name_prefix:
-        value: '${google_compute_ssl_certificate.{{ name }}.name_prefix}'
+        value: google_compute_ssl_certificate.{{ name }}.name_prefix
       project:
-        value: '${google_compute_ssl_certificate.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_ssl_certificate.{{ name }}.self_link}'
+        value: google_compute_ssl_certificate.{{ name }}.project
       name:
-        value: '${google_compute_ssl_certificate.{{ name }}.name}'
+        value: google_compute_ssl_certificate.{{ name }}.name
       creation_timestamp:
-        value: '${google_compute_ssl_certificate.{{ name }}.creation_timestamp}'
+        value: google_compute_ssl_certificate.{{ name }}.creation_timestamp
+      self_link:
+        value: google_compute_ssl_certificate.{{ name }}.self_link

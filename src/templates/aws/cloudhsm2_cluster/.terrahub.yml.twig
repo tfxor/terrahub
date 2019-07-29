@@ -8,30 +8,28 @@
     resource:
       aws_cloudhsm2_cluster:
         {{ name }}:
-          hsm_type: '${var.{{ name }}_hsm_type}'
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
-          # source_backup_identifier: ''
-          # tags:
+          hsm_type: var.{{ name }}_hsm_type
+          subnet_ids: var.{{ name }}_subnet_ids
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # source_backup_identifier: ''
     variable:
       {{ name }}_hsm_type:
-        type: 'string'
+        type: string
       {{ name }}_subnet_ids:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
+        value: aws_cloudhsm2_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.id}'
-      source_backup_identifier:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.source_backup_identifier}'
+        value: aws_cloudhsm2_cluster.{{ name }}.id
       vpc_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.vpc_id}'
+        value: aws_cloudhsm2_cluster.{{ name }}.vpc_id
       cluster_certificates:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_certificates}'
+        value: aws_cloudhsm2_cluster.{{ name }}.cluster_certificates
       cluster_state:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_state}'
+        value: aws_cloudhsm2_cluster.{{ name }}.cluster_state
       cluster_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.cluster_id}'
+        value: aws_cloudhsm2_cluster.{{ name }}.cluster_id
       security_group_id:
-        value: '${aws_cloudhsm2_cluster.{{ name }}.security_group_id}'
+        value: aws_cloudhsm2_cluster.{{ name }}.security_group_id

@@ -7,23 +7,23 @@
     resource:
       azurerm_arm_virtual_machine_data_disk_attachment:
         {{ name }}:
-          managed_disk_id: '${var.{{ name }}_managed_disk_id}'
-          virtual_machine_id: '${var.{{ name }}_virtual_machine_id}'
-          lun: '${var.{{ name }}_lun}'
-          caching: '${var.{{ name }}_caching}'
+          caching: var.{{ name }}_caching
+          managed_disk_id: var.{{ name }}_managed_disk_id
+          virtual_machine_id: var.{{ name }}_virtual_machine_id
+          lun: var.{{ name }}_lun
           # create_option: ''
           # write_accelerator_enabled: false
     variable:
-      {{ name }}_managed_disk_id:
-        type: 'string'
-      {{ name }}_virtual_machine_id:
-        type: 'string'
-      {{ name }}_lun:
-        type: 'int'
       {{ name }}_caching:
-        type: 'string'
+        type: string
+      {{ name }}_managed_disk_id:
+        type: string
+      {{ name }}_virtual_machine_id:
+        type: string
+      {{ name }}_lun:
+        type: int
     output:
       id:
-        value: '${azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id}'
+        value: azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id}'
+        value: azurerm_arm_virtual_machine_data_disk_attachment.{{ name }}.id

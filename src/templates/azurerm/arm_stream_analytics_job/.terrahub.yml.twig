@@ -1,0 +1,46 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_stream_analytics_job:
+        {{ name }}:
+          data_locale: var.{{ name }}_data_locale
+          events_out_of_order_policy: var.{{ name }}_events_out_of_order_policy
+          output_error_policy: var.{{ name }}_output_error_policy
+          transformation_query: var.{{ name }}_transformation_query
+          name: var.{{ name }}_name
+          compatibility_level: var.{{ name }}_compatibility_level
+          events_late_arrival_max_delay_in_seconds: var.{{ name }}_events_late_arrival_max_delay_in_seconds
+          events_out_of_order_max_delay_in_seconds: var.{{ name }}_events_out_of_order_max_delay_in_seconds
+          streaming_units: var.{{ name }}_streaming_units
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_data_locale:
+        type: string
+      {{ name }}_events_out_of_order_policy:
+        type: string
+      {{ name }}_output_error_policy:
+        type: string
+      {{ name }}_transformation_query:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_compatibility_level:
+        type: string
+      {{ name }}_events_late_arrival_max_delay_in_seconds:
+        type: int
+      {{ name }}_events_out_of_order_max_delay_in_seconds:
+        type: int
+      {{ name }}_streaming_units:
+        type: int
+    output:
+      id:
+        value: azurerm_arm_stream_analytics_job.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_stream_analytics_job.{{ name }}.id
+      job_id:
+        value: azurerm_arm_stream_analytics_job.{{ name }}.job_id

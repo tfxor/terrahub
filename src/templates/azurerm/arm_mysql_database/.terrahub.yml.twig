@@ -7,21 +7,21 @@
     resource:
       azurerm_arm_mysql_database:
         {{ name }}:
-          charset: '${var.{{ name }}_charset}'
-          collation: '${var.{{ name }}_collation}'
-          name: '${var.{{ name }}_name}'
-          server_name: '${var.{{ name }}_server_name}'
+          server_name: var.{{ name }}_server_name
+          charset: var.{{ name }}_charset
+          collation: var.{{ name }}_collation
+          name: var.{{ name }}_name
     variable:
-      {{ name }}_charset:
-        type: 'string'
-      {{ name }}_collation:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_server_name:
-        type: 'string'
+        type: string
+      {{ name }}_charset:
+        type: string
+      {{ name }}_collation:
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_mysql_database.{{ name }}.id}'
+        value: azurerm_arm_mysql_database.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_mysql_database.{{ name }}.id}'
+        value: azurerm_arm_mysql_database.{{ name }}.id

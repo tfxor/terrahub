@@ -8,15 +8,15 @@
     resource:
       aws_route53_query_log:
         {{ name }}:
-          zone_id: '${var.{{ name }}_zone_id}'
-          cloudwatch_log_group_arn: '${var.{{ name }}_cloudwatch_log_group_arn}'
+          cloudwatch_log_group_arn: var.{{ name }}_cloudwatch_log_group_arn
+          zone_id: var.{{ name }}_zone_id
     variable:
-      {{ name }}_zone_id:
-        type: 'string'
       {{ name }}_cloudwatch_log_group_arn:
-        type: 'string'
+        type: string
+      {{ name }}_zone_id:
+        type: string
     output:
       id:
-        value: '${aws_route53_query_log.{{ name }}.id}'
+        value: aws_route53_query_log.{{ name }}.id
       thub_id:
-        value: '${aws_route53_query_log.{{ name }}.id}'
+        value: aws_route53_query_log.{{ name }}.id

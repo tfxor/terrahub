@@ -8,29 +8,29 @@
     resource:
       aws_iam_role:
         {{ name }}:
-          assume_role_policy: '${var.{{ name }}_assume_role_policy}'
+          assume_role_policy: var.{{ name }}_assume_role_policy
           # max_session_duration: 0
-          # name: ''
-          # permissions_boundary: ''
-          # force_detach_policies: false
-          # name_prefix: ''
-          # path: ''
-          # description: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # name: ''
+          # name_prefix: ''
+          # description: ''
+          # force_detach_policies: false
+          # path: ''
+          # permissions_boundary: ''
     variable:
       {{ name }}_assume_role_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_role.{{ name }}.id}'
+        value: aws_iam_role.{{ name }}.id
       thub_id:
-        value: '${aws_iam_role.{{ name }}.id}'
-      create_date:
-        value: '${aws_iam_role.{{ name }}.create_date}'
+        value: aws_iam_role.{{ name }}.id
       unique_id:
-        value: '${aws_iam_role.{{ name }}.unique_id}'
+        value: aws_iam_role.{{ name }}.unique_id
       name:
-        value: '${aws_iam_role.{{ name }}.name}'
+        value: aws_iam_role.{{ name }}.name
       arn:
-        value: '${aws_iam_role.{{ name }}.arn}'
+        value: aws_iam_role.{{ name }}.arn
+      create_date:
+        value: aws_iam_role.{{ name }}.create_date

@@ -8,37 +8,37 @@
     resource:
       aws_appsync_datasource:
         {{ name }}:
-          api_id: '${var.{{ name }}_api_id}'
-          name: '${var.{{ name }}_name}'
-          type: '${var.{{ name }}_type}'
-          # lambda_config:
-          #   -
-          #     function_arn: ''
+          type: var.{{ name }}_type
+          api_id: var.{{ name }}_api_id
+          name: var.{{ name }}_name
           # description: ''
-          # dynamodb_config:
+          # service_role_arn: ''
+          # dynamodb_config: 
           #   -
           #     table_name: ''
+          #     region: ''
           #     use_caller_credentials: false
-          #     region: ''
-          # http_config:
-          #   -
-          #     endpoint: ''
-          # elasticsearch_config:
+          # elasticsearch_config: 
           #   -
           #     endpoint: ''
           #     region: ''
-          # service_role_arn: ''
+          # http_config: 
+          #   -
+          #     endpoint: ''
+          # lambda_config: 
+          #   -
+          #     function_arn: ''
     variable:
-      {{ name }}_api_id:
-        type: 'string'
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_type:
-        type: 'string'
+        type: string
+      {{ name }}_api_id:
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_appsync_datasource.{{ name }}.id}'
+        value: aws_appsync_datasource.{{ name }}.id
       thub_id:
-        value: '${aws_appsync_datasource.{{ name }}.id}'
+        value: aws_appsync_datasource.{{ name }}.id
       arn:
-        value: '${aws_appsync_datasource.{{ name }}.arn}'
+        value: aws_appsync_datasource.{{ name }}.arn

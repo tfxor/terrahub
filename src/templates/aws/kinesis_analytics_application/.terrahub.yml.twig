@@ -8,75 +8,77 @@
     resource:
       aws_kinesis_analytics_application:
         {{ name }}:
-          name_prefix: '${var.{{ name }}_name_prefix}'
-          name: '${var.{{ name }}_name}'
-          table_name: '${var.{{ name }}_table_name}'
-          schema:
+          schema: 
             -
           #     record_format_type: ''
+          name: var.{{ name }}_name
+          name_prefix: var.{{ name }}_name_prefix
+          table_name: var.{{ name }}_table_name
           # code: ''
-          # cloudwatch_logging_options:
+          # processing_configuration: 
+          #   -
+          #     lambda: 
+          #       -
+          #         resource_arn: ''
+          #         role_arn: ''
+          # outputs: 
+          #   -
+          #     kinesis_firehose: 
+          #       -
+          #         role_arn: ''
+          #         resource_arn: ''
+          # lambda: 
+          #   -
+          #     resource_arn: ''
+          #     role_arn: ''
+          # reference_data_sources: 
+          #   -
+          #     s3: 
+          #       -
+          #         role_arn: ''
+          #         bucket_arn: ''
+          #         file_key: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # cloudwatch_logging_options: 
           #   -
           #     log_stream_arn: ''
           #     role_arn: ''
-          # processing_configuration:
-          #   -
-          #     lambda:
-          #       -
-          #         resource_arn: ''
-          #         role_arn: ''
-          # outputs:
-          #   -
-          #     kinesis_firehose:
-          #       -
-          #         resource_arn: ''
-          #         role_arn: ''
-          # lambda:
-          #   -
-          #     role_arn: ''
-          #     resource_arn: ''
-          # parallelism:
+          # parallelism: 
           #   -
           #     count: 0
-          # reference_data_sources:
-          #   -
-          #     s3:
-          #       -
-          #         bucket_arn: ''
-          #         file_key: ''
-          #         role_arn: ''
           # description: ''
-          # inputs:
+          # inputs: 
           #   -
-          #     kinesis_firehose:
+          #     kinesis_firehose: 
           #       -
           #         resource_arn: ''
           #         role_arn: ''
     variable:
-      {{ name }}_name_prefix:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_name_prefix:
+        type: string
       {{ name }}_table_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_kinesis_analytics_application.{{ name }}.id}'
+        value: aws_kinesis_analytics_application.{{ name }}.id
       thub_id:
-        value: '${aws_kinesis_analytics_application.{{ name }}.id}'
-      arn:
-        value: '${aws_kinesis_analytics_application.{{ name }}.arn}'
-      starting_position_configuration:
-        value: '${aws_kinesis_analytics_application.{{ name }}.starting_position_configuration}'
-      create_timestamp:
-        value: '${aws_kinesis_analytics_application.{{ name }}.create_timestamp}'
-      status:
-        value: '${aws_kinesis_analytics_application.{{ name }}.status}'
-      version:
-        value: '${aws_kinesis_analytics_application.{{ name }}.version}'
+        value: aws_kinesis_analytics_application.{{ name }}.id
       record_format_type:
-        value: '${aws_kinesis_analytics_application.{{ name }}.record_format_type}'
+        value: aws_kinesis_analytics_application.{{ name }}.record_format_type
+      arn:
+        value: aws_kinesis_analytics_application.{{ name }}.arn
+      create_timestamp:
+        value: aws_kinesis_analytics_application.{{ name }}.create_timestamp
       last_update_timestamp:
-        value: '${aws_kinesis_analytics_application.{{ name }}.last_update_timestamp}'
+        value: aws_kinesis_analytics_application.{{ name }}.last_update_timestamp
       stream_names:
-        value: '${aws_kinesis_analytics_application.{{ name }}.stream_names}'
+        value: aws_kinesis_analytics_application.{{ name }}.stream_names
+      starting_position_configuration:
+        value: aws_kinesis_analytics_application.{{ name }}.starting_position_configuration
+      status:
+        value: aws_kinesis_analytics_application.{{ name }}.status
+      version:
+        value: aws_kinesis_analytics_application.{{ name }}.version

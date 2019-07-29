@@ -8,20 +8,20 @@
     resource:
       aws_s3_bucket_metric:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          bucket: '${var.{{ name }}_bucket}'
-          # filter:
+          bucket: var.{{ name }}_bucket
+          name: var.{{ name }}_name
+          # filter: 
           #   -
           #     prefix: ''
-          #     tags:
+          #     tags: 
           #       '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_bucket:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_metric.{{ name }}.id}'
+        value: aws_s3_bucket_metric.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_metric.{{ name }}.id}'
+        value: aws_s3_bucket_metric.{{ name }}.id

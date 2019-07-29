@@ -1,0 +1,37 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_cloudformation_stack_set:
+        {{ name }}:
+          administration_role_arn: var.{{ name }}_administration_role_arn
+          name: var.{{ name }}_name
+          # template_body: ''
+          # template_url: ''
+          # execution_role_name: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # capabilities: []
+          # description: ''
+    variable:
+      {{ name }}_administration_role_arn:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: aws_cloudformation_stack_set.{{ name }}.id
+      thub_id:
+        value: aws_cloudformation_stack_set.{{ name }}.id
+      template_body:
+        value: aws_cloudformation_stack_set.{{ name }}.template_body
+      stack_set_id:
+        value: aws_cloudformation_stack_set.{{ name }}.stack_set_id
+      arn:
+        value: aws_cloudformation_stack_set.{{ name }}.arn

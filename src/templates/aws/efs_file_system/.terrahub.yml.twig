@@ -9,30 +9,30 @@
       aws_efs_file_system:
         {{ name }}:
           # creation_token: ''
-          # performance_mode: ''
+          # kms_key_id: ''
           # provisioned_throughput_in_mibps: ''
           # reference_name: ''
+          # performance_mode: ''
           # encrypted: false
-          # kms_key_id: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # throughput_mode: ''
     output:
       id:
-        value: '${aws_efs_file_system.{{ name }}.id}'
+        value: aws_efs_file_system.{{ name }}.id
       thub_id:
-        value: '${aws_efs_file_system.{{ name }}.id}'
+        value: aws_efs_file_system.{{ name }}.id
       arn:
-        value: '${aws_efs_file_system.{{ name }}.arn}'
+        value: aws_efs_file_system.{{ name }}.arn
       creation_token:
-        value: '${aws_efs_file_system.{{ name }}.creation_token}'
-      performance_mode:
-        value: '${aws_efs_file_system.{{ name }}.performance_mode}'
-      reference_name:
-        value: '${aws_efs_file_system.{{ name }}.reference_name}'
-      encrypted:
-        value: '${aws_efs_file_system.{{ name }}.encrypted}'
+        value: aws_efs_file_system.{{ name }}.creation_token
       kms_key_id:
-        value: '${aws_efs_file_system.{{ name }}.kms_key_id}'
+        value: aws_efs_file_system.{{ name }}.kms_key_id
       dns_name:
-        value: '${aws_efs_file_system.{{ name }}.dns_name}'
+        value: aws_efs_file_system.{{ name }}.dns_name
+      reference_name:
+        value: aws_efs_file_system.{{ name }}.reference_name
+      performance_mode:
+        value: aws_efs_file_system.{{ name }}.performance_mode
+      encrypted:
+        value: aws_efs_file_system.{{ name }}.encrypted

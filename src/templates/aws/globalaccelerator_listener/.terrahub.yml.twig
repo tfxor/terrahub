@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_globalaccelerator_listener:
+        {{ name }}:
+          accelerator_arn: var.{{ name }}_accelerator_arn
+          protocol: var.{{ name }}_protocol
+          port_range: 
+          #   to_port: 0
+          #   from_port: 0
+          # client_affinity: ''
+    variable:
+      {{ name }}_accelerator_arn:
+        type: string
+      {{ name }}_protocol:
+        type: string
+    output:
+      id:
+        value: aws_globalaccelerator_listener.{{ name }}.id
+      thub_id:
+        value: aws_globalaccelerator_listener.{{ name }}.id

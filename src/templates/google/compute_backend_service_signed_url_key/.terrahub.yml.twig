@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_backend_service_signed_url_key:
+        {{ name }}:
+          backend_service: var.{{ name }}_backend_service
+          key_value: var.{{ name }}_key_value
+          name: var.{{ name }}_name
+          # project: ''
+    variable:
+      {{ name }}_backend_service:
+        type: string
+      {{ name }}_key_value:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: google_compute_backend_service_signed_url_key.{{ name }}.id
+      thub_id:
+        value: google_compute_backend_service_signed_url_key.{{ name }}.id
+      project:
+        value: google_compute_backend_service_signed_url_key.{{ name }}.project

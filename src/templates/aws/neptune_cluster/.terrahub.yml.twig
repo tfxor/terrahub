@@ -8,63 +8,63 @@
     resource:
       aws_neptune_cluster:
         {{ name }}:
-          # iam_roles: []
-          # iam_database_authentication_enabled: false
-          # neptune_subnet_group_name: ''
-          # neptune_cluster_parameter_group_name: ''
-          # apply_immediately: false
-          # engine: ''
-          # port: 0
-          # preferred_backup_window: ''
-          # preferred_maintenance_window: ''
-          # kms_key_arn: ''
-          # availability_zones: []
+          # storage_encrypted: false
           # final_snapshot_identifier: ''
-          # cluster_identifier_prefix: ''
-          # skip_final_snapshot: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          # apply_immediately: false
+          # availability_zones: []
           # backup_retention_period: 0
           # snapshot_identifier: ''
-          # cluster_identifier: ''
-          # engine_version: ''
-          # replication_source_identifier: ''
-          # storage_encrypted: false
+          # kms_key_arn: ''
+          # port: 0
+          # preferred_maintenance_window: ''
+          # skip_final_snapshot: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # vpc_security_group_ids: []
+          # cluster_identifier: ''
+          # preferred_backup_window: ''
+          # engine: ''
+          # cluster_identifier_prefix: ''
+          # neptune_subnet_group_name: ''
+          # engine_version: ''
+          # iam_roles: []
+          # iam_database_authentication_enabled: false
+          # neptune_cluster_parameter_group_name: ''
+          # replication_source_identifier: ''
     output:
       id:
-        value: '${aws_neptune_cluster.{{ name }}.id}'
+        value: aws_neptune_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_neptune_cluster.{{ name }}.id}'
-      cluster_resource_id:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_resource_id}'
-      neptune_subnet_group_name:
-        value: '${aws_neptune_cluster.{{ name }}.neptune_subnet_group_name}'
-      apply_immediately:
-        value: '${aws_neptune_cluster.{{ name }}.apply_immediately}'
-      preferred_backup_window:
-        value: '${aws_neptune_cluster.{{ name }}.preferred_backup_window}'
-      preferred_maintenance_window:
-        value: '${aws_neptune_cluster.{{ name }}.preferred_maintenance_window}'
-      kms_key_arn:
-        value: '${aws_neptune_cluster.{{ name }}.kms_key_arn}'
-      availability_zones:
-        value: '${aws_neptune_cluster.{{ name }}.availability_zones}'
-      cluster_members:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_members}'
-      hosted_zone_id:
-        value: '${aws_neptune_cluster.{{ name }}.hosted_zone_id}'
-      reader_endpoint:
-        value: '${aws_neptune_cluster.{{ name }}.reader_endpoint}'
-      arn:
-        value: '${aws_neptune_cluster.{{ name }}.arn}'
-      cluster_identifier_prefix:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier_prefix}'
-      cluster_identifier:
-        value: '${aws_neptune_cluster.{{ name }}.cluster_identifier}'
-      engine_version:
-        value: '${aws_neptune_cluster.{{ name }}.engine_version}'
-      vpc_security_group_ids:
-        value: '${aws_neptune_cluster.{{ name }}.vpc_security_group_ids}'
+        value: aws_neptune_cluster.{{ name }}.id
       endpoint:
-        value: '${aws_neptune_cluster.{{ name }}.endpoint}'
+        value: aws_neptune_cluster.{{ name }}.endpoint
+      reader_endpoint:
+        value: aws_neptune_cluster.{{ name }}.reader_endpoint
+      apply_immediately:
+        value: aws_neptune_cluster.{{ name }}.apply_immediately
+      availability_zones:
+        value: aws_neptune_cluster.{{ name }}.availability_zones
+      kms_key_arn:
+        value: aws_neptune_cluster.{{ name }}.kms_key_arn
+      preferred_maintenance_window:
+        value: aws_neptune_cluster.{{ name }}.preferred_maintenance_window
+      vpc_security_group_ids:
+        value: aws_neptune_cluster.{{ name }}.vpc_security_group_ids
+      cluster_identifier:
+        value: aws_neptune_cluster.{{ name }}.cluster_identifier
+      cluster_members:
+        value: aws_neptune_cluster.{{ name }}.cluster_members
+      preferred_backup_window:
+        value: aws_neptune_cluster.{{ name }}.preferred_backup_window
+      hosted_zone_id:
+        value: aws_neptune_cluster.{{ name }}.hosted_zone_id
+      arn:
+        value: aws_neptune_cluster.{{ name }}.arn
+      cluster_identifier_prefix:
+        value: aws_neptune_cluster.{{ name }}.cluster_identifier_prefix
+      cluster_resource_id:
+        value: aws_neptune_cluster.{{ name }}.cluster_resource_id
+      neptune_subnet_group_name:
+        value: aws_neptune_cluster.{{ name }}.neptune_subnet_group_name
+      engine_version:
+        value: aws_neptune_cluster.{{ name }}.engine_version

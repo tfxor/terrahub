@@ -7,27 +7,31 @@
     resource:
       azurerm_arm_storage_blob:
         {{ name }}:
-          storage_account_name: '${var.{{ name }}_storage_account_name}'
-          name: '${var.{{ name }}_name}'
-          storage_container_name: '${var.{{ name }}_storage_container_name}'
+          name: var.{{ name }}_name
+          storage_account_name: var.{{ name }}_storage_account_name
+          storage_container_name: var.{{ name }}_storage_container_name
           # type: ''
           # size: 0
-          # source_uri: ''
           # parallelism: 0
           # attempts: 0
+          # source_uri: ''
+          # metadata: 
+          #   '[TO_BE_REPLACED]': ''
           # content_type: ''
           # source: ''
     variable:
-      {{ name }}_storage_account_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_storage_account_name:
+        type: string
       {{ name }}_storage_container_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_storage_blob.{{ name }}.id}'
+        value: azurerm_arm_storage_blob.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_storage_blob.{{ name }}.id}'
+        value: azurerm_arm_storage_blob.{{ name }}.id
       url:
-        value: '${azurerm_arm_storage_blob.{{ name }}.url}'
+        value: azurerm_arm_storage_blob.{{ name }}.url
+      metadata:
+        value: azurerm_arm_storage_blob.{{ name }}.metadata

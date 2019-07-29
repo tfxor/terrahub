@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_management_lock:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          scope: '${var.{{ name }}_scope}'
-          lock_level: '${var.{{ name }}_lock_level}'
+          name: var.{{ name }}_name
+          scope: var.{{ name }}_scope
+          lock_level: var.{{ name }}_lock_level
           # notes: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_scope:
-        type: 'string'
+        type: string
       {{ name }}_lock_level:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_management_lock.{{ name }}.id}'
+        value: azurerm_arm_management_lock.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_management_lock.{{ name }}.id}'
+        value: azurerm_arm_management_lock.{{ name }}.id

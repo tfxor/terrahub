@@ -8,17 +8,17 @@
     resource:
       aws_vpc_dhcp_options:
         {{ name }}:
+          # domain_name_servers: []
           # ntp_servers: []
           # netbios_node_type: ''
           # netbios_name_servers: []
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # domain_name: ''
-          # domain_name_servers: []
     output:
       id:
-        value: '${aws_vpc_dhcp_options.{{ name }}.id}'
+        value: aws_vpc_dhcp_options.{{ name }}.id
       thub_id:
-        value: '${aws_vpc_dhcp_options.{{ name }}.id}'
+        value: aws_vpc_dhcp_options.{{ name }}.id
       owner_id:
-        value: '${aws_vpc_dhcp_options.{{ name }}.owner_id}'
+        value: aws_vpc_dhcp_options.{{ name }}.owner_id

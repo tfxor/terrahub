@@ -8,39 +8,39 @@
     resource:
       aws_storagegateway_nfs_file_share:
         {{ name }}:
-          gateway_arn: '${var.{{ name }}_gateway_arn}'
-          location_arn: '${var.{{ name }}_location_arn}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          client_list: '${var.{{ name }}_client_list}'
-          # kms_encrypted: false
-          # object_acl: ''
-          # requester_pays: false
-          # squash: ''
-          # default_storage_class: ''
-          # guess_mime_type_enabled: false
-          # kms_key_arn: ''
-          # nfs_file_share_defaults:
+          gateway_arn: var.{{ name }}_gateway_arn
+          location_arn: var.{{ name }}_location_arn
+          client_list: var.{{ name }}_client_list
+          role_arn: var.{{ name }}_role_arn
+          # nfs_file_share_defaults: 
           #   -
           #     directory_mode: ''
           #     file_mode: ''
           #     group_id: 0
           #     owner_id: 0
+          # object_acl: ''
+          # guess_mime_type_enabled: false
+          # kms_encrypted: false
           # read_only: false
+          # default_storage_class: ''
+          # squash: ''
+          # kms_key_arn: ''
+          # requester_pays: false
     variable:
       {{ name }}_gateway_arn:
-        type: 'string'
+        type: string
       {{ name }}_location_arn:
-        type: 'string'
-      {{ name }}_role_arn:
-        type: 'string'
+        type: string
       {{ name }}_client_list:
-        type: 'set'
+        type: set
+      {{ name }}_role_arn:
+        type: string
     output:
       id:
-        value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
+        value: aws_storagegateway_nfs_file_share.{{ name }}.id
       thub_id:
-        value: '${aws_storagegateway_nfs_file_share.{{ name }}.id}'
+        value: aws_storagegateway_nfs_file_share.{{ name }}.id
       arn:
-        value: '${aws_storagegateway_nfs_file_share.{{ name }}.arn}'
+        value: aws_storagegateway_nfs_file_share.{{ name }}.arn
       fileshare_id:
-        value: '${aws_storagegateway_nfs_file_share.{{ name }}.fileshare_id}'
+        value: aws_storagegateway_nfs_file_share.{{ name }}.fileshare_id

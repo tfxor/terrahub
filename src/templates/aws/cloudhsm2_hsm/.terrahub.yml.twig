@@ -8,27 +8,27 @@
     resource:
       aws_cloudhsm2_hsm:
         {{ name }}:
-          cluster_id: '${var.{{ name }}_cluster_id}'
+          cluster_id: var.{{ name }}_cluster_id
           # subnet_id: ''
           # availability_zone: ''
           # ip_address: ''
     variable:
       {{ name }}_cluster_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.id}'
+        value: aws_cloudhsm2_hsm.{{ name }}.id
       thub_id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.id}'
-      hsm_state:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.hsm_state}'
-      hsm_eni_id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.hsm_eni_id}'
+        value: aws_cloudhsm2_hsm.{{ name }}.id
       subnet_id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.subnet_id}'
+        value: aws_cloudhsm2_hsm.{{ name }}.subnet_id
       availability_zone:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.availability_zone}'
+        value: aws_cloudhsm2_hsm.{{ name }}.availability_zone
       ip_address:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.ip_address}'
+        value: aws_cloudhsm2_hsm.{{ name }}.ip_address
       hsm_id:
-        value: '${aws_cloudhsm2_hsm.{{ name }}.hsm_id}'
+        value: aws_cloudhsm2_hsm.{{ name }}.hsm_id
+      hsm_state:
+        value: aws_cloudhsm2_hsm.{{ name }}.hsm_state
+      hsm_eni_id:
+        value: aws_cloudhsm2_hsm.{{ name }}.hsm_eni_id

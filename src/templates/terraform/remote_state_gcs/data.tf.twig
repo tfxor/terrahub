@@ -4,10 +4,10 @@
 data "terraform_remote_state" "{{ name }}" {
   backend = "gcs"
   config {
-    region  = "${var.backend_region}"
-    bucket  = "${var.backend_bucket}"
-    prefix  = "${var.backend_prefix}"
-    encryption_key = "${var.backend_encrypt}"
+    region  = var.backend_region
+    bucket  = var.backend_bucket
+    prefix  = var.backend_prefix
+    encryption_key = var.backend_encrypt
   }
 }
 
@@ -16,24 +16,24 @@ data "terraform_remote_state" "{{ name }}" {
 ################
 variable "backend_region" {
   description = "GCP region where terraform.tfstate is stored"
-  type        = "string"
+  type        = string
   default     = "us-central1"
 }
 
 variable "backend_bucket" {
   description = "GCS bucket where terraform.tfstate is stored"
-  type        = "string"
+  type        = string
   default     = "data-lake-terrahub-us-east-1"
 }
 
 variable "backend_prefix" {
   description = "GCS prefix where terraform.tfstate is stored"
-  type        = "string"
+  type        = string
   default     = "terraform.tfstate"
 }
 
 variable "backend_encrypt" {
   description = "Encryption key (32 byte base64 encoded key)"
-  type        = "string"
+  type        = string
   default     = ""
 }

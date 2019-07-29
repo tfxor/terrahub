@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_organizations_organizational_unit:
+        {{ name }}:
+          name: var.{{ name }}_name
+          parent_id: var.{{ name }}_parent_id
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_parent_id:
+        type: string
+    output:
+      id:
+        value: aws_organizations_organizational_unit.{{ name }}.id
+      thub_id:
+        value: aws_organizations_organizational_unit.{{ name }}.id
+      accounts:
+        value: aws_organizations_organizational_unit.{{ name }}.accounts
+      arn:
+        value: aws_organizations_organizational_unit.{{ name }}.arn

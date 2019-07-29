@@ -8,24 +8,24 @@
     resource:
       aws_cloudwatch_log_metric_filter:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          pattern: '${var.{{ name }}_pattern}'
-          log_group_name: '${var.{{ name }}_log_group_name}'
-          metric_transformation:
+          name: var.{{ name }}_name
+          pattern: var.{{ name }}_pattern
+          log_group_name: var.{{ name }}_log_group_name
+          metric_transformation: 
             -
+              value: ''
               name: ''
               namespace: ''
-              value: ''
           #     default_value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_pattern:
-        type: 'string'
+        type: string
       {{ name }}_log_group_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_log_metric_filter.{{ name }}.id}'
+        value: aws_cloudwatch_log_metric_filter.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_log_metric_filter.{{ name }}.id}'
+        value: aws_cloudwatch_log_metric_filter.{{ name }}.id

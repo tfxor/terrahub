@@ -7,11 +7,12 @@ const fse = require('fs-extra');
 const semver = require('semver');
 const logger = require('../logger');
 const Metadata = require('../metadata');
+const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
 const { config, fetch } = require('../../parameters');
-const { extend, spawner, homePath } = require('../util');
+const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile } = require('../util');
 
 class Terraform {
   /**
@@ -37,7 +38,7 @@ class Terraform {
         var: {},
         varFile: [],
         backend: {},
-        version: '0.11.11',
+        version: '0.12.3',
         backup: false,
         workspace: 'default'
       }
@@ -86,6 +87,55 @@ class Terraform {
    */
   _backend() {
     return Object.keys(this._tf.backend).map(name => `-backend-config='${name}=${this._tf.backend[name]}'`);
+  }
+
+  /**
+   * Setup env vars for use cloudAccount & terraform backend for backendAccount properties
+   * @return {Promise}
+   * @private
+   */
+  async _setupVars() {
+    const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
+
+    if (!accounts.length) {
+      return Promise.resolve();
+    }
+
+    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    const provider = Object.keys(this._config.template.provider).toString();
+    const providerAccounts = cloudAccounts[provider];
+
+    if (providerAccounts) {
+      accounts.forEach(type => {
+        const _value = this._tf[type];
+        const accountData = providerAccounts.find(it => it.name === _value);
+
+        if (!accountData) {
+          return;
+        }
+
+        const sourceProfile = accountData.type === 'role'
+          ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+
+        const credentials = prepareCredentialsFile({ accountData, sourceProfile });
+
+        switch (type) {
+          case 'cloudAccount':
+            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
+              .forEach(it => delete this._envVars[it]);
+
+            Object.assign(this._envVars,
+              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud') });
+            break;
+          case 'backendAccount':
+            Object.assign(this._tf.backend,
+              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend') });
+            break;
+        }
+      });
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -175,7 +225,9 @@ class Terraform {
    * https://www.terraform.io/docs/commands/init.html
    * @return {Promise}
    */
-  init() {
+  async init() {
+    await this._setupVars();
+
     return this.run(
       'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
     )
@@ -383,7 +435,9 @@ class Terraform {
    * @param {Array} args
    * @return {Promise}
    */
-  run(cmd, args) {
+  async run(cmd, args) {
+    await this._setupVars();
+
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }

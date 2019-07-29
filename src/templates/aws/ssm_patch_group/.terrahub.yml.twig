@@ -8,15 +8,15 @@
     resource:
       aws_ssm_patch_group:
         {{ name }}:
-          patch_group: '${var.{{ name }}_patch_group}'
-          baseline_id: '${var.{{ name }}_baseline_id}'
+          baseline_id: var.{{ name }}_baseline_id
+          patch_group: var.{{ name }}_patch_group
     variable:
-      {{ name }}_patch_group:
-        type: 'string'
       {{ name }}_baseline_id:
-        type: 'string'
+        type: string
+      {{ name }}_patch_group:
+        type: string
     output:
       id:
-        value: '${aws_ssm_patch_group.{{ name }}.id}'
+        value: aws_ssm_patch_group.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_patch_group.{{ name }}.id}'
+        value: aws_ssm_patch_group.{{ name }}.id

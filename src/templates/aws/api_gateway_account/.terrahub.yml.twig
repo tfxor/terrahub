@@ -11,8 +11,8 @@
           # cloudwatch_role_arn: ''
     output:
       id:
-        value: '${aws_api_gateway_account.{{ name }}.id}'
+        value: aws_api_gateway_account.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_account.{{ name }}.id}'
+        value: aws_api_gateway_account.{{ name }}.id
       throttle_settings:
-        value: '${aws_api_gateway_account.{{ name }}.throttle_settings}'
+        value: aws_api_gateway_account.{{ name }}.throttle_settings

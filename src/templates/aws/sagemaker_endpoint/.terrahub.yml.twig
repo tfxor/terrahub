@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_sagemaker_endpoint:
+        {{ name }}:
+          endpoint_config_name: var.{{ name }}_endpoint_config_name
+          # name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_endpoint_config_name:
+        type: string
+    output:
+      id:
+        value: aws_sagemaker_endpoint.{{ name }}.id
+      thub_id:
+        value: aws_sagemaker_endpoint.{{ name }}.id
+      arn:
+        value: aws_sagemaker_endpoint.{{ name }}.arn
+      name:
+        value: aws_sagemaker_endpoint.{{ name }}.name

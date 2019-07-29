@@ -8,15 +8,15 @@
     resource:
       aws_placement_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          strategy: '${var.{{ name }}_strategy}'
+          name: var.{{ name }}_name
+          strategy: var.{{ name }}_strategy
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_strategy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_placement_group.{{ name }}.id}'
+        value: aws_placement_group.{{ name }}.id
       thub_id:
-        value: '${aws_placement_group.{{ name }}.id}'
+        value: aws_placement_group.{{ name }}.id

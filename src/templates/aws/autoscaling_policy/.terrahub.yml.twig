@@ -8,41 +8,41 @@
     resource:
       aws_autoscaling_policy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
-          target_value: '${var.{{ name }}_target_value}'
-          # adjustment_type: ''
+          target_value: var.{{ name }}_target_value
+          name: var.{{ name }}_name
+          autoscaling_group_name: var.{{ name }}_autoscaling_group_name
+          # disable_scale_in: false
           # estimated_instance_warmup: 0
+          # min_adjustment_magnitude: 0
           # min_adjustment_step: 0
-          # step_adjustment:
+          # step_adjustment: 
           #   scaling_adjustment: 0
           #   metric_interval_lower_bound: ''
           #   metric_interval_upper_bound: ''
-          # metric_aggregation_type: ''
-          # min_adjustment_magnitude: 0
-          # disable_scale_in: false
           # scaling_adjustment: 0
-          # target_tracking_configuration:
+          # target_tracking_configuration: 
           #   -
-          #     predefined_metric_specification:
+          #     predefined_metric_specification: 
           #       -
           #         predefined_metric_type: ''
           #         resource_label: ''
+          # adjustment_type: ''
           # policy_type: ''
           # cooldown: 0
+          # metric_aggregation_type: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
-      {{ name }}_autoscaling_group_name:
-        type: 'string'
       {{ name }}_target_value:
-        type: 'float'
+        type: float
+      {{ name }}_name:
+        type: string
+      {{ name }}_autoscaling_group_name:
+        type: string
     output:
       id:
-        value: '${aws_autoscaling_policy.{{ name }}.id}'
+        value: aws_autoscaling_policy.{{ name }}.id
       thub_id:
-        value: '${aws_autoscaling_policy.{{ name }}.id}'
+        value: aws_autoscaling_policy.{{ name }}.id
       arn:
-        value: '${aws_autoscaling_policy.{{ name }}.arn}'
+        value: aws_autoscaling_policy.{{ name }}.arn
       metric_aggregation_type:
-        value: '${aws_autoscaling_policy.{{ name }}.metric_aggregation_type}'
+        value: aws_autoscaling_policy.{{ name }}.metric_aggregation_type

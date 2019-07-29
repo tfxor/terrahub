@@ -8,19 +8,19 @@
     resource:
       aws_pinpoint_sms_channel:
         {{ name }}:
-          application_id: '${var.{{ name }}_application_id}'
+          application_id: var.{{ name }}_application_id
+          # sender_id: ''
           # short_code: ''
           # enabled: false
-          # sender_id: ''
     variable:
       {{ name }}_application_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_sms_channel.{{ name }}.id}'
+        value: aws_pinpoint_sms_channel.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_sms_channel.{{ name }}.id}'
+        value: aws_pinpoint_sms_channel.{{ name }}.id
       promotional_messages_per_second:
-        value: '${aws_pinpoint_sms_channel.{{ name }}.promotional_messages_per_second}'
+        value: aws_pinpoint_sms_channel.{{ name }}.promotional_messages_per_second
       transactional_messages_per_second:
-        value: '${aws_pinpoint_sms_channel.{{ name }}.transactional_messages_per_second}'
+        value: aws_pinpoint_sms_channel.{{ name }}.transactional_messages_per_second

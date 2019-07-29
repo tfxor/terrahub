@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_appsync_resolver:
+        {{ name }}:
+          api_id: var.{{ name }}_api_id
+          field: var.{{ name }}_field
+          request_template: var.{{ name }}_request_template
+          response_template: var.{{ name }}_response_template
+          type: var.{{ name }}_type
+          # data_source: ''
+          # kind: ''
+          # pipeline_config: 
+          #   -
+          #     functions: 
+          #       -
+    variable:
+      {{ name }}_api_id:
+        type: string
+      {{ name }}_field:
+        type: string
+      {{ name }}_request_template:
+        type: string
+      {{ name }}_response_template:
+        type: string
+      {{ name }}_type:
+        type: string
+    output:
+      id:
+        value: aws_appsync_resolver.{{ name }}.id
+      thub_id:
+        value: aws_appsync_resolver.{{ name }}.id
+      arn:
+        value: aws_appsync_resolver.{{ name }}.arn

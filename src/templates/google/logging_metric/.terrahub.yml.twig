@@ -1,0 +1,47 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_logging_metric:
+        {{ name }}:
+          metric_descriptor: 
+            -
+              metric_kind: ''
+              value_type: ''
+          #     labels: 
+          #       -
+          #         key: ''
+          #         description: ''
+          #         value_type: ''
+          name: var.{{ name }}_name
+          filter: var.{{ name }}_filter
+          # bucket_options: 
+          #   -
+          #     explicit: 
+          #       -
+          #         bounds: 
+          #           -
+          # linear_buckets: 
+          #   -
+          #     num_finite_buckets: 0
+          #     offset: ''
+          #     width: 0
+          # value_extractor: ''
+          # project: ''
+          # label_extractors: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_filter:
+        type: string
+    output:
+      id:
+        value: google_logging_metric.{{ name }}.id
+      thub_id:
+        value: google_logging_metric.{{ name }}.id
+      project:
+        value: google_logging_metric.{{ name }}.project

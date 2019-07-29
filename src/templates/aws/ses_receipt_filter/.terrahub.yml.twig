@@ -8,18 +8,18 @@
     resource:
       aws_ses_receipt_filter:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          cidr: '${var.{{ name }}_cidr}'
-          policy: '${var.{{ name }}_policy}'
+          name: var.{{ name }}_name
+          cidr: var.{{ name }}_cidr
+          policy: var.{{ name }}_policy
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_cidr:
-        type: 'string'
+        type: string
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_receipt_filter.{{ name }}.id}'
+        value: aws_ses_receipt_filter.{{ name }}.id
       thub_id:
-        value: '${aws_ses_receipt_filter.{{ name }}.id}'
+        value: aws_ses_receipt_filter.{{ name }}.id

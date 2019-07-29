@@ -8,71 +8,62 @@
     resource:
       aws_vpn_connection:
         {{ name }}:
-          type: '${var.{{ name }}_type}'
-          customer_gateway_id: '${var.{{ name }}_customer_gateway_id}'
-          # tunnel2_preshared_key: ''
-          # vpn_gateway_id: ''
-          # tunnel2_inside_cidr: ''
-          # routes:
-          #   destination_cidr_block: ''
-          #   source: ''
-          #   state: ''
-          # static_routes_only: false
-          # tunnel1_inside_cidr: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # customer_gateway_configuration: ''
+          customer_gateway_id: var.{{ name }}_customer_gateway_id
+          type: var.{{ name }}_type
           # transit_gateway_id: ''
+          # static_routes_only: false
+          # vpn_gateway_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # tunnel1_inside_cidr: ''
+          # tunnel2_preshared_key: ''
           # tunnel1_preshared_key: ''
-          # vgw_telemetry:
-          #   outside_ip_address: ''
-          #   status: ''
-          #   status_message: ''
-          #   accepted_route_count: 0
-          #   last_status_change: ''
+          # tunnel2_inside_cidr: ''
     variable:
-      {{ name }}_type:
-        type: 'string'
       {{ name }}_customer_gateway_id:
-        type: 'string'
+        type: string
+      {{ name }}_type:
+        type: string
     output:
       id:
-        value: '${aws_vpn_connection.{{ name }}.id}'
+        value: aws_vpn_connection.{{ name }}.id
       thub_id:
-        value: '${aws_vpn_connection.{{ name }}.id}'
-      tunnel2_preshared_key:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_preshared_key}'
-      tunnel1_bgp_asn:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_bgp_asn}'
-      tunnel2_vgw_inside_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_vgw_inside_address}'
-      tunnel2_inside_cidr:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_inside_cidr}'
-      tunnel2_bgp_holdtime:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_bgp_holdtime}'
-      routes:
-        value: '${aws_vpn_connection.{{ name }}.routes}'
+        value: aws_vpn_connection.{{ name }}.id
       static_routes_only:
-        value: '${aws_vpn_connection.{{ name }}.static_routes_only}'
-      tunnel1_inside_cidr:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_inside_cidr}'
-      tunnel2_cgw_inside_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_cgw_inside_address}'
-      customer_gateway_configuration:
-        value: '${aws_vpn_connection.{{ name }}.customer_gateway_configuration}'
-      tunnel1_vgw_inside_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_vgw_inside_address}'
-      tunnel1_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_address}'
-      tunnel1_cgw_inside_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_cgw_inside_address}'
-      tunnel1_bgp_holdtime:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_bgp_holdtime}'
-      tunnel2_address:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_address}'
+        value: aws_vpn_connection.{{ name }}.static_routes_only
+      tunnel2_vgw_inside_address:
+        value: aws_vpn_connection.{{ name }}.tunnel2_vgw_inside_address
       tunnel2_bgp_asn:
-        value: '${aws_vpn_connection.{{ name }}.tunnel2_bgp_asn}'
-      tunnel1_preshared_key:
-        value: '${aws_vpn_connection.{{ name }}.tunnel1_preshared_key}'
+        value: aws_vpn_connection.{{ name }}.tunnel2_bgp_asn
+      transit_gateway_attachment_id:
+        value: aws_vpn_connection.{{ name }}.transit_gateway_attachment_id
+      tunnel1_address:
+        value: aws_vpn_connection.{{ name }}.tunnel1_address
+      tunnel1_cgw_inside_address:
+        value: aws_vpn_connection.{{ name }}.tunnel1_cgw_inside_address
+      tunnel2_address:
+        value: aws_vpn_connection.{{ name }}.tunnel2_address
       vgw_telemetry:
-        value: '${aws_vpn_connection.{{ name }}.vgw_telemetry}'
+        value: aws_vpn_connection.{{ name }}.vgw_telemetry
+      tunnel1_inside_cidr:
+        value: aws_vpn_connection.{{ name }}.tunnel1_inside_cidr
+      tunnel2_preshared_key:
+        value: aws_vpn_connection.{{ name }}.tunnel2_preshared_key
+      tunnel1_bgp_asn:
+        value: aws_vpn_connection.{{ name }}.tunnel1_bgp_asn
+      tunnel2_bgp_holdtime:
+        value: aws_vpn_connection.{{ name }}.tunnel2_bgp_holdtime
+      routes:
+        value: aws_vpn_connection.{{ name }}.routes
+      tunnel2_cgw_inside_address:
+        value: aws_vpn_connection.{{ name }}.tunnel2_cgw_inside_address
+      tunnel1_preshared_key:
+        value: aws_vpn_connection.{{ name }}.tunnel1_preshared_key
+      tunnel2_inside_cidr:
+        value: aws_vpn_connection.{{ name }}.tunnel2_inside_cidr
+      customer_gateway_configuration:
+        value: aws_vpn_connection.{{ name }}.customer_gateway_configuration
+      tunnel1_vgw_inside_address:
+        value: aws_vpn_connection.{{ name }}.tunnel1_vgw_inside_address
+      tunnel1_bgp_holdtime:
+        value: aws_vpn_connection.{{ name }}.tunnel1_bgp_holdtime

@@ -8,21 +8,21 @@
     resource:
       aws_iam_user_login_profile:
         {{ name }}:
-          user: '${var.{{ name }}_user}'
-          pgp_key: '${var.{{ name }}_pgp_key}'
-          # password_length: 0
+          pgp_key: var.{{ name }}_pgp_key
+          user: var.{{ name }}_user
           # password_reset_required: false
+          # password_length: 0
     variable:
-      {{ name }}_user:
-        type: 'string'
       {{ name }}_pgp_key:
-        type: 'string'
+        type: string
+      {{ name }}_user:
+        type: string
     output:
       id:
-        value: '${aws_iam_user_login_profile.{{ name }}.id}'
+        value: aws_iam_user_login_profile.{{ name }}.id
       thub_id:
-        value: '${aws_iam_user_login_profile.{{ name }}.id}'
+        value: aws_iam_user_login_profile.{{ name }}.id
       key_fingerprint:
-        value: '${aws_iam_user_login_profile.{{ name }}.key_fingerprint}'
+        value: aws_iam_user_login_profile.{{ name }}.key_fingerprint
       encrypted_password:
-        value: '${aws_iam_user_login_profile.{{ name }}.encrypted_password}'
+        value: aws_iam_user_login_profile.{{ name }}.encrypted_password

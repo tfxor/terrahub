@@ -8,17 +8,17 @@
     resource:
       aws_waf_ipset:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # ip_set_descriptors:
+          name: var.{{ name }}_name
+          # ip_set_descriptors: 
           #   type: ''
           #   value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_waf_ipset.{{ name }}.id}'
+        value: aws_waf_ipset.{{ name }}.id
       thub_id:
-        value: '${aws_waf_ipset.{{ name }}.id}'
+        value: aws_waf_ipset.{{ name }}.id
       arn:
-        value: '${aws_waf_ipset.{{ name }}.arn}'
+        value: aws_waf_ipset.{{ name }}.arn

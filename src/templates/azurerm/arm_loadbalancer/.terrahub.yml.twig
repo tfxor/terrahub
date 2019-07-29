@@ -7,26 +7,27 @@
     resource:
       azurerm_arm_loadbalancer:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # sku: ''
-          # frontend_ip_configuration:
+          # frontend_ip_configuration: 
           #   -
           #     name: ''
+          #     private_ip_address_allocation: ''
           #     subnet_id: ''
           #     private_ip_address: ''
           #     public_ip_address_id: ''
-          #     private_ip_address_allocation: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          #     public_ip_prefix_id: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_loadbalancer.{{ name }}.id}'
+        value: azurerm_arm_loadbalancer.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_loadbalancer.{{ name }}.id}'
-      private_ip_address:
-        value: '${azurerm_arm_loadbalancer.{{ name }}.private_ip_address}'
+        value: azurerm_arm_loadbalancer.{{ name }}.id
       private_ip_addresses:
-        value: '${azurerm_arm_loadbalancer.{{ name }}.private_ip_addresses}'
+        value: azurerm_arm_loadbalancer.{{ name }}.private_ip_addresses
+      private_ip_address:
+        value: azurerm_arm_loadbalancer.{{ name }}.private_ip_address

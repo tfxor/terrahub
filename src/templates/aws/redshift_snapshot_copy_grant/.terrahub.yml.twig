@@ -8,17 +8,19 @@
     resource:
       aws_redshift_snapshot_copy_grant:
         {{ name }}:
-          snapshot_copy_grant_name: '${var.{{ name }}_snapshot_copy_grant_name}'
+          snapshot_copy_grant_name: var.{{ name }}_snapshot_copy_grant_name
           # kms_key_id: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_snapshot_copy_grant_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_redshift_snapshot_copy_grant.{{ name }}.id}'
+        value: aws_redshift_snapshot_copy_grant.{{ name }}.id
       thub_id:
-        value: '${aws_redshift_snapshot_copy_grant.{{ name }}.id}'
+        value: aws_redshift_snapshot_copy_grant.{{ name }}.id
+      arn:
+        value: aws_redshift_snapshot_copy_grant.{{ name }}.arn
       kms_key_id:
-        value: '${aws_redshift_snapshot_copy_grant.{{ name }}.kms_key_id}'
+        value: aws_redshift_snapshot_copy_grant.{{ name }}.kms_key_id

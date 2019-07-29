@@ -8,39 +8,39 @@
     resource:
       aws_cloudtrail:
         {{ name }}:
-          s3_bucket_name: '${var.{{ name }}_s3_bucket_name}'
-          name: '${var.{{ name }}_name}'
-          # enable_logging: false
-          # s3_key_prefix: ''
-          # is_multi_region_trail: false
-          # sns_topic_name: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # cloud_watch_logs_role_arn: ''
-          # cloud_watch_logs_group_arn: ''
-          # include_global_service_events: false
-          # is_organization_trail: false
-          # kms_key_id: ''
-          # event_selector:
+          s3_bucket_name: var.{{ name }}_s3_bucket_name
+          name: var.{{ name }}_name
+          # event_selector: 
           #   -
-          #     data_resource:
+          #     read_write_type: ''
+          #     include_management_events: false
+          #     data_resource: 
           #       -
           #         type: ''
           #         values: []
-          #     read_write_type: ''
-          #     include_management_events: false
+          # include_global_service_events: false
+          # is_multi_region_trail: false
+          # is_organization_trail: false
+          # enable_logging: false
+          # cloud_watch_logs_role_arn: ''
           # enable_log_file_validation: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # sns_topic_name: ''
+          # kms_key_id: ''
+          # s3_key_prefix: ''
+          # cloud_watch_logs_group_arn: ''
     variable:
       {{ name }}_s3_bucket_name:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudtrail.{{ name }}.id}'
+        value: aws_cloudtrail.{{ name }}.id
       thub_id:
-        value: '${aws_cloudtrail.{{ name }}.id}'
+        value: aws_cloudtrail.{{ name }}.id
       home_region:
-        value: '${aws_cloudtrail.{{ name }}.home_region}'
+        value: aws_cloudtrail.{{ name }}.home_region
       arn:
-        value: '${aws_cloudtrail.{{ name }}.arn}'
+        value: aws_cloudtrail.{{ name }}.arn

@@ -8,19 +8,16 @@
     resource:
       aws_iot_thing_type:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # properties:
-          #   -
-          #     description: ''
-          #     searchable_attributes:
+          name: var.{{ name }}_name
+          # properties: []
           # deprecated: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iot_thing_type.{{ name }}.id}'
+        value: aws_iot_thing_type.{{ name }}.id
       thub_id:
-        value: '${aws_iot_thing_type.{{ name }}.id}'
+        value: aws_iot_thing_type.{{ name }}.id
       arn:
-        value: '${aws_iot_thing_type.{{ name }}.arn}'
+        value: aws_iot_thing_type.{{ name }}.arn

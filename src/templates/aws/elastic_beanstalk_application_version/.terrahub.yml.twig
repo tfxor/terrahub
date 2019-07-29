@@ -8,23 +8,27 @@
     resource:
       aws_elastic_beanstalk_application_version:
         {{ name }}:
-          application: '${var.{{ name }}_application}'
-          bucket: '${var.{{ name }}_bucket}'
-          key: '${var.{{ name }}_key}'
-          name: '${var.{{ name }}_name}'
-          # description: ''
+          application: var.{{ name }}_application
+          bucket: var.{{ name }}_bucket
+          key: var.{{ name }}_key
+          name: var.{{ name }}_name
           # force_delete: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # description: ''
     variable:
       {{ name }}_application:
-        type: 'string'
+        type: string
       {{ name }}_bucket:
-        type: 'string'
+        type: string
       {{ name }}_key:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elastic_beanstalk_application_version.{{ name }}.id}'
+        value: aws_elastic_beanstalk_application_version.{{ name }}.id
       thub_id:
-        value: '${aws_elastic_beanstalk_application_version.{{ name }}.id}'
+        value: aws_elastic_beanstalk_application_version.{{ name }}.id
+      arn:
+        value: aws_elastic_beanstalk_application_version.{{ name }}.arn

@@ -8,17 +8,17 @@
     resource:
       aws_redshift_security_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          ingress:
-          #   cidr: ''
+          name: var.{{ name }}_name
+          ingress: 
           #   security_group_name: ''
           #   security_group_owner_id: ''
+          #   cidr: ''
           # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_redshift_security_group.{{ name }}.id}'
+        value: aws_redshift_security_group.{{ name }}.id
       thub_id:
-        value: '${aws_redshift_security_group.{{ name }}.id}'
+        value: aws_redshift_security_group.{{ name }}.id

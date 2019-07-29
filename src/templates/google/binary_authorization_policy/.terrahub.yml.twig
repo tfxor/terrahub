@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_binary_authorization_policy:
+        {{ name }}:
+          default_admission_rule: 
+            -
+              enforcement_mode: ''
+              evaluation_mode: ''
+          #     require_attestations_by: []
+          # admission_whitelist_patterns: 
+          #   -
+          #     name_pattern: ''
+          # cluster_admission_rules: 
+          #   cluster: ''
+          #   evaluation_mode: ''
+          #   require_attestations_by: []
+          #   enforcement_mode: ''
+          # description: ''
+          # project: ''
+    output:
+      id:
+        value: google_binary_authorization_policy.{{ name }}.id
+      thub_id:
+        value: google_binary_authorization_policy.{{ name }}.id
+      project:
+        value: google_binary_authorization_policy.{{ name }}.project

@@ -7,32 +7,32 @@
     resource:
       azurerm_arm_firewall_application_rule_collection:
         {{ name }}:
-          priority: '${var.{{ name }}_priority}'
-          action: '${var.{{ name }}_action}'
-          rule:
+          rule: 
             -
               name: ''
               source_addresses: []
-          #     fqdn_tags:
-          #     target_fqdns:
-          #     protocol:
+          #     description: ''
+          #     fqdn_tags: 
+          #     target_fqdns: 
+          #     protocol: 
           #       -
           #         type: ''
           #         port: 0
-          #     description: ''
-          name: '${var.{{ name }}_name}'
-          azure_firewall_name: '${var.{{ name }}_azure_firewall_name}'
+          name: var.{{ name }}_name
+          azure_firewall_name: var.{{ name }}_azure_firewall_name
+          priority: var.{{ name }}_priority
+          action: var.{{ name }}_action
     variable:
-      {{ name }}_priority:
-        type: 'int'
-      {{ name }}_action:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_azure_firewall_name:
-        type: 'string'
+        type: string
+      {{ name }}_priority:
+        type: int
+      {{ name }}_action:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_firewall_application_rule_collection.{{ name }}.id}'
+        value: azurerm_arm_firewall_application_rule_collection.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_firewall_application_rule_collection.{{ name }}.id}'
+        value: azurerm_arm_firewall_application_rule_collection.{{ name }}.id

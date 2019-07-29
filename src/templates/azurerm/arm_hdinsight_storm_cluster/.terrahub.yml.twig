@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_hdinsight_storm_cluster:
+        {{ name }}:
+          roles: 
+            -
+          component_version: 
+            -
+              storm: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    output:
+      id:
+        value: azurerm_arm_hdinsight_storm_cluster.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_hdinsight_storm_cluster.{{ name }}.id
+      https_endpoint:
+        value: azurerm_arm_hdinsight_storm_cluster.{{ name }}.https_endpoint
+      ssh_endpoint:
+        value: azurerm_arm_hdinsight_storm_cluster.{{ name }}.ssh_endpoint

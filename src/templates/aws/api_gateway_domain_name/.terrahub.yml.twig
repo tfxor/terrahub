@@ -8,34 +8,37 @@
     resource:
       aws_api_gateway_domain_name:
         {{ name }}:
-          domain_name: '${var.{{ name }}_domain_name}'
-          # certificate_name: ''
-          # certificate_private_key: ''
-          # certificate_body: ''
-          # certificate_chain: ''
-          # endpoint_configuration:
+          domain_name: var.{{ name }}_domain_name
+          # certificate_arn: ''
+          # endpoint_configuration: 
           #   -
           #     types: []
+          # certificate_body: ''
+          # certificate_private_key: ''
+          # certificate_name: ''
           # regional_certificate_arn: ''
-          # certificate_arn: ''
+          # security_policy: ''
           # regional_certificate_name: ''
+          # certificate_chain: ''
     variable:
       {{ name }}_domain_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.id}'
+        value: aws_api_gateway_domain_name.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.id}'
-      regional_domain_name:
-        value: '${aws_api_gateway_domain_name.{{ name }}.regional_domain_name}'
-      certificate_upload_date:
-        value: '${aws_api_gateway_domain_name.{{ name }}.certificate_upload_date}'
-      endpoint_configuration:
-        value: '${aws_api_gateway_domain_name.{{ name }}.endpoint_configuration}'
+        value: aws_api_gateway_domain_name.{{ name }}.id
       cloudfront_domain_name:
-        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_domain_name}'
-      cloudfront_zone_id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.cloudfront_zone_id}'
+        value: aws_api_gateway_domain_name.{{ name }}.cloudfront_domain_name
+      endpoint_configuration:
+        value: aws_api_gateway_domain_name.{{ name }}.endpoint_configuration
       regional_zone_id:
-        value: '${aws_api_gateway_domain_name.{{ name }}.regional_zone_id}'
+        value: aws_api_gateway_domain_name.{{ name }}.regional_zone_id
+      cloudfront_zone_id:
+        value: aws_api_gateway_domain_name.{{ name }}.cloudfront_zone_id
+      regional_domain_name:
+        value: aws_api_gateway_domain_name.{{ name }}.regional_domain_name
+      security_policy:
+        value: aws_api_gateway_domain_name.{{ name }}.security_policy
+      certificate_upload_date:
+        value: aws_api_gateway_domain_name.{{ name }}.certificate_upload_date
