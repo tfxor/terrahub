@@ -8,15 +8,15 @@
     resource:
       aws_vpc_endpoint_subnet_association:
         {{ name }}:
-          vpc_endpoint_id: '${var.{{ name }}_vpc_endpoint_id}'
-          subnet_id: '${var.{{ name }}_subnet_id}'
+          vpc_endpoint_id: var.{{ name }}_vpc_endpoint_id
+          subnet_id: var.{{ name }}_subnet_id
     variable:
       {{ name }}_vpc_endpoint_id:
-        type: 'string'
+        type: string
       {{ name }}_subnet_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_vpc_endpoint_subnet_association.{{ name }}.id}'
+        value: aws_vpc_endpoint_subnet_association.{{ name }}.id
       thub_id:
-        value: '${aws_vpc_endpoint_subnet_association.{{ name }}.id}'
+        value: aws_vpc_endpoint_subnet_association.{{ name }}.id

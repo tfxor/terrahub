@@ -7,17 +7,17 @@
     resource:
       azurerm_arm_shared_image_gallery:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_shared_image_gallery.{{ name }}.id}'
+        value: azurerm_arm_shared_image_gallery.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_shared_image_gallery.{{ name }}.id}'
+        value: azurerm_arm_shared_image_gallery.{{ name }}.id
       unique_name:
-        value: '${azurerm_arm_shared_image_gallery.{{ name }}.unique_name}'
+        value: azurerm_arm_shared_image_gallery.{{ name }}.unique_name

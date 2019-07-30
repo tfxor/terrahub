@@ -8,18 +8,18 @@
     resource:
       aws_lightsail_static_ip:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_lightsail_static_ip.{{ name }}.id}'
+        value: aws_lightsail_static_ip.{{ name }}.id
       thub_id:
-        value: '${aws_lightsail_static_ip.{{ name }}.id}'
+        value: aws_lightsail_static_ip.{{ name }}.id
       ip_address:
-        value: '${aws_lightsail_static_ip.{{ name }}.ip_address}'
+        value: aws_lightsail_static_ip.{{ name }}.ip_address
       arn:
-        value: '${aws_lightsail_static_ip.{{ name }}.arn}'
+        value: aws_lightsail_static_ip.{{ name }}.arn
       support_code:
-        value: '${aws_lightsail_static_ip.{{ name }}.support_code}'
+        value: aws_lightsail_static_ip.{{ name }}.support_code

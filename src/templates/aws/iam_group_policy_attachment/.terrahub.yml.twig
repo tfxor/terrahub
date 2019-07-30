@@ -8,15 +8,15 @@
     resource:
       aws_iam_group_policy_attachment:
         {{ name }}:
-          group: '${var.{{ name }}_group}'
-          policy_arn: '${var.{{ name }}_policy_arn}'
+          policy_arn: var.{{ name }}_policy_arn
+          group: var.{{ name }}_group
     variable:
-      {{ name }}_group:
-        type: 'string'
       {{ name }}_policy_arn:
-        type: 'string'
+        type: string
+      {{ name }}_group:
+        type: string
     output:
       id:
-        value: '${aws_iam_group_policy_attachment.{{ name }}.id}'
+        value: aws_iam_group_policy_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_iam_group_policy_attachment.{{ name }}.id}'
+        value: aws_iam_group_policy_attachment.{{ name }}.id

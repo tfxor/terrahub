@@ -8,31 +8,31 @@
     resource:
       aws_kms_grant:
         {{ name }}:
-          key_id: '${var.{{ name }}_key_id}'
-          operations: '${var.{{ name }}_operations}'
-          grantee_principal: '${var.{{ name }}_grantee_principal}'
-          # grant_creation_tokens: []
+          key_id: var.{{ name }}_key_id
+          grantee_principal: var.{{ name }}_grantee_principal
+          operations: var.{{ name }}_operations
           # retiring_principal: ''
-          # constraints:
-          #   encryption_context_equals:
-          #     '[TO_BE_REPLACED]': ''
-          #   encryption_context_subset:
-          #     '[TO_BE_REPLACED]': ''
           # retire_on_delete: false
+          # constraints: 
+          #   encryption_context_equals: 
+          #     '[TO_BE_REPLACED]': ''
+          #   encryption_context_subset: 
+          #     '[TO_BE_REPLACED]': ''
+          # grant_creation_tokens: []
           # name: ''
     variable:
       {{ name }}_key_id:
-        type: 'string'
-      {{ name }}_operations:
-        type: 'set'
+        type: string
       {{ name }}_grantee_principal:
-        type: 'string'
+        type: string
+      {{ name }}_operations:
+        type: set
     output:
       id:
-        value: '${aws_kms_grant.{{ name }}.id}'
+        value: aws_kms_grant.{{ name }}.id
       thub_id:
-        value: '${aws_kms_grant.{{ name }}.id}'
-      grant_token:
-        value: '${aws_kms_grant.{{ name }}.grant_token}'
+        value: aws_kms_grant.{{ name }}.id
       grant_id:
-        value: '${aws_kms_grant.{{ name }}.grant_id}'
+        value: aws_kms_grant.{{ name }}.grant_id
+      grant_token:
+        value: aws_kms_grant.{{ name }}.grant_token

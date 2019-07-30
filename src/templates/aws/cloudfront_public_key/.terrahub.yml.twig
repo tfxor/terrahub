@@ -8,23 +8,23 @@
     resource:
       aws_cloudfront_public_key:
         {{ name }}:
-          encoded_key: '${var.{{ name }}_encoded_key}'
-          # comment: ''
+          encoded_key: var.{{ name }}_encoded_key
           # name: ''
           # name_prefix: ''
+          # comment: ''
     variable:
       {{ name }}_encoded_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudfront_public_key.{{ name }}.id}'
+        value: aws_cloudfront_public_key.{{ name }}.id
       thub_id:
-        value: '${aws_cloudfront_public_key.{{ name }}.id}'
-      caller_reference:
-        value: '${aws_cloudfront_public_key.{{ name }}.caller_reference}'
+        value: aws_cloudfront_public_key.{{ name }}.id
       etag:
-        value: '${aws_cloudfront_public_key.{{ name }}.etag}'
+        value: aws_cloudfront_public_key.{{ name }}.etag
       name:
-        value: '${aws_cloudfront_public_key.{{ name }}.name}'
+        value: aws_cloudfront_public_key.{{ name }}.name
       name_prefix:
-        value: '${aws_cloudfront_public_key.{{ name }}.name_prefix}'
+        value: aws_cloudfront_public_key.{{ name }}.name_prefix
+      caller_reference:
+        value: aws_cloudfront_public_key.{{ name }}.caller_reference

@@ -8,19 +8,23 @@
     resource:
       aws_redshift_parameter_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          family: '${var.{{ name }}_family}'
+          name: var.{{ name }}_name
+          family: var.{{ name }}_family
           # description: ''
-          # parameter:
+          # parameter: 
           #   name: ''
           #   value: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_family:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_redshift_parameter_group.{{ name }}.id}'
+        value: aws_redshift_parameter_group.{{ name }}.id
       thub_id:
-        value: '${aws_redshift_parameter_group.{{ name }}.id}'
+        value: aws_redshift_parameter_group.{{ name }}.id
+      arn:
+        value: aws_redshift_parameter_group.{{ name }}.arn

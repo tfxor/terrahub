@@ -8,13 +8,13 @@
     resource:
       aws_waf_regex_pattern_set:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # regex_pattern_strings: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_waf_regex_pattern_set.{{ name }}.id}'
+        value: aws_waf_regex_pattern_set.{{ name }}.id
       thub_id:
-        value: '${aws_waf_regex_pattern_set.{{ name }}.id}'
+        value: aws_waf_regex_pattern_set.{{ name }}.id

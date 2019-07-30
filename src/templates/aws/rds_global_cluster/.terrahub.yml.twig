@@ -8,23 +8,23 @@
     resource:
       aws_rds_global_cluster:
         {{ name }}:
-          global_cluster_identifier: '${var.{{ name }}_global_cluster_identifier}'
+          global_cluster_identifier: var.{{ name }}_global_cluster_identifier
+          # storage_encrypted: false
+          # database_name: ''
           # deletion_protection: false
           # engine: ''
           # engine_version: ''
-          # storage_encrypted: false
-          # database_name: ''
     variable:
       {{ name }}_global_cluster_identifier:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_rds_global_cluster.{{ name }}.id}'
+        value: aws_rds_global_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_rds_global_cluster.{{ name }}.id}'
-      engine_version:
-        value: '${aws_rds_global_cluster.{{ name }}.engine_version}'
+        value: aws_rds_global_cluster.{{ name }}.id
       global_cluster_resource_id:
-        value: '${aws_rds_global_cluster.{{ name }}.global_cluster_resource_id}'
+        value: aws_rds_global_cluster.{{ name }}.global_cluster_resource_id
       arn:
-        value: '${aws_rds_global_cluster.{{ name }}.arn}'
+        value: aws_rds_global_cluster.{{ name }}.arn
+      engine_version:
+        value: aws_rds_global_cluster.{{ name }}.engine_version

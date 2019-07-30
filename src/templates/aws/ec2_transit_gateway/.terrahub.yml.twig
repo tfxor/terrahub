@@ -8,25 +8,25 @@
     resource:
       aws_ec2_transit_gateway:
         {{ name }}:
-          # description: ''
-          # default_route_table_propagation: ''
+          # vpn_ecmp_support: ''
+          # amazon_side_asn: 0
           # auto_accept_shared_attachments: ''
           # default_route_table_association: ''
+          # default_route_table_propagation: ''
+          # description: ''
           # dns_support: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # amazon_side_asn: 0
-          # vpn_ecmp_support: ''
     output:
       id:
-        value: '${aws_ec2_transit_gateway.{{ name }}.id}'
+        value: aws_ec2_transit_gateway.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_transit_gateway.{{ name }}.id}'
-      propagation_default_route_table_id:
-        value: '${aws_ec2_transit_gateway.{{ name }}.propagation_default_route_table_id}'
+        value: aws_ec2_transit_gateway.{{ name }}.id
       arn:
-        value: '${aws_ec2_transit_gateway.{{ name }}.arn}'
+        value: aws_ec2_transit_gateway.{{ name }}.arn
       association_default_route_table_id:
-        value: '${aws_ec2_transit_gateway.{{ name }}.association_default_route_table_id}'
+        value: aws_ec2_transit_gateway.{{ name }}.association_default_route_table_id
       owner_id:
-        value: '${aws_ec2_transit_gateway.{{ name }}.owner_id}'
+        value: aws_ec2_transit_gateway.{{ name }}.owner_id
+      propagation_default_route_table_id:
+        value: aws_ec2_transit_gateway.{{ name }}.propagation_default_route_table_id

@@ -6,26 +6,32 @@
     resource:
       google_dataflow_job:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          template_gcs_path: '${var.{{ name }}_template_gcs_path}'
-          temp_gcs_location: '${var.{{ name }}_temp_gcs_location}'
+          template_gcs_path: var.{{ name }}_template_gcs_path
+          temp_gcs_location: var.{{ name }}_temp_gcs_location
+          name: var.{{ name }}_name
+          # project: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # network: ''
+          # subnetwork: ''
+          # machine_type: ''
+          # service_account_email: ''
           # zone: ''
           # region: ''
           # max_workers: 0
-          # parameters:
-          #   '[TO_BE_REPLACED]': ''
-          # project: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_template_gcs_path:
-        type: 'string'
+        type: string
       {{ name }}_temp_gcs_location:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${google_dataflow_job.{{ name }}.id}'
+        value: google_dataflow_job.{{ name }}.id
       thub_id:
-        value: '${google_dataflow_job.{{ name }}.id}'
+        value: google_dataflow_job.{{ name }}.id
+      project:
+        value: google_dataflow_job.{{ name }}.project
       state:
-        value: '${google_dataflow_job.{{ name }}.state}'
+        value: google_dataflow_job.{{ name }}.state

@@ -7,17 +7,17 @@
     resource:
       azurerm_arm_cdn_profile:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          sku: '${var.{{ name }}_sku}'
-          # tags:
+          name: var.{{ name }}_name
+          sku: var.{{ name }}_sku
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_sku:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_cdn_profile.{{ name }}.id}'
+        value: azurerm_arm_cdn_profile.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_cdn_profile.{{ name }}.id}'
+        value: azurerm_arm_cdn_profile.{{ name }}.id

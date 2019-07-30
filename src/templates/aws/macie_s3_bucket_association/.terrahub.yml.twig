@@ -8,20 +8,20 @@
     resource:
       aws_macie_s3_bucket_association:
         {{ name }}:
-          bucket_name: '${var.{{ name }}_bucket_name}'
+          bucket_name: var.{{ name }}_bucket_name
           # prefix: ''
           # member_account_id: ''
-          # classification_type:
+          # classification_type: 
           #   -
-          #     one_time: ''
           #     continuous: ''
+          #     one_time: ''
     variable:
       {{ name }}_bucket_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_macie_s3_bucket_association.{{ name }}.id}'
+        value: aws_macie_s3_bucket_association.{{ name }}.id
       thub_id:
-        value: '${aws_macie_s3_bucket_association.{{ name }}.id}'
+        value: aws_macie_s3_bucket_association.{{ name }}.id
       classification_type:
-        value: '${aws_macie_s3_bucket_association.{{ name }}.classification_type}'
+        value: aws_macie_s3_bucket_association.{{ name }}.classification_type

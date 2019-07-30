@@ -8,33 +8,33 @@
     resource:
       aws_iam_account_password_policy:
         {{ name }}:
-          # hard_expiry: false
+          # password_reuse_prevention: 0
           # require_lowercase_characters: false
-          # require_numbers: false
           # require_symbols: false
+          # require_uppercase_characters: false
           # allow_users_to_change_password: false
+          # hard_expiry: false
           # max_password_age: 0
           # minimum_password_length: 0
-          # password_reuse_prevention: 0
-          # require_uppercase_characters: false
+          # require_numbers: false
     output:
       id:
-        value: '${aws_iam_account_password_policy.{{ name }}.id}'
+        value: aws_iam_account_password_policy.{{ name }}.id
       thub_id:
-        value: '${aws_iam_account_password_policy.{{ name }}.id}'
-      expire_passwords:
-        value: '${aws_iam_account_password_policy.{{ name }}.expire_passwords}'
-      hard_expiry:
-        value: '${aws_iam_account_password_policy.{{ name }}.hard_expiry}'
-      require_lowercase_characters:
-        value: '${aws_iam_account_password_policy.{{ name }}.require_lowercase_characters}'
-      require_numbers:
-        value: '${aws_iam_account_password_policy.{{ name }}.require_numbers}'
-      require_symbols:
-        value: '${aws_iam_account_password_policy.{{ name }}.require_symbols}'
-      max_password_age:
-        value: '${aws_iam_account_password_policy.{{ name }}.max_password_age}'
+        value: aws_iam_account_password_policy.{{ name }}.id
       password_reuse_prevention:
-        value: '${aws_iam_account_password_policy.{{ name }}.password_reuse_prevention}'
+        value: aws_iam_account_password_policy.{{ name }}.password_reuse_prevention
+      require_lowercase_characters:
+        value: aws_iam_account_password_policy.{{ name }}.require_lowercase_characters
+      require_symbols:
+        value: aws_iam_account_password_policy.{{ name }}.require_symbols
       require_uppercase_characters:
-        value: '${aws_iam_account_password_policy.{{ name }}.require_uppercase_characters}'
+        value: aws_iam_account_password_policy.{{ name }}.require_uppercase_characters
+      hard_expiry:
+        value: aws_iam_account_password_policy.{{ name }}.hard_expiry
+      max_password_age:
+        value: aws_iam_account_password_policy.{{ name }}.max_password_age
+      require_numbers:
+        value: aws_iam_account_password_policy.{{ name }}.require_numbers
+      expire_passwords:
+        value: aws_iam_account_password_policy.{{ name }}.expire_passwords

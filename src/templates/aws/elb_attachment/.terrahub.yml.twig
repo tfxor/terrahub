@@ -8,15 +8,15 @@
     resource:
       aws_elb_attachment:
         {{ name }}:
-          elb: '${var.{{ name }}_elb}'
-          instance: '${var.{{ name }}_instance}'
+          elb: var.{{ name }}_elb
+          instance: var.{{ name }}_instance
     variable:
       {{ name }}_elb:
-        type: 'string'
+        type: string
       {{ name }}_instance:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elb_attachment.{{ name }}.id}'
+        value: aws_elb_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_elb_attachment.{{ name }}.id}'
+        value: aws_elb_attachment.{{ name }}.id

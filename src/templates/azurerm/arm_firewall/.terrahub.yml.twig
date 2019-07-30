@@ -7,20 +7,20 @@
     resource:
       azurerm_arm_firewall:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          ip_configuration:
+          ip_configuration: 
             -
               name: ''
               subnet_id: ''
           #     public_ip_address_id: ''
           #     internal_public_ip_address_id: ''
-          # tags:
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_firewall.{{ name }}.id}'
+        value: azurerm_arm_firewall.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_firewall.{{ name }}.id}'
+        value: azurerm_arm_firewall.{{ name }}.id

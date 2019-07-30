@@ -8,13 +8,10 @@
     resource:
       aws_lb_listener_rule:
         {{ name }}:
-          listener_arn: '${var.{{ name }}_listener_arn}'
-          action:
+          action: 
             -
               type: ''
-          #     order: 0
-          #     target_group_arn: ''
-          #     redirect:
+          #     redirect: 
           #       -
           #         status_code: ''
           #         host: ''
@@ -22,22 +19,25 @@
           #         port: ''
           #         protocol: ''
           #         query: ''
-          condition:
+          #     order: 0
+          #     target_group_arn: ''
+          condition: 
           #   field: ''
-          #   values:
+          #   values: 
           #     -
-          # priority: 0
+          listener_arn: var.{{ name }}_listener_arn
           # authenticate_cognito: []
           # authenticate_oidc: []
+          # priority: 0
     variable:
       {{ name }}_listener_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_lb_listener_rule.{{ name }}.id}'
+        value: aws_lb_listener_rule.{{ name }}.id
       thub_id:
-        value: '${aws_lb_listener_rule.{{ name }}.id}'
+        value: aws_lb_listener_rule.{{ name }}.id
       arn:
-        value: '${aws_lb_listener_rule.{{ name }}.arn}'
+        value: aws_lb_listener_rule.{{ name }}.arn
       priority:
-        value: '${aws_lb_listener_rule.{{ name }}.priority}'
+        value: aws_lb_listener_rule.{{ name }}.priority

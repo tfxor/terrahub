@@ -8,30 +8,32 @@
     resource:
       aws_codepipeline_webhook:
         {{ name }}:
-          authentication: '${var.{{ name }}_authentication}'
-          filter:
+          filter: 
             json_path: ''
             match_equals: ''
-          name: '${var.{{ name }}_name}'
-          target_action: '${var.{{ name }}_target_action}'
-          target_pipeline: '${var.{{ name }}_target_pipeline}'
-          # authentication_configuration:
+          name: var.{{ name }}_name
+          target_action: var.{{ name }}_target_action
+          target_pipeline: var.{{ name }}_target_pipeline
+          authentication: var.{{ name }}_authentication
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # authentication_configuration: 
           #   -
           #     secret_token: ''
           #     allowed_ip_range: ''
     variable:
-      {{ name }}_authentication:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_target_action:
-        type: 'string'
+        type: string
       {{ name }}_target_pipeline:
-        type: 'string'
+        type: string
+      {{ name }}_authentication:
+        type: string
     output:
       id:
-        value: '${aws_codepipeline_webhook.{{ name }}.id}'
+        value: aws_codepipeline_webhook.{{ name }}.id
       thub_id:
-        value: '${aws_codepipeline_webhook.{{ name }}.id}'
+        value: aws_codepipeline_webhook.{{ name }}.id
       url:
-        value: '${aws_codepipeline_webhook.{{ name }}.url}'
+        value: aws_codepipeline_webhook.{{ name }}.url

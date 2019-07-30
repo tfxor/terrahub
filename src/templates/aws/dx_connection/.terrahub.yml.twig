@@ -8,24 +8,28 @@
     resource:
       aws_dx_connection:
         {{ name }}:
-          bandwidth: '${var.{{ name }}_bandwidth}'
-          location: '${var.{{ name }}_location}'
-          name: '${var.{{ name }}_name}'
-          # tags:
+          location: var.{{ name }}_location
+          name: var.{{ name }}_name
+          bandwidth: var.{{ name }}_bandwidth
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_bandwidth:
-        type: 'string'
       {{ name }}_location:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_bandwidth:
+        type: string
     output:
       id:
-        value: '${aws_dx_connection.{{ name }}.id}'
+        value: aws_dx_connection.{{ name }}.id
       thub_id:
-        value: '${aws_dx_connection.{{ name }}.id}'
+        value: aws_dx_connection.{{ name }}.id
       jumbo_frame_capable:
-        value: '${aws_dx_connection.{{ name }}.jumbo_frame_capable}'
+        value: aws_dx_connection.{{ name }}.jumbo_frame_capable
+      has_logical_redundancy:
+        value: aws_dx_connection.{{ name }}.has_logical_redundancy
+      aws_device:
+        value: aws_dx_connection.{{ name }}.aws_device
       arn:
-        value: '${aws_dx_connection.{{ name }}.arn}'
+        value: aws_dx_connection.{{ name }}.arn

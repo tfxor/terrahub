@@ -8,70 +8,68 @@
     resource:
       aws_docdb_cluster:
         {{ name }}:
-          # availability_zones: []
-          # storage_encrypted: false
-          # final_snapshot_identifier: ''
-          # kms_key_id: ''
-          # cluster_members: []
-          # master_username: ''
-          # port: 0
-          # preferred_maintenance_window: ''
-          # cluster_identifier_prefix: ''
-          # engine: ''
-          # engine_version: ''
-          # master_password: ''
-          # snapshot_identifier: ''
-          # preferred_backup_window: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
           # cluster_identifier: ''
+          # db_cluster_parameter_group_name: ''
+          # port: 0
+          # availability_zones: []
+          # engine: ''
+          # snapshot_identifier: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # kms_key_id: ''
+          # db_subnet_group_name: ''
+          # engine_version: ''
+          # final_snapshot_identifier: ''
+          # apply_immediately: false
+          # backup_retention_period: 0
+          # cluster_identifier_prefix: ''
+          # skip_final_snapshot: false
+          # master_username: ''
           # vpc_security_group_ids: []
           # enabled_cloudwatch_logs_exports: []
-          # db_subnet_group_name: ''
-          # apply_immediately: false
-          # db_cluster_parameter_group_name: ''
-          # skip_final_snapshot: false
-          # backup_retention_period: 0
+          # preferred_backup_window: ''
+          # preferred_maintenance_window: ''
+          # storage_encrypted: false
+          # cluster_members: []
+          # master_password: ''
     output:
       id:
-        value: '${aws_docdb_cluster.{{ name }}.id}'
+        value: aws_docdb_cluster.{{ name }}.id
       thub_id:
-        value: '${aws_docdb_cluster.{{ name }}.id}'
-      availability_zones:
-        value: '${aws_docdb_cluster.{{ name }}.availability_zones}'
-      kms_key_id:
-        value: '${aws_docdb_cluster.{{ name }}.kms_key_id}'
-      cluster_members:
-        value: '${aws_docdb_cluster.{{ name }}.cluster_members}'
-      master_username:
-        value: '${aws_docdb_cluster.{{ name }}.master_username}'
-      preferred_maintenance_window:
-        value: '${aws_docdb_cluster.{{ name }}.preferred_maintenance_window}'
-      hosted_zone_id:
-        value: '${aws_docdb_cluster.{{ name }}.hosted_zone_id}'
-      cluster_identifier_prefix:
-        value: '${aws_docdb_cluster.{{ name }}.cluster_identifier_prefix}'
-      engine_version:
-        value: '${aws_docdb_cluster.{{ name }}.engine_version}'
-      preferred_backup_window:
-        value: '${aws_docdb_cluster.{{ name }}.preferred_backup_window}'
+        value: aws_docdb_cluster.{{ name }}.id
       cluster_identifier:
-        value: '${aws_docdb_cluster.{{ name }}.cluster_identifier}'
-      endpoint:
-        value: '${aws_docdb_cluster.{{ name }}.endpoint}'
-      reader_endpoint:
-        value: '${aws_docdb_cluster.{{ name }}.reader_endpoint}'
-      vpc_security_group_ids:
-        value: '${aws_docdb_cluster.{{ name }}.vpc_security_group_ids}'
-      enabled_cloudwatch_logs_exports:
-        value: '${aws_docdb_cluster.{{ name }}.enabled_cloudwatch_logs_exports}'
-      db_subnet_group_name:
-        value: '${aws_docdb_cluster.{{ name }}.db_subnet_group_name}'
-      apply_immediately:
-        value: '${aws_docdb_cluster.{{ name }}.apply_immediately}'
-      cluster_resource_id:
-        value: '${aws_docdb_cluster.{{ name }}.cluster_resource_id}'
-      arn:
-        value: '${aws_docdb_cluster.{{ name }}.arn}'
+        value: aws_docdb_cluster.{{ name }}.cluster_identifier
       db_cluster_parameter_group_name:
-        value: '${aws_docdb_cluster.{{ name }}.db_cluster_parameter_group_name}'
+        value: aws_docdb_cluster.{{ name }}.db_cluster_parameter_group_name
+      reader_endpoint:
+        value: aws_docdb_cluster.{{ name }}.reader_endpoint
+      availability_zones:
+        value: aws_docdb_cluster.{{ name }}.availability_zones
+      kms_key_id:
+        value: aws_docdb_cluster.{{ name }}.kms_key_id
+      db_subnet_group_name:
+        value: aws_docdb_cluster.{{ name }}.db_subnet_group_name
+      engine_version:
+        value: aws_docdb_cluster.{{ name }}.engine_version
+      apply_immediately:
+        value: aws_docdb_cluster.{{ name }}.apply_immediately
+      cluster_identifier_prefix:
+        value: aws_docdb_cluster.{{ name }}.cluster_identifier_prefix
+      master_username:
+        value: aws_docdb_cluster.{{ name }}.master_username
+      cluster_resource_id:
+        value: aws_docdb_cluster.{{ name }}.cluster_resource_id
+      arn:
+        value: aws_docdb_cluster.{{ name }}.arn
+      vpc_security_group_ids:
+        value: aws_docdb_cluster.{{ name }}.vpc_security_group_ids
+      preferred_backup_window:
+        value: aws_docdb_cluster.{{ name }}.preferred_backup_window
+      preferred_maintenance_window:
+        value: aws_docdb_cluster.{{ name }}.preferred_maintenance_window
+      endpoint:
+        value: aws_docdb_cluster.{{ name }}.endpoint
+      cluster_members:
+        value: aws_docdb_cluster.{{ name }}.cluster_members
+      hosted_zone_id:
+        value: aws_docdb_cluster.{{ name }}.hosted_zone_id

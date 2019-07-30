@@ -8,51 +8,51 @@
     resource:
       aws_cloudwatch_event_target:
         {{ name }}:
-          rule: '${var.{{ name }}_rule}'
-          arn: '${var.{{ name }}_arn}'
-          # target_id: ''
-          # input_path: ''
-          # sqs_target:
+          rule: var.{{ name }}_rule
+          arn: var.{{ name }}_arn
+          # input_transformer: 
           #   -
-          #     message_group_id: ''
+          #     input_template: ''
+          #     input_paths: 
+          #       '[TO_BE_REPLACED]': ''
+          # target_id: ''
           # input: ''
           # role_arn: ''
-          # run_command_targets:
+          # run_command_targets: 
           #   -
           #     key: ''
           #     values: []
-          # ecs_target:
-          #   -
-          #     group: ''
-          #     launch_type: ''
-          #     network_configuration:
-          #       -
-          #         subnets: []
-          #         assign_public_ip: false
-          #         security_groups:
-          # batch_target:
+          # batch_target: 
           #   -
           #     job_definition: ''
           #     job_name: ''
           #     array_size: 0
           #     job_attempts: 0
-          # kinesis_target:
+          # input_path: ''
+          # ecs_target: 
+          #   -
+          #     group: ''
+          #     launch_type: ''
+          #     network_configuration: 
+          #       -
+          #         subnets: []
+          #         security_groups: 
+          #         assign_public_ip: false
+          # kinesis_target: 
           #   -
           #     partition_key_path: ''
-          # input_transformer:
+          # sqs_target: 
           #   -
-          #     input_template: ''
-          #     input_paths:
-          #       '[TO_BE_REPLACED]': ''
+          #     message_group_id: ''
     variable:
       {{ name }}_rule:
-        type: 'string'
+        type: string
       {{ name }}_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_event_target.{{ name }}.id}'
+        value: aws_cloudwatch_event_target.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_event_target.{{ name }}.id}'
+        value: aws_cloudwatch_event_target.{{ name }}.id
       target_id:
-        value: '${aws_cloudwatch_event_target.{{ name }}.target_id}'
+        value: aws_cloudwatch_event_target.{{ name }}.target_id

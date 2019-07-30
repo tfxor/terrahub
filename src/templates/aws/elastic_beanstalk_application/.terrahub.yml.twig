@@ -8,19 +8,23 @@
     resource:
       aws_elastic_beanstalk_application:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # description: ''
-          # appversion_lifecycle:
+          # appversion_lifecycle: 
           #   -
           #     service_role: ''
           #     max_age_in_days: 0
           #     max_count: 0
           #     delete_source_from_s3: false
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elastic_beanstalk_application.{{ name }}.id}'
+        value: aws_elastic_beanstalk_application.{{ name }}.id
       thub_id:
-        value: '${aws_elastic_beanstalk_application.{{ name }}.id}'
+        value: aws_elastic_beanstalk_application.{{ name }}.id
+      arn:
+        value: aws_elastic_beanstalk_application.{{ name }}.arn

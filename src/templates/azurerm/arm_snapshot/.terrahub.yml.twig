@@ -7,23 +7,23 @@
     resource:
       azurerm_arm_snapshot:
         {{ name }}:
-          create_option: '${var.{{ name }}_create_option}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          create_option: var.{{ name }}_create_option
+          # disk_size_gb: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # source_uri: ''
           # source_resource_id: ''
           # storage_account_id: ''
-          # disk_size_gb: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_create_option:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_create_option:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_snapshot.{{ name }}.id}'
+        value: azurerm_arm_snapshot.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_snapshot.{{ name }}.id}'
+        value: azurerm_arm_snapshot.{{ name }}.id
       disk_size_gb:
-        value: '${azurerm_arm_snapshot.{{ name }}.disk_size_gb}'
+        value: azurerm_arm_snapshot.{{ name }}.disk_size_gb

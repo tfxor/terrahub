@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_network_interface_nat_rule_association:
         {{ name }}:
-          network_interface_id: '${var.{{ name }}_network_interface_id}'
-          ip_configuration_name: '${var.{{ name }}_ip_configuration_name}'
-          nat_rule_id: '${var.{{ name }}_nat_rule_id}'
+          network_interface_id: var.{{ name }}_network_interface_id
+          ip_configuration_name: var.{{ name }}_ip_configuration_name
+          nat_rule_id: var.{{ name }}_nat_rule_id
     variable:
       {{ name }}_network_interface_id:
-        type: 'string'
+        type: string
       {{ name }}_ip_configuration_name:
-        type: 'string'
+        type: string
       {{ name }}_nat_rule_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_network_interface_nat_rule_association.{{ name }}.id}'
+        value: azurerm_arm_network_interface_nat_rule_association.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_network_interface_nat_rule_association.{{ name }}.id}'
+        value: azurerm_arm_network_interface_nat_rule_association.{{ name }}.id

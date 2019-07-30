@@ -1,0 +1,35 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_kms_external_key:
+        {{ name }}:
+          # enabled: false
+          # key_material_base64: ''
+          # policy: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # deletion_window_in_days: 0
+          # description: ''
+          # valid_to: ''
+    output:
+      id:
+        value: aws_kms_external_key.{{ name }}.id
+      thub_id:
+        value: aws_kms_external_key.{{ name }}.id
+      key_state:
+        value: aws_kms_external_key.{{ name }}.key_state
+      key_usage:
+        value: aws_kms_external_key.{{ name }}.key_usage
+      enabled:
+        value: aws_kms_external_key.{{ name }}.enabled
+      expiration_model:
+        value: aws_kms_external_key.{{ name }}.expiration_model
+      policy:
+        value: aws_kms_external_key.{{ name }}.policy
+      arn:
+        value: aws_kms_external_key.{{ name }}.arn

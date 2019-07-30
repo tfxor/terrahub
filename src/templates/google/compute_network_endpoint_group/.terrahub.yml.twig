@@ -1,0 +1,34 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_compute_network_endpoint_group:
+        {{ name }}:
+          name: var.{{ name }}_name
+          network: var.{{ name }}_network
+          # subnetwork: ''
+          # zone: ''
+          # project: ''
+          # description: ''
+          # network_endpoint_type: ''
+          # default_port: 0
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_network:
+        type: string
+    output:
+      id:
+        value: google_compute_network_endpoint_group.{{ name }}.id
+      thub_id:
+        value: google_compute_network_endpoint_group.{{ name }}.id
+      zone:
+        value: google_compute_network_endpoint_group.{{ name }}.zone
+      project:
+        value: google_compute_network_endpoint_group.{{ name }}.project
+      size:
+        value: google_compute_network_endpoint_group.{{ name }}.size
+      self_link:
+        value: google_compute_network_endpoint_group.{{ name }}.self_link

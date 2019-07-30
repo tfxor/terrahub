@@ -8,21 +8,21 @@
     resource:
       aws_opsworks_rds_db_instance:
         {{ name }}:
-          stack_id: '${var.{{ name }}_stack_id}'
-          rds_db_instance_arn: '${var.{{ name }}_rds_db_instance_arn}'
-          db_password: '${var.{{ name }}_db_password}'
-          db_user: '${var.{{ name }}_db_user}'
+          rds_db_instance_arn: var.{{ name }}_rds_db_instance_arn
+          db_password: var.{{ name }}_db_password
+          db_user: var.{{ name }}_db_user
+          stack_id: var.{{ name }}_stack_id
     variable:
-      {{ name }}_stack_id:
-        type: 'string'
       {{ name }}_rds_db_instance_arn:
-        type: 'string'
+        type: string
       {{ name }}_db_password:
-        type: 'string'
+        type: string
       {{ name }}_db_user:
-        type: 'string'
+        type: string
+      {{ name }}_stack_id:
+        type: string
     output:
       id:
-        value: '${aws_opsworks_rds_db_instance.{{ name }}.id}'
+        value: aws_opsworks_rds_db_instance.{{ name }}.id
       thub_id:
-        value: '${aws_opsworks_rds_db_instance.{{ name }}.id}'
+        value: aws_opsworks_rds_db_instance.{{ name }}.id

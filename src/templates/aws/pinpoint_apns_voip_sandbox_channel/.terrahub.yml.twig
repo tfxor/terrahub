@@ -8,20 +8,20 @@
     resource:
       aws_pinpoint_apns_voip_sandbox_channel:
         {{ name }}:
-          application_id: '${var.{{ name }}_application_id}'
-          # bundle_id: ''
+          application_id: var.{{ name }}_application_id
           # default_authentication_method: ''
-          # enabled: false
-          # token_key_id: ''
-          # certificate: ''
           # private_key: ''
           # team_id: ''
+          # token_key_id: ''
+          # bundle_id: ''
+          # certificate: ''
+          # enabled: false
           # token_key: ''
     variable:
       {{ name }}_application_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_apns_voip_sandbox_channel.{{ name }}.id}'
+        value: aws_pinpoint_apns_voip_sandbox_channel.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_apns_voip_sandbox_channel.{{ name }}.id}'
+        value: aws_pinpoint_apns_voip_sandbox_channel.{{ name }}.id

@@ -8,49 +8,49 @@
     resource:
       aws_ssm_document:
         {{ name }}:
-          content: '${var.{{ name }}_content}'
-          document_type: '${var.{{ name }}_document_type}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          content: var.{{ name }}_content
+          document_type: var.{{ name }}_document_type
           # document_format: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # permissions:
+          # permissions: 
           #   '[TO_BE_REPLACED]': ''
           #   'type': ''
           #   'account_ids': ''
     variable:
-      {{ name }}_content:
-        type: 'string'
-      {{ name }}_document_type:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_content:
+        type: string
+      {{ name }}_document_type:
+        type: string
     output:
       id:
-        value: '${aws_ssm_document.{{ name }}.id}'
+        value: aws_ssm_document.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_document.{{ name }}.id}'
-      hash_type:
-        value: '${aws_ssm_document.{{ name }}.hash_type}'
-      parameter:
-        value: '${aws_ssm_document.{{ name }}.parameter}'
-      schema_version:
-        value: '${aws_ssm_document.{{ name }}.schema_version}'
-      created_date:
-        value: '${aws_ssm_document.{{ name }}.created_date}'
-      status:
-        value: '${aws_ssm_document.{{ name }}.status}'
-      latest_version:
-        value: '${aws_ssm_document.{{ name }}.latest_version}'
+        value: aws_ssm_document.{{ name }}.id
       arn:
-        value: '${aws_ssm_document.{{ name }}.arn}'
-      hash:
-        value: '${aws_ssm_document.{{ name }}.hash}'
-      platform_types:
-        value: '${aws_ssm_document.{{ name }}.platform_types}'
-      default_version:
-        value: '${aws_ssm_document.{{ name }}.default_version}'
-      description:
-        value: '${aws_ssm_document.{{ name }}.description}'
+        value: aws_ssm_document.{{ name }}.arn
+      schema_version:
+        value: aws_ssm_document.{{ name }}.schema_version
       owner:
-        value: '${aws_ssm_document.{{ name }}.owner}'
+        value: aws_ssm_document.{{ name }}.owner
+      parameter:
+        value: aws_ssm_document.{{ name }}.parameter
+      created_date:
+        value: aws_ssm_document.{{ name }}.created_date
+      hash:
+        value: aws_ssm_document.{{ name }}.hash
+      description:
+        value: aws_ssm_document.{{ name }}.description
+      hash_type:
+        value: aws_ssm_document.{{ name }}.hash_type
+      default_version:
+        value: aws_ssm_document.{{ name }}.default_version
+      latest_version:
+        value: aws_ssm_document.{{ name }}.latest_version
+      status:
+        value: aws_ssm_document.{{ name }}.status
+      platform_types:
+        value: aws_ssm_document.{{ name }}.platform_types

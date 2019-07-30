@@ -8,15 +8,15 @@
     resource:
       aws_s3_account_public_access_block:
         {{ name }}:
+          # account_id: ''
+          # block_public_acls: false
           # block_public_policy: false
           # ignore_public_acls: false
           # restrict_public_buckets: false
-          # account_id: ''
-          # block_public_acls: false
     output:
       id:
-        value: '${aws_s3_account_public_access_block.{{ name }}.id}'
+        value: aws_s3_account_public_access_block.{{ name }}.id
       thub_id:
-        value: '${aws_s3_account_public_access_block.{{ name }}.id}'
+        value: aws_s3_account_public_access_block.{{ name }}.id
       account_id:
-        value: '${aws_s3_account_public_access_block.{{ name }}.account_id}'
+        value: aws_s3_account_public_access_block.{{ name }}.account_id

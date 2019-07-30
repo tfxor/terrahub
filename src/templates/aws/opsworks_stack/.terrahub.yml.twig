@@ -8,15 +8,17 @@
     resource:
       aws_opsworks_stack:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          region: '${var.{{ name }}_region}'
-          default_instance_profile_arn: '${var.{{ name }}_default_instance_profile_arn}'
-          service_role_arn: '${var.{{ name }}_service_role_arn}'
-          # default_os: ''
-          # default_ssh_key_name: ''
+          name: var.{{ name }}_name
+          region: var.{{ name }}_region
+          default_instance_profile_arn: var.{{ name }}_default_instance_profile_arn
+          service_role_arn: var.{{ name }}_service_role_arn
+          # color: ''
+          # berkshelf_version: ''
+          # custom_json: ''
+          # default_root_device_type: ''
+          # hostname_theme: ''
           # agent_version: ''
-          # configuration_manager_version: ''
-          # custom_cookbooks_source:
+          # custom_cookbooks_source: 
           #   -
           #     type: ''
           #     url: ''
@@ -24,45 +26,43 @@
           #     password: ''
           #     revision: ''
           #     ssh_key: ''
-          # default_subnet_id: ''
-          # configuration_manager_name: ''
-          # berkshelf_version: ''
-          # manage_berkshelf: false
-          # custom_json: ''
-          # default_root_device_type: ''
-          # use_custom_cookbooks: false
-          # use_opsworks_security_groups: false
-          # color: ''
           # default_availability_zone: ''
-          # hostname_theme: ''
-          # tags:
+          # default_os: ''
+          # default_subnet_id: ''
+          # configuration_manager_version: ''
+          # manage_berkshelf: false
+          # use_custom_cookbooks: false
+          # configuration_manager_name: ''
+          # default_ssh_key_name: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # use_opsworks_security_groups: false
           # vpc_id: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_region:
-        type: 'string'
+        type: string
       {{ name }}_default_instance_profile_arn:
-        type: 'string'
+        type: string
       {{ name }}_service_role_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_opsworks_stack.{{ name }}.id}'
+        value: aws_opsworks_stack.{{ name }}.id
       thub_id:
-        value: '${aws_opsworks_stack.{{ name }}.id}'
-      agent_version:
-        value: '${aws_opsworks_stack.{{ name }}.agent_version}'
-      custom_cookbooks_source:
-        value: '${aws_opsworks_stack.{{ name }}.custom_cookbooks_source}'
-      default_subnet_id:
-        value: '${aws_opsworks_stack.{{ name }}.default_subnet_id}'
+        value: aws_opsworks_stack.{{ name }}.id
       arn:
-        value: '${aws_opsworks_stack.{{ name }}.arn}'
-      stack_endpoint:
-        value: '${aws_opsworks_stack.{{ name }}.stack_endpoint}'
+        value: aws_opsworks_stack.{{ name }}.arn
+      agent_version:
+        value: aws_opsworks_stack.{{ name }}.agent_version
+      custom_cookbooks_source:
+        value: aws_opsworks_stack.{{ name }}.custom_cookbooks_source
       default_availability_zone:
-        value: '${aws_opsworks_stack.{{ name }}.default_availability_zone}'
+        value: aws_opsworks_stack.{{ name }}.default_availability_zone
+      default_subnet_id:
+        value: aws_opsworks_stack.{{ name }}.default_subnet_id
+      stack_endpoint:
+        value: aws_opsworks_stack.{{ name }}.stack_endpoint
       vpc_id:
-        value: '${aws_opsworks_stack.{{ name }}.vpc_id}'
+        value: aws_opsworks_stack.{{ name }}.vpc_id

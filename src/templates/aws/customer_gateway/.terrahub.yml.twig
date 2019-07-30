@@ -8,20 +8,20 @@
     resource:
       aws_customer_gateway:
         {{ name }}:
-          bgp_asn: '${var.{{ name }}_bgp_asn}'
-          ip_address: '${var.{{ name }}_ip_address}'
-          type: '${var.{{ name }}_type}'
-          # tags:
+          bgp_asn: var.{{ name }}_bgp_asn
+          ip_address: var.{{ name }}_ip_address
+          type: var.{{ name }}_type
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_bgp_asn:
-        type: 'int'
+        type: int
       {{ name }}_ip_address:
-        type: 'string'
+        type: string
       {{ name }}_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_customer_gateway.{{ name }}.id}'
+        value: aws_customer_gateway.{{ name }}.id
       thub_id:
-        value: '${aws_customer_gateway.{{ name }}.id}'
+        value: aws_customer_gateway.{{ name }}.id

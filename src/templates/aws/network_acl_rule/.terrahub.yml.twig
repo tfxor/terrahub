@@ -8,28 +8,28 @@
     resource:
       aws_network_acl_rule:
         {{ name }}:
-          network_acl_id: '${var.{{ name }}_network_acl_id}'
-          protocol: '${var.{{ name }}_protocol}'
-          rule_number: '${var.{{ name }}_rule_number}'
-          rule_action: '${var.{{ name }}_rule_action}'
+          protocol: var.{{ name }}_protocol
+          rule_action: var.{{ name }}_rule_action
+          network_acl_id: var.{{ name }}_network_acl_id
+          rule_number: var.{{ name }}_rule_number
           # egress: false
           # ipv6_cidr_block: ''
           # to_port: 0
-          # icmp_type: ''
           # icmp_code: ''
           # cidr_block: ''
           # from_port: 0
+          # icmp_type: ''
     variable:
-      {{ name }}_network_acl_id:
-        type: 'string'
       {{ name }}_protocol:
-        type: 'string'
-      {{ name }}_rule_number:
-        type: 'int'
+        type: string
       {{ name }}_rule_action:
-        type: 'string'
+        type: string
+      {{ name }}_network_acl_id:
+        type: string
+      {{ name }}_rule_number:
+        type: int
     output:
       id:
-        value: '${aws_network_acl_rule.{{ name }}.id}'
+        value: aws_network_acl_rule.{{ name }}.id
       thub_id:
-        value: '${aws_network_acl_rule.{{ name }}.id}'
+        value: aws_network_acl_rule.{{ name }}.id

@@ -8,17 +8,17 @@
     resource:
       aws_lb_target_group_attachment:
         {{ name }}:
-          target_group_arn: '${var.{{ name }}_target_group_arn}'
-          target_id: '${var.{{ name }}_target_id}'
+          target_group_arn: var.{{ name }}_target_group_arn
+          target_id: var.{{ name }}_target_id
           # port: 0
           # availability_zone: ''
     variable:
       {{ name }}_target_group_arn:
-        type: 'string'
+        type: string
       {{ name }}_target_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_lb_target_group_attachment.{{ name }}.id}'
+        value: aws_lb_target_group_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_lb_target_group_attachment.{{ name }}.id}'
+        value: aws_lb_target_group_attachment.{{ name }}.id

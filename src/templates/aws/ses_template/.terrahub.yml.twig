@@ -8,15 +8,15 @@
     resource:
       aws_ses_template:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # text: ''
+          name: var.{{ name }}_name
           # html: ''
           # subject: ''
+          # text: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_template.{{ name }}.id}'
+        value: aws_ses_template.{{ name }}.id
       thub_id:
-        value: '${aws_ses_template.{{ name }}.id}'
+        value: aws_ses_template.{{ name }}.id

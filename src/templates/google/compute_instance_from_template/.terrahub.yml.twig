@@ -8,6 +8,6 @@
         {{ name }}:
     output:
       id:
-        value: '${google_compute_instance_from_template.{{ name }}.id}'
+        value: google_compute_instance_from_template.{{ name }}.id
       thub_id:
-        value: '${google_compute_instance_from_template.{{ name }}.id}'
+        value: google_compute_instance_from_template.{{ name }}.id

@@ -8,18 +8,22 @@
     resource:
       aws_wafregional_byte_match_set:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # byte_match_tuple: []
-          # byte_match_tuples:
-          #   field_to_match:
+          name: var.{{ name }}_name
+          # byte_match_tuples: 
+          #   field_to_match: 
+          #     -
+          #       type: ''
+          #       data: ''
+          # byte_match_tuple: 
+          #   field_to_match: 
           #     -
           #       type: ''
           #       data: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_wafregional_byte_match_set.{{ name }}.id}'
+        value: aws_wafregional_byte_match_set.{{ name }}.id
       thub_id:
-        value: '${aws_wafregional_byte_match_set.{{ name }}.id}'
+        value: aws_wafregional_byte_match_set.{{ name }}.id

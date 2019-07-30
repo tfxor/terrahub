@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_application_insights_api_key:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          application_insights_id: '${var.{{ name }}_application_insights_id}'
+          name: var.{{ name }}_name
+          application_insights_id: var.{{ name }}_application_insights_id
           # read_permissions: []
           # write_permissions: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_application_insights_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_application_insights_api_key.{{ name }}.id}'
+        value: azurerm_arm_application_insights_api_key.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_application_insights_api_key.{{ name }}.id}'
+        value: azurerm_arm_application_insights_api_key.{{ name }}.id
       api_key:
-        value: '${azurerm_arm_application_insights_api_key.{{ name }}.api_key}'
+        value: azurerm_arm_application_insights_api_key.{{ name }}.api_key

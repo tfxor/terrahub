@@ -7,33 +7,33 @@
     resource:
       azurerm_arm_monitor_diagnostic_setting:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          target_resource_id: '${var.{{ name }}_target_resource_id}'
+          name: var.{{ name }}_name
+          target_resource_id: var.{{ name }}_target_resource_id
+          # log: 
+          #   retention_policy: 
+          #     -
+          #       enabled: false
+          #       days: 0
+          #   category: ''
+          #   enabled: false
+          # metric: 
+          #   retention_policy: 
+          #     -
+          #       enabled: false
+          #       days: 0
+          #   category: ''
+          #   enabled: false
+          # eventhub_name: ''
           # eventhub_authorization_rule_id: ''
           # log_analytics_workspace_id: ''
           # storage_account_id: ''
-          # log:
-          #   category: ''
-          #   retention_policy:
-          #     -
-          #       enabled: false
-          #       days: 0
-          #   enabled: false
-          # metric:
-          #   category: ''
-          #   retention_policy:
-          #     -
-          #       enabled: false
-          #       days: 0
-          #   enabled: false
-          # eventhub_name: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_target_resource_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_monitor_diagnostic_setting.{{ name }}.id}'
+        value: azurerm_arm_monitor_diagnostic_setting.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_monitor_diagnostic_setting.{{ name }}.id}'
+        value: azurerm_arm_monitor_diagnostic_setting.{{ name }}.id

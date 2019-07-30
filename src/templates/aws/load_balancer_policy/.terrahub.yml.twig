@@ -8,21 +8,21 @@
     resource:
       aws_load_balancer_policy:
         {{ name }}:
-          load_balancer_name: '${var.{{ name }}_load_balancer_name}'
-          policy_name: '${var.{{ name }}_policy_name}'
-          policy_type_name: '${var.{{ name }}_policy_type_name}'
-          # policy_attribute:
+          load_balancer_name: var.{{ name }}_load_balancer_name
+          policy_name: var.{{ name }}_policy_name
+          policy_type_name: var.{{ name }}_policy_type_name
+          # policy_attribute: 
           #   name: ''
           #   value: ''
     variable:
       {{ name }}_load_balancer_name:
-        type: 'string'
+        type: string
       {{ name }}_policy_name:
-        type: 'string'
+        type: string
       {{ name }}_policy_type_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_load_balancer_policy.{{ name }}.id}'
+        value: aws_load_balancer_policy.{{ name }}.id
       thub_id:
-        value: '${aws_load_balancer_policy.{{ name }}.id}'
+        value: aws_load_balancer_policy.{{ name }}.id

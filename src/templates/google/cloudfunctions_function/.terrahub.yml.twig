@@ -6,62 +6,58 @@
     resource:
       google_cloudfunctions_function:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # description: ''
-          # timeout: 0
-          # trigger_topic: ''
-          # source_archive_object: ''
-          # entry_point: ''
-          # labels:
-          #   '[TO_BE_REPLACED]': ''
-          # https_trigger_url: ''
-          # project: ''
-          # source_repository:
+          name: var.{{ name }}_name
+          # service_account_email: ''
+          # event_trigger: 
           #   -
-          #     url: ''
-          # available_memory_mb: 0
-          # trigger_bucket: ''
-          # event_trigger:
-          #   -
-          #     resource: ''
           #     event_type: ''
-          #     failure_policy:
+          #     resource: ''
+          #     failure_policy: 
           #       -
           #         retry: false
-          # retry_on_failure: false
-          # region: ''
-          # source_archive_bucket: ''
-          # runtime: ''
-          # service_account_email: ''
-          # environment_variables:
+          # source_repository: 
+          #   -
+          #     url: ''
+          # labels: 
           #   '[TO_BE_REPLACED]': ''
+          # trigger_bucket: ''
+          # trigger_topic: ''
+          # region: ''
+          # entry_point: ''
           # trigger_http: false
+          # max_instances: 0
+          # project: ''
+          # available_memory_mb: 0
+          # source_archive_object: ''
+          # description: ''
+          # timeout: 0
+          # runtime: ''
+          # environment_variables: 
+          #   '[TO_BE_REPLACED]': ''
+          # https_trigger_url: ''
+          # source_archive_bucket: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_cloudfunctions_function.{{ name }}.id}'
+        value: google_cloudfunctions_function.{{ name }}.id
       thub_id:
-        value: '${google_cloudfunctions_function.{{ name }}.id}'
-      trigger_topic:
-        value: '${google_cloudfunctions_function.{{ name }}.trigger_topic}'
-      https_trigger_url:
-        value: '${google_cloudfunctions_function.{{ name }}.https_trigger_url}'
-      project:
-        value: '${google_cloudfunctions_function.{{ name }}.project}'
-      trigger_bucket:
-        value: '${google_cloudfunctions_function.{{ name }}.trigger_bucket}'
-      event_trigger:
-        value: '${google_cloudfunctions_function.{{ name }}.event_trigger}'
-      retry_on_failure:
-        value: '${google_cloudfunctions_function.{{ name }}.retry_on_failure}'
-      region:
-        value: '${google_cloudfunctions_function.{{ name }}.region}'
-      runtime:
-        value: '${google_cloudfunctions_function.{{ name }}.runtime}'
+        value: google_cloudfunctions_function.{{ name }}.id
       service_account_email:
-        value: '${google_cloudfunctions_function.{{ name }}.service_account_email}'
+        value: google_cloudfunctions_function.{{ name }}.service_account_email
+      event_trigger:
+        value: google_cloudfunctions_function.{{ name }}.event_trigger
+      trigger_bucket:
+        value: google_cloudfunctions_function.{{ name }}.trigger_bucket
+      trigger_topic:
+        value: google_cloudfunctions_function.{{ name }}.trigger_topic
+      region:
+        value: google_cloudfunctions_function.{{ name }}.region
+      project:
+        value: google_cloudfunctions_function.{{ name }}.project
+      https_trigger_url:
+        value: google_cloudfunctions_function.{{ name }}.https_trigger_url
 
 # build:
 #   env:

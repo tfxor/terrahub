@@ -6,25 +6,25 @@
     resource:
       google_compute_attached_disk:
         {{ name }}:
-          disk: '${var.{{ name }}_disk}'
-          instance: '${var.{{ name }}_instance}'
+          disk: var.{{ name }}_disk
+          instance: var.{{ name }}_instance
           # project: ''
           # zone: ''
           # device_name: ''
           # mode: ''
     variable:
       {{ name }}_disk:
-        type: 'string'
+        type: string
       {{ name }}_instance:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_attached_disk.{{ name }}.id}'
+        value: google_compute_attached_disk.{{ name }}.id
       thub_id:
-        value: '${google_compute_attached_disk.{{ name }}.id}'
+        value: google_compute_attached_disk.{{ name }}.id
       project:
-        value: '${google_compute_attached_disk.{{ name }}.project}'
+        value: google_compute_attached_disk.{{ name }}.project
       zone:
-        value: '${google_compute_attached_disk.{{ name }}.zone}'
+        value: google_compute_attached_disk.{{ name }}.zone
       device_name:
-        value: '${google_compute_attached_disk.{{ name }}.device_name}'
+        value: google_compute_attached_disk.{{ name }}.device_name

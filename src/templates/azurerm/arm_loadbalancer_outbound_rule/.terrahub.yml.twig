@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_loadbalancer_outbound_rule:
+        {{ name }}:
+          loadbalancer_id: var.{{ name }}_loadbalancer_id
+          backend_address_pool_id: var.{{ name }}_backend_address_pool_id
+          protocol: var.{{ name }}_protocol
+          name: var.{{ name }}_name
+          # enable_tcp_reset: false
+          # idle_timeout_in_minutes: 0
+          # allocated_outbound_ports: 0
+          # frontend_ip_configuration: 
+          #   -
+          #     name: ''
+    variable:
+      {{ name }}_loadbalancer_id:
+        type: string
+      {{ name }}_backend_address_pool_id:
+        type: string
+      {{ name }}_protocol:
+        type: string
+      {{ name }}_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_loadbalancer_outbound_rule.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_loadbalancer_outbound_rule.{{ name }}.id

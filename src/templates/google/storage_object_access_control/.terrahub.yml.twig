@@ -6,31 +6,31 @@
     resource:
       google_storage_object_access_control:
         {{ name }}:
-          object: '${var.{{ name }}_object}'
-          role: '${var.{{ name }}_role}'
-          bucket: '${var.{{ name }}_bucket}'
-          entity: '${var.{{ name }}_entity}'
+          object: var.{{ name }}_object
+          bucket: var.{{ name }}_bucket
+          entity: var.{{ name }}_entity
+          role: var.{{ name }}_role
     variable:
       {{ name }}_object:
-        type: 'string'
-      {{ name }}_role:
-        type: 'string'
+        type: string
       {{ name }}_bucket:
-        type: 'string'
+        type: string
       {{ name }}_entity:
-        type: 'string'
+        type: string
+      {{ name }}_role:
+        type: string
     output:
       id:
-        value: '${google_storage_object_access_control.{{ name }}.id}'
+        value: google_storage_object_access_control.{{ name }}.id
       thub_id:
-        value: '${google_storage_object_access_control.{{ name }}.id}'
-      generation:
-        value: '${google_storage_object_access_control.{{ name }}.generation}'
-      project_team:
-        value: '${google_storage_object_access_control.{{ name }}.project_team}'
+        value: google_storage_object_access_control.{{ name }}.id
       domain:
-        value: '${google_storage_object_access_control.{{ name }}.domain}'
+        value: google_storage_object_access_control.{{ name }}.domain
       email:
-        value: '${google_storage_object_access_control.{{ name }}.email}'
+        value: google_storage_object_access_control.{{ name }}.email
       entity_id:
-        value: '${google_storage_object_access_control.{{ name }}.entity_id}'
+        value: google_storage_object_access_control.{{ name }}.entity_id
+      generation:
+        value: google_storage_object_access_control.{{ name }}.generation
+      project_team:
+        value: google_storage_object_access_control.{{ name }}.project_team

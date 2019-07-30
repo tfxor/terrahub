@@ -7,14 +7,14 @@
     resource:
       azurerm_arm_azuread_service_principal:
         {{ name }}:
-          application_id: '${var.{{ name }}_application_id}'
+          application_id: var.{{ name }}_application_id
     variable:
       {{ name }}_application_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_azuread_service_principal.{{ name }}.id}'
+        value: azurerm_arm_azuread_service_principal.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_azuread_service_principal.{{ name }}.id}'
+        value: azurerm_arm_azuread_service_principal.{{ name }}.id
       display_name:
-        value: '${azurerm_arm_azuread_service_principal.{{ name }}.display_name}'
+        value: azurerm_arm_azuread_service_principal.{{ name }}.display_name

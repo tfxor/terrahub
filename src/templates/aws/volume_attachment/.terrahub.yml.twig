@@ -8,20 +8,20 @@
     resource:
       aws_volume_attachment:
         {{ name }}:
-          instance_id: '${var.{{ name }}_instance_id}'
-          volume_id: '${var.{{ name }}_volume_id}'
-          device_name: '${var.{{ name }}_device_name}'
+          device_name: var.{{ name }}_device_name
+          instance_id: var.{{ name }}_instance_id
+          volume_id: var.{{ name }}_volume_id
           # force_detach: false
           # skip_destroy: false
     variable:
-      {{ name }}_instance_id:
-        type: 'string'
-      {{ name }}_volume_id:
-        type: 'string'
       {{ name }}_device_name:
-        type: 'string'
+        type: string
+      {{ name }}_instance_id:
+        type: string
+      {{ name }}_volume_id:
+        type: string
     output:
       id:
-        value: '${aws_volume_attachment.{{ name }}.id}'
+        value: aws_volume_attachment.{{ name }}.id
       thub_id:
-        value: '${aws_volume_attachment.{{ name }}.id}'
+        value: aws_volume_attachment.{{ name }}.id

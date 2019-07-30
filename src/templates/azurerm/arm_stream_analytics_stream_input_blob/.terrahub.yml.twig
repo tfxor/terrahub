@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_stream_analytics_stream_input_blob:
+        {{ name }}:
+          name: var.{{ name }}_name
+          stream_analytics_job_name: var.{{ name }}_stream_analytics_job_name
+          date_format: var.{{ name }}_date_format
+          path_pattern: var.{{ name }}_path_pattern
+          storage_account_key: var.{{ name }}_storage_account_key
+          storage_account_name: var.{{ name }}_storage_account_name
+          storage_container_name: var.{{ name }}_storage_container_name
+          time_format: var.{{ name }}_time_format
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_stream_analytics_job_name:
+        type: string
+      {{ name }}_date_format:
+        type: string
+      {{ name }}_path_pattern:
+        type: string
+      {{ name }}_storage_account_key:
+        type: string
+      {{ name }}_storage_account_name:
+        type: string
+      {{ name }}_storage_container_name:
+        type: string
+      {{ name }}_time_format:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_stream_analytics_stream_input_blob.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_stream_analytics_stream_input_blob.{{ name }}.id

@@ -8,51 +8,51 @@
     resource:
       aws_ami_copy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          source_ami_region: '${var.{{ name }}_source_ami_region}'
-          source_ami_id: '${var.{{ name }}_source_ami_id}'
-          # description: ''
-          # ephemeral_block_device:
+          name: var.{{ name }}_name
+          source_ami_id: var.{{ name }}_source_ami_id
+          source_ami_region: var.{{ name }}_source_ami_region
           # kms_key_id: ''
-          # ebs_block_device:
-          # encrypted: false
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
+          # ebs_block_device: 
+          # encrypted: false
+          # description: ''
+          # ephemeral_block_device: 
     variable:
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_source_ami_region:
-        type: 'string'
+        type: string
       {{ name }}_source_ami_id:
-        type: 'string'
+        type: string
+      {{ name }}_source_ami_region:
+        type: string
     output:
       id:
-        value: '${aws_ami_copy.{{ name }}.id}'
+        value: aws_ami_copy.{{ name }}.id
       thub_id:
-        value: '${aws_ami_copy.{{ name }}.id}'
-      ramdisk_id:
-        value: '${aws_ami_copy.{{ name }}.ramdisk_id}'
-      architecture:
-        value: '${aws_ami_copy.{{ name }}.architecture}'
-      ephemeral_block_device:
-        value: '${aws_ami_copy.{{ name }}.ephemeral_block_device}'
-      image_location:
-        value: '${aws_ami_copy.{{ name }}.image_location}'
-      kernel_id:
-        value: '${aws_ami_copy.{{ name }}.kernel_id}'
-      kms_key_id:
-        value: '${aws_ami_copy.{{ name }}.kms_key_id}'
+        value: aws_ami_copy.{{ name }}.id
       manage_ebs_snapshots:
-        value: '${aws_ami_copy.{{ name }}.manage_ebs_snapshots}'
-      sriov_net_support:
-        value: '${aws_ami_copy.{{ name }}.sriov_net_support}'
-      virtualization_type:
-        value: '${aws_ami_copy.{{ name }}.virtualization_type}'
-      ebs_block_device:
-        value: '${aws_ami_copy.{{ name }}.ebs_block_device}'
-      root_snapshot_id:
-        value: '${aws_ami_copy.{{ name }}.root_snapshot_id}'
-      ena_support:
-        value: '${aws_ami_copy.{{ name }}.ena_support}'
+        value: aws_ami_copy.{{ name }}.manage_ebs_snapshots
+      kms_key_id:
+        value: aws_ami_copy.{{ name }}.kms_key_id
+      kernel_id:
+        value: aws_ami_copy.{{ name }}.kernel_id
       root_device_name:
-        value: '${aws_ami_copy.{{ name }}.root_device_name}'
+        value: aws_ami_copy.{{ name }}.root_device_name
+      root_snapshot_id:
+        value: aws_ami_copy.{{ name }}.root_snapshot_id
+      virtualization_type:
+        value: aws_ami_copy.{{ name }}.virtualization_type
+      ebs_block_device:
+        value: aws_ami_copy.{{ name }}.ebs_block_device
+      image_location:
+        value: aws_ami_copy.{{ name }}.image_location
+      sriov_net_support:
+        value: aws_ami_copy.{{ name }}.sriov_net_support
+      ephemeral_block_device:
+        value: aws_ami_copy.{{ name }}.ephemeral_block_device
+      ena_support:
+        value: aws_ami_copy.{{ name }}.ena_support
+      ramdisk_id:
+        value: aws_ami_copy.{{ name }}.ramdisk_id
+      architecture:
+        value: aws_ami_copy.{{ name }}.architecture

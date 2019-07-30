@@ -7,17 +7,17 @@
     resource:
       azurerm_arm_recovery_services_vault:
         {{ name }}:
-          sku: '${var.{{ name }}_sku}'
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          sku: var.{{ name }}_sku
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_sku:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_sku:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_recovery_services_vault.{{ name }}.id}'
+        value: azurerm_arm_recovery_services_vault.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_recovery_services_vault.{{ name }}.id}'
+        value: azurerm_arm_recovery_services_vault.{{ name }}.id

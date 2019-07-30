@@ -8,15 +8,15 @@
     resource:
       aws_waf_geo_match_set:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # geo_match_constraint:
-          #   value: ''
+          name: var.{{ name }}_name
+          # geo_match_constraint: 
           #   type: ''
+          #   value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_waf_geo_match_set.{{ name }}.id}'
+        value: aws_waf_geo_match_set.{{ name }}.id
       thub_id:
-        value: '${aws_waf_geo_match_set.{{ name }}.id}'
+        value: aws_waf_geo_match_set.{{ name }}.id

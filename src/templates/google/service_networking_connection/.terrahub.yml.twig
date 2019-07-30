@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_service_networking_connection:
+        {{ name }}:
+          network: var.{{ name }}_network
+          service: var.{{ name }}_service
+          reserved_peering_ranges: var.{{ name }}_reserved_peering_ranges
+    variable:
+      {{ name }}_network:
+        type: string
+      {{ name }}_service:
+        type: string
+      {{ name }}_reserved_peering_ranges:
+        type: list
+    output:
+      id:
+        value: google_service_networking_connection.{{ name }}.id
+      thub_id:
+        value: google_service_networking_connection.{{ name }}.id
+      peering:
+        value: google_service_networking_connection.{{ name }}.peering

@@ -8,23 +8,23 @@
     resource:
       aws_datasync_location_efs:
         {{ name }}:
-          ec2_config:
+          ec2_config: 
             -
               security_group_arns: []
               subnet_arn: ''
-          efs_file_system_arn: '${var.{{ name }}_efs_file_system_arn}'
+          efs_file_system_arn: var.{{ name }}_efs_file_system_arn
           # subdirectory: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_efs_file_system_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_datasync_location_efs.{{ name }}.id}'
+        value: aws_datasync_location_efs.{{ name }}.id
       thub_id:
-        value: '${aws_datasync_location_efs.{{ name }}.id}'
+        value: aws_datasync_location_efs.{{ name }}.id
       arn:
-        value: '${aws_datasync_location_efs.{{ name }}.arn}'
+        value: aws_datasync_location_efs.{{ name }}.arn
       uri:
-        value: '${aws_datasync_location_efs.{{ name }}.uri}'
+        value: aws_datasync_location_efs.{{ name }}.uri

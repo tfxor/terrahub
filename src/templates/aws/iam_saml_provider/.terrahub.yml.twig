@@ -8,19 +8,19 @@
     resource:
       aws_iam_saml_provider:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          saml_metadata_document: '${var.{{ name }}_saml_metadata_document}'
+          saml_metadata_document: var.{{ name }}_saml_metadata_document
+          name: var.{{ name }}_name
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_saml_metadata_document:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_iam_saml_provider.{{ name }}.id}'
+        value: aws_iam_saml_provider.{{ name }}.id
       thub_id:
-        value: '${aws_iam_saml_provider.{{ name }}.id}'
+        value: aws_iam_saml_provider.{{ name }}.id
       arn:
-        value: '${aws_iam_saml_provider.{{ name }}.arn}'
+        value: aws_iam_saml_provider.{{ name }}.arn
       valid_until:
-        value: '${aws_iam_saml_provider.{{ name }}.valid_until}'
+        value: aws_iam_saml_provider.{{ name }}.valid_until

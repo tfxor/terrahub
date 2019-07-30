@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_subscription:
+        {{ name }}:
+          display_name: var.{{ name }}_display_name
+          # state: ''
+          # primary_key: ''
+          # secondary_key: ''
+          # subscription_id: ''
+    variable:
+      {{ name }}_display_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_subscription.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_subscription.{{ name }}.id
+      primary_key:
+        value: azurerm_arm_api_management_subscription.{{ name }}.primary_key
+      secondary_key:
+        value: azurerm_arm_api_management_subscription.{{ name }}.secondary_key
+      subscription_id:
+        value: azurerm_arm_api_management_subscription.{{ name }}.subscription_id

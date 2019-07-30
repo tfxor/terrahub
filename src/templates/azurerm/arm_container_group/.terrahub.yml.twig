@@ -7,38 +7,71 @@
     resource:
       azurerm_arm_container_group:
         {{ name }}:
-          container:
+          os_type: var.{{ name }}_os_type
+          container: 
             -
-              name: ''
-              image: ''
               cpu: ''
               memory: ''
-          #     port: 0
-          #     protocol: ''
-          #     ports:
-          #     port: 0
-          #     protocol: ''
-          name: '${var.{{ name }}_name}'
-          os_type: '${var.{{ name }}_os_type}'
-          # restart_policy: ''
-          # dns_name_label: ''
+              name: ''
+              image: ''
+          #     gpu: 
+          #       -
+          #         count: 0
+          #         sku: ''
+          name: var.{{ name }}_name
           # ip_address_type: ''
-          # image_registry_credential:
+          # commands: []
+          # image_registry_credential: 
           #   -
-          #     server: ''
           #     username: ''
           #     password: ''
+          #     server: ''
+          # identity: 
+          #   -
+          #     type: ''
+          #     identity_ids: 
+          #       -
+          # restart_policy: ''
+          # diagnostics: 
+          #   -
+          #     log_analytics: 
+          #       -
+          #         workspace_id: ''
+          #         workspace_key: ''
+          #         log_type: ''
+          #         metadata: 
+          #           '[TO_BE_REPLACED]': ''
+          # command: ''
+          # volume: 
+          #   -
+          #     storage_account_name: ''
+          #     storage_account_key: ''
+          #     name: ''
+          #     mount_path: ''
+          #     share_name: ''
+          #     read_only: false
+          # dns_name_label: ''
+          # environment_variables: 
+          #   '[TO_BE_REPLACED]': ''
+          # secure_environment_variables: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_os_type:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_container_group.{{ name }}.id}'
+        value: azurerm_arm_container_group.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_container_group.{{ name }}.id}'
+        value: azurerm_arm_container_group.{{ name }}.id
+      commands:
+        value: azurerm_arm_container_group.{{ name }}.commands
       fqdn:
-        value: '${azurerm_arm_container_group.{{ name }}.fqdn}'
+        value: azurerm_arm_container_group.{{ name }}.fqdn
+      identity:
+        value: azurerm_arm_container_group.{{ name }}.identity
+      command:
+        value: azurerm_arm_container_group.{{ name }}.command
       ip_address:
-        value: '${azurerm_arm_container_group.{{ name }}.ip_address}'
+        value: azurerm_arm_container_group.{{ name }}.ip_address

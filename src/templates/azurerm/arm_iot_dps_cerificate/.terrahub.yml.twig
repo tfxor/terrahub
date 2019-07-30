@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_iot_dps_cerificate:
+        {{ name }}:
+          name: var.{{ name }}_name
+          iot_dps_name: var.{{ name }}_iot_dps_name
+          certificate_content: var.{{ name }}_certificate_content
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_iot_dps_name:
+        type: string
+      {{ name }}_certificate_content:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_iot_dps_cerificate.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_iot_dps_cerificate.{{ name }}.id

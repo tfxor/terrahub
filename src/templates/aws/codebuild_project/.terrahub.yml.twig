@@ -8,64 +8,72 @@
     resource:
       aws_codebuild_project:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          environment:
-            compute_type: ''
-          #   environment_variable:
-          #     -
-          #       value: ''
-          #       name: ''
-          #       type: ''
-          artifacts:
+          artifacts: 
             type: ''
-          #   packaging: ''
-          #   path: ''
-          #   name: ''
           #   encryption_disabled: false
-          #   location: ''
-          #   namespace_type: ''
-          service_role: '${var.{{ name }}_service_role}'
-          # secondary_artifacts:
-          #   artifact_identifier: ''
-          #   type: ''
           #   location: ''
           #   namespace_type: ''
           #   packaging: ''
           #   path: ''
           #   name: ''
-          #   encryption_disabled: false
-          # cache:
+          environment: 
+            compute_type: ''
+          #   environment_variable: 
+          #     -
+          #       name: ''
+          #       value: ''
+          #       type: ''
+          name: var.{{ name }}_name
+          service_role: var.{{ name }}_service_role
+          # cache: 
           #   -
           #     type: ''
           #     location: ''
+          #     modes: 
+          #       -
           # description: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # vpc_config:
+          # badge_enabled: false
+          # vpc_config: 
           #   -
           #     vpc_id: ''
           #     subnets: []
           #     security_group_ids: []
-          # build_timeout: 0
-          # secondary_sources:
-          # badge_enabled: false
-          # timeout: 0
           # encryption_key: ''
+          # logs_config: 
+          #   -
+          #     cloudwatch_logs: 
+          #       -
+          #         status: ''
+          #         group_name: ''
+          #         stream_name: ''
+          # secondary_sources: 
+          # build_timeout: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # secondary_artifacts: 
+          #   artifact_identifier: ''
+          #   type: ''
+          #   packaging: ''
+          #   path: ''
+          #   name: ''
+          #   encryption_disabled: false
+          #   location: ''
+          #   namespace_type: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_service_role:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_codebuild_project.{{ name }}.id}'
+        value: aws_codebuild_project.{{ name }}.id
       thub_id:
-        value: '${aws_codebuild_project.{{ name }}.id}'
-      badge_url:
-        value: '${aws_codebuild_project.{{ name }}.badge_url}'
+        value: aws_codebuild_project.{{ name }}.id
       description:
-        value: '${aws_codebuild_project.{{ name }}.description}'
-      arn:
-        value: '${aws_codebuild_project.{{ name }}.arn}'
+        value: aws_codebuild_project.{{ name }}.description
       encryption_key:
-        value: '${aws_codebuild_project.{{ name }}.encryption_key}'
+        value: aws_codebuild_project.{{ name }}.encryption_key
+      arn:
+        value: aws_codebuild_project.{{ name }}.arn
+      badge_url:
+        value: aws_codebuild_project.{{ name }}.badge_url

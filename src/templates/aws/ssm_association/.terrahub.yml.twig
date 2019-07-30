@@ -8,34 +8,37 @@
     resource:
       aws_ssm_association:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # document_version: ''
-          # parameters:
-          #   '[TO_BE_REPLACED]': ''
-          # schedule_expression: ''
-          # association_name: ''
+          name: var.{{ name }}_name
+          # compliance_severity: ''
           # instance_id: ''
-          # output_location:
+          # document_version: ''
+          # max_concurrency: ''
+          # max_errors: ''
+          # schedule_expression: ''
+          # targets: 
+          #   -
+          #     key: ''
+          #     values: []
+          # association_name: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # output_location: 
           #   -
           #     s3_bucket_name: ''
           #     s3_key_prefix: ''
-          # targets:
-          #   -
-          #     values: []
-          #     key: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ssm_association.{{ name }}.id}'
+        value: aws_ssm_association.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_association.{{ name }}.id}'
-      document_version:
-        value: '${aws_ssm_association.{{ name }}.document_version}'
-      parameters:
-        value: '${aws_ssm_association.{{ name }}.parameters}'
+        value: aws_ssm_association.{{ name }}.id
       association_id:
-        value: '${aws_ssm_association.{{ name }}.association_id}'
+        value: aws_ssm_association.{{ name }}.association_id
+      document_version:
+        value: aws_ssm_association.{{ name }}.document_version
       targets:
-        value: '${aws_ssm_association.{{ name }}.targets}'
+        value: aws_ssm_association.{{ name }}.targets
+      parameters:
+        value: aws_ssm_association.{{ name }}.parameters

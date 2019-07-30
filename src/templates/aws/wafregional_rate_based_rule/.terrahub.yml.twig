@@ -8,25 +8,25 @@
     resource:
       aws_wafregional_rate_based_rule:
         {{ name }}:
-          rate_limit: '${var.{{ name }}_rate_limit}'
-          name: '${var.{{ name }}_name}'
-          metric_name: '${var.{{ name }}_metric_name}'
-          rate_key: '${var.{{ name }}_rate_key}'
-          # predicate:
-          #   negated: false
+          name: var.{{ name }}_name
+          metric_name: var.{{ name }}_metric_name
+          rate_key: var.{{ name }}_rate_key
+          rate_limit: var.{{ name }}_rate_limit
+          # predicate: 
           #   data_id: ''
           #   type: ''
+          #   negated: false
     variable:
-      {{ name }}_rate_limit:
-        type: 'int'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_metric_name:
-        type: 'string'
+        type: string
       {{ name }}_rate_key:
-        type: 'string'
+        type: string
+      {{ name }}_rate_limit:
+        type: int
     output:
       id:
-        value: '${aws_wafregional_rate_based_rule.{{ name }}.id}'
+        value: aws_wafregional_rate_based_rule.{{ name }}.id
       thub_id:
-        value: '${aws_wafregional_rate_based_rule.{{ name }}.id}'
+        value: aws_wafregional_rate_based_rule.{{ name }}.id

@@ -8,19 +8,20 @@
     resource:
       aws_athena_named_query:
         {{ name }}:
-          query: '${var.{{ name }}_query}'
-          database: '${var.{{ name }}_database}'
-          name: '${var.{{ name }}_name}'
+          database: var.{{ name }}_database
+          name: var.{{ name }}_name
+          query: var.{{ name }}_query
           # description: ''
+          # workgroup: ''
     variable:
-      {{ name }}_query:
-        type: 'string'
       {{ name }}_database:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_query:
+        type: string
     output:
       id:
-        value: '${aws_athena_named_query.{{ name }}.id}'
+        value: aws_athena_named_query.{{ name }}.id
       thub_id:
-        value: '${aws_athena_named_query.{{ name }}.id}'
+        value: aws_athena_named_query.{{ name }}.id

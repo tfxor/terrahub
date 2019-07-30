@@ -1,6 +1,8 @@
 'use strict';
 
+const fse = require('fs-extra');
 const events = require('events');
+const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
 const { fetch, config: { api, logs } } = require('../parameters');
 
@@ -8,14 +10,14 @@ class ApiHelper extends events.EventEmitter {
 
   constructor() {
     super();
-    this._promises = [];
     this._logs = [];
+    this._promises = [];
     this._workerIsFree = true;
-    this.apiLogginStart = false;
     this._tokenIsValid = false;
+    this._apiLogginStart = false;
+    this._logsRetrieveCount = 8;
     this._componentsExecutionList = {};
     this._errors = null;
-    this._logsRetrieveCount = 8;
   }
 
   /**
@@ -56,7 +58,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   promisesForSyncExit() {
-    if (!this.apiLogginStart) {
+    if (!this._apiLogginStart) {
       return Promise.resolve();
     }
 
@@ -220,7 +222,7 @@ class ApiHelper extends events.EventEmitter {
 
     if (this.tokenIsValid && this._isWorkflowUseCase()) {
       if (status === 'create') {
-        this.apiLogginStart = true;
+        this._apiLogginStart = true;
       }
 
       this.sendDataToApi({ source: 'workflow', status }, runStatus);
@@ -388,7 +390,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   sendLogToS3() {
-    if (this.canApiLogsBeSent() && this.apiLogginStart) {
+    if (this.canApiLogsBeSent() && this._apiLogginStart) {
       return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
@@ -398,7 +400,7 @@ class ApiHelper extends events.EventEmitter {
    * On error sends finish status for all logging executions
    */
   sendErrorToApi() {
-    if (this.tokenIsValid && this.apiLogginStart) {
+    if (this.tokenIsValid && this._apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
       this._errors = true;
 
@@ -419,6 +421,28 @@ class ApiHelper extends events.EventEmitter {
       this.sendDataToApi({ source, status, name, hash });
     });
   }
+
+  /**
+   * @return {Promise || Object}
+   */
+  async retrieveCloudAccounts() {
+    if (!this._cloudAccounts) {
+      const result = await fetch.get(`https://${api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      this._cloudAccounts = result.data;
+    }
+
+    return this._cloudAccounts;
+  }
+
+  /**
+   * @return {void}
+   */
+  deleteTempFolder() {
+    const tmpPath = homePath('temp');
+
+    fse.removeSync(tmpPath);
+  }
+
 }
 
 module.exports = new ApiHelper();

@@ -6,58 +6,61 @@
     resource:
       google_compute_disk:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # snapshot: ''
-          # project: ''
-          # source_snapshot_encryption_key:
+          name: var.{{ name }}_name
+          # source_snapshot_encryption_key: 
           #   -
-          #     kms_key_self_link: ''
           #     raw_key: ''
-          # image: ''
-          # source_image_encryption_key:
-          #   -
           #     kms_key_self_link: ''
-          #     raw_key: ''
-          # type: ''
           # disk_encryption_key_raw: ''
-          # description: ''
-          # disk_encryption_key:
-          #   -
-          #     raw_key: ''
-          #     kms_key_self_link: ''
-          # labels:
-          #   '[TO_BE_REPLACED]': ''
-          # size: 0
+          # project: ''
+          # image: ''
           # zone: ''
+          # type: ''
+          # description: ''
+          # source_image_encryption_key: 
+          #   -
+          #     kms_key_self_link: ''
+          #     raw_key: ''
+          # size: 0
+          # snapshot: ''
+          # disk_encryption_key: 
+          #   -
+          #     kms_key_self_link: ''
+          #     raw_key: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # physical_block_size_bytes: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_disk.{{ name }}.id}'
+        value: google_compute_disk.{{ name }}.id
       thub_id:
-        value: '${google_compute_disk.{{ name }}.id}'
-      creation_timestamp:
-        value: '${google_compute_disk.{{ name }}.creation_timestamp}'
-      last_detach_timestamp:
-        value: '${google_compute_disk.{{ name }}.last_detach_timestamp}'
-      source_snapshot_id:
-        value: '${google_compute_disk.{{ name }}.source_snapshot_id}'
-      project:
-        value: '${google_compute_disk.{{ name }}.project}'
-      label_fingerprint:
-        value: '${google_compute_disk.{{ name }}.label_fingerprint}'
+        value: google_compute_disk.{{ name }}.id
       last_attach_timestamp:
-        value: '${google_compute_disk.{{ name }}.last_attach_timestamp}'
-      source_image_id:
-        value: '${google_compute_disk.{{ name }}.source_image_id}'
-      disk_encryption_key_sha256:
-        value: '${google_compute_disk.{{ name }}.disk_encryption_key_sha256}'
-      size:
-        value: '${google_compute_disk.{{ name }}.size}'
-      zone:
-        value: '${google_compute_disk.{{ name }}.zone}'
+        value: google_compute_disk.{{ name }}.last_attach_timestamp
       users:
-        value: '${google_compute_disk.{{ name }}.users}'
+        value: google_compute_disk.{{ name }}.users
+      disk_encryption_key_sha256:
+        value: google_compute_disk.{{ name }}.disk_encryption_key_sha256
+      project:
+        value: google_compute_disk.{{ name }}.project
+      zone:
+        value: google_compute_disk.{{ name }}.zone
+      label_fingerprint:
+        value: google_compute_disk.{{ name }}.label_fingerprint
+      last_detach_timestamp:
+        value: google_compute_disk.{{ name }}.last_detach_timestamp
+      source_snapshot_id:
+        value: google_compute_disk.{{ name }}.source_snapshot_id
+      size:
+        value: google_compute_disk.{{ name }}.size
+      creation_timestamp:
+        value: google_compute_disk.{{ name }}.creation_timestamp
+      source_image_id:
+        value: google_compute_disk.{{ name }}.source_image_id
       self_link:
-        value: '${google_compute_disk.{{ name }}.self_link}'
+        value: google_compute_disk.{{ name }}.self_link
+      physical_block_size_bytes:
+        value: google_compute_disk.{{ name }}.physical_block_size_bytes

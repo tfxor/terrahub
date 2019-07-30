@@ -7,25 +7,25 @@
     resource:
       azurerm_arm_local_network_gateway:
         {{ name }}:
-          gateway_address: '${var.{{ name }}_gateway_address}'
-          address_space: '${var.{{ name }}_address_space}'
-          name: '${var.{{ name }}_name}'
-          # bgp_settings:
+          name: var.{{ name }}_name
+          gateway_address: var.{{ name }}_gateway_address
+          address_space: var.{{ name }}_address_space
+          # bgp_settings: 
           #   -
           #     asn: 0
           #     bgp_peering_address: ''
           #     peer_weight: 0
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_gateway_address:
-        type: 'string'
-      {{ name }}_address_space:
-        type: 'list'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_gateway_address:
+        type: string
+      {{ name }}_address_space:
+        type: list
     output:
       id:
-        value: '${azurerm_arm_local_network_gateway.{{ name }}.id}'
+        value: azurerm_arm_local_network_gateway.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_local_network_gateway.{{ name }}.id}'
+        value: azurerm_arm_local_network_gateway.{{ name }}.id

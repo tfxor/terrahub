@@ -8,14 +8,14 @@
     resource:
       aws_inspector_group:
         {{ name }}:
-          tags: '${var.{{ name }}_tags}'
+          tags: var.{{ name }}_tags
     variable:
       {{ name }}_tags:
-        type: 'map'
+        type: map
     output:
       id:
-        value: '${aws_inspector_group.{{ name }}.id}'
+        value: aws_inspector_group.{{ name }}.id
       thub_id:
-        value: '${aws_inspector_group.{{ name }}.id}'
+        value: aws_inspector_group.{{ name }}.id
       arn:
-        value: '${aws_inspector_group.{{ name }}.arn}'
+        value: aws_inspector_group.{{ name }}.arn

@@ -1,0 +1,33 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_analysis_services_server:
+        {{ name }}:
+          name: var.{{ name }}_name
+          sku: var.{{ name }}_sku
+          # admin_users: []
+          # ipv4_firewall_rule: 
+          #   -
+          #     name: ''
+          #     range_start: ''
+          #     range_end: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # enable_power_bi_service: false
+          # querypool_connection_mode: ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_sku:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_analysis_services_server.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_analysis_services_server.{{ name }}.id
+      querypool_connection_mode:
+        value: azurerm_arm_analysis_services_server.{{ name }}.querypool_connection_mode

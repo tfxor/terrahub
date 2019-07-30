@@ -1,0 +1,24 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_storage_share_directory:
+        {{ name }}:
+          name: var.{{ name }}_name
+          share_name: var.{{ name }}_share_name
+          storage_account_name: var.{{ name }}_storage_account_name
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_share_name:
+        type: string
+      {{ name }}_storage_account_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_storage_share_directory.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_storage_share_directory.{{ name }}.id

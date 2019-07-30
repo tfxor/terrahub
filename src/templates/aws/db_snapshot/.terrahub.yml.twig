@@ -8,51 +8,51 @@
     resource:
       aws_db_snapshot:
         {{ name }}:
-          db_instance_identifier: '${var.{{ name }}_db_instance_identifier}'
-          db_snapshot_identifier: '${var.{{ name }}_db_snapshot_identifier}'
-          # tags:
+          db_snapshot_identifier: var.{{ name }}_db_snapshot_identifier
+          db_instance_identifier: var.{{ name }}_db_instance_identifier
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_db_instance_identifier:
-        type: 'string'
       {{ name }}_db_snapshot_identifier:
-        type: 'string'
+        type: string
+      {{ name }}_db_instance_identifier:
+        type: string
     output:
       id:
-        value: '${aws_db_snapshot.{{ name }}.id}'
+        value: aws_db_snapshot.{{ name }}.id
       thub_id:
-        value: '${aws_db_snapshot.{{ name }}.id}'
-      engine_version:
-        value: '${aws_db_snapshot.{{ name }}.engine_version}'
-      iops:
-        value: '${aws_db_snapshot.{{ name }}.iops}'
-      license_model:
-        value: '${aws_db_snapshot.{{ name }}.license_model}'
-      status:
-        value: '${aws_db_snapshot.{{ name }}.status}'
-      vpc_id:
-        value: '${aws_db_snapshot.{{ name }}.vpc_id}'
-      availability_zone:
-        value: '${aws_db_snapshot.{{ name }}.availability_zone}'
-      encrypted:
-        value: '${aws_db_snapshot.{{ name }}.encrypted}'
-      engine:
-        value: '${aws_db_snapshot.{{ name }}.engine}'
-      port:
-        value: '${aws_db_snapshot.{{ name }}.port}'
-      storage_type:
-        value: '${aws_db_snapshot.{{ name }}.storage_type}'
-      allocated_storage:
-        value: '${aws_db_snapshot.{{ name }}.allocated_storage}'
-      kms_key_id:
-        value: '${aws_db_snapshot.{{ name }}.kms_key_id}'
-      option_group_name:
-        value: '${aws_db_snapshot.{{ name }}.option_group_name}'
-      source_region:
-        value: '${aws_db_snapshot.{{ name }}.source_region}'
-      db_snapshot_arn:
-        value: '${aws_db_snapshot.{{ name }}.db_snapshot_arn}'
+        value: aws_db_snapshot.{{ name }}.id
       source_db_snapshot_identifier:
-        value: '${aws_db_snapshot.{{ name }}.source_db_snapshot_identifier}'
+        value: aws_db_snapshot.{{ name }}.source_db_snapshot_identifier
+      db_snapshot_arn:
+        value: aws_db_snapshot.{{ name }}.db_snapshot_arn
+      encrypted:
+        value: aws_db_snapshot.{{ name }}.encrypted
+      iops:
+        value: aws_db_snapshot.{{ name }}.iops
+      option_group_name:
+        value: aws_db_snapshot.{{ name }}.option_group_name
       snapshot_type:
-        value: '${aws_db_snapshot.{{ name }}.snapshot_type}'
+        value: aws_db_snapshot.{{ name }}.snapshot_type
+      storage_type:
+        value: aws_db_snapshot.{{ name }}.storage_type
+      engine:
+        value: aws_db_snapshot.{{ name }}.engine
+      source_region:
+        value: aws_db_snapshot.{{ name }}.source_region
+      port:
+        value: aws_db_snapshot.{{ name }}.port
+      status:
+        value: aws_db_snapshot.{{ name }}.status
+      vpc_id:
+        value: aws_db_snapshot.{{ name }}.vpc_id
+      allocated_storage:
+        value: aws_db_snapshot.{{ name }}.allocated_storage
+      availability_zone:
+        value: aws_db_snapshot.{{ name }}.availability_zone
+      kms_key_id:
+        value: aws_db_snapshot.{{ name }}.kms_key_id
+      license_model:
+        value: aws_db_snapshot.{{ name }}.license_model
+      engine_version:
+        value: aws_db_snapshot.{{ name }}.engine_version

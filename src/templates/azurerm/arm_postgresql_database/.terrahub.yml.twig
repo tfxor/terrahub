@@ -7,21 +7,21 @@
     resource:
       azurerm_arm_postgresql_database:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          server_name: '${var.{{ name }}_server_name}'
-          charset: '${var.{{ name }}_charset}'
-          collation: '${var.{{ name }}_collation}'
+          name: var.{{ name }}_name
+          server_name: var.{{ name }}_server_name
+          charset: var.{{ name }}_charset
+          collation: var.{{ name }}_collation
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_server_name:
-        type: 'string'
+        type: string
       {{ name }}_charset:
-        type: 'string'
+        type: string
       {{ name }}_collation:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_postgresql_database.{{ name }}.id}'
+        value: azurerm_arm_postgresql_database.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_postgresql_database.{{ name }}.id}'
+        value: azurerm_arm_postgresql_database.{{ name }}.id

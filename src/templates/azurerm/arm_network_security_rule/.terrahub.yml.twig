@@ -7,38 +7,38 @@
     resource:
       azurerm_arm_network_security_rule:
         {{ name }}:
-          access: '${var.{{ name }}_access}'
-          direction: '${var.{{ name }}_direction}'
-          network_security_group_name: '${var.{{ name }}_network_security_group_name}'
-          protocol: '${var.{{ name }}_protocol}'
-          priority: '${var.{{ name }}_priority}'
-          name: '${var.{{ name }}_name}'
-          # source_port_ranges: []
-          # destination_application_security_group_ids: []
-          # source_address_prefix: ''
-          # destination_address_prefix: ''
-          # source_application_security_group_ids: []
-          # source_port_range: ''
-          # destination_port_range: ''
-          # destination_port_ranges: []
-          # description: ''
+          network_security_group_name: var.{{ name }}_network_security_group_name
+          access: var.{{ name }}_access
+          priority: var.{{ name }}_priority
+          name: var.{{ name }}_name
+          protocol: var.{{ name }}_protocol
+          direction: var.{{ name }}_direction
           # destination_address_prefixes: []
+          # source_application_security_group_ids: []
+          # destination_port_range: ''
           # source_address_prefixes: []
+          # destination_address_prefix: ''
+          # destination_application_security_group_ids: []
+          # description: ''
+          # source_port_range: ''
+          # source_port_ranges: []
+          # destination_port_ranges: []
+          # source_address_prefix: ''
     variable:
-      {{ name }}_access:
-        type: 'string'
-      {{ name }}_direction:
-        type: 'string'
       {{ name }}_network_security_group_name:
-        type: 'string'
-      {{ name }}_protocol:
-        type: 'string'
+        type: string
+      {{ name }}_access:
+        type: string
       {{ name }}_priority:
-        type: 'int'
+        type: int
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_protocol:
+        type: string
+      {{ name }}_direction:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_network_security_rule.{{ name }}.id}'
+        value: azurerm_arm_network_security_rule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_network_security_rule.{{ name }}.id}'
+        value: azurerm_arm_network_security_rule.{{ name }}.id

@@ -8,24 +8,25 @@
     resource:
       aws_kinesis_stream:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          shard_count: '${var.{{ name }}_shard_count}'
-          # shard_level_metrics: []
+          shard_count: var.{{ name }}_shard_count
+          name: var.{{ name }}_name
+          # retention_period: 0
+          # enforce_consumer_deletion: false
           # encryption_type: ''
           # kms_key_id: ''
+          # shard_level_metrics: []
           # arn: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # retention_period: 0
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_shard_count:
-        type: 'int'
+        type: int
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_kinesis_stream.{{ name }}.id}'
+        value: aws_kinesis_stream.{{ name }}.id
       thub_id:
-        value: '${aws_kinesis_stream.{{ name }}.id}'
+        value: aws_kinesis_stream.{{ name }}.id
       arn:
-        value: '${aws_kinesis_stream.{{ name }}.arn}'
+        value: aws_kinesis_stream.{{ name }}.arn

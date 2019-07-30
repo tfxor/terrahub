@@ -7,19 +7,19 @@
     resource:
       azurerm_arm_eventhub_consumer_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          namespace_name: '${var.{{ name }}_namespace_name}'
-          eventhub_name: '${var.{{ name }}_eventhub_name}'
+          name: var.{{ name }}_name
+          namespace_name: var.{{ name }}_namespace_name
+          eventhub_name: var.{{ name }}_eventhub_name
           # user_metadata: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_namespace_name:
-        type: 'string'
+        type: string
       {{ name }}_eventhub_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_eventhub_consumer_group.{{ name }}.id}'
+        value: azurerm_arm_eventhub_consumer_group.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_eventhub_consumer_group.{{ name }}.id}'
+        value: azurerm_arm_eventhub_consumer_group.{{ name }}.id

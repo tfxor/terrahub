@@ -8,7 +8,7 @@
     resource:
       aws_flow_log:
         {{ name }}:
-          traffic_type: '${var.{{ name }}_traffic_type}'
+          traffic_type: var.{{ name }}_traffic_type
           # eni_id: ''
           # iam_role_arn: ''
           # log_destination: ''
@@ -18,13 +18,13 @@
           # subnet_id: ''
     variable:
       {{ name }}_traffic_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_flow_log.{{ name }}.id}'
+        value: aws_flow_log.{{ name }}.id
       thub_id:
-        value: '${aws_flow_log.{{ name }}.id}'
+        value: aws_flow_log.{{ name }}.id
       log_destination:
-        value: '${aws_flow_log.{{ name }}.log_destination}'
+        value: aws_flow_log.{{ name }}.log_destination
       log_group_name:
-        value: '${aws_flow_log.{{ name }}.log_group_name}'
+        value: aws_flow_log.{{ name }}.log_group_name

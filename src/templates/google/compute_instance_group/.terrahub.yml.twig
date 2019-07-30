@@ -6,33 +6,33 @@
     resource:
       google_compute_instance_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # zone: ''
+          name: var.{{ name }}_name
+          # instances: []
           # network: ''
           # project: ''
-          # named_port:
+          # description: ''
+          # zone: ''
+          # named_port: 
           #   -
           #     name: ''
           #     port: 0
-          # description: ''
-          # instances: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_instance_group.{{ name }}.id}'
+        value: google_compute_instance_group.{{ name }}.id
       thub_id:
-        value: '${google_compute_instance_group.{{ name }}.id}'
-      size:
-        value: '${google_compute_instance_group.{{ name }}.size}'
-      zone:
-        value: '${google_compute_instance_group.{{ name }}.zone}'
-      network:
-        value: '${google_compute_instance_group.{{ name }}.network}'
-      project:
-        value: '${google_compute_instance_group.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_instance_group.{{ name }}.self_link}'
+        value: google_compute_instance_group.{{ name }}.id
       instances:
-        value: '${google_compute_instance_group.{{ name }}.instances}'
+        value: google_compute_instance_group.{{ name }}.instances
+      network:
+        value: google_compute_instance_group.{{ name }}.network
+      project:
+        value: google_compute_instance_group.{{ name }}.project
+      size:
+        value: google_compute_instance_group.{{ name }}.size
+      self_link:
+        value: google_compute_instance_group.{{ name }}.self_link
+      zone:
+        value: google_compute_instance_group.{{ name }}.zone

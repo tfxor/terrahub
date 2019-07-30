@@ -6,47 +6,49 @@
     resource:
       google_compute_interconnect_attachment:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          router: '${var.{{ name }}_router}'
+          name: var.{{ name }}_name
+          router: var.{{ name }}_router
+          # edge_availability_domain: ''
           # type: ''
-          # interconnect: ''
-          # region: ''
           # candidate_subnets: []
+          # region: ''
           # project: ''
           # description: ''
-          # edge_availability_domain: ''
+          # interconnect: ''
           # vlan_tag8021q: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_router:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_interconnect_attachment.{{ name }}.id}'
+        value: google_compute_interconnect_attachment.{{ name }}.id
       thub_id:
-        value: '${google_compute_interconnect_attachment.{{ name }}.id}'
+        value: google_compute_interconnect_attachment.{{ name }}.id
       type:
-        value: '${google_compute_interconnect_attachment.{{ name }}.type}'
+        value: google_compute_interconnect_attachment.{{ name }}.type
       pairing_key:
-        value: '${google_compute_interconnect_attachment.{{ name }}.pairing_key}'
-      private_interconnect_info:
-        value: '${google_compute_interconnect_attachment.{{ name }}.private_interconnect_info}'
-      self_link:
-        value: '${google_compute_interconnect_attachment.{{ name }}.self_link}'
-      region:
-        value: '${google_compute_interconnect_attachment.{{ name }}.region}'
-      cloud_router_ip_address:
-        value: '${google_compute_interconnect_attachment.{{ name }}.cloud_router_ip_address}'
-      creation_timestamp:
-        value: '${google_compute_interconnect_attachment.{{ name }}.creation_timestamp}'
-      google_reference_id:
-        value: '${google_compute_interconnect_attachment.{{ name }}.google_reference_id}'
+        value: google_compute_interconnect_attachment.{{ name }}.pairing_key
       partner_asn:
-        value: '${google_compute_interconnect_attachment.{{ name }}.partner_asn}'
-      state:
-        value: '${google_compute_interconnect_attachment.{{ name }}.state}'
-      project:
-        value: '${google_compute_interconnect_attachment.{{ name }}.project}'
+        value: google_compute_interconnect_attachment.{{ name }}.partner_asn
+      private_interconnect_info:
+        value: google_compute_interconnect_attachment.{{ name }}.private_interconnect_info
+      self_link:
+        value: google_compute_interconnect_attachment.{{ name }}.self_link
+      creation_timestamp:
+        value: google_compute_interconnect_attachment.{{ name }}.creation_timestamp
       customer_router_ip_address:
-        value: '${google_compute_interconnect_attachment.{{ name }}.customer_router_ip_address}'
+        value: google_compute_interconnect_attachment.{{ name }}.customer_router_ip_address
+      google_reference_id:
+        value: google_compute_interconnect_attachment.{{ name }}.google_reference_id
+      region:
+        value: google_compute_interconnect_attachment.{{ name }}.region
+      cloud_router_ip_address:
+        value: google_compute_interconnect_attachment.{{ name }}.cloud_router_ip_address
+      project:
+        value: google_compute_interconnect_attachment.{{ name }}.project
+      vlan_tag8021q:
+        value: google_compute_interconnect_attachment.{{ name }}.vlan_tag8021q
+      state:
+        value: google_compute_interconnect_attachment.{{ name }}.state

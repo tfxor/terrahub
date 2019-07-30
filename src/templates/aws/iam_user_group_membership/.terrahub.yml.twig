@@ -8,15 +8,15 @@
     resource:
       aws_iam_user_group_membership:
         {{ name }}:
-          user: '${var.{{ name }}_user}'
-          groups: '${var.{{ name }}_groups}'
+          user: var.{{ name }}_user
+          groups: var.{{ name }}_groups
     variable:
       {{ name }}_user:
-        type: 'string'
+        type: string
       {{ name }}_groups:
-        type: 'set'
+        type: set
     output:
       id:
-        value: '${aws_iam_user_group_membership.{{ name }}.id}'
+        value: aws_iam_user_group_membership.{{ name }}.id
       thub_id:
-        value: '${aws_iam_user_group_membership.{{ name }}.id}'
+        value: aws_iam_user_group_membership.{{ name }}.id

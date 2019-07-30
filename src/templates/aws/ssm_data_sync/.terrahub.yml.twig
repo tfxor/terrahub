@@ -8,19 +8,19 @@
     resource:
       aws_ssm_data_sync:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          s3_destination:
+          name: var.{{ name }}_name
+          s3_destination: 
             -
-              region: ''
               bucket_name: ''
-          #     sync_format: ''
+              region: ''
           #     kms_key_arn: ''
           #     prefix: ''
+          #     sync_format: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ssm_data_sync.{{ name }}.id}'
+        value: aws_ssm_data_sync.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_data_sync.{{ name }}.id}'
+        value: aws_ssm_data_sync.{{ name }}.id

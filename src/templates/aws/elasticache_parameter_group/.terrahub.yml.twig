@@ -8,19 +8,19 @@
     resource:
       aws_elasticache_parameter_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          family: '${var.{{ name }}_family}'
-          # parameter:
+          name: var.{{ name }}_name
+          family: var.{{ name }}_family
+          # description: ''
+          # parameter: 
           #   name: ''
           #   value: ''
-          # description: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_family:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elasticache_parameter_group.{{ name }}.id}'
+        value: aws_elasticache_parameter_group.{{ name }}.id
       thub_id:
-        value: '${aws_elasticache_parameter_group.{{ name }}.id}'
+        value: aws_elasticache_parameter_group.{{ name }}.id

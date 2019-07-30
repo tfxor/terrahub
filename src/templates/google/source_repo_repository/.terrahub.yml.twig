@@ -6,19 +6,19 @@
     resource:
       google_source_repo_repository:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_source_repo_repository.{{ name }}.id}'
+        value: google_source_repo_repository.{{ name }}.id
       thub_id:
-        value: '${google_source_repo_repository.{{ name }}.id}'
-      project:
-        value: '${google_source_repo_repository.{{ name }}.project}'
+        value: google_source_repo_repository.{{ name }}.id
       size:
-        value: '${google_source_repo_repository.{{ name }}.size}'
+        value: google_source_repo_repository.{{ name }}.size
       url:
-        value: '${google_source_repo_repository.{{ name }}.url}'
+        value: google_source_repo_repository.{{ name }}.url
+      project:
+        value: google_source_repo_repository.{{ name }}.project

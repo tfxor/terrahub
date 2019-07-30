@@ -6,44 +6,48 @@
     resource:
       google_compute_forwarding_rule:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # project: ''
-          # backend_service: ''
-          # description: ''
-          # load_balancing_scheme: ''
-          # subnetwork: ''
-          # ip_address: ''
+          name: var.{{ name }}_name
+          # all_ports: false
           # network: ''
           # network_tier: ''
-          # ports: []
-          # region: ''
-          # ip_protocol: ''
-          # ip_version: ''
           # port_range: ''
+          # service_label: ''
+          # subnetwork: ''
+          # ip_address: ''
+          # description: ''
+          # project: ''
+          # backend_service: ''
+          # load_balancing_scheme: ''
+          # ip_protocol: ''
+          # region: ''
           # target: ''
+          # ip_version: ''
+          # ports: []
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_forwarding_rule.{{ name }}.id}'
+        value: google_compute_forwarding_rule.{{ name }}.id
       thub_id:
-        value: '${google_compute_forwarding_rule.{{ name }}.id}'
-      project:
-        value: '${google_compute_forwarding_rule.{{ name }}.project}'
-      self_link:
-        value: '${google_compute_forwarding_rule.{{ name }}.self_link}'
-      subnetwork:
-        value: '${google_compute_forwarding_rule.{{ name }}.subnetwork}'
-      ip_address:
-        value: '${google_compute_forwarding_rule.{{ name }}.ip_address}'
+        value: google_compute_forwarding_rule.{{ name }}.id
       network:
-        value: '${google_compute_forwarding_rule.{{ name }}.network}'
+        value: google_compute_forwarding_rule.{{ name }}.network
       network_tier:
-        value: '${google_compute_forwarding_rule.{{ name }}.network_tier}'
+        value: google_compute_forwarding_rule.{{ name }}.network_tier
+      subnetwork:
+        value: google_compute_forwarding_rule.{{ name }}.subnetwork
+      service_name:
+        value: google_compute_forwarding_rule.{{ name }}.service_name
+      ip_address:
+        value: google_compute_forwarding_rule.{{ name }}.ip_address
+      project:
+        value: google_compute_forwarding_rule.{{ name }}.project
       creation_timestamp:
-        value: '${google_compute_forwarding_rule.{{ name }}.creation_timestamp}'
-      region:
-        value: '${google_compute_forwarding_rule.{{ name }}.region}'
+        value: google_compute_forwarding_rule.{{ name }}.creation_timestamp
       ip_protocol:
-        value: '${google_compute_forwarding_rule.{{ name }}.ip_protocol}'
+        value: google_compute_forwarding_rule.{{ name }}.ip_protocol
+      region:
+        value: google_compute_forwarding_rule.{{ name }}.region
+      self_link:
+        value: google_compute_forwarding_rule.{{ name }}.self_link

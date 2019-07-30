@@ -8,9 +8,9 @@
     resource:
       aws_gamelift_build:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          operating_system: '${var.{{ name }}_operating_system}'
-          storage_location:
+          name: var.{{ name }}_name
+          operating_system: var.{{ name }}_operating_system
+          storage_location: 
             -
               bucket: ''
               key: ''
@@ -18,11 +18,11 @@
           # version: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_operating_system:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_gamelift_build.{{ name }}.id}'
+        value: aws_gamelift_build.{{ name }}.id
       thub_id:
-        value: '${aws_gamelift_build.{{ name }}.id}'
+        value: aws_gamelift_build.{{ name }}.id

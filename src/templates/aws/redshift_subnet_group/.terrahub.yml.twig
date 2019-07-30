@@ -8,18 +8,20 @@
     resource:
       aws_redshift_subnet_group:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
-          # tags:
+          subnet_ids: var.{{ name }}_subnet_ids
+          name: var.{{ name }}_name
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_subnet_ids:
-        type: 'set'
+        type: set
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_redshift_subnet_group.{{ name }}.id}'
+        value: aws_redshift_subnet_group.{{ name }}.id
       thub_id:
-        value: '${aws_redshift_subnet_group.{{ name }}.id}'
+        value: aws_redshift_subnet_group.{{ name }}.id
+      arn:
+        value: aws_redshift_subnet_group.{{ name }}.arn

@@ -9,12 +9,12 @@
       aws_internet_gateway:
         {{ name }}:
           # vpc_id: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     output:
       id:
-        value: '${aws_internet_gateway.{{ name }}.id}'
+        value: aws_internet_gateway.{{ name }}.id
       thub_id:
-        value: '${aws_internet_gateway.{{ name }}.id}'
+        value: aws_internet_gateway.{{ name }}.id
       owner_id:
-        value: '${aws_internet_gateway.{{ name }}.owner_id}'
+        value: aws_internet_gateway.{{ name }}.owner_id

@@ -8,18 +8,18 @@
     resource:
       aws_key_pair:
         {{ name }}:
-          public_key: '${var.{{ name }}_public_key}'
+          public_key: var.{{ name }}_public_key
           # key_name: ''
           # key_name_prefix: ''
     variable:
       {{ name }}_public_key:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_key_pair.{{ name }}.id}'
+        value: aws_key_pair.{{ name }}.id
       thub_id:
-        value: '${aws_key_pair.{{ name }}.id}'
+        value: aws_key_pair.{{ name }}.id
       key_name:
-        value: '${aws_key_pair.{{ name }}.key_name}'
+        value: aws_key_pair.{{ name }}.key_name
       fingerprint:
-        value: '${aws_key_pair.{{ name }}.fingerprint}'
+        value: aws_key_pair.{{ name }}.fingerprint

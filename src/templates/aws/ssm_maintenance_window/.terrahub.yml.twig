@@ -8,26 +8,28 @@
     resource:
       aws_ssm_maintenance_window:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          schedule: '${var.{{ name }}_schedule}'
-          duration: '${var.{{ name }}_duration}'
-          cutoff: '${var.{{ name }}_cutoff}'
+          name: var.{{ name }}_name
+          schedule: var.{{ name }}_schedule
+          cutoff: var.{{ name }}_cutoff
+          duration: var.{{ name }}_duration
           # allow_unassociated_targets: false
-          # end_date: ''
-          # start_date: ''
           # enabled: false
+          # end_date: ''
           # schedule_timezone: ''
+          # start_date: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_schedule:
-        type: 'string'
-      {{ name }}_duration:
-        type: 'int'
+        type: string
       {{ name }}_cutoff:
-        type: 'int'
+        type: int
+      {{ name }}_duration:
+        type: int
     output:
       id:
-        value: '${aws_ssm_maintenance_window.{{ name }}.id}'
+        value: aws_ssm_maintenance_window.{{ name }}.id
       thub_id:
-        value: '${aws_ssm_maintenance_window.{{ name }}.id}'
+        value: aws_ssm_maintenance_window.{{ name }}.id

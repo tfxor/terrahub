@@ -8,24 +8,24 @@
     resource:
       aws_dms_replication_subnet_group:
         {{ name }}:
-          replication_subnet_group_description: '${var.{{ name }}_replication_subnet_group_description}'
-          replication_subnet_group_id: '${var.{{ name }}_replication_subnet_group_id}'
-          subnet_ids: '${var.{{ name }}_subnet_ids}'
-          # tags:
+          replication_subnet_group_id: var.{{ name }}_replication_subnet_group_id
+          subnet_ids: var.{{ name }}_subnet_ids
+          replication_subnet_group_description: var.{{ name }}_replication_subnet_group_description
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_replication_subnet_group_description:
-        type: 'string'
       {{ name }}_replication_subnet_group_id:
-        type: 'string'
+        type: string
       {{ name }}_subnet_ids:
-        type: 'set'
+        type: set
+      {{ name }}_replication_subnet_group_description:
+        type: string
     output:
       id:
-        value: '${aws_dms_replication_subnet_group.{{ name }}.id}'
+        value: aws_dms_replication_subnet_group.{{ name }}.id
       thub_id:
-        value: '${aws_dms_replication_subnet_group.{{ name }}.id}'
+        value: aws_dms_replication_subnet_group.{{ name }}.id
       vpc_id:
-        value: '${aws_dms_replication_subnet_group.{{ name }}.vpc_id}'
+        value: aws_dms_replication_subnet_group.{{ name }}.vpc_id
       replication_subnet_group_arn:
-        value: '${aws_dms_replication_subnet_group.{{ name }}.replication_subnet_group_arn}'
+        value: aws_dms_replication_subnet_group.{{ name }}.replication_subnet_group_arn

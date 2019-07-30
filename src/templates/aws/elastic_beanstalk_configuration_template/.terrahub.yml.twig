@@ -8,21 +8,21 @@
     resource:
       aws_elastic_beanstalk_configuration_template:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          application: '${var.{{ name }}_application}'
+          name: var.{{ name }}_name
+          application: var.{{ name }}_application
+          # environment_id: ''
+          # setting: 
           # solution_stack_name: ''
           # description: ''
-          # environment_id: ''
-          # setting:
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_application:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_elastic_beanstalk_configuration_template.{{ name }}.id}'
+        value: aws_elastic_beanstalk_configuration_template.{{ name }}.id
       thub_id:
-        value: '${aws_elastic_beanstalk_configuration_template.{{ name }}.id}'
+        value: aws_elastic_beanstalk_configuration_template.{{ name }}.id
       setting:
-        value: '${aws_elastic_beanstalk_configuration_template.{{ name }}.setting}'
+        value: aws_elastic_beanstalk_configuration_template.{{ name }}.setting

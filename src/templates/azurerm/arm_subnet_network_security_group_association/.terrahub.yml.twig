@@ -7,15 +7,15 @@
     resource:
       azurerm_arm_subnet_network_security_group_association:
         {{ name }}:
-          subnet_id: '${var.{{ name }}_subnet_id}'
-          network_security_group_id: '${var.{{ name }}_network_security_group_id}'
+          subnet_id: var.{{ name }}_subnet_id
+          network_security_group_id: var.{{ name }}_network_security_group_id
     variable:
       {{ name }}_subnet_id:
-        type: 'string'
+        type: string
       {{ name }}_network_security_group_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_subnet_network_security_group_association.{{ name }}.id}'
+        value: azurerm_arm_subnet_network_security_group_association.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_subnet_network_security_group_association.{{ name }}.id}'
+        value: azurerm_arm_subnet_network_security_group_association.{{ name }}.id

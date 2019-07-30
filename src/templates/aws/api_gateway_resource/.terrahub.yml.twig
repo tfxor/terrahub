@@ -8,20 +8,20 @@
     resource:
       aws_api_gateway_resource:
         {{ name }}:
-          parent_id: '${var.{{ name }}_parent_id}'
-          path_part: '${var.{{ name }}_path_part}'
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
+          rest_api_id: var.{{ name }}_rest_api_id
+          parent_id: var.{{ name }}_parent_id
+          path_part: var.{{ name }}_path_part
     variable:
-      {{ name }}_parent_id:
-        type: 'string'
-      {{ name }}_path_part:
-        type: 'string'
       {{ name }}_rest_api_id:
-        type: 'string'
+        type: string
+      {{ name }}_parent_id:
+        type: string
+      {{ name }}_path_part:
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_resource.{{ name }}.id}'
+        value: aws_api_gateway_resource.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_resource.{{ name }}.id}'
+        value: aws_api_gateway_resource.{{ name }}.id
       path:
-        value: '${aws_api_gateway_resource.{{ name }}.path}'
+        value: aws_api_gateway_resource.{{ name }}.path

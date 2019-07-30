@@ -8,24 +8,12 @@
     resource:
       aws_dms_endpoint:
         {{ name }}:
-          endpoint_id: '${var.{{ name }}_endpoint_id}'
-          endpoint_type: '${var.{{ name }}_endpoint_type}'
-          engine_name: '${var.{{ name }}_engine_name}'
-          # password: ''
-          # port: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          endpoint_id: var.{{ name }}_endpoint_id
+          endpoint_type: var.{{ name }}_endpoint_type
+          engine_name: var.{{ name }}_engine_name
+          # ssl_mode: ''
           # server_name: ''
-          # mongodb_settings:
-          #   -
-          #     auth_source: ''
-          #     auth_type: ''
-          #     auth_mechanism: ''
-          #     nesting_level: ''
-          #     extract_doc_id: ''
-          #     docs_to_investigate: ''
-          # extra_connection_attributes: ''
-          # s3_settings:
+          # s3_settings: 
           #   -
           #     service_access_role_arn: ''
           #     external_table_definition: ''
@@ -34,31 +22,43 @@
           #     bucket_folder: ''
           #     bucket_name: ''
           #     compression_type: ''
-          # certificate_arn: ''
+          # port: 0
+          # service_access_role: ''
+          # extra_connection_attributes: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # mongodb_settings: 
+          #   -
+          #     auth_type: ''
+          #     auth_mechanism: ''
+          #     nesting_level: ''
+          #     extract_doc_id: ''
+          #     docs_to_investigate: ''
+          #     auth_source: ''
           # database_name: ''
           # kms_key_arn: ''
-          # ssl_mode: ''
+          # password: ''
           # username: ''
-          # service_access_role: ''
+          # certificate_arn: ''
     variable:
       {{ name }}_endpoint_id:
-        type: 'string'
+        type: string
       {{ name }}_endpoint_type:
-        type: 'string'
+        type: string
       {{ name }}_engine_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_dms_endpoint.{{ name }}.id}'
+        value: aws_dms_endpoint.{{ name }}.id
       thub_id:
-        value: '${aws_dms_endpoint.{{ name }}.id}'
-      extra_connection_attributes:
-        value: '${aws_dms_endpoint.{{ name }}.extra_connection_attributes}'
-      certificate_arn:
-        value: '${aws_dms_endpoint.{{ name }}.certificate_arn}'
-      kms_key_arn:
-        value: '${aws_dms_endpoint.{{ name }}.kms_key_arn}'
+        value: aws_dms_endpoint.{{ name }}.id
       ssl_mode:
-        value: '${aws_dms_endpoint.{{ name }}.ssl_mode}'
+        value: aws_dms_endpoint.{{ name }}.ssl_mode
+      extra_connection_attributes:
+        value: aws_dms_endpoint.{{ name }}.extra_connection_attributes
       endpoint_arn:
-        value: '${aws_dms_endpoint.{{ name }}.endpoint_arn}'
+        value: aws_dms_endpoint.{{ name }}.endpoint_arn
+      kms_key_arn:
+        value: aws_dms_endpoint.{{ name }}.kms_key_arn
+      certificate_arn:
+        value: aws_dms_endpoint.{{ name }}.certificate_arn

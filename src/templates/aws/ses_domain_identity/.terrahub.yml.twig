@@ -8,16 +8,16 @@
     resource:
       aws_ses_domain_identity:
         {{ name }}:
-          domain: '${var.{{ name }}_domain}'
+          domain: var.{{ name }}_domain
     variable:
       {{ name }}_domain:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_domain_identity.{{ name }}.id}'
+        value: aws_ses_domain_identity.{{ name }}.id
       thub_id:
-        value: '${aws_ses_domain_identity.{{ name }}.id}'
+        value: aws_ses_domain_identity.{{ name }}.id
       arn:
-        value: '${aws_ses_domain_identity.{{ name }}.arn}'
+        value: aws_ses_domain_identity.{{ name }}.arn
       verification_token:
-        value: '${aws_ses_domain_identity.{{ name }}.verification_token}'
+        value: aws_ses_domain_identity.{{ name }}.verification_token

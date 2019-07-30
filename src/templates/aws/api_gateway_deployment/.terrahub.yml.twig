@@ -8,25 +8,23 @@
     resource:
       aws_api_gateway_deployment:
         {{ name }}:
-          rest_api_id: '${var.{{ name }}_rest_api_id}'
-          stage_name: '${var.{{ name }}_stage_name}'
-          # description: ''
+          rest_api_id: var.{{ name }}_rest_api_id
           # stage_description: ''
-          # variables:
+          # variables: 
           #   '[TO_BE_REPLACED]': ''
+          # stage_name: ''
+          # description: ''
     variable:
       {{ name }}_rest_api_id:
-        type: 'string'
-      {{ name }}_stage_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_deployment.{{ name }}.id}'
+        value: aws_api_gateway_deployment.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_deployment.{{ name }}.id}'
-      invoke_url:
-        value: '${aws_api_gateway_deployment.{{ name }}.invoke_url}'
-      execution_arn:
-        value: '${aws_api_gateway_deployment.{{ name }}.execution_arn}'
+        value: aws_api_gateway_deployment.{{ name }}.id
       created_date:
-        value: '${aws_api_gateway_deployment.{{ name }}.created_date}'
+        value: aws_api_gateway_deployment.{{ name }}.created_date
+      invoke_url:
+        value: aws_api_gateway_deployment.{{ name }}.invoke_url
+      execution_arn:
+        value: aws_api_gateway_deployment.{{ name }}.execution_arn

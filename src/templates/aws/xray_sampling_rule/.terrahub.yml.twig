@@ -1,0 +1,51 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_xray_sampling_rule:
+        {{ name }}:
+          resource_arn: var.{{ name }}_resource_arn
+          reservoir_size: var.{{ name }}_reservoir_size
+          service_type: var.{{ name }}_service_type
+          host: var.{{ name }}_host
+          version: var.{{ name }}_version
+          priority: var.{{ name }}_priority
+          fixed_rate: var.{{ name }}_fixed_rate
+          service_name: var.{{ name }}_service_name
+          http_method: var.{{ name }}_http_method
+          url_path: var.{{ name }}_url_path
+          # attributes: 
+          #   '[TO_BE_REPLACED]': ''
+          # rule_name: ''
+    variable:
+      {{ name }}_resource_arn:
+        type: string
+      {{ name }}_reservoir_size:
+        type: int
+      {{ name }}_service_type:
+        type: string
+      {{ name }}_host:
+        type: string
+      {{ name }}_version:
+        type: int
+      {{ name }}_priority:
+        type: int
+      {{ name }}_fixed_rate:
+        type: float
+      {{ name }}_service_name:
+        type: string
+      {{ name }}_http_method:
+        type: string
+      {{ name }}_url_path:
+        type: string
+    output:
+      id:
+        value: aws_xray_sampling_rule.{{ name }}.id
+      thub_id:
+        value: aws_xray_sampling_rule.{{ name }}.id
+      arn:
+        value: aws_xray_sampling_rule.{{ name }}.arn

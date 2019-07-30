@@ -7,27 +7,28 @@
     resource:
       azurerm_arm_public_ip:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # public_ip_prefix_id: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # public_ip_address_allocation: ''
           # ip_version: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # sku: ''
-          # reverse_fqdn: ''
-          # allocation_method: ''
           # idle_timeout_in_minutes: 0
+          # allocation_method: ''
+          # sku: ''
           # domain_name_label: ''
+          # reverse_fqdn: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_public_ip.{{ name }}.id}'
+        value: azurerm_arm_public_ip.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_public_ip.{{ name }}.id}'
+        value: azurerm_arm_public_ip.{{ name }}.id
       ip_address:
-        value: '${azurerm_arm_public_ip.{{ name }}.ip_address}'
-      fqdn:
-        value: '${azurerm_arm_public_ip.{{ name }}.fqdn}'
+        value: azurerm_arm_public_ip.{{ name }}.ip_address
       allocation_method:
-        value: '${azurerm_arm_public_ip.{{ name }}.allocation_method}'
+        value: azurerm_arm_public_ip.{{ name }}.allocation_method
+      fqdn:
+        value: azurerm_arm_public_ip.{{ name }}.fqdn

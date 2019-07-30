@@ -1,0 +1,31 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_data_factory_linked_service_mysql:
+        {{ name }}:
+          connection_string: var.{{ name }}_connection_string
+          name: var.{{ name }}_name
+          data_factory_name: var.{{ name }}_data_factory_name
+          # annotations: []
+          # description: ''
+          # parameters: 
+          #   '[TO_BE_REPLACED]': ''
+          # integration_runtime_name: ''
+          # additional_properties: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_connection_string:
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_data_factory_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_data_factory_linked_service_mysql.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_data_factory_linked_service_mysql.{{ name }}.id

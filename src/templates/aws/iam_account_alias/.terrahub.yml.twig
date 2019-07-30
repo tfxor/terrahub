@@ -8,12 +8,12 @@
     resource:
       aws_iam_account_alias:
         {{ name }}:
-          account_alias: '${var.{{ name }}_account_alias}'
+          account_alias: var.{{ name }}_account_alias
     variable:
       {{ name }}_account_alias:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_account_alias.{{ name }}.id}'
+        value: aws_iam_account_alias.{{ name }}.id
       thub_id:
-        value: '${aws_iam_account_alias.{{ name }}.id}'
+        value: aws_iam_account_alias.{{ name }}.id

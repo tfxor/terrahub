@@ -8,34 +8,34 @@
     resource:
       aws_storagegateway_gateway:
         {{ name }}:
-          gateway_name: '${var.{{ name }}_gateway_name}'
-          gateway_timezone: '${var.{{ name }}_gateway_timezone}'
+          gateway_name: var.{{ name }}_gateway_name
+          gateway_timezone: var.{{ name }}_gateway_timezone
+          # activation_key: ''
           # gateway_ip_address: ''
-          # smb_active_directory_settings:
+          # smb_guest_password: ''
+          # tape_drive_type: ''
+          # gateway_type: ''
+          # medium_changer_type: ''
+          # smb_active_directory_settings: 
           #   -
           #     password: ''
           #     username: ''
           #     domain_name: ''
-          # smb_guest_password: ''
-          # activation_key: ''
-          # gateway_type: ''
-          # medium_changer_type: ''
-          # tape_drive_type: ''
     variable:
       {{ name }}_gateway_name:
-        type: 'string'
+        type: string
       {{ name }}_gateway_timezone:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_storagegateway_gateway.{{ name }}.id}'
+        value: aws_storagegateway_gateway.{{ name }}.id
       thub_id:
-        value: '${aws_storagegateway_gateway.{{ name }}.id}'
+        value: aws_storagegateway_gateway.{{ name }}.id
       arn:
-        value: '${aws_storagegateway_gateway.{{ name }}.arn}'
-      gateway_ip_address:
-        value: '${aws_storagegateway_gateway.{{ name }}.gateway_ip_address}'
+        value: aws_storagegateway_gateway.{{ name }}.arn
       activation_key:
-        value: '${aws_storagegateway_gateway.{{ name }}.activation_key}'
+        value: aws_storagegateway_gateway.{{ name }}.activation_key
       gateway_id:
-        value: '${aws_storagegateway_gateway.{{ name }}.gateway_id}'
+        value: aws_storagegateway_gateway.{{ name }}.gateway_id
+      gateway_ip_address:
+        value: aws_storagegateway_gateway.{{ name }}.gateway_ip_address
