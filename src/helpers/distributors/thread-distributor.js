@@ -43,7 +43,7 @@ class ThreadDistributor extends AbstractDistributor {
     const worker = cluster.fork(Object.assign({
       THUB_RUN_ID: this.THUB_RUN_ID,
       TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
-      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid
+      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || ''
     }, this._env));
 
     delete this._dependencyTable[hash];
