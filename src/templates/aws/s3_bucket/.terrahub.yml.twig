@@ -5,145 +5,135 @@
     #       region: 'us-east-1'
     #       bucket: 'bucket-name'
     #       key: 'path/to/terraform.tfstate'
-    # data:
-    #   aws_s3_bucket_object:
-    #     {{ name }}_object:
-    #       key: 'index.txt'
-    #       bucket: '${aws_s3_bucket.{{ name }}.id}'
     resource:
       aws_s3_bucket:
         {{ name }}:
-          status: '${var.{{ name }}_status}'
-          # website:
+          status: var.{{ name }}_status
+          # bucket: ''
+          # versioning: 
           #   -
-          #     index_document: 'index.html'
-          #     error_document: '/404.html'
-          #     redirect_all_requests_to: ''
-          #     routing_rules: ''
-          # request_payer: ''
-          # replication_configuration:
+          #     enabled: false
+          #     mfa_delete: false
+          # acceleration_status: ''
+          # lifecycle_rule: 
           #   -
-          #     role: ''
-          #     rules:
-          #     destination:
-          #       bucket: ''
-          #       account_id: ''
-          #       storage_class: ''
-          #       replica_kms_key_id: ''
-          #       access_control_translation:
-          #         -
-          #           owner: ''
+          #     enabled: false
+          #     expiration: 
+          #     date: ''
+          #     days: 0
+          #     expired_object_delete_marker: false
           #     id: ''
-          #     source_selection_criteria:
-          #     sse_kms_encrypted_objects:
-          #       enabled:false
-          # bucket_prefix: ''
-          # server_side_encryption_configuration:
-          #   -
-          #     rule:
-          #       -
-          #         apply_server_side_encryption_by_default:
-          #           -
-          #             sse_algorithm: ''
-          #             kms_master_key_id: ''
-          # object_lock_configuration:
+          #     prefix: ''
+          #     tags: 
+          #       '[TO_BE_REPLACED]': ''
+          #     abort_incomplete_multipart_upload_days: 0
+          # force_destroy: false
+          # region: ''
+          # transition: 
+          #   storage_class: ''
+          #   date: ''
+          #   days: 0
+          # noncurrent_version_transition: 
+          #   storage_class: ''
+          #   days: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # priority: 0
+          # logging: 
+          #   target_bucket: ''
+          #   target_prefix: ''
+          # object_lock_configuration: 
           #   -
           #     object_lock_enabled: ''
-          #     rule:
+          #     rule: 
           #       -
-          #         default_retention:
+          #         default_retention: 
           #           -
           #             mode: ''
           #             days: 0
           #             years: 0
-          # bucket: '${var.{{ name}}_name}'
-          # acl: 'public-read'
-          # lifecycle_rule:
-          #   -
-          #     enabled: false
-          #     id: ''
-          #     prefix: ''
-          #     tags:
-          #       '[TO_BE_REPLACED]': ''
-          #     abort_incomplete_multipart_upload_days: 0
-          #     expiration:
-          #     date: ''
-          #     days: 0
-          #     expired_object_delete_marker: false
-          # force_destroy: 'true'
-          # website_endpoint: ''
-          # versioning:
-          #   -
-          #     enabled: false
-          #     mfa_delete: false
-          # priority: 0
-          # tags:
-          #   Description: 'Managed by TerraHub'
-          #   ThubCode: '${local.project["code"]}'
-          #   ThubEnv: '${terraform.workspace}'
-          #   ThubName: '{{ name }}'
           # policy: ''
-          # hosted_zone_id: ''
-          # acceleration_status: ''
-          # cors_rule:
+          # website_endpoint: ''
+          # replication_configuration: 
           #   -
-          #     allowed_methods: ['HEAD', 'GET', 'PUT', 'POST', 'DELETE']
-          #     allowed_origins: ['*']
-          #     allowed_headers: ['*']
-          #     expose_headers: ['ETag']
-          #     max_age_seconds: '0'
-          # region: 'us-east-1'
-          # transition:
-          #   storage_class: ''
-          #   date: ''
-          #   days:0
+          #     role: ''
+          #     rules: 
+          #     destination: 
+          #       bucket: ''
+          #       account_id: ''
+          #       storage_class: ''
+          #       replica_kms_key_id: ''
+          #       access_control_translation: 
+          #         -
+          #           owner: ''
+          #     id: ''
+          #     source_selection_criteria: 
+          #     sse_kms_encrypted_objects: 
+          #       enabled: false
+          # prefix: ''
+          # bucket_prefix: ''
           # arn: ''
+          # cors_rule: 
+          #   -
+          #     allowed_methods: []
+          #     allowed_origins: []
+          #     allowed_headers: 
+          #       -
+          #     expose_headers: 
+          #       -
+          #     max_age_seconds: 0
+          # website: 
+          #   -
+          #     redirect_all_requests_to: ''
+          #     routing_rules: ''
+          #     index_document: ''
+          #     error_document: ''
+          # request_payer: ''
+          # hosted_zone_id: ''
           # website_domain: ''
-          # logging:
-          #   target_bucket: ''
-          #   target_prefix: ''
-          # filter:
+          # filter: 
           #   -
           #     prefix: ''
-          #     tags:
+          #     tags: 
           #       '[TO_BE_REPLACED]': ''
-          # noncurrent_version_transition:
-          #   storage_class: ''
-          #   days: 0
-          # prefix: ''
+          # server_side_encryption_configuration: 
+          #   -
+          #     rule: 
+          #       -
+          #         apply_server_side_encryption_by_default: 
+          #           -
+          #             sse_algorithm: ''
+          #             kms_master_key_id: ''
     variable:
       {{ name }}_status:
-        type: 'string'
-      # {{ name }}_name:
-      #   type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket.{{ name }}.id}'
+        value: aws_s3_bucket.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket.{{ name }}.id}'
-      request_payer:
-        value: '${aws_s3_bucket.{{ name }}.request_payer}'
-      bucket_domain_name:
-        value: '${aws_s3_bucket.{{ name }}.bucket_domain_name}'
+        value: aws_s3_bucket.{{ name }}.id
       bucket:
-        value: '${aws_s3_bucket.{{ name }}.bucket}'
-      website_endpoint:
-        value: '${aws_s3_bucket.{{ name }}.website_endpoint}'
+        value: aws_s3_bucket.{{ name }}.bucket
       versioning:
-        value: '${aws_s3_bucket.{{ name }}.versioning}'
-      bucket_regional_domain_name:
-        value: '${aws_s3_bucket.{{ name }}.bucket_regional_domain_name}'
-      hosted_zone_id:
-        value: '${aws_s3_bucket.{{ name }}.hosted_zone_id}'
+        value: aws_s3_bucket.{{ name }}.versioning
       acceleration_status:
-        value: '${aws_s3_bucket.{{ name }}.acceleration_status}'
+        value: aws_s3_bucket.{{ name }}.acceleration_status
+      bucket_regional_domain_name:
+        value: aws_s3_bucket.{{ name }}.bucket_regional_domain_name
       region:
-        value: '${aws_s3_bucket.{{ name }}.region}'
+        value: aws_s3_bucket.{{ name }}.region
+      bucket_domain_name:
+        value: aws_s3_bucket.{{ name }}.bucket_domain_name
+      website_endpoint:
+        value: aws_s3_bucket.{{ name }}.website_endpoint
       arn:
-        value: '${aws_s3_bucket.{{ name }}.arn}'
+        value: aws_s3_bucket.{{ name }}.arn
+      request_payer:
+        value: aws_s3_bucket.{{ name }}.request_payer
+      hosted_zone_id:
+        value: aws_s3_bucket.{{ name }}.hosted_zone_id
       website_domain:
-        value: '${aws_s3_bucket.{{ name }}.website_domain}'
-
+        value: aws_s3_bucket.{{ name }}.website_domain
 
 ## build config
 # build:

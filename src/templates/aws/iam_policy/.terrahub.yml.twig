@@ -8,20 +8,20 @@
     resource:
       aws_iam_policy:
         {{ name }}:
-          policy: '${var.{{ name }}_policy}'
+          policy: var.{{ name }}_policy
+          # path: ''
           # name: ''
           # name_prefix: ''
           # description: ''
-          # path: ''
     variable:
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iam_policy.{{ name }}.id}'
+        value: aws_iam_policy.{{ name }}.id
       thub_id:
-        value: '${aws_iam_policy.{{ name }}.id}'
+        value: aws_iam_policy.{{ name }}.id
       name:
-        value: '${aws_iam_policy.{{ name }}.name}'
+        value: aws_iam_policy.{{ name }}.name
       arn:
-        value: '${aws_iam_policy.{{ name }}.arn}'
+        value: aws_iam_policy.{{ name }}.arn

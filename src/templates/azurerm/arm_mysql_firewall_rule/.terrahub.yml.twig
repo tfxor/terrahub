@@ -7,21 +7,21 @@
     resource:
       azurerm_arm_mysql_firewall_rule:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          server_name: '${var.{{ name }}_server_name}'
-          start_ip_address: '${var.{{ name }}_start_ip_address}'
-          end_ip_address: '${var.{{ name }}_end_ip_address}'
+          name: var.{{ name }}_name
+          server_name: var.{{ name }}_server_name
+          start_ip_address: var.{{ name }}_start_ip_address
+          end_ip_address: var.{{ name }}_end_ip_address
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_server_name:
-        type: 'string'
+        type: string
       {{ name }}_start_ip_address:
-        type: 'string'
+        type: string
       {{ name }}_end_ip_address:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_mysql_firewall_rule.{{ name }}.id}'
+        value: azurerm_arm_mysql_firewall_rule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_mysql_firewall_rule.{{ name }}.id}'
+        value: azurerm_arm_mysql_firewall_rule.{{ name }}.id

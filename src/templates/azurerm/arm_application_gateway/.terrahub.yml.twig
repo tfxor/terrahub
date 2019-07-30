@@ -7,127 +7,190 @@
     resource:
       azurerm_arm_application_gateway:
         {{ name }}:
-          frontend_ip_configuration:
+          request_routing_rule: 
+            -
+              http_listener_name: ''
+              name: ''
+              rule_type: ''
+          #     backend_http_settings_name: ''
+          #     url_path_map_name: ''
+          #     backend_address_pool_name: ''
+          #     redirect_configuration_name: ''
+          #     rewrite_rule_set_name: ''
+          backend_http_settings: 
+            -
+              port: 0
+              cookie_based_affinity: ''
+              protocol: ''
+              name: ''
+          #     affinity_cookie_name: ''
+          #     pick_host_name_from_backend_address: false
+          #     path: ''
+          #     host_name: ''
+          #     request_timeout: 0
+          #     authentication_certificate: 
+          #       -
+          #         name: ''
+          frontend_port: 
+            -
+              name: ''
+              port: 0
+          http_listener: 
+            -
+              frontend_ip_configuration_name: ''
+              frontend_port_name: ''
+              name: ''
+              protocol: ''
+          #     custom_error_configuration: 
+          #       -
+          #         status_code: ''
+          #         custom_error_page_url: ''
+          #     ssl_certificate_name: ''
+          #     host_name: ''
+          #     require_sni: false
+          name: var.{{ name }}_name
+          backend_address_pool: 
+            -
+              name: ''
+          #     fqdns: 
+          #       -
+          #     ip_addresses: 
+          #       -
+          #     fqdn_list: []
+          #     ip_address_list: []
+          gateway_ip_configuration: 
+            -
+              name: ''
+              subnet_id: ''
+          resource_group_name: var.{{ name }}_resource_group_name
+          sku: 
+            -
+              name: ''
+              tier: ''
+          #     capacity: 0
+          frontend_ip_configuration: 
             -
               name: ''
           #     subnet_id: ''
           #     private_ip_address: ''
           #     public_ip_address_id: ''
           #     private_ip_address_allocation: ''
-          backend_http_settings:
-            -
-              name: ''
-              port: 0
-              protocol: ''
-              cookie_based_affinity: ''
-          #     authentication_certificate:
-          #       -
-          #         name: ''
-          #     pick_host_name_from_backend_address: false
-          #     request_timeout: 0
-          frontend_port:
-            -
-              name: ''
-              port: 0
-          request_routing_rule:
-            -
-              name: ''
-              rule_type: ''
-              http_listener_name: ''
-          #     backend_address_pool_name: ''
-          #     backend_http_settings_name: ''
-          #     url_path_map_name: ''
-          name: '${var.{{ name }}_name}'
-          sku:
-            -
-              tier: ''
-              capacity: 0
-              name: ''
-          resource_group_name: '${var.{{ name }}_resource_group_name}'
-          gateway_ip_configuration:
-            -
-              name: ''
-              subnet_id: ''
-          http_listener:
-            -
-              name: ''
-              frontend_ip_configuration_name: ''
-              frontend_port_name: ''
-              protocol: ''
-          #     ssl_certificate_name: ''
-          #     custom_error_configuration:
-          #       -
-          #         status_code: ''
-          #         custom_error_page_url: ''
-          #     host_name: ''
-          #     require_sni: false
-          backend_address_pool:
-            -
-              name: ''
-          #     ip_addresses:
-          #       -
-          #     fqdn_list: []
-          #     ip_address_list: []
-          #     fqdns:
-          #       -
-          # url_path_map:
+          # disabled_ssl_protocols: []
+          # ssl_policy: 
           #   -
-          #     default_backend_address_pool_name: ''
-          #     default_backend_http_settings_name: ''
-          #     path_rule:
+          #     disabled_protocols: 
           #       -
-          #         paths: []
-          #         backend_address_pool_name: ''
-          #         backend_http_settings_name: ''
-          #         name: ''
+          #     policy_type: ''
+          #     policy_name: ''
+          #     cipher_suites: 
+          #       -
+          #     min_protocol_version: ''
+          # probe: 
+          #   -
           #     name: ''
-          # custom_error_configuration:
+          #     interval: 0
+          #     unhealthy_threshold: 0
+          #     protocol: ''
+          #     path: ''
+          #     timeout: 0
+          #     host: ''
+          #     minimum_servers: 0
+          #     match: 
+          #       -
+          #         status_code: 
+          #           -
+          #         body: ''
+          #     pick_host_name_from_backend_http_settings: false
+          # rewrite_rule_set: 
           #   -
-          #     custom_error_page_url: ''
-          #     status_code: ''
-          # authentication_certificate:
+          #     name: ''
+          #     rewrite_rule: 
+          #       -
+          #         name: ''
+          #         rule_sequence: 0
+          #         condition: 
+          #           -
+          #             variable: ''
+          #             pattern: ''
+          #             ignore_case: false
+          #             negate: false
+          #     response_header_configuration: 
+          #       -
+          #         header_value: ''
+          #         header_name: ''
+          # ssl_certificate: 
           #   -
           #     name: ''
           #     data: ''
-          # waf_configuration:
+          #     password: ''
+          # redirect_configuration: 
+          #   -
+          #     name: ''
+          #     redirect_type: ''
+          #     target_url: ''
+          #     include_path: false
+          #     include_query_string: false
+          #     target_listener_name: ''
+          # authentication_certificate: 
+          #   -
+          #     name: ''
+          #     data: ''
+          # probe_name: ''
+          # waf_configuration: 
           #   -
           #     enabled: false
           #     firewall_mode: ''
           #     rule_set_version: ''
           #     rule_set_type: ''
           #     file_upload_limit_mb: 0
-          # disabled_ssl_protocols: []
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # enable_http2: false
-          # probe:
-          #   -
-          #     protocol: ''
-          #     timeout: 0
-          #     unhealthy_threshold: 0
-          #     name: ''
-          #     path: ''
-          #     interval: 0
-          #     pick_host_name_from_backend_http_settings: false
-          #     match:
+          #     request_body_check: false
+          #     max_request_body_size_kb: 0
+          #     disabled_rule_group: 
           #       -
-          #         body: ''
-          #         status_code:
+          #         rule_group_name: ''
+          #         rules: 
           #           -
-          #     host: ''
-          #     minimum_servers: 0
-          # ssl_certificate:
+          # custom_error_configuration: 
           #   -
+          #     status_code: ''
+          #     custom_error_page_url: ''
+          # autoscale_configuration: 
+          #   -
+          #     min_capacity: 0
+          #     max_capacity: 0
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # url_path_map: 
+          #   -
+          #     path_rule: 
+          #       -
+          #         name: ''
+          #         paths: []
+          #         backend_http_settings_name: ''
+          #         backend_address_pool_name: ''
+          #         redirect_configuration_name: ''
+          #         rewrite_rule_set_name: ''
           #     name: ''
-          #     data: ''
-          #     password: ''
+          #     default_backend_http_settings_name: ''
+          #     default_redirect_configuration_name: ''
+          #     default_rewrite_rule_set_name: ''
+          #     default_backend_address_pool_name: ''
+          # enable_http2: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_resource_group_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_application_gateway.{{ name }}.id}'
+        value: azurerm_arm_application_gateway.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_application_gateway.{{ name }}.id}'
+        value: azurerm_arm_application_gateway.{{ name }}.id
+      disabled_ssl_protocols:
+        value: azurerm_arm_application_gateway.{{ name }}.disabled_ssl_protocols
+      ssl_policy:
+        value: azurerm_arm_application_gateway.{{ name }}.ssl_policy
+      probe_id:
+        value: azurerm_arm_application_gateway.{{ name }}.probe_id
+      id:
+        value: azurerm_arm_application_gateway.{{ name }}.id

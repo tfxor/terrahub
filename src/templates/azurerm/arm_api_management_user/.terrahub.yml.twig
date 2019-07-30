@@ -1,0 +1,30 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_user:
+        {{ name }}:
+          email: var.{{ name }}_email
+          first_name: var.{{ name }}_first_name
+          last_name: var.{{ name }}_last_name
+          # confirmation: ''
+          # password: ''
+          # note: ''
+          # state: ''
+    variable:
+      {{ name }}_email:
+        type: string
+      {{ name }}_first_name:
+        type: string
+      {{ name }}_last_name:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_user.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_user.{{ name }}.id
+      state:
+        value: azurerm_arm_api_management_user.{{ name }}.state

@@ -1,0 +1,39 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_servicequotas_service_quota:
+        {{ name }}:
+          service_code: var.{{ name }}_service_code
+          value: var.{{ name }}_value
+          quota_code: var.{{ name }}_quota_code
+    variable:
+      {{ name }}_service_code:
+        type: string
+      {{ name }}_value:
+        type: float
+      {{ name }}_quota_code:
+        type: string
+    output:
+      id:
+        value: aws_servicequotas_service_quota.{{ name }}.id
+      thub_id:
+        value: aws_servicequotas_service_quota.{{ name }}.id
+      request_id:
+        value: aws_servicequotas_service_quota.{{ name }}.request_id
+      service_name:
+        value: aws_servicequotas_service_quota.{{ name }}.service_name
+      quota_name:
+        value: aws_servicequotas_service_quota.{{ name }}.quota_name
+      request_status:
+        value: aws_servicequotas_service_quota.{{ name }}.request_status
+      adjustable:
+        value: aws_servicequotas_service_quota.{{ name }}.adjustable
+      arn:
+        value: aws_servicequotas_service_quota.{{ name }}.arn
+      default_value:
+        value: aws_servicequotas_service_quota.{{ name }}.default_value

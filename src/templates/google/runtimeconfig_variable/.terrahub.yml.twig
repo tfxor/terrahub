@@ -6,22 +6,22 @@
     resource:
       google_runtimeconfig_variable:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          parent: '${var.{{ name }}_parent}'
-          # value: ''
+          name: var.{{ name }}_name
+          parent: var.{{ name }}_parent
           # text: ''
           # project: ''
+          # value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_parent:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_runtimeconfig_variable.{{ name }}.id}'
+        value: google_runtimeconfig_variable.{{ name }}.id
       thub_id:
-        value: '${google_runtimeconfig_variable.{{ name }}.id}'
+        value: google_runtimeconfig_variable.{{ name }}.id
       update_time:
-        value: '${google_runtimeconfig_variable.{{ name }}.update_time}'
+        value: google_runtimeconfig_variable.{{ name }}.update_time
       project:
-        value: '${google_runtimeconfig_variable.{{ name }}.project}'
+        value: google_runtimeconfig_variable.{{ name }}.project

@@ -8,24 +8,24 @@
     resource:
       aws_glue_classifier:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # grok_classifier:
+          name: var.{{ name }}_name
+          # json_classifier: 
+          #   -
+          #     json_path: ''
+          # xml_classifier: 
+          #   -
+          #     classification: ''
+          #     row_tag: ''
+          # grok_classifier: 
           #   -
           #     classification: ''
           #     grok_pattern: ''
           #     custom_patterns: ''
-          # json_classifier:
-          #   -
-          #     json_path: ''
-          # xml_classifier:
-          #   -
-          #     classification: ''
-          #     row_tag: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_glue_classifier.{{ name }}.id}'
+        value: aws_glue_classifier.{{ name }}.id
       thub_id:
-        value: '${aws_glue_classifier.{{ name }}.id}'
+        value: aws_glue_classifier.{{ name }}.id

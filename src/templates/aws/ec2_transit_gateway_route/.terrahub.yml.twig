@@ -8,18 +8,17 @@
     resource:
       aws_ec2_transit_gateway_route:
         {{ name }}:
-          destination_cidr_block: '${var.{{ name }}_destination_cidr_block}'
-          transit_gateway_attachment_id: '${var.{{ name }}_transit_gateway_attachment_id}'
-          transit_gateway_route_table_id: '${var.{{ name }}_transit_gateway_route_table_id}'
+          transit_gateway_route_table_id: var.{{ name }}_transit_gateway_route_table_id
+          destination_cidr_block: var.{{ name }}_destination_cidr_block
+          # transit_gateway_attachment_id: ''
+          # blackhole: false
     variable:
-      {{ name }}_destination_cidr_block:
-        type: 'string'
-      {{ name }}_transit_gateway_attachment_id:
-        type: 'string'
       {{ name }}_transit_gateway_route_table_id:
-        type: 'string'
+        type: string
+      {{ name }}_destination_cidr_block:
+        type: string
     output:
       id:
-        value: '${aws_ec2_transit_gateway_route.{{ name }}.id}'
+        value: aws_ec2_transit_gateway_route.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_transit_gateway_route.{{ name }}.id}'
+        value: aws_ec2_transit_gateway_route.{{ name }}.id

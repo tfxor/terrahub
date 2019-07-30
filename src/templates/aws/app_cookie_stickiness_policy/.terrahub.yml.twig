@@ -8,21 +8,21 @@
     resource:
       aws_app_cookie_stickiness_policy:
         {{ name }}:
-          lb_port: '${var.{{ name }}_lb_port}'
-          cookie_name: '${var.{{ name }}_cookie_name}'
-          name: '${var.{{ name }}_name}'
-          load_balancer: '${var.{{ name }}_load_balancer}'
+          name: var.{{ name }}_name
+          load_balancer: var.{{ name }}_load_balancer
+          lb_port: var.{{ name }}_lb_port
+          cookie_name: var.{{ name }}_cookie_name
     variable:
-      {{ name }}_lb_port:
-        type: 'int'
-      {{ name }}_cookie_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_load_balancer:
-        type: 'string'
+        type: string
+      {{ name }}_lb_port:
+        type: int
+      {{ name }}_cookie_name:
+        type: string
     output:
       id:
-        value: '${aws_app_cookie_stickiness_policy.{{ name }}.id}'
+        value: aws_app_cookie_stickiness_policy.{{ name }}.id
       thub_id:
-        value: '${aws_app_cookie_stickiness_policy.{{ name }}.id}'
+        value: aws_app_cookie_stickiness_policy.{{ name }}.id

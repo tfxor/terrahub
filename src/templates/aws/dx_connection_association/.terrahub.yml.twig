@@ -8,15 +8,15 @@
     resource:
       aws_dx_connection_association:
         {{ name }}:
-          connection_id: '${var.{{ name }}_connection_id}'
-          lag_id: '${var.{{ name }}_lag_id}'
+          connection_id: var.{{ name }}_connection_id
+          lag_id: var.{{ name }}_lag_id
     variable:
       {{ name }}_connection_id:
-        type: 'string'
+        type: string
       {{ name }}_lag_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_dx_connection_association.{{ name }}.id}'
+        value: aws_dx_connection_association.{{ name }}.id
       thub_id:
-        value: '${aws_dx_connection_association.{{ name }}.id}'
+        value: aws_dx_connection_association.{{ name }}.id

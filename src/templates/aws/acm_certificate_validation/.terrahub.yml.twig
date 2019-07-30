@@ -8,13 +8,13 @@
     resource:
       aws_acm_certificate_validation:
         {{ name }}:
-          certificate_arn: '${var.{{ name }}_certificate_arn}'
+          certificate_arn: var.{{ name }}_certificate_arn
           # validation_record_fqdns: []
     variable:
       {{ name }}_certificate_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_acm_certificate_validation.{{ name }}.id}'
+        value: aws_acm_certificate_validation.{{ name }}.id
       thub_id:
-        value: '${aws_acm_certificate_validation.{{ name }}.id}'
+        value: aws_acm_certificate_validation.{{ name }}.id

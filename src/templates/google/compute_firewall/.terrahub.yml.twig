@@ -6,13 +6,13 @@
     resource:
       google_compute_firewall:
         {{ name }}:
-          protocol: '${var.{{ name }}_protocol}'
+          protocol: var.{{ name }}_protocol
           # ports: []
     variable:
       {{ name }}_protocol:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_firewall.{{ name }}.id}'
+        value: google_compute_firewall.{{ name }}.id
       thub_id:
-        value: '${google_compute_firewall.{{ name }}.id}'
+        value: google_compute_firewall.{{ name }}.id

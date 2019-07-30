@@ -7,24 +7,24 @@
     resource:
       azurerm_arm_scheduler_job_collection:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          sku: '${var.{{ name }}_sku}'
+          name: var.{{ name }}_name
+          sku: var.{{ name }}_sku
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # state: ''
-          # quota:
+          # quota: 
           #   -
           #     max_recurrence_frequency: ''
-          #     max_job_count: 0
           #     max_retry_interval: 0
           #     max_recurrence_interval: 0
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          #     max_job_count: 0
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_sku:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_scheduler_job_collection.{{ name }}.id}'
+        value: azurerm_arm_scheduler_job_collection.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_scheduler_job_collection.{{ name }}.id}'
+        value: azurerm_arm_scheduler_job_collection.{{ name }}.id

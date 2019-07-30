@@ -8,41 +8,41 @@
     resource:
       aws_neptune_cluster_snapshot:
         {{ name }}:
-          db_cluster_identifier: '${var.{{ name }}_db_cluster_identifier}'
-          db_cluster_snapshot_identifier: '${var.{{ name }}_db_cluster_snapshot_identifier}'
+          db_cluster_identifier: var.{{ name }}_db_cluster_identifier
+          db_cluster_snapshot_identifier: var.{{ name }}_db_cluster_snapshot_identifier
     variable:
       {{ name }}_db_cluster_identifier:
-        type: 'string'
+        type: string
       {{ name }}_db_cluster_snapshot_identifier:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.id}'
+        value: aws_neptune_cluster_snapshot.{{ name }}.id
       thub_id:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.id}'
-      availability_zones:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.availability_zones}'
+        value: aws_neptune_cluster_snapshot.{{ name }}.id
       allocated_storage:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.allocated_storage}'
-      engine:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine}'
-      engine_version:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.engine_version}'
-      storage_encrypted:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.storage_encrypted}'
-      db_cluster_snapshot_arn:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn}'
-      snapshot_type:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.snapshot_type}'
-      status:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.status}'
-      vpc_id:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.vpc_id}'
-      license_model:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.license_model}'
-      port:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.port}'
-      source_db_cluster_snapshot_arn:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn}'
+        value: aws_neptune_cluster_snapshot.{{ name }}.allocated_storage
       kms_key_id:
-        value: '${aws_neptune_cluster_snapshot.{{ name }}.kms_key_id}'
+        value: aws_neptune_cluster_snapshot.{{ name }}.kms_key_id
+      snapshot_type:
+        value: aws_neptune_cluster_snapshot.{{ name }}.snapshot_type
+      storage_encrypted:
+        value: aws_neptune_cluster_snapshot.{{ name }}.storage_encrypted
+      availability_zones:
+        value: aws_neptune_cluster_snapshot.{{ name }}.availability_zones
+      engine:
+        value: aws_neptune_cluster_snapshot.{{ name }}.engine
+      source_db_cluster_snapshot_arn:
+        value: aws_neptune_cluster_snapshot.{{ name }}.source_db_cluster_snapshot_arn
+      license_model:
+        value: aws_neptune_cluster_snapshot.{{ name }}.license_model
+      port:
+        value: aws_neptune_cluster_snapshot.{{ name }}.port
+      db_cluster_snapshot_arn:
+        value: aws_neptune_cluster_snapshot.{{ name }}.db_cluster_snapshot_arn
+      engine_version:
+        value: aws_neptune_cluster_snapshot.{{ name }}.engine_version
+      status:
+        value: aws_neptune_cluster_snapshot.{{ name }}.status
+      vpc_id:
+        value: aws_neptune_cluster_snapshot.{{ name }}.vpc_id

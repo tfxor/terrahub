@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_openid_connect_provider:
+        {{ name }}:
+          client_id: var.{{ name }}_client_id
+          client_secret: var.{{ name }}_client_secret
+          display_name: var.{{ name }}_display_name
+          metadata_endpoint: var.{{ name }}_metadata_endpoint
+          # description: ''
+    variable:
+      {{ name }}_client_id:
+        type: string
+      {{ name }}_client_secret:
+        type: string
+      {{ name }}_display_name:
+        type: string
+      {{ name }}_metadata_endpoint:
+        type: string
+    output:
+      id:
+        value: azurerm_arm_api_management_openid_connect_provider.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_openid_connect_provider.{{ name }}.id

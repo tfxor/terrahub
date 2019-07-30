@@ -8,35 +8,35 @@
     resource:
       aws_autoscaling_schedule:
         {{ name }}:
-          autoscaling_group_name: '${var.{{ name }}_autoscaling_group_name}'
-          scheduled_action_name: '${var.{{ name }}_scheduled_action_name}'
-          # desired_capacity: 0
+          autoscaling_group_name: var.{{ name }}_autoscaling_group_name
+          scheduled_action_name: var.{{ name }}_scheduled_action_name
           # start_time: ''
           # end_time: ''
-          # max_size: 0
           # recurrence: ''
           # min_size: 0
+          # max_size: 0
+          # desired_capacity: 0
     variable:
       {{ name }}_autoscaling_group_name:
-        type: 'string'
+        type: string
       {{ name }}_scheduled_action_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_autoscaling_schedule.{{ name }}.id}'
+        value: aws_autoscaling_schedule.{{ name }}.id
       thub_id:
-        value: '${aws_autoscaling_schedule.{{ name }}.id}'
-      desired_capacity:
-        value: '${aws_autoscaling_schedule.{{ name }}.desired_capacity}'
+        value: aws_autoscaling_schedule.{{ name }}.id
       start_time:
-        value: '${aws_autoscaling_schedule.{{ name }}.start_time}'
+        value: aws_autoscaling_schedule.{{ name }}.start_time
       end_time:
-        value: '${aws_autoscaling_schedule.{{ name }}.end_time}'
-      max_size:
-        value: '${aws_autoscaling_schedule.{{ name }}.max_size}'
-      arn:
-        value: '${aws_autoscaling_schedule.{{ name }}.arn}'
+        value: aws_autoscaling_schedule.{{ name }}.end_time
       recurrence:
-        value: '${aws_autoscaling_schedule.{{ name }}.recurrence}'
+        value: aws_autoscaling_schedule.{{ name }}.recurrence
       min_size:
-        value: '${aws_autoscaling_schedule.{{ name }}.min_size}'
+        value: aws_autoscaling_schedule.{{ name }}.min_size
+      max_size:
+        value: aws_autoscaling_schedule.{{ name }}.max_size
+      arn:
+        value: aws_autoscaling_schedule.{{ name }}.arn
+      desired_capacity:
+        value: aws_autoscaling_schedule.{{ name }}.desired_capacity

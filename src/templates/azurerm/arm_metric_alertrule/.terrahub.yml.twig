@@ -7,52 +7,52 @@
     resource:
       azurerm_arm_metric_alertrule:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          threshold: '${var.{{ name }}_threshold}'
-          period: '${var.{{ name }}_period}'
-          aggregation: '${var.{{ name }}_aggregation}'
-          resource_id: '${var.{{ name }}_resource_id}'
-          metric_name: '${var.{{ name }}_metric_name}'
-          operator: '${var.{{ name }}_operator}'
-          # enabled: false
-          # description: ''
-          # webhook_action:
-          #   -
-          #     service_uri: ''
-          #     properties:
-          #       '[TO_BE_REPLACED]': ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # email_action:
+          threshold: var.{{ name }}_threshold
+          aggregation: var.{{ name }}_aggregation
+          period: var.{{ name }}_period
+          metric_name: var.{{ name }}_metric_name
+          name: var.{{ name }}_name
+          resource_id: var.{{ name }}_resource_id
+          operator: var.{{ name }}_operator
+          # email_action: 
           #   -
           #     send_to_service_owners: false
-          #     custom_emails:
+          #     custom_emails: 
           #       -
+          # enabled: false
+          # description: ''
+          # webhook_action: 
+          #   -
+          #     service_uri: ''
+          #     properties: 
+          #       '[TO_BE_REPLACED]': ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_threshold:
-        type: 'float'
-      {{ name }}_period:
-        type: 'string'
+        type: float
       {{ name }}_aggregation:
-        type: 'string'
-      {{ name }}_resource_id:
-        type: 'string'
+        type: string
+      {{ name }}_period:
+        type: string
       {{ name }}_metric_name:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
+      {{ name }}_resource_id:
+        type: string
       {{ name }}_operator:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.id}'
+        value: azurerm_arm_metric_alertrule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.id}'
-      description:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.description}'
-      webhook_action:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.webhook_action}'
-      tags:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.tags}'
+        value: azurerm_arm_metric_alertrule.{{ name }}.id
       email_action:
-        value: '${azurerm_arm_metric_alertrule.{{ name }}.email_action}'
+        value: azurerm_arm_metric_alertrule.{{ name }}.email_action
+      description:
+        value: azurerm_arm_metric_alertrule.{{ name }}.description
+      webhook_action:
+        value: azurerm_arm_metric_alertrule.{{ name }}.webhook_action
+      tags:
+        value: azurerm_arm_metric_alertrule.{{ name }}.tags

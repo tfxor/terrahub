@@ -8,33 +8,33 @@
     resource:
       aws_s3_bucket_notification:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          # topic:
-          #   -
-          #     topic_arn: ''
-          #     events: []
-          #     filter_prefix: ''
-          #     filter_suffix: ''
-          #     id: ''
-          # queue:
-          #   -
-          #     queue_arn: ''
-          #     events: []
-          #     id: ''
-          #     filter_prefix: ''
-          #     filter_suffix: ''
-          # lambda_function:
+          bucket: var.{{ name }}_bucket
+          # lambda_function: 
           #   -
           #     events: []
           #     id: ''
           #     filter_prefix: ''
           #     filter_suffix: ''
           #     lambda_function_arn: ''
+          # topic: 
+          #   -
+          #     events: []
+          #     topic_arn: ''
+          #     id: ''
+          #     filter_prefix: ''
+          #     filter_suffix: ''
+          # queue: 
+          #   -
+          #     events: []
+          #     queue_arn: ''
+          #     id: ''
+          #     filter_prefix: ''
+          #     filter_suffix: ''
     variable:
       {{ name }}_bucket:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_notification.{{ name }}.id}'
+        value: aws_s3_bucket_notification.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_notification.{{ name }}.id}'
+        value: aws_s3_bucket_notification.{{ name }}.id

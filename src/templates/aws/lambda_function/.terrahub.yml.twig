@@ -8,68 +8,68 @@
     resource:
       aws_lambda_function:
         {{ name }}:
-          function_name: '${var.{{ name }}_function_name}'
-          handler: '${var.{{ name }}_handler}'
-          runtime: '${var.{{ name }}_runtime}'
-          role: '${var.{{ name }}_role}'
-          # vpc_config:
+          handler: var.{{ name }}_handler
+          runtime: var.{{ name }}_runtime
+          role: var.{{ name }}_role
+          function_name: var.{{ name }}_function_name
+          # filename: ''
+          # tracing_config: 
+          #   -
+          #     mode: ''
+          # kms_key_arn: ''
+          # s3_bucket: ''
+          # memory_size: 0
+          # publish: false
+          # layers: []
+          # s3_object_version: ''
+          # source_code_hash: ''
+          # vpc_config: 
           #   -
           #     subnet_ids: []
           #     security_group_ids: []
-          # kms_key_arn: ''
-          # filename: ''
-          # layers: []
-          # publish: false
-          # source_code_hash: ''
-          # s3_bucket: ''
-          # dead_letter_config:
+          # s3_key: ''
+          # dead_letter_config: 
           #   -
           #     target_arn: ''
           # reserved_concurrent_executions: 0
-          # tracing_config:
-          #   -
-          #     mode: ''
-          # s3_key: ''
-          # memory_size: 0
-          # timeout: 0
-          # s3_object_version: ''
-          # environment:
-          #   -
-          #     variables:
-          #       '[TO_BE_REPLACED]': ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
           # description: ''
+          # environment: 
+          #   -
+          #     variables: 
+          #       '[TO_BE_REPLACED]': ''
+          # timeout: 0
     variable:
-      {{ name }}_function_name:
-        type: 'string'
       {{ name }}_handler:
-        type: 'string'
+        type: string
       {{ name }}_runtime:
-        type: 'string'
+        type: string
       {{ name }}_role:
-        type: 'string'
+        type: string
+      {{ name }}_function_name:
+        type: string
     output:
       id:
-        value: '${aws_lambda_function.{{ name }}.id}'
+        value: aws_lambda_function.{{ name }}.id
       thub_id:
-        value: '${aws_lambda_function.{{ name }}.id}'
-      qualified_arn:
-        value: '${aws_lambda_function.{{ name }}.qualified_arn}'
-      invoke_arn:
-        value: '${aws_lambda_function.{{ name }}.invoke_arn}'
-      source_code_hash:
-        value: '${aws_lambda_function.{{ name }}.source_code_hash}'
-      tracing_config:
-        value: '${aws_lambda_function.{{ name }}.tracing_config}'
-      source_code_size:
-        value: '${aws_lambda_function.{{ name }}.source_code_size}'
-      version:
-        value: '${aws_lambda_function.{{ name }}.version}'
-      last_modified:
-        value: '${aws_lambda_function.{{ name }}.last_modified}'
+        value: aws_lambda_function.{{ name }}.id
       arn:
-        value: '${aws_lambda_function.{{ name }}.arn}'
+        value: aws_lambda_function.{{ name }}.arn
+      tracing_config:
+        value: aws_lambda_function.{{ name }}.tracing_config
+      source_code_hash:
+        value: aws_lambda_function.{{ name }}.source_code_hash
+      version:
+        value: aws_lambda_function.{{ name }}.version
+      last_modified:
+        value: aws_lambda_function.{{ name }}.last_modified
+      source_code_size:
+        value: aws_lambda_function.{{ name }}.source_code_size
+      invoke_arn:
+        value: aws_lambda_function.{{ name }}.invoke_arn
+      qualified_arn:
+        value: aws_lambda_function.{{ name }}.qualified_arn
 
 ## build config
 # build:

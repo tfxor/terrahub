@@ -8,48 +8,48 @@
     resource:
       aws_directory_service_directory:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          password: '${var.{{ name }}_password}'
-          # type: ''
-          # alias: ''
-          # enable_sso: false
-          # short_name: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # edition: ''
-          # size: ''
-          # connect_settings:
+          password: var.{{ name }}_password
+          name: var.{{ name }}_name
+          # connect_settings: 
           #   -
           #     customer_username: ''
           #     customer_dns_ips: []
           #     subnet_ids: []
           #     vpc_id: ''
-          # description: ''
-          # vpc_settings:
+          # vpc_settings: 
           #   -
           #     subnet_ids: []
           #     vpc_id: ''
+          # alias: ''
+          # short_name: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+          # type: ''
+          # edition: ''
+          # size: ''
+          # description: ''
+          # enable_sso: false
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_password:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_directory_service_directory.{{ name }}.id}'
+        value: aws_directory_service_directory.{{ name }}.id
       thub_id:
-        value: '${aws_directory_service_directory.{{ name }}.id}'
-      access_url:
-        value: '${aws_directory_service_directory.{{ name }}.access_url}'
+        value: aws_directory_service_directory.{{ name }}.id
       alias:
-        value: '${aws_directory_service_directory.{{ name }}.alias}'
-      security_group_id:
-        value: '${aws_directory_service_directory.{{ name }}.security_group_id}'
+        value: aws_directory_service_directory.{{ name }}.alias
       short_name:
-        value: '${aws_directory_service_directory.{{ name }}.short_name}'
-      dns_ip_addresses:
-        value: '${aws_directory_service_directory.{{ name }}.dns_ip_addresses}'
+        value: aws_directory_service_directory.{{ name }}.short_name
+      security_group_id:
+        value: aws_directory_service_directory.{{ name }}.security_group_id
       edition:
-        value: '${aws_directory_service_directory.{{ name }}.edition}'
+        value: aws_directory_service_directory.{{ name }}.edition
       size:
-        value: '${aws_directory_service_directory.{{ name }}.size}'
+        value: aws_directory_service_directory.{{ name }}.size
+      dns_ip_addresses:
+        value: aws_directory_service_directory.{{ name }}.dns_ip_addresses
+      access_url:
+        value: aws_directory_service_directory.{{ name }}.access_url

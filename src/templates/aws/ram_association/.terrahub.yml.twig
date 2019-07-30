@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ram_association:
+        {{ name }}:
+          resource_arn: var.{{ name }}_resource_arn
+          resource_share_arn: var.{{ name }}_resource_share_arn
+    variable:
+      {{ name }}_resource_arn:
+        type: string
+      {{ name }}_resource_share_arn:
+        type: string
+    output:
+      id:
+        value: aws_ram_association.{{ name }}.id
+      thub_id:
+        value: aws_ram_association.{{ name }}.id

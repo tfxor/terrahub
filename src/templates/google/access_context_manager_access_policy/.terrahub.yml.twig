@@ -1,0 +1,26 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_access_context_manager_access_policy:
+        {{ name }}:
+          parent: var.{{ name }}_parent
+          title: var.{{ name }}_title
+    variable:
+      {{ name }}_parent:
+        type: string
+      {{ name }}_title:
+        type: string
+    output:
+      id:
+        value: google_access_context_manager_access_policy.{{ name }}.id
+      thub_id:
+        value: google_access_context_manager_access_policy.{{ name }}.id
+      create_time:
+        value: google_access_context_manager_access_policy.{{ name }}.create_time
+      name:
+        value: google_access_context_manager_access_policy.{{ name }}.name
+      update_time:
+        value: google_access_context_manager_access_policy.{{ name }}.update_time

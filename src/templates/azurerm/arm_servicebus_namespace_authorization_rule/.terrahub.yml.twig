@@ -9,6 +9,6 @@
         {{ name }}:
     output:
       id:
-        value: '${azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id}'
+        value: azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id}'
+        value: azurerm_arm_servicebus_namespace_authorization_rule.{{ name }}.id

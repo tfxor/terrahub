@@ -7,22 +7,22 @@
     resource:
       azurerm_arm_automation_module:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          automation_account_name: '${var.{{ name }}_automation_account_name}'
-          module_link:
+          name: var.{{ name }}_name
+          automation_account_name: var.{{ name }}_automation_account_name
+          module_link: 
             -
               uri: ''
-          #     hash:
+          #     hash: 
           #       -
-          #         value: ''
           #         algorithm: ''
+          #         value: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_automation_account_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_automation_module.{{ name }}.id}'
+        value: azurerm_arm_automation_module.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_automation_module.{{ name }}.id}'
+        value: azurerm_arm_automation_module.{{ name }}.id

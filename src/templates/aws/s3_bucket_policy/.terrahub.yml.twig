@@ -8,15 +8,15 @@
     resource:
       aws_s3_bucket_policy:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
-          policy: '${var.{{ name }}_policy}'
+          policy: var.{{ name }}_policy
+          bucket: var.{{ name }}_bucket
     variable:
-      {{ name }}_bucket:
-        type: 'string'
       {{ name }}_policy:
-        type: 'string'
+        type: string
+      {{ name }}_bucket:
+        type: string
     output:
       id:
-        value: '${aws_s3_bucket_policy.{{ name }}.id}'
+        value: aws_s3_bucket_policy.{{ name }}.id
       thub_id:
-        value: '${aws_s3_bucket_policy.{{ name }}.id}'
+        value: aws_s3_bucket_policy.{{ name }}.id

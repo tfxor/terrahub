@@ -8,15 +8,15 @@
     resource:
       aws_config_configuration_recorder_status:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          is_enabled: '${var.{{ name }}_is_enabled}'
+          is_enabled: var.{{ name }}_is_enabled
+          name: var.{{ name }}_name
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_is_enabled:
-        type: 'bool'
+        type: bool
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_config_configuration_recorder_status.{{ name }}.id}'
+        value: aws_config_configuration_recorder_status.{{ name }}.id
       thub_id:
-        value: '${aws_config_configuration_recorder_status.{{ name }}.id}'
+        value: aws_config_configuration_recorder_status.{{ name }}.id

@@ -8,17 +8,17 @@
     resource:
       aws_cloudwatch_log_stream:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          log_group_name: '${var.{{ name }}_log_group_name}'
+          log_group_name: var.{{ name }}_log_group_name
+          name: var.{{ name }}_name
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_log_group_name:
-        type: 'string'
+        type: string
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${aws_cloudwatch_log_stream.{{ name }}.id}'
+        value: aws_cloudwatch_log_stream.{{ name }}.id
       thub_id:
-        value: '${aws_cloudwatch_log_stream.{{ name }}.id}'
+        value: aws_cloudwatch_log_stream.{{ name }}.id
       arn:
-        value: '${aws_cloudwatch_log_stream.{{ name }}.arn}'
+        value: aws_cloudwatch_log_stream.{{ name }}.arn

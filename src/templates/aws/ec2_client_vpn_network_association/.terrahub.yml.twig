@@ -8,21 +8,21 @@
     resource:
       aws_ec2_client_vpn_network_association:
         {{ name }}:
-          client_vpn_endpoint_id: '${var.{{ name }}_client_vpn_endpoint_id}'
-          subnet_id: '${var.{{ name }}_subnet_id}'
+          client_vpn_endpoint_id: var.{{ name }}_client_vpn_endpoint_id
+          subnet_id: var.{{ name }}_subnet_id
     variable:
       {{ name }}_client_vpn_endpoint_id:
-        type: 'string'
+        type: string
       {{ name }}_subnet_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ec2_client_vpn_network_association.{{ name }}.id}'
+        value: aws_ec2_client_vpn_network_association.{{ name }}.id
       thub_id:
-        value: '${aws_ec2_client_vpn_network_association.{{ name }}.id}'
-      security_groups:
-        value: '${aws_ec2_client_vpn_network_association.{{ name }}.security_groups}'
-      status:
-        value: '${aws_ec2_client_vpn_network_association.{{ name }}.status}'
+        value: aws_ec2_client_vpn_network_association.{{ name }}.id
       vpc_id:
-        value: '${aws_ec2_client_vpn_network_association.{{ name }}.vpc_id}'
+        value: aws_ec2_client_vpn_network_association.{{ name }}.vpc_id
+      security_groups:
+        value: aws_ec2_client_vpn_network_association.{{ name }}.security_groups
+      status:
+        value: aws_ec2_client_vpn_network_association.{{ name }}.status

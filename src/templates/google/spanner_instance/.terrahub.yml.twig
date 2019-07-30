@@ -6,26 +6,26 @@
     resource:
       google_spanner_instance:
         {{ name }}:
-          config: '${var.{{ name }}_config}'
-          display_name: '${var.{{ name }}_display_name}'
+          display_name: var.{{ name }}_display_name
+          config: var.{{ name }}_config
           # name: ''
-          # labels:
+          # labels: 
           #   '[TO_BE_REPLACED]': ''
           # num_nodes: 0
           # project: ''
     variable:
-      {{ name }}_config:
-        type: 'string'
       {{ name }}_display_name:
-        type: 'string'
+        type: string
+      {{ name }}_config:
+        type: string
     output:
       id:
-        value: '${google_spanner_instance.{{ name }}.id}'
+        value: google_spanner_instance.{{ name }}.id
       thub_id:
-        value: '${google_spanner_instance.{{ name }}.id}'
+        value: google_spanner_instance.{{ name }}.id
       name:
-        value: '${google_spanner_instance.{{ name }}.name}'
+        value: google_spanner_instance.{{ name }}.name
       state:
-        value: '${google_spanner_instance.{{ name }}.state}'
+        value: google_spanner_instance.{{ name }}.state
       project:
-        value: '${google_spanner_instance.{{ name }}.project}'
+        value: google_spanner_instance.{{ name }}.project

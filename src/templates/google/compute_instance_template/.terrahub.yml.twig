@@ -6,86 +6,94 @@
     resource:
       google_compute_instance_template:
         {{ name }}:
-          disk:
+          disk: 
             -
-          #     device_name: ''
           #     disk_type: ''
           #     interface: ''
-          #     mode: ''
           #     source: ''
           #     type: ''
-          #     auto_delete: false
           #     boot: false
-          #     disk_name: ''
           #     disk_size_gb: 0
+          #     disk_name: ''
           #     source_image: ''
-          #     disk_encryption_key:
+          #     mode: ''
+          #     disk_encryption_key: 
           #       -
           #         kms_key_self_link: ''
-          machine_type: '${var.{{ name }}_machine_type}'
-          # scheduling:
+          #     auto_delete: false
+          #     device_name: ''
+          machine_type: var.{{ name }}_machine_type
+          # network_interface: 
           #   -
-          #     preemptible: false
-          #     automatic_restart: false
-          #     on_host_maintenance: ''
-          # labels:
-          #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # metadata:
-          #   '[TO_BE_REPLACED]': ''
-          # can_ip_forward: false
-          # instance_description: ''
-          # metadata_startup_script: ''
-          # network_interface:
-          #   -
+          #     access_config: 
+          #       -
+          #         nat_ip: ''
+          #         network_tier: ''
           #     network: ''
           #     network_ip: ''
           #     subnetwork: ''
           #     subnetwork_project: ''
-          #     access_config:
-          #       -
-          #         nat_ip: ''
-          #         network_tier: ''
-          # project: ''
-          # name_prefix: ''
-          # automatic_restart: false
-          # service_account:
+          # name: ''
+          # instance_description: ''
+          # metadata: 
+          #   '[TO_BE_REPLACED]': ''
+          # service_account: 
           #   -
           #     scopes: []
           #     email: ''
-          # guest_accelerator:
+          # guest_accelerator: 
           #   -
           #     count: 0
           #     type: ''
           # tags: []
-          # on_host_maintenance: ''
-          # name: ''
+          # automatic_restart: false
+          # description: ''
           # address: ''
           # region: ''
+          # can_ip_forward: false
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # scheduling: 
+          #   -
+          #     preemptible: false
+          #     automatic_restart: false
+          #     on_host_maintenance: ''
+          #     node_affinities: 
+          # shielded_instance_config: 
+          #   -
+          #     enable_integrity_monitoring: false
+          #     enable_secure_boot: false
+          #     enable_vtpm: false
           # min_cpu_platform: ''
+          # name_prefix: ''
+          # metadata_startup_script: ''
+          # on_host_maintenance: ''
+          # project: ''
     variable:
       {{ name }}_machine_type:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_instance_template.{{ name }}.id}'
+        value: google_compute_instance_template.{{ name }}.id
       thub_id:
-        value: '${google_compute_instance_template.{{ name }}.id}'
-      scheduling:
-        value: '${google_compute_instance_template.{{ name }}.scheduling}'
-      metadata_fingerprint:
-        value: '${google_compute_instance_template.{{ name }}.metadata_fingerprint}'
-      project:
-        value: '${google_compute_instance_template.{{ name }}.project}'
-      name_prefix:
-        value: '${google_compute_instance_template.{{ name }}.name_prefix}'
-      tags_fingerprint:
-        value: '${google_compute_instance_template.{{ name }}.tags_fingerprint}'
+        value: google_compute_instance_template.{{ name }}.id
       name:
-        value: '${google_compute_instance_template.{{ name }}.name}'
+        value: google_compute_instance_template.{{ name }}.name
+      metadata_fingerprint:
+        value: google_compute_instance_template.{{ name }}.metadata_fingerprint
       address:
-        value: '${google_compute_instance_template.{{ name }}.address}'
+        value: google_compute_instance_template.{{ name }}.address
       region:
-        value: '${google_compute_instance_template.{{ name }}.region}'
+        value: google_compute_instance_template.{{ name }}.region
       self_link:
-        value: '${google_compute_instance_template.{{ name }}.self_link}'
+        value: google_compute_instance_template.{{ name }}.self_link
+      scheduling:
+        value: google_compute_instance_template.{{ name }}.scheduling
+      shielded_instance_config:
+        value: google_compute_instance_template.{{ name }}.shielded_instance_config
+      name_prefix:
+        value: google_compute_instance_template.{{ name }}.name_prefix
+      project:
+        value: google_compute_instance_template.{{ name }}.project
+      tags_fingerprint:
+        value: google_compute_instance_template.{{ name }}.tags_fingerprint

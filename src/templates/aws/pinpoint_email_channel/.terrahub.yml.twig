@@ -8,24 +8,24 @@
     resource:
       aws_pinpoint_email_channel:
         {{ name }}:
-          from_address: '${var.{{ name }}_from_address}'
-          identity: '${var.{{ name }}_identity}'
-          role_arn: '${var.{{ name }}_role_arn}'
-          application_id: '${var.{{ name }}_application_id}'
+          application_id: var.{{ name }}_application_id
+          from_address: var.{{ name }}_from_address
+          identity: var.{{ name }}_identity
+          role_arn: var.{{ name }}_role_arn
           # enabled: false
     variable:
-      {{ name }}_from_address:
-        type: 'string'
-      {{ name }}_identity:
-        type: 'string'
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_application_id:
-        type: 'string'
+        type: string
+      {{ name }}_from_address:
+        type: string
+      {{ name }}_identity:
+        type: string
+      {{ name }}_role_arn:
+        type: string
     output:
       id:
-        value: '${aws_pinpoint_email_channel.{{ name }}.id}'
+        value: aws_pinpoint_email_channel.{{ name }}.id
       thub_id:
-        value: '${aws_pinpoint_email_channel.{{ name }}.id}'
+        value: aws_pinpoint_email_channel.{{ name }}.id
       messages_per_second:
-        value: '${aws_pinpoint_email_channel.{{ name }}.messages_per_second}'
+        value: aws_pinpoint_email_channel.{{ name }}.messages_per_second

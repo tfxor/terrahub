@@ -7,76 +7,85 @@
     resource:
       azurerm_arm_service_fabric_cluster:
         {{ name }}:
-          reliability_level: '${var.{{ name }}_reliability_level}'
-          management_endpoint: '${var.{{ name }}_management_endpoint}'
-          node_type:
+          name: var.{{ name }}_name
+          upgrade_mode: var.{{ name }}_upgrade_mode
+          node_type: 
             -
-              name: ''
               instance_count: 0
+              name: ''
               is_primary: false
               client_endpoint_port: 0
               http_endpoint_port: 0
-          #     reverse_proxy_endpoint_port: 0
+          #     placement_properties: 
+          #       '[TO_BE_REPLACED]': ''
+          #     capacities: 
+          #       '[TO_BE_REPLACED]': ''
           #     durability_level: ''
-          #     application_ports:
+          #     reverse_proxy_endpoint_port: 0
+          #     application_ports: 
           #       -
           #         start_port: 0
           #         end_port: 0
-          name: '${var.{{ name }}_name}'
-          upgrade_mode: '${var.{{ name }}_upgrade_mode}'
-          vm_image: '${var.{{ name }}_vm_image}'
-          # azure_active_directory:
+          reliability_level: var.{{ name }}_reliability_level
+          vm_image: var.{{ name }}_vm_image
+          management_endpoint: var.{{ name }}_management_endpoint
+          # add_on_features: []
+          # certificate: 
           #   -
-          #     tenant_id: ''
+          #     x509_store_name: ''
+          #     thumbprint: ''
+          #     thumbprint_secondary: ''
+          # reverse_proxy_certificate: 
+          #   -
+          #     thumbprint: ''
+          #     x509_store_name: ''
+          #     thumbprint_secondary: ''
+          # client_certificate_thumbprint: 
+          #   -
+          #     thumbprint: ''
+          #     is_admin: false
+          # fabric_settings: 
+          #   -
+          #     name: ''
+          #     parameters: 
+          #       '[TO_BE_REPLACED]': ''
+          # azure_active_directory: 
+          #   -
           #     cluster_application_id: ''
           #     client_application_id: ''
-          # diagnostics_config:
+          #     tenant_id: ''
+          # certificate_common_names: 
           #   -
-          #     table_endpoint: ''
+          #     common_names: 
+          #     certificate_common_name: ''
+          #     certificate_issuer_thumbprint: ''
+          # cluster_code_version: ''
+          # diagnostics_config: 
+          #   -
           #     storage_account_name: ''
           #     protected_account_key_name: ''
           #     blob_endpoint: ''
           #     queue_endpoint: ''
-          # certificate:
-          #   -
-          #     thumbprint: ''
-          #     x509_store_name: ''
-          #     thumbprint_secondary: ''
-          # client_certificate_thumbprint:
-          #   -
-          #     is_admin: false
-          #     thumbprint: ''
-          # tags:
+          #     table_endpoint: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # cluster_code_version: ''
-          # add_on_features: []
-          # fabric_settings:
-          #   -
-          #     name: ''
-          #     parameters:
-          #       '[TO_BE_REPLACED]': ''
-          # reverse_proxy_certificate:
-          #   -
-          #     x509_store_name: ''
-          #     thumbprint: ''
-          #     thumbprint_secondary: ''
     variable:
-      {{ name }}_reliability_level:
-        type: 'string'
-      {{ name }}_management_endpoint:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_upgrade_mode:
-        type: 'string'
+        type: string
+      {{ name }}_reliability_level:
+        type: string
       {{ name }}_vm_image:
-        type: 'string'
+        type: string
+      {{ name }}_management_endpoint:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.id}'
+        value: azurerm_arm_service_fabric_cluster.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.id}'
-      cluster_endpoint:
-        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.cluster_endpoint}'
+        value: azurerm_arm_service_fabric_cluster.{{ name }}.id
       cluster_code_version:
-        value: '${azurerm_arm_service_fabric_cluster.{{ name }}.cluster_code_version}'
+        value: azurerm_arm_service_fabric_cluster.{{ name }}.cluster_code_version
+      cluster_endpoint:
+        value: azurerm_arm_service_fabric_cluster.{{ name }}.cluster_endpoint

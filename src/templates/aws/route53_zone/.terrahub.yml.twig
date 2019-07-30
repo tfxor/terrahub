@@ -8,32 +8,30 @@
     resource:
       aws_route53_zone:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # vpc_region: ''
+          name: var.{{ name }}_name
           # force_destroy: false
           # comment: ''
           # vpc_id: ''
           # delegation_set_id: ''
-          # tags:
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
-          # vpc:
+          # vpc: 
           #   vpc_id: ''
           #   vpc_region: ''
+          # vpc_region: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_route53_zone.{{ name }}.id}'
+        value: aws_route53_zone.{{ name }}.id
       thub_id:
-        value: '${aws_route53_zone.{{ name }}.id}'
-      vpc_region:
-        value: '${aws_route53_zone.{{ name }}.vpc_region}'
-      zone_id:
-        value: '${aws_route53_zone.{{ name }}.zone_id}'
+        value: aws_route53_zone.{{ name }}.id
       vpc_id:
-        value: '${aws_route53_zone.{{ name }}.vpc_id}'
+        value: aws_route53_zone.{{ name }}.vpc_id
+      zone_id:
+        value: aws_route53_zone.{{ name }}.zone_id
       name_servers:
-        value: '${aws_route53_zone.{{ name }}.name_servers}'
-      vpc:
-        value: '${aws_route53_zone.{{ name }}.vpc}'
+        value: aws_route53_zone.{{ name }}.name_servers
+      vpc_region:
+        value: aws_route53_zone.{{ name }}.vpc_region

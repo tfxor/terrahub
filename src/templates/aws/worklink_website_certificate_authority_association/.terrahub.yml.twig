@@ -1,0 +1,25 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_worklink_website_certificate_authority_association:
+        {{ name }}:
+          certificate: var.{{ name }}_certificate
+          fleet_arn: var.{{ name }}_fleet_arn
+          # display_name: ''
+    variable:
+      {{ name }}_certificate:
+        type: string
+      {{ name }}_fleet_arn:
+        type: string
+    output:
+      id:
+        value: aws_worklink_website_certificate_authority_association.{{ name }}.id
+      thub_id:
+        value: aws_worklink_website_certificate_authority_association.{{ name }}.id
+      website_ca_id:
+        value: aws_worklink_website_certificate_authority_association.{{ name }}.website_ca_id

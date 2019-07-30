@@ -1,0 +1,23 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_api_management_logger:
+        {{ name }}:
+          # eventhub: 
+          #   -
+          #     name: ''
+          #     connection_string: ''
+          # application_insights: 
+          #   -
+          #     instrumentation_key: ''
+          # buffered: false
+          # description: ''
+    output:
+      id:
+        value: azurerm_arm_api_management_logger.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_api_management_logger.{{ name }}.id

@@ -8,17 +8,17 @@
     resource:
       aws_wafregional_sql_injection_match_set:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # sql_injection_match_tuple:
-          #   field_to_match:
+          name: var.{{ name }}_name
+          # sql_injection_match_tuple: 
+          #   field_to_match: 
           #     -
           #       type: ''
           #       data: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_wafregional_sql_injection_match_set.{{ name }}.id}'
+        value: aws_wafregional_sql_injection_match_set.{{ name }}.id
       thub_id:
-        value: '${aws_wafregional_sql_injection_match_set.{{ name }}.id}'
+        value: aws_wafregional_sql_injection_match_set.{{ name }}.id

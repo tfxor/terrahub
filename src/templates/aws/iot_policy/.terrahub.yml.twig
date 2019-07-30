@@ -8,19 +8,19 @@
     resource:
       aws_iot_policy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          policy: '${var.{{ name }}_policy}'
+          name: var.{{ name }}_name
+          policy: var.{{ name }}_policy
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_policy:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iot_policy.{{ name }}.id}'
+        value: aws_iot_policy.{{ name }}.id
       thub_id:
-        value: '${aws_iot_policy.{{ name }}.id}'
+        value: aws_iot_policy.{{ name }}.id
       arn:
-        value: '${aws_iot_policy.{{ name }}.arn}'
+        value: aws_iot_policy.{{ name }}.arn
       default_version_id:
-        value: '${aws_iot_policy.{{ name }}.default_version_id}'
+        value: aws_iot_policy.{{ name }}.default_version_id

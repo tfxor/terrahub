@@ -6,13 +6,13 @@
     resource:
       google_compute_security_policy:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # rule:
+          name: var.{{ name }}_name
+          # rule: 
           #   action: ''
           #   priority: 0
-          #   match:
+          #   match: 
           #     -
-          #       config:
+          #       config: 
           #           -
           #           src_ip_ranges: []
           # preview: false
@@ -20,17 +20,17 @@
           # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_security_policy.{{ name }}.id}'
+        value: google_compute_security_policy.{{ name }}.id
       thub_id:
-        value: '${google_compute_security_policy.{{ name }}.id}'
+        value: google_compute_security_policy.{{ name }}.id
       rule:
-        value: '${google_compute_security_policy.{{ name }}.rule}'
+        value: google_compute_security_policy.{{ name }}.rule
       fingerprint:
-        value: '${google_compute_security_policy.{{ name }}.fingerprint}'
+        value: google_compute_security_policy.{{ name }}.fingerprint
       self_link:
-        value: '${google_compute_security_policy.{{ name }}.self_link}'
+        value: google_compute_security_policy.{{ name }}.self_link
       project:
-        value: '${google_compute_security_policy.{{ name }}.project}'
+        value: google_compute_security_policy.{{ name }}.project

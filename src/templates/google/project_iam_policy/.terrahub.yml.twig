@@ -6,21 +6,21 @@
     resource:
       google_project_iam_policy:
         {{ name }}:
-          project: '${var.{{ name }}_project}'
-          policy_data: '${var.{{ name }}_policy_data}'
+          project: var.{{ name }}_project
+          policy_data: var.{{ name }}_policy_data
           # authoritative: false
           # disable_project: false
     variable:
       {{ name }}_project:
-        type: 'string'
+        type: string
       {{ name }}_policy_data:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_project_iam_policy.{{ name }}.id}'
+        value: google_project_iam_policy.{{ name }}.id
       thub_id:
-        value: '${google_project_iam_policy.{{ name }}.id}'
-      etag:
-        value: '${google_project_iam_policy.{{ name }}.etag}'
+        value: google_project_iam_policy.{{ name }}.id
       restore_policy:
-        value: '${google_project_iam_policy.{{ name }}.restore_policy}'
+        value: google_project_iam_policy.{{ name }}.restore_policy
+      etag:
+        value: google_project_iam_policy.{{ name }}.etag

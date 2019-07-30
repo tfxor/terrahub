@@ -8,60 +8,60 @@
     resource:
       aws_lb_listener:
         {{ name }}:
-          load_balancer_arn: '${var.{{ name }}_load_balancer_arn}'
-          default_action:
+          load_balancer_arn: var.{{ name }}_load_balancer_arn
+          port: var.{{ name }}_port
+          default_action: 
             -
               type: ''
           #     order: 0
           #     target_group_arn: ''
-          #     redirect:
+          #     redirect: 
           #       -
           #         status_code: ''
+          #         host: ''
+          #         path: ''
           #         port: ''
           #         protocol: ''
           #         query: ''
-          #         host: ''
-          #         path: ''
-          port: '${var.{{ name }}_port}'
-          # authenticate_oidc:
+          # certificate_arn: ''
+          # authenticate_oidc: 
           #   -
-          #     user_info_endpoint: ''
-          #     client_secret: ''
-          #     issuer: ''
           #     token_endpoint: ''
-          #     authorization_endpoint: ''
           #     client_id: ''
-          #     session_timeout: 0
+          #     issuer: ''
+          #     user_info_endpoint: ''
+          #     authorization_endpoint: ''
+          #     client_secret: ''
+          #     on_unauthenticated_request: ''
           #     scope: ''
           #     session_cookie_name: ''
-          #     authentication_request_extra_params:
+          #     session_timeout: 0
+          #     authentication_request_extra_params: 
           #       '[TO_BE_REPLACED]': ''
-          #     on_unauthenticated_request: ''
           # protocol: ''
           # ssl_policy: ''
-          # certificate_arn: ''
-          # authenticate_cognito:
+          # authenticate_cognito: 
           #   -
-          #     user_pool_arn: ''
           #     user_pool_client_id: ''
           #     user_pool_domain: ''
+          #     user_pool_arn: ''
+          #     authentication_request_extra_params: 
+          #       '[TO_BE_REPLACED]': ''
+          #     on_unauthenticated_request: ''
           #     scope: ''
           #     session_cookie_name: ''
           #     session_timeout: 0
-          #     authentication_request_extra_params:
-          #       '[TO_BE_REPLACED]': ''
-          #     on_unauthenticated_request: ''
     variable:
       {{ name }}_load_balancer_arn:
-        type: 'string'
+        type: string
       {{ name }}_port:
-        type: 'int'
+        type: int
     output:
       id:
-        value: '${aws_lb_listener.{{ name }}.id}'
+        value: aws_lb_listener.{{ name }}.id
       thub_id:
-        value: '${aws_lb_listener.{{ name }}.id}'
+        value: aws_lb_listener.{{ name }}.id
       arn:
-        value: '${aws_lb_listener.{{ name }}.arn}'
+        value: aws_lb_listener.{{ name }}.arn
       ssl_policy:
-        value: '${aws_lb_listener.{{ name }}.ssl_policy}'
+        value: aws_lb_listener.{{ name }}.ssl_policy

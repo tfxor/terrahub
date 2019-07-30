@@ -8,32 +8,37 @@
     resource:
       aws_glue_job:
         {{ name }}:
-          role_arn: '${var.{{ name }}_role_arn}'
-          name: '${var.{{ name }}_name}'
-          command:
+          name: var.{{ name }}_name
+          role_arn: var.{{ name }}_role_arn
+          command: 
             -
               script_location: ''
           #     name: ''
-          # max_retries: 0
-          # timeout: 0
-          # default_arguments:
-          #   '[TO_BE_REPLACED]': ''
-          # description: ''
-          # execution_property:
-          #   -
-          #     max_concurrent_runs: 0
-          # security_configuration: ''
           # allocated_capacity: 0
           # connections: []
+          # default_arguments: 
+          #   '[TO_BE_REPLACED]': ''
+          # execution_property: 
+          #   -
+          #     max_concurrent_runs: 0
+          # max_capacity: ''
+          # security_configuration: ''
+          # description: ''
+          # max_retries: 0
+          # timeout: 0
     variable:
-      {{ name }}_role_arn:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_role_arn:
+        type: string
     output:
       id:
-        value: '${aws_glue_job.{{ name }}.id}'
+        value: aws_glue_job.{{ name }}.id
       thub_id:
-        value: '${aws_glue_job.{{ name }}.id}'
+        value: aws_glue_job.{{ name }}.id
+      allocated_capacity:
+        value: aws_glue_job.{{ name }}.allocated_capacity
       execution_property:
-        value: '${aws_glue_job.{{ name }}.execution_property}'
+        value: aws_glue_job.{{ name }}.execution_property
+      max_capacity:
+        value: aws_glue_job.{{ name }}.max_capacity

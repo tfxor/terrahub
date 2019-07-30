@@ -8,28 +8,28 @@
     resource:
       aws_mq_configuration:
         {{ name }}:
-          data: '${var.{{ name }}_data}'
-          engine_type: '${var.{{ name }}_engine_type}'
-          engine_version: '${var.{{ name }}_engine_version}'
-          name: '${var.{{ name }}_name}'
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
+          data: var.{{ name }}_data
+          engine_type: var.{{ name }}_engine_type
+          engine_version: var.{{ name }}_engine_version
+          name: var.{{ name }}_name
           # description: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_data:
-        type: 'string'
+        type: string
       {{ name }}_engine_type:
-        type: 'string'
+        type: string
       {{ name }}_engine_version:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_mq_configuration.{{ name }}.id}'
+        value: aws_mq_configuration.{{ name }}.id
       thub_id:
-        value: '${aws_mq_configuration.{{ name }}.id}'
+        value: aws_mq_configuration.{{ name }}.id
       arn:
-        value: '${aws_mq_configuration.{{ name }}.arn}'
+        value: aws_mq_configuration.{{ name }}.arn
       latest_revision:
-        value: '${aws_mq_configuration.{{ name }}.latest_revision}'
+        value: aws_mq_configuration.{{ name }}.latest_revision

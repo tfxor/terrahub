@@ -6,25 +6,25 @@
     resource:
       google_project_iam_custom_role:
         {{ name }}:
-          role_id: '${var.{{ name }}_role_id}'
-          title: '${var.{{ name }}_title}'
-          permissions: '${var.{{ name }}_permissions}'
+          title: var.{{ name }}_title
+          permissions: var.{{ name }}_permissions
+          role_id: var.{{ name }}_role_id
+          # project: ''
           # stage: ''
           # description: ''
-          # project: ''
     variable:
-      {{ name }}_role_id:
-        type: 'string'
       {{ name }}_title:
-        type: 'string'
+        type: string
       {{ name }}_permissions:
-        type: 'set'
+        type: set
+      {{ name }}_role_id:
+        type: string
     output:
       id:
-        value: '${google_project_iam_custom_role.{{ name }}.id}'
+        value: google_project_iam_custom_role.{{ name }}.id
       thub_id:
-        value: '${google_project_iam_custom_role.{{ name }}.id}'
-      deleted:
-        value: '${google_project_iam_custom_role.{{ name }}.deleted}'
+        value: google_project_iam_custom_role.{{ name }}.id
       project:
-        value: '${google_project_iam_custom_role.{{ name }}.project}'
+        value: google_project_iam_custom_role.{{ name }}.project
+      deleted:
+        value: google_project_iam_custom_role.{{ name }}.deleted

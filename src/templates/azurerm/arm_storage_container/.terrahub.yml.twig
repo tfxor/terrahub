@@ -7,18 +7,22 @@
     resource:
       azurerm_arm_storage_container:
         {{ name }}:
-          storage_account_name: '${var.{{ name }}_storage_account_name}'
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          storage_account_name: var.{{ name }}_storage_account_name
           # container_access_type: ''
     variable:
-      {{ name }}_storage_account_name:
-        type: 'string'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_storage_account_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_storage_container.{{ name }}.id}'
+        value: azurerm_arm_storage_container.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_storage_container.{{ name }}.id}'
+        value: azurerm_arm_storage_container.{{ name }}.id
       properties:
-        value: '${azurerm_arm_storage_container.{{ name }}.properties}'
+        value: azurerm_arm_storage_container.{{ name }}.properties
+      has_immutability_policy:
+        value: azurerm_arm_storage_container.{{ name }}.has_immutability_policy
+      has_legal_hold:
+        value: azurerm_arm_storage_container.{{ name }}.has_legal_hold

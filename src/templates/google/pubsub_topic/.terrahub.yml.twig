@@ -6,15 +6,18 @@
     resource:
       google_pubsub_topic:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # kms_key_name: ''
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
           # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_pubsub_topic.{{ name }}.id}'
+        value: google_pubsub_topic.{{ name }}.id
       thub_id:
-        value: '${google_pubsub_topic.{{ name }}.id}'
+        value: google_pubsub_topic.{{ name }}.id
       project:
-        value: '${google_pubsub_topic.{{ name }}.project}'
+        value: google_pubsub_topic.{{ name }}.project

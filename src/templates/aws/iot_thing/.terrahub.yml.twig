@@ -8,21 +8,21 @@
     resource:
       aws_iot_thing:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # thing_type_name: ''
-          # attributes:
+          name: var.{{ name }}_name
+          # attributes: 
           #   '[TO_BE_REPLACED]': ''
+          # thing_type_name: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_iot_thing.{{ name }}.id}'
+        value: aws_iot_thing.{{ name }}.id
       thub_id:
-        value: '${aws_iot_thing.{{ name }}.id}'
+        value: aws_iot_thing.{{ name }}.id
       default_client_id:
-        value: '${aws_iot_thing.{{ name }}.default_client_id}'
+        value: aws_iot_thing.{{ name }}.default_client_id
       version:
-        value: '${aws_iot_thing.{{ name }}.version}'
+        value: aws_iot_thing.{{ name }}.version
       arn:
-        value: '${aws_iot_thing.{{ name }}.arn}'
+        value: aws_iot_thing.{{ name }}.arn

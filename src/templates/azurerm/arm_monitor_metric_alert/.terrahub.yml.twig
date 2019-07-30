@@ -7,39 +7,39 @@
     resource:
       azurerm_arm_monitor_metric_alert:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          scopes: '${var.{{ name }}_scopes}'
-          criteria:
+          scopes: var.{{ name }}_scopes
+          criteria: 
             -
               metric_namespace: ''
               metric_name: ''
               aggregation: ''
               operator: ''
               threshold: ''
-          #     dimension:
+          #     dimension: 
           #       -
           #         name: ''
           #         operator: ''
           #         values: []
-          # auto_mitigate: false
-          # severity: 0
-          # window_size: ''
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
-          # action:
+          name: var.{{ name }}_name
+          # action: 
           #   action_group_id: ''
-          #   webhook_properties:
+          #   webhook_properties: 
           #     '[TO_BE_REPLACED]': ''
-          # frequency: ''
+          # auto_mitigate: false
+          # window_size: ''
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # description: ''
           # enabled: false
+          # frequency: ''
+          # severity: 0
     variable:
-      {{ name }}_name:
-        type: 'string'
       {{ name }}_scopes:
-        type: 'set'
+        type: set
+      {{ name }}_name:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_monitor_metric_alert.{{ name }}.id}'
+        value: azurerm_arm_monitor_metric_alert.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_monitor_metric_alert.{{ name }}.id}'
+        value: azurerm_arm_monitor_metric_alert.{{ name }}.id

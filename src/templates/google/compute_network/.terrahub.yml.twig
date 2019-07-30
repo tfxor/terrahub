@@ -6,25 +6,26 @@
     resource:
       google_compute_network:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # ipv4_range: ''
-          # project: ''
-          # auto_create_subnetworks: false
+          name: var.{{ name }}_name
           # description: ''
+          # ipv4_range: ''
+          # delete_default_routes_on_create: false
+          # auto_create_subnetworks: false
+          # project: ''
           # routing_mode: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_network.{{ name }}.id}'
+        value: google_compute_network.{{ name }}.id
       thub_id:
-        value: '${google_compute_network.{{ name }}.id}'
-      gateway_ipv4:
-        value: '${google_compute_network.{{ name }}.gateway_ipv4}'
-      project:
-        value: '${google_compute_network.{{ name }}.project}'
+        value: google_compute_network.{{ name }}.id
       self_link:
-        value: '${google_compute_network.{{ name }}.self_link}'
+        value: google_compute_network.{{ name }}.self_link
+      project:
+        value: google_compute_network.{{ name }}.project
       routing_mode:
-        value: '${google_compute_network.{{ name }}.routing_mode}'
+        value: google_compute_network.{{ name }}.routing_mode
+      gateway_ipv4:
+        value: google_compute_network.{{ name }}.gateway_ipv4

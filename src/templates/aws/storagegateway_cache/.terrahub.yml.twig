@@ -8,15 +8,15 @@
     resource:
       aws_storagegateway_cache:
         {{ name }}:
-          disk_id: '${var.{{ name }}_disk_id}'
-          gateway_arn: '${var.{{ name }}_gateway_arn}'
+          gateway_arn: var.{{ name }}_gateway_arn
+          disk_id: var.{{ name }}_disk_id
     variable:
-      {{ name }}_disk_id:
-        type: 'string'
       {{ name }}_gateway_arn:
-        type: 'string'
+        type: string
+      {{ name }}_disk_id:
+        type: string
     output:
       id:
-        value: '${aws_storagegateway_cache.{{ name }}.id}'
+        value: aws_storagegateway_cache.{{ name }}.id
       thub_id:
-        value: '${aws_storagegateway_cache.{{ name }}.id}'
+        value: aws_storagegateway_cache.{{ name }}.id

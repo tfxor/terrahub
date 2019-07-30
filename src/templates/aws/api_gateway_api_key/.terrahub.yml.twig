@@ -8,22 +8,24 @@
     resource:
       aws_api_gateway_api_key:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
           # value: ''
           # description: ''
           # enabled: false
-          # stage_key: []
+          # stage_key: 
+          #   rest_api_id: ''
+          #   stage_name: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_api_gateway_api_key.{{ name }}.id}'
+        value: aws_api_gateway_api_key.{{ name }}.id
       thub_id:
-        value: '${aws_api_gateway_api_key.{{ name }}.id}'
-      created_date:
-        value: '${aws_api_gateway_api_key.{{ name }}.created_date}'
+        value: aws_api_gateway_api_key.{{ name }}.id
       last_updated_date:
-        value: '${aws_api_gateway_api_key.{{ name }}.last_updated_date}'
+        value: aws_api_gateway_api_key.{{ name }}.last_updated_date
       value:
-        value: '${aws_api_gateway_api_key.{{ name }}.value}'
+        value: aws_api_gateway_api_key.{{ name }}.value
+      created_date:
+        value: aws_api_gateway_api_key.{{ name }}.created_date

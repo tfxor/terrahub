@@ -7,26 +7,26 @@
     resource:
       azurerm_arm_loadbalancer_probe:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          loadbalancer_id: '${var.{{ name }}_loadbalancer_id}'
-          port: '${var.{{ name }}_port}'
+          name: var.{{ name }}_name
+          port: var.{{ name }}_port
+          loadbalancer_id: var.{{ name }}_loadbalancer_id
           # request_path: ''
-          # interval_in_seconds: 0
-          # protocol: ''
           # number_of_probes: 0
+          # protocol: ''
+          # interval_in_seconds: 0
     variable:
       {{ name }}_name:
-        type: 'string'
-      {{ name }}_loadbalancer_id:
-        type: 'string'
+        type: string
       {{ name }}_port:
-        type: 'int'
+        type: int
+      {{ name }}_loadbalancer_id:
+        type: string
     output:
       id:
-        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
+        value: azurerm_arm_loadbalancer_probe.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.id}'
-      load_balancer_rules:
-        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.load_balancer_rules}'
+        value: azurerm_arm_loadbalancer_probe.{{ name }}.id
       protocol:
-        value: '${azurerm_arm_loadbalancer_probe.{{ name }}.protocol}'
+        value: azurerm_arm_loadbalancer_probe.{{ name }}.protocol
+      load_balancer_rules:
+        value: azurerm_arm_loadbalancer_probe.{{ name }}.load_balancer_rules

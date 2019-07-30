@@ -8,12 +8,12 @@
     resource:
       aws_ses_active_receipt_rule_set:
         {{ name }}:
-          rule_set_name: '${var.{{ name }}_rule_set_name}'
+          rule_set_name: var.{{ name }}_rule_set_name
     variable:
       {{ name }}_rule_set_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_ses_active_receipt_rule_set.{{ name }}.id}'
+        value: aws_ses_active_receipt_rule_set.{{ name }}.id
       thub_id:
-        value: '${aws_ses_active_receipt_rule_set.{{ name }}.id}'
+        value: aws_ses_active_receipt_rule_set.{{ name }}.id

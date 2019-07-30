@@ -1,0 +1,22 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_directory_service_log_subscription:
+        {{ name }}:
+          directory_id: var.{{ name }}_directory_id
+          log_group_name: var.{{ name }}_log_group_name
+    variable:
+      {{ name }}_directory_id:
+        type: string
+      {{ name }}_log_group_name:
+        type: string
+    output:
+      id:
+        value: aws_directory_service_log_subscription.{{ name }}.id
+      thub_id:
+        value: aws_directory_service_log_subscription.{{ name }}.id

@@ -6,26 +6,26 @@
     resource:
       google_compute_target_tcp_proxy:
         {{ name }}:
-          backend_service: '${var.{{ name }}_backend_service}'
-          name: '${var.{{ name }}_name}'
-          # project: ''
+          backend_service: var.{{ name }}_backend_service
+          name: var.{{ name }}_name
           # description: ''
           # proxy_header: ''
+          # project: ''
     variable:
       {{ name }}_backend_service:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.id}'
+        value: google_compute_target_tcp_proxy.{{ name }}.id
       thub_id:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.id}'
-      proxy_id:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.proxy_id}'
-      project:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.project}'
+        value: google_compute_target_tcp_proxy.{{ name }}.id
       self_link:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.self_link}'
+        value: google_compute_target_tcp_proxy.{{ name }}.self_link
       creation_timestamp:
-        value: '${google_compute_target_tcp_proxy.{{ name }}.creation_timestamp}'
+        value: google_compute_target_tcp_proxy.{{ name }}.creation_timestamp
+      proxy_id:
+        value: google_compute_target_tcp_proxy.{{ name }}.proxy_id
+      project:
+        value: google_compute_target_tcp_proxy.{{ name }}.project

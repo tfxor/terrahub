@@ -7,38 +7,38 @@
     resource:
       azurerm_arm_automation_runbook:
         {{ name }}:
-          log_verbose: '${var.{{ name }}_log_verbose}'
-          account_name: '${var.{{ name }}_account_name}'
-          runbook_type: '${var.{{ name }}_runbook_type}'
-          log_progress: '${var.{{ name }}_log_progress}'
-          publish_content_link:
+          publish_content_link: 
             -
               uri: ''
           #     version: ''
-          #     hash:
+          #     hash: 
           #       -
-          #         value: ''
           #         algorithm: ''
-          name: '${var.{{ name }}_name}'
-          # content: ''
+          #         value: ''
+          name: var.{{ name }}_name
+          runbook_type: var.{{ name }}_runbook_type
+          log_verbose: var.{{ name }}_log_verbose
+          account_name: var.{{ name }}_account_name
+          log_progress: var.{{ name }}_log_progress
           # description: ''
-          # tags:
+          # content: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
-      {{ name }}_log_verbose:
-        type: 'bool'
-      {{ name }}_account_name:
-        type: 'string'
-      {{ name }}_runbook_type:
-        type: 'string'
-      {{ name }}_log_progress:
-        type: 'bool'
       {{ name }}_name:
-        type: 'string'
+        type: string
+      {{ name }}_runbook_type:
+        type: string
+      {{ name }}_log_verbose:
+        type: bool
+      {{ name }}_account_name:
+        type: string
+      {{ name }}_log_progress:
+        type: bool
     output:
       id:
-        value: '${azurerm_arm_automation_runbook.{{ name }}.id}'
+        value: azurerm_arm_automation_runbook.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_automation_runbook.{{ name }}.id}'
+        value: azurerm_arm_automation_runbook.{{ name }}.id
       content:
-        value: '${azurerm_arm_automation_runbook.{{ name }}.content}'
+        value: azurerm_arm_automation_runbook.{{ name }}.content

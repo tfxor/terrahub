@@ -7,25 +7,25 @@
     resource:
       azurerm_arm_azuread_application:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # available_to_other_tenants: false
+          name: var.{{ name }}_name
           # oauth2_allow_implicit_flow: false
           # homepage: ''
           # identifier_uris: []
           # reply_urls: []
+          # available_to_other_tenants: false
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_azuread_application.{{ name }}.id}'
+        value: azurerm_arm_azuread_application.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_azuread_application.{{ name }}.id}'
+        value: azurerm_arm_azuread_application.{{ name }}.id
       application_id:
-        value: '${azurerm_arm_azuread_application.{{ name }}.application_id}'
+        value: azurerm_arm_azuread_application.{{ name }}.application_id
       homepage:
-        value: '${azurerm_arm_azuread_application.{{ name }}.homepage}'
+        value: azurerm_arm_azuread_application.{{ name }}.homepage
       identifier_uris:
-        value: '${azurerm_arm_azuread_application.{{ name }}.identifier_uris}'
+        value: azurerm_arm_azuread_application.{{ name }}.identifier_uris
       reply_urls:
-        value: '${azurerm_arm_azuread_application.{{ name }}.reply_urls}'
+        value: azurerm_arm_azuread_application.{{ name }}.reply_urls

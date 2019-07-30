@@ -8,21 +8,21 @@
     resource:
       aws_globalaccelerator_accelerator:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
+          name: var.{{ name }}_name
+          # ip_address_type: ''
           # enabled: false
-          # attributes:
+          # attributes: 
           #   -
-          #     flow_logs_s3_prefix: ''
           #     flow_logs_enabled: false
           #     flow_logs_s3_bucket: ''
-          # ip_address_type: ''
+          #     flow_logs_s3_prefix: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_globalaccelerator_accelerator.{{ name }}.id}'
+        value: aws_globalaccelerator_accelerator.{{ name }}.id
       thub_id:
-        value: '${aws_globalaccelerator_accelerator.{{ name }}.id}'
+        value: aws_globalaccelerator_accelerator.{{ name }}.id
       ip_sets:
-        value: '${aws_globalaccelerator_accelerator.{{ name }}.ip_sets}'
+        value: aws_globalaccelerator_accelerator.{{ name }}.ip_sets

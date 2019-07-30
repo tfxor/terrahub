@@ -1,0 +1,19 @@
+  template:
+    # terraform:
+    #   backend:
+    #     s3:
+    #       region: 'us-east-1'
+    #       bucket: 'bucket-name'
+    #       key: 'path/to/terraform.tfstate'
+    resource:
+      aws_ebs_default_kms_key:
+        {{ name }}:
+          key_arn: var.{{ name }}_key_arn
+    variable:
+      {{ name }}_key_arn:
+        type: string
+    output:
+      id:
+        value: aws_ebs_default_kms_key.{{ name }}.id
+      thub_id:
+        value: aws_ebs_default_kms_key.{{ name }}.id

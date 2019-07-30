@@ -6,27 +6,27 @@
     resource:
       google_compute_https_health_check:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          # check_interval_sec: 0
-          # description: ''
-          # host: ''
+          name: var.{{ name }}_name
           # port: 0
           # request_path: ''
-          # unhealthy_threshold: 0
-          # healthy_threshold: 0
           # timeout_sec: 0
+          # check_interval_sec: 0
+          # description: ''
+          # healthy_threshold: 0
+          # host: ''
+          # unhealthy_threshold: 0
           # project: ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_compute_https_health_check.{{ name }}.id}'
+        value: google_compute_https_health_check.{{ name }}.id
       thub_id:
-        value: '${google_compute_https_health_check.{{ name }}.id}'
-      self_link:
-        value: '${google_compute_https_health_check.{{ name }}.self_link}'
+        value: google_compute_https_health_check.{{ name }}.id
       creation_timestamp:
-        value: '${google_compute_https_health_check.{{ name }}.creation_timestamp}'
+        value: google_compute_https_health_check.{{ name }}.creation_timestamp
+      self_link:
+        value: google_compute_https_health_check.{{ name }}.self_link
       project:
-        value: '${google_compute_https_health_check.{{ name }}.project}'
+        value: google_compute_https_health_check.{{ name }}.project

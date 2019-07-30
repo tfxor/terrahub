@@ -7,18 +7,18 @@
     resource:
       azurerm_arm_logic_app_trigger_custom:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          logic_app_id: '${var.{{ name }}_logic_app_id}'
-          body: '${var.{{ name }}_body}'
+          name: var.{{ name }}_name
+          logic_app_id: var.{{ name }}_logic_app_id
+          body: var.{{ name }}_body
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_logic_app_id:
-        type: 'string'
+        type: string
       {{ name }}_body:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_logic_app_trigger_custom.{{ name }}.id}'
+        value: azurerm_arm_logic_app_trigger_custom.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_logic_app_trigger_custom.{{ name }}.id}'
+        value: azurerm_arm_logic_app_trigger_custom.{{ name }}.id

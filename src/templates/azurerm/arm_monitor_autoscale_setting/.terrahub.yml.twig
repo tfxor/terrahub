@@ -7,47 +7,47 @@
     resource:
       azurerm_arm_monitor_autoscale_setting:
         {{ name }}:
-          name: '${var.{{ name }}_name}'
-          profile:
+          name: var.{{ name }}_name
+          target_resource_id: var.{{ name }}_target_resource_id
+          profile: 
             -
-              capacity:
+              name: ''
+              capacity: 
                 -
-                  maximum: 0
                   default: 0
                   minimum: 0
-              name: ''
-          target_resource_id: '${var.{{ name }}_target_resource_id}'
+                  maximum: 0
+          # notification: 
+          #   -
+          #     email: 
+          #       -
+          #         send_to_subscription_administrator: false
+          #         send_to_subscription_co_administrator: false
+          #         custom_emails: 
+          #           -
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
           # enabled: false
-          # fixed_date:
+          # recurrence: 
+          #   -
+          #     days: []
+          #     hours: 
+          #       -
+          #     minutes: 
+          #       -
+          #     timezone: ''
+          # fixed_date: 
           #   -
           #     start: ''
           #     end: ''
           #     timezone: ''
-          # recurrence:
-          #   -
-          #     days: []
-          #     hours:
-          #       -
-          #     minutes:
-          #       -
-          #     timezone: ''
-          # notification:
-          #   -
-          #     email:
-          #       -
-          #         send_to_subscription_co_administrator: false
-          #         custom_emails:
-          #           -
-          #         send_to_subscription_administrator: false
-          # tags:
-          #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
       {{ name }}_target_resource_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_monitor_autoscale_setting.{{ name }}.id}'
+        value: azurerm_arm_monitor_autoscale_setting.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_monitor_autoscale_setting.{{ name }}.id}'
+        value: azurerm_arm_monitor_autoscale_setting.{{ name }}.id

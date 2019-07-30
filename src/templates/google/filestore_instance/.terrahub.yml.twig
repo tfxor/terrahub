@@ -1,0 +1,42 @@
+  template:
+    # terraform:
+    #   backend:
+    #     bucket: 'tf-state-prod'
+    #     prefix: 'terraform/state'
+    resource:
+      google_filestore_instance:
+        {{ name }}:
+          file_shares: 
+            -
+              capacity_gb: 0
+              name: ''
+          name: var.{{ name }}_name
+          tier: var.{{ name }}_tier
+          networks: 
+            -
+              modes: []
+              network: ''
+          #     reserved_ip_range: ''
+          zone: var.{{ name }}_zone
+          # labels: 
+          #   '[TO_BE_REPLACED]': ''
+          # project: ''
+          # description: ''
+    variable:
+      {{ name }}_name:
+        type: string
+      {{ name }}_tier:
+        type: string
+      {{ name }}_zone:
+        type: string
+    output:
+      id:
+        value: google_filestore_instance.{{ name }}.id
+      thub_id:
+        value: google_filestore_instance.{{ name }}.id
+      create_time:
+        value: google_filestore_instance.{{ name }}.create_time
+      etag:
+        value: google_filestore_instance.{{ name }}.etag
+      project:
+        value: google_filestore_instance.{{ name }}.project

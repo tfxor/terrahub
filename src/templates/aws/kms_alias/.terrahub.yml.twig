@@ -8,18 +8,18 @@
     resource:
       aws_kms_alias:
         {{ name }}:
-          target_key_id: '${var.{{ name }}_target_key_id}'
+          target_key_id: var.{{ name }}_target_key_id
           # name: ''
           # name_prefix: ''
     variable:
       {{ name }}_target_key_id:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_kms_alias.{{ name }}.id}'
+        value: aws_kms_alias.{{ name }}.id
       thub_id:
-        value: '${aws_kms_alias.{{ name }}.id}'
-      target_key_arn:
-        value: '${aws_kms_alias.{{ name }}.target_key_arn}'
+        value: aws_kms_alias.{{ name }}.id
       arn:
-        value: '${aws_kms_alias.{{ name }}.arn}'
+        value: aws_kms_alias.{{ name }}.arn
+      target_key_arn:
+        value: aws_kms_alias.{{ name }}.target_key_arn

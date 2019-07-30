@@ -1,0 +1,28 @@
+  template:
+    # terraform:
+    #   backend:
+    #     storage_account_name: 'abcd1234'
+    #     container_name: 'tfstate'
+    #     key: 'prod.terraform.tfstate'
+    resource:
+      azurerm_arm_hdinsight_rserver_cluster:
+        {{ name }}:
+          roles: 
+            -
+          rstudio: var.{{ name }}_rstudio
+          # tags: 
+          #   '[TO_BE_REPLACED]': ''
+    variable:
+      {{ name }}_rstudio:
+        type: bool
+    output:
+      id:
+        value: azurerm_arm_hdinsight_rserver_cluster.{{ name }}.id
+      thub_id:
+        value: azurerm_arm_hdinsight_rserver_cluster.{{ name }}.id
+      edge_ssh_endpoint:
+        value: azurerm_arm_hdinsight_rserver_cluster.{{ name }}.edge_ssh_endpoint
+      https_endpoint:
+        value: azurerm_arm_hdinsight_rserver_cluster.{{ name }}.https_endpoint
+      ssh_endpoint:
+        value: azurerm_arm_hdinsight_rserver_cluster.{{ name }}.ssh_endpoint

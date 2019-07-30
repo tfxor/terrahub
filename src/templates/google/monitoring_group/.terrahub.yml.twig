@@ -6,22 +6,22 @@
     resource:
       google_monitoring_group:
         {{ name }}:
-          filter: '${var.{{ name }}_filter}'
-          display_name: '${var.{{ name }}_display_name}'
+          filter: var.{{ name }}_filter
+          display_name: var.{{ name }}_display_name
           # is_cluster: false
           # parent_name: ''
           # project: ''
     variable:
       {{ name }}_filter:
-        type: 'string'
+        type: string
       {{ name }}_display_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${google_monitoring_group.{{ name }}.id}'
+        value: google_monitoring_group.{{ name }}.id
       thub_id:
-        value: '${google_monitoring_group.{{ name }}.id}'
+        value: google_monitoring_group.{{ name }}.id
       name:
-        value: '${google_monitoring_group.{{ name }}.name}'
+        value: google_monitoring_group.{{ name }}.name
       project:
-        value: '${google_monitoring_group.{{ name }}.project}'
+        value: google_monitoring_group.{{ name }}.project

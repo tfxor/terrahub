@@ -7,23 +7,26 @@
     resource:
       azurerm_arm_automation_account:
         {{ name }}:
-          sku:
-            -
-          #     name: ''
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          # sku_name: ''
+          # sku: []
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_automation_account.{{ name }}.id}'
+        value: azurerm_arm_automation_account.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_automation_account.{{ name }}.id}'
-      dsc_server_endpoint:
-        value: '${azurerm_arm_automation_account.{{ name }}.dsc_server_endpoint}'
-      dsc_primary_access_key:
-        value: '${azurerm_arm_automation_account.{{ name }}.dsc_primary_access_key}'
+        value: azurerm_arm_automation_account.{{ name }}.id
+      sku_name:
+        value: azurerm_arm_automation_account.{{ name }}.sku_name
       dsc_secondary_access_key:
-        value: '${azurerm_arm_automation_account.{{ name }}.dsc_secondary_access_key}'
+        value: azurerm_arm_automation_account.{{ name }}.dsc_secondary_access_key
+      sku:
+        value: azurerm_arm_automation_account.{{ name }}.sku
+      dsc_server_endpoint:
+        value: azurerm_arm_automation_account.{{ name }}.dsc_server_endpoint
+      dsc_primary_access_key:
+        value: azurerm_arm_automation_account.{{ name }}.dsc_primary_access_key

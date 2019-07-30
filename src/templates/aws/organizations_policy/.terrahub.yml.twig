@@ -8,19 +8,19 @@
     resource:
       aws_organizations_policy:
         {{ name }}:
-          content: '${var.{{ name }}_content}'
-          name: '${var.{{ name }}_name}'
+          content: var.{{ name }}_content
+          name: var.{{ name }}_name
           # description: ''
           # type: ''
     variable:
       {{ name }}_content:
-        type: 'string'
+        type: string
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_organizations_policy.{{ name }}.id}'
+        value: aws_organizations_policy.{{ name }}.id
       thub_id:
-        value: '${aws_organizations_policy.{{ name }}.id}'
+        value: aws_organizations_policy.{{ name }}.id
       arn:
-        value: '${aws_organizations_policy.{{ name }}.arn}'
+        value: aws_organizations_policy.{{ name }}.arn

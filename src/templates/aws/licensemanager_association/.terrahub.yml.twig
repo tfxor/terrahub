@@ -8,15 +8,15 @@
     resource:
       aws_licensemanager_association:
         {{ name }}:
-          resource_arn: '${var.{{ name }}_resource_arn}'
-          license_configuration_arn: '${var.{{ name }}_license_configuration_arn}'
+          resource_arn: var.{{ name }}_resource_arn
+          license_configuration_arn: var.{{ name }}_license_configuration_arn
     variable:
       {{ name }}_resource_arn:
-        type: 'string'
+        type: string
       {{ name }}_license_configuration_arn:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_licensemanager_association.{{ name }}.id}'
+        value: aws_licensemanager_association.{{ name }}.id
       thub_id:
-        value: '${aws_licensemanager_association.{{ name }}.id}'
+        value: aws_licensemanager_association.{{ name }}.id

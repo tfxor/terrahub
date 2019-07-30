@@ -7,27 +7,30 @@
     resource:
       azurerm_arm_relay_namespace:
         {{ name }}:
-          sku:
-            -
-              name: ''
-          name: '${var.{{ name }}_name}'
-          # tags:
+          name: var.{{ name }}_name
+          # sku: []
+          # sku_name: ''
+          # tags: 
           #   '[TO_BE_REPLACED]': ''
     variable:
       {{ name }}_name:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.id}'
+        value: azurerm_arm_relay_namespace.{{ name }}.id
       thub_id:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.id}'
+        value: azurerm_arm_relay_namespace.{{ name }}.id
+      sku:
+        value: azurerm_arm_relay_namespace.{{ name }}.sku
       metric_id:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.metric_id}'
-      primary_connection_string:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.primary_connection_string}'
-      primary_key:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.primary_key}'
+        value: azurerm_arm_relay_namespace.{{ name }}.metric_id
       secondary_connection_string:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.secondary_connection_string}'
+        value: azurerm_arm_relay_namespace.{{ name }}.secondary_connection_string
+      primary_key:
+        value: azurerm_arm_relay_namespace.{{ name }}.primary_key
+      sku_name:
+        value: azurerm_arm_relay_namespace.{{ name }}.sku_name
+      primary_connection_string:
+        value: azurerm_arm_relay_namespace.{{ name }}.primary_connection_string
       secondary_key:
-        value: '${azurerm_arm_relay_namespace.{{ name }}.secondary_key}'
+        value: azurerm_arm_relay_namespace.{{ name }}.secondary_key

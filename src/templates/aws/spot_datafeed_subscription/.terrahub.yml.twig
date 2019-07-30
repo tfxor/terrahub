@@ -8,13 +8,13 @@
     resource:
       aws_spot_datafeed_subscription:
         {{ name }}:
-          bucket: '${var.{{ name }}_bucket}'
+          bucket: var.{{ name }}_bucket
           # prefix: ''
     variable:
       {{ name }}_bucket:
-        type: 'string'
+        type: string
     output:
       id:
-        value: '${aws_spot_datafeed_subscription.{{ name }}.id}'
+        value: aws_spot_datafeed_subscription.{{ name }}.id
       thub_id:
-        value: '${aws_spot_datafeed_subscription.{{ name }}.id}'
+        value: aws_spot_datafeed_subscription.{{ name }}.id
