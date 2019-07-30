@@ -397,8 +397,9 @@ class Util {
     }
 
     if (tfvars) {
+      const sourceProfileRegion = sourceProfile ? sourceProfile.env_var.AWS_DEFAULT_REGION : null;
       const region = accountData.env_var.AWS_DEFAULT_REGION
-        || sourceProfile.env_var.AWS_DEFAULT_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1';
+        || sourceProfileRegion || process.env.AWS_DEFAULT_REGION || 'us-east-1';
 
       credentials += `output = json\n` +
         `region = ${region.value || region}\n`;
