@@ -6,8 +6,10 @@ const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
 const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
-const { toMd5, homePath } = require('./helpers/util');
+const Util = require('./helpers/util');
 const AuthenticationException = require('./exceptions/authentication-exception');
+const ListException = require('./exceptions/list-exception');
+
 
 /**
  * @abstract
@@ -151,7 +153,7 @@ class AbstractCommand {
    */
   validate() {
     try {
-      fse.readJsonSync(homePath('.terrahub.json'));
+      fse.readJsonSync(Util.homePath('.terrahub.json'));
     } catch (error) {
       this.logger.error('Global `.terrahub.json` config is invalid. ' +
         `Please make sure file's content is parsing JSON lint successfully.`
@@ -263,7 +265,7 @@ class AbstractCommand {
    * @returns {String}
    */
   getProjectCode(name) {
-    return toMd5(name + Date.now().toString()).slice(0, 8);
+    return Util.toMd5(name + Date.now().toString()).slice(0, 8);
   }
 
   /**
@@ -296,6 +298,110 @@ class AbstractCommand {
 
     this.logger.warn('THUB_TOKEN is not provided.');
     return Promise.resolve();
+  }
+
+
+  /**
+   *   ******************* NEW *******************
+   */
+
+  /**
+   * @returns {Promise}
+   */
+  checkProjectDuplicateComponents(fullConfig) {
+    const result = {};
+
+    Object.keys(fullConfig).forEach(hash => {
+      const { name, root } = fullConfig[hash];
+
+      if (result.hasOwnProperty(name)) {
+        result[name].push(root);
+      } else {
+        result[name] = [root];
+      }
+    });
+
+    const duplicates = Object.keys(result).filter(it => result[it].length > 1);
+
+    if (duplicates.length) {
+      const messages = duplicates.map(it => `component '${it}' ` +
+        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
+
+      throw new ListException(messages, {
+        header: 'Some components have duplicates in project:',
+        style: ListException.NUMBER
+      });
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * @return {Promise}
+   */
+  checkProjectDataMissing() {
+    const projectConfig = this._configLoader.getProjectConfig();
+    const missingData = ['root', 'name', 'code'].find(it => !projectConfig[it]);
+
+    if (!missingData) {
+      return Promise.resolve();
+    } else if (missingData === 'root') {
+      throw new Error('Configuration file not found. Either re-run the same command ' +
+        'in project\'s root or initialize new project with `terrahub project`.');
+    } else {
+      return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
+        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
+      ).then(answer => {
+
+        try {
+          this._configLoader.addToGlobalConfig(missingData, answer);
+        } catch (error) {
+          this.logger.debug(error);
+        }
+
+        this._configLoader.updateRootConfig();
+
+        return this.checkProjectDataMissing();
+      });
+    }
+  }
+
+  /**
+   * Check all components dependencies existence
+   * @param {Object} config
+   */
+  checkDependenciesExist(config) {
+    const issues = {};
+
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+
+      issues[hash] = node.dependsOn.filter(dep => {
+        const key = ConfigLoader.buildComponentHash(dep);
+
+        return !config.hasOwnProperty(key);
+      });
+    });
+
+    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
+      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
+        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
+    });
+
+    if (messages.length) {
+      throw new ListException(messages, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
+    }
+  }
+
+
+  /**
+   * @returns {Boolean}
+   */
+  isComponentsCountZero() {
+    return (this._configLoader.componentsCount() === 0);
   }
 }
 

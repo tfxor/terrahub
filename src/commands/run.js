@@ -1,12 +1,14 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const TerraformCommand = require('../terraform-command');
+
+const DistributedCommand = require('../distributed-command');
+
 const { printListAsTree } = require('../helpers/log-helper');
 const Distributor = require('../helpers/distributors/thread-distributor');
 const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
-class RunCommand extends TerraformCommand {
+class RunCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -47,9 +49,9 @@ class RunCommand extends TerraformCommand {
           return Promise.reject('Action aborted');
         }
 
-        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
+        return Promise.resolve(config);
       })
-      .then(() => Promise.resolve('Done'));
+      // .then(() => Promise.resolve('Done'));
   }
 
   /**

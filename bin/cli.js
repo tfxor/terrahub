@@ -9,7 +9,8 @@ const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
-const { commandsPath, config, args } = require('../src/parameters');
+const { commandsPath, config, fetch, args } = require('../src/parameters');
+const AwsDistributor = require('../src/helpers/distributors/aws-distributor');
 
 /**
  * Validate node version
@@ -35,7 +36,8 @@ function commandCreate(logger = console) {
   }
 
   const Command = require(path.join(commandsPath, command));
-  return new Command(args, logger);
+  const _Command = new Command(args, logger);
+  return new AwsDistributor(_Command, config, fetch);
 }
 
 /**
@@ -49,6 +51,7 @@ function syncExitProcess(code) {
     .then(() => process.exit(code));
 }
 
+
 let command;
 try {
   command = commandCreate(logger);
@@ -57,40 +60,59 @@ try {
   process.exit(1);
 }
 
-const environment = command.getOption('env') ? command.getOption('env') : 'default';
-const projectConfig = command.getProjectConfig();
+const environment = command.command.getOption('env') ? command.command.getOption('env') : 'default';
+const projectConfig = command.command.getProjectConfig();
 
-command
-  .validate()
-  .then(() => {
-    ApiHelper.setToken(command._tokenIsValid);
-
-    return ApiHelper.sendMainWorkflow({
-        status: 'create',
-        runId: command.runId,
-        commandName: command._name,
-        project: projectConfig,
-        environment: environment,
-      })
-    }
-  )
-  .then(() => command.run())
-  .then(message => {
-    ApiHelper.sendMainWorkflow({ status: 'update' });
-
-    return Promise.resolve(message);
-  })
-  .then(msg => {
+try {
+  command.runCommand().then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {
       logger.info(message);
     }
 
     return syncExitProcess(0);
-  })
-  .catch(err => {
-    ApiHelper.sendErrorToApi();
-    logger.error(err.message || err || 'Error occurred');
-
-    return syncExitProcess(1);
   });
+} catch (error) {
+  console.error(error);
+  return syncExitProcess(1);
+}
+
+// command.command
+//   .validate()
+//   .then(() => {
+//     ApiHelper.setToken(command.command._tokenIsValid);
+//
+//     return ApiHelper.sendMainWorkflow({
+//         status: 'create',
+//         runId: command.command.runId,
+//         commandName: command.command._name,
+//         project: projectConfig,
+//         environment: environment,
+//       })
+//     }
+//   )
+//   .then(() => {
+//     debugger;
+//   return command.runActions()})
+//   .then(() => {
+//     debugger;
+//     return command.command.run()})
+//   .then(message => {
+//     ApiHelper.sendMainWorkflow({ status: 'update' });
+//
+//     return Promise.resolve(message);
+//   })
+//   .then(msg => {
+//     const message = Array.isArray(msg) ? msg.toString() : msg;
+//     if (message) {
+//       logger.info(message);
+//     }
+//
+//     return syncExitProcess(0);
+//   })
+//   .catch(err => {
+//     ApiHelper.sendErrorToApi();
+//     logger.error(err.message || err || 'Error occurred');
+//
+//     return syncExitProcess(1);
+//   });
