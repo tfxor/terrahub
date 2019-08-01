@@ -48,8 +48,10 @@ class RunCommand extends DistributedCommand {
         if (!isConfirmed) {
           return Promise.reject('Action aborted');
         }
-
-        return Promise.resolve(config);
+        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
+        // const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
+        // debugger;
+        // return Promise.resolve([config, actions]);
       })
       // .then(() => Promise.resolve('Done'));
   }
@@ -87,32 +89,47 @@ class RunCommand extends DistributedCommand {
       actions.push('plan');
     }
 
-    return distributor.runActions(actions)
-      .then(() => !this._isApply ?
-        Promise.resolve() :
-        distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
-          dependencyDirection: Dictionary.DIRECTION.FORWARD
-        })
-      )
-      .then(() => !this._isDestroy ?
-        Promise.resolve() :
-        distributor.runActions(['plan', 'destroy'], {
-          dependencyDirection: Dictionary.DIRECTION.REVERSE,
-          planDestroy: true
-        })
-      );
+    return Promise.resolve([config, actions]).then(() => !this._isApply ?
+      Promise.resolve() :
+      distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
+        dependencyDirection: Dictionary.DIRECTION.FORWARD
+      })
+    ).then(() => !this._isDestroy ?
+      Promise.resolve() :
+      distributor.runActions(['plan', 'destroy'], {
+        dependencyDirection: Dictionary.DIRECTION.REVERSE,
+        planDestroy: true
+      })
+    );
+
+    // return distributor.runActions(actions)
+    //   .then(() => !this._isApply ?
+    //     Promise.resolve() :
+    //     distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
+    //       dependencyDirection: Dictionary.DIRECTION.FORWARD
+    //     })
+    //   )
+    //   .then(() => !this._isDestroy ?
+    //     Promise.resolve() :
+    //     distributor.runActions(['plan', 'destroy'], {
+    //       dependencyDirection: Dictionary.DIRECTION.REVERSE,
+    //       planDestroy: true
+    //     })
+    //   );
   }
 
   /**
-   * @param {Object} cfg
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
-  _runCloud(cfg) {
+  _runCloud(config) {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    const distributor = new CloudDistributor(cfg);
+    return Promise.resolve([config, actions])
 
-    return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+    // const distributor = new CloudDistributor(cfg);
+
+    // return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }
 
   /**

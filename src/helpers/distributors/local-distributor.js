@@ -101,7 +101,7 @@ class LocalDistributor extends Distributor {
     this._env = { format, planDestroy, resourceName, importId, input };
 
     const results = [];
-    this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
+    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     ApiHelper.on('loggerWork', () => {

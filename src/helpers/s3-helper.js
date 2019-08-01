@@ -2,7 +2,6 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
-const ApiHelper = require('./api-helper');
 const { prepareCredentialsFile, createCredentialsFile } = require('./util');
 
 class S3Helper {
@@ -86,7 +85,7 @@ class S3Helper {
       return Promise.resolve();
     }
 
-    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    const cloudAccounts = await this._retrieveCloudAccounts(config);
     const accountData = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
 
     if (!accountData) {
@@ -100,6 +99,15 @@ class S3Helper {
     const credsPath = createCredentialsFile(credentials, config, 'tfvars');
 
     return Promise.resolve(credsPath);
+  }
+
+  async _retrieveCloudAccounts(config) {
+    if (!this._cloudAccounts) {
+      const result = await fetch.get(`https://${config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      this._cloudAccounts = result.data;
+    }
+
+    return this._cloudAccounts;
   }
 
   /**

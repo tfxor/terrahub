@@ -12,10 +12,10 @@ class AwsDistributor extends Distributor {
   /**
    * @param {Object} command
    * @param {Object} config
+   * @param {Object} fetch
    */
   constructor(command, config, fetch) {
     super(command);
-    debugger;
     this.config = config;
     this.fetch = fetch;
 
@@ -34,7 +34,7 @@ class AwsDistributor extends Distributor {
     const s3Helper = new S3Helper();
     const s3directory = this.config.api.replace('api', 'projects');
 
-    this._dependencyTable = this.buildDependencyTable(this.projectConfig, dependencyDirection);
+    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
 
     return Promise.all([this._fetchAccountId(), this._buildFileList()])
       .then(([accountId, files]) => {
@@ -120,8 +120,6 @@ class AwsDistributor extends Distributor {
    * @private
    */
   _getExecutionMapping() {
-    debugger;
-
     const componentMappings = [].concat(...Object.keys(this.projectConfig).map(hash => this.projectConfig[hash].mapping));
 
     return [...new Set(componentMappings)];
@@ -140,7 +138,6 @@ class AwsDistributor extends Distributor {
         return [path];
       }
 
-      debugger;
       if (stats.isDirectory()) {
         return globPromise(join(path, '**'), {
           cwd: this._projectRoot,
@@ -156,9 +153,8 @@ class AwsDistributor extends Distributor {
 
   /**
    * @return {Promise<String>}
-   * @private
    */
-  _fetchAccountId() {
+  fetchAccountId() {
     return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
   }
 }

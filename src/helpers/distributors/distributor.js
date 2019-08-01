@@ -21,12 +21,14 @@ class Distributor {
    */
   async runCommand() {
     const validation = await this.command.validate();
-    this.projectConfig = await this.command.run();
+    const [config, actions] = await this.command.run();
+
+    this.projectConfig = config;
 
     const firstKey = Object.keys(this.projectConfig)[0];
     this._projectRoot = this.projectConfig[firstKey].project.root;
 
-    return this.runActions();
+    return this.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
   }
 
   /**
