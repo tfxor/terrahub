@@ -11,13 +11,12 @@ class AwsDistributor extends Distributor {
 
   /**
    * @param {Object} command
-   * @param {Object} config
-   * @param {Object} fetch
+   * @param {Object} parameters
    */
-  constructor(command, config, fetch) {
+  constructor(command, parameters) {
     super(command);
-    this.config = config;
-    this.fetch = fetch;
+    this.config = parameters.config;
+    this.fetch = parameters.fetch;
 
     this._errors = [];
   }

@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
-const { templates, config, fetch } = require('../parameters');
 const { renderTwig, isAwsNameValid } = require('../helpers/util');
 
 class ProjectCommand extends AbstractCommand {
@@ -37,9 +36,9 @@ class ProjectCommand extends AbstractCommand {
         throw new Error('Project code has collisions');
       }
 
-      const format = config.format === 'yaml' ? 'yml' : config.format;
-      const srcFile = path.join(templates.config, 'project', `.terrahub.${format}.twig`);
-      const outFile = path.join(directory, config.defaultFileName);
+      const format = this.config.format === 'yaml' ? 'yml' : this.config.format;
+      const srcFile = path.join(this.templates.config, 'project', `.terrahub.${format}.twig`);
+      const outFile = path.join(directory, this.config.defaultFileName);
       const isProjectExisting = ConfigLoader.availableFormats
         .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
 
@@ -61,11 +60,11 @@ class ProjectCommand extends AbstractCommand {
    * @private
    */
   _isCodeValid(code) {
-    if (!config.token) {
+    if (!this.config.token) {
       return Promise.resolve(true);
     }
 
-    return fetch.get(`thub/project/validate?hash=${code}`)
+    return this.fetch.get(`thub/project/validate?hash=${code}`)
       .then(json => json.data.isValid)
       .catch(err => {
         // @todo get rid of `errorMessage` in future

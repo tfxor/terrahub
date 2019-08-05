@@ -4,7 +4,6 @@ const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
 const Util = require('../helpers/util');
-const { templates } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const AbstractCommand = require('../abstract-command');
 const Terraform = require('../helpers/wrappers/terraform');
@@ -43,7 +42,7 @@ class ComponentCommand extends AbstractCommand {
 
     this._appPath = this.getAppPath();
     this._srcFile = path.join(
-      templates.config,
+      this._parameters.templates.config,
       'component',
       `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`
     );
@@ -164,7 +163,7 @@ class ComponentCommand extends AbstractCommand {
         this._createWorkspaceFiles(this._directory);
 
         const templateName = this._configLoader.getDefaultFileName() + '.twig';
-        const specificConfigPath = path.join(path.dirname(templates.config), templateName);
+        const specificConfigPath = path.join(path.dirname(this._parameters.templates.config), templateName);
         const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
 
         return Util.renderTwig(
@@ -254,7 +253,7 @@ class ComponentCommand extends AbstractCommand {
     const keys = this._template.split('_');
     const provider = keys.shift();
     const resourceName = this._template.replace(provider + '_', '');
-    const templateDir = path.join(templates.path, provider, resourceName);
+    const templateDir = path.join(this._parameters.templates.path, provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);

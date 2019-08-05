@@ -4,7 +4,6 @@ const path = require('path');
 const fse = require('fs-extra');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const Util = require('./helpers/util');
 const AuthenticationException = require('./exceptions/authentication-exception');
@@ -18,14 +17,16 @@ class AbstractCommand {
   /**
    * @param {Object} input
    * @param {Logger} logger
+   * @param {Object} parameters
    */
-  constructor(input, logger) {
+  constructor(input, logger, parameters) {
     this.logger = logger;
     this._name = null;
     this._input = input;
     this._options = {};
     this._description = null;
     this._configLoader = new ConfigLoader();
+    this._parameters = parameters;
 
     this.configure();
     this.initialize();
@@ -42,7 +43,7 @@ class AbstractCommand {
    */
   _addDefaultOptions() {
     this
-      .addOption('env', 'e', 'Workspace environment', String, config.env)
+      .addOption('env', 'e', 'Workspace environment', String, this._parameters.config.env)
       .addOption('help', 'h', 'Show list of available commands', Boolean, false);
   }
 
@@ -272,15 +273,15 @@ class AbstractCommand {
    * @return {Promise}
    */
   validateToken() {
-    if (!config.token) {
+    if (!this._parameters.config.token) {
       return this.onTokenMissingOrInvalid(null);
     }
 
-    return fetch.get('thub/account/retrieve')
+    return this._parameters.fetch.get('thub/account/retrieve')
       .then(res => Promise.resolve(!!res))
       .catch(err => {
         if (err instanceof AuthenticationException) {
-          return this.onTokenMissingOrInvalid(config.token);
+          return this.onTokenMissingOrInvalid(this._parameters.config.token);
         }
 
         throw err;

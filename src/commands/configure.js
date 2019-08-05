@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const { cfgPath } = require('../parameters');
 const ConfigLoader = require('../config-loader');
 const TerraformCommand = require('../terraform-command');
 const { yesNoQuestion } = require('../helpers/util');
@@ -47,10 +46,10 @@ class ConfigureCommand extends TerraformCommand {
    */
   _runAction(global, data, configAction) {
     if (global) {
-      const content = ConfigLoader.readConfig(cfgPath);
+      const content = ConfigLoader.readConfig(this.cfgPath);
 
       data.forEach(it => this[configAction](it, content));
-      ConfigLoader.writeConfig(content, cfgPath);
+      ConfigLoader.writeConfig(content, this.cfgPath);
 
       return Promise.resolve('Done');
     }

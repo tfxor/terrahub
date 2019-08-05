@@ -6,7 +6,6 @@ const fse = require('fs-extra');
 const treeify = require('treeify');
 const ConfigLoader = require('../config-loader');
 const HashTable = require('../helpers/hash-table');
-const { config, templates } = require('../parameters');
 const TerraformCommand = require('../terraform-command');
 const { renderTwig, yesNoQuestion } = require('../helpers/util');
 const Distributor = require('../helpers/distributors/thread-distributor');
@@ -55,20 +54,20 @@ class WorkspaceCommand extends TerraformCommand {
       configsList.unshift(rootConfigPath);
     }
 
-    if (config.isDefault) {
+    if (this.config.isDefault) {
       return this._workspace('workspaceSelect', configs).then(() => 'Done');
     }
 
     configsList.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
       const envConfig = path.join(dir, this.getFileName());
-      const tfvarsName = path.join('workspace', `${config.env}.tfvars`);
+      const tfvarsName = path.join('workspace', `${this.config.env}.tfvars`);
       const tfvarsPath = path.join(dir, tfvarsName);
 
       if (!fs.existsSync(envConfig) && !kill) {
         const creating = new HashTable({});
         const existing = new HashTable(ConfigLoader.readConfig(configPath));
-        const template = path.join(templates.workspace, 'default.tfvars.twig');
+        const template = path.join(this.templates.workspace, 'default.tfvars.twig');
 
         existing.transform('varFile', (key, value) => {
           value.push(tfvarsName);
@@ -78,7 +77,7 @@ class WorkspaceCommand extends TerraformCommand {
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
         if (i !== 0 || !includeRootConfig) { // Skip root path
-          promises.push(renderTwig(template, { name: projectName, code, env: config.env }, tfvarsPath));
+          promises.push(renderTwig(template, { name: projectName, code, env: this.config.env }, tfvarsPath));
         }
       }
 
@@ -92,7 +91,7 @@ class WorkspaceCommand extends TerraformCommand {
 
     if (!kill) {
       let isUpdate = promises.length !== (configsList.length - 1);
-      let message = `TerraHub environment '${config.env}' was ${isUpdate ? 'updated' : 'created'}`;
+      let message = `TerraHub environment '${this.config.env}' was ${isUpdate ? 'updated' : 'created'}`;
 
       return Promise
         .all(promises)
@@ -100,7 +99,7 @@ class WorkspaceCommand extends TerraformCommand {
         .then(() => Promise.resolve(message));
     }
 
-    return yesNoQuestion(`Do you want to delete workspace '${config.env}' (y/N)? `).then(confirmed => {
+    return yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `).then(confirmed => {
       if (!confirmed) {
         return Promise.resolve('Canceled');
       }
@@ -114,7 +113,7 @@ class WorkspaceCommand extends TerraformCommand {
       return Promise
         .all(filesToRemove.map(file => fse.unlink(file)))
         .then(() => this._workspace('workspaceDelete', cfgObject))
-        .then(() => Promise.resolve(`TerraHub environment '${config.env}' was deleted`));
+        .then(() => Promise.resolve(`TerraHub environment '${this.config.env}' was deleted`));
     });
   }
 

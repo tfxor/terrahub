@@ -9,7 +9,7 @@ const logger = require('../src/helpers/logger');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
-const { commandsPath, config, fetch, args } = require('../src/parameters');
+const Parameters = require('../src/parameters');
 const AwsDistributor = require('../src/helpers/distributors/aws-distributor');
 
 /**
@@ -26,18 +26,18 @@ if (!semver.satisfies(process.version, engines.node)) {
  * @returns {*}
  */
 function commandCreate(logger = console) {
-  const command = args._.shift();
-  delete args._;
+  const command = Parameters.args._.shift();
+  delete Parameters.args._;
 
-  if (!HelpParser.getCommandsNameList().includes(command) || config.isHelp
-    || HelpParser.hasInvalidOptions(command, args)) {
-    args.command = command;
-    return new HelpCommand(args, logger);
+  if (!HelpParser.getCommandsNameList().includes(command) || Parameters.config.isHelp
+    || HelpParser.hasInvalidOptions(command, Parameters.args)) {
+    Parameters.args.command = command;
+    return new HelpCommand(Parameters.args, logger);
   }
 
-  const Command = require(path.join(commandsPath, command));
-  const _Command = new Command(args, logger);
-  return new AwsDistributor(_Command, config, fetch);
+  const Command = require(path.join(Parameters.commandsPath, command));
+  const _Command = new Command(Parameters.args, logger);
+  return new AwsDistributor(_Command, Parameters);
 }
 
 /**

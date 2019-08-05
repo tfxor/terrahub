@@ -4,12 +4,12 @@ const fse = require('fs-extra');
 const events = require('events');
 const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
-const { fetch, config: { api, logs } } = require('../parameters');
 
 class ApiHelper extends events.EventEmitter {
 
   constructor() {
     super();
+
     this._logs = [];
     this._promises = [];
     this._workerIsFree = true;
@@ -20,6 +20,16 @@ class ApiHelper extends events.EventEmitter {
     this._errors = null;
   }
 
+  /**
+   * Initialize with parameters
+   * @param {Object} parameters
+   */
+  init(parameters) {
+    if (parameters) {
+      this.fetch = parameters.fetch;
+      this.config = parameters.config;
+    }
+  }
   /**
    * Sends event to ThreadDistributor to execute logging
    */
@@ -78,7 +88,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise}
    */
   asyncFetch({ url, body }) {
-    return fetch.post(url, {
+    return this.fetch.post(url, {
       body: JSON.stringify(body)
     }).catch(err => console.log(err));
   }
@@ -123,7 +133,7 @@ class ApiHelper extends events.EventEmitter {
       return false;
     }
 
-    const url = `https://${api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
+    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
     let _logs = [];
 
     if (!all) {
@@ -368,7 +378,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   canApiLogsBeSent() {
-    return this.tokenIsValid && logs;
+    return this.tokenIsValid && this.config.logs;
   }
 
   /**
@@ -391,7 +401,7 @@ class ApiHelper extends events.EventEmitter {
    */
   sendLogToS3() {
     if (this.canApiLogsBeSent() && this._apiLogginStart) {
-      return fetch.post(`https://${api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
+      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
         .catch(error => console.log(error));
     }
   }
@@ -427,7 +437,7 @@ class ApiHelper extends events.EventEmitter {
    */
   async retrieveCloudAccounts() {
     if (!this._cloudAccounts) {
-      const result = await fetch.get(`https://${api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      const result = await this.fetch.get(`https://${this.config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
       this._cloudAccounts = result.data;
     }
 

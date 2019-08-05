@@ -5,7 +5,6 @@ const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
 const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
-const { config: { listLimit, logs } } = require('./parameters');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
 
@@ -29,9 +28,10 @@ class DistributedCommand extends AbstractCommand {
   /**
    * @param {Object} input
    * @param {Logger} logger
+   * @param {Object} parameters
    */
-  constructor(input, logger) {
-    super(input, logger);
+  constructor(input, logger, parameters) {
+    super(input, logger, parameters);
 
     this._runId = Util.uuid();
 
@@ -67,7 +67,7 @@ class DistributedCommand extends AbstractCommand {
     return super.validate().then(token => {
       this._tokenIsValid = token;
 
-      if (this._tokenIsValid && logs) { //@todo retrieve logs from `parameters`
+      if (this._tokenIsValid && this._parameters.logs) { //@todo retrieve logs from `parameters`
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
@@ -513,7 +513,7 @@ class DistributedCommand extends AbstractCommand {
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this._parameters.listLimit);
 
     const action = this.getName();
 

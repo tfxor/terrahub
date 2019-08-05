@@ -9,7 +9,6 @@ const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
 const { toMd5, homePath } = require('../helpers/util');
 const AbstractCommand = require('../abstract-command');
-const { fetch, config, templates } = require('../parameters');
 
 class ListCommand extends AbstractCommand {
   /**
@@ -186,11 +185,11 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getResourcesFromTerrahubApi() {
-    if (!config.token) {
+    if (!this._parameters.config.token) {
       return Promise.resolve([]);
     }
 
-    return fetch.get('thub/listing/retrieve?type=list').then(json => {
+    return this._parameters.fetch.get('thub/listing/retrieve?type=list').then(json => {
       return json.data.map(row => {
         return {
           service: row.service_name,
@@ -201,7 +200,7 @@ class ListCommand extends AbstractCommand {
         };
       });
     }).then(data => {
-      const cachePath = this._cachePath(config.token);
+      const cachePath = this._cachePath(this._parameters.config.token);
 
       return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
     });
@@ -214,7 +213,7 @@ class ListCommand extends AbstractCommand {
    */
   _fetchResources() {
     return Promise.all(
-      [this.accountId, config.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
+      [this.accountId, this._parameters.config.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
     ).then(([free, paid]) => {
       return Promise.all([
         free ? free : this._getResourcesFromAwsApi(),
@@ -330,7 +329,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getRegions() {
-    const list = fse.readJsonSync(path.join(templates.help, 'regions.aws.json'), { throws: false }) || [];
+    const list = fse.readJsonSync(path.join(this._parameters.templates.help, 'regions.aws.json'), { throws: false }) || [];
 
     return list
       .filter(region => region.public === true)

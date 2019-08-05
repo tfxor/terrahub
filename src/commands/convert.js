@@ -8,7 +8,6 @@ const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
-const { binPath, config, commandsPath } = require('../parameters');
 const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
 
 class ConvertCommand extends TerraformCommand {
@@ -201,7 +200,7 @@ class ConvertCommand extends TerraformCommand {
    * @private
    */
   _toYamlFromHcl(cfg) {
-    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), config.defaultFileName);
+    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), this.config.defaultFileName);
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
     if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
@@ -245,7 +244,7 @@ class ConvertCommand extends TerraformCommand {
    */
   _deteleTemplateFromConfig(cfg) {
     const { name } = cfg;
-    const Command = require(join(commandsPath, 'configure'));
+    const Command = require(join(this.commandsPath, 'configure'));
     const args = { i: `${name}`, c: 'component.template', D: true, y: true };
     const configureCommand = new Command(args, logger);
     return configureCommand.run();
@@ -259,7 +258,7 @@ class ConvertCommand extends TerraformCommand {
    */
   _initTemplateFromConfig(cfg) {
     const { name } = cfg;
-    const Command = require(join(commandsPath, 'init'));
+    const Command = require(join(this.commandsPath, 'init'));
     const args = { i: `${name}`};
     const configureCommand = new Command(args, logger);
     return configureCommand.run();
@@ -352,7 +351,7 @@ class ConvertCommand extends TerraformCommand {
     const configPath = ConvertCommand._buildComponentPath(config);
 
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(binPath, arch);
+    const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
     if (arch.indexOf("windows") > -1)
@@ -390,7 +389,7 @@ class ConvertCommand extends TerraformCommand {
     const configPath = ConvertCommand._buildComponentPath(config);
 
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(binPath, arch);
+    const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
     if (arch.indexOf("windows") > -1)
@@ -408,7 +407,7 @@ class ConvertCommand extends TerraformCommand {
     const configPath = ConvertCommand._buildComponentPath(config);
 
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(binPath, arch);
+    const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
     if (arch.indexOf("windows") > -1)
