@@ -25,7 +25,7 @@ class AbstractCommand {
     this._input = input;
     this._options = {};
     this._description = null;
-    this._configLoader = new ConfigLoader();
+    this._configLoader = new ConfigLoader(parameters);
     this._parameters = parameters;
 
     this.configure();
@@ -236,7 +236,7 @@ class AbstractCommand {
    * @deprecated
    */
   reloadConfig() {
-    this._configLoader = new ConfigLoader();
+    this._configLoader = new ConfigLoader(this._parameters);
   }
 
   /**

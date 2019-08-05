@@ -8,7 +8,6 @@ const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
-const { config: { listLimit, logs } } = require('./parameters');
 
 const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
@@ -21,9 +20,10 @@ class TerraformCommand extends AbstractCommand {
   /**
    * @param {Object} input
    * @param {Logger} logger
+   * @param {Object} parameters
    */
-  constructor(input, logger) {
-    super(input, logger);
+  constructor(input, logger, parameters) {
+    super(input, logger, parameters);
 
     this._runId = Util.uuid();
 
@@ -58,7 +58,7 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(token => {
       this._tokenIsValid = token;
 
-      if (this._tokenIsValid && logs) {
+      if (this._tokenIsValid && this.parameters.logs) {
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
@@ -349,7 +349,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.parameters.listLimit);
 
     const action = this.getName();
 
@@ -369,7 +369,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object|Array} config
    */
   warnExecutionStarted(config) {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.parameters.listLimit);
 
     const action = this.getName();
 

@@ -4,8 +4,8 @@ const cluster = require('cluster');
 const ApiHelper = require('../api-helper');
 
 
-function run(promises) {
-
+function run(promises, parameters) {
+  ApiHelper.init(parameters);
   const _promises =  promises.map(ApiHelper.asyncFetch);
 
   return Promise.all(_promises).then(() => {
@@ -32,4 +32,4 @@ function run(promises) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'logger' ? run(msg.data) : null);
+process.on('message', msg => msg.workerType === 'logger' ? run(msg.data, msg.parameters) : null);

@@ -24,7 +24,7 @@ class ApiHelper extends events.EventEmitter {
    * Initialize with parameters
    * @param {Object} parameters
    */
-  init(parameters) {
+  init(parameters) { //todo Remove
     if (parameters) {
       this.fetch = parameters.fetch;
       this.config = parameters.config;

@@ -18,10 +18,11 @@ function getActions() {
 /**
  * Get task with hooks (if enabled)
  * @param {Object} config
+ * @param {Object} parameters
  * @return {Function[]}
  */
-function getTasks(config) {
-  const terrahub = new Terrahub(config, process.env.THUB_RUN_ID);
+function getTasks(config, parameters) {
+  const terrahub = new Terrahub(config, process.env.THUB_RUN_ID, parameters);
 
   return getActions().map(action =>
     options => {
@@ -35,16 +36,16 @@ function getTasks(config) {
 /**
  * BladeRunner
  * @param {Object} config
+ * @param {Object} parameters
  */
-function run(config) {
-
+function run(config, parameters) {
   logger.updateContext({
     runId: process.env.THUB_RUN_ID,
     componentName: config.name,
   });
 
   JitHelper.jitMiddleware(config)
-    .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
+    .then(cfg => promiseSeries(getTasks(cfg, parameters), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
         delete lastResult.buffer;
@@ -72,4 +73,4 @@ function run(config) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'default' ? run(msg.data) : null);
+process.on('message', msg => msg.workerType === 'default' ? run(msg.data, msg.parameters, msg.fetch) : null);

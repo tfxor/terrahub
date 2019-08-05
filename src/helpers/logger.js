@@ -3,7 +3,6 @@
 const cluster = require('cluster');
 const logger = require('js-logger');
 const ApiHelper = require('./api-helper');
-const { config: { logs } } = require('../parameters');
 
 class Logger {
   /**
@@ -21,7 +20,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._isTokenValid() && logs) {
+      if (this._isTokenValid()) { // && logs todo parameters.logs
         this._sendLogToApi(messages);
       }
     });

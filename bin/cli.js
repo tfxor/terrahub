@@ -6,11 +6,12 @@ const path = require('path');
 const semver = require('semver');
 const { engines } = require('../package.json');
 const logger = require('../src/helpers/logger');
+const Parameters = require('../src/parameters');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
-const Parameters = require('../src/parameters');
 const AwsDistributor = require('../src/helpers/distributors/aws-distributor');
+const LocalDistributor = require('../src/helpers/distributors/local-distributor');
 
 /**
  * Validate node version
@@ -32,12 +33,12 @@ function commandCreate(logger = console) {
   if (!HelpParser.getCommandsNameList().includes(command) || Parameters.config.isHelp
     || HelpParser.hasInvalidOptions(command, Parameters.args)) {
     Parameters.args.command = command;
-    return new HelpCommand(Parameters.args, logger);
+    return new HelpCommand(Parameters.args, logger, Parameters);
   }
+  const Command = require(path.join(Parameters.commandsPath, command)); //todo Command gets parameters, then Distributor takes parameters form Command
+  const _Command = new Command(Parameters.args, logger, Parameters);
 
-  const Command = require(path.join(Parameters.commandsPath, command));
-  const _Command = new Command(Parameters.args, logger);
-  return new AwsDistributor(_Command, Parameters);
+  return new LocalDistributor(_Command);
 }
 
 /**
@@ -64,6 +65,7 @@ const environment = command.command.getOption('env') ? command.command.getOption
 const projectConfig = command.command.getProjectConfig();
 
 try {
+  ApiHelper.init(Parameters);
   command.runCommand().then(msg => {
     const message = Array.isArray(msg) ? msg.toString() : msg;
     if (message) {

@@ -1,12 +1,11 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-
 const DistributedCommand = require('../distributed-command');
-
 const { printListAsTree } = require('../helpers/log-helper');
-const Distributor = require('../helpers/distributors/thread-distributor');
-const CloudDistributor = require('../helpers/distributors/cloud-distributor');
+
+// const Distributor = require('../helpers/distributors/thread-distributor');
+// const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
 class RunCommand extends DistributedCommand {
   /**
@@ -50,7 +49,6 @@ class RunCommand extends DistributedCommand {
         }
         return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
         // const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-        // debugger;
         // return Promise.resolve([config, actions]);
       })
       // .then(() => Promise.resolve('Done'));
@@ -79,7 +77,6 @@ class RunCommand extends DistributedCommand {
    */
   _runLocal(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
-    const distributor = new Distributor(config, this.runId);
 
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
@@ -88,6 +85,7 @@ class RunCommand extends DistributedCommand {
 
       actions.push('plan');
     }
+    debugger;
 
     return Promise.resolve([config, actions]).then(() => !this._isApply ?
       Promise.resolve() :

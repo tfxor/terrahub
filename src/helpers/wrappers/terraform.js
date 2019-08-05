@@ -11,18 +11,19 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
-const { config, fetch } = require('../../parameters');
 const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile } = require('../util');
 
 class Terraform {
   /**
    * @param {Object} config
+   * @param {Object} parameters
    */
-  constructor(config) {
+  constructor(config, parameters) {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._envVars = process.env;
     this._metadata = new Metadata(this._config);
+    this._parameters = parameters;
 
     this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
@@ -105,6 +106,7 @@ class Terraform {
       return Promise.resolve();
     }
 
+    ApiHelper.init(this._parameters.fetch);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     const provider = Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];
@@ -511,7 +513,7 @@ class Terraform {
    * @return {Promise|*}
    */
   _getEnvVarsFromAPI() {
-    if (!config.token) {
+    if (!this._parameters.config.token) {
       return Promise.resolve({});
     }
     try {
@@ -524,7 +526,7 @@ class Terraform {
 
       const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
-        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+        return this._parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
             let test = JSON.parse(json.data.env_var);
             return Object.keys(test).reduce((acc, key) => {

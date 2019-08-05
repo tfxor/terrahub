@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
-const { config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
@@ -12,13 +11,15 @@ const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 class ConfigLoader {
   /**
    * Constructor
+   * @param {Object} config
    */
-  constructor() {
+  constructor(config) {
     this._config = {};
+    this._terrahubConfig = config;
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
-    this._format = '.' + config.format;
+    this._format = '.' + this._terrahubConfig.format;
 
     /**
      * Initialisation
@@ -33,7 +34,7 @@ class ConfigLoader {
    */
   _componentDefaults() {
     return {
-      cfgEnv: config.env,
+      cfgEnv: this._terrahubConfig.env,
       project: this.getProjectConfig(),
       hook: {},
       build: {},
@@ -67,7 +68,7 @@ class ConfigLoader {
 
     if (configFile) {
       this._format = path.extname(configFile);
-      this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
+      this._fileName = this._terrahubConfig.isDefault ? `.terrahub${this._format}` : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
@@ -180,7 +181,7 @@ class ConfigLoader {
         break;
 
       case Dictionary.ENVIRONMENT.SPECIFIC:
-        searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
+        searchPattern = `**/.terrahub.${this._terrahubConfig.env}.+(json|yml|yaml)`;
         break;
 
       case Dictionary.ENVIRONMENT.EVERY:
@@ -371,13 +372,13 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), this.getFileName());
-    const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
+    const forceWorkspace = { terraform: { workspace: this._terrahubConfig.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;
       }
     };
-    return (!config.isDefault && fs.existsSync(envPath))
+    return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
   }

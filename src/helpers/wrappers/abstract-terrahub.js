@@ -4,21 +4,25 @@ const path = require('path');
 const logger = require('../logger');
 const Terraform = require('./terraform');
 const Dictionary = require('../dictionary');
-const { config } = require('../../parameters');
 const ConfigLoader = require('../../config-loader');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
+
+const Fetch = require('../fetch');
 
 class AbstractTerrahub {
   /**
    * @param {Object} cfg
    * @param {String} thubRunId
+   * @param {Object} parameters
    */
-  constructor(cfg, thubRunId) {
+  constructor(cfg, thubRunId, parameters) {
     this._runId = thubRunId;
     this._action = '';
+    this._parameters = parameters;
+    this._parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization); //todo Refactor
     this._config = cfg;
     this._project = cfg.project;
-    this._terraform = new Terraform(cfg);
+    this._terraform = new Terraform(cfg, this._parameters);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
   }
@@ -170,7 +174,7 @@ class AbstractTerrahub {
       conditionFunction: error => {
         return [/timeout/, /connection reset by peer/, /connection refused/, /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
-      maxRetries: config.retryCount,
+      maxRetries: this._parameters.config.retryCount,
       intermediateAction: (retries, maxRetries) => {
         logger.warn(this._addNameToMessage(`'terraform ${this._action}' failed. ` +
           `Retrying attempt ${retries} out of ${maxRetries} using exponential backoff approach...`));

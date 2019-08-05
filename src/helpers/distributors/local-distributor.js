@@ -10,18 +10,16 @@ const { physicalCpuCount, threadsLimitCount } = require('../util');
 class LocalDistributor extends Distributor {
   /**
    * @param {Object} command
-   * @param {Object} config
    */
-  constructor(command, config) {
+  constructor(command) {
     super(command);
-
-    this.config = config;
+    this._terrahubCfg = command._parameters;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._loggerWorkerCount = 0;
     this._loggerLastLog = {};
-    this._threadsCount = this.config.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.config);
+    this._threadsCount = this._terrahubCfg.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this._terrahubCfg);
 
     if (ApiHelper.tokenIsValid) {
       this._createLoggerWorker();
@@ -37,11 +35,10 @@ class LocalDistributor extends Distributor {
    */
   _createWorker(hash) {
     cluster.setupMaster({ exec: this._worker });
-
-    const cfgThread = this.config[hash];
+    const cfgThread = this.projectConfig[hash]; //this.config[hash] ||  todo Verify ! was `this.config`
 
     const worker = cluster.fork(Object.assign({
-      THUB_RUN_ID: this.THUB_RUN_ID,
+      THUB_RUN_ID: this.THUB_RUN_ID, //todo runId undefined
       TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
       THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || ''
     }, this._env));
@@ -49,7 +46,7 @@ class LocalDistributor extends Distributor {
     delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send({ workerType: 'default', data: cfgThread });
+    worker.send({ workerType: 'default', data: cfgThread, parameters: this._terrahubCfg });
   }
 
   _createLoggerWorker() {
@@ -61,7 +58,7 @@ class LocalDistributor extends Distributor {
 
     this._loggerWorkerCount++;
 
-    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend() });
+    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend(), parameters: this._terrahubCfg });
   }
 
   /**

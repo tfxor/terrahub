@@ -10,7 +10,7 @@ const objectDepth = require('object-depth');
 const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
-// const { binPath, jitPath, tfstatePath } = require('../parameters');
+const { binPath, jitPath, tfstatePath } = require('../parameters');
 
 class JitHelper {
   /**
@@ -18,7 +18,7 @@ class JitHelper {
    * @param {Object} config
    * @return {Promise}
    */
-  static jitMiddleware(config) {    
+  static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
 
     if (!transformedConfig.isJit) {
@@ -98,7 +98,7 @@ class JitHelper {
   static _normalizeBackendLocalPath(config) {
     const { template } = config;
     const { locals } = template;
-    // let localTfstatePath = homePath(tfstatePath, config.project.name);
+    let localTfstatePath = homePath(tfstatePath, config.project.name);
 
     if (locals) {
       Object.keys(locals).filter(it => locals[it]).map(() => {
@@ -707,10 +707,10 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config) {
-    // const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
-    // fse.ensureDirSync(tmpPath);
-    //
-    // return tmpPath;
+    const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
+    fse.ensureDirSync(tmpPath);
+
+    return tmpPath;
   }
 
   /**
@@ -722,7 +722,7 @@ class JitHelper {
   static convertJsonToHcl(componentPath, data, isHCL2) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    // const componentBinPath = join(binPath, arch);
+    const componentBinPath = join(binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
