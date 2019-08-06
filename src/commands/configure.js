@@ -2,10 +2,10 @@
 
 const path = require('path');
 const ConfigLoader = require('../config-loader');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { yesNoQuestion } = require('../helpers/util');
 
-class ConfigureCommand extends TerraformCommand {
+class ConfigureCommand extends DistributedCommand {
   /**
    * Command configuration
    */

@@ -8,9 +8,9 @@ const fse = require('fs-extra');
 const treeify = require('treeify');
 const HashTable = require('../helpers/hash-table');
 const { toMd5, homePath } = require('../helpers/util');
-const AbstractCommand = require('../abstract-command');
+const ConfigCommand = require('../config-command');
 
-class ListCommand extends AbstractCommand {
+class ListCommand extends ConfigCommand {
   /**
    * Command configuration
    */
@@ -40,7 +40,7 @@ class ListCommand extends AbstractCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const depth = this.getOption('depth');
     const regions = this.getOption('regions');
     const projects = this.getOption('projects');
@@ -49,71 +49,65 @@ class ListCommand extends AbstractCommand {
 
     this.logger.warn('Querying cloud accounts, regions and services. It might take a while...');
 
-    return this._getCredentials()
-      .then(credentials => {
-        const sts = new AWS.STS({ credentials });
+    try {
+      const credentials = await this._getCredentials();
 
-        return sts.getCallerIdentity().promise();
-      })
-      .then(identity => {
-        this.accountId = identity.Account;
+      const sts = new AWS.STS({ credentials });
+      const identity = await sts.getCallerIdentity().promise();
 
-        return this._fetchResources();
-      })
-      .then(data => {
-        /**
-         * @param {Array} allowed
-         * @param {String} item
-         * @returns {Boolean}
-         */
-        function isAllowed(allowed, item) {
-          return (allowed.length === 0 || allowed.includes(item));
+      this.accountId = identity.Account;
+
+      const data = await this._fetchResources();
+
+      /**
+       * @param {Array} allowed
+       * @param {String} item
+       * @returns {Boolean}
+       */
+      function isAllowed(allowed, item) {
+        return (allowed.length === 0 || allowed.includes(item));
+      }
+
+      this.logger.log('Compiling the list of cloud resources. ' +
+        'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
+
+      data.forEach(item => {
+        if (
+          isAllowed(projects, item.project)
+          && isAllowed(accounts, item.accountId)
+          && isAllowed(regions, item.region)
+          && isAllowed(services, item.service)
+        ) {
+          this.hash.set([item.project, item.accountId, item.region, item.service, item.resource].join(':'), null);
         }
-
-        this.logger.log('Compiling the list of cloud resources. ' +
-          'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
-
-        data.forEach(item => {
-          if (
-            isAllowed(projects, item.project)
-            && isAllowed(accounts, item.accountId)
-            && isAllowed(regions, item.region)
-            && isAllowed(services, item.service)
-          ) {
-            this.hash.set([item.project, item.accountId, item.region, item.service, item.resource].join(':'), null);
-          }
-        });
-
-        return Promise.resolve();
-      })
-      .then(() => {
-        const projectsData = this.hash.getRaw();
-
-        if (Object.keys(projectsData).length) {
-          this.logger.log('Projects');
-
-          this._showTree(this._format(projectsData, 0, depth));
-        } else {
-          this.logger.log('No Projects to display.');
-        }
-
-        this.logger.log('');
-        this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
-        this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources.');
-
-        return Promise.resolve();
-      })
-      .then(() => Promise.resolve('Done'))
-      .catch(err => {
-        if (err.code === 'EHOSTUNREACH') {
-          this.logger.warn('TerraHub hasn\'t found any AWS credentials.');
-          return;
-        }
-
-        throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
-          new Error('TerraHub is missing internet connection') :
-          err;
       });
+
+      const projectsData = this.hash.getRaw();
+
+      if (Object.keys(projectsData).length) {
+        this.logger.log('Projects');
+
+        this._showTree(this._format(projectsData, 0, depth));
+      } else {
+        this.logger.log('No Projects to display.');
+      }
+
+      this.logger.log('');
+      this.logger.warn('Above list includes ONLY cloud resources that support tagging api.');
+      this.logger.log('Please visit https://www.terrahub.io and register to see ALL cloud resources.');
+
+    } catch (err) {
+      if (err.code === 'EHOSTUNREACH') {
+        this.logger.warn('TerraHub hasn\'t found any AWS credentials.');
+        return;
+      }
+
+      throw ['EAI_AGAIN', 'NetworkingError'].includes(err.code) ?
+        new Error('TerraHub is missing internet connection') :
+        err;
+    }
+
+    return Promise.resolve('Done');
   }
 
   /**
@@ -155,28 +149,24 @@ class ListCommand extends AbstractCommand {
    * @returns {Promise}
    * @private
    */
-  _getResourcesFromAwsApi() {
-    return this._getCredentials()
-      .then(credentials => {
-        return Promise.all(
-          this._getRegions().map(region => new AWS.ResourceGroupsTaggingAPI({ region, credentials }))
-        );
-      })
-      .then(taggingApis => {
-        return Promise.all(taggingApis.map(taggingApi => this._getResources(taggingApi))).then(data => {
-          let result = [];
-          data.forEach(item => result.push(...item));
+  async _getResourcesFromAwsApi() {
+    const credentials = await this._getCredentials();
+    const taggingApis = await Promise.all(
+      this._getRegions().map(region => new AWS.ResourceGroupsTaggingAPI({ region, credentials }))
+    );
 
-          return result;
-        });
-      })
-      .then(data => {
-        const cachePath = this._cachePath(this.accountId);
+    const data = await Promise.all(taggingApis.map(taggingApi => this._getResources(taggingApi))).then(data => {
+      let result = [];
+      data.forEach(item => result.push(...item));
 
-        return fse.outputJson(cachePath, data).then(() => {
-          return data;
-        });
-      });
+      return result;
+    });
+
+    const cachePath = this._cachePath(this.accountId);
+
+    return fse.outputJson(cachePath, data).then(() => {
+      return data;
+    });
   }
 
   /**
@@ -185,11 +175,11 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getResourcesFromTerrahubApi() {
-    if (!this._parameters.config.token) {
+    if (!this.terrahubCfg.token) {
       return Promise.resolve([]);
     }
 
-    return this._parameters.fetch.get('thub/listing/retrieve?type=list').then(json => {
+    return this.parameters.fetch.get('thub/listing/retrieve?type=list').then(json => {
       return json.data.map(row => {
         return {
           service: row.service_name,
@@ -200,7 +190,7 @@ class ListCommand extends AbstractCommand {
         };
       });
     }).then(data => {
-      const cachePath = this._cachePath(this._parameters.config.token);
+      const cachePath = this._cachePath(this.terrahubCfg.token);
 
       return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
     });
@@ -213,7 +203,7 @@ class ListCommand extends AbstractCommand {
    */
   _fetchResources() {
     return Promise.all(
-      [this.accountId, this._parameters.config.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
+      [this.accountId, this.terrahubCfg.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
     ).then(([free, paid]) => {
       return Promise.all([
         free ? free : this._getResourcesFromAwsApi(),
@@ -259,20 +249,20 @@ class ListCommand extends AbstractCommand {
    * @returns {Promise}
    * @private
    */
-  _getResources(taggingApi, params = {}, data = []) {
-    return taggingApi.getResources(params).promise().then(res => {
-      const activeRegion = taggingApi.config.region;
+  async _getResources(taggingApi, params = {}, data = []) {
+    const response = await taggingApi.getResources(params).promise();
 
-      res.ResourceTagMappingList.forEach(res => {
-        data.push(this._parseResource(res, activeRegion));
-      });
+    const activeRegion = taggingApi.config.region;
 
-      if (!res.PaginationToken) {
-        return Promise.resolve(data);
-      }
-
-      return this._getResources(taggingApi, { PaginationToken: res.PaginationToken }, data);
+    response.ResourceTagMappingList.forEach(res => {
+      data.push(this._parseResource(res, activeRegion));
     });
+
+    if (!response.PaginationToken) {
+      return data;
+    }
+
+    return await this._getResources(taggingApi, { PaginationToken: response.PaginationToken }, data);
   }
 
   /**
@@ -304,7 +294,7 @@ class ListCommand extends AbstractCommand {
    * @returns {Promise}
    * @private
    */
-  _getCredentials() {
+  async _getCredentials() {
     if (!this.credentials) {
       const profile = process.env.AWS_DEFAULT_PROFILE || process.env.AWS_PROFILE;
       const isEcsConfigured = AWS.ECSCredentials.prototype.isConfiguredForEcsCredentials();
@@ -314,13 +304,15 @@ class ListCommand extends AbstractCommand {
         isEcsConfigured ? new AWS.ECSCredentials() : new AWS.EC2MetadataCredentials()
       ];
 
-      return new AWS.CredentialProviderChain(providers).resolvePromise().then(creds => {
+      const creds = await new AWS.CredentialProviderChain(providers).resolvePromise();
+
+      if (creds) {
         this.credentials = creds;
         return this.credentials;
-      });
+      }
     }
 
-    return Promise.resolve(this.credentials);
+    return this.credentials;
   }
 
   /**
@@ -329,7 +321,7 @@ class ListCommand extends AbstractCommand {
    * @private
    */
   _getRegions() {
-    const list = fse.readJsonSync(path.join(this._parameters.templates.help, 'regions.aws.json'), { throws: false }) || [];
+    const list = fse.readJsonSync(path.join(this.parameters.templates.help, 'regions.aws.json'), { throws: false }) || [];
 
     return list
       .filter(region => region.public === true)

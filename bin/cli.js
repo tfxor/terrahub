@@ -33,10 +33,13 @@ function commandCreate(logger = console) {
   if (!HelpParser.getCommandsNameList().includes(command) || Parameters.config.isHelp
     || HelpParser.hasInvalidOptions(command, Parameters.args)) {
     Parameters.args.command = command;
-    return new HelpCommand(Parameters.args, logger, Parameters);
+
+    const helpCommand = new HelpCommand(Parameters, logger);
+
+    return new LocalDistributor(helpCommand);
   }
   const Command = require(path.join(Parameters.commandsPath, command)); //todo Command gets parameters, then Distributor takes parameters form Command
-  const _Command = new Command(Parameters.args, logger, Parameters);
+  const _Command = new Command(Parameters, logger);
 
   return new LocalDistributor(_Command);
 }
@@ -45,11 +48,12 @@ function commandCreate(logger = console) {
  * @param {Number} code
  * @return {Promise}
  */
-function syncExitProcess(code) {
-  return ApiHelper.promisesForSyncExit()
-    .then(() => ApiHelper.sendLogToS3())
-    .then(() => ApiHelper.deleteTempFolder())
-    .then(() => process.exit(code));
+async function syncExitProcess(code) {
+  await ApiHelper.promisesForSyncExit();
+  await ApiHelper.sendLogToS3();
+  await ApiHelper.deleteTempFolder();
+
+  return process.exit(code);
 }
 
 
@@ -61,23 +65,27 @@ try {
   process.exit(1);
 }
 
-const environment = command.command.getOption('env') ? command.command.getOption('env') : 'default';
-const projectConfig = command.command.getProjectConfig();
+// const environment = command.command.getOption('env') ? command.command.getOption('env') : 'default';
+// const projectConfig = command.command.getProjectConfig();
 
-try {
-  ApiHelper.init(Parameters);
-  command.runCommand().then(msg => {
-    const message = Array.isArray(msg) ? msg.toString() : msg;
+(async () => {
+  try {
+    ApiHelper.init(Parameters);
+
+    const result = await command.runCommand();
+    const message = Array.isArray(result) ? result.toString() : result;
+
     if (message) {
       logger.info(message);
     }
 
-    return syncExitProcess(0);
-  });
-} catch (error) {
-  console.error(error);
-  return syncExitProcess(1);
-}
+    await syncExitProcess(0);
+  } catch (err) {
+    logger.error(err.message || err || 'Error occurred');
+
+    await syncExitProcess(1);
+  }
+})();
 
 // command.command
 //   .validate()

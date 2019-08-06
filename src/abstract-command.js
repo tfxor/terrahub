@@ -19,14 +19,16 @@ class AbstractCommand {
    * @param {Logger} logger
    * @param {Object} parameters
    */
-  constructor(input, logger, parameters) {
+  constructor(parameters, logger) {
     this.logger = logger;
     this._name = null;
-    this._input = input;
     this._options = {};
     this._description = null;
+    this.parameters = parameters;
+    this.fetch = this.parameters.fetch;
+    this._input = this.parameters.args;
+    this.terrahubCfg = this.parameters.config;
     this._configLoader = new ConfigLoader(parameters);
-    this._parameters = parameters;
 
     this.configure();
     this.initialize();
@@ -43,7 +45,7 @@ class AbstractCommand {
    */
   _addDefaultOptions() {
     this
-      .addOption('env', 'e', 'Workspace environment', String, this._parameters.config.env)
+      .addOption('env', 'e', 'Workspace environment', String, this.parameters.config.env)
       .addOption('help', 'h', 'Show list of available commands', Boolean, false);
   }
 
@@ -206,6 +208,7 @@ class AbstractCommand {
    * @returns {Object}
    */
   getConfig() {
+    debugger;
     return this._configLoader.getFullConfig();
   }
 
@@ -236,7 +239,7 @@ class AbstractCommand {
    * @deprecated
    */
   reloadConfig() {
-    this._configLoader = new ConfigLoader(this._parameters);
+    this._configLoader = new ConfigLoader(this.parameters);
   }
 
   /**
@@ -273,15 +276,15 @@ class AbstractCommand {
    * @return {Promise}
    */
   validateToken() {
-    if (!this._parameters.config.token) {
+    if (!this.parameters.config.token) {
       return this.onTokenMissingOrInvalid(null);
     }
 
-    return this._parameters.fetch.get('thub/account/retrieve')
+    return this.parameters.fetch.get('thub/account/retrieve')
       .then(res => Promise.resolve(!!res))
       .catch(err => {
         if (err instanceof AuthenticationException) {
-          return this.onTokenMissingOrInvalid(this._parameters.config.token);
+          return this.onTokenMissingOrInvalid(this.parameters.config.token);
         }
 
         throw err;

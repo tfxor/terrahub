@@ -1,10 +1,10 @@
 'use strict';
 
 const { yesNoQuestion } = require('../helpers/util');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const Distributor = require('../helpers/distributors/thread-distributor');
 
-class OutputCommand extends TerraformCommand {
+class OutputCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -20,29 +20,30 @@ class OutputCommand extends TerraformCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     this._format = this.getOption('format');
 
     if (!['text', 'json', ''].includes(this._format)) {
       return Promise.reject(new Error(`The '${this._format}' output format is not supported for this command.`));
     }
 
-    return this._getPromise().then(isConfirmed => {
-      if (!isConfirmed) {
-        return Promise.resolve('Action aborted');
+    const isConfirmed = await this._getPromise();
+    if (!isConfirmed) {
+      return Promise.resolve('Action aborted');
+    }
+
+    const config = this.getFilteredConfig();
+
+    return [{
+      actions: ['prepare', 'output'],
+      config,
+      format: this._format,
+      postActionFn: results => {
+        this._handleOutput(results);
+
+        return this._format ? Promise.resolve() : Promise.resolve('Done');
       }
-
-      const config = this.getFilteredConfig();
-      const distributor = new Distributor(config, this.runId);
-
-      return distributor.runActions(['prepare', 'output'], {
-        format: this._format
-      });
-    }).then(results => {
-      this._handleOutput(results);
-
-      return this._format ? Promise.resolve() : Promise.resolve('Done');
-    });
+    }];
   }
 
   /**
@@ -73,7 +74,7 @@ class OutputCommand extends TerraformCommand {
           const stdout = (Buffer.from(it.buffer)).toString('utf8');
           const indexStart = stdout.indexOf('{');
           const json = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
-          
+
           result[it.component] = JSON.parse(json);
         });
 

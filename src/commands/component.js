@@ -5,11 +5,11 @@ const glob = require('glob');
 const fse = require('fs-extra');
 const Util = require('../helpers/util');
 const ConfigLoader = require('../config-loader');
-const AbstractCommand = require('../abstract-command');
+const ConfigCommand = require('../config-command');
 const Terraform = require('../helpers/wrappers/terraform');
 const { printListAsTree } = require('../helpers/log-helper');
 
-class ComponentCommand extends AbstractCommand {
+class ComponentCommand extends ConfigCommand {
   /**
    * Command configuration
    */
@@ -39,10 +39,10 @@ class ComponentCommand extends AbstractCommand {
     this._delete = this.getOption('delete');
 
     const projectFormat = this.getProjectFormat();
-
+  debugger;
     this._appPath = this.getAppPath();
     this._srcFile = path.join(
-      this._parameters.templates.config,
+      this.parameters.templates.config,
       'component',
       `.terrahub${projectFormat === '.yaml' ? '.yml' : projectFormat}.twig`
     );
@@ -55,7 +55,10 @@ class ComponentCommand extends AbstractCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
+  debugger;
+
     const config = this.getConfig();
+    console.dir(config, { depth: 10 });
     const duplicatedNames = Util.getNonUniqueNames(this._name, config);
 
     Object.keys(duplicatedNames).forEach(hash => {
@@ -163,7 +166,7 @@ class ComponentCommand extends AbstractCommand {
         this._createWorkspaceFiles(this._directory);
 
         const templateName = this._configLoader.getDefaultFileName() + '.twig';
-        const specificConfigPath = path.join(path.dirname(this._parameters.templates.config), templateName);
+        const specificConfigPath = path.join(path.dirname(this.parameters.templates.config), templateName);
         const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
 
         return Util.renderTwig(
@@ -253,7 +256,7 @@ class ComponentCommand extends AbstractCommand {
     const keys = this._template.split('_');
     const provider = keys.shift();
     const resourceName = this._template.replace(provider + '_', '');
-    const templateDir = path.join(this._parameters.templates.path, provider, resourceName);
+    const templateDir = path.join(this.parameters.templates.path, provider, resourceName);
 
     if (!fse.pathExistsSync(templateDir)) {
       throw new Error(`${this._template} is not supported`);

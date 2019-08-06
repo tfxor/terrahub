@@ -21,14 +21,43 @@ class Distributor {
    */
   async runCommand() {
     const validation = await this.command.validate();
-    const [config, actions] = await this.command.run();
+    const result = await this.command.run();
 
-    this.projectConfig = config;
+    console.log(result, typeof result);
 
-    const firstKey = Object.keys(this.projectConfig)[0];
-    this._projectRoot = this.projectConfig[firstKey].project.root;
+    if (!result) { //todo refactor !
+      return Promise.resolve();
+    }
 
-    return this.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+    if (result && !Array.isArray(result)) { // todo project.js return {String}
+      return Promise.resolve(result);
+    }
+
+    const steps = result.filter(step => Boolean(step));
+
+    try { //todo Does need try ?
+      for (const step of steps) {
+        const { actions, config, postActionFn, ...options } = step;
+
+        if (config) {
+          this.projectConfig = config;
+
+          const firstKey = Object.keys(this.projectConfig)[0];
+          this._projectRoot = this.projectConfig[firstKey].project.root;
+
+        }
+
+         const result = await this.runActions(actions, options);
+
+        if (postActionFn) {
+          return postActionFn(result)
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    return Promise.resolve('Done');
   }
 
   /**

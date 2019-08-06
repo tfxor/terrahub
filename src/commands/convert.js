@@ -7,10 +7,10 @@ const logger = require('../helpers/logger');
 const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
 
-class ConvertCommand extends TerraformCommand {
+class ConvertCommand extends DistributedCommand {
   /**
    * Command configuration
    */

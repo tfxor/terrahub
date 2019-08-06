@@ -6,11 +6,10 @@ const fse = require('fs-extra');
 const treeify = require('treeify');
 const ConfigLoader = require('../config-loader');
 const HashTable = require('../helpers/hash-table');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { renderTwig, yesNoQuestion } = require('../helpers/util');
-const Distributor = require('../helpers/distributors/thread-distributor');
 
-class WorkspaceCommand extends TerraformCommand {
+class WorkspaceCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -26,7 +25,7 @@ class WorkspaceCommand extends TerraformCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const promises = [];
     let filesToRemove = [];
     const kill = this.getOption('delete');
@@ -45,9 +44,10 @@ class WorkspaceCommand extends TerraformCommand {
     const { name: projectName, code } = this.getProjectConfig();
 
     if (this.getOption('list')) {
-      return this._workspace('workspaceList', configs)
-        .then(results => this._handleWorkspaceList(results))
-        .then(() => 'Done');
+      const results = await this._workspace('workspaceList', configs);
+      await this._handleWorkspaceList(results);
+
+      return 'Done'; //todo was Promise.resolve('Done')
     }
 
     if (includeRootConfig) {
@@ -55,7 +55,9 @@ class WorkspaceCommand extends TerraformCommand {
     }
 
     if (this.config.isDefault) {
-      return this._workspace('workspaceSelect', configs).then(() => 'Done');
+      await this._workspace('workspaceSelect', configs);
+
+      return 'Done'; //todo was Promise.resolve('Done')
     }
 
     configsList.forEach((configPath, i) => {
@@ -67,7 +69,7 @@ class WorkspaceCommand extends TerraformCommand {
       if (!fs.existsSync(envConfig) && !kill) {
         const creating = new HashTable({});
         const existing = new HashTable(ConfigLoader.readConfig(configPath));
-        const template = path.join(this.templates.workspace, 'default.tfvars.twig');
+        const template = path.join(this.templates.workspace, 'default.tfvars.twig'); //todo test `this.templates.workspace`
 
         existing.transform('varFile', (key, value) => {
           value.push(tfvarsName);
@@ -93,28 +95,27 @@ class WorkspaceCommand extends TerraformCommand {
       let isUpdate = promises.length !== (configsList.length - 1);
       let message = `TerraHub environment '${this.config.env}' was ${isUpdate ? 'updated' : 'created'}`;
 
-      return Promise
-        .all(promises)
-        .then(() => this._workspace('workspaceSelect', cfgObject))
-        .then(() => Promise.resolve(message));
+      await Promise.all(promises);
+      await this._workspace('workspaceSelect', cfgObject);
+
+      return Promise.resolve(message);
     }
 
-    return yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `).then(confirmed => {
-      if (!confirmed) {
-        return Promise.resolve('Canceled');
-      }
+    const confirmed = await yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `);
+    if (!confirmed) {
+      return Promise.resolve('Canceled');
+    }
 
-      filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
+    filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
 
-      if (!filesToRemove.length) {
-        return Promise.resolve('Nothing to remove');
-      }
+    if (!filesToRemove.length) {
+      return Promise.resolve('Nothing to remove');
+    }
 
-      return Promise
-        .all(filesToRemove.map(file => fse.unlink(file)))
-        .then(() => this._workspace('workspaceDelete', cfgObject))
-        .then(() => Promise.resolve(`TerraHub environment '${this.config.env}' was deleted`));
-    });
+    await Promise.all(filesToRemove.map(file => fse.unlink(file)));
+    await this._workspace('workspaceDelete', cfgObject);
+
+    return Promise.resolve(`TerraHub environment '${this.config.env}' was deleted`);
   }
 
   /**
@@ -123,12 +124,10 @@ class WorkspaceCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _workspace(action, config) {
-    const distributor = new Distributor(config, this.runId);
-
+  async _workspace(action, config) {
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', 'init', action]);
+    return [{ actions: ['prepare', 'init', action], config }];
   }
 
   /**

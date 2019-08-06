@@ -4,9 +4,6 @@ const Dictionary = require('../helpers/dictionary');
 const DistributedCommand = require('../distributed-command');
 const { printListAsTree } = require('../helpers/log-helper');
 
-// const Distributor = require('../helpers/distributors/thread-distributor');
-// const CloudDistributor = require('../helpers/distributors/cloud-distributor');
-
 class RunCommand extends DistributedCommand {
   /**
    * Command configuration
@@ -27,7 +24,7 @@ class RunCommand extends DistributedCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     this._isApply = this.getOption('apply');
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
@@ -42,16 +39,12 @@ class RunCommand extends DistributedCommand {
       return Promise.resolve('Done');
     }
 
-    return this._getPromise(config)
-      .then(isConfirmed => {
-        if (!isConfirmed) {
-          return Promise.reject('Action aborted');
-        }
-        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
-        // const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-        // return Promise.resolve([config, actions]);
-      })
-      // .then(() => Promise.resolve('Done'));
+    const isConfirmed = await this._getPromise(config);
+    if (!isConfirmed) {
+      return Promise.reject('Action aborted');
+    }
+
+    return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
   }
 
   /**
@@ -59,15 +52,13 @@ class RunCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _getPromise(config) {
-    return Promise.resolve().then(() => {
-      if (this._isApprovementRequired) {
-        return this.askForApprovement(config, this.getOption('auto-approve'));
-      }
+  async _getPromise(config) {
+    if (this._isApprovementRequired) {
+      return this.askForApprovement(config, this.getOption('auto-approve'));
+    }
 
-      this.warnExecutionStarted(config);
-      return Promise.resolve(true);
-    });
+    this.warnExecutionStarted(config);
+    return true;
   }
 
   /**
@@ -85,35 +76,19 @@ class RunCommand extends DistributedCommand {
 
       actions.push('plan');
     }
-    debugger;
 
-    return Promise.resolve([config, actions]).then(() => !this._isApply ?
-      Promise.resolve() :
-      distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
-        dependencyDirection: Dictionary.DIRECTION.FORWARD
-      })
-    ).then(() => !this._isDestroy ?
-      Promise.resolve() :
-      distributor.runActions(['plan', 'destroy'], {
-        dependencyDirection: Dictionary.DIRECTION.REVERSE,
-        planDestroy: true
-      })
-    );
+    const firstStep = { actions, config: config };
+    const secondStep = !this._isApply ? Promise.resolve() : {
+      actions: this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'],
+      dependencyDirection: Dictionary.DIRECTION.FORWARD
+    };
+    const thirdStep = !this._isDestroy ? Promise.resolve() : {
+      actions: ['plan', 'destroy'],
+      dependencyDirection: Dictionary.DIRECTION.REVERSE,
+      planDestroy: true
+    };
 
-    // return distributor.runActions(actions)
-    //   .then(() => !this._isApply ?
-    //     Promise.resolve() :
-    //     distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
-    //       dependencyDirection: Dictionary.DIRECTION.FORWARD
-    //     })
-    //   )
-    //   .then(() => !this._isDestroy ?
-    //     Promise.resolve() :
-    //     distributor.runActions(['plan', 'destroy'], {
-    //       dependencyDirection: Dictionary.DIRECTION.REVERSE,
-    //       planDestroy: true
-    //     })
-    //   );
+    return Promise.all([firstStep, secondStep, thirdStep]);
   }
 
   /**
@@ -123,7 +98,7 @@ class RunCommand extends DistributedCommand {
    */
   _runCloud(config) {
     const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    return Promise.resolve([config, actions])
+    return Promise.resolve([config, actions]);
 
     // const distributor = new CloudDistributor(cfg);
 

@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class ImportCommand extends TerraformCommand {
+class ImportCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -18,20 +17,20 @@ class ImportCommand extends TerraformCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const configContentArr = this.getOption('config');
     const config = this.getFilteredConfig();
 
-    const distributor = new Distributor(config, this.runId);
     return Promise.all(
       configContentArr.map(it => {
         const resourceData = it.split('=');
 
-        return distributor
-          .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
-            resourceName: resourceData[0],
-            importId: resourceData[1]
-          }).then(() => 'Done');
+        return [{
+          actions: ['prepare', 'init', 'workspaceSelect', 'import'],
+          config,
+          resourceName: resourceData[0],
+          importId: resourceData[1]
+        }];
       })
     );
   }

@@ -23,7 +23,7 @@ class Terraform {
     this._tf = this._config.terraform;
     this._envVars = process.env;
     this._metadata = new Metadata(this._config);
-    this._parameters = parameters;
+    this.parameters = parameters;
 
     this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
@@ -106,7 +106,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    ApiHelper.init(this._parameters.fetch);
+    ApiHelper.init(this.parameters.fetch);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     const provider = Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];
@@ -513,7 +513,7 @@ class Terraform {
    * @return {Promise|*}
    */
   _getEnvVarsFromAPI() {
-    if (!this._parameters.config.token) {
+    if (!this.parameters.config.token) {
       return Promise.resolve({});
     }
     try {
@@ -526,7 +526,7 @@ class Terraform {
 
       const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
-        return this._parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+        return this.parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
             let test = JSON.parse(json.data.env_var);
             return Object.keys(test).reduce((acc, key) => {

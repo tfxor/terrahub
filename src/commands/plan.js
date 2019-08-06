@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class PlanCommand extends TerraformCommand {
+class PlanCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -18,16 +17,16 @@ class PlanCommand extends TerraformCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 
-    return distributor
-      .runActions(['prepare', 'workspaceSelect', 'plan'], {
-        planDestroy: this.getOption('destroy')
-      }).then(() => Promise.resolve('Done'));
+    return [{
+      actions: ['prepare', 'workspaceSelect', 'plan'],
+      config,
+      planDestroy: this.getOption('destroy')
+    }];
   }
 }
 

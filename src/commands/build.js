@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class BuildCommand extends TerraformCommand {
+class BuildCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -18,7 +17,7 @@ class BuildCommand extends TerraformCommand {
   /**
    * @return {Promise}
    */
-  run() {
+  async run() {
     const format = this.getOption('format');
 
     if (format && !['json', 'text'].includes(format)) {
@@ -26,13 +25,15 @@ class BuildCommand extends TerraformCommand {
     }
 
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
+    // const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
+    debugger;
+    return [{ actions: ['build'], config, format: format, postActionFn: (format) => !['json'].includes(format) ? 'Done' : '' }];
 
-    return distributor.runActions(['build'], { format: format })
-      .then(() => Promise.resolve(!['json'].includes(format) ? 'Done' : ''))
-      .catch(err => ['json'].includes(format) ? Promise.resolve() : Promise.reject(err));
+    // return distributor.runActions(['build'], { format: format })
+    //   .then(() => Promise.resolve(!['json'].includes(format) ? 'Done' : ''))
+    //   .catch(err => ['json'].includes(format) ? Promise.resolve() : Promise.reject(err));
   }
 }
 

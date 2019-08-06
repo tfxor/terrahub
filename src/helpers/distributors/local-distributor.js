@@ -13,7 +13,7 @@ class LocalDistributor extends Distributor {
    */
   constructor(command) {
     super(command);
-    this._terrahubCfg = command._parameters;
+    this._terrahubCfg = command.parameters;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
@@ -87,7 +87,7 @@ class LocalDistributor extends Distributor {
    * @param {Boolean} input
    * @return {Promise}
    */
-  runActions(actions, {
+  async runActions(actions, {
     format = '',
     planDestroy = false,
     dependencyDirection = null,

@@ -26,12 +26,11 @@ class DistributedCommand extends AbstractCommand {
 
   // 1. All about api-console logging
   /**
-   * @param {Object} input
-   * @param {Logger} logger
    * @param {Object} parameters
+   * @param {Logger} logger
    */
-  constructor(input, logger, parameters) {
-    super(input, logger, parameters);
+  constructor(parameters, logger) {
+    super(parameters, logger);
 
     this._runId = Util.uuid();
 
@@ -67,7 +66,7 @@ class DistributedCommand extends AbstractCommand {
     return super.validate().then(token => {
       this._tokenIsValid = token;
 
-      if (this._tokenIsValid && this._parameters.logs) { //@todo retrieve logs from `parameters`
+      if (this._tokenIsValid && this.terrahubCfg.logs) { //@todo retrieve logs from `parameters`
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
@@ -508,12 +507,23 @@ class DistributedCommand extends AbstractCommand {
 
   /**
    * @param {Object|Array} config
+   */
+  warnExecutionStarted(config) {
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
+
+    const action = this.getName();
+
+    this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
+  }
+
+  /**
+   * @param {Object|Array} config
    * @param {Boolean} autoApprove
    * @param {String} customQuestion
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, this._parameters.listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.parameters.listLimit);
 
     const action = this.getName();
 

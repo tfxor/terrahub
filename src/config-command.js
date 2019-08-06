@@ -9,9 +9,8 @@ class ConfigCommand extends AbstractCommand {
   // convert, graph,
   // list(uses AWS.creds),
   // project,
-  constructor(input, logger) {
-    super(input, logger);
-
+  constructor(parameters, logger) {
+    super(parameters, logger);
 
   }
 }

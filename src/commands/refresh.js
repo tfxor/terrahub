@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class RefreshCommand extends TerraformCommand {
+class RefreshCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -17,13 +16,15 @@ class RefreshCommand extends TerraformCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
 
     this.warnExecutionStarted(config);
 
-    return distributor.runActions(['prepare', 'workspaceSelect', 'refresh']).then(() => Promise.resolve('Done'));
+    return [{
+      actions: ['prepare', 'workspaceSelect', 'refresh'],
+      config,
+    }];
   }
 }
 

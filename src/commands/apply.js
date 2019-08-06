@@ -1,10 +1,9 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class ApplyCommand extends TerraformCommand {
+class ApplyCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -20,17 +19,18 @@ class ApplyCommand extends TerraformCommand {
    * @returns {Promise}
    */
   run() {
+    debugger;
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
+    // const distributor = new Distributor(config, this.runId);
 
     this.checkDependencies(config);
+    const actions = ['prepare', 'workspaceSelect', 'plan', 'apply'];
+    const dependencyDirections = Dictionary.DIRECTION.FORWARD;
 
     return this.askForApprovement(config, this.getOption('auto-approve'))
       .then(answer => answer ?
-        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
-          dependencyDirection: Dictionary.DIRECTION.FORWARD
-        }) : Promise.reject('Action aborted')
-      ).then(() => Promise.resolve('Done'));
+        Promise.resolve([config, actions, dependencyDirections]) : Promise.reject('Action aborted')
+      );
   }
 }
 

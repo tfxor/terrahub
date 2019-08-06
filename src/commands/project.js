@@ -3,10 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const ConfigLoader = require('../config-loader');
-const AbstractCommand = require('../abstract-command');
+const ConfigCommand = require('../config-command');
 const { renderTwig, isAwsNameValid } = require('../helpers/util');
 
-class ProjectCommand extends AbstractCommand {
+class ProjectCommand extends ConfigCommand {
   /**
    * Command configuration
    */
@@ -22,34 +22,40 @@ class ProjectCommand extends AbstractCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const name = this.getOption('name');
     const code = this.getProjectCode(name);
     const directory = path.resolve(this.getOption('directory'));
+
+    debugger;
 
     if (!isAwsNameValid(name)) {
       throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
     }
 
-    return this._isCodeValid(code).then(valid => {
-      if (!valid) {
-        throw new Error('Project code has collisions');
-      }
+    const isValid = await this._isCodeValid(code);
 
-      const format = this.config.format === 'yaml' ? 'yml' : this.config.format;
-      const srcFile = path.join(this.templates.config, 'project', `.terrahub.${format}.twig`);
-      const outFile = path.join(directory, this.config.defaultFileName);
-      const isProjectExisting = ConfigLoader.availableFormats
-        .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
+    if (!isValid) {
+      throw new Error('Project code has collisions');
+    }
 
-      if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
-        this.logger.warn(`Project already configured in ${directory} directory`);
-        return Promise.resolve();
-      }
+    debugger;
 
-      return renderTwig(srcFile, { name, code }, outFile).then(() => {
-        return Promise.resolve('Project successfully initialized');
-      });
+    const format = this.terrahubCfg.format === 'yaml' ? 'yml' : this.terrahubCfg.format;
+    const srcFile = path.join(this.parameters.templates.config, 'project', `.terrahub.${format}.twig`);
+    const outFile = path.join(directory, this.terrahubCfg.defaultFileName);
+    const isProjectExisting = ConfigLoader.availableFormats
+      .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
+
+    debugger;
+
+    if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
+      this.logger.warn(`Project already configured in ${directory} directory`);
+      return Promise.resolve();
+    }
+
+    return renderTwig(srcFile, { name, code }, outFile).then(() => {
+      return Promise.resolve('Project successfully initialized');
     });
   }
 
@@ -59,17 +65,20 @@ class ProjectCommand extends AbstractCommand {
    * @returns {Promise}
    * @private
    */
-  _isCodeValid(code) {
-    if (!this.config.token) {
+  async _isCodeValid(code) {
+    debugger;
+
+    if (!this.terrahubCfg.token) {
       return Promise.resolve(true);
     }
 
-    return this.fetch.get(`thub/project/validate?hash=${code}`)
-      .then(json => json.data.isValid)
-      .catch(err => {
-        // @todo get rid of `errorMessage` in future
-        throw new Error(err.message || err.errorMessage);
-      });
+    try {
+      const json = await this.fetch.get(`thub/project/validate?hash=${code}`);
+
+      return json.data.isValid;
+    } catch (err) {
+      throw new Error(err.message || err.errorMessage);
+    }
   }
 }
 
