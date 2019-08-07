@@ -22,7 +22,7 @@ class Terraform {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
     this._envVars = process.env;
-    this._metadata = new Metadata(this._config);
+    this._metadata = new Metadata(this._config, parameters);
     this.parameters = parameters;
 
     this._showLogs = !process.env.format;

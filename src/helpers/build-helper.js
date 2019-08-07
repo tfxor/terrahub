@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-// const logger = require('./logger');
+const logger = require('./logger');
 const { promiseSeries, spawner } = require('./util');
 
 class BuildHelper {
@@ -36,12 +36,12 @@ class BuildHelper {
         return spawner(command, args, options,
           err => {
             if (isVerbose) {
-              console.error(BuildHelper._out(name, err));
+              logger.error(BuildHelper._out(name, err));
             }
           },
           data => {
             if (isVerbose) {
-              console.log(BuildHelper._out(name, data));
+              logger.raw(BuildHelper._out(name, data));
             }
           }
         );
@@ -109,12 +109,12 @@ class BuildHelper {
           error: isSuccess ? '0' : '1'
         };
 
-        console.log(JSON.stringify(json));
+        logger.log(JSON.stringify(json));
         break;
 
       case 'text':
       default:
-        console[isSuccess ? 'log' : 'error'](message);
+        logger[isSuccess ? 'info' : 'error'](message);
         break;
     }
   }

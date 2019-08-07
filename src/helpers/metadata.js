@@ -7,9 +7,11 @@ const { buildTmpPath } = require('./jit-helper');
 class Metadata {
   /**
    * @param {Object} config
+   * @param {Object} parameters
    */
-  constructor(config) {
+  constructor(config, parameters) {
     this._cfg = config;
+    this._parameters = parameters;
     this._base = false;
     this._isRemote = false;
 
@@ -34,7 +36,7 @@ class Metadata {
    * @return {String}
    */
   getRoot() {
-    return this._cfg.isJit ? buildTmpPath(this._cfg) : path.join(this._cfg.project.root, this._cfg.root);
+    return this._cfg.isJit ? buildTmpPath(this._cfg, this._parameters) : path.join(this._cfg.project.root, this._cfg.root);
   }
 
   /**

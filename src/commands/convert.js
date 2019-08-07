@@ -104,7 +104,7 @@ class ConvertCommand extends DistributedCommand {
   async _toJsonFromYaml(cfg) {
     await this._initTemplateFromConfig(cfg);
     const templatePath = ConvertCommand._buildComponentPath(cfg);
-    const componentPath = buildTmpPath(cfg);
+    const componentPath = buildTmpPath(cfg, this.parameters);
 
     try {
       const files = await fse.readdir(componentPath);
@@ -164,7 +164,7 @@ class ConvertCommand extends DistributedCommand {
     await this._initTemplateFromConfig(cfg);
     const templatePath = ConvertCommand._buildComponentPath(cfg);
     const regEx = /.*(tf|tfvars)$/;
-    const componentPath = buildTmpPath(cfg);
+    const componentPath = buildTmpPath(cfg, this.parameters);
 
     try {
       const files = await fse.readdir(componentPath);
@@ -352,7 +352,7 @@ class ConvertCommand extends DistributedCommand {
     if (arch.indexOf("windows") > -1)
       extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} -thub ${buildTmpPath(config)} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, `component${extension}`)} -thub ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
 
   /**
@@ -390,7 +390,7 @@ class ConvertCommand extends DistributedCommand {
     if (arch.indexOf("windows") > -1)
       extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, `component${extension}`)} -json ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
 
   /**

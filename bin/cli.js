@@ -6,10 +6,11 @@ const path = require('path');
 const semver = require('semver');
 const { engines } = require('../package.json');
 const logger = require('../src/helpers/logger');
-const Parameters = require('../src/parameters');
+const parameters = require('../src/parameters');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
+
 const AwsDistributor = require('../src/helpers/distributors/aws-distributor');
 const LocalDistributor = require('../src/helpers/distributors/local-distributor');
 
@@ -27,21 +28,21 @@ if (!semver.satisfies(process.version, engines.node)) {
  * @returns {*}
  */
 function commandCreate(logger = console) {
-  const command = Parameters.args._.shift();
-  delete Parameters.args._;
+  const command = parameters.args._.shift();
+  delete parameters.args._;
 
-  if (!HelpParser.getCommandsNameList().includes(command) || Parameters.config.isHelp
-    || HelpParser.hasInvalidOptions(command, Parameters.args)) {
-    Parameters.args.command = command;
+  if (!HelpParser.getCommandsNameList().includes(command) || parameters.config.isHelp
+    || HelpParser.hasInvalidOptions(command, parameters.args)) {
+    parameters.args.command = command;
 
-    const helpCommand = new HelpCommand(Parameters, logger);
+    const helpCommand = new HelpCommand(parameters, logger);
 
     return new LocalDistributor(helpCommand);
   }
-  const Command = require(path.join(Parameters.commandsPath, command)); //todo Command gets parameters, then Distributor takes parameters form Command
-  const _Command = new Command(Parameters, logger);
+  const Command = require(path.join(parameters.commandsPath, command));
+  const _Command = new Command(parameters, logger);
 
-  return new LocalDistributor(_Command);
+  return new AwsDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
 }
 
 /**
@@ -65,12 +66,9 @@ try {
   process.exit(1);
 }
 
-// const environment = command.command.getOption('env') ? command.command.getOption('env') : 'default';
-// const projectConfig = command.command.getProjectConfig();
-
 (async () => {
   try {
-    ApiHelper.init(Parameters);
+    ApiHelper.init(parameters);
 
     const result = await command.runCommand();
     const message = Array.isArray(result) ? result.toString() : result;
@@ -87,43 +85,3 @@ try {
     await syncExitProcess(1);
   }
 })();
-
-// command.command
-//   .validate()
-//   .then(() => {
-//     ApiHelper.setToken(command.command._tokenIsValid);
-//
-//     return ApiHelper.sendMainWorkflow({
-//         status: 'create',
-//         runId: command.command.runId,
-//         commandName: command.command._name,
-//         project: projectConfig,
-//         environment: environment,
-//       })
-//     }
-//   )
-//   .then(() => {
-//     debugger;
-//   return command.runActions()})
-//   .then(() => {
-//     debugger;
-//     return command.command.run()})
-//   .then(message => {
-//     ApiHelper.sendMainWorkflow({ status: 'update' });
-//
-//     return Promise.resolve(message);
-//   })
-//   .then(msg => {
-//     const message = Array.isArray(msg) ? msg.toString() : msg;
-//     if (message) {
-//       logger.info(message);
-//     }
-//
-//     return syncExitProcess(0);
-//   })
-//   .catch(err => {
-//     ApiHelper.sendErrorToApi();
-//     logger.error(err.message || err || 'Error occurred');
-//
-//     return syncExitProcess(1);
-//   });

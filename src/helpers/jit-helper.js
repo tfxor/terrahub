@@ -10,16 +10,16 @@ const objectDepth = require('object-depth');
 const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
-const { binPath, jitPath, tfstatePath } = require('../parameters');
 
 class JitHelper {
   /**
    * JIT middleware (config to files)
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    */
-  static jitMiddleware(config) {
-    const transformedConfig = JitHelper._transformConfig(config);
+  static jitMiddleware(config, parameters) {
+    const transformedConfig = JitHelper._transformConfig(config, parameters);
 
     if (!transformedConfig.isJit) {
       return Promise.resolve(config);
@@ -38,19 +38,19 @@ class JitHelper {
       // add "tfvars" if it is not described in config
       const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
       if (remoteTfvarsLinks.length > 0) {
-        return JitHelper._addTfvars(config, remoteTfvarsLinks);
+        return JitHelper._addTfvars(config, remoteTfvarsLcliinks);
       }
     }).then(() => JitHelper._normalizeProvidersForResource(config))
       .then(() => JitHelper._normalizeProvidersForData(config))
       .then(() => JitHelper._normalizeTfvars(config))
-      .then(() => JitHelper._createTerraformFiles(config))
+      .then(() => JitHelper._createTerraformFiles(config, parameters))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
-          return JitHelper._generateVariable(config);
+          return JitHelper._generateVariable(config, parameters);
         }
       })
-      .then(() => JitHelper._symLinkNonTerraHubFiles(config))
+      .then(() => JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
@@ -58,16 +58,17 @@ class JitHelper {
   /**
    * Transform template config
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Object}
    * @private
    */
-  static _transformConfig(config) {
+  static _transformConfig(config, parameters) {
     config.isJit = config.hasOwnProperty('template');
 
     if (config.isJit) {
       const componentPath = join(config.project.root, config.root);
 
-      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
+      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config, parameters);
       const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
 
       config.template.locals = extend(config.template.locals, [{
@@ -92,13 +93,14 @@ class JitHelper {
   /**
    * Normalize Backend Local config
    * @param {Object} config
+   * @param {Object} parameters
    * @return {String}
    * @private
    */
-  static _normalizeBackendLocalPath(config) {
+  static _normalizeBackendLocalPath(config, parameters) {
     const { template } = config;
     const { locals } = template;
-    let localTfstatePath = homePath(tfstatePath, config.project.name);
+    let localTfstatePath = homePath(parameters.tfstatePath, config.project.name);
 
     if (locals) {
       Object.keys(locals).filter(it => locals[it]).map(() => {
@@ -600,12 +602,13 @@ class JitHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
-  static _createTerraformFiles(config) {
+  static _createTerraformFiles(config, parameters) {
     const { template, cfgEnv } = config;
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = JitHelper.buildTmpPath(config, parameters);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -622,7 +625,7 @@ class JitHelper {
           break;
       }
 
-      return JitHelper.convertJsonToHcl(join(tmpPath, name), data, JitHelper.checkTfVersion(config));
+      return JitHelper.convertJsonToHcl(join(tmpPath, name), data, JitHelper.checkTfVersion(config), parameters);
     });
 
     return Promise.all(promises);
@@ -630,12 +633,13 @@ class JitHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @private
    */
-  static _generateVariable(config) {
+  static _generateVariable(config, parameters) {
     const variable = config.template.variable || {};
     
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = JitHelper.buildTmpPath(config, parameters);
 
     const { tfvars } = config.template;
 
@@ -654,12 +658,12 @@ class JitHelper {
 
       variable[it] = { type };
     });
-    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config));
+    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters);
   }
 
-  static _symLinkNonTerraHubFiles(config) {
+  static _symLinkNonTerraHubFiles(config, parameters) {
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = JitHelper.buildTmpPath(config, parameters);
     const src = join(config.project.root, config.root);
 
     return fse.ensureDir(tmpPath)
@@ -704,10 +708,11 @@ class JitHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @return {String}
    */
-  static buildTmpPath(config) {
-    const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
+  static buildTmpPath(config, parameters) {
+    const tmpPath = homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
     fse.ensureDirSync(tmpPath);
 
     return tmpPath;
@@ -717,12 +722,13 @@ class JitHelper {
    * @param {String} componentPath
    * @param {Object} data
    * @param {Boolean} isHCL2
+   * @param {Object} parameters
    * @return {Promise}
    */
-  static convertJsonToHcl(componentPath, data, isHCL2) {
+  static convertJsonToHcl(componentPath, data, isHCL2, parameters) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(binPath, arch);
+    const componentBinPath = join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);

@@ -11,12 +11,12 @@ class AwsDistributor extends Distributor {
 
   /**
    * @param {Object} command
-   * @param {Object} parameters
    */
-  constructor(command, parameters) {
+  constructor(command) {
     super(command);
-    this.config = parameters.config;
-    this.fetch = parameters.fetch;
+    this.parameters = command.parameters;
+    this.config = this.parameters.config;
+    this.fetch = this.parameters.fetch;
 
     this._errors = [];
   }
@@ -38,7 +38,7 @@ class AwsDistributor extends Distributor {
     return Promise.all([this._fetchAccountId(), this._buildFileList()])
       .then(([accountId, files]) => {
         this.logger.warn('Uploading project to S3.');
-
+        debugger;
         const s3Prefix = [s3directory, accountId, this.runId].join('/');
         const pathMap = files.map(it => ({
           localPath: join(this._projectRoot, it),
@@ -49,7 +49,7 @@ class AwsDistributor extends Distributor {
       })
       .then(() => {
         this.logger.warn('Directory uploaded to S3.');
-
+        debugger;
         return new Promise((resolve, reject) => {
           /**
            * @private
@@ -76,9 +76,11 @@ class AwsDistributor extends Distributor {
             const body = JSON.stringify({
               actions: actions,
               thubRunId: this.runId,
-              config: config
+              config: config,
+              parameters: this.parameters
             });
 
+            console.log({ body });
             inProgress++;
 
             this.logger.warn(`[${config.name}] Deploy started!`);
@@ -153,7 +155,7 @@ class AwsDistributor extends Distributor {
   /**
    * @return {Promise<String>}
    */
-  fetchAccountId() {
+  _fetchAccountId() {
     return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
   }
 }

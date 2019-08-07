@@ -44,7 +44,7 @@ function run(config, parameters) {
     componentName: config.name,
   });
 
-  JitHelper.jitMiddleware(config)
+  JitHelper.jitMiddleware(config, parameters)
     .then(cfg => promiseSeries(getTasks(cfg, parameters), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {

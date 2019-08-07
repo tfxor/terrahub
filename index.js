@@ -1,11 +1,13 @@
 'use strict';
 
-// const { getComponentBuildTask } = require('./src/helpers/build-helper');
-const AwsCloudDeployer = require('./src/helpers/distributors/aws-cloud-deployer');
+const { getComponentBuildTask } = require('./src/helpers/build-helper');
+const AwsDeployer = require('./src/helpers/distributors/aws-cloud-deployer');
 
 module.exports = {
-  // getComponentBuildTask,
-  CloudDeployers: {
-    AwsCloudDeployer
+  getComponentBuildTask,
+  Distributors: {
+    AWS: {
+      AwsDeployer
+    }
   }
 };
