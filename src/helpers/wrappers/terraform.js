@@ -106,7 +106,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    ApiHelper.init(this.parameters.fetch);
+    ApiHelper.init(this.parameters);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     const provider = Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];

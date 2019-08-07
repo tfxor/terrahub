@@ -2,6 +2,7 @@
 
 const fse = require('fs-extra');
 const events = require('events');
+const Fetch = require('./fetch');
 const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
 
@@ -25,11 +26,11 @@ class ApiHelper extends events.EventEmitter {
    * @param {Object} parameters
    */
   init(parameters) { //todo Remove
-    if (parameters) {
-      this.fetch = parameters.fetch;
-      this.config = parameters.config;
-    }
+    this.fetch = parameters.fetch instanceof Fetch
+      ? parameters.fetch : new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
+    this.config = parameters.config;
   }
+
   /**
    * Sends event to ThreadDistributor to execute logging
    */
@@ -74,10 +75,10 @@ class ApiHelper extends events.EventEmitter {
 
     const _promises = [...this.retrievePromises(), this.retrieveLogs(true)]
       .filter(Boolean)
-      .map(this.asyncFetch);
+      .map(({ url, body }) => this.asyncFetch({ url, body }));
 
     return Promise.all(_promises).then(() => {
-      const _promises = this.retrievePromises().map(this.asyncFetch);
+      const _promises = this.retrievePromises().map(({ url, body }) => this.asyncFetch({ url, body }));
 
       return Promise.all(_promises);
     });

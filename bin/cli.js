@@ -81,6 +81,7 @@ try {
 
     await syncExitProcess(0);
   } catch (err) {
+    ApiHelper.sendErrorToApi();
     logger.error(err.message || err || 'Error occurred');
 
     await syncExitProcess(1);

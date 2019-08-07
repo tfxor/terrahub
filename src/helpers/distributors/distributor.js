@@ -1,7 +1,7 @@
 'use strict';
 
+const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
-
 /**
  * @abstract Class
  */
@@ -20,7 +20,9 @@ class Distributor {
    * @return {Promise}
    */
   async runCommand() {
-    const validation = await this.command.validate();
+    await this.command.validate();
+    await this.sendLogsToApi();
+
     const result = await this.command.run();
 
     console.log(result, typeof result);
@@ -35,7 +37,7 @@ class Distributor {
 
     const steps = result.filter(step => Boolean(step));
 
-    try { //todo Does need try ?
+    try {
       for (const step of steps) {
         const { actions, config, postActionFn, ...options } = step;
 
@@ -47,15 +49,17 @@ class Distributor {
 
         }
 
-         const result = await this.runActions(actions, options);
+        const result = await this.runActions(actions, options);
 
         if (postActionFn) {
-          return postActionFn(result)
+          return postActionFn(result);
         }
       }
     } catch (err) {
       console.error(err);
     }
+
+    await ApiHelper.sendMainWorkflow({ status: 'update' });
 
     return Promise.resolve('Done');
   }
@@ -105,8 +109,32 @@ class Distributor {
     });
   }
 
-  runActions() {
+  /**
+   * @param {String[]} actions
+   * @param {Object} options
+   * @return {Promise}
+   * @abstract
+   */
+  runActions(actions, options = {}) {
     throw new Error('Method must be implemented.');
+  }
+
+  /**
+   * @return {Promise}
+   */
+  async sendLogsToApi() {
+    ApiHelper.setToken(this.command._tokenIsValid);
+
+    const environment = this.command.getOption('env') ? this.command.getOption('env') : 'default';
+    const projectConfig = this.command.getProjectConfig();
+
+    return ApiHelper.sendMainWorkflow({
+      status: 'create',
+      runId: this.command.runId,
+      commandName: this.command._name,
+      project: projectConfig,
+      environment: environment,
+    });
   }
 }
 

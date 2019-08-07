@@ -3,10 +3,9 @@
 const cluster = require('cluster');
 const ApiHelper = require('../api-helper');
 
-
 function run(promises, parameters) {
   ApiHelper.init(parameters);
-  const _promises =  promises.map(ApiHelper.asyncFetch);
+  const _promises = promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body }));
 
   return Promise.all(_promises).then(() => {
     process.send({
