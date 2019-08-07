@@ -18,19 +18,16 @@ class ApplyCommand extends DistributedCommand {
   /**
    * @returns {Promise}
    */
-  run() {
-    debugger;
+  async run() {
     const config = this.getFilteredConfig();
-    // const distributor = new Distributor(config, this.runId);
 
     this.checkDependencies(config);
+
     const actions = ['prepare', 'workspaceSelect', 'plan', 'apply'];
     const dependencyDirections = Dictionary.DIRECTION.FORWARD;
 
-    return this.askForApprovement(config, this.getOption('auto-approve'))
-      .then(answer => answer ?
-        Promise.resolve([config, actions, dependencyDirections]) : Promise.reject('Action aborted')
-      );
+    const answer = await this.askForApprovement(config, this.getOption('auto-approve'));
+    return answer ? [{ config, actions, dependencyDirections }] : Promise.reject('Action aborted');
   }
 }
 

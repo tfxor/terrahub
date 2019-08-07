@@ -208,7 +208,6 @@ class AbstractCommand {
    * @returns {Object}
    */
   getConfig() {
-    debugger;
     return this._configLoader.getFullConfig();
   }
 

@@ -25,15 +25,9 @@ class BuildCommand extends DistributedCommand {
     }
 
     const config = this.getFilteredConfig();
-    // const distributor = new Distributor(config, this.runId);
-
     this.warnExecutionStarted(config);
-    debugger;
-    return [{ actions: ['build'], config, format: format, postActionFn: (format) => !['json'].includes(format) ? 'Done' : '' }];
 
-    // return distributor.runActions(['build'], { format: format })
-    //   .then(() => Promise.resolve(!['json'].includes(format) ? 'Done' : ''))
-    //   .catch(err => ['json'].includes(format) ? Promise.resolve() : Promise.reject(err));
+    return [{ actions: ['build'], config, format: format, postActionFn: (format) => !['json'].includes(format) ? 'Done' : '' }];
   }
 }
 

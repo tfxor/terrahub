@@ -64,7 +64,6 @@ class ConfigLoader {
    * @private
    */
   _readRoot() {
-    debugger;
     const configFile = this._findRootConfig(process.cwd());
 
     if (configFile) {
@@ -158,7 +157,6 @@ class ConfigLoader {
    * @returns {Object}
    */
   getFullConfig() {
-    debugger;
     if (!Object.keys(this._config).length) {
       this._handleRootConfig();
       this._handleComponentConfig();
@@ -216,9 +214,7 @@ class ConfigLoader {
    * @private
    */
   _handleRootConfig() {
-    debugger;
     Object.keys(this._rootConfig).forEach(key => {
-      debugger;
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
@@ -239,12 +235,10 @@ class ConfigLoader {
    * @private
    */
   _handleComponentConfig() {
-    debugger;
     const configPaths = this.listConfig();
     const rootPaths = {};
 
     configPaths.forEach(configPath => {
-      debugger;
       let config = this._getConfig(configPath);
 
       if (config.hasOwnProperty('project')) {

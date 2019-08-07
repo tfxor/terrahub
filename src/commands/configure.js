@@ -192,13 +192,13 @@ class ConfigureCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _deleteConfig() {
-    return this._getPromise().then(confirmed => {
-      if (!confirmed) {
-        return Promise.reject('Action aborted');
-      }
-      return this._addConfig();
-    });
+  async _deleteConfig() {
+    const confirmed = await this._getPromise();
+    if (!confirmed) {
+      return Promise.reject('Action aborted');
+    }
+
+    return this._addConfig();
   }
 
   /**

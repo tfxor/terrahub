@@ -163,10 +163,9 @@ class ListCommand extends ConfigCommand {
     });
 
     const cachePath = this._cachePath(this.accountId);
+    await fse.outputJson(cachePath, data);
 
-    return fse.outputJson(cachePath, data).then(() => {
-      return data;
-    });
+    return data;
   }
 
   /**
@@ -174,26 +173,26 @@ class ListCommand extends ConfigCommand {
    * @return {Promise|*}
    * @private
    */
-  _getResourcesFromTerrahubApi() {
+  async _getResourcesFromTerrahubApi() {
     if (!this.terrahubCfg.token) {
       return Promise.resolve([]);
     }
 
-    return this.parameters.fetch.get('thub/listing/retrieve?type=list').then(json => {
-      return json.data.map(row => {
-        return {
-          service: row.service_name,
-          region: row.region,
-          accountId: row.cloud_account_id,
-          resource: row.resource_name,
-          project: row.project_hash
-        };
-      });
-    }).then(data => {
-      const cachePath = this._cachePath(this.terrahubCfg.token);
-
-      return fse.outputJson(cachePath, data).then(() => Promise.resolve(data));
+    const json = await this.parameters.fetch.get('thub/listing/retrieve?type=list');
+    const data = json.data.map(row => {
+      return {
+        service: row.service_name,
+        region: row.region,
+        accountId: row.cloud_account_id,
+        resource: row.resource_name,
+        project: row.project_hash
+      };
     });
+
+    const cachePath = this._cachePath(this.terrahubCfg.token);
+
+    await fse.outputJson(cachePath, data);
+    return data;
   }
 
   /**
@@ -201,15 +200,16 @@ class ListCommand extends ConfigCommand {
    * @return {Promise}
    * @private
    */
-  _fetchResources() {
-    return Promise.all(
-      [this.accountId, this.terrahubCfg.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath))
-    ).then(([free, paid]) => {
-      return Promise.all([
-        free ? free : this._getResourcesFromAwsApi(),
-        paid ? paid : this._getResourcesFromTerrahubApi()
-      ]).then(([free, paid]) => [...free, ...paid]);
-    });
+  async _fetchResources() {
+    let [free, paid] = await Promise.all(
+      [this.accountId, this.terrahubCfg.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath)));
+
+    [free, paid] = await Promise.all([
+      free ? free : this._getResourcesFromAwsApi(),
+      paid ? paid : this._getResourcesFromTerrahubApi()
+    ]);
+
+    return [...free, ...paid];
   }
 
   /**

@@ -22,7 +22,7 @@ class InitCommand extends DistributedCommand {
 
     this.warnExecutionStarted(config);
 
-    return [{ actions: ['prepare', 'init'] }];
+    return [{ actions: ['prepare', 'init'], config }];
   }
 }
 

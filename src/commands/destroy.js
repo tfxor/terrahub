@@ -18,12 +18,12 @@ class DestroyCommand extends DistributedCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const config = this.getFilteredConfig();
 
     this.checkDependencies(config, Dictionary.DIRECTION.REVERSE);
 
-    const isApproved = this.askForApprovement(config, this.getOption('auto-approve'));
+    const isApproved = await this.askForApprovement(config, this.getOption('auto-approve'));
 
     return isApproved ? [{
       actions: ['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'],

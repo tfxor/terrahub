@@ -27,8 +27,6 @@ class ProjectCommand extends ConfigCommand {
     const code = this.getProjectCode(name);
     const directory = path.resolve(this.getOption('directory'));
 
-    debugger;
-
     if (!isAwsNameValid(name)) {
       throw new Error('Name is not valid, only letters, numbers, hyphens, or underscores are allowed');
     }
@@ -39,15 +37,11 @@ class ProjectCommand extends ConfigCommand {
       throw new Error('Project code has collisions');
     }
 
-    debugger;
-
     const format = this.terrahubCfg.format === 'yaml' ? 'yml' : this.terrahubCfg.format;
     const srcFile = path.join(this.parameters.templates.config, 'project', `.terrahub.${format}.twig`);
     const outFile = path.join(directory, this.terrahubCfg.defaultFileName);
     const isProjectExisting = ConfigLoader.availableFormats
       .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
-
-    debugger;
 
     if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
       this.logger.warn(`Project already configured in ${directory} directory`);
@@ -66,8 +60,6 @@ class ProjectCommand extends ConfigCommand {
    * @private
    */
   async _isCodeValid(code) {
-    debugger;
-
     if (!this.terrahubCfg.token) {
       return Promise.resolve(true);
     }

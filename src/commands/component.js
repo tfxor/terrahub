@@ -30,7 +30,7 @@ class ComponentCommand extends ConfigCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     this._name = this.getOption('name');
     this._template = this.getOption('template');
     this._directory = this.getOption('directory');
@@ -39,7 +39,6 @@ class ComponentCommand extends ConfigCommand {
     this._delete = this.getOption('delete');
 
     const projectFormat = this.getProjectFormat();
-  debugger;
     this._appPath = this.getAppPath();
     this._srcFile = path.join(
       this.parameters.templates.config,
@@ -55,17 +54,8 @@ class ComponentCommand extends ConfigCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-  debugger;
 
     const config = this.getConfig();
-    console.dir(config, { depth: 10 });
-    const duplicatedNames = Util.getNonUniqueNames(this._name, config);
-
-    Object.keys(duplicatedNames).forEach(hash => {
-      throw new Error(`Terrahub component with provided name '${config[hash].name}'` +
-        ` already exists in '${duplicatedNames[hash]}' directory.`);
-    });
-
     const names = this._name;
 
     if (this._delete) {
@@ -76,26 +66,32 @@ class ComponentCommand extends ConfigCommand {
 
       printListAsTree(this.getConfig(), this.getProjectConfig().name);
 
-      return Util.yesNoQuestion('Do you want to perform delete action? (y/N) ').then(answer => {
-        if (!answer) {
-          return Promise.reject('Action aborted');
-        }
+      const answer = await Util.yesNoQuestion('Do you want to perform delete action? (y/N) ');
+      if (!answer) {
+        return Promise.reject('Action aborted');
+      }
 
-        return Promise.all(names.map(it => this._deleteComponent(it)))
-          .then(() => `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`);
-      });
+      await Promise.all(names.map(it => this._deleteComponent(it)));
+
+      return `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`;
     } else if (this._template) {
-      return Promise.all(names.map(it => this._createNewComponent(it))).then(data => {
-        if (data.some(it => !it)) {
-          return Promise.resolve();
-        }
+      const duplicatedNames = Util.getNonUniqueNames(this._name, config);
 
-        return Promise.resolve('Done');
+      Object.keys(duplicatedNames).forEach(hash => {
+        throw new Error(`Terrahub component with provided name '${config[hash].name}'` +
+          ` already exists in '${duplicatedNames[hash]}' directory.`);
       });
+
+      const data = await Promise.all(names.map(it => this._createNewComponent(it)));
+      if (data.some(it => !it)) {
+        return Promise.resolve();
+      }
+
+      return'Done';
     }
 
-
-    return Promise.all(names.map(it => this._addExistingComponent(it))).then(() => 'Done');
+    await Promise.all(names.map(it => this._addExistingComponent(it)));
+    return 'Done';
   }
 
   /**
@@ -115,64 +111,64 @@ class ComponentCommand extends ConfigCommand {
    * @return {Promise}
    * @private
    */
-  _addExistingComponent(name) {
+  async _addExistingComponent(name) {
     const directory = path.resolve(this._directory);
     const projectPath = this.getAppPath();
     const componentPath = this._configLoader.relativePath(process.cwd());
-    const terraform = new Terraform({ root: componentPath, project: { root: projectPath } });
+    const terraform = new Terraform({ root: componentPath, project: { root: projectPath } }, this.parameters);
 
-    return terraform.workspaceList()
-      .then(({ workspaces }) => {
-        workspaces.forEach(it => {
-          if (it !== 'default') {
-            const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
-            ConfigLoader.writeConfig({}, outFile);
-          }
-        });
+    const { workspaces } = await terraform.workspaceList();
 
-        return Promise.resolve();
-      }).catch(() => Promise.resolve())
-      .then(() => {
-        const existing = this._findExistingComponent();
-
-        if (!fse.pathExistsSync(directory)) {
-          throw new Error(`Couldn't create '${directory}' because path is invalid.`);
+    try {
+      workspaces.forEach(it => {
+        if (it !== 'default') {
+          const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
+          ConfigLoader.writeConfig({}, outFile);
         }
-
-        let outFile = path.join(directory, this._defaultFileName());
-        let componentData = { component: { name: name } };
-
-        componentData.component['dependsOn'] = this._dependsOn;
-
-        if (fse.pathExistsSync(outFile)) {
-          const config = ConfigLoader.readConfig(outFile);
-          if (config.project) {
-            throw new Error(`Configuring components in project's root is NOT allowed.`);
-          }
-        }
-
-        if (!this._force && fse.pathExistsSync(outFile)) {
-          this.logger.warn(`Component '${name}' already exists`);
-          return Promise.resolve();
-        }
-
-        if (existing.name) {
-          componentData.component = Util.extend(existing.config[existing.name], [componentData.component]);
-          delete existing.config[existing.name];
-
-          ConfigLoader.writeConfig(existing.config, existing.path);
-        }
-
-        this._createWorkspaceFiles(this._directory);
-
-        const templateName = this._configLoader.getDefaultFileName() + '.twig';
-        const specificConfigPath = path.join(path.dirname(this.parameters.templates.config), templateName);
-        const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
-
-        return Util.renderTwig(
-          this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile
-        ).then(() => 'Done');
       });
+    } catch (err) {
+      this.logger.warn(err);
+    }
+
+    const existing = this._findExistingComponent();
+
+    if (!fse.pathExistsSync(directory)) {
+      throw new Error(`Couldn't create '${directory}' because path is invalid.`);
+    }
+
+    let outFile = path.join(directory, this._defaultFileName());
+    let componentData = { component: { name: name } };
+
+    componentData.component['dependsOn'] = this._dependsOn;
+
+    if (fse.pathExistsSync(outFile)) {
+      const config = ConfigLoader.readConfig(outFile);
+      if (config.project) {
+        throw new Error(`Configuring components in project's root is NOT allowed.`);
+      }
+    }
+
+    if (!this._force && fse.pathExistsSync(outFile)) {
+      this.logger.warn(`Component '${name}' already exists`);
+      return Promise.resolve();
+    }
+
+    if (existing.name) {
+      componentData.component = Util.extend(existing.config[existing.name], [componentData.component]);
+      delete existing.config[existing.name];
+
+      ConfigLoader.writeConfig(existing.config, existing.path);
+    }
+
+    this._createWorkspaceFiles(this._directory);
+
+    const templateName = this._configLoader.getDefaultFileName() + '.twig';
+    const specificConfigPath = path.join(path.dirname(this.parameters.templates.config), templateName);
+    const data = fse.existsSync(specificConfigPath) ? fse.readFileSync(specificConfigPath) : '';
+
+    await Util.renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+
+    return 'Done';
   }
 
   /**
@@ -180,7 +176,7 @@ class ComponentCommand extends ConfigCommand {
    * @return {Promise}
    * @private
    */
-  _createNewComponent(name) {
+  async _createNewComponent(name) {
     const { code } = this.getProjectConfig();
     const directory = path.resolve(this._directory, name);
     const templatePath = this._getTemplatePath();
@@ -192,7 +188,7 @@ class ComponentCommand extends ConfigCommand {
 
     this._createWorkspaceFiles(directory);
 
-    return Promise.all(
+    await Promise.all(
       glob.sync('**', { cwd: templatePath, nodir: true, dot: false }).map(file => {
 
         const twigReg = /\.twig$/;
@@ -201,19 +197,20 @@ class ComponentCommand extends ConfigCommand {
         return twigReg.test(srcFile)
           ? Util.renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
-      })
-    ).then(() => {
-      const outFile = path.join(directory, this._defaultFileName());
-      const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-      let data = '';
-      if (fse.existsSync(specificConfigPath)) {
-        data = fse.readFileSync(specificConfigPath);
-      }
-      return Util.renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
-    }).then(() => {
-      const outFile = path.join(directory, this._defaultFileName());
-      return Util.renderTwig(outFile, { name: name, code: code }, outFile);
-    }).then(() => 'Done');
+      }));
+
+    const outFile = path.join(directory, this._defaultFileName());
+    const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
+    let data = '';
+
+    if (fse.existsSync(specificConfigPath)) {
+      data = fse.readFileSync(specificConfigPath);
+    }
+
+    await Util.renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+    await Util.renderTwig(outFile, { name: name, code: code }, outFile);
+
+    return 'Done';
   }
 
   /**

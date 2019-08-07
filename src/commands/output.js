@@ -2,7 +2,6 @@
 
 const { yesNoQuestion } = require('../helpers/util');
 const DistributedCommand = require('../distributed-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
 
 class OutputCommand extends DistributedCommand {
   /**

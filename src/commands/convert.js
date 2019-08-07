@@ -26,23 +26,23 @@ class ConvertCommand extends DistributedCommand {
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const format = this.getOption('to');
     ConvertCommand._validateFormat(format);
 
     const config = this.getFilteredConfig();
 
-    return this.askForApprovement(
+    const answer = await this.askForApprovement(
       config,
       this.getOption('auto-approve'),
-      `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `
-    ).then(answer => {
-      if (!answer) {
-        return Promise.reject('Action aborted');
-      }
+      `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `);
+    if (!answer) {
+      return Promise.reject('Action aborted');
+    }
 
-      return Promise.all(Object.keys(config).map(hash => this._convertComponent(config[hash], format)));
-    }).then(() => 'Done');
+    await Promise.all(Object.keys(config).map(hash => this._convertComponent(config[hash], format)));
+
+    return 'Done';
   }
 
   /**
@@ -101,22 +101,21 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toJsonFromYaml(cfg) {   
-    return this._initTemplateFromConfig(cfg).then(() => {
-      const templatePath = ConvertCommand._buildComponentPath(cfg);
-      const componentPath = buildTmpPath(cfg);
-      return fse.readdir(componentPath)
-        .then(files => {
-          const promises = this._hclToJson(files, componentPath, templatePath);
-  
-          return Promise.all(promises).then(() => {
-            return this._deteleTemplateFromConfig(cfg);
-          });
-        })
-      .catch(err => {
-        throw new Error(err.toString());
-      });
-    });
+  async _toJsonFromYaml(cfg) {
+    await this._initTemplateFromConfig(cfg);
+    const templatePath = ConvertCommand._buildComponentPath(cfg);
+    const componentPath = buildTmpPath(cfg);
+
+    try {
+      const files = await fse.readdir(componentPath);
+      const promises = this._hclToJson(files, componentPath, templatePath);
+
+      await Promise.all(promises);
+
+      return this._deteleTemplateFromConfig(cfg);
+    } catch (err) {
+      throw new Error(err.toString());
+    }
   }
 
   /**
@@ -124,17 +123,17 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toJsonFromHcl(cfg) {
+  async _toJsonFromHcl(cfg) {
     const scriptPath = ConvertCommand._buildComponentPath(cfg);
-    return fse.readdir(scriptPath)
-      .then(files => {
-        const promises = this._hclToJson(files, scriptPath, scriptPath);
 
-        return Promise.all(promises);
-      })
-    .catch(err => {
+    try {
+      const files = await fse.readdir(scriptPath);
+      const promises = this._hclToJson(files, scriptPath, scriptPath);
+
+      await Promise.all(promises);
+    } catch (err) {
       throw new Error(err.toString());
-    });
+    }
   }
 
   /**
@@ -144,15 +143,14 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _hclToJson(files, terraformPath, scriptPath) {
+  async _hclToJson(files, terraformPath, scriptPath) {
     const regEx = /.*(tf|tfvars)$/;
     const scriptFiles = files.filter(src => regEx.test(src));
-    const promises = scriptFiles.map(file => {
-      return fse.readFile(join(terraformPath, file))
-        .then(dataBuffer => {
-          const jsonContent = hcltojson(dataBuffer.toString());
-          return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
-        });
+    const promises = scriptFiles.map(async file => {
+      const dataBuffer = await fse.readFile(join(terraformPath, file));
+      const jsonContent = hcltojson(dataBuffer.toString());
+
+      return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
     });
     return promises;
   }
@@ -162,27 +160,26 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toHCLFromYaml(cfg) {
-    return this._initTemplateFromConfig(cfg).then(() => {
-      const templatePath = ConvertCommand._buildComponentPath(cfg);
-      const regEx = /.*(tf|tfvars)$/;
-      const componentPath = buildTmpPath(cfg);
-      return fse.readdir(componentPath)
-        .then(files => {
-          const terraformFiles = files.filter(src => regEx.test(src));
-  
-          const promises = terraformFiles.map(file => {
-            return fse.copySync(join(componentPath, file), join(templatePath, file));
-          });
-  
-          return Promise.all(promises).then(() => {
-            return this._deteleTemplateFromConfig(cfg);
-          });
-        })
-      .catch(err => {
-        throw new Error(err.toString());
+  async _toHCLFromYaml(cfg) {
+    await this._initTemplateFromConfig(cfg);
+    const templatePath = ConvertCommand._buildComponentPath(cfg);
+    const regEx = /.*(tf|tfvars)$/;
+    const componentPath = buildTmpPath(cfg);
+
+    try {
+      const files = await fse.readdir(componentPath);
+      const terraformFiles = files.filter(src => regEx.test(src));
+
+      const promises = terraformFiles.map(file => {
+        return fse.copySync(join(componentPath, file), join(templatePath, file));
       });
-    });
+
+      await Promise.all(promises);
+
+      return this._deteleTemplateFromConfig(cfg);
+    } catch (err) {
+      throw new Error(err.toString());
+    }
   }
 
   /**
@@ -199,12 +196,13 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toYamlFromHcl(cfg) {
+  async _toYamlFromHcl(cfg) {
     const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), this.config.defaultFileName);
     const rawConfig = ConfigLoader.readConfig(componentConfigPath);
 
     if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
-      return ConvertCommand._revertComponent(cfg).then(() => { this.logSuccess(cfg.name, 'YML'); });
+      await ConvertCommand._revertComponent(cfg);
+      this.logSuccess(cfg.name, 'YML');
     }
 
     return Promise.resolve();
@@ -215,30 +213,27 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toHCLFromJson(cfg) {
+  async _toHCLFromJson(cfg) {
     const scriptPath = ConvertCommand._buildComponentPath(cfg);
-    return fse.readdir(scriptPath)
-      .then(files => {
-        const regEx = /.*(tf|tfvars)$/;
-        const scriptFiles = files.filter(src => regEx.test(src));
-        const promises = scriptFiles.map(file => {
-          return fse.readFile(join(scriptPath, file))
-            .then(dataBuffer => {
-              console.log(dataBuffer);
-              return Promise.resolve();
-              // return convertJsonToHcl(join(scriptPath, file), dataBuffer.toString(), checkTfVersion(cfg));
-            });
-        });
-        return Promise.all(promises);
-      })
-    .catch(err => {
+    try {
+      const files = await fse.readdir(scriptPath);
+      const regEx = /.*(tf|tfvars)$/;
+      const scriptFiles = files.filter(src => regEx.test(src));
+      const promises = scriptFiles.map(async file => {
+        const dataBuffer = await fse.readFile(join(scriptPath, file));
+        console.log(dataBuffer);
+        return Promise.resolve();
+        // return convertJsonToHcl(join(scriptPath, file), dataBuffer.toString(), checkTfVersion(cfg));
+      });
+      await Promise.all(promises);
+    } catch (err) {
       throw new Error(err.toString());
-    });
+    }
   }
 
   /**
-   * 
-   * @param {Object} cfg 
+   *
+   * @param {Object} cfg
    * @return {Promise}
    * @private
    */
@@ -251,15 +246,15 @@ class ConvertCommand extends DistributedCommand {
   }
 
   /**
-   * 
-   * @param {Object} cfg 
+   *
+   * @param {Object} cfg
    * @return {Promise}
    * @private
    */
   _initTemplateFromConfig(cfg) {
     const { name } = cfg;
     const Command = require(join(this.commandsPath, 'init'));
-    const args = { i: `${name}`};
+    const args = { i: `${name}` };
     const configureCommand = new Command(args, logger);
     return configureCommand.run();
   }
@@ -395,7 +390,7 @@ class ConvertCommand extends DistributedCommand {
     if (arch.indexOf("windows") > -1)
       extension = '.exe';
 
-    return exec(`${join(componentBinPath,  `component${extension}`)} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, `component${extension}`)} -json ${buildTmpPath(config)} ${configPath} ${config.name}`);
   }
 
   /**
