@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const Fetch = require('./fetch');
 const { prepareCredentialsFile, createCredentialsFile } = require('./util');
 
 class S3Helper {
@@ -39,14 +40,15 @@ class S3Helper {
    * @param {String} bucketName
    * @param {String} objectKey
    * @param {Object} config
+   * @param {Object} parameters
    * @returns {Promise}
    */
-  getObject(bucketName, objectKey, config) {
+  getObject(bucketName, objectKey, config, parameters) {
     if (!process.env.THUB_TOKEN_IS_VALID.length) {
       return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
     }
 
-    return this._retriveCredsForTfVars(config).then(credsPath => {
+    return this._retriveCredsForTfVars(config, parameters).then(credsPath => {
       if (credsPath) {
         ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
           .forEach(it => delete process.env[it]);
@@ -62,30 +64,33 @@ class S3Helper {
 
   /**
    * @param {Object} [config]
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
-  _retriveCredsForTfVars(config) {
+  _retriveCredsForTfVars(config, parameters) {
     if (!config) {
       return Promise.resolve();
     }
     const { tfvarsAccount } = config.terraform;
 
-    return this._findCloudAccount(tfvarsAccount, config);
+    return this._findCloudAccount(tfvarsAccount, config, parameters);
   }
 
   /**
    * @param {String} tfvarsAccount
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
-  async _findCloudAccount(tfvarsAccount, config) {
+  async _findCloudAccount(tfvarsAccount, config, parameters) {
     if (!tfvarsAccount) {
       return Promise.resolve();
     }
 
-    const cloudAccounts = await this._retrieveCloudAccounts(config);
+    const cloudAccounts = await this._retrieveCloudAccounts(config, parameters);
+    console.log('CloudAccounts', cloudAccounts);
     const accountData = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
 
     if (!accountData) {
@@ -101,9 +106,16 @@ class S3Helper {
     return Promise.resolve(credsPath);
   }
 
-  async _retrieveCloudAccounts(config) {
+  /**
+   * @param {Object} config
+   * @param {Object} parameters
+   * @return {Promise}
+   * @private
+   */
+  async _retrieveCloudAccounts(config, parameters) {
     if (!this._cloudAccounts) {
-      const result = await fetch.get(`https://${config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      const fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
+      const result = await fetch.get(`https://${parameters.config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
       this._cloudAccounts = result.data;
     }
 

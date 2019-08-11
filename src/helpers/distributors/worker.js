@@ -73,4 +73,4 @@ function run(config, parameters) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'default' ? run(msg.data, msg.parameters, msg.fetch) : null);
+process.on('message', msg => msg.workerType === 'default' ? run(msg.data, msg.parameters) : null);

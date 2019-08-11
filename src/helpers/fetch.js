@@ -40,6 +40,8 @@ class Fetch {
       headers: this._getHeaders()
     };
 
+    console.log('POST :',defaults, opts);
+
     return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
       .then(this._handleResponse).catch(this._handleError);
   }
@@ -73,11 +75,13 @@ class Fetch {
   _handleResponse(result) {
     return result.json().then(json => {
 
-      fs.appendFileSync('/Users/andreyluchianic/Documents/log.txt', JSON.stringify({
+      // fs.appendFileSync('/Users/andreyluchianic/Documents/log.txt', JSON.stringify({
+      console.log({
         url: result.url,
         status: result.status,
         body: json
-      }, null, 2));
+      });
+      // }, null, 2));
 
       let error;
       switch (result.status) {

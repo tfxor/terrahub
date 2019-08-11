@@ -3,6 +3,7 @@
 const path = require('path');
 const logger = require('../logger');
 const Terraform = require('./terraform');
+const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const ConfigLoader = require('../../config-loader');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
@@ -63,7 +64,7 @@ class AbstractTerrahub {
       if (options.skip) {
 
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          .then(res => this._sendLogsToApi('update',  res))
+          .then(res => this._sendLogsToApi('update', res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
@@ -224,7 +225,7 @@ class AbstractTerrahub {
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => this._sendLogsToApi('update',  res))
+      .then(res => this._sendLogsToApi('update', res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -257,7 +258,12 @@ class AbstractTerrahub {
    * @private
    */
   _sendLogsToApi(status, ...args) {
-    process.send({ type: 'workflow', workerLogger: true, options: {...this._workflowOptions, status }});
+    if (this.parameters.isCloud) {
+      ApiHelper.init(this.parameters);
+      ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
+    } else {
+      process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+    }
 
     return Promise.resolve(...args);
   }

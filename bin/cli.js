@@ -42,7 +42,8 @@ function commandCreate(logger = console) {
   const Command = require(path.join(parameters.commandsPath, command));
   const _Command = new Command(parameters, logger);
 
-  return new AwsDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
+  // return new LocalDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
+  return parameters.args.cloud ? new AwsDistributor(_Command) : new LocalDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
 }
 
 /**
@@ -52,7 +53,7 @@ function commandCreate(logger = console) {
 async function syncExitProcess(code) {
   await ApiHelper.promisesForSyncExit();
   await ApiHelper.sendLogToS3();
-  await ApiHelper.deleteTempFolder();
+  // await ApiHelper.deleteTempFolder();
 
   return process.exit(code);
 }

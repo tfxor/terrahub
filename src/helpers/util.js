@@ -428,6 +428,22 @@ class Util {
 
     return credsPath;
   }
+
+  /**
+   * @return {String}
+   */
+  static get lambdaHomedir() {
+    return '/tmp';
+  }
+
+  /**
+   * Get terrahub home path in lambda
+   * @param {String} suffix
+   * @returns {*}
+   */
+  static homePathLambda(...suffix) {
+    return path.join(Util.lambdaHomedir, '.terrahub', ...suffix);
+  }
 }
 
 module.exports = Util;

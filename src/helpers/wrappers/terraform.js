@@ -11,7 +11,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const { execSync } = require('child_process');
-const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile } = require('../util');
+const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda } = require('../util');
 
 class Terraform {
   /**
@@ -69,7 +69,7 @@ class Terraform {
    * @return {String}
    */
   getBinary() {
-    return homePath('terraform', this.getVersion(), 'terraform');
+    return this.parameters.isCloud ? homePathLambda('terraform', this.getVersion(), 'terraform') : homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -96,7 +96,7 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (!process.env.THUB_TOKEN_IS_VALID || !process.env.THUB_TOKEN_IS_VALID.length) {
+    if (!this.parameters.isCloud && (!process.env.THUB_TOKEN_IS_VALID || !process.env.THUB_TOKEN_IS_VALID.length)) {
       return Promise.resolve();
     }
 
@@ -131,7 +131,8 @@ class Terraform {
               .forEach(it => delete this._envVars[it]);
 
             Object.assign(this._envVars,
-              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud') });
+              // credentials);
+              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud), AWS_PROFILE: 'default' });
             break;
           case 'backendAccount':
             Object.assign(this._tf.backend,
@@ -168,6 +169,7 @@ class Terraform {
    * @return {Promise}
    */
   prepare() {
+    console.log('prepare start');
     logger.debug(JSON.stringify(this._config, null, 2));
 
     return this._checkTerraformBinary()
@@ -192,11 +194,14 @@ class Terraform {
    * @return {Promise}
    */
   _checkTerraformBinary() {
+    console.log('checkBinary');
     if (fs.existsSync(this.getBinary())) {
       return Promise.resolve();
     }
 
-    return (new Downloader()).download(this.getVersion());
+    console.log('DownloadBinary');
+
+    return (new Downloader()).download(this.getVersion(), this.parameters.isCloud);
   }
 
   /**

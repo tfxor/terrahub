@@ -25,8 +25,6 @@ class Distributor {
 
     const result = await this.command.run();
 
-    console.log(result, typeof result);
-
     if (!result) { //todo refactor !
       return Promise.resolve();
     }

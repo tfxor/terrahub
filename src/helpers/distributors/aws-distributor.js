@@ -6,6 +6,7 @@ const S3Helper = require('../s3-helper');
 const { globPromise } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 const Distributor = require('./distributor');
+const Util = require('../util');
 
 class AwsDistributor extends Distributor {
 
@@ -72,6 +73,9 @@ class AwsDistributor extends Distributor {
            */
           const _callLambdaExecutor = hash => {
             const config = this.projectConfig[hash];
+
+            this.parameters.jitPath = this.parameters.jitPath.replace('/cache', Util.lambdaHomedir);
+            this.parameters.isCloud = true;
 
             const body = JSON.stringify({
               actions: actions,
