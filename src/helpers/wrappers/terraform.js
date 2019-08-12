@@ -136,7 +136,7 @@ class Terraform {
             break;
           case 'backendAccount':
             Object.assign(this._tf.backend,
-              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend') });
+              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend', this.parameters.isCloud) });
             break;
         }
       });

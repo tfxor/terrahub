@@ -29,48 +29,39 @@ class JitHelper {
     const { template } = transformedConfig;
 
     return Promise.resolve().then(() => {
-      console.log('_moduleSourceRefactoring');
       return JitHelper._moduleSourceRefactoring(template)
     })
       .then(() => {
         // add "tfvars" if it is not described in config
-        console.log('_extractOnlyLocalTfvarsLinks');
         const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
         if (localTfvarsLinks.length > 0) {
           return JitHelper._addLocalTfvars(config, localTfvarsLinks);
         }
       }).then(() => {
         // add "tfvars" if it is not described in config
-        console.log('_extractOnlyRemoteTfvarsLinks');
         const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
         if (remoteTfvarsLinks.length > 0) {
           return JitHelper._addTfvars(config, remoteTfvarsLinks, parameters);
         }
       }).then(() => {
-        console.log('_normalizeProvidersForResource');
         return JitHelper._normalizeProvidersForResource(config)
       })
       .then(() => {
-        console.log('_normalizeProvidersForData');
         return JitHelper._normalizeProvidersForData(config)
       })
       .then(() => {
-        console.log('_normalizeTfvars');
         return JitHelper._normalizeTfvars(config)
       })
       .then(() => {
-        console.log('_createTerraformFiles');
         return JitHelper._createTerraformFiles(config, parameters)
       })
       .then(() => {
-        console.log('_generateVariable :', template.hasOwnProperty('tfvars'));
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
           return JitHelper._generateVariable(config, parameters);
         }
       })
       .then(() => {
-        console.log('_symLinkNonTerraHubFiles');
         return parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters)
       })
       .then(() => config);
@@ -631,7 +622,6 @@ class JitHelper {
   static _createTerraformFiles(config, parameters) {
     const { template, cfgEnv } = config;
     const tmpPath = JitHelper.buildTmpPath(config, parameters); // /tmp/jit/${config.name}_${config.project.code}
-    console.log('tmpPath :', tmpPath);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -689,14 +679,9 @@ class JitHelper {
     const tmpPath = JitHelper.buildTmpPath(config, parameters);
     const src = join(config.project.root, config.root);
 
-    console.log('SymLink :', tmpPath, src);
-
     return fse.ensureDir(tmpPath)
       .then(() => fse.readdir(src))
       .then(files => {
-
-        console.log(files);
-
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
         const promises = nonTerrahubFiles.map(file =>

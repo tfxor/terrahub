@@ -412,12 +412,13 @@ class Util {
 
   /**
    * Creates AWS credentials file in temp directory
-   * @param credentials
-   * @param config
-   * @param prefix
+   * @param {String} credentials
+   * @param {Object} config
+   * @param {String} prefix
+   * @param {Boolean} isCloud
    * @return {String}
    */
-  static createCredentialsFile(credentials, config, prefix) {
+  static createCredentialsFile(credentials, config, prefix, isCloud = false) {
     const tmpPath = Util.homePath('temp', config.project.code, config.name);
 
     fse.ensureDirSync(tmpPath);

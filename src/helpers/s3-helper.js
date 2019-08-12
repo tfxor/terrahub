@@ -90,7 +90,6 @@ class S3Helper {
     }
 
     const cloudAccounts = await this._retrieveCloudAccounts(config, parameters);
-    console.log('CloudAccounts', cloudAccounts);
     const accountData = cloudAccounts.aws && cloudAccounts.aws.find(it => it.name === tfvarsAccount);
 
     if (!accountData) {
@@ -101,7 +100,7 @@ class S3Helper {
       ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
     const credentials = prepareCredentialsFile({ accountData, sourceProfile, tfvars: true });
-    const credsPath = createCredentialsFile(credentials, config, 'tfvars');
+    const credsPath = createCredentialsFile(credentials, config, 'tfvars', parameters.isCloud);
 
     return Promise.resolve(credsPath);
   }
