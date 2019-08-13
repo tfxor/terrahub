@@ -11,9 +11,6 @@ const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
 
-const AwsDistributor = require('../src/helpers/distributors/aws-distributor');
-const LocalDistributor = require('../src/helpers/distributors/local-distributor');
-
 /**
  * Validate node version
  */
@@ -37,13 +34,12 @@ function commandCreate(logger = console) {
 
     const helpCommand = new HelpCommand(parameters, logger);
 
-    return new LocalDistributor(helpCommand);
+    return HelpParser.getDistributor(false, helpCommand);
   }
   const Command = require(path.join(parameters.commandsPath, command));
   const _Command = new Command(parameters, logger);
 
-  // return new LocalDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
-  return parameters.args.cloud ? new AwsDistributor(_Command) : new LocalDistributor(_Command); //todo DistributorDispatcher (Local/AWS/Azure)
+  return HelpParser.getDistributor(parameters.args, _Command);
 }
 
 /**
@@ -53,7 +49,7 @@ function commandCreate(logger = console) {
 async function syncExitProcess(code) {
   await ApiHelper.promisesForSyncExit();
   await ApiHelper.sendLogToS3();
-  // await ApiHelper.deleteTempFolder();
+  await ApiHelper.deleteTempFolder();
 
   return process.exit(code);
 }
@@ -71,7 +67,7 @@ try {
   try {
     ApiHelper.init(parameters);
 
-    const result = await command.runCommand();
+    const result = await command.run();
     const message = Array.isArray(result) ? result.toString() : result;
 
     if (message) {

@@ -19,7 +19,7 @@ class Distributor {
   /**
    * @return {Promise}
    */
-  async runCommand() {
+  async run() {
     await this.command.validate();
     await this.sendLogsToApi();
 

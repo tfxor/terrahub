@@ -5,7 +5,10 @@ const path = require('path');
 const fs = require('fs-extra');
 const logger = require('./logger');
 const exec = require('child-process-promise').exec;
+const AwsDitributor = require('./distributors/aws-distributor');
+const LocalDistributor = require('./distributors/local-distributor');
 const { commandsPath, templates, packageJson } = require('../parameters');
+
 
 class HelpParser {
   /**
@@ -111,6 +114,10 @@ class HelpParser {
       .catch(err => {
         throw new Error(`Failed to update AWS regions: ${err.message || err}`);
       });
+  }
+
+  static getDistributor(args, command) {
+    return args && args.cloud ? new AwsDitributor(command) : new LocalDistributor(command);
   }
 
   /**
