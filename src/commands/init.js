@@ -1,7 +1,6 @@
 'use strict';
 
 const DistributedCommand = require('../distributed-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
 
 class InitCommand extends DistributedCommand {
   /**

@@ -8,6 +8,7 @@ const ConfigLoader = require('../config-loader');
 const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
+const LocalDistributor = require('../helpers/distributors/local-distributor');
 const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
 
 class ConvertCommand extends DistributedCommand {
@@ -239,10 +240,12 @@ class ConvertCommand extends DistributedCommand {
    */
   _deteleTemplateFromConfig(cfg) {
     const { name } = cfg;
-    const Command = require(join(this.commandsPath, 'configure'));
-    const args = { i: `${name}`, c: 'component.template', D: true, y: true };
-    const configureCommand = new Command(args, logger);
-    return configureCommand.run();
+    const Command = require(join(this.parameters.commandsPath, 'configure'));
+    const parameters = Object.assign(this.parameters,
+      { args: { i: `${name}`, c: 'component.template', D: true, y: true } });
+
+    const configureCommand = new Command(parameters, logger);
+    return new LocalDistributor(configureCommand).run();
   }
 
   /**
@@ -253,10 +256,11 @@ class ConvertCommand extends DistributedCommand {
    */
   _initTemplateFromConfig(cfg) {
     const { name } = cfg;
-    const Command = require(join(this.commandsPath, 'init'));
-    const args = { i: `${name}` };
-    const configureCommand = new Command(args, logger);
-    return configureCommand.run();
+    const Command = require(join(this.parameters.commandsPath, 'init'));
+    const parameters = Object.assign(this.parameters, { args: { i: `${name}` } });
+
+    const configureCommand = new Command(parameters, logger);
+    return new LocalDistributor(configureCommand).run();
   }
 
   /**

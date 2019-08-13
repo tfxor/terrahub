@@ -36,7 +36,6 @@ class Metadata {
    * @return {String}
    */
   getRoot() {
-    console.log('Metadata getting Root');
     return this._cfg.isJit ? buildTmpPath(this._cfg, this._parameters) : path.join(this._cfg.project.root, this._cfg.root);
   }
 

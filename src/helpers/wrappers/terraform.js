@@ -169,7 +169,6 @@ class Terraform {
    * @return {Promise}
    */
   prepare() {
-    console.log('prepare start');
     logger.debug(JSON.stringify(this._config, null, 2));
 
     return this._checkTerraformBinary()
@@ -194,12 +193,9 @@ class Terraform {
    * @return {Promise}
    */
   _checkTerraformBinary() {
-    console.log('checkBinary');
     if (fs.existsSync(this.getBinary())) {
       return Promise.resolve();
     }
-
-    console.log('DownloadBinary');
 
     return (new Downloader()).download(this.getVersion(), this.parameters.isCloud);
   }
