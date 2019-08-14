@@ -214,8 +214,6 @@ class ConvertCommand extends TerraformCommand {
               const fileName = file.split('.');
               const key = fileName[0];
               jsonContent.component.template[key] = {key: hcltojson(dataBuffer.toString())};
-              console.log('99999999999999999999999999999999999');
-              console.log(jsonContent);
               return Promise.resolve();
               // return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
             });
