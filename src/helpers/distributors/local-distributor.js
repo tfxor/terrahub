@@ -13,13 +13,12 @@ class LocalDistributor extends Distributor {
    */
   constructor(command) {
     super(command);
-    this._terrahubCfg = command.parameters;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._loggerWorkerCount = 0;
     this._loggerLastLog = {};
-    this._threadsCount = this._terrahubCfg.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this._terrahubCfg);
+    this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
 
     if (ApiHelper.tokenIsValid) {
       this._createLoggerWorker();
@@ -46,7 +45,7 @@ class LocalDistributor extends Distributor {
     delete this._dependencyTable[hash];
 
     this._workersCount++;
-    worker.send({ workerType: 'default', data: cfgThread, parameters: this._terrahubCfg });
+    worker.send({ workerType: 'default', data: cfgThread, parameters: this.parameters });
   }
 
   _createLoggerWorker() {
@@ -58,7 +57,7 @@ class LocalDistributor extends Distributor {
 
     this._loggerWorkerCount++;
 
-    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend(), parameters: this._terrahubCfg });
+    this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend(), parameters: this.parameters });
   }
 
   /**

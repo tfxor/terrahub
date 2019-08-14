@@ -1,12 +1,13 @@
 'use strict';
 
 const fse = require('fs-extra');
-const { join } =require('path');
+const Util = require('../util');
+const { join } = require('path');
 const S3Helper = require('../s3-helper');
 const { globPromise } = require('../util');
-const { defaultIgnorePatterns } = require('../../config-loader');
+const ApiHelper = require('../api-helper');
 const Distributor = require('./distributor');
-const Util = require('../util');
+const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor extends Distributor {
 
@@ -15,7 +16,7 @@ class AwsDistributor extends Distributor {
    */
   constructor(command) {
     super(command);
-    this.parameters = command.parameters;
+    this.parameters.isCloud = true;
     this.config = this.parameters.config;
     this.fetch = this.parameters.fetch;
 
@@ -28,10 +29,12 @@ class AwsDistributor extends Distributor {
    * @return {Promise}
    * @override
    */
-  runActions(actions, { dependencyDirection = null } = {}) {
+  async runActions(actions, { dependencyDirection = null } = {}) {
+    await this._validateRequirements();
+
     let inProgress = 0;
 
-    const s3Helper = new S3Helper();
+    const s3Helper = new S3Helper(); //todo creds for deploy in S3
     const s3directory = this.config.api.replace('api', 'projects');
 
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
@@ -39,7 +42,7 @@ class AwsDistributor extends Distributor {
     return Promise.all([this._fetchAccountId(), this._buildFileList()])
       .then(([accountId, files]) => {
         this.logger.warn('Uploading project to S3.');
-        debugger;
+      debugger;
         const s3Prefix = [s3directory, accountId, this.runId].join('/');
         const pathMap = files.map(it => ({
           localPath: join(this._projectRoot, it),
@@ -50,7 +53,7 @@ class AwsDistributor extends Distributor {
       })
       .then(() => {
         this.logger.warn('Directory uploaded to S3.');
-        debugger;
+      debugger;
         return new Promise((resolve, reject) => {
           /**
            * @private
@@ -75,7 +78,6 @@ class AwsDistributor extends Distributor {
             const config = this.projectConfig[hash];
 
             this.parameters.jitPath = this.parameters.jitPath.replace('/cache', Util.lambdaHomedir);
-            this.parameters.isCloud = true;
 
             const body = JSON.stringify({
               actions: actions,
@@ -84,7 +86,6 @@ class AwsDistributor extends Distributor {
               parameters: this.parameters
             });
 
-            console.log({ body });
             inProgress++;
 
             this.logger.warn(`[${config.name}] Deploy started!`);
@@ -118,6 +119,39 @@ class AwsDistributor extends Distributor {
       });
   }
 
+
+  async _validateRequirements() {
+    if (!this.config.logs) {
+      throw new Error('Please enable logging in `.terrahub.json`.');
+    }
+
+    const errors = Object.keys(this.projectConfig).filter(hash => {
+      const { cloudAccount, backendAccount } = this.projectConfig[hash].terraform;
+
+      return !cloudAccount && !backendAccount;
+    });
+
+    if (errors.length) {
+      const errorMessage = `'${errors.map(it => this.projectConfig[it].name).join('\' ,\'')}' do not have` +
+        ` CloudAccount and/or BackendAccount in config.`;
+
+      throw new Error(errorMessage);
+    }
+
+    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    const accountErrors = Object.keys(this.projectConfig).filter(hash => {
+      const { cloudAccount } = this.projectConfig[hash].terraform;
+
+      return !cloudAccounts.aws.some(it => it.name === cloudAccount);
+    });
+
+    if (accountErrors.length) {
+      const errorMessage = `'${accountErrors.map(it => this.projectConfig[it].name).join('\', \'')}' do not have` +
+        ` valid account in config.`;
+
+      throw new Error(errorMessage);
+    }
+  }
 
   /**
    * @description Returns the current execution file mapping

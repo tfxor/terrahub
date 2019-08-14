@@ -16,37 +16,27 @@ class AwsDeployer {
   /**
    * Preparation
    */
-  prepare() {
-    // this.s3fs = new Helper.S3fs();
-  }
+  prepare() {}
 
   /**
    * @param {Object} requestData
    * @return {Promise}
    */
-  async execute(requestData) {
-    console.log('RequestData: ', requestData);
+  async deploy(requestData) {
     const { config, thubRunId, actions, parameters } = requestData;
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     config.project.root = AwsDeployer._projectDirectory;
-
     const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
-    console.log('s3 :', s3Prefix);
 
-    return this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping)
-      .then(() => JitHelper.jitMiddleware(config, parameters))
-      .then(cfg => {
-        console.log('config :', cfg);
-        return this._runActions(actions, cfg, thubRunId, parameters).then(() => {
-          return cfg.isJit ?
-            fse.remove(JitHelper.buildTmpPath(cfg, parameters)) :
-            Promise.resolve();
-        });
-      })
-      .then(() => Promise.resolve({
-        message: `Component '${config.name}' has been successfully deployed.`,
-        data: {}
-      }));
+    await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
+    const cfg = await JitHelper.jitMiddleware(config, parameters);
+    await this._runActions(actions, cfg, thubRunId, parameters);
+    await cfg.isJit ? fse.remove(JitHelper.buildTmpPath(cfg, parameters)) : Promise.resolve();
+
+    return {
+      message: `Component '${config.name}' has been successfully deployed.`,
+      data: {}
+    }
   }
 
   /**
@@ -57,9 +47,7 @@ class AwsDeployer {
    * @return {Promise}
    * @private
    */
-  _runActions(actions, config, thubRunId, parameters) {
-    // const terrahub = new LambdaTerrahub(config, thubRunId, this.getAccountId(), this.db);
-
+  async _runActions(actions, config, thubRunId, parameters) {
     const terrahub = new Terrahub(config, thubRunId, parameters);
 
     const tasks = actions.map(action =>

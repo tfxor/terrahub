@@ -100,6 +100,10 @@ class Terraform {
       return Promise.resolve();
     }
 
+    if (this.parameters.isCloud) {
+      this._deleteDefaultEnvCreds(this._envVars);
+    }
+
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
 
     if (!accounts.length) {
@@ -127,11 +131,9 @@ class Terraform {
 
         switch (type) {
           case 'cloudAccount':
-            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-              .forEach(it => delete this._envVars[it]);
+            this._deleteDefaultEnvCreds(this._envVars);
 
             Object.assign(this._envVars,
-              // credentials);
               { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud), AWS_PROFILE: 'default' });
             break;
           case 'backendAccount':
@@ -507,6 +509,16 @@ class Terraform {
     }
 
     return `[${this.getName()}] ${stdout}`;
+  }
+
+  /**
+   * @param {Object} envVars
+   * @return {Object}
+   * @private
+   */
+  _deleteDefaultEnvCreds(envVars) {
+    return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
+      .forEach(it => delete envVars[it]);
   }
 
   /**

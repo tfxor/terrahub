@@ -419,7 +419,9 @@ class Util {
    * @return {String}
    */
   static createCredentialsFile(credentials, config, prefix, isCloud = false) {
-    const tmpPath = Util.homePath('temp', config.project.code, config.name);
+    const tmpPath = isCloud
+      ? Util.homePathLambda(config.project.code, config.name)
+      : Util.homePath('temp', config.project.code, config.name);
 
     fse.ensureDirSync(tmpPath);
 

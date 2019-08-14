@@ -13,6 +13,8 @@ class Distributor {
     this.command = command;
     this.runId = command._runId;
     this.logger = command.logger;
+    this.parameters = command.parameters;
+    this.parameters.isCloud = false;
     this.tokenIsValid = command._tokenIsValid; //@todo - undefined
   }
 
@@ -54,7 +56,7 @@ class Distributor {
         }
       }
     } catch (err) {
-      console.error(err);
+      throw new Error(err.message || err);
     }
 
     await ApiHelper.sendMainWorkflow({ status: 'update' });
