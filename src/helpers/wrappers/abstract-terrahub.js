@@ -58,15 +58,10 @@ class AbstractTerrahub {
 
       if (options.skip) {
         return this.on({ status: Dictionary.REALTIME.SKIP })
-          .then(res => this._sendLogsToApi('update',  res))
+          .then(res => this._sendLogsToApi('update', res))
           .then(res => {
-            const destroyActions = ['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'];
-            const applyActions = ['prepare', 'workspaceSelect', 'plan', 'apply'];
-
-            if (process.env.TERRAFORM_ACTIONS !== destroyActions.join(',') && process.env.TERRAFORM_ACTIONS !== applyActions.join(',')) {
-              logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
-                `'No changes. Infrastructure is up-to-date.'`);
-            }
+            logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
+              `'No changes. Infrastructure is up-to-date.'`);
 
             return res;
           });
@@ -225,7 +220,7 @@ class AbstractTerrahub {
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
-      .then(res => this._sendLogsToApi('update',  res))
+      .then(res => this._sendLogsToApi('update', res))
       .then(res => this._hook('after', res))
       .then(data => this.on(data))
       .catch(err => this.on({ status: Dictionary.REALTIME.ERROR }, err));
@@ -258,7 +253,7 @@ class AbstractTerrahub {
    * @private
    */
   _sendLogsToApi(status, ...args) {
-    process.send({ type: 'workflow', workerLogger: true, options: {...this._workflowOptions, status }});
+    process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
 
     return Promise.resolve(...args);
   }
