@@ -43,6 +43,10 @@ class S3Helper {
    * @returns {Promise}
    */
   getObject(bucketName, objectKey, config) {
+    if (!process.env.THUB_TOKEN_IS_VALID.length) {
+      return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
+    }
+
     return this._retriveCredsForTfVars(config).then(credsPath => {
       if (credsPath) {
         ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
