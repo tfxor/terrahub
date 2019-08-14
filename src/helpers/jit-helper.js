@@ -19,10 +19,6 @@ class JitHelper {
    * @return {Promise}
    */
   static jitMiddleware(config) {
-    if (process.env.THUB_TOKEN_IS_VALID.length) {
-      console.log('test');
-    }
-    process.exit();
     const transformedConfig = JitHelper._transformConfig(config);
 
     if (!transformedConfig.isJit) {
