@@ -64,7 +64,7 @@ class WorkspaceCommand extends DistributedCommand {
       if (!fs.existsSync(envConfig) && !kill) {
         const creating = new HashTable({});
         const existing = new HashTable(ConfigLoader.readConfig(configPath));
-        const template = path.join(this.templates.workspace, 'default.tfvars.twig'); //todo test `this.templates.workspace`
+        const template = path.join(this.templates.workspace, 'default.tfvars.twig');
 
         existing.transform('varFile', (key, value) => {
           value.push(tfvarsName);
