@@ -236,6 +236,15 @@ class ConfigureCommand extends DistributedCommand {
   _isComponentTarget() {
     return ['include', 'exclude', 'exclude-regex', 'include-regex'].some(it => this.getOption(it).length);
   }
+
+  /**
+   *
+   * @param {Object} config
+   * @return {String[]}
+   */
+  buildComponentList(config) {
+    return Object.keys(config).map(key => config[key].name);
+  }
 }
 
 module.exports = ConfigureCommand;

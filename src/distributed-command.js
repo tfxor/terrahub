@@ -62,39 +62,35 @@ class DistributedCommand extends AbstractCommand {
    *
    * @returns {Promise}
    */
-  validate() {
-    return super.validate().then(token => {
-      this._tokenIsValid = token;
+  async validate() {
+    try {
+      this._tokenIsValid = await super.validate();
 
-      if (this._tokenIsValid && this.terrahubCfg.logs) { //@todo retrieve logs from `parameters`
+      if (this._tokenIsValid && this.terrahubCfg.logs) {
         this.logger.updateContext({ canLogBeSentToApi: true });
       }
 
-      return Promise.resolve();
-    }).then(() => this.checkProjectDataMissing()).then(() => {
+      await this.checkProjectDataMissing();
+
       if (this.isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
 
-      return Promise.resolve();
-    }).then(() => {
       const nonExistingComponents = this._getNonExistingComponents();
 
       if (nonExistingComponents.length) {
         throw new Error('Some of components were not found: ' + nonExistingComponents.join(', '));
       }
 
-      return Promise.resolve();
-    }).then(() => {
       const fullConfig = this.getExtendedConfig();
       return this.checkProjectDuplicateComponents(fullConfig);
-    })
-      .catch(err => {
-        const error = err.constructor === String ? new Error(err) : err;
+    } catch (err) {
 
-        return Promise.reject(error);
-    })
+      const error = err.constructor === String ? new Error(err) : err;
+
+      return Promise.reject(error);
+    }
   }
 
   /**
@@ -496,14 +492,6 @@ class DistributedCommand extends AbstractCommand {
     return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
 
-  /**
-   *
-   * @param {Object} config
-   * @return {String[]}
-   */
-  buildComponentList(config) { //@todo used only in Configure
-    return Object.keys(config).map(key => config[key].name);
-  }
 
   /**
    * @param {Object|Array} config

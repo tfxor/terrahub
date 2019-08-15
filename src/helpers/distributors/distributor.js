@@ -15,7 +15,7 @@ class Distributor {
     this.logger = command.logger;
     this.parameters = command.parameters;
     this.parameters.isCloud = false;
-    this.tokenIsValid = command._tokenIsValid; //@todo - undefined
+    this.tokenIsValid = command._tokenIsValid || false;
   }
 
   /**

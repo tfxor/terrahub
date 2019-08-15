@@ -34,7 +34,7 @@ class AwsDistributor extends Distributor {
 
     let inProgress = 0;
 
-    const s3Helper = new S3Helper(); //todo creds for deploy in S3
+    const s3Helper = new S3Helper();
     const s3directory = this.config.api.replace('api', 'projects');
 
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);

@@ -34,12 +34,12 @@ class LocalDistributor extends Distributor {
    */
   _createWorker(hash) {
     cluster.setupMaster({ exec: this._worker });
-    const cfgThread = this.projectConfig[hash]; //this.config[hash] ||  todo Verify ! was `this.config`
+    const cfgThread = this.projectConfig[hash];
 
     const worker = cluster.fork(Object.assign({
-      THUB_RUN_ID: this.THUB_RUN_ID, //todo runId undefined
+      THUB_RUN_ID: this.runId,
       TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
-      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || ''
+      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
     }, this._env));
 
     delete this._dependencyTable[hash];

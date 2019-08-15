@@ -20,7 +20,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._isTokenValid()) { // && logs todo parameters.logs
+      if (this._isTokenValid() && this._context.canLogBeSentToApi) {
         this._sendLogToApi(messages);
       }
     });

@@ -25,6 +25,7 @@ class AbstractCommand {
     this._options = {};
     this._description = null;
     this.parameters = parameters;
+    this.logs = parameters.logs;
     this.fetch = this.parameters.fetch;
     this._input = this.parameters.args;
     this.terrahubCfg = this.parameters.config;

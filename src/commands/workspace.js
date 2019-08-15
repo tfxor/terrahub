@@ -47,7 +47,7 @@ class WorkspaceCommand extends DistributedCommand {
       const results = await this._workspace('workspaceList', configs);
       await this._handleWorkspaceList(results);
 
-      return 'Done'; //todo was Promise.resolve('Done')
+      return Promise.resolve('Done');
     }
 
     if (includeRootConfig) {
@@ -57,7 +57,7 @@ class WorkspaceCommand extends DistributedCommand {
     if (this.config.isDefault) {
       await this._workspace('workspaceSelect', configs);
 
-      return 'Done'; //todo was Promise.resolve('Done')
+      return Promise.resolve('Done');
     }
 
     configsList.forEach((configPath, i) => {
