@@ -44,10 +44,7 @@ class WorkspaceCommand extends DistributedCommand {
     const { name: projectName, code } = this.getProjectConfig();
 
     if (this.getOption('list')) {
-      const results = await this._workspace('workspaceList', configs);
-      await this._handleWorkspaceList(results);
-
-      return Promise.resolve('Done');
+      return this._workspace('workspaceList', configs, 'Done');
     }
 
     if (includeRootConfig) {
@@ -55,9 +52,7 @@ class WorkspaceCommand extends DistributedCommand {
     }
 
     if (this.config.isDefault) {
-      await this._workspace('workspaceSelect', configs);
-
-      return Promise.resolve('Done');
+      return this._workspace('workspaceSelect', configs, 'Done');
     }
 
     configsList.forEach((configPath, i) => {
@@ -96,9 +91,8 @@ class WorkspaceCommand extends DistributedCommand {
       let message = `TerraHub environment '${this.config.env}' was ${isUpdate ? 'updated' : 'created'}`;
 
       await Promise.all(promises);
-      await this._workspace('workspaceSelect', cfgObject);
 
-      return Promise.resolve(message);
+      return this._workspace('workspaceSelect', cfgObject, 'Done');
     }
 
     const confirmed = await yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `);
@@ -113,28 +107,34 @@ class WorkspaceCommand extends DistributedCommand {
     }
 
     await Promise.all(filesToRemove.map(file => fse.unlink(file)));
-    await this._workspace('workspaceDelete', cfgObject);
 
-    return Promise.resolve(`TerraHub environment '${this.config.env}' was deleted`);
+    const succesMessage = `TerraHub environment '${this.config.env}' was deleted`;
+    return this._workspace('workspaceDelete', cfgObject, succesMessage);
   }
 
   /**
    * @param {String} action
    * @param {Object} config
+   * @param {String} message
    * @return {Promise}
    * @private
    */
-  async _workspace(action, config) {
+  async _workspace(action, config, message) {
     this.warnExecutionStarted(config);
 
-    return [{ actions: ['prepare', 'init', action], config }];
+    return [{
+      actions: ['prepare', 'init', action],
+      config: config,
+      postActionFn: results => this._handleWorkspaceList(results, message)
+    }];
   }
 
   /**
    * @param {Object[]} results
+   * @param {String} message
    * @private
    */
-  _handleWorkspaceList(results) {
+  _handleWorkspaceList(results, message) {
     const result = {};
 
     results.forEach(item => {
@@ -149,6 +149,8 @@ class WorkspaceCommand extends DistributedCommand {
     treeify.asLines(result, false, line => {
       this.logger.log(` ${line}`);
     });
+
+    return Promise.resolve(message);
   }
 }
 
