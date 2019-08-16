@@ -62,12 +62,12 @@ class AbstractTerrahub {
       }
 
       if (options.skip) {
-
         return this.on({ status: Dictionary.REALTIME.SKIP })
           .then(res => this._sendLogsToApi('update', res))
           .then(res => {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
+
             return res;
           });
       } else {

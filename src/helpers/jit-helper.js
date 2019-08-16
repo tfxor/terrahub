@@ -173,7 +173,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} config
    * @return {Promise}
    * @private
@@ -196,7 +195,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} config
    * @return {Promise}
    * @private
@@ -219,7 +217,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} resourcesByType
    * @param {Object} template
    * @return {Promise}
@@ -240,7 +237,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} resourcesByType
    * @param {String} resourceName
    * @param {Object} template
@@ -312,7 +308,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {*} template
    * @param {*} tfvarValue
    * @param {*} oldProviderTerrahubVariable
@@ -411,7 +406,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {String} terrahubVariable
    * @return {String, Array}
    * @private
@@ -425,7 +419,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} terrahubVariable
    * @return {Array}
    * @private
@@ -438,7 +431,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {String} templateStringify
    * @return {Array}
    * @private
@@ -480,7 +472,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {Object} tfvarValue
    * @return {String}
    * @private
@@ -564,7 +555,6 @@ class JitHelper {
   }
 
   /**
-   *
    * @param {String} remoteTfvars
    * @param {Object} config
    * @return {Promise}
@@ -612,7 +602,7 @@ class JitHelper {
    */
   static _createTerraformFiles(config, parameters) {
     const { template, cfgEnv } = config;
-    const tmpPath = JitHelper.buildTmpPath(config, parameters); // /tmp/jit/${config.name}_${config.project.code}
+    const tmpPath = JitHelper.buildTmpPath(config, parameters);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -665,6 +655,12 @@ class JitHelper {
     return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters);
   }
 
+  /**
+   * @param {Object} config
+   * @param {Object} parameters
+   * @return {Promise}
+   * @private
+   */
   static _symLinkNonTerraHubFiles(config, parameters) {
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
     const tmpPath = JitHelper.buildTmpPath(config, parameters);

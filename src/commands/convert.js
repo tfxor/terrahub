@@ -8,8 +8,10 @@ const logger = require('../helpers/logger');
 const ConfigLoader = require('../config-loader');
 const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
-const LocalDistributor = require('../helpers/distributors/local-distributor');
+const { jsonToYaml, yamlToJson } = require('../helpers/util');
+const { binPath, config, commandsPath } = require('../parameters');
 const { buildTmpPath, checkTfVersion } = require('../helpers/jit-helper');
+const LocalDistributor = require('../helpers/distributors/local-distributor');
 
 class ConvertCommand extends DistributedCommand {
   /**
@@ -197,16 +199,30 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  async _toYamlFromHcl(cfg) {
-    const componentConfigPath = join(ConvertCommand._buildComponentPath(cfg), this.config.defaultFileName);
-    const rawConfig = ConfigLoader.readConfig(componentConfigPath);
+  _toYamlFromHcl(cfg) {
+    const scriptPath = ConvertCommand._buildComponentPath(cfg);
+    return fse.readdir(scriptPath)
+      .then(files => {
+        const regEx = /.*(tf|tfvars)$/;
+        const scriptFiles = files.filter(src => regEx.test(src));
+        let jsonContent = yamlToJson(join(scriptPath, '.terrahub.yml'));
+        jsonContent['template'] = {};
+        const promises = scriptFiles.map(file => {
+          return fse.readFile(join(scriptPath, file))
+            .then(dataBuffer => {
+              const fileName = file.split('.');
+              const key = fileName[0];
+              jsonContent.component.template[key] = {key: hcltojson(dataBuffer.toString())};
+              return Promise.resolve();
+              // return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
+            });
+        });
 
-    if (!rawConfig.component.hasOwnProperty('template') || this._checkIfFilesIsJson(cfg)) {
-      await ConvertCommand._revertComponent(cfg);
-      this.logSuccess(cfg.name, 'YML');
-    }
-
-    return Promise.resolve();
+        return Promise.all(promises);
+      })
+    .catch(err => {
+      throw new Error(err.toString());
+    });
   }
 
   /**
@@ -214,22 +230,23 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  async _toHCLFromJson(cfg) {
+  _toHCLFromJson(cfg) {
     const scriptPath = ConvertCommand._buildComponentPath(cfg);
-    try {
-      const files = await fse.readdir(scriptPath);
-      const regEx = /.*(tf|tfvars)$/;
-      const scriptFiles = files.filter(src => regEx.test(src));
-      const promises = scriptFiles.map(async file => {
-        const dataBuffer = await fse.readFile(join(scriptPath, file));
-        console.log(dataBuffer);
-        return Promise.resolve();
-        // return convertJsonToHcl(join(scriptPath, file), dataBuffer.toString(), checkTfVersion(cfg));
-      });
-      await Promise.all(promises);
-    } catch (err) {
+    return fse.readdir(scriptPath)
+      .then(files => {
+        const regEx = /.*(tf|tfvars)$/;
+        const scriptFiles = files.filter(src => regEx.test(src));
+        const promises = scriptFiles.map(file => {
+          return fse.readJson(join(scriptPath, file))
+            .then(data => {
+              return convertJsonToHcl(join(scriptPath, file), data, checkTfVersion(cfg));
+            });
+        });
+        return Promise.all(promises);
+      })
+    .catch(err => {
       throw new Error(err.toString());
-    }
+    });
   }
 
   /**
@@ -253,7 +270,6 @@ class ConvertCommand extends DistributedCommand {
   }
 
   /**
-   *
    * @param {Object} cfg
    * @return {Promise}
    * @private
