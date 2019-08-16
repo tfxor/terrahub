@@ -27,10 +27,13 @@ class ApplyCommand extends TerraformCommand {
 
     return this.askForApprovement(config, this.getOption('auto-approve'))
       .then(answer => answer ?
-        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
+        distributor.runActions(['prepare', 'workspaceSelect', 'plan'], {
           dependencyDirection: Dictionary.DIRECTION.FORWARD
         }) : Promise.reject('Action aborted')
-      ).then(() => Promise.resolve('Done'));
+      )
+
+      .then(() => distributor.runActions(['apply'], { dependencyDirection: Dictionary.DIRECTION.FORWARD }))
+      .then(() => Promise.resolve('Done'));
   }
 }
 
