@@ -18,7 +18,7 @@ class JitHelper {
    * @param {Object} config
    * @return {Promise}
    */
-  static jitMiddleware(config) {    
+  static jitMiddleware(config) {
     const transformedConfig = JitHelper._transformConfig(config);
 
     if (!transformedConfig.isJit) {
