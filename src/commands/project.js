@@ -15,8 +15,7 @@ class ProjectCommand extends ConfigCommand {
       .setName('project')
       .setDescription('create new or define existing folder as project that manages terraform configuration')
       .addOption('name', 'n', 'Project name', String)
-      .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd())
-    ;
+      .addOption('directory', 'd', 'Path where project should be created (default: cwd)', String, process.cwd());
   }
 
   /**

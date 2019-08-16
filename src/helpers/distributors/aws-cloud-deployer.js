@@ -23,20 +23,28 @@ class AwsDeployer {
    * @return {Promise}
    */
   async deploy(requestData) {
-    const { config, thubRunId, actions, parameters } = requestData;
+    const {
+      config, thubRunId, actions, parameters 
+    } = requestData;
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     config.project.root = AwsDeployer._projectDirectory;
     const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
 
     await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
+
     const cfg = await JitHelper.jitMiddleware(config, parameters);
+
     await this._runActions(actions, cfg, thubRunId, parameters);
-    await cfg.isJit ? fse.remove(JitHelper.buildTmpPath(cfg, parameters)) : Promise.resolve();
+    console.log('5');
+
+    if (cfg.isJit) {
+      await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
+    }
 
     return {
       message: `Component '${config.name}' has been successfully deployed.`,
       data: {}
-    }
+    };
   }
 
   /**
@@ -50,9 +58,7 @@ class AwsDeployer {
   async _runActions(actions, config, thubRunId, parameters) {
     const terrahub = new Terrahub(config, thubRunId, parameters);
 
-    const tasks = actions.map(action =>
-      options => (action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config))
-    );
+    const tasks = actions.map(action => options => (action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config)));
 
     return promiseSeries(tasks, (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})));
   }

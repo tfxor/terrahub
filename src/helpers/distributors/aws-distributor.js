@@ -1,8 +1,8 @@
 'use strict';
 
 const fse = require('fs-extra');
-const Util = require('../util');
 const { join } = require('path');
+const Util = require('../util');
 const S3Helper = require('../s3-helper');
 const { globPromise } = require('../util');
 const ApiHelper = require('../api-helper');
@@ -42,7 +42,7 @@ class AwsDistributor extends Distributor {
     return Promise.all([this._fetchAccountId(), this._buildFileList()])
       .then(([accountId, files]) => {
         this.logger.warn('Uploading project to S3.');
-      debugger;
+
         const s3Prefix = [s3directory, accountId, this.runId].join('/');
         const pathMap = files.map(it => ({
           localPath: join(this._projectRoot, it),
@@ -53,7 +53,7 @@ class AwsDistributor extends Distributor {
       })
       .then(() => {
         this.logger.warn('Directory uploaded to S3.');
-      debugger;
+
         return new Promise((resolve, reject) => {
           /**
            * @private

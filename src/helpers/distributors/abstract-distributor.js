@@ -9,7 +9,7 @@ class AbstractDistributor {
    */
   constructor(configObject, thubRunId) {
     this.THUB_RUN_ID = thubRunId;
-    this.config = Object.assign({}, configObject);
+    this.config = { ...configObject };
   }
 
   /**

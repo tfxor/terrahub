@@ -24,13 +24,11 @@ function getActions() {
 function getTasks(config, parameters) {
   const terrahub = new Terrahub(config, process.env.THUB_RUN_ID, parameters);
 
-  return getActions().map(action =>
-    options => {
-      logger.updateContext({ action: action });
+  return getActions().map(action => options => {
+    logger.updateContext({ action: action });
 
-      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
-    }
-  );
+    return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
+  });
 }
 
 /**
@@ -73,4 +71,4 @@ function run(config, parameters) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'default' ? run(msg.data, msg.parameters) : null);
+process.on('message', msg => (msg.workerType === 'default' ? run(msg.data, msg.parameters) : null));

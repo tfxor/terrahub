@@ -24,8 +24,7 @@ class ListCommand extends ConfigCommand {
       .addOption('projects', 'p', 'Projects (comma separated values)', Array, [])
       .addOption('accounts', 'a', 'Accounts (comma separated values)', Array, [])
       .addOption('regions', 'r', 'Regions (comma separated values)', Array, [])
-      .addOption('services', 's', 'Services (comma separated values)', Array, [])
-    ;
+      .addOption('services', 's', 'Services (comma separated values)', Array, []);
   }
 
   /**
@@ -162,7 +161,7 @@ class ListCommand extends ConfigCommand {
       return result;
     });
 
-    const cachePath = this._cachePath(this.accountId);
+    const cachePath = ListCommand._cachePath(this.accountId);
     await fse.outputJson(cachePath, data);
 
     return data;
@@ -189,7 +188,7 @@ class ListCommand extends ConfigCommand {
       };
     });
 
-    const cachePath = this._cachePath(this.terrahubCfg.token);
+    const cachePath = ListCommand._cachePath(this.terrahubCfg.token);
 
     await fse.outputJson(cachePath, data);
     return data;
@@ -202,7 +201,8 @@ class ListCommand extends ConfigCommand {
    */
   async _fetchResources() {
     let [free, paid] = await Promise.all(
-      [this.accountId, this.terrahubCfg.token].map(salt => this._cachePath(salt)).map(cachePath => this._tryCache(cachePath)));
+      [this.accountId, this.terrahubCfg.token].map(salt => ListCommand._cachePath(salt)).map(cachePath => ListCommand._tryCache(cachePath))
+    );
 
     [free, paid] = await Promise.all([
       free ? free : this._getResourcesFromAwsApi(),
@@ -218,7 +218,7 @@ class ListCommand extends ConfigCommand {
    * @returns {Promise}
    * @private
    */
-  _tryCache(cachePath) {
+  static _tryCache(cachePath) {
     if (!fs.existsSync(cachePath)) {
       return Promise.resolve();
     }
@@ -237,7 +237,7 @@ class ListCommand extends ConfigCommand {
    * @returns {String}
    * @private
    */
-  _cachePath(salt) {
+  static _cachePath(salt) {
     return homePath('cache', 'list', `${toMd5('resources' + salt)}.json`);
   }
 

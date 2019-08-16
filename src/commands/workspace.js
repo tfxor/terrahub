@@ -18,8 +18,7 @@ class WorkspaceCommand extends DistributedCommand {
       .setName('workspace')
       .setDescription('run `terraform workspace` across multiple terrahub components')
       .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)
-      .addOption('list', 'L', 'Shows list of terrahub components', Boolean, false)
-    ;
+      .addOption('list', 'L', 'Shows list of terrahub components', Boolean, false);
   }
 
   /**
@@ -92,7 +91,7 @@ class WorkspaceCommand extends DistributedCommand {
 
       await Promise.all(promises);
 
-      return this._workspace('workspaceSelect', cfgObject, 'Done');
+      return this._workspace('workspaceSelect', cfgObject, message);
     }
 
     const confirmed = await yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `);

@@ -3,8 +3,14 @@
     "node": true,
     "es6": true
   },
+  "extends": [
+    "airbnb-base"
+  ],
   "rules": {
-    "comma-dangle": [ 0, "never" ],
+    "comma-dangle": [
+      0,
+      "never"
+    ],
     "no-cond-assign": 2,
     "no-console": 0,
     "no-constant-condition": 2,
@@ -20,7 +26,10 @@
     "no-extra-parens": 0,
     "no-extra-semi": 2,
     "no-func-assign": 2,
-    "no-inner-declarations": [ 2, "functions" ],
+    "no-inner-declarations": [
+      2,
+      "functions"
+    ],
     "no-invalid-regexp": 2,
     "no-irregular-whitespace": 2,
     "no-negated-in-lhs": 2,
@@ -30,15 +39,21 @@
     "no-unexpected-multiline": 2,
     "no-unreachable": 2,
     "use-isnan": 2,
-    "valid-jsdoc": [ 2, {
-      "requireParamDescription": false,
-      "requireReturn": false,
-      "requireReturnDescription": false
-    }],
+    "valid-jsdoc": [
+      2,
+      {
+        "requireParamDescription": false,
+        "requireReturn": false,
+        "requireReturnDescription": false
+      }
+    ],
     "valid-typeof": 2,
     "accessor-pairs": 2,
     "block-scoped-var": 0,
-    "complexity": [ 0, 20 ],
+    "complexity": [
+      0,
+      20
+    ],
     "consistent-return": 0,
     "curly": 2,
     "default-case": 0,
@@ -88,11 +103,17 @@
     "no-void": 2,
     "no-warning-comments": 0,
     "no-with": 2,
-    "radix": [ 0, "always" ],
+    "radix": [
+      0,
+      "always"
+    ],
     "vars-on-top": 0,
     "wrap-iife": 2,
     "yoda": 0,
-    "strict": [ 0, "global" ],
+    "strict": [
+      0,
+      "global"
+    ],
     "init-declarations": 0,
     "no-catch-shadow": 0,
     "no-delete-var": 2,
@@ -102,13 +123,19 @@
     "no-undef-init": 2,
     "no-undef": 2,
     "no-undefined": 0,
-    "no-unused-vars": [ 2, {
-      "args": "none"
-    }],
-    "no-use-before-define": ["error", {
-      "functions": false,
-      "classes": true
-    }],
+    "no-unused-vars": [
+      2,
+      {
+        "args": "none"
+      }
+    ],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": true
+      }
+    ],
     "callback-return": 0,
     "global-require": 0,
     "handle-callback-err": 2,
@@ -121,9 +148,12 @@
     "array-bracket-spacing": 0,
     "block-spacing": 0,
     "brace-style": 0,
-    "camelcase": [ 0, {
-      "properties": "never"
-    }],
+    "camelcase": [
+      0,
+      {
+        "properties": "never"
+      }
+    ],
     "comma-spacing": 0,
     "comma-style": 0,
     "computed-property-spacing": 0,
@@ -133,23 +163,41 @@
     "func-style": 0,
     "id-length": 0,
     "id-match": 0,
-    "indent": [ 2, 2, {
-      "SwitchCase": 1
-    }],
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
     "jsx-quotes": 0,
     "key-spacing": 0,
     "linebreak-style": 0,
     "lines-around-comment": 0,
-    "max-depth": [ 2, 7 ],
-    "max-len": [ 2, 120, 2, {
-      "ignoreComments": true
-    }],
+    "max-depth": [
+      2,
+      7
+    ],
+    "max-len": [
+      2,
+      120,
+      2,
+      {
+        "ignoreComments": true
+      }
+    ],
     "max-nested-callbacks": 0,
     "max-params": 0,
-    "max-statements": [ 2, 50 ],
-    "new-cap": [ 2, {
-      "capIsNew": false
-    }],
+    "max-statements": [
+      2,
+      50
+    ],
+    "new-cap": [
+      2,
+      {
+        "capIsNew": false
+      }
+    ],
     "new-parens": 0,
     "newline-after-var": 0,
     "no-array-constructor": 0,
@@ -175,9 +223,13 @@
     "operator-linebreak": 0,
     "padded-blocks": 0,
     "quote-props": 0,
-    "quotes": [ 2, "single", {
-      "allowTemplateLiterals": true
-    }],
+    "quotes": [
+      2,
+      "single",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
     "require-jsdoc": 2,
     "semi-spacing": 0,
     "semi": 1,

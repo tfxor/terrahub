@@ -2,13 +2,13 @@
 
 const fse = require('fs-extra');
 const semver = require('semver');
-const S3Helper = require('./s3-helper');
-const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
 const { resolve, join } = require('path');
 const objectDepth = require('object-depth');
-const { homePath, extend, homePathLambda } = require('./util');
 const { exec } = require('child-process-promise');
+const { homePath, extend, homePathLambda } = require('./util');
+const GsHelper = require('./gs-helper');
+const S3Helper = require('./s3-helper');
 const Downloader = require('../helpers/downloader');
 
 
@@ -28,9 +28,7 @@ class JitHelper {
 
     const { template } = transformedConfig;
 
-    return Promise.resolve().then(() => {
-      return JitHelper._moduleSourceRefactoring(template)
-    })
+    return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
       .then(() => {
         // add "tfvars" if it is not described in config
         const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
@@ -43,27 +41,18 @@ class JitHelper {
         if (remoteTfvarsLinks.length > 0) {
           return JitHelper._addTfvars(config, remoteTfvarsLinks, parameters);
         }
-      }).then(() => {
-        return JitHelper._normalizeProvidersForResource(config)
       })
-      .then(() => {
-        return JitHelper._normalizeProvidersForData(config)
-      })
-      .then(() => {
-        return JitHelper._normalizeTfvars(config)
-      })
-      .then(() => {
-        return JitHelper._createTerraformFiles(config, parameters)
-      })
+      .then(() => JitHelper._normalizeProvidersForResource(config))
+      .then(() => JitHelper._normalizeProvidersForData(config))
+      .then(() => JitHelper._normalizeTfvars(config))
+      .then(() => JitHelper._createTerraformFiles(config, parameters))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
           return JitHelper._generateVariable(config, parameters);
         }
       })
-      .then(() => {
-        return parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters)
-      })
+      .then(() => parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
@@ -290,7 +279,8 @@ class JitHelper {
         tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
           JitHelper._parsingParamInResource(
             template, tfvarValue, oldProviderTerrahubVariable,
-            resourcesByType, resourceName).then(() => {
+            resourcesByType, resourceName
+          ).then(() => {
             const { output } = template;
 
             if (output) {
@@ -331,7 +321,7 @@ class JitHelper {
    */
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
-    let resourceByNameCopy = Object.assign({}, resourceByName);
+    let resourceByNameCopy = { ...resourceByName};
     const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
         const paramByName = JSON.stringify(resourceByName[paramName]);
@@ -364,7 +354,8 @@ class JitHelper {
               const dataPath = dataVariable.split('.');
               let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
               resourceByNameStringify = resourceByNameStringify.replace(
-                dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
+                dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`)
+              );
               resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
             });
 
@@ -584,7 +575,7 @@ class JitHelper {
     const remoteTfvarsJson = hcltojson(remoteTfvars);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ',').replace(/{,/g, '{'));
 
     return Promise.resolve();
   }
@@ -684,9 +675,7 @@ class JitHelper {
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
-        const promises = nonTerrahubFiles.map(file =>
-          fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {})
-        );
+        const promises = nonTerrahubFiles.map(file => fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {}));
 
         return Promise.all(promises);
       })

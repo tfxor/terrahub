@@ -5,13 +5,15 @@ const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
+const { execSync } = require('child_process');
 const logger = require('../logger');
 const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
-const { execSync } = require('child_process');
-const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda } = require('../util');
+const {
+  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda
+} = require('../util');
 
 class Terraform {
   /**
@@ -134,7 +136,10 @@ class Terraform {
             this._deleteDefaultEnvCreds(this._envVars);
 
             Object.assign(this._envVars,
-              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud), AWS_PROFILE: 'default' });
+              {
+                AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud),
+                AWS_PROFILE: 'default'
+              });
             break;
           case 'backendAccount':
             Object.assign(this._tf.backend,
@@ -143,6 +148,8 @@ class Terraform {
         }
       });
     }
+
+    console.log('env :', this._envVars);
 
     return Promise.resolve();
   }
@@ -287,7 +294,7 @@ class Terraform {
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }
-    const workspace = this._tf.workspace;
+    const { workspace } = this._tf;
 
     return this.run('workspace', ['list'])
       .then(result => {

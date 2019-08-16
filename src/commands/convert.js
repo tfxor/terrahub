@@ -3,13 +3,13 @@
 const fse = require('fs-extra');
 const { join, sep } = require('path');
 const hcltojson = require('hcl-to-json');
+const { exec } = require('child-process-promise');
 const logger = require('../helpers/logger');
 const ConfigLoader = require('../config-loader');
-const { exec } = require('child-process-promise');
 const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
 const LocalDistributor = require('../helpers/distributors/local-distributor');
-const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
+const { buildTmpPath, checkTfVersion } = require('../helpers/jit-helper');
 
 class ConvertCommand extends DistributedCommand {
   /**
@@ -20,8 +20,7 @@ class ConvertCommand extends DistributedCommand {
       .setName('convert')
       .setDescription('convert terraform configuration into yaml, json or hcl format (both directions)')
       .addOption('to', 't', 'Convert current component TO another format (e.g. yml, hcl; default: yml)', String, 'yml')
-      .addOption('auto-approve', 'y', 'Auto approve config conversion', Boolean, false)
-    ;
+      .addOption('auto-approve', 'y', 'Auto approve config conversion', Boolean, false);
   }
 
   /**
@@ -36,7 +35,8 @@ class ConvertCommand extends DistributedCommand {
     const answer = await this.askForApprovement(
       config,
       this.getOption('auto-approve'),
-      `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `);
+      `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `
+    );
     if (!answer) {
       return Promise.reject('Action aborted');
     }
@@ -242,7 +242,11 @@ class ConvertCommand extends DistributedCommand {
     const { name } = cfg;
     const Command = require(join(this.parameters.commandsPath, 'configure'));
     const parameters = Object.assign(this.parameters,
-      { args: { i: `${name}`, c: 'component.template', D: true, y: true } });
+      {
+        args: {
+          i: `${name}`, c: 'component.template', D: true, y: true
+        }
+      });
 
     const configureCommand = new Command(parameters, logger);
     return new LocalDistributor(configureCommand).run();
@@ -353,8 +357,7 @@ class ConvertCommand extends DistributedCommand {
     const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
-    if (arch.indexOf("windows") > -1)
-      extension = '.exe';
+    if (arch.indexOf('windows') > -1) extension = '.exe';
 
     return exec(`${join(componentBinPath, `component${extension}`)} -thub ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
@@ -391,8 +394,7 @@ class ConvertCommand extends DistributedCommand {
     const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
-    if (arch.indexOf("windows") > -1)
-      extension = '.exe';
+    if (arch.indexOf('windows') > -1) extension = '.exe';
 
     return exec(`${join(componentBinPath, `component${extension}`)} -json ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
@@ -409,8 +411,7 @@ class ConvertCommand extends DistributedCommand {
     const componentBinPath = join(this.binPath, arch);
 
     let extension = '';
-    if (arch.indexOf("windows") > -1)
-      extension = '.exe';
+    if (arch.indexOf('windows') > -1) extension = '.exe';
 
     return exec(`${join(componentBinPath, `generator${extension}`)} -thub ${configPath}${sep} ${configPath}${sep}`);
   }

@@ -10,8 +10,7 @@ class BuildCommand extends DistributedCommand {
     this
       .setName('build')
       .setDescription('build code used by terraform configuration (e.g. AWS Lambda, Google Functions)')
-      .addOption('format', 'o', 'Log only the command result in one of the following formats: json, text', String, '')
-    ;
+      .addOption('format', 'o', 'Log only the command result in one of the following formats: json, text', String, '');
   }
 
   /**
@@ -27,7 +26,9 @@ class BuildCommand extends DistributedCommand {
     const config = this.getFilteredConfig();
     this.warnExecutionStarted(config);
 
-    return [{ actions: ['build'], config, format: format, postActionFn: (format) => !['json'].includes(format) ? 'Done' : '' }];
+    return [{
+      actions: ['build'], config, format: format, postActionFn: (format) => (!['json'].includes(format) ? 'Done' : '') 
+    }];
   }
 }
 

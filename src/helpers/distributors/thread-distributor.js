@@ -1,6 +1,5 @@
 'use strict';
 
-const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const { config } = require('../../parameters');
@@ -40,11 +39,12 @@ class ThreadDistributor extends AbstractDistributor {
 
     const cfgThread = this.config[hash];
 
-    const worker = cluster.fork(Object.assign({
+    const worker = cluster.fork({
       THUB_RUN_ID: this.THUB_RUN_ID,
       TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
-      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || ''
-    }, this._env));
+      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
+      ...this._env
+    });
 
     delete this._dependencyTable[hash];
 
@@ -55,9 +55,7 @@ class ThreadDistributor extends AbstractDistributor {
   _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork(Object.assign({
-      THUB_RUN_ID: this.THUB_RUN_ID
-    }, this._env));
+    this.loggerWorker = cluster.fork({ THUB_RUN_ID: this.THUB_RUN_ID, ...this._env });
 
     this._loggerWorkerCount++;
 
@@ -98,7 +96,9 @@ class ThreadDistributor extends AbstractDistributor {
     importId = '',
     input = false
   } = {}) {
-    this._env = { format, planDestroy, resourceName, importId, input };
+    this._env = {
+      format, planDestroy, resourceName, importId, input
+    };
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
@@ -134,7 +134,7 @@ class ThreadDistributor extends AbstractDistributor {
       });
 
       cluster.on('exit', (worker, code) => {
-        if (this._getWorkerName(worker) === 'logger-worker') {
+        if (ThreadDistributor._getWorkerName(worker) === 'logger-worker') {
           return;
         }
 
@@ -231,11 +231,11 @@ class ThreadDistributor extends AbstractDistributor {
    * @return {String}
    * @private
    */
-  _getWorkerName(worker) {
+  static _getWorkerName(worker) {
     const fileName = worker.process.spawnargs[1];
     const extension = path.extname(fileName);
 
-    return  path.basename(fileName, extension);
+    return path.basename(fileName, extension);
   }
 }
 

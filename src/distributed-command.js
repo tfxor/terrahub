@@ -54,8 +54,7 @@ class DistributedCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
-    ;
+      .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto');
   }
 
   /**
@@ -225,7 +224,7 @@ class DistributedCommand extends AbstractCommand {
    */
   getFilteredConfig() {
     const fullConfig = this.getExtendedConfig();
-    const config = Object.assign({}, fullConfig);
+    const config = { ...fullConfig};
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -410,7 +409,7 @@ class DistributedCommand extends AbstractCommand {
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = Object.assign({}, config);
+    const checked = { ...config};
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -448,7 +447,7 @@ class DistributedCommand extends AbstractCommand {
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = Object.assign({}, config);
+    const checked = { ...config};
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });

@@ -84,7 +84,7 @@ class Metadata {
    */
   _getBackupDir() {
     const backup = this._cfg.terraform.backup || '.backup';
-    const workspace = this._cfg.terraform.workspace;
+    const { workspace } = this._cfg.terraform;
     const realRootPath = path.join(this._cfg.project.root, this._cfg.root);
 
     // @todo discuss w/ Eugene how and where to backup

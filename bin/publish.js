@@ -3,8 +3,8 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('../src/helpers/logger');
 const { exec } = require('child-process-promise');
+const logger = require('../src/helpers/logger');
 const HelpParser = require('../src/helpers/help-parser');
 
 /**

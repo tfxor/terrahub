@@ -9,8 +9,7 @@ class InitCommand extends DistributedCommand {
   configure() {
     this
       .setName('init')
-      .setDescription('run `terraform init` across multiple terrahub components')
-    ;
+      .setDescription('run `terraform init` across multiple terrahub components');
   }
 
   /**

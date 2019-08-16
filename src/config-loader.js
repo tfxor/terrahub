@@ -6,7 +6,9 @@ const glob = require('glob');
 const fse = require('fs-extra');
 const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
-const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
+const {
+  toMd5, extend, yamlToJson, jsonToYaml 
+} = require('./helpers/util');
 
 class ConfigLoader {
   /**
@@ -299,7 +301,7 @@ class ConfigLoader {
           config[key].env = {};
         }
 
-        config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+        config[key].env.variables = { ...config.env.variables, ...config[key].env.variables};
       });
     }
 
@@ -332,7 +334,9 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns });
+    return glob.sync(pattern, {
+      cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns 
+    });
   }
 
   /**

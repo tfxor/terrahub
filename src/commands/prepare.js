@@ -9,8 +9,7 @@ class PrepareCommand extends DistributedCommand {
   configure() {
     this
       .setName('prepare')
-      .setDescription('run `terraform prepare` across multiple terrahub components')
-    ;
+      .setDescription('run `terraform prepare` across multiple terrahub components');
   }
 
   /**

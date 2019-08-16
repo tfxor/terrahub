@@ -10,8 +10,7 @@ class ImportCommand extends DistributedCommand {
     this
       .setName('import')
       .setDescription('run `terraform import` across multiple terrahub components')
-      .addOption('config', 'c', 'Import resource', Array)
-    ;
+      .addOption('config', 'c', 'Import resource', Array);
   }
 
   /**

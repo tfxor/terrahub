@@ -158,8 +158,7 @@ class AbstractTerrahub {
 
       error.message = this._addNameToMessage(originalMessage ?
         `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
-        `An unknown error occurred in hook ${this._action} ${hook} execution.`
-      );
+        `An unknown error occurred in hook ${this._action} ${hook} execution.`);
 
       return Promise.reject(error);
     });
@@ -195,10 +194,11 @@ class AbstractTerrahub {
     return spawner(
       binary,
       args,
-      Object.assign({
+      {
         cwd: path.join(this._config.project.root, this._config.root),
-        shell: true
-      }, options),
+        shell: true,
+        ...options
+      },
       err => logger.error(this._addNameToMessage(err.toString())),
       data => logger.raw(this._addNameToMessage(data.toString()))
     );

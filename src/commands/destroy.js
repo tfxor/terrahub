@@ -11,8 +11,7 @@ class DestroyCommand extends DistributedCommand {
     this
       .setName('destroy')
       .setDescription('run `terraform destroy` across multiple terrahub components')
-      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
-    ;
+      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false);
   }
 
   /**
@@ -26,8 +25,12 @@ class DestroyCommand extends DistributedCommand {
     const isApproved = await this.askForApprovement(config, this.getOption('auto-approve'));
     const dependencyDirection = Dictionary.DIRECTION.REVERSE;
 
-    const firstStep = { actions: ['prepare', 'init', 'workspaceSelect', 'plan'], config, planDestroy: true, dependencyDirection };
-    const secondStep = { actions: ['destroy'], config, planDestroy: true, dependencyDirection };
+    const firstStep = {
+      actions: ['prepare', 'init', 'workspaceSelect', 'plan'], config, planDestroy: true, dependencyDirection 
+    };
+    const secondStep = {
+      actions: ['destroy'], config, planDestroy: true, dependencyDirection 
+    };
 
     return isApproved ? await Promise.all([firstStep, secondStep]) : Promise.reject('Action aborted');
   }

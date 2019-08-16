@@ -15,7 +15,6 @@ const ListException = require('./exceptions/list-exception');
  */
 class AbstractCommand {
   /**
-   * @param {Object} input
    * @param {Logger} logger
    * @param {Object} parameters
    */
@@ -108,7 +107,9 @@ class AbstractCommand {
    * @returns {AbstractCommand}
    */
   addOption(name, shortcut, description, type = String, defaultValue = undefined) {
-    this._options[name] = { name, shortcut, description, type, defaultValue };
+    this._options[name] = {
+      name, shortcut, description, type, defaultValue
+    };
 
     return this;
   }
@@ -160,8 +161,7 @@ class AbstractCommand {
       fse.readJsonSync(Util.homePath('.terrahub.json'));
     } catch (error) {
       this.logger.error('Global `.terrahub.json` config is invalid. ' +
-        `Please make sure file's content is parsing JSON lint successfully.`
-      );
+        `Please make sure file's content is parsing JSON lint successfully.`);
     }
 
     const required = Object.keys(this._options).filter(name => {
@@ -354,8 +354,7 @@ class AbstractCommand {
         'in project\'s root or initialize new project with `terrahub project`.');
     } else {
       return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
-        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
-      ).then(answer => {
+        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `).then(answer => {
 
         try {
           this._configLoader.addToGlobalConfig(missingData, answer);

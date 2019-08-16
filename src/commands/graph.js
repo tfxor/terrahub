@@ -11,8 +11,7 @@ class GraphCommand extends ConfigCommand {
   configure() {
     this
       .setName('graph')
-      .setDescription('show dependencies graph for terraform configuration mapped as terrahub components')
-    ;
+      .setDescription('show dependencies graph for terraform configuration mapped as terrahub components');
   }
 
   /**

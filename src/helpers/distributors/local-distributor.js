@@ -36,11 +36,12 @@ class LocalDistributor extends Distributor {
     cluster.setupMaster({ exec: this._worker });
     const cfgThread = this.projectConfig[hash];
 
-    const worker = cluster.fork(Object.assign({
+    const worker = cluster.fork({
       THUB_RUN_ID: this.runId,
       TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
       THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
-    }, this._env));
+      ...this._env
+    });
 
     delete this._dependencyTable[hash];
 
@@ -51,9 +52,7 @@ class LocalDistributor extends Distributor {
   _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork(Object.assign({
-      THUB_RUN_ID: this.THUB_RUN_ID
-    }, this._env));
+    this.loggerWorker = cluster.fork({ THUB_RUN_ID: this.THUB_RUN_ID, ...this._env });
 
     this._loggerWorkerCount++;
 
@@ -94,7 +93,9 @@ class LocalDistributor extends Distributor {
     importId = '',
     input = false
   } = {}) {
-    this._env = { format, planDestroy, resourceName, importId, input };
+    this._env = {
+      format, planDestroy, resourceName, importId, input
+    };
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
@@ -130,7 +131,7 @@ class LocalDistributor extends Distributor {
       });
 
       cluster.on('exit', (worker, code) => {
-        if (this._getWorkerName(worker) === 'logger-worker') {
+        if (LocalDistributor._getWorkerName(worker) === 'logger-worker') {
           return;
         }
 
@@ -227,11 +228,11 @@ class LocalDistributor extends Distributor {
    * @return {String}
    * @private
    */
-  _getWorkerName(worker) {
+  static _getWorkerName(worker) {
     const fileName = worker.process.spawnargs[1];
     const extension = path.extname(fileName);
 
-    return  path.basename(fileName, extension);
+    return path.basename(fileName, extension);
   }
 }
 

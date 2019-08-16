@@ -9,8 +9,7 @@ class RefreshCommand extends DistributedCommand {
   configure() {
     this
       .setName('refresh')
-      .setDescription('run `terraform refresh` across multiple terrahub components')
-    ;
+      .setDescription('run `terraform refresh` across multiple terrahub components');
   }
 
   /**

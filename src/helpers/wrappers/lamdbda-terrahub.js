@@ -8,6 +8,7 @@ class LambdaTerrahub {
     this.config = config;
     this.fetch = fetch;
   }
+
   /**
    * @param {Object} data
    * @param {Error|String} err

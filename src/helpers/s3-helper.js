@@ -30,9 +30,7 @@ class S3Helper {
    * @return {Promise}
    */
   uploadFiles(bucketName, pathMap) {
-    return Promise.all(pathMap.map(path =>
-      this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))
-    ));
+    return Promise.all(pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))));
   }
 
   /**

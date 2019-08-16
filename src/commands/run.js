@@ -17,8 +17,7 @@ class RunCommand extends DistributedCommand {
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
       .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
-      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false)
-    ;
+      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false);
   }
 
   /**

@@ -222,7 +222,9 @@ class ApiHelper extends events.EventEmitter {
    * @param {{ status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}}
    * @param {Number} [runStatus]
    */
-  sendMainWorkflow({ status, runId, commandName, project, environment }, runStatus) {
+  sendMainWorkflow({
+    status, runId, commandName, project, environment
+  }, runStatus) {
     if (status === 'create') {
       this.runId = runId;
       this.commandName = commandName;
@@ -247,13 +249,17 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} [hash]
    * @param {String[]} [actions]
    */
-  sendComponentFlow({ status, name, action, hash, actions }) {
+  sendComponentFlow({
+    status, name, action, hash, actions
+  }) {
     if (!this.actions && actions) {
       this.actions = actions;
     }
 
     if (this.tokenIsValid && this._isComponentUseCase(status, action, actions)) {
-      this.sendDataToApi({ source: 'component', status, hash, name });
+      this.sendDataToApi({
+        source: 'component', status, hash, name
+      });
     }
   }
 
@@ -281,8 +287,10 @@ class ApiHelper extends events.EventEmitter {
    * @param {{ source: String, status: String, [hash]: String, [name]: String }}
    * @param {Number} [runStatus]
    */
-  sendDataToApi({ source, status, hash, name }, runStatus) {
-    const url = this.getUrl(source, status);
+  sendDataToApi({
+    source, status, hash, name
+  }, runStatus) {
+    const url = ApiHelper.getUrl(source, status);
     const body = this.getBody(source, status, hash, name, runStatus);
 
     this.pushToPromises({ url, body });
@@ -301,7 +309,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} status
    * @return {string}
    */
-  getUrl(source, status) {
+  static getUrl(source, status) {
     return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
   }
 
@@ -357,7 +365,7 @@ class ApiHelper extends events.EventEmitter {
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
       projectHash: this.projectHash,
       projectName: this.projectName,
-      'terraformRunStatus': this.getRunStatus(status, runStatus),
+      'terraformRunStatus': ApiHelper.getRunStatus(status, runStatus),
       'terraformRunWorkspace': this.environment || 'default'
     };
   }
@@ -367,7 +375,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {Number} runStatus
    * @return {Number}
    */
-  getRunStatus(status, runStatus) {
+  static getRunStatus(status, runStatus) {
     if (runStatus) {
       return runStatus;
     }
@@ -429,7 +437,9 @@ class ApiHelper extends events.EventEmitter {
         source = 'component',
         name = this._componentsExecutionList[hash];
 
-      this.sendDataToApi({ source, status, name, hash });
+      this.sendDataToApi({
+        source, status, name, hash
+      });
     });
   }
 

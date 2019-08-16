@@ -12,41 +12,38 @@ class BuildHelper {
   static getComponentBuildTask(config) {
     const { build: buildConfig, name } = config;
 
-    const env = Object.assign({}, process.env, BuildHelper._extractEnvVars(buildConfig));
+    const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig)};
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
 
-    return promiseSeries(commandsList.map(it =>
-      () => {
-        let fullCommand = it;
+    return promiseSeries(commandsList.map(it => () => {
+      let fullCommand = it;
 
-        if (it.constructor === Object) {
-          const key = Object.keys(it)[0];
+      if (it.constructor === Object) {
+        const key = Object.keys(it)[0];
 
-          fullCommand = [key, it[key]].join(': ');
-        }
-
-        const isVerbose = !process.env.format;
-        const [command, ...args] = fullCommand.split(' ');
-        const options = {
-          cwd: path.join(config.project.root, config.root),
-          env: env,
-          shell: true
-        };
-
-        return spawner(command, args, options,
-          err => {
-            if (isVerbose) {
-              logger.error(BuildHelper._out(name, err));
-            }
-          },
-          data => {
-            if (isVerbose) {
-              logger.raw(BuildHelper._out(name, data));
-            }
-          }
-        );
+        fullCommand = [key, it[key]].join(': ');
       }
-    )).then(() => {
+
+      const isVerbose = !process.env.format;
+      const [command, ...args] = fullCommand.split(' ');
+      const options = {
+        cwd: path.join(config.project.root, config.root),
+        env: env,
+        shell: true
+      };
+
+      return spawner(command, args, options,
+        err => {
+          if (isVerbose) {
+            logger.error(BuildHelper._out(name, err));
+          }
+        },
+        data => {
+          if (isVerbose) {
+            logger.raw(BuildHelper._out(name, data));
+          }
+        });
+    })).then(() => {
       BuildHelper._printOutput(BuildHelper._out(name, `Build successfully finished.`), true);
 
       return Promise.resolve({ action: 'build' });

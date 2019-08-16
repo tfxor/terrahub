@@ -17,7 +17,7 @@ class Downloader {
    * @returns {Promise}
    */
   download(version, isCloud = false) {
-    const url = this._buildSrcUrl(version);
+    const url = Downloader._buildSrcUrl(version);
     const binaryDir = isCloud ? homePathLambda('terraform', version) : homePath('terraform', version);
 
     return fse
@@ -29,7 +29,7 @@ class Downloader {
    * @param {String} version
    * @returns {String}
    */
-  _buildSrcUrl(version) {
+  static _buildSrcUrl(version) {
     const arch = Downloader.getOsArch();
 
     return url.resolve(
@@ -41,7 +41,8 @@ class Downloader {
    * @returns {String}
    */
   static getOsArch() {
-    let arch, platform;
+    let arch,
+      platform;
 
     switch (os.arch()) {
       case 'x32':

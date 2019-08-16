@@ -3,8 +3,8 @@
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs-extra');
+const { exec } = require('child-process-promise');
 const logger = require('./logger');
-const exec = require('child-process-promise').exec;
 const AwsDitributor = require('./distributors/aws-distributor');
 const LocalDistributor = require('./distributors/local-distributor');
 const { commandsPath, templates, packageJson } = require('../parameters');
@@ -87,7 +87,7 @@ class HelpParser {
    */
   static hasInvalidOptions(command, args) {
     const metadata = require(templates.helpMetadata);
-    const options = metadata.commands.find(it => it.name === command).options;
+    const { options } = metadata.commands.find(it => it.name === command);
 
     return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
   }
@@ -101,14 +101,13 @@ class HelpParser {
 
     return exec(command)
       .then(result => {
-        const stdout = result.stdout;
-        const stderr = result.stderr;
+        const { stdout, stderr } = result;
 
         if (!stderr) {
           const parsedResult = JSON.parse(stdout);
           const allRegions = [].concat(parsedResult, HelpParser.getPrivateAWSRegions());
 
-          fs.writeJsonSync(path.join(templates.help,  'regions.aws.json'), allRegions, { spaces: 2 });
+          fs.writeJsonSync(path.join(templates.help, 'regions.aws.json'), allRegions, { spaces: 2 });
         }
       })
       .catch(err => {

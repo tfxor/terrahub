@@ -31,4 +31,4 @@ function run(promises, parameters) {
 /**
  * Message listener
  */
-process.on('message', msg => msg.workerType === 'logger' ? run(msg.data, msg.parameters) : null);
+process.on('message', msg => (msg.workerType === 'logger' ? run(msg.data, msg.parameters) : null));

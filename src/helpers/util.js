@@ -11,7 +11,9 @@ const { createHash } = require('crypto');
 const mergeWith = require('lodash.mergewith');
 const childProcess = require('child_process');
 const { spawn } = require('child-process-promise');
-const { EOL, platform, cpus, homedir } = require('os');
+const {
+  EOL, platform, cpus, homedir 
+} = require('os');
 
 /**
  * @static
@@ -91,7 +93,7 @@ class Util {
         if (!outFile) {
           return resolve(data);
         }
-        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => err ? reject(err) : resolve());
+        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => (err ? reject(err) : resolve()));
       });
     });
   }
@@ -103,7 +105,7 @@ class Util {
    */
   static familyTree(data) {
     const tree = {};
-    const object = Object.assign({}, data);
+    const object = { ...data};
 
     Object.keys(object).forEach(hash => {
       let node = object[hash];
@@ -372,9 +374,7 @@ class Util {
    * @return {Promise}
    */
   static globPromise(pattern, options) {
-    return new Promise((resolve, reject) =>
-      glob(pattern, options, (error, files) => error ? reject(error) : resolve(files))
-    );
+    return new Promise((resolve, reject) => glob(pattern, options, (error, files) => (error ? reject(error) : resolve(files))));
   }
 
   /**

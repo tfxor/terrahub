@@ -1,8 +1,8 @@
 'use strict';
 
 const { EOL } = require('os');
-const logger = require('./logger');
 const { execSync } = require('child_process');
+const logger = require('./logger');
 
 class GitHelper {
   /**

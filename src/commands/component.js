@@ -23,8 +23,7 @@ class ComponentCommand extends ConfigCommand {
       .addOption('depends-on', 'o', 'List of paths to components that depend on current component' +
         ' (comma separated)', Array, [])
       .addOption('force', 'f', 'Replace directory. Works only with template option', Boolean, false)
-      .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false)
-    ;
+      .addOption('delete', 'D', 'Delete terrahub configuration files in the component folder', Boolean, false);
   }
 
   /**
@@ -87,7 +86,7 @@ class ComponentCommand extends ConfigCommand {
         return Promise.resolve();
       }
 
-      return'Done';
+      return 'Done';
     }
 
     await Promise.all(names.map(it => this._addExistingComponent(it)));
@@ -197,7 +196,8 @@ class ComponentCommand extends ConfigCommand {
         return twigReg.test(srcFile)
           ? Util.renderTwig(srcFile, { name: name, code: code }, outFile.replace(twigReg, ''))
           : fse.copy(srcFile, outFile);
-      }));
+      })
+    );
 
     const outFile = path.join(directory, this._defaultFileName());
     const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');

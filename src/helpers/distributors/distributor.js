@@ -39,7 +39,9 @@ class Distributor {
 
     try {
       for (const step of steps) {
-        const { actions, config, postActionFn, ...options } = step;
+        const {
+          actions, config, postActionFn, ...options 
+        } = step;
 
         if (config) {
           this.projectConfig = config;
