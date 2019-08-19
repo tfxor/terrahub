@@ -26,15 +26,11 @@ class DestroyCommand extends TerraformCommand {
     this.checkDependencies(config, Dictionary.DIRECTION.REVERSE);
 
     return this.askForApprovement(config, this.getOption('auto-approve'))
-      .then(answer => answer ? distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan'], {
+      .then(answer => answer ? distributor.runActions(['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'], {
           planDestroy: true,
           dependencyDirection: Dictionary.DIRECTION.REVERSE
-        }) : Promise.reject('Action aborted'))
-      .then(() => distributor.runActions(['destroy'], {
-        planDestroy: true,
-        dependencyDirection: Dictionary.DIRECTION.REVERSE
-      }))
-      .then(() => Promise.resolve('Done'));
+        }) : Promise.reject('Action aborted')
+      ).then(() => Promise.resolve('Done'));
   }
 }
 
