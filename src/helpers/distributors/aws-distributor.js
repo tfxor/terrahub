@@ -34,32 +34,9 @@ class AwsDistributor extends Distributor {
     await this._validateRequirements();
     const { data: { ticket_id } } = await this.websocketTicketCreate();
 
-    const ws = new Websocket(this.config.api, ticket_id);
+    const { ws } = new Websocket(this.config.api, ticket_id);
 
-    ws.ws.on('message', data => {
-      try {
-        // console.log('Data :', data);
-        const message = JSON.parse(data);
 
-        // console.log('parsedMessage : ', message);
-        if (message.action === 'logs') {
-          // console.log({ logs: message.data.map(it => it.log) });
-        }
-
-        if (message.action === 'aws-cloud-deployer') {
-          // console.log({ deployer: message.data });
-
-          if (message.data.status === 'finish') {
-            const hash = message.data.hash;
-            console.log(hash, 'remove  from dependency table and run next');
-
-            // this.cloudDeployerResponse(hash);
-          }
-        }
-      } catch (err) {
-        throw new Error(err);
-      }
-    });
 
     let inProgress = 0;
 
@@ -80,6 +57,7 @@ class AwsDistributor extends Distributor {
     await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
     this.logger.warn('Directory uploaded to S3.');
 
+
     return new Promise((resolve, reject) => {
       /**
        * @private
@@ -87,21 +65,44 @@ class AwsDistributor extends Distributor {
       const _distributeConfigs = () => {
         Object.keys(this._dependencyTable).forEach(hash => {
           const dependencies = this._dependencyTable[hash];
-          console.log('_distributeConfigs :', this._dependencyTable, dependencies);
 
           if (!Object.keys(dependencies).length) {
             delete this._dependencyTable[hash];
 
-            _callLambdaExecutor(hash);
+            _callLambdaExecutor(hash, _finishExecution);
           }
         });
       };
 
       /**
        * @param {String} hash
+       * @param {Object} config
        * @private
        */
-      const _callLambdaExecutor = async hash => {
+      const _finishExecution = (hash, config) => {
+        this.removeDependencies(this._dependencyTable, hash);
+
+        this.logger.info(`[${config.name}] Successfully deployed!`);
+
+        inProgress--;
+
+        if (Object.keys(this._dependencyTable).length) {
+          _distributeConfigs();
+        } else if (!inProgress) {
+          if (this._errors.length) {
+            return reject(this._errors);
+          }
+
+          return resolve();
+        }
+      };
+
+      /**
+       * @param {String} hash
+       * @param {Function} callback
+       * @private
+       */
+      const _callLambdaExecutor = async (hash, callback) => {
         const config = this.projectConfig[hash];
 
         this.parameters.jitPath = this.parameters.jitPath.replace('/cache', Util.lambdaHomedir);
@@ -115,39 +116,25 @@ class AwsDistributor extends Distributor {
 
         inProgress++;
 
-        this.logger.warn(`[${config.name}] Deploy started!`);
         try {
           const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
-          console.log('postResult : ', postResult);
-        } catch (err) {
-          console.error('cloud-deployer/aws/create error  :', err);
-        }
-
-        try {
-          console.log('waiting response from finish');
-          const cloudDeployerResponse = await ws.onFinish();
-          console.log('Cloud Deployer Response :', cloudDeployerResponse, hash);
-
-          this.removeDependencies(this._dependencyTable, hash);
-
-          this.logger.info(`[${config.name}] Successfully deployed!`);
+          this.logger.warn(`[${config.name}] ${postResult.message}!`);
         } catch (err) {
           this._dependencyTable = {};
           this._errors.push(err);
         }
 
-        console.log('inProgress--', this._dependencyTable);
-        inProgress--;
+        ws.on('message', data => {
+          try {
+            const message = JSON.parse(data);
 
-        if (Object.keys(this._dependencyTable).length) {
-          _distributeConfigs();
-        } else if (!inProgress) {
-          if (this._errors.length) {
-            return reject(this._errors);
+            if (message.action === 'aws-cloud-deployer' && message.data.status === 'finish') {
+              if (message.data.hash === hash) callback(hash, config);
+            }
+          } catch (err) {
+            throw new Error(err);
           }
-
-          return resolve();
-        }
+        });
       };
 
       _distributeConfigs();

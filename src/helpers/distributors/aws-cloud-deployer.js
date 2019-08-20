@@ -53,7 +53,8 @@ class AwsDeployer {
 
     return {
       message: `Component '${config.name}' has been successfully deployed.`,
-      data: {}
+      hash: config.hash,
+      status: 'finish'
     };
   }
 

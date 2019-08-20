@@ -9,8 +9,6 @@ class Websocket {
     this.baseUrl = `wss://apiws-${env.split('-')[1]}.terrahub.io/v1`;
     this.ws = new WebSocket(`${this.baseUrl}?ticket_id=${ticket}`);
 
-    // this.listen();
-
   }
 
   listen() {
