@@ -52,7 +52,7 @@ class LocalDistributor extends Distributor {
   _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork({ THUB_RUN_ID: this.THUB_RUN_ID, ...this._env });
+    this.loggerWorker = cluster.fork({ THUB_RUN_ID: this.runId, ...this._env });
 
     this._loggerWorkerCount++;
 

@@ -15,8 +15,9 @@ class AbstractTerrahub {
    * @param {Object} cfg
    * @param {String} thubRunId
    * @param {Object} parameters
+   * @param {Function} publish
    */
-  constructor(cfg, thubRunId, parameters) {
+  constructor(cfg, thubRunId, parameters, publish) {
     this._runId = thubRunId;
     this._action = '';
     this.parameters = parameters;
@@ -26,6 +27,7 @@ class AbstractTerrahub {
     this._terraform = new Terraform(cfg, this.parameters);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
+    this.publish = publish;
   }
 
   /**
@@ -257,10 +259,12 @@ class AbstractTerrahub {
    * @return {Promise}
    * @private
    */
-  _sendLogsToApi(status, ...args) {
+  async _sendLogsToApi(status, ...args) {
     if (this.parameters.isCloud) {
       ApiHelper.init(this.parameters);
       ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
+
+      this.publish({ ...this._workflowOptions, status });
     } else {
       process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
     }

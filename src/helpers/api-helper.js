@@ -13,6 +13,7 @@ class ApiHelper extends events.EventEmitter {
 
     this._logs = [];
     this._promises = [];
+    this._isCloud = false;
     this._workerIsFree = true;
     this._tokenIsValid = false;
     this._apiLogginStart = false;
@@ -28,6 +29,8 @@ class ApiHelper extends events.EventEmitter {
   init(parameters) { //todo Remove
     this.fetch = parameters.fetch instanceof Fetch
       ? parameters.fetch : new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
+
+    this._isCloud = parameters.isCloud;
     this.config = parameters.config;
   }
 
@@ -183,7 +186,6 @@ class ApiHelper extends events.EventEmitter {
    */
   pushToPromises(promise) {
     this._promises.push(promise);
-
     return this.sendToWorker();
   }
 
@@ -208,7 +210,7 @@ class ApiHelper extends events.EventEmitter {
 
     const message = Object.keys(data.messages).map(key => data.messages[key]).join('');
     const body = {
-      terraformRunId: this.runId,
+      terraformRunId: this.runId || data.context.runId,
       timestamp: Date.now() + this.logsTimestampAdder,
       component: data.context.componentName,
       log: message,
@@ -249,9 +251,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} [hash]
    * @param {String[]} [actions]
    */
-  sendComponentFlow({
-    status, name, action, hash, actions
-  }) {
+  sendComponentFlow({ status, name, action, hash, actions }) {
     if (!this.actions && actions) {
       this.actions = actions;
     }
@@ -287,9 +287,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {{ source: String, status: String, [hash]: String, [name]: String }}
    * @param {Number} [runStatus]
    */
-  sendDataToApi({
-    source, status, hash, name
-  }, runStatus) {
+  sendDataToApi({ source, status, hash, name }, runStatus) {
     const url = ApiHelper.getUrl(source, status);
     const body = this.getBody(source, status, hash, name, runStatus);
 
@@ -395,6 +393,10 @@ class ApiHelper extends events.EventEmitter {
    */
   get tokenIsValid() {
     return this._tokenIsValid;
+  }
+
+  get isDeployCloud() {
+    return this._isCloud;
   }
 
   /**

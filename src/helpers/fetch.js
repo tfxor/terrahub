@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const URL = require('url');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;

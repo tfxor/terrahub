@@ -76,6 +76,7 @@ try {
 
     await syncExitProcess(0);
   } catch (err) {
+    console.log('cathed error in CLI.JS');
     ApiHelper.sendErrorToApi();
     logger.error(err.message || err || 'Error occurred');
 

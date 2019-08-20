@@ -2,6 +2,8 @@
 
 const fse = require('fs-extra');
 const Fetch = require('../fetch');
+const logger = require('../logger');
+const ApiHelper = require('../api-helper');
 const JitHelper = require('../jit-helper');
 const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
@@ -9,8 +11,10 @@ const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
 
-  constructor(S3fs) {
-    this.s3fs = new S3fs;
+  constructor({ s3, parameters, publish }) {
+    this.s3fs = new s3;
+    this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
+    this.publish = publish;
   }
 
   /**
@@ -24,9 +28,16 @@ class AwsDeployer {
    */
   async deploy(requestData) {
     const {
-      config, thubRunId, actions, parameters 
+      config, thubRunId, actions, parameters
     } = requestData;
-    this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
+
+    ApiHelper.on('loggerWork', () => {
+      const promises = ApiHelper.retrieveDataToSend();
+
+      return Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
+    });
+
+
     config.project.root = AwsDeployer._projectDirectory;
     const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
 
@@ -35,7 +46,6 @@ class AwsDeployer {
     const cfg = await JitHelper.jitMiddleware(config, parameters);
 
     await this._runActions(actions, cfg, thubRunId, parameters);
-    console.log('5');
 
     if (cfg.isJit) {
       await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
@@ -56,9 +66,18 @@ class AwsDeployer {
    * @private
    */
   async _runActions(actions, config, thubRunId, parameters) {
-    const terrahub = new Terrahub(config, thubRunId, parameters);
+    const terrahub = new Terrahub(config, thubRunId, parameters, this.publish);
 
-    const tasks = actions.map(action => options => (action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config)));
+    logger.updateContext({
+      runId: thubRunId,
+      componentName: config.name,
+    });
+
+    const tasks = actions.map(action => options => {
+      logger.updateContext({ action: action });
+
+      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
+    });
 
     return promiseSeries(tasks, (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})));
   }
