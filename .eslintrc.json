@@ -7,6 +7,7 @@
     "airbnb-base"
   ],
   "rules": {
+    "function-paren-newline" : [0, { "minItems": 4 }],
     "comma-dangle": [
       0,
       "never"
@@ -84,6 +85,7 @@
     "no-magic-number": 0,
     "no-multi-spaces": 0,
     "no-multi-str": 0,
+    "no-multi-assign": 0,
     "no-native-reassign": 2,
     "no-new-func": 2,
     "no-new-wrappers": 2,
@@ -91,11 +93,14 @@
     "no-octal-escape": 2,
     "no-octal": 2,
     "no-proto": 2,
+    "no-prototype-builtins": 0,
     "no-redeclare": 2,
+    "no-restricted-globals": 0,
     "no-return-assign": 2,
     "no-script-url": 2,
     "no-self-compare": 2,
     "no-sequences": 0,
+    "no-template-curly-in-string": 0,
     "no-throw-literal": 0,
     "no-unused-expressions": 0,
     "no-useless-call": 2,
@@ -133,7 +138,8 @@
       "error",
       {
         "functions": false,
-        "classes": true
+        "classes": true,
+        "variables": false
       }
     ],
     "callback-return": 0,
@@ -218,6 +224,8 @@
     "no-underscore-dangle": 0,
     "no-unneeded-ternary": 0,
     "object-curly-spacing": 0,
+    "object-curly-newline": 0,
+    "object-property-newline": [1, { "allowAllPropertiesOnSameLine": true }],
     "one-var": 0,
     "operator-assignment": 0,
     "operator-linebreak": 0,
@@ -251,6 +259,7 @@
     "generator-star-spacing": 0,
     "no-arrow-condition": 0,
     "no-class-assign": 0,
+    "class-methods-use-this": 0,
     "no-const-assign": 0,
     "no-dupe-class-members": 0,
     "no-this-before-super": 0,
@@ -261,6 +270,7 @@
     "prefer-reflect": 0,
     "prefer-spread": 0,
     "prefer-template": 0,
-    "require-yield": 0
+    "require-yield": 0,
+    "import/no-dynamic-require": 0
   }
 }

@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const URL = require('url');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;
@@ -105,11 +104,12 @@ class Fetch {
    * @private
    */
   static _handleError(error) {
+    let message;
     if (['EAI_AGAIN', 'NetworkingError'].includes(error.code)) {
-      error.message = 'Internet connection issue';
+      message = 'Internet connection issue';
     }
 
-    throw error;
+    throw message.length ? {...error, message } : error;
   }
 }
 

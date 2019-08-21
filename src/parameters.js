@@ -13,11 +13,12 @@ const { extend, homePath } = require('./helpers/util');
  * @private
  */
 function _getEnv(args) {
+  const _args = {...args};
   if (process.env.hasOwnProperty('THUB_ENV')) {
-    args.env = args.e = process.env.THUB_ENV;
+    _args.env = _args.e = process.env.THUB_ENV;
   }
 
-  return args.env || args.e;
+  return _args.env || _args.e;
 }
 
 /**

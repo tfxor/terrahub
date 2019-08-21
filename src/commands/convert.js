@@ -5,12 +5,10 @@ const { join, sep } = require('path');
 const hcltojson = require('hcl-to-json');
 const { exec } = require('child-process-promise');
 const logger = require('../helpers/logger');
-const ConfigLoader = require('../config-loader');
 const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
-const { jsonToYaml, yamlToJson } = require('../helpers/util');
-const { binPath, config, commandsPath } = require('../parameters');
-const { buildTmpPath, checkTfVersion } = require('../helpers/jit-helper');
+const { yamlToJson } = require('../helpers/util');
+const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
 const LocalDistributor = require('../helpers/distributors/local-distributor');
 
 class ConvertCommand extends DistributedCommand {
@@ -40,7 +38,7 @@ class ConvertCommand extends DistributedCommand {
       `Are you sure you want to convert all of the components above into '${format}' format? (y/N) `
     );
     if (!answer) {
-      return Promise.reject('Action aborted');
+      throw new Error('Action aborted');
     }
 
     await Promise.all(Object.keys(config).map(hash => this._convertComponent(config[hash], format)));
@@ -220,9 +218,9 @@ class ConvertCommand extends DistributedCommand {
 
         return Promise.all(promises);
       })
-    .catch(err => {
-      throw new Error(err.toString());
-    });
+      .catch(err => {
+        throw new Error(err.toString());
+      });
   }
 
   /**
@@ -244,9 +242,9 @@ class ConvertCommand extends DistributedCommand {
         });
         return Promise.all(promises);
       })
-    .catch(err => {
-      throw new Error(err.toString());
-    });
+      .catch(err => {
+        throw new Error(err.toString());
+      });
   }
 
   /**
@@ -375,7 +373,8 @@ class ConvertCommand extends DistributedCommand {
     let extension = '';
     if (arch.indexOf('windows') > -1) extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} -thub ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, `component${extension}`)} ` +
+      `-thub ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
 
   /**
@@ -412,7 +411,8 @@ class ConvertCommand extends DistributedCommand {
     let extension = '';
     if (arch.indexOf('windows') > -1) extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} -json ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
+    return exec(`${join(componentBinPath, `component${extension}`)} ` +
+      `-json ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
   }
 
   /**

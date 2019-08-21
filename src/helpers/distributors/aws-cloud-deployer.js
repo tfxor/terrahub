@@ -11,8 +11,8 @@ const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
 
-  constructor({ s3, parameters, publish }) {
-    this.s3fs = new s3;
+  constructor({ s3: S3, parameters, publish }) {
+    this.s3fs = new S3;
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this.publish = publish;
   }
@@ -37,14 +37,11 @@ class AwsDeployer {
       return Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
     });
 
-
     config.project.root = AwsDeployer._projectDirectory;
     const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
 
     await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
-
     const cfg = await JitHelper.jitMiddleware(config, parameters);
-
     await this._runActions(actions, cfg, thubRunId, parameters);
 
     if (cfg.isJit) {

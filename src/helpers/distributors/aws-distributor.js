@@ -32,11 +32,9 @@ class AwsDistributor extends Distributor {
    */
   async runActions(actions, { dependencyDirection = null } = {}) {
     await this._validateRequirements();
+
     const { data: { ticket_id } } = await this.websocketTicketCreate();
-
     const { ws } = new Websocket(this.config.api, ticket_id);
-
-
 
     let inProgress = 0;
 
@@ -69,7 +67,7 @@ class AwsDistributor extends Distributor {
           if (!Object.keys(dependencies).length) {
             delete this._dependencyTable[hash];
 
-            _callLambdaExecutor(hash, _finishExecution);
+            _callLambdaExecutor(hash, _onFinishExecution);
           }
         });
       };
@@ -77,9 +75,10 @@ class AwsDistributor extends Distributor {
       /**
        * @param {String} hash
        * @param {Object} config
+       * @return {void}
        * @private
        */
-      const _finishExecution = (hash, config) => {
+      const _onFinishExecution = (hash, config) => {
         this.removeDependencies(this._dependencyTable, hash);
 
         this.logger.info(`[${config.name}] Successfully deployed!`);
@@ -128,8 +127,8 @@ class AwsDistributor extends Distributor {
           try {
             const message = JSON.parse(data);
 
-            if (message.action === 'aws-cloud-deployer' && message.data.status === 'finish') {
-              if (message.data.hash === hash) callback(hash, config);
+            if (this._isFinishMessage(message, hash)) {
+              return callback(hash, config);
             }
           } catch (err) {
             throw new Error(err);
@@ -175,12 +174,25 @@ class AwsDistributor extends Distributor {
   }
 
   /**
+   * @param {Object} message
+   * @param {String} componentHash
+   * @return {Boolean}
+   * @private
+   */
+  _isFinishMessage(message, componentHash) {
+    const { action, data: { status, hash } } = message;
+
+    return action === 'aws-cloud-deployer' && status === 'finish' && componentHash === hash;
+  }
+
+  /**
    * @description Returns the current execution file mapping
    * @return {String[]}
    * @private
    */
   _getExecutionMapping() {
-    const componentMappings = [].concat(...Object.keys(this.projectConfig).map(hash => this.projectConfig[hash].mapping));
+    const componentMappings = [].concat(...Object.keys(this.projectConfig)
+      .map(hash => this.projectConfig[hash].mapping));
 
     return [...new Set(componentMappings)];
   }

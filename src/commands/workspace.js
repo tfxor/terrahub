@@ -131,6 +131,7 @@ class WorkspaceCommand extends DistributedCommand {
   /**
    * @param {Object[]} results
    * @param {String} message
+   * @return {Promise}
    * @private
    */
   _handleWorkspaceList(results, message) {

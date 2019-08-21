@@ -12,24 +12,24 @@ class GitHelper {
    */
   static handleGitDiffError(error, appPath) {
     logger.debug(error);
+    let message;
 
     if (error.stderr) {
       const stderr = error.stderr.toString();
-
       if (/not found/.test(stderr)) {
-        error.message = 'Git is not installed on this device.';
+        message = 'Git is not installed on this device.';
       } else if (/Not a git repository/i.test(stderr)) {
-        error.message = `Git repository not found in '${appPath}'.`;
+        message = `Git repository not found in '${appPath}'.`;
       }
     }
 
-    return error;
+    return { ...error, message };
   }
 
   /**
    * @param {String[]} commits
    * @param {String} appPath
-   * @return {String[] || void}
+   * @return {String[] | void}
    */
   static getGitDiff(commits, appPath) {
     let stdout;

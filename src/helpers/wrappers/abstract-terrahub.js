@@ -76,10 +76,10 @@ class AbstractTerrahub {
         return this._getTask();
       }
     }).then(data => {
-      data.action = this._action;
-      data.component = this._config.name;
+      const action = this._action;
+      const component = this._config.name;
 
-      return data;
+      return { ...data, action, component };
     });
   }
 
@@ -126,7 +126,8 @@ class AbstractTerrahub {
       switch (extension) {
         case '.js':
           return () => {
-            const promise = require(args[0])(this._config, res.buffer); // eslint-disable-line global-require
+            // eslint-disable-next-line import/no-dynamic-require
+            const promise = require(args[0])(this._config, res.buffer);
 
             return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
           };
@@ -158,11 +159,11 @@ class AbstractTerrahub {
         return true;
       });
 
-      error.message = this._addNameToMessage(originalMessage ?
+      const message = this._addNameToMessage(originalMessage ?
         `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
         `An unknown error occurred in hook ${this._action} ${hook} execution.`);
 
-      return Promise.reject(error);
+      throw new Error({ ...error, message });
     });
   }
 
@@ -174,7 +175,8 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/timeout/, /connection reset by peer/, /connection refused/, /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+        return [/timeout/, /connection reset by peer/, /connection refused/,
+          /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: this.parameters.config.retryCount,
       intermediateAction: (retries, maxRetries) => {

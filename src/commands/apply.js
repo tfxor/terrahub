@@ -27,7 +27,12 @@ class ApplyCommand extends DistributedCommand {
     const secondStep = { actions: ['apply'], dependencyDirection };
 
     const answer = await this.askForApprovement(config, this.getOption('auto-approve'));
-    return answer ? Promise.all([firstStep, secondStep]) : Promise.reject('Action aborted');
+
+    if (answer) {
+      return Promise.all([firstStep, secondStep]);
+    } else {
+      throw new Error('Action aborted');
+    }
   }
 }
 

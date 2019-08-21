@@ -195,7 +195,7 @@ class ConfigureCommand extends DistributedCommand {
   async _deleteConfig() {
     const confirmed = await this._getPromise();
     if (!confirmed) {
-      return Promise.reject('Action aborted');
+      throw new Error('Action aborted');
     }
 
     return this._addConfig();

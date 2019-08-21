@@ -40,7 +40,7 @@ class RunCommand extends DistributedCommand {
 
     const isConfirmed = await this._getPromise(config);
     if (!isConfirmed) {
-      return Promise.reject('Action aborted');
+      throw new Error('Action aborted');
     }
 
     return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);

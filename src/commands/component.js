@@ -67,7 +67,7 @@ class ComponentCommand extends ConfigCommand {
 
       const answer = await Util.yesNoQuestion('Do you want to perform delete action? (y/N) ');
       if (!answer) {
-        return Promise.reject('Action aborted');
+        throw new Error('Action aborted');
       }
 
       await Promise.all(names.map(it => this._deleteComponent(it)));
@@ -86,11 +86,11 @@ class ComponentCommand extends ConfigCommand {
         return Promise.resolve();
       }
 
-      return 'Done';
+      return Promise.resolve('Done');
     }
 
     await Promise.all(names.map(it => this._addExistingComponent(it)));
-    return 'Done';
+    return Promise.resolve('Done');
   }
 
   /**
@@ -266,7 +266,7 @@ class ComponentCommand extends ConfigCommand {
    * @param {String} directory
    */
   _createWorkspaceFiles(directory) {
-    this._getWorkspaceFiles().map(file => {
+    this._getWorkspaceFiles().forEach(file => {
       ConfigLoader.writeConfig({}, path.join(directory, file));
     });
   }

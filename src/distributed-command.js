@@ -4,6 +4,7 @@ const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
 const LogHelper = require('./helpers/log-helper');
+const GitHelper = require('./helpers/git-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
@@ -14,17 +15,6 @@ const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-
 
 class DistributedCommand extends AbstractCommand {
 
-  // DistributedCommands list:
-  // apply, build,
-  // destroy, import,
-  // init, output,
-  // plan, prepare,
-  // refresh, workspace
-
-  // const _Command = require(comandPath)
-  // const Command = new [Type]Distributor(new _Command(input, logger))
-
-  // 1. All about api-console logging
   /**
    * @param {Object} parameters
    * @param {Logger} logger
@@ -192,7 +182,7 @@ class DistributedCommand extends AbstractCommand {
   getVar() {
     let result = {};
 
-    this.getOption('var').map(item => {
+    this.getOption('var').forEach(item => {
       Object.assign(result, Args.toObject(item));
     });
 
@@ -475,7 +465,7 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
         ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }

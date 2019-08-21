@@ -71,7 +71,9 @@ class Terraform {
    * @return {String}
    */
   getBinary() {
-    return this.parameters.isCloud ? homePathLambda('terraform', this.getVersion(), 'terraform') : homePath('terraform', this.getVersion(), 'terraform');
+    return this.parameters.isCloud
+      ? homePathLambda('terraform', this.getVersion(), 'terraform')
+      : homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -103,7 +105,7 @@ class Terraform {
     }
 
     if (this.parameters.isCloud) {
-      this._deleteDefaultEnvCreds(this._envVars);
+      this._deleteDefaultEnvCreds();
     }
 
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
@@ -133,23 +135,19 @@ class Terraform {
 
         switch (type) {
           case 'cloudAccount':
-            this._deleteDefaultEnvCreds(this._envVars);
+            this._deleteDefaultEnvCreds();
+            const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud);
 
-            Object.assign(this._envVars,
-              {
-                AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud),
-                AWS_PROFILE: 'default'
-              });
+            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
             break;
           case 'backendAccount':
-            Object.assign(this._tf.backend,
-              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend', this.parameters.isCloud) });
+            const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this.parameters.isCloud);
+
+            Object.assign(this._tf.backend,{ shared_credentials_file: backCredsPath });
             break;
         }
       });
     }
-
-    console.log('env :', this._envVars);
 
     return Promise.resolve();
   }
@@ -519,13 +517,12 @@ class Terraform {
   }
 
   /**
-   * @param {Object} envVars
-   * @return {Object}
+   * @return {void}
    * @private
    */
-  _deleteDefaultEnvCreds(envVars) {
+  _deleteDefaultEnvCreds() {
     return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-      .forEach(it => delete envVars[it]);
+      .forEach(it => delete this._envVars[it]);
   }
 
   /**

@@ -35,7 +35,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * Sends event to ThreadDistributor to execute logging
+   * Sends event to Distributor to execute logging
    */
   sendToWorker() {
     if (this._errors) {
@@ -88,7 +88,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {{ url: {String}, body: {Object} }}
+   * @param {Object} { url: {String}, body: {Object} }
    * @return {Promise}
    */
   asyncFetch({ url, body }) {
@@ -114,7 +114,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Array}
    */
   retrievePromises() {
-    const _promises = this._promises;
+    const { _promises } = this;
     const onCreate = _promises.filter(({ url }) => url.split('/')[2] === 'create');
 
     if (onCreate.length) {
@@ -137,7 +137,8 @@ class ApiHelper extends events.EventEmitter {
       return false;
     }
 
-    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}?indexMapping=logs`;
+    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}` +
+      `?indexMapping=logs`;
     let _logs = [];
 
     if (!all) {
@@ -183,15 +184,17 @@ class ApiHelper extends events.EventEmitter {
 
   /**
    * @param {Object} promise
+   * @return {Event} `LoggerWork`
    */
   pushToPromises(promise) {
     this._promises.push(promise);
+
     return this.sendToWorker();
   }
 
   /**
    * @param {Object} body
-   * @return {void||null}
+   * @return {void | null}
    */
   pushToLogs(body) {
     this._logs.push(body);
@@ -200,7 +203,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param data {{ messages: Object, context: Object }}
+   * @param {Object} data { messages: Object, context: Object }
    */
   sendLogsToApi(data) {
     if (!this.logsTimestampAdder) {
@@ -221,7 +224,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {{ status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}}
+   * @param {Object} {status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}
    * @param {Number} [runStatus]
    */
   sendMainWorkflow({
@@ -251,7 +254,9 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} [hash]
    * @param {String[]} [actions]
    */
-  sendComponentFlow({ status, name, action, hash, actions }) {
+  sendComponentFlow({
+    status, name, action, hash, actions
+  }) {
     if (!this.actions && actions) {
       this.actions = actions;
     }
@@ -284,10 +289,12 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @param {{ source: String, status: String, [hash]: String, [name]: String }}
+   * @param {Object} {source: String, status: String, [hash]: String, [name]: String}
    * @param {Number} [runStatus]
    */
-  sendDataToApi({ source, status, hash, name }, runStatus) {
+  sendDataToApi({
+    source, status, hash, name
+  }, runStatus) {
     const url = ApiHelper.getUrl(source, status);
     const body = this.getBody(source, status, hash, name, runStatus);
 
@@ -434,19 +441,17 @@ class ApiHelper extends events.EventEmitter {
    * Finish components logging
    */
   endComponentsLogging() {
-    Object.keys(this._componentsExecutionList).map(hash => {
+    Object.keys(this._componentsExecutionList).forEach(hash => {
       const status = 'update',
         source = 'component',
         name = this._componentsExecutionList[hash];
 
-      this.sendDataToApi({
-        source, status, name, hash
-      });
+      this.sendDataToApi({ source, status, name, hash });
     });
   }
 
   /**
-   * @return {Promise || Object}
+   * @return {Promise | Object}
    */
   async retrieveCloudAccounts() {
     if (!this._cloudAccounts) {
@@ -461,9 +466,9 @@ class ApiHelper extends events.EventEmitter {
    * @return {void}
    */
   deleteTempFolder() {
-    const tmpPath = homePath('temp');
+    this.tmpPath = homePath('temp');
 
-    fse.removeSync(tmpPath);
+    fse.removeSync(this.tmpPath);
   }
 
 }

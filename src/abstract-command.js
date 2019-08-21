@@ -15,8 +15,8 @@ const ListException = require('./exceptions/list-exception');
  */
 class AbstractCommand {
   /**
-   * @param {Logger} logger
    * @param {Object} parameters
+   * @param {Logger} logger
    */
   constructor(parameters, logger) {
     this.logger = logger;
@@ -310,6 +310,7 @@ class AbstractCommand {
    */
 
   /**
+   * @param {Object} fullConfig
    * @returns {Promise}
    */
   checkProjectDuplicateComponents(fullConfig) {
@@ -354,7 +355,8 @@ class AbstractCommand {
         'in project\'s root or initialize new project with `terrahub project`.');
     } else {
       return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
-        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `).then(answer => {
+        `(e.g. ${missingData === 'code'
+          ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `).then(answer => {
 
         try {
           this._configLoader.addToGlobalConfig(missingData, answer);

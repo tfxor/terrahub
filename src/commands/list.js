@@ -63,9 +63,9 @@ class ListCommand extends ConfigCommand {
        * @param {String} item
        * @returns {Boolean}
        */
-      function isAllowed(allowed, item) {
+      const isAllowed = (allowed, item) => {
         return (allowed.length === 0 || allowed.includes(item));
-      }
+      };
 
       this.logger.log('Compiling the list of cloud resources. ' +
         'Use --depth, -d option to view details about projects, accounts, regions and services.' + os.EOL);
@@ -201,7 +201,8 @@ class ListCommand extends ConfigCommand {
    */
   async _fetchResources() {
     let [free, paid] = await Promise.all(
-      [this.accountId, this.terrahubCfg.token].map(salt => ListCommand._cachePath(salt)).map(cachePath => ListCommand._tryCache(cachePath))
+      [this.accountId, this.terrahubCfg.token]
+        .map(salt => ListCommand._cachePath(salt)).map(cachePath => ListCommand._tryCache(cachePath))
     );
 
     [free, paid] = await Promise.all([
@@ -262,7 +263,7 @@ class ListCommand extends ConfigCommand {
       return data;
     }
 
-    return await this._getResources(taggingApi, { PaginationToken: response.PaginationToken }, data);
+    return this._getResources(taggingApi, { PaginationToken: response.PaginationToken }, data);
   }
 
   /**
@@ -285,7 +286,7 @@ class ListCommand extends ConfigCommand {
       region: region || fallbackRegion,
       accountId: accountId || this.accountId,
       resource: resource,
-      project: code && code.Value || '-'
+      project: (code && code.Value) || '-'
     };
   }
 
@@ -321,7 +322,8 @@ class ListCommand extends ConfigCommand {
    * @private
    */
   _getRegions() {
-    const list = fse.readJsonSync(path.join(this.parameters.templates.help, 'regions.aws.json'), { throws: false }) || [];
+    const list = fse.readJsonSync(
+      path.join(this.parameters.templates.help, 'regions.aws.json'), { throws: false }) || [];
 
     return list
       .filter(region => region.public === true)

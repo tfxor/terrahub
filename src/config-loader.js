@@ -7,7 +7,7 @@ const fse = require('fs-extra');
 const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
 const {
-  toMd5, extend, yamlToJson, jsonToYaml 
+  toMd5, extend, yamlToJson, jsonToYaml
 } = require('./helpers/util');
 
 class ConfigLoader {
@@ -70,7 +70,9 @@ class ConfigLoader {
 
     if (configFile) {
       this._format = path.extname(configFile);
-      this._fileName = this._terrahubConfig.isDefault ? `.terrahub${this._format}` : `.terrahub.${this._terrahubConfig.env}${this._format}`;
+      this._fileName = this._terrahubConfig.isDefault
+        ? `.terrahub${this._format}`
+        : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
@@ -255,7 +257,8 @@ class ConfigLoader {
       config = Object.assign(config, config.component);
 
       this._processComponentConfig(config, componentPath);
-      this._config[componentHash] = extend({ root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend(
+        { root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
     });
 
     rootPaths[this._rootPath] = null;
@@ -335,7 +338,7 @@ class ConfigLoader {
    */
   _find(pattern, path) {
     return glob.sync(pattern, {
-      cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns 
+      cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns
     });
   }
 

@@ -12,7 +12,7 @@ const mergeWith = require('lodash.mergewith');
 const childProcess = require('child_process');
 const { spawn } = require('child-process-promise');
 const {
-  EOL, platform, cpus, homedir 
+  EOL, platform, cpus, homedir
 } = require('os');
 
 /**
@@ -233,10 +233,10 @@ class Util {
       onStdout(data);
     });
 
-    return promise.then(() => Buffer.concat(stdout)).catch(err => {
-      err.message = Buffer.concat(stderr).toString();
+    return promise.then(() => Buffer.concat(stdout)).catch(error => {
+      const message = Buffer.concat(stderr).toString();
 
-      return Promise.reject(err);
+      throw new Error({...error, message });
     });
   }
 
@@ -266,10 +266,11 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        error.message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
+        let { message } = error;
+        message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
           `Retried ${maxRetries} times, but still FAILED.`;
 
-        return Promise.reject(error);
+        throw new Error({...error, message });
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -374,7 +375,8 @@ class Util {
    * @return {Promise}
    */
   static globPromise(pattern, options) {
-    return new Promise((resolve, reject) => glob(pattern, options, (error, files) => (error ? reject(error) : resolve(files))));
+    return new Promise((resolve, reject) => glob(pattern, options,
+      (error, files) => (error ? reject(error) : resolve(files))));
   }
 
   /**

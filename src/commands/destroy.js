@@ -26,13 +26,17 @@ class DestroyCommand extends DistributedCommand {
     const dependencyDirection = Dictionary.DIRECTION.REVERSE;
 
     const firstStep = {
-      actions: ['prepare', 'init', 'workspaceSelect', 'plan'], config, planDestroy: true, dependencyDirection 
+      actions: ['prepare', 'init', 'workspaceSelect', 'plan'], config, planDestroy: true, dependencyDirection
     };
     const secondStep = {
-      actions: ['destroy'], config, planDestroy: true, dependencyDirection 
+      actions: ['destroy'], config, planDestroy: true, dependencyDirection
     };
 
-    return isApproved ? await Promise.all([firstStep, secondStep]) : Promise.reject('Action aborted');
+    if (isApproved) {
+      return Promise.all([firstStep, secondStep]);
+    } else {
+      throw new Error('Action aborted');
+    }
   }
 }
 

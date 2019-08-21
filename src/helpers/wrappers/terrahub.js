@@ -68,7 +68,8 @@ class Terrahub extends AbstractTerrahub {
    * @abstract
    */
   upload(data) {
-    if (!this.parameters.config.token || !data || !data.buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!this.parameters.config.token || !data || !data.buffer ||
+      !['plan', 'apply', 'destroy'].includes(this._action)) {
       return Promise.resolve(data);
     }
 
@@ -108,8 +109,9 @@ class Terrahub extends AbstractTerrahub {
       })
     };
     const promise = this.parameters.fetch.post(url, options).catch(error => {
-      error.message = this._addNameToMessage('Failed to trigger parse function');
-      logger.error(error);
+      const message = this._addNameToMessage('Failed to trigger parse function');
+
+      logger.error({...error, message });
 
       return Promise.resolve();
     });

@@ -81,9 +81,10 @@ class Logger {
     if (message instanceof Error) {
       const { name } = this._logger.getLevel();
 
-      message = (name === logger.DEBUG.name) ?
-        message.stack :
-        message.message;
+      // eslint-disable-next-line no-param-reassign
+      message = (name === logger.DEBUG.name)
+        ? message.stack
+        : message.message;
     }
 
     this._logger.error('❌', message);
@@ -115,7 +116,7 @@ class Logger {
 
   /**
    * Send messages to ThreadDistributor to execute logging
-   * @param messages
+   * @param {String[]} messages
    * @private
    */
   _sendMessageToMaster(messages) {
@@ -124,7 +125,7 @@ class Logger {
       type: 'logs',
       workerLogger: true,
       messages,
-      context: this._context,
+      context: this._context
     });
   }
 

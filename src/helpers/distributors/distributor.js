@@ -39,9 +39,7 @@ class Distributor {
 
     try {
       for (const step of steps) {
-        const {
-          actions, config, postActionFn, ...options 
-        } = step;
+        const { actions, config, postActionFn, ...options } = step;
 
         if (config) {
           this.projectConfig = config;
@@ -51,6 +49,7 @@ class Distributor {
 
         }
 
+        // eslint-disable-next-line no-await-in-loop
         const result = await this.runActions(actions, options);
 
         if (postActionFn) {
@@ -135,7 +134,7 @@ class Distributor {
       runId: this.command.runId,
       commandName: this.command._name,
       project: projectConfig,
-      environment: environment,
+      environment: environment
     });
   }
 }

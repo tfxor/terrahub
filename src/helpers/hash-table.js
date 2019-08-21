@@ -117,6 +117,7 @@ class HashTable {
     }
 
     if (!object.hasOwnProperty(property)) {
+      // eslint-disable-next-line no-param-reassign
       object[property] = {};
     }
 

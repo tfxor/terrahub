@@ -30,7 +30,8 @@ class S3Helper {
    * @return {Promise}
    */
   uploadFiles(bucketName, pathMap) {
-    return Promise.all(pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))));
+    return Promise.all(
+      pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))));
   }
 
   /**
@@ -51,7 +52,8 @@ class S3Helper {
         ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
           .forEach(it => delete process.env[it]);
 
-        AWS.config.credentials = new AWS.SharedIniFileCredentials({ filename: credsPath, preferStaticCredentials: true });
+        AWS.config.credentials = new AWS.SharedIniFileCredentials(
+          { filename: credsPath, preferStaticCredentials: true });
 
         this._s3 = new AWS.S3();
       }
