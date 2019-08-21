@@ -2,7 +2,6 @@
 
 const WebSocket = require('ws');
 
-
 class Websocket {
 
   constructor(env, ticket) {

@@ -70,12 +70,7 @@ class Fetch {
    * @private
    */
   _handleResponse(result) {
-    if (!result.length) {
-      console.log('Empty Body', result.status);
-    }
-
     return result.json().then(json => {
-
       let error;
       switch (result.status) {
         case 403:
