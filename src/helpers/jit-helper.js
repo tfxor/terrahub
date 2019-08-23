@@ -52,7 +52,7 @@ class JitHelper {
           return JitHelper._generateVariable(config, parameters);
         }
       })
-      .then(() => (parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters)))
+      .then(() => parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
@@ -65,33 +65,31 @@ class JitHelper {
    * @private
    */
   static _transformConfig(config, parameters) {
-    const _config = { ...config };
+    config.isJit = config.hasOwnProperty('template');
 
-    _config.isJit = config.hasOwnProperty('template');
-
-    if (_config.isJit) {
+    if (config.isJit) {
       const componentPath = join(config.project.root, config.root);
 
-      const localTfstatePath = JitHelper._normalizeBackendLocalPath(_config, parameters);
-      const remoteTfstatePath = JitHelper._normalizeBackendS3Key(_config);
+      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config, parameters);
+      const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
 
-      _config.template.locals = extend(_config.template.locals, [{
+      config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
         component: {
-          name: _config.name,
+          name: config.name,
           path: componentPath,
           local: localTfstatePath,
           remote: remoteTfstatePath
         },
         project: {
-          path: _config.project.root,
-          name: _config.project.name,
-          code: _config.project.code
+          path: config.project.root,
+          name: config.project.name,
+          code: config.project.code
         }
       }]);
     }
 
-    return _config;
+    return config;
   }
 
   /**
@@ -107,7 +105,7 @@ class JitHelper {
     let localTfstatePath = homePath(parameters.tfstatePath, config.project.name);
 
     if (locals) {
-      Object.keys(locals).filter(it => locals[it]).forEach(() => {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
         const { component } = locals;
         if (component && component.local) {
           localTfstatePath = component.local;
@@ -122,7 +120,7 @@ class JitHelper {
       if (backend) {
         const { local } = backend;
         if (local) {
-          Object.keys(local).filter(it => local[it]).forEach(() => {
+          Object.keys(local).filter(it => local[it]).map(() => {
             const { path } = local;
             if (path) {
               local.path = path.replace(/\$\{local.component\["local"\]\}/g, localTfstatePath);
@@ -147,7 +145,7 @@ class JitHelper {
     let remoteTfstatePath = join('terraform', config.project.name);
 
     if (locals) {
-      Object.keys(locals).filter(it => locals[it]).forEach(() => {
+      Object.keys(locals).filter(it => locals[it]).map(() => {
         const { component } = locals;
         if (component && component.remote) {
           localTfstatePath = component.remote;
@@ -161,7 +159,7 @@ class JitHelper {
       if (backend) {
         const { s3 } = backend;
         if (s3) {
-          Object.keys(s3).filter(it => s3[it]).forEach(() => {
+          Object.keys(s3).filter(it => s3[it]).map(() => {
             const { key } = s3;
             if (key) {
               s3.key = key.replace(/\$\{local.component\["remote"\]\}/g, remoteTfstatePath);
@@ -269,7 +267,7 @@ class JitHelper {
       }
 
       let tfvarValues = tfvars[variableName];
-      if (!JitHelper._checkTerrahubVariableType(tfvarValues) === 'list' || !tfvarValues) {
+      if (!JitHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
         return Promise.resolve();
       }
 
@@ -318,7 +316,7 @@ class JitHelper {
    */
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
-    let resourceByNameCopy = { ...resourceByName };
+    let resourceByNameCopy = { ...resourceByName};
     const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
         const paramByName = JSON.stringify(resourceByName[paramName]);
@@ -331,11 +329,9 @@ class JitHelper {
             const promises = unique.map(localVariable => {
               const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
               const { locals } = template;
-              locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName]
-                .replace(oldProviderTerrahubVariable, tfvarValue);
+              locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
               let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-              resourceByNameStringify = resourceByNameStringify
-                .replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
+              resourceByNameStringify = resourceByNameStringify.replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
               resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
             });
 
@@ -389,7 +385,7 @@ class JitHelper {
    * @private
    */
   static _normalizeTfvars(config) {
-    const { template } = config;
+    const template = config['template'];
 
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template);
@@ -411,7 +407,7 @@ class JitHelper {
 
   /**
    * @param {String} terrahubVariable
-   * @return {Object} {String, Array}
+   * @return {String, Array}
    * @private
    */
   static _extractTerrahubVariableName(terrahubVariable) {
@@ -456,8 +452,8 @@ class JitHelper {
     let variableValue = '';
 
     switch (JitHelper._checkTerrahubVariableType(tfvarValue)) {
-      case 'list':
-        if (variableNameNetArr.length === 2) {
+      case "list":
+        if (variableNameNetArr.length == 2) {
           const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
           variableValue = tfvarValue[indexOfElement];
         } else {
@@ -632,7 +628,6 @@ class JitHelper {
   /**
    * @param {Object} config
    * @param {Object} parameters
-   * @return {Promise}
    * @private
    */
   static _generateVariable(config, parameters) {
@@ -657,9 +652,7 @@ class JitHelper {
 
       variable[it] = { type };
     });
-
-    return JitHelper.convertJsonToHcl(
-      join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters);
+    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters);
   }
 
   /**
@@ -678,8 +671,7 @@ class JitHelper {
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
-        const promises = nonTerrahubFiles.map(file => fse.ensureSymlink(join(src, file), join(tmpPath, file))
-          .catch(() => {}));
+        const promises = nonTerrahubFiles.map(file => fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {}));
 
         return Promise.all(promises);
       })
@@ -718,9 +710,7 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config, parameters) {
-    const tmpPath = parameters.isCloud
-      ? homePathLambda(parameters.jitPath, `${config.name}_${config.project.code}`)
-      : homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
+    const tmpPath = parameters.isCloud ? homePathLambda(parameters.jitPath, `${config.name}_${config.project.code}`) : homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
 
     fse.ensureDirSync(tmpPath);
 
@@ -737,12 +727,10 @@ class JitHelper {
   static convertJsonToHcl(componentPath, data, isHCL2, parameters) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = parameters.isCloud
-      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
-      : join(parameters.binPath, arch);
+    const componentBinPath = parameters.isCloud ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin') : join(parameters.binPath, arch); // "/Users/andreyluchianic/WebstormProjects/terrahub-cli/terrahub/bin" + ${arch}
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
-    const buff = Buffer.from(dataStringify);
+    const buff = new Buffer(dataStringify);
     const base64data = buff.toString('base64');
 
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)

@@ -46,9 +46,7 @@ class Distributor {
 
           const firstKey = Object.keys(this.projectConfig)[0];
           this._projectRoot = this.projectConfig[firstKey].project.root;
-
         }
-
         // eslint-disable-next-line no-await-in-loop
         const result = await this.runActions(actions, options);
 
@@ -57,7 +55,7 @@ class Distributor {
         }
       }
     } catch (err) {
-      throw new Error(err.message || err);
+      return Promise.reject(err.message || err);
     }
 
     await ApiHelper.sendMainWorkflow({ status: 'update' });

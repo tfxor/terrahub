@@ -44,12 +44,22 @@ function commandCreate(logger = console) {
 
 /**
  * @param {Number} code
+ * @param {String | Array} message
+ * @param {Boolean} error
  * @return {Promise}
  */
-async function syncExitProcess(code) {
+async function syncExitProcess(code, message, error = false) {
   await ApiHelper.promisesForSyncExit();
   await ApiHelper.sendLogToS3();
   await ApiHelper.deleteTempFolder();
+
+  if (error) {
+    Array.isArray(message)
+      ? message.forEach(err => logger.error(err.message || err || 'Error occurred'))
+      : logger.error(message.message || message || 'Error occurred');
+  } else {
+    logger.info(message);
+  }
 
   return process.exit(code);
 }
@@ -70,15 +80,10 @@ try {
     const result = await command.run();
     const message = Array.isArray(result) ? result.toString() : result;
 
-    if (message) {
-      logger.info(message);
-    }
-
-    await syncExitProcess(0);
-  } catch (err) {
+    await syncExitProcess(0, message);
+  } catch (error) {
     ApiHelper.sendErrorToApi();
-    logger.error(err.message || err || 'Error occurred');
 
-    await syncExitProcess(1);
+    await syncExitProcess(1, error, true);
   }
 })();

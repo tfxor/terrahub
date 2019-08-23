@@ -104,7 +104,7 @@ class Fetch {
       message = 'Internet connection issue';
     }
 
-    throw message.length ? {...error, message } : error;
+    throw message ? { ...error, message } : error;
   }
 }
 

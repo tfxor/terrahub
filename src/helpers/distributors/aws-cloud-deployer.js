@@ -27,9 +27,7 @@ class AwsDeployer {
    * @return {Promise}
    */
   async deploy(requestData) {
-    const {
-      config, thubRunId, actions, parameters
-    } = requestData;
+    const { config, thubRunId, actions, parameters } = requestData;
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -37,15 +35,24 @@ class AwsDeployer {
       return Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
     });
 
-    config.project.root = AwsDeployer._projectDirectory;
-    const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
+    try {
+      config.project.root = AwsDeployer._projectDirectory;
+      const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
 
-    await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
-    const cfg = await JitHelper.jitMiddleware(config, parameters);
-    await this._runActions(actions, cfg, thubRunId, parameters);
+      await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
+      const cfg = await JitHelper.jitMiddleware(config, parameters);
+      await this._runActions(actions, cfg, thubRunId, parameters);
 
-    if (cfg.isJit) {
-      await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
+      if (cfg.isJit) {
+        await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
+      }
+
+    } catch (error) {
+      return {
+        message: error.message || error,
+        hash: config.hash,
+        status: 'error'
+      };
     }
 
     return {
@@ -68,7 +75,7 @@ class AwsDeployer {
 
     logger.updateContext({
       runId: thubRunId,
-      componentName: config.name,
+      componentName: config.name
     });
 
     const tasks = actions.map(action => options => {

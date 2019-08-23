@@ -81,7 +81,9 @@ class AwsDistributor extends Distributor {
       const _onFinishExecution = (hash, config) => {
         this.removeDependencies(this._dependencyTable, hash);
 
-        this.logger.info(`[${config.name}] Successfully deployed!`);
+        if (!this._errors.length) {
+          this.logger.info(`[${config.name}] Successfully deployed!`);
+        }
 
         inProgress--;
 
@@ -103,7 +105,6 @@ class AwsDistributor extends Distributor {
        */
       const _callLambdaExecutor = async (hash, callback) => {
         const config = this.projectConfig[hash];
-
         this.parameters.jitPath = this.parameters.jitPath.replace('/cache', Util.lambdaHomedir);
 
         const body = JSON.stringify({
@@ -127,7 +128,17 @@ class AwsDistributor extends Distributor {
           try {
             const message = JSON.parse(data);
 
-            if (this._isFinishMessage(message, hash)) {
+            // if (message.action === 'logs') {
+            //   console.log({ logs: message.data.filter(it => it.action !== 'main').map(it => it.log) });
+            // }
+
+            if (AwsDistributor._isFinishMessage(message, hash)) {
+              return callback(hash, config);
+            }
+            if (AwsDistributor._isFinishMessageWithErrors(message, hash)) {
+              this._dependencyTable = {};
+              this._errors.push(`[${config.name}] ${message.data.message}`);
+
               return callback(hash, config);
             }
           } catch (err) {
@@ -179,10 +190,22 @@ class AwsDistributor extends Distributor {
    * @return {Boolean}
    * @private
    */
-  _isFinishMessage(message, componentHash) {
+  static _isFinishMessage(message, componentHash) {
     const { action, data: { status, hash } } = message;
 
     return action === 'aws-cloud-deployer' && status === 'finish' && componentHash === hash;
+  }
+
+  /**
+   * @param {Object} message
+   * @param {String} componentHash
+   * @return {Boolean}
+   * @private
+   */
+  static _isFinishMessageWithErrors(message, componentHash) {
+    const { action, data: { status, hash } } = message;
+
+    return action === 'aws-cloud-deployer' && status === 'error' && componentHash === hash;
   }
 
   /**

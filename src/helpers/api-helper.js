@@ -227,9 +227,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {Object} {status: String, [runId]: String, [commandName]: String, [project]: Object, [environment]: String}
    * @param {Number} [runStatus]
    */
-  sendMainWorkflow({
-    status, runId, commandName, project, environment
-  }, runStatus) {
+  sendMainWorkflow({ status, runId, commandName, project, environment }, runStatus) {
     if (status === 'create') {
       this.runId = runId;
       this.commandName = commandName;
@@ -254,9 +252,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {String} [hash]
    * @param {String[]} [actions]
    */
-  sendComponentFlow({
-    status, name, action, hash, actions
-  }) {
+  sendComponentFlow({ status, name, action, hash, actions }) {
     if (!this.actions && actions) {
       this.actions = actions;
     }
@@ -292,13 +288,11 @@ class ApiHelper extends events.EventEmitter {
    * @param {Object} {source: String, status: String, [hash]: String, [name]: String}
    * @param {Number} [runStatus]
    */
-  sendDataToApi({
-    source, status, hash, name
-  }, runStatus) {
+  sendDataToApi({ source, status, hash, name }, runStatus) {
     const url = ApiHelper.getUrl(source, status);
     const body = this.getBody(source, status, hash, name, runStatus);
 
-    this.pushToPromises({ url, body });
+    source === 'workflow' ? this.asyncFetch({ url, body}) : this.pushToPromises({ url, body });
   }
 
   /**
