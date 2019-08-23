@@ -392,9 +392,12 @@ class JitHelper {
       if (templateStringifyArr) {
         templateStringifyArr.map(terrahubVariable => {
           const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
-          const { tfvars } = template;
+          const { tfvars } = template;          
+          const { locals } = template;
           const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-            JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr): '';
+            JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr):
+            (locals && locals.hasOwnProperty(variableName)) ?
+            JitHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr): '';
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
@@ -466,7 +469,8 @@ class JitHelper {
         variableValue = tfvarValue;
         break;
       case 'map':
-        // @TODO:
+        const keyOfElement = variableNameNetArr[1].replace(/\\"/g, '');
+        variableValue = tfvarValue[keyOfElement];
         break;
     }
 
