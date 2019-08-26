@@ -393,10 +393,10 @@ class JitHelper {
         templateStringifyArr.map(terrahubVariable => {
           const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
           const { tfvars, locals } = template;
-          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-            JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr):
-            (locals && locals.hasOwnProperty(variableName)) ?
-            JitHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr): '';
+          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName))
+            ? JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr)
+            : (locals && locals.hasOwnProperty(variableName))
+              ? JitHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr) : '';
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
