@@ -38,7 +38,7 @@ class Terraform {
         var: {},
         varFile: [],
         backend: {},
-        version: '0.12.6',
+        version: '0.12.7',
         backup: false,
         workspace: 'default'
       }
