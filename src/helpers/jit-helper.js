@@ -392,8 +392,7 @@ class JitHelper {
       if (templateStringifyArr) {
         templateStringifyArr.map(terrahubVariable => {
           const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
-          const { tfvars } = template;          
-          const { locals } = template;
+          const { tfvars, locals } = template;
           const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
             JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr):
             (locals && locals.hasOwnProperty(variableName)) ?
