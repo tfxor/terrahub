@@ -96,10 +96,23 @@ class RunCommand extends DistributedCommand {
    * @private
    */
   _runCloud(config) {
-    const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
+    const actions = ['prepare', 'init', 'workspaceSelect'];
+
+    if (!this._isApply && !this._isDestroy) {
+      if (this._isBuild) {
+        actions.push('build');
+      }
+
+      actions.push('plan');
+    }
+
+    const updateActions = !this._isApply
+      ? this._isBuild ? ['build', 'plan'] : ['plan']
+      : this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'];
+
     const dependencyDirection = Dictionary.DIRECTION.FORWARD;
 
-    return Promise.resolve([{ config, actions, dependencyDirection }]);
+    return Promise.resolve([{ config, actions: [...actions, ...updateActions], dependencyDirection }]);
   }
 
   /**

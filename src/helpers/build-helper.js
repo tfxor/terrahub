@@ -12,9 +12,8 @@ class BuildHelper {
   static getComponentBuildTask(config) {
     const { build: buildConfig, name } = config;
 
-    const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig)};
+    const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig) };
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
-
     return promiseSeries(commandsList.map(it => () => {
       let fullCommand = it;
 

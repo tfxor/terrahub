@@ -234,9 +234,9 @@ class Util {
     });
 
     return promise.then(() => Buffer.concat(stdout)).catch(error => {
-      const message = Buffer.concat(stderr).toString();
+      error.message = Buffer.concat(stderr).toString();
 
-      throw new Error({...error, message });
+      throw new Error(error);
     });
   }
 
@@ -267,8 +267,11 @@ class Util {
 
       if (retries >= maxRetries) {
         let { message } = error;
-        message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
-          `Retried ${maxRetries} times, but still FAILED.`;
+
+        if (options.component) {
+          message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
+            `Retried ${maxRetries} times, but still FAILED.`;
+        }
 
         throw new Error({...error, message });
       }

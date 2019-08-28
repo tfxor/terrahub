@@ -45,7 +45,7 @@ class ApiHelper extends events.EventEmitter {
     if (this.isWorkForLogger() && this.loggerIsFree) {
       const counter = this.listenerCount('loggerWork');
 
-      if (counter < 2) {
+      if (counter < 3) {
         this.emit('loggerWork');
       } else {
         const eventListeners = this.listeners('loggerWork');
@@ -98,10 +98,11 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
+   * @param {Boolean} all
    * @return {Promise[]}
    */
-  retrieveDataToSend() {
-    const _logs = this._logs.length ? this.retrieveLogs() : [];
+  retrieveDataToSend(all = false) {
+    const _logs = this._logs.length ? this.retrieveLogs(all) : [];
     const _promises = this.retrievePromises().concat(_logs);
 
     this._promises = [];
@@ -194,9 +195,16 @@ class ApiHelper extends events.EventEmitter {
 
   /**
    * @param {Object} body
-   * @return {void | null}
+   * @return {void | null | Promise}
    */
   pushToLogs(body) {
+    if (this.isDeployCloud && body.component === 'main') {
+      return this.asyncFetch({
+        url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
+          `/document/create/${this.runId}?indexMapping=logs`,
+        body: { bulk: [body] }
+      });
+    }
     this._logs.push(body);
 
     return this.sendToWorker();
@@ -292,7 +300,7 @@ class ApiHelper extends events.EventEmitter {
     const url = ApiHelper.getUrl(source, status);
     const body = this.getBody(source, status, hash, name, runStatus);
 
-    source === 'workflow' ? this.asyncFetch({ url, body}) : this.pushToPromises({ url, body });
+    source === 'workflow' ? this.asyncFetch({ url, body }) : this.pushToPromises({ url, body });
   }
 
   /**

@@ -12,7 +12,7 @@ const Terrahub = require('../wrappers/terrahub');
 class AwsDeployer {
 
   constructor({ s3: S3, parameters, publish }) {
-    this.s3fs = new S3;
+    this.s3fs = new S3();
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this.publish = publish;
   }
@@ -31,14 +31,15 @@ class AwsDeployer {
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
+      console.log('promises :', promises);
 
       return Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
     });
 
     try {
       config.project.root = AwsDeployer._projectDirectory;
-      const s3Prefix = [`projects-${parameters.config.api}`, await this._fetchAccountId(), thubRunId].join('/');
-
+      const api = parameters.config.api.split('-')[1];
+      const s3Prefix = [`projects-${api}`, await this._fetchAccountId(), thubRunId].join('/');
       await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
       const cfg = await JitHelper.jitMiddleware(config, parameters);
       await this._runActions(actions, cfg, thubRunId, parameters);
@@ -46,6 +47,9 @@ class AwsDeployer {
       if (cfg.isJit) {
         await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
       }
+
+      const promises = ApiHelper.retrieveDataToSend();
+      await Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
 
     } catch (error) {
       return {

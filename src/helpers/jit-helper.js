@@ -710,7 +710,9 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config, parameters) {
-    const tmpPath = parameters.isCloud ? homePathLambda(parameters.jitPath, `${config.name}_${config.project.code}`) : homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
+    const tmpPath = parameters.isCloud
+      ? homePathLambda(parameters.jitPath, `${config.name}_${config.project.code}`)
+      : homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
 
     fse.ensureDirSync(tmpPath);
 
@@ -727,7 +729,7 @@ class JitHelper {
   static convertJsonToHcl(componentPath, data, isHCL2, parameters) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = parameters.isCloud ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin') : join(parameters.binPath, arch); // "/Users/andreyluchianic/WebstormProjects/terrahub-cli/terrahub/bin" + ${arch}
+    const componentBinPath = parameters.isCloud ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin') : join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);

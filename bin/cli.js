@@ -50,7 +50,6 @@ function commandCreate(logger = console) {
  */
 async function syncExitProcess(code, message, error = false) {
   await ApiHelper.promisesForSyncExit();
-  await ApiHelper.sendLogToS3();
   await ApiHelper.deleteTempFolder();
 
   if (error) {
@@ -58,8 +57,10 @@ async function syncExitProcess(code, message, error = false) {
       ? message.forEach(err => logger.error(err.message || err || 'Error occurred'))
       : logger.error(message.message || message || 'Error occurred');
   } else {
-    logger.info(message);
+    message ? logger.info(message) : null;
   }
+
+  await ApiHelper.sendLogToS3();
 
   return process.exit(code);
 }
