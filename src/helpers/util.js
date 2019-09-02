@@ -105,7 +105,7 @@ class Util {
    */
   static familyTree(data) {
     const tree = {};
-    const object = { ...data};
+    const object = { ...data };
 
     Object.keys(object).forEach(hash => {
       let node = object[hash];
@@ -269,11 +269,11 @@ class Util {
         let { message } = error;
 
         if (options.component) {
-          message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
+          message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
             `Retried ${maxRetries} times, but still FAILED.`;
         }
 
-        throw new Error({...error, message });
+        throw new Error({ ...error, message });
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -386,16 +386,19 @@ class Util {
    * Compose AWS credentials string
    * @param {Object} accountData
    * @param {Object} [sourceProfile]
+   * @param {Object} config
    * @param {Boolean} tfvars
+   * @param {Boolean} isCloud
    * @return {String}
    */
-  static prepareCredentialsFile({ accountData, sourceProfile, tfvars = false }) {
-    let credentials = `[default]\n`;
+  static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, isCloud = false) {
+    let credentials = '[terrahub]\n'; // sourceProfile ? '[terrahub]' : '[default]';
 
     if (sourceProfile) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
-        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n` +
-        `role_arn = ${accountData.env_var.AWS_ROLE_ARN.value}\n`;
+        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
+
+      Util.createConfigProfile(accountData, config, isCloud);
     } else {
       credentials += `aws_access_key_id = ${accountData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${accountData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
@@ -424,9 +427,7 @@ class Util {
    * @return {String}
    */
   static createCredentialsFile(credentials, config, prefix, isCloud = false) {
-    const tmpPath = isCloud
-      ? Util.homePathLambda(config.project.code, config.name)
-      : Util.homePath('temp', config.project.code, config.name);
+    const tmpPath = Util.tempPath(config, isCloud);
 
     fse.ensureDirSync(tmpPath);
 
@@ -435,6 +436,32 @@ class Util {
     fse.writeFileSync(credsPath, credentials);
 
     return credsPath;
+  }
+
+  /**
+   * Creates in aws config profile \w arn role
+   * @param {Object} sourceProfile
+   * @param {Object} config
+   * @param {Boolean} isCloud
+   * @return {void}
+   */
+  static createConfigProfile(sourceProfile, config, isCloud) {
+    const { env_var: { AWS_ROLE_ARN: { value: arn } }, name  } = sourceProfile;
+    const tempPath = Util.tempPath(config, isCloud);
+    const configPath = isCloud ? path.join(tempPath, '.aws/config') : path.join(tempPath, '.aws/config');
+    const profile =
+      `[profile default]\n` +
+      `region = us-east-1\n` +
+      `role_arn = ${arn}\n` +
+      `source_profile = ${name}\n`;
+
+    fse.ensureFileSync(configPath);
+
+    return fs.writeFile(configPath, profile, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
   }
 
   /**
@@ -451,6 +478,17 @@ class Util {
    */
   static homePathLambda(...suffix) {
     return path.join(Util.lambdaHomedir, '.terrahub', ...suffix);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {Boolean} isCloud
+   * @return {String}
+   */
+  static tempPath(config, isCloud) {
+    return isCloud
+      ? Util.homePathLambda(config.project.code, config.name)
+      : Util.homePath('temp', config.project.code, config.name);
   }
 }
 

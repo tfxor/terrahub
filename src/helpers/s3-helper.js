@@ -51,7 +51,7 @@ class S3Helper {
       if (credsPath) {
         ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
           .forEach(it => delete process.env[it]);
-
+        //todo replace with AWS.STS
         AWS.config.credentials = new AWS.SharedIniFileCredentials(
           { filename: credsPath, preferStaticCredentials: true });
 
@@ -99,7 +99,7 @@ class S3Helper {
     const sourceProfile = accountData.type === 'role'
       ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
-    const credentials = prepareCredentialsFile({ accountData, sourceProfile, tfvars: true });
+    const credentials = prepareCredentialsFile(accountData, sourceProfile, config, true);
     const credsPath = createCredentialsFile(credentials, config, 'tfvars', parameters.isCloud);
 
     return Promise.resolve(credsPath);

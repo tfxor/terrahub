@@ -4,7 +4,7 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const Util = require('../util');
 const S3Helper = require('../s3-helper');
-const { globPromise } = require('../util');
+const { globPromise, prepareCredentialsFile, createCredentialsFile, tempPath } = require('../util');
 const ApiHelper = require('../api-helper');
 const Distributor = require('./distributor');
 const Websocket = require('./websocket');
@@ -31,7 +31,8 @@ class AwsDistributor extends Distributor {
    * @override
    */
   async runActions(actions, { dependencyDirection = null } = {}) {
-    await this._validateRequirements();
+    const cloudAccounts = await this._validateRequirements();
+    this.updateEnvirmentVariables(cloudAccounts);
 
     const { data: { ticket_id } } = await this.websocketTicketCreate();
     const { ws } = new Websocket(this.config.api, ticket_id);
@@ -42,10 +43,8 @@ class AwsDistributor extends Distributor {
     const s3directory = this.config.api.replace('api', 'projects');
 
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
-
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
     this.logger.warn('Uploading project to S3.');
-
     const s3Prefix = [s3directory, accountId, this.runId].join('/');
     const pathMap = files.map(it => ({
       localPath: join(this._projectRoot, it),
@@ -182,6 +181,42 @@ class AwsDistributor extends Distributor {
 
       throw new Error(errorMessage);
     }
+
+    return cloudAccounts;
+  }
+
+  /**
+   * @param {Object} cloudAccounts
+   */
+  updateEnvirmentVariables(cloudAccounts) {
+    Object.keys(this.projectConfig).forEach(hash => {
+      const { cloudAccount } = this.projectConfig[hash].terraform;
+      const accountData = cloudAccounts.aws.find(it => it.name === cloudAccount);
+
+      if (!accountData) {
+        return;
+      }
+
+      const sourceProfile = accountData.type === 'role'
+        ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+      const credentials = prepareCredentialsFile(
+        accountData, sourceProfile, this.projectConfig[hash], false, this.parameters.isCloud);
+
+      ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
+        .forEach(it => delete process.env[it]);
+
+      const cloudCredsPath = createCredentialsFile(
+        credentials, this.projectConfig[hash], 'cloud', this.parameters.isCloud);
+
+      if (sourceProfile) {
+        Object.assign(process.env, {
+          AWS_CONFIG_FILE: join(tempPath(this.projectConfig[hash], this.parameters.isCloud), '.aws/config'),
+          AWS_SDK_LOAD_CONFIG: 1
+        });
+      }
+
+      Object.assign(process.env, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
+    });
   }
 
   /**
@@ -246,6 +281,9 @@ class AwsDistributor extends Distributor {
     }))).then(results => [].concat(...results));
   }
 
+  /**
+   * @return {Promise}
+   */
   websocketTicketCreate() {
     return this.fetch.get('thub/ticket/create');
   }

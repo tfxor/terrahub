@@ -11,8 +11,8 @@ const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
 
-  constructor({ s3: S3, parameters, publish }) {
-    this.s3fs = new S3();
+  constructor({ s3fs, parameters, publish }) {
+    this.s3Helper = s3fs;
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this.publish = publish;
   }
@@ -39,8 +39,11 @@ class AwsDeployer {
     try {
       config.project.root = AwsDeployer._projectDirectory;
       const api = parameters.config.api.split('-')[1];
-      const s3Prefix = [`projects-${api}`, await this._fetchAccountId(), thubRunId].join('/');
-      await this.s3fs.syncPaths(AwsDeployer._projectDirectory, s3Prefix, config.mapping);
+      const accountId = await this._fetchAccountId();
+      const s3Prefix = [`projects-${api}`, accountId, thubRunId].join('/');
+
+      await this.s3Helper.syncPaths(config.project.root, s3Prefix, config.mapping);
+
       const cfg = await JitHelper.jitMiddleware(config, parameters);
       await this._runActions(actions, cfg, thubRunId, parameters);
 
@@ -85,7 +88,7 @@ class AwsDeployer {
     const tasks = actions.map(action => options => {
       logger.updateContext({ action: action });
 
-      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
+      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config, true);
     });
 
     return promiseSeries(tasks, (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})));

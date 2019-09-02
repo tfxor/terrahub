@@ -12,7 +12,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
 const {
-  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda
+  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda, tempPath
 } = require('../util');
 
 class Terraform {
@@ -131,19 +131,26 @@ class Terraform {
         const sourceProfile = accountData.type === 'role'
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
-        const credentials = prepareCredentialsFile({ accountData, sourceProfile });
+        const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this.parameters.isCloud);
 
         switch (type) {
           case 'cloudAccount':
             this._deleteDefaultEnvCreds();
             const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud);
 
+            if (sourceProfile) {
+              Object.assign(this._envVars, {
+                AWS_CONFIG_FILE: path.join(tempPath(this._config, this.parameters.isCloud), '.aws/config'),
+                AWS_SDK_LOAD_CONFIG: 1
+              });
+            }
+
             Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
             break;
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this.parameters.isCloud);
 
-            Object.assign(this._tf.backend,{ shared_credentials_file: backCredsPath });
+            Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
             break;
         }
       });

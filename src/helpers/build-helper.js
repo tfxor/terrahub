@@ -1,20 +1,39 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 const logger = require('./logger');
-const { promiseSeries, spawner } = require('./util');
+const { promiseSeries, spawner, tempPath } = require('./util');
 
 class BuildHelper {
   /**
    * @param {Object} config
+   * @param {Boolean} isCloud
    * @return {Promise}
    */
-  static getComponentBuildTask(config) {
+  static getComponentBuildTask(config, isCloud) {
     const { build: buildConfig, name } = config;
 
     const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig) };
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
-    return promiseSeries(commandsList.map(it => () => {
+    const awsConfigPath = path.join(tempPath(config, isCloud), '.aws/config');
+    const awsCloudAccountPath = path.join(tempPath(config, isCloud), 'aws_credentials_cloud');
+
+    if (fs.existsSync(awsConfigPath)) {
+      Object.assign(env, {
+        AWS_CONFIG_FILE: awsConfigPath,
+        AWS_SDK_LOAD_CONFIG: 1,
+      });
+    }
+
+    if (fs.existsSync(awsCloudAccountPath)) {
+      Object.assign(env, {
+        AWS_PROFILE: 'default',
+        AWS_SHARED_CREDENTIALS_FILE: awsCloudAccountPath
+      });
+    }
+
+    return promiseSeries(commandsList.map(it => async () => {
       let fullCommand = it;
 
       if (it.constructor === Object) {
@@ -47,6 +66,7 @@ class BuildHelper {
 
       return Promise.resolve({ action: 'build' });
     }).catch(error => {
+      console.log('Build Error :', error);
       BuildHelper._printOutput(BuildHelper._out(name, `Build failed.`), false);
 
       return Promise.reject(error);

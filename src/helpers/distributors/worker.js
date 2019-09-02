@@ -27,7 +27,7 @@ function getTasks(config, parameters) {
   return getActions().map(action => options => {
     logger.updateContext({ action: action });
 
-    return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config);
+    return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config, false);
   });
 }
 

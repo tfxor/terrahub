@@ -453,7 +453,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   /**
-   * @return {Promise | Object}
+   * @return {Promise}
    */
   async retrieveCloudAccounts() {
     if (!this._cloudAccounts) {
