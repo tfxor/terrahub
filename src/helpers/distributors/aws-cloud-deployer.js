@@ -31,9 +31,8 @@ class AwsDeployer {
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
-      console.log('promises :', promises);
 
-      return Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
+      return Promise.all(ApiHelper.asyncFetch(promises));
     });
 
     try {
@@ -52,7 +51,7 @@ class AwsDeployer {
       }
 
       const promises = ApiHelper.retrieveDataToSend();
-      await Promise.all(promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body })));
+      await Promise.all(ApiHelper.asyncFetch(promises));
 
     } catch (error) {
       return {

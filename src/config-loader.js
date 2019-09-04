@@ -256,6 +256,7 @@ class ConfigLoader {
       // Delete in case of delete
       config = Object.assign(config, config.component);
 
+      this._validateProperties(config);
       this._processComponentConfig(config, componentPath);
       this._config[componentHash] = extend(
         { root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
@@ -270,6 +271,17 @@ class ConfigLoader {
         footer: 'ONLY 1 root config per project is allowed. Please remove all the other and try again.',
         style: ListException.NUMBER
       });
+    }
+  }
+
+  /**
+   * Validate's components' config fields'
+   * @param {Object} config
+   * @private
+   */
+  _validateProperties(config) {
+    if (!config.hasOwnProperty('mapping')) {
+      config.mapping = [];
     }
   }
 

@@ -77,24 +77,26 @@ class ApiHelper extends events.EventEmitter {
     }
 
     const _promises = [...this.retrievePromises(), this.retrieveLogs(true)]
-      .filter(Boolean)
-      .map(({ url, body }) => this.asyncFetch({ url, body }));
+      .filter(Boolean);
 
-    return Promise.all(_promises).then(() => {
-      const _promises = this.retrievePromises().map(({ url, body }) => this.asyncFetch({ url, body }));
+    return Promise.all(this.asyncFetch(_promises)).then(() => {
+      const _promises = this.retrievePromises();
 
-      return Promise.all(_promises);
+      return Promise.all(this.asyncFetch(_promises));
     });
   }
 
   /**
-   * @param {Object} { url: {String}, body: {Object} }
-   * @return {Promise}
+   * @param {Array} promises
+   * @param {String} promises.url
+   * @param {Object} promises.body
+   * @return {Promise[]}
    */
-  asyncFetch({ url, body }) {
-    return this.fetch.post(url, {
-      body: JSON.stringify(body)
-    }).catch(err => console.log(err));
+  asyncFetch(promises) {
+    const _promises = Array.isArray(promises) ? promises : [promises];
+
+    return _promises.map(({ url, body }) => this.fetch.post(url, { body: JSON.stringify(body) })
+      .catch(err => console.log(err)));
   }
 
   /**
@@ -185,6 +187,8 @@ class ApiHelper extends events.EventEmitter {
 
   /**
    * @param {Object} promise
+   * @param {String} promise.url
+   * @param {Object} promise.body
    * @return {Event} `LoggerWork`
    */
   pushToPromises(promise) {
@@ -199,11 +203,13 @@ class ApiHelper extends events.EventEmitter {
    */
   pushToLogs(body) {
     if (this.isDeployCloud && body.component === 'main') {
-      return this.asyncFetch({
+      const promise = {
         url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
           `/document/create/${this.runId}?indexMapping=logs`,
         body: { bulk: [body] }
-      });
+      };
+
+      return this.asyncFetch(promise);
     }
     this._logs.push(body);
 
@@ -297,10 +303,12 @@ class ApiHelper extends events.EventEmitter {
    * @param {Number} [runStatus]
    */
   sendDataToApi({ source, status, hash, name }, runStatus) {
-    const url = ApiHelper.getUrl(source, status);
-    const body = this.getBody(source, status, hash, name, runStatus);
+    const promise = {
+      url: ApiHelper.getUrl(source, status),
+      body: this.getBody(source, status, hash, name, runStatus)
+    };
 
-    source === 'workflow' ? this.asyncFetch({ url, body }) : this.pushToPromises({ url, body });
+    return source === 'workflow' ? this.asyncFetch(promise) : this.pushToPromises(promise);
   }
 
   /**

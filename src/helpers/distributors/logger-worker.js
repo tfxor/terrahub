@@ -10,7 +10,7 @@ const ApiHelper = require('../api-helper');
  */
 function run(promises, parameters) {
   ApiHelper.init(parameters);
-  const _promises = promises.map(({ url, body }) => ApiHelper.asyncFetch({ url, body }));
+  const _promises = ApiHelper.asyncFetch(promises);
 
   return Promise.all(_promises).then(() => {
     process.send({

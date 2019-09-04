@@ -66,7 +66,6 @@ class BuildHelper {
 
       return Promise.resolve({ action: 'build' });
     }).catch(error => {
-      console.log('Build Error :', error);
       BuildHelper._printOutput(BuildHelper._out(name, `Build failed.`), false);
 
       return Promise.reject(error);
