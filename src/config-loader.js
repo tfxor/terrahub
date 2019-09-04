@@ -274,7 +274,7 @@ class ConfigLoader {
    */
   _validateComponentConfig(config) {
     if (!config.hasOwnProperty('mapping')) {
-      config.mapping = [];
+      config.mapping = ['.'];
     }
   }
 
