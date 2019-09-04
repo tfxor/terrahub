@@ -393,9 +393,11 @@ class JitHelper {
       if (templateStringifyArr) {
         templateStringifyArr.map(terrahubVariable => {
           const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
-          const { tfvars } = template;
-          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName)) ?
-            JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr) : '';
+          const { tfvars, locals } = template;
+          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName))
+            ? JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr)
+            : (locals && locals.hasOwnProperty(variableName))
+              ? JitHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr) : '';
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
@@ -452,8 +454,8 @@ class JitHelper {
     let variableValue = '';
 
     switch (JitHelper._checkTerrahubVariableType(tfvarValue)) {
-      case "list":
-        if (variableNameNetArr.length == 2) {
+      case 'list':
+        if (variableNameNetArr.length === 2) {
           const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
           variableValue = tfvarValue[indexOfElement];
         } else {
@@ -464,7 +466,8 @@ class JitHelper {
         variableValue = tfvarValue;
         break;
       case 'map':
-        // @TODO:
+        const keyOfElement = variableNameNetArr[1].replace(/\\"/g, '');
+        variableValue = tfvarValue[keyOfElement];
         break;
     }
 
@@ -522,11 +525,11 @@ class JitHelper {
       const regExPrefixBucket = new RegExp('(' + bucket + '\/)', 'g');
       const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
 
-      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
-        JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
+      const promise = (remoteTfvarsLink.substring(0, 2) === 'gs')
+        ? JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
           return JitHelper._parsingTfvars(data.toString(), config);
-        }) :
-        JitHelper.s3Helper.getObject(bucket, prefix, config, parameters).then(data => {
+        })
+        : JitHelper.s3Helper.getObject(bucket, prefix, config, parameters).then(data => {
           return JitHelper._parsingTfvars(data.Body.toString(), config);
         });
 
@@ -671,7 +674,8 @@ class JitHelper {
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
 
-        const promises = nonTerrahubFiles.map(file => fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {}));
+        const promises = nonTerrahubFiles.map(file => fse.ensureSymlink(join(src, file), join(tmpPath, file))
+          .catch(() => {}));
 
         return Promise.all(promises);
       })

@@ -23,20 +23,16 @@ class DestroyCommand extends DistributedCommand {
     this.checkDependencies(config, Dictionary.DIRECTION.REVERSE);
 
     const isApproved = await this.askForApprovement(config, this.getOption('auto-approve'));
-    const dependencyDirection = Dictionary.DIRECTION.REVERSE;
-
-    const firstStep = {
-      actions: ['prepare', 'init', 'workspaceSelect', 'plan'], config, planDestroy: true, dependencyDirection
-    };
-    const secondStep = {
-      actions: ['destroy'], config, planDestroy: true, dependencyDirection
-    };
-
-    if (isApproved) {
-      return Promise.all([firstStep, secondStep]);
-    } else {
+    if (!isApproved) {
       throw new Error('Action aborted');
     }
+
+    return [{
+      actions: ['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'],
+      config,
+      planDestroy: true,
+      dependencyDirection: Dictionary.DIRECTION.REVERSE
+    }];
   }
 }
 

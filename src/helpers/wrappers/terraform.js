@@ -41,7 +41,7 @@ class Terraform {
         var: {},
         varFile: [],
         backend: {},
-        version: '0.12.6',
+        version: '0.12.7',
         backup: false,
         workspace: 'default'
       }
@@ -369,6 +369,11 @@ class Terraform {
           skip = true;
         }
 
+        const commandsList = this._envVars['TERRAFORM_ACTIONS'];
+        if (commandsList === 'prepare,workspaceSelect,plan,apply' || commandsList === 'prepare,workspaceSelect,plan,destroy') {
+          skip = false;
+        }
+
         const planPath = this._metadata.getPlanPath();
 
         if (fse.existsSync(planPath)) {
@@ -404,7 +409,9 @@ class Terraform {
    * @return {Promise}
    */
   apply() {
-    const options = { '-backup': this._metadata.getStateBackupPath(), '-auto-approve': true, '-input': false };
+    const backupPath = this._metadata.getStateBackupPath();
+    fse.ensureFileSync(backupPath);
+    const options = { '-backup': backupPath, '-auto-approve': true, '-input': false };
 
     return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent())
@@ -437,9 +444,19 @@ class Terraform {
   refresh() {
     const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false };
 
+    const localBackend = [];
+    const { template } = this._config;
+    if (template && template.hasOwnProperty('terraform')) {
+      const { backend } = template.terraform;
+      if (backend && backend.hasOwnProperty('local')) {
+        localBackend.push(`-state='${backend.local.path}'`);
+      }
+    }
+
     return this
-      .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), this._var()));
+      .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), localBackend, this._var()));
   }
+  
 
   /**
    * https://www.terraform.io/docs/commands/show.html

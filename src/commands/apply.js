@@ -22,17 +22,16 @@ class ApplyCommand extends DistributedCommand {
 
     this.checkDependencies(config);
 
-    const dependencyDirection = Dictionary.DIRECTION.FORWARD;
-    const firstStep = { actions: ['prepare', 'workspaceSelect', 'plan'], dependencyDirection };
-    const secondStep = { actions: ['apply'], dependencyDirection };
+    const isApproved = await this.askForApprovement(config, this.getOption('auto-approve'));
 
-    const answer = await this.askForApprovement(config, this.getOption('auto-approve'));
-
-    if (answer) {
-      return Promise.all([firstStep, secondStep]);
-    } else {
+    if (!isApproved) {
       throw new Error('Action aborted');
     }
+
+    return [{
+      actions: ['prepare', 'workspaceSelect', 'plan', 'apply'],
+      dependencyDirection: Dictionary.DIRECTION.FORWARD
+    }];
   }
 }
 
