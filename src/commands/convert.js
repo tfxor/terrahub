@@ -109,7 +109,7 @@ class ConvertCommand extends DistributedCommand {
 
     try {
       const files = await fse.readdir(componentPath);
-      const promises = this._hclToJson(files, componentPath, templatePath);
+      const promises = await this._hclToJson(files, componentPath, templatePath);
 
       await Promise.all(promises);
 
@@ -129,7 +129,7 @@ class ConvertCommand extends DistributedCommand {
 
     try {
       const files = await fse.readdir(scriptPath);
-      const promises = this._hclToJson(files, scriptPath, scriptPath);
+      const promises = await this._hclToJson(files, scriptPath, scriptPath);
 
       await Promise.all(promises);
     } catch (err) {
@@ -147,12 +147,16 @@ class ConvertCommand extends DistributedCommand {
   async _hclToJson(files, terraformPath, scriptPath) {
     const regEx = /.*(tf|tfvars)$/;
     const scriptFiles = files.filter(src => regEx.test(src));
-    const promises = scriptFiles.map(async file => {
+    const promises = [];
+
+    for (const file of scriptFiles) {
+      // eslint-disable-next-line no-await-in-loop
       const dataBuffer = await fse.readFile(join(terraformPath, file));
       const jsonContent = hcltojson(dataBuffer.toString());
 
-      return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
-    });
+      promises.push(fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 }));
+    }
+
     return promises;
   }
 
@@ -197,30 +201,32 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toYamlFromHcl(cfg) {
+  async _toYamlFromHcl(cfg) {
     const scriptPath = ConvertCommand._buildComponentPath(cfg);
-    return fse.readdir(scriptPath)
-      .then(files => {
-        const regEx = /.*(tf|tfvars)$/;
-        const scriptFiles = files.filter(src => regEx.test(src));
-        let jsonContent = yamlToJson(join(scriptPath, '.terrahub.yml'));
-        jsonContent['template'] = {};
-        const promises = scriptFiles.map(file => {
-          return fse.readFile(join(scriptPath, file))
-            .then(dataBuffer => {
-              const fileName = file.split('.');
-              const key = fileName[0];
-              jsonContent.component.template[key] = {key: hcltojson(dataBuffer.toString())};
-              return Promise.resolve();
-              // return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
-            });
-        });
+    const promises = [];
 
-        return Promise.all(promises);
-      })
-      .catch(err => {
-        throw new Error(err.toString());
-      });
+    try {
+      const files = await fse.readdir(scriptPath);
+      const regEx = /.*(tf|tfvars)$/;
+      const scriptFiles = files.filter(src => regEx.test(src));
+      let jsonContent = yamlToJson(join(scriptPath, '.terrahub.yml'));
+      jsonContent['template'] = {};
+
+      for (const file of scriptFiles) {
+        // eslint-disable-next-line no-await-in-loop
+        const dataBuffer = await fse.readFile(join(scriptPath, file));
+        const fileName = file.split('.');
+        const key = fileName[0];
+        jsonContent.component.template[key] = {key: hcltojson(dataBuffer.toString())};
+
+        promises.push(Promise.resolve());
+        // return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
+      }
+
+      return Promise.all(promises);
+    } catch (err) {
+      throw new Error(err.toString());
+    }
   }
 
   /**
@@ -228,23 +234,24 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _toHCLFromJson(cfg) {
+  async _toHCLFromJson(cfg) {
     const scriptPath = ConvertCommand._buildComponentPath(cfg);
-    return fse.readdir(scriptPath)
-      .then(files => {
-        const regEx = /.*(tf|tfvars)$/;
-        const scriptFiles = files.filter(src => regEx.test(src));
-        const promises = scriptFiles.map(file => {
-          return fse.readJson(join(scriptPath, file))
-            .then(data => {
-              return convertJsonToHcl(join(scriptPath, file), data, checkTfVersion(cfg));
-            });
-        });
-        return Promise.all(promises);
-      })
-      .catch(err => {
-        throw new Error(err.toString());
-      });
+    const promises = [];
+    try {
+      const files = await fse.readdir(scriptPath);
+      const regEx = /.*(tf|tfvars)$/;
+      const scriptFiles = files.filter(src => regEx.test(src));
+
+      for (const file of scriptFiles) {
+        // eslint-disable-next-line no-await-in-loop
+        const data = await fse.readJson(join(scriptPath, file));
+        promises.push(convertJsonToHcl(join(scriptPath, file), data, checkTfVersion(cfg), this.parameters));
+      }
+
+      return Promise.all(promises);
+    } catch (err) {
+      throw new Error(err.toString());
+    }
   }
 
   /**
@@ -300,24 +307,24 @@ class ConvertCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _convertComponent(config, format) {
+  async _convertComponent(config, format) {
     let promise;
     switch (format) {
       case 'yaml':
       case 'yml':
-        promise = this._toYml(config);
+        promise = await this._toYml(config);
         break;
 
       case 'hcl':
-        promise = this._toHcl(config);
+        promise = await this._toHcl(config);
         break;
 
       case 'hcl2':
-        promise = this._toHcl(config);
+        promise = await this._toHcl(config);
         break;
 
       case 'json':
-        promise = this._toJson(config);
+        promise = await this._toJson(config);
         break;
     }
 

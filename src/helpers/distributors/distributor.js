@@ -27,11 +27,7 @@ class Distributor {
 
     const result = await this.command.run();
 
-    if (!result) { //todo refactor !
-      return Promise.resolve();
-    }
-
-    if (result && !Array.isArray(result)) { // todo project.js return {String}
+    if (!Array.isArray(result)) {
       return Promise.resolve(result);
     }
 

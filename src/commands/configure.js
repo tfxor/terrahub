@@ -32,7 +32,7 @@ class ConfigureCommand extends DistributedCommand {
   _addConfig() {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
-    const data = configContent instanceof Array ? configContent : [configContent];
+    const data = Array.isArray(configContent) ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
     return this._runAction(global, data, configAction);
   }
