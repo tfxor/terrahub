@@ -258,6 +258,22 @@ class Util {
     let retries = 0;
 
     /**
+     * Exits' from Backoff function with error message
+     * @param {Object} error
+     * @param {Object} options
+     */
+    const exitWithError = (error, options) => {
+      let { message } = error;
+
+      if (options.component) {
+        message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
+          `Retried ${maxRetries} times, but still FAILED.`;
+      }
+
+      throw new Error({ ...error, message: message });
+    };
+
+    /**
      * @return {Promise}
      */
     const retry = () => promiseFunction().catch(error => {
@@ -266,14 +282,7 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        let { message } = error;
-
-        if (options.component) {
-          message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
-            `Retried ${maxRetries} times, but still FAILED.`;
-        }
-
-        throw new Error({ ...error, message: message });
+        exitWithError(error, options);
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -403,7 +412,7 @@ class Util {
    * @return {String}
    */
   static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, isCloud = false) {
-    let credentials = '[terrahub]\n'; // sourceProfile ? '[terrahub]' : '[default]';
+    let credentials = '[terrahub]\n';
 
     if (sourceProfile) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +

@@ -3,13 +3,13 @@
 const fse = require('fs-extra');
 const { join } = require('path');
 const S3Helper = require('../s3-helper');
-const {
-  globPromise, retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, tempPath, lambdaHomedir
-} = require('../util');
 const ApiHelper = require('../api-helper');
 const Distributor = require('./distributor');
 const Websocket = require('./websocket');
 const { defaultIgnorePatterns } = require('../../config-loader');
+const {
+  globPromise, retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, tempPath, lambdaHomedir
+} = require('../util');
 
 class AwsDistributor extends Distributor {
 
@@ -46,6 +46,7 @@ class AwsDistributor extends Distributor {
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
     this.logger.warn('Uploading project to S3.');
+
     const s3Prefix = [s3directory, accountId, this.runId].join('/');
     const pathMap = files.map(it => ({
       localPath: join(this._projectRoot, it),
@@ -147,6 +148,10 @@ class AwsDistributor extends Distributor {
     });
   }
 
+  /**
+   * @return {Promise}
+   * @private
+   */
   async _validateRequirements() {
     if (!this.config.logs) {
       throw new Error('Please enable logging in `.terrahub.json`.');
