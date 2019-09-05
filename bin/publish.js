@@ -142,13 +142,13 @@ async function gitPush() {
 (async () => {
   try {
     await gitDiff();
-    await deleteNodeModules;
-    await installNodeModules;
-    await npmVersion;
-    await updateJsonFiles;
-    await npmPublish;
-    await gitCommit;
-    await gitPush;
+    await deleteNodeModules();
+    await installNodeModules();
+    await npmVersion();
+    await updateJsonFiles();
+    await npmPublish();
+    await gitCommit();
+    await gitPush();
     logger.info('Done');
     process.exit(0);
   } catch (error) {
