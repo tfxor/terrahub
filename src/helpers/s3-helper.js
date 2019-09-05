@@ -3,7 +3,7 @@
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const Fetch = require('./fetch');
-const { prepareCredentialsFile, createCredentialsFile } = require('./util');
+const { retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile } = require('./util');
 
 class S3Helper {
   /**
@@ -96,9 +96,7 @@ class S3Helper {
       return Promise.resolve();
     }
 
-    const sourceProfile = accountData.type === 'role'
-      ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
-
+    const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
     const credentials = prepareCredentialsFile(accountData, sourceProfile, config, true);
     const credsPath = createCredentialsFile(credentials, config, 'tfvars', parameters.isCloud);
 

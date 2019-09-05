@@ -98,19 +98,15 @@ class RunCommand extends DistributedCommand {
   _runCloud(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
 
-    if (!this._isApply && !this._isDestroy) {
-      if (this._isBuild) {
-        actions.push('build');
-      }
-
-      actions.push('plan');
+    if (this._isBuild) {
+      throw new Error('`build` action is currently not available in AWS lambda.');
+    }
+    if (this._isDestroy) {
+      throw new Error('`destroy` action is currently not available in AWS lambda.');
     }
 
-    const updateActions = !this._isApply
-      ? this._isBuild ? ['build', 'plan'] : ['plan']
-      : this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'];
-
-    const dependencyDirection = Dictionary.DIRECTION.FORWARD;
+    const updateActions = !this._isApply ? ['plan'] : ['plan', 'apply'];
+    const dependencyDirection =  Dictionary.DIRECTION.FORWARD;
 
     return Promise.resolve([{ config, actions: [...actions, ...updateActions], dependencyDirection }]);
   }

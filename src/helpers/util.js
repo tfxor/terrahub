@@ -273,7 +273,7 @@ class Util {
             `Retried ${maxRetries} times, but still FAILED.`;
         }
 
-        throw new Error({ ...error, message });
+        throw new Error({ ...error, message: message });
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -380,6 +380,17 @@ class Util {
   static globPromise(pattern, options) {
     return new Promise((resolve, reject) => glob(pattern, options,
       (error, files) => (error ? reject(error) : resolve(files))));
+  }
+
+  /**
+   * Returns associate source profile
+   * @param {Object} accountData
+   * @param {Object} cloudAccounts
+   * @return {Object | null}
+   */
+  static retrieveSourceProfile(accountData, cloudAccounts) {
+    return accountData.type === 'role'
+      ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
   }
 
   /**

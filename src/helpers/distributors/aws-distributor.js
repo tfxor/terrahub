@@ -2,9 +2,10 @@
 
 const fse = require('fs-extra');
 const { join } = require('path');
-const Util = require('../util');
 const S3Helper = require('../s3-helper');
-const { globPromise, prepareCredentialsFile, createCredentialsFile, tempPath } = require('../util');
+const {
+  globPromise, retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, tempPath, lambdaHomedir
+} = require('../util');
 const ApiHelper = require('../api-helper');
 const Distributor = require('./distributor');
 const Websocket = require('./websocket');
@@ -104,7 +105,7 @@ class AwsDistributor extends Distributor {
        */
       const _callLambdaExecutor = async (hash, callback) => {
         const config = this.projectConfig[hash];
-        this.parameters.jitPath = this.parameters.jitPath.replace('/cache', Util.lambdaHomedir);
+        this.parameters.jitPath = this.parameters.jitPath.replace('/cache', lambdaHomedir);
 
         const body = JSON.stringify({
           actions: actions,
@@ -126,10 +127,6 @@ class AwsDistributor extends Distributor {
         ws.on('message', data => {
           try {
             const message = JSON.parse(data);
-
-            // if (message.action === 'logs') {
-            //   console.log({ logs: message.data.filter(it => it.action !== 'main').map(it => it.log) });
-            // }
 
             if (AwsDistributor._isFinishMessage(message, hash)) {
               return callback(hash, config);
@@ -197,8 +194,7 @@ class AwsDistributor extends Distributor {
         return;
       }
 
-      const sourceProfile = accountData.type === 'role'
-        ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+      const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
       const credentials = prepareCredentialsFile(
         accountData, sourceProfile, this.projectConfig[hash], false, this.parameters.isCloud);
 

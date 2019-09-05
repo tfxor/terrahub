@@ -53,44 +53,65 @@ class ComponentCommand extends ConfigCommand {
       throw new Error(`Name is not valid. Only letters, numbers, hyphens, or underscores are allowed.`);
     }
 
-
     const config = this.getConfig();
     const names = this._name;
 
     if (this._delete) {
-      const inexistentComponents = names.filter(it => !this.getConfigPath(it));
-      if (inexistentComponents.length) {
-        throw new Error(`Terrahub components with provided names '${inexistentComponents.join(`', '`)}' don't exist.`);
-      }
-
-      printListAsTree(this.getConfig(), this.getProjectConfig().name);
-
-      const answer = await Util.yesNoQuestion('Do you want to perform delete action? (y/N) ');
-      if (!answer) {
-        throw new Error('Action aborted');
-      }
-
-      await Promise.all(names.map(it => this._deleteComponent(it)));
-
-      return `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`;
+      return this._deleteAction(names);
     } else if (this._template) {
-      const duplicatedNames = Util.getNonUniqueNames(this._name, config);
-
-      Object.keys(duplicatedNames).forEach(hash => {
-        throw new Error(`Terrahub component with provided name '${config[hash].name}'` +
-          ` already exists in '${duplicatedNames[hash]}' directory.`);
-      });
-
-      const data = await Promise.all(names.map(it => this._createNewComponent(it)));
-      if (data.some(it => !it)) {
-        return Promise.resolve();
-      }
-
-      return Promise.resolve('Done');
+      return this._templateAction(names, config);
     }
 
     await Promise.all(names.map(it => this._addExistingComponent(it)));
+
     return Promise.resolve('Done');
+  }
+
+  /**
+   * Perform delete action
+   * @param {String[]} names
+   * @return {Promise}
+   * @private
+   */
+  async _deleteAction(names) {
+    const inexistentComponents = names.filter(it => !this.getConfigPath(it));
+    if (inexistentComponents.length) {
+      throw new Error(`Terrahub components with provided names '${inexistentComponents.join(`', '`)}' don't exist.`);
+    }
+
+    printListAsTree(this.getConfig(), this.getProjectConfig().name);
+
+    const answer = await Util.yesNoQuestion('Do you want to perform delete action? (y/N) ');
+    if (!answer) {
+      throw new Error('Action aborted');
+    }
+
+    await Promise.all(names.map(it => this._deleteComponent(it)));
+
+    return `'${names.join(`', '`)}' Terrahub component${names.length > 1 ? 's' : ''} successfully deleted.`;
+  }
+
+  /**
+   * Perform template action
+   * @param {String[]}names
+   * @param {Object} config
+   * @return {Promise}
+   * @private
+   */
+  async _templateAction(names, config) {
+    const duplicatedNames = Util.getNonUniqueNames(this._name, config);
+
+    Object.keys(duplicatedNames).forEach(hash => {
+      throw new Error(`Terrahub component with provided name '${config[hash].name}'` +
+        ` already exists in '${duplicatedNames[hash]}' directory.`);
+    });
+
+    const data = await Promise.all(names.map(it => this._createNewComponent(it)));
+    if (data.some(it => !it)) {
+      return Promise.resolve();
+    }
+
+    return 'Done';
   }
 
   /**
