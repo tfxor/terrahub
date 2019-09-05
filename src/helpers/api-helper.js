@@ -202,7 +202,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {void | null | Promise}
    */
   pushToLogs(body) {
-    if (this.isDeployCloud && body.component === 'main') {
+    if (this.isCloudDeployer && body.component === 'main') {
       const promise = {
         url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
           `/document/create/${this.runId}?indexMapping=logs`,
@@ -412,7 +412,7 @@ class ApiHelper extends events.EventEmitter {
     return this._tokenIsValid;
   }
 
-  get isDeployCloud() {
+  get isCloudDeployer() {
     return this._isCloud;
   }
 

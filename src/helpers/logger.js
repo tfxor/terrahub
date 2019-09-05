@@ -20,7 +20,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if ((this._isTokenValid() && this._context.canLogBeSentToApi) || ApiHelper.isDeployCloud) {
+      if ((this._isTokenValid() && this._context.canLogBeSentToApi) || ApiHelper.isCloudDeployer) {
         this._sendLogToApi(messages);
       }
     });
@@ -41,7 +41,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._isTokenValid() || ApiHelper.isDeployCloud) {
+    if (this._isTokenValid() || ApiHelper.isCloudDeployer) {
       this._sendLogToApi([message]);
     }
   }

@@ -258,22 +258,6 @@ class Util {
     let retries = 0;
 
     /**
-     * Exits' from Backoff function with error message
-     * @param {Object} error
-     * @param {Object} options
-     */
-    const exitWithError = (error, options) => {
-      let { message } = error;
-
-      if (options.component) {
-        message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
-          `Retried ${maxRetries} times, but still FAILED.`;
-      }
-
-      throw new Error({ ...error, message: message });
-    };
-
-    /**
      * @return {Promise}
      */
     const retry = () => promiseFunction().catch(error => {
@@ -282,7 +266,7 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        exitWithError(error, options);
+        Util.exitFromBackoffWithError(error, options, maxRetries);
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -293,6 +277,23 @@ class Util {
     });
 
     return retry();
+  }
+
+  /**
+   * @param {Object} error
+   * @param {Object} options
+   * @param {Number} maxRetries
+   * @throws {Error}
+   */
+  static exitFromBackoffWithError(error, options, maxRetries) {
+    let { message } = error;
+
+    if (options.component) {
+      message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
+        `Retried ${maxRetries} times, but still FAILED.`;
+    }
+
+    throw new Error({ ...error, message: message });
   }
 
   /**
