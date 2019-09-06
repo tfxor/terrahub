@@ -54,10 +54,7 @@ class JitHelper {
           return JitHelper._generateVariable(config, parameters);
         }
       })
-      .then(() => {
-        return HelpParser.Distributor !== DISTRIBUTOR.LOCAL
-          ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters);
-      })
+      .then(() =>  HelpParser.Distributor !== DISTRIBUTOR.LOCAL ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
