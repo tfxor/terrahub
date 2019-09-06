@@ -3,14 +3,8 @@
 const AbstractCommand = require('./abstract-command');
 
 class ConfigCommand extends AbstractCommand {
-
-  // ConfigCommands list:
-  // ? configure,
-  // ? convert,
-
-  // component,graph,
-  // list(uses AWS.creds),
-  // project,
+  //todo: Introduce common logic for `ConfigCommands`:
+  //  [ component, project, list, project, !configure, !convert ]
   constructor(parameters, logger) {
     super(parameters, logger);
 

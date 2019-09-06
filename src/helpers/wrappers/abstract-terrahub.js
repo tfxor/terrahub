@@ -21,7 +21,7 @@ class AbstractTerrahub {
     this._runId = thubRunId;
     this._action = '';
     this.parameters = parameters;
-    this.parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization); //todo Refactor
+    this.parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization); //todo api-helper
     this._config = cfg;
     this._project = cfg.project;
     this._terraform = new Terraform(cfg, this.parameters);
