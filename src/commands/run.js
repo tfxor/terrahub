@@ -1,6 +1,7 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
+const HelpParser = require('../helpers/help-parser');
 const DistributedCommand = require('../distributed-command');
 const { printListAsTree } = require('../helpers/log-helper');
 
@@ -16,8 +17,7 @@ class RunCommand extends DistributedCommand {
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
-      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
-      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false);
+      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false);
   }
 
   /**
@@ -43,7 +43,9 @@ class RunCommand extends DistributedCommand {
       throw new Error('Action aborted');
     }
 
-    return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
+    return HelpParser.Distributor === Dictionary.DISTRIBUTOR.LOCAL
+      ? this._runLocal(config)
+      : this._runCloud(config);
   }
 
   /**
@@ -152,7 +154,7 @@ class RunCommand extends DistributedCommand {
    * @return {void|Promise}
    */
   onTokenMissingOrInvalid(token) {
-    if (this.getOption('cloud')) {
+    if (HelpParser.Distributor !== 'local') {
       return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
     }
 

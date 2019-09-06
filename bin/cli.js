@@ -34,12 +34,12 @@ function commandCreate(logger = console) {
 
     const helpCommand = new HelpCommand(parameters, logger);
 
-    return HelpParser.getDistributor(false, helpCommand);
+    return HelpParser.getDistributor(helpCommand);
   }
   const Command = require(path.join(parameters.commandsPath, command));
   const _Command = new Command(parameters, logger);
 
-  return HelpParser.getDistributor(parameters.args, _Command);
+  return HelpParser.getDistributor(_Command);
 }
 
 /**

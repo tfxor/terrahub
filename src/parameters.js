@@ -52,6 +52,7 @@ const def = {
   retryCount: 2,
   format: 'yml',
   threadLimit: 0,
+  distributor: 'local',
   usePhysicalCpu: false
 };
 const env = {
@@ -84,6 +85,7 @@ module.exports = {
     isHelp: _isHelp(args),
     listLimit: cfg.listLimit,
     retryCount: cfg.retryCount,
+    distributor: cfg.distributor,
     usePhysicalCpu: cfg.usePhysicalCpu,
     threadLimit: cfg.threadLimit,
     defaultFileName: `.terrahub.${cfg.format}`

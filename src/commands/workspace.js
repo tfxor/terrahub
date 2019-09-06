@@ -99,16 +99,7 @@ class WorkspaceCommand extends DistributedCommand {
       return Promise.resolve('Canceled');
     }
 
-    filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
-
-    if (!filesToRemove.length) {
-      return Promise.resolve('Nothing to remove');
-    }
-
-    await Promise.all(filesToRemove.map(file => fse.unlink(file)));
-
-    const succesMessage = `TerraHub environment '${this.config.env}' was deleted`;
-    return this._workspace('workspaceDelete', cfgObject, succesMessage);
+    return this._removeFiles(filesToRemove, cfgObject);
   }
 
   /**
@@ -151,6 +142,19 @@ class WorkspaceCommand extends DistributedCommand {
     });
 
     return Promise.resolve(message);
+  }
+
+  async _removeFiles(filesToRemove, config) {
+    const _filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
+
+    if (!_filesToRemove.length) {
+      return Promise.resolve('Nothing to remove');
+    }
+
+    await Promise.all(_filesToRemove.map(file => fse.unlink(file)));
+
+    const succesMessage = `TerraHub environment '${this.config.env}' was deleted`;
+    return this._workspace('workspaceDelete', config, succesMessage);
   }
 }
 

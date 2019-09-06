@@ -19,7 +19,7 @@ class ApiHelper extends events.EventEmitter {
     this._apiLogginStart = false;
     this._logsRetrieveCount = 8;
     this._componentsExecutionList = {};
-    this._errors = null;
+    this._errors = [];
   }
 
   /**
@@ -96,7 +96,7 @@ class ApiHelper extends events.EventEmitter {
     const _promises = Array.isArray(promises) ? promises : [promises];
 
     return _promises.map(({ url, body }) => this.fetch.post(url, { body: JSON.stringify(body) })
-      .catch(err => console.log(err)));
+      .catch(err => this._errors.push(err)));
   }
 
   /**

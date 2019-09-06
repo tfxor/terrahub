@@ -4,5 +4,6 @@
   "logs": false,
   "retryCount": 2,
   "usePhysicalCpu": false,
-  "listLimit": 5
+  "listLimit": 5,
+  "distributor": "local"
 }
