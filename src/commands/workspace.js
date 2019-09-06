@@ -94,12 +94,7 @@ class WorkspaceCommand extends DistributedCommand {
       return this._workspace('workspaceSelect', cfgObject, message);
     }
 
-    const confirmed = await yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `);
-    if (!confirmed) {
-      return Promise.resolve('Canceled');
-    }
-
-    return this._removeFiles(filesToRemove, cfgObject);
+    return this._deleteWorkspace(filesToRemove, cfgObject);
   }
 
   /**
@@ -144,7 +139,12 @@ class WorkspaceCommand extends DistributedCommand {
     return Promise.resolve(message);
   }
 
-  async _removeFiles(filesToRemove, config) {
+  async _deleteWorkspace(filesToRemove, config) {
+    const confirmed = await yesNoQuestion(`Do you want to delete workspace '${this.config.env}' (y/N)? `);
+    if (!confirmed) {
+      return Promise.resolve('Canceled');
+    }
+
     const _filesToRemove = filesToRemove.filter(file => fs.existsSync(file));
 
     if (!_filesToRemove.length) {
