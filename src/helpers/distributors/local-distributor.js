@@ -201,7 +201,7 @@ class LocalDistributor extends Distributor {
 
     this._dependencyTable = {};
 
-    return (err.constructor === Error) ? err : new Error(`Worker error: ${err}`);
+    return (err.constructor === Error) ? err : new Error(`Worker error: ${err.message || err}`);
   }
 
   /**

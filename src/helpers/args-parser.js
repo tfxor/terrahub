@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-escape */
-
 'use strict';
 
 const parseArgs = require('minimist');
@@ -115,8 +113,8 @@ class ArgsParser {
    * @returns {String}
    */
   static trim(value) {
-    let leading = new RegExp('^([\\s\'\"]*)', 'g');
-    let trailing = new RegExp('([\\s\'\"]*)$', 'g');
+    let leading = new RegExp('^([\\s\'"]*)', 'g');
+    let trailing = new RegExp('([\\s\'"]*)$', 'g');
 
     return value.trim().replace(leading, '').replace(trailing, '');
   }

@@ -126,7 +126,6 @@ class AbstractTerrahub {
       switch (extension) {
         case '.js':
           return () => {
-            // eslint-disable-next-line import/no-dynamic-require
             const promise = require(args[0])(this._config, res.buffer);
 
             return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));

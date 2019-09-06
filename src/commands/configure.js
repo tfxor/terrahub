@@ -171,20 +171,21 @@ class ConfigureCommand extends DistributedCommand {
    * @private
    */
   _intermediateFill(destination, key, regex) {
+    let _destinations = { ...destination };
     const match = key.match(regex);
     const finalKey = match ? match[1] : key;
     const value = match ? [] : {};
     if (Array.isArray(destination[finalKey])) {
       const index = match[2] || destination[finalKey].push(value);
-      destination = destination[finalKey][index];
+      _destinations = destination[finalKey][index];
     } else {
       if (!match && !(destination[finalKey] instanceof Object)) {
         destination[finalKey] = value;
       }
-      destination = destination[finalKey];
+      _destinations = destination[finalKey];
     }
 
-    return destination;
+    return _destinations;
   }
 
 

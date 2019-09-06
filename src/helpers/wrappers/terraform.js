@@ -131,7 +131,8 @@ class Terraform {
         const sourceProfile = accountData.type === 'role'
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
-        const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this.parameters.isCloud);
+        const credentials = prepareCredentialsFile(
+          accountData, sourceProfile, this._config, false, this.parameters.isCloud);
 
         switch (type) {
           case 'cloudAccount':
@@ -370,7 +371,8 @@ class Terraform {
         }
 
         const commandsList = this._envVars['TERRAFORM_ACTIONS'];
-        if (commandsList === 'prepare,workspaceSelect,plan,apply' || commandsList === 'prepare,workspaceSelect,plan,destroy') {
+        if (commandsList === 'prepare,workspaceSelect,plan,apply'
+          || commandsList === 'prepare,workspaceSelect,plan,destroy') {
           skip = false;
         }
 
@@ -456,7 +458,7 @@ class Terraform {
     return this
       .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), localBackend, this._var()));
   }
-  
+
 
   /**
    * https://www.terraform.io/docs/commands/show.html

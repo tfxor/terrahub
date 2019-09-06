@@ -489,6 +489,7 @@ class DistributedCommand extends AbstractCommand {
   isComponentsCountZero() {
     return (this._configLoader.componentsCount() === 0);
   }
+
   /**
    * Returns an array of error strings related to
    * all components' dependencies are included in config

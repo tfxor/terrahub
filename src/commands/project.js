@@ -43,9 +43,9 @@ class ProjectCommand extends ConfigCommand {
       .some(it => fs.existsSync(path.join(directory, `.terrahub${it}`)));
 
     if (Object.keys(this.getProjectConfig()).length || isProjectExisting) {
-      const directory = isProjectExisting ? directory : this.getProjectConfig().root;
+      const _directory = isProjectExisting ? directory : this.getProjectConfig().root;
 
-      this.logger.warn(`Project already configured in ${directory} directory`);
+      this.logger.warn(`Project already configured in ${_directory} directory`);
       return Promise.resolve();
     }
 

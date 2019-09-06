@@ -47,7 +47,6 @@ function run(config, parameters) {
       (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
-        // eslint-disable-next-line no-param-reassign
         delete lastResult.buffer;
       }
 

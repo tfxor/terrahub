@@ -7,7 +7,12 @@
     "airbnb-base"
   ],
   "rules": {
-    "function-paren-newline" : [0, { "minItems": 4 }],
+    "function-paren-newline": [
+      0,
+      {
+        "minItems": 4
+      }
+    ],
     "comma-dangle": [
       0,
       "never"
@@ -39,6 +44,12 @@
     "no-sparse-arrays": 2,
     "no-unexpected-multiline": 2,
     "no-unreachable": 2,
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
     "use-isnan": 2,
     "valid-jsdoc": [
       2,
@@ -225,7 +236,12 @@
     "no-unneeded-ternary": 0,
     "object-curly-spacing": 0,
     "object-curly-newline": 0,
-    "object-property-newline": [1, { "allowAllPropertiesOnSameLine": true }],
+    "object-property-newline": [
+      1,
+      {
+        "allowAllPropertiesOnSameLine": true
+      }
+    ],
     "one-var": 0,
     "operator-assignment": 0,
     "operator-linebreak": 0,

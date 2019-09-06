@@ -49,6 +49,7 @@ class ApiHelper extends events.EventEmitter {
         this.emit('loggerWork');
       } else {
         const eventListeners = this.listeners('loggerWork');
+        // eslint-disable-next-line no-unused-vars
         const [mainListener, ...otherListeners] = eventListeners;
 
         otherListeners.forEach(it => this.removeListener('loggerWork', it));
@@ -301,6 +302,7 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @param {Object} {source: String, status: String, [hash]: String, [name]: String}
    * @param {Number} [runStatus]
+   * @return {Promise[] | Event}
    */
   sendDataToApi({ source, status, hash, name }, runStatus) {
     const promise = {

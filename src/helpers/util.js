@@ -11,9 +11,8 @@ const { createHash } = require('crypto');
 const mergeWith = require('lodash.mergewith');
 const childProcess = require('child_process');
 const { spawn } = require('child-process-promise');
-const {
-  EOL, platform, cpus, homedir
-} = require('os');
+const { EOL, platform, cpus, homedir } = require('os');
+const { SpawnError } = require('../exceptions/errors');
 
 /**
  * @static
@@ -234,9 +233,7 @@ class Util {
     });
 
     return promise.then(() => Buffer.concat(stdout)).catch(error => {
-      error.message = Buffer.concat(stderr).toString();
-
-      throw new Error(error);
+      throw new SpawnError(error, stderr);
     });
   }
 

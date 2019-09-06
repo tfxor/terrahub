@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable quotes */
+
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs-extra');
