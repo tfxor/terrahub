@@ -56,6 +56,51 @@ class AwsDistributor {
     await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
     console.log('Directory uploaded to S3.');
 
+    this.parameters.jitPath = this.parameters.jitPath.replace('/cache', lambdaHomedir);
+
+    const body = JSON.stringify({
+      actions: actions,
+      thubRunId: runId,
+      config: this.componentConfig,
+      parameters: this.parameters
+    });
+
+    inProgress++;
+
+    try {
+      const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
+      console.log(`[${this.componentConfig.name}] ${postResult.message}!`);
+    } catch (err) {
+      this._dependencyTable = {};
+      this._errors.push(err);
+    }
+
+    ws.on('message', data => {
+      try {
+        const message = JSON.parse(data);
+
+        if (AwsDistributor._isFinishMessage(message, this.componentConfig.hash)) {
+          if (!this._errors.length) {
+            console.log(`[${this.componentConfig.name}] Successfully deployed!`);
+          }
+
+          inProgress--;
+
+          console.log('ws on message: ', message);
+
+          setImmediate(() => this.emitter.emit('message', { worker: '123456789', data: message }));
+        }
+        if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
+          this._dependencyTable = {};
+          this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
+
+          setImmediate(() => this.emitter.emit('exit', { isError: true, message: this._errors }));
+        }
+      } catch (err) {
+        throw new Error(err);
+      }
+    });
+
   }
 
 

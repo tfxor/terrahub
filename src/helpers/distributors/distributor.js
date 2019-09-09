@@ -33,7 +33,7 @@ class Distributor {
    */
   async run() {
     await this.command.validate();
-    await this.sendLogsToApi();
+    // await this.sendLogsToApi();
 
     const result = await this.command.run();
 
@@ -48,7 +48,7 @@ class Distributor {
         this.projectConfig = config;
       }
 
-      console.log('runactions  step :', { actions, config, postActionFn, options });
+      // console.log('runactions  step :', { actions, config, postActionFn, options });
       // eslint-disable-next-line no-await-in-loop
       const response = await this.runActions(actions, config, this.parameters, options);
 
