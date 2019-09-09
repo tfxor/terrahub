@@ -4,26 +4,60 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const S3Helper = require('../s3-helper');
 const ApiHelper = require('../api-helper');
-const Distributor = require('./distributor');
 const Websocket = require('./websocket');
 const { defaultIgnorePatterns } = require('../../config-loader');
 const {
   globPromise, retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, tempPath, lambdaHomedir
 } = require('../util');
 
-class AwsDistributor extends Distributor {
+class AwsDistributor {
 
   /**
-   * @param {Object} command
+   * @param {Object} parameters
+   * @param {Object} config
+   * @param {EventListenerObject} emitter
    */
-  constructor(command) {
-    super(command);
+  constructor(parameters, config, emitter) {
+    this.parameters = parameters;
+    this.componentConfig = config;
+    this.emitter = emitter;
+    this._projectRoot = this.componentConfig.project.root;
     this.parameters.isCloud = true;
     this.config = this.parameters.config;
     this.fetch = this.parameters.fetch;
 
     this._errors = [];
   }
+
+  async distribute({ actions, runId }) {
+    const cloudAccounts = await this._validateRequirements();
+    this.updateEnvirmentVariables(cloudAccounts);
+
+    const { data: { ticket_id } } = await this.websocketTicketCreate();
+    const { ws } = new Websocket(this.config.api, ticket_id);
+
+    let inProgress = 0;
+
+    const s3Helper = new S3Helper();
+    const s3directory = this.config.api.replace('api', 'projects');
+
+    const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
+    console.log('Uploading project to S3.');
+
+    const s3Prefix = [s3directory, accountId, runId].join('/');
+
+    console.log({ accountId, files, s3Prefix });
+
+    const pathMap = files.map(it => ({
+      localPath: join(this._projectRoot, it),
+      s3Path: [s3Prefix, it].join('/')
+    }));
+
+    await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
+    console.log('Directory uploaded to S3.');
+
+  }
+
 
   /**
    * @param {String[]} actions
@@ -43,9 +77,10 @@ class AwsDistributor extends Distributor {
     const s3Helper = new S3Helper();
     const s3directory = this.config.api.replace('api', 'projects');
 
-    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
+    // this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
-    this.logger.warn('Uploading project to S3.');
+    // this.logger.warn('Uploading project to S3.');
+    console.log('Uploading project to S3.');
 
     const s3Prefix = [s3directory, accountId, this.runId].join('/');
     const pathMap = files.map(it => ({
@@ -54,7 +89,8 @@ class AwsDistributor extends Distributor {
     }));
 
     await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
-    this.logger.warn('Directory uploaded to S3.');
+    // this.logger.warn('Directory uploaded to S3.');
+    console.log('Directory uploaded to S3.');
 
 
     return new Promise((resolve, reject) => {
@@ -157,28 +193,18 @@ class AwsDistributor extends Distributor {
       throw new Error('Please enable logging in `.terrahub.json`.');
     }
 
-    const errors = Object.keys(this.projectConfig).filter(hash => {
-      const { cloudAccount, backendAccount } = this.projectConfig[hash].terraform;
+    const { cloudAccount, backendAccount } = this.componentConfig.terraform;
 
-      return !cloudAccount && !backendAccount;
-    });
-
-    if (errors.length) {
-      const errorMessage = `'${errors.map(it => this.projectConfig[it].name).join('\' ,\'')}' do not have` +
+    if (!cloudAccount || !backendAccount) {
+      const errorMessage = `'${this.componentConfig.name}' do not have` +
         ` CloudAccount and/or BackendAccount in config.`;
 
       throw new Error(errorMessage);
     }
 
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const accountErrors = Object.keys(this.projectConfig).filter(hash => {
-      const { cloudAccount } = this.projectConfig[hash].terraform;
-
-      return !cloudAccounts.aws.some(it => it.name === cloudAccount);
-    });
-
-    if (accountErrors.length) {
-      const errorMessage = `'${accountErrors.map(it => this.projectConfig[it].name).join('\', \'')}' do not have` +
+    if (!cloudAccounts.aws.some(it => it.name === cloudAccount)) {
+      const errorMessage = `'${this.componentConfig.name}' component do not have` +
         ` valid backendAccount in config.`;
 
       throw new Error(errorMessage);
@@ -191,33 +217,33 @@ class AwsDistributor extends Distributor {
    * @param {Object} cloudAccounts
    */
   updateEnvirmentVariables(cloudAccounts) {
-    Object.keys(this.projectConfig).forEach(hash => {
-      const { cloudAccount } = this.projectConfig[hash].terraform;
-      const accountData = cloudAccounts.aws.find(it => it.name === cloudAccount);
+    // Object.keys(this.componentConfig).forEach(hash => {
+    const { cloudAccount } = this.componentConfig.terraform;
+    const accountData = cloudAccounts.aws.find(it => it.name === cloudAccount);
 
-      if (!accountData) {
-        return;
-      }
+    if (!accountData) {
+      return;
+    }
 
-      const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
-      const credentials = prepareCredentialsFile(
-        accountData, sourceProfile, this.projectConfig[hash], false, this.parameters.isCloud);
+    const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
+    const credentials = prepareCredentialsFile(
+      accountData, sourceProfile, this.componentConfig, false, this.parameters.isCloud);
 
-      ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-        .forEach(it => delete process.env[it]);
+    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
+      .forEach(it => delete process.env[it]);
 
-      const cloudCredsPath = createCredentialsFile(
-        credentials, this.projectConfig[hash], 'cloud', this.parameters.isCloud);
+    const cloudCredsPath = createCredentialsFile(
+      credentials, this.componentConfig, 'cloud', this.parameters.isCloud);
 
-      if (sourceProfile) {
-        Object.assign(process.env, {
-          AWS_CONFIG_FILE: join(tempPath(this.projectConfig[hash], this.parameters.isCloud), '.aws/config'),
-          AWS_SDK_LOAD_CONFIG: 1
-        });
-      }
+    if (sourceProfile) {
+      Object.assign(process.env, {
+        AWS_CONFIG_FILE: join(tempPath(this.componentConfig, this.parameters.isCloud), '.aws/config'),
+        AWS_SDK_LOAD_CONFIG: 1
+      });
+    }
 
-      Object.assign(process.env, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
-    });
+    Object.assign(process.env, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
+    // });
   }
 
   /**
@@ -250,8 +276,7 @@ class AwsDistributor extends Distributor {
    * @private
    */
   _getExecutionMapping() {
-    const componentMappings = [].concat(...Object.keys(this.projectConfig)
-      .map(hash => this.projectConfig[hash].mapping));
+    const componentMappings = [].concat(...this.componentConfig.mapping);
 
     return [...new Set(componentMappings)];
   }

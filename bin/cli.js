@@ -11,6 +11,8 @@ const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
 
+const Distributor = require('../src/helpers/distributors/distributor');
+
 /**
  * Validate node version
  */
@@ -39,7 +41,7 @@ function commandCreate(logger = console) {
   const Command = require(path.join(parameters.commandsPath, command));
   const _Command = new Command(parameters, logger);
 
-  return HelpParser.getDistributor(_Command);
+  return new Distributor(_Command);
 }
 
 /**

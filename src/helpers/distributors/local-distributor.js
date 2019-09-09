@@ -3,16 +3,19 @@
 const path = require('path');
 const cluster = require('cluster');
 const ApiHelper = require('../api-helper');
-const Distributor = require('./distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
 
 
-class LocalDistributor extends Distributor {
+class LocalDistributor {
   /**
-   * @param {Object} command
+   * @param {Object} parameters
+   * @param {Object} config
+   * @param {EventListenerObject} emitter
    */
-  constructor(command) {
-    super(command);
+  constructor(parameters, config, emitter) {
+    this.emitter = emitter;
+    this.parameters = parameters;
+    this.config = config;
     this._worker = path.join(__dirname, 'worker.js');
     this._workersCount = 0;
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
@@ -29,133 +32,66 @@ class LocalDistributor extends Distributor {
   }
 
   /**
-   * @param {String} hash
+   * @param {String[]} actions
+   * @param {String} runId
    * @private
    */
-  _createWorker(hash) {
+  _createWorker(actions, runId) {
     cluster.setupMaster({ exec: this._worker });
-    const cfgThread = this.projectConfig[hash];
+    const cfgThread = this.config;
 
     const worker = cluster.fork({
-      THUB_RUN_ID: this.runId,
-      TERRAFORM_ACTIONS: this.TERRAFORM_ACTIONS,
+      THUB_RUN_ID: runId,
+      TERRAFORM_ACTIONS: actions,
       THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
       ...this._env
     });
 
-    delete this._dependencyTable[hash];
-
     this._workersCount++;
     worker.send({ workerType: 'default', data: cfgThread, parameters: this.parameters });
+
+    cluster.on('message', (worker, data) => {
+      if (data.isError) {
+        this._error = this._handleError(data.error);
+
+        setImmediate(() => this.emitter.emit('exit', { isError: true, message: this._error }));
+      }
+
+      if (data.isLogger || data.workerLogger) {
+        return this._loggerMessageHandler(data);
+      }
+
+      if (data.data) {
+        setImmediate(() => this.emitter.emit('message', { worker: worker.id, data: data }));
+      }
+    });
+
+    cluster.on('exit', (worker, code) => {
+      if (LocalDistributor._getWorkerName(worker) === 'logger-worker') {
+        return;
+      }
+
+      this._workersCount--;
+
+      setImmediate(() => this.emitter.emit('exit', { worker, code, hash: this.config.hash }));
+    });
   }
 
-  _createLoggerWorker() {
+  _createLoggerWorker(runId) {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork({ THUB_RUN_ID: this.runId, ...this._env });
+    this.loggerWorker = cluster.fork({ THUB_RUN_ID: runId, ...this._env });
 
     this._loggerWorkerCount++;
 
     this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend(), parameters: this.parameters });
   }
 
-  /**
-   * @private
-   */
-  _distributeConfigs() {
-    const hashes = Object.keys(this._dependencyTable);
-
-    for (let index = 0; this._workersCount < this._threadsCount && index < hashes.length; index++) {
-      const hash = hashes[index];
-      const dependsOn = Object.keys(this._dependencyTable[hash]);
-
-      if (!dependsOn.length) {
-        this._createWorker(hash);
-      }
+  distribute({ actions, runId } = {}) {
+    if (this._workersCount < this._threadsCount) {
+      this._createWorker(actions, runId);
     }
   }
-
-  /**
-   * @param {String[]} actions
-   * @param {String} format
-   * @param {Boolean} planDestroy
-   * @param {Number} dependencyDirection
-   * @param {String} resourceName
-   * @param {String} importId
-   * @param {Boolean} input
-   * @return {Promise}
-   */
-  async runActions(actions, {
-    format = '',
-    planDestroy = false,
-    dependencyDirection = null,
-    resourceName = '',
-    importId = '',
-    input = false
-  } = {}) {
-    this._env = {
-      format, planDestroy, resourceName, importId, input
-    };
-
-    const results = [];
-    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
-    this.TERRAFORM_ACTIONS = actions;
-
-    ApiHelper.on('loggerWork', () => {
-      if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
-        ApiHelper.setIsBusy();
-        return this._createLoggerWorker();
-      }
-
-      return false;
-    });
-
-    return new Promise((resolve, reject) => {
-      this._distributeConfigs();
-
-      cluster.on('message', (worker, data) => {
-        if (data.isError) {
-          this._error = this._handleError(data.error);
-          return;
-        }
-
-        if (data.isLogger || data.workerLogger) {
-          return this._loggerMessageHandler(data);
-        }
-
-        if (data.data) {
-          results.push(data.data);
-        }
-
-        this.removeDependencies(this._dependencyTable, data.hash);
-      });
-
-      cluster.on('exit', (worker, code) => {
-        if (LocalDistributor._getWorkerName(worker) === 'logger-worker') {
-          return;
-        }
-
-        this._workersCount--;
-
-        if (code === 0) {
-          this._distributeConfigs();
-        }
-
-        const hashes = Object.keys(this._dependencyTable);
-        const workersId = Object.keys(cluster.workers);
-        const defaultWorkersLength = workersId.length - this._loggerWorkerCount;
-
-        if (!defaultWorkersLength && !hashes.length) {
-          if (this._error) {
-            reject(this._error);
-          } else {
-            resolve(results);
-          }
-        }
-      });
-    });
-  }
-
 
   /**
    * @param {Object} data
@@ -226,7 +162,6 @@ class LocalDistributor extends Distributor {
    * Returns worker spawn file name
    * @param {Object} worker
    * @return {String}
-   * @private
    */
   static _getWorkerName(worker) {
     const fileName = worker.process.spawnargs[1];

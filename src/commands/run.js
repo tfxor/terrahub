@@ -43,9 +43,11 @@ class RunCommand extends DistributedCommand {
       throw new Error('Action aborted');
     }
 
-    return HelpParser.Distributor === Dictionary.DISTRIBUTOR.LOCAL
-      ? this._runLocal(config)
-      : this._runCloud(config);
+    // return HelpParser.Distributor === Dictionary.DISTRIBUTOR.LOCAL
+    //   ? this._runLocal(config)
+    //   : this._runCloud(config);
+
+    return this._runLocal(config);
   }
 
   /**
@@ -78,18 +80,22 @@ class RunCommand extends DistributedCommand {
       actions.push('plan');
     }
 
-    const firstStep = { actions, config: config };
-    const secondStep = !this._isApply ? Promise.resolve() : {
-      actions: this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'],
+    const defaultRun = [{ actions, config: config, dependencyDirection: Dictionary.DIRECTION.FORWARD }];
+
+    const applyRun = !this._isApply ? false : [{
+      actions: [...actions, ...this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply']],
+      config: config,
       dependencyDirection: Dictionary.DIRECTION.FORWARD
-    };
-    const thirdStep = !this._isDestroy ? Promise.resolve() : {
-      actions: ['plan', 'destroy'],
+    }];
+
+    const destroyRun = !this._isDestroy ? false : [{
+      actions: [...actions, ...['plan', 'destroy']],
+      config: config,
       dependencyDirection: Dictionary.DIRECTION.REVERSE,
       planDestroy: true
-    };
+    }];
 
-    return Promise.all([firstStep, secondStep, thirdStep]);
+    return Promise.resolve(destroyRun || applyRun || defaultRun );
   }
 
   /**
@@ -154,9 +160,9 @@ class RunCommand extends DistributedCommand {
    * @return {void|Promise}
    */
   onTokenMissingOrInvalid(token) {
-    if (HelpParser.Distributor !== 'local') {
-      return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
-    }
+    // if (HelpParser.Distributor !== 'local') {
+    //   return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
+    // }
 
     return super.onTokenMissingOrInvalid(token);
   }

@@ -15,7 +15,7 @@ class AbstractTerrahub {
    * @param {Object} cfg
    * @param {String} thubRunId
    * @param {Object} parameters
-   * @param {Function} publish
+   * @param {Function} [publish]
    */
   constructor(cfg, thubRunId, parameters, publish) {
     this._runId = thubRunId;

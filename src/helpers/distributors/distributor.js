@@ -2,6 +2,11 @@
 
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
+const AwsDistributor = require('../distributors/aws-distributor');
+const LocalDistributor = require('../distributors/local-distributor');
+
+const events = require('events');
+
 /**
  * @abstract Class
  */
@@ -10,6 +15,11 @@ class Distributor {
    * @param {Object} command
    */
   constructor(command) {
+
+    this._eventEmitter = new events.EventEmitter();
+
+    this._workCounter = 0;
+
     this.command = command;
     this.runId = command._runId;
     this.logger = command.logger;
@@ -31,26 +41,23 @@ class Distributor {
       return Promise.resolve(result);
     }
 
-    const steps = result.filter(step => Boolean(step));
-
     try {
-      for (const step of steps) {
-        const { actions, config, postActionFn, ...options } = step;
+      const [{ actions, config, postActionFn, ...options }] = result;
 
-        if (config) {
-          this.projectConfig = config;
-
-          const firstKey = Object.keys(this.projectConfig)[0];
-          this._projectRoot = this.projectConfig[firstKey].project.root;
-        }
-        // eslint-disable-next-line no-await-in-loop
-        const result = await this.runActions(actions, options);
-
-        if (postActionFn) {
-          return postActionFn(result);
-        }
+      if (config) {
+        this.projectConfig = config;
       }
+
+      console.log('runactions  step :', { actions, config, postActionFn, options });
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.runActions(actions, config, this.parameters, options);
+
+      if (postActionFn) {
+        return postActionFn(response);
+      }
+      // }
     } catch (err) {
+      console.log('catched ? :', err);
       return Promise.reject(err.message || err);
     }
 
@@ -106,12 +113,105 @@ class Distributor {
 
   /**
    * @param {String[]} actions
+   * @param {Object} config
+   * @param {Object} parameters
    * @param {Object} options
    * @return {Promise}
    * @abstract
    */
-  runActions(actions, options = {}) {
-    throw new Error('Method must be implemented.');
+  async runActions(actions, config, parameters, {
+    format = '',
+    planDestroy = false,
+    dependencyDirection = null,
+    resourceName = '',
+    importId = '',
+    input = false
+  } = {}) {
+    const results = [];
+    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
+    this.TERRAFORM_ACTIONS = actions;
+
+    return new Promise((resolve, reject) => {
+      this.distributeConfig();
+
+      this._eventEmitter.on('message', (data) => {
+        const { data: response } = data;
+
+        if (response.isError) {
+          this._error = response.error;
+          return;
+        }
+
+        if (response && !results.some(it => it.id === response.id)) {
+          results.push(response);
+        }
+
+        this.removeDependencies(this._dependencyTable, response.hash);
+      });
+
+      this._eventEmitter.on('exit', (data) => {
+        const { code, isError, hash, message } = data;
+        this._workCounter--;
+
+        if (code === 0) {
+          this.distributeConfig();
+        }
+
+        if (isError) {
+          this._error = message;
+        }
+
+        const hashes = Object.keys(this._dependencyTable);
+
+        if (!hashes.length && !this._workCounter) {
+          if (this._error) {
+            return reject(this._error);
+          } else {
+            return resolve(results);
+          }
+        }
+      });
+    });
+  }
+
+
+  distributeConfig() {
+    const hashes = Object.keys(this._dependencyTable);
+
+    for (let index = 0; index < hashes.length; index++) {
+      const hash = hashes[index];
+      const dependsOn = Object.keys(this._dependencyTable[hash]);
+
+      if (!dependsOn.length) {
+        this.getDistributor(hash).distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
+
+        this._workCounter++;
+
+        delete this._dependencyTable[hash];
+      }
+    }
+  }
+
+  getDistributor(hash) {
+    const config = this.projectConfig[hash];
+    const { distributor } = config;
+
+    switch (distributor) {
+      case 'local':
+        this.distributor = new LocalDistributor(this.parameters, config, this._eventEmitter);
+        break;
+      case 'lambda':
+        this.distributor = new AwsDistributor(this.parameters, config, this._eventEmitter);
+        break;
+      case 'fargate':
+        this.distributor = new AwsDistributor(this.parameters);
+        break;
+      default:
+        this.distributor = new LocalDistributor(this.parameters, config, this._eventEmitter);
+        break;
+    }
+
+    return this.distributor;
   }
 
   /**
