@@ -1,11 +1,10 @@
 'use strict';
 
+const events = require('events');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
-
-const events = require('events');
 
 /**
  * @abstract Class
@@ -15,9 +14,7 @@ class Distributor {
    * @param {Object} command
    */
   constructor(command) {
-
     this._eventEmitter = new events.EventEmitter();
-
     this._workCounter = 0;
 
     this.command = command;
@@ -33,7 +30,7 @@ class Distributor {
    */
   async run() {
     await this.command.validate();
-    // await this.sendLogsToApi();
+    await this.sendLogsToApi();
 
     const result = await this.command.run();
 
@@ -57,7 +54,6 @@ class Distributor {
       }
       // }
     } catch (err) {
-      console.log('catched ? :', err);
       return Promise.reject(err.message || err);
     }
 
@@ -128,6 +124,7 @@ class Distributor {
     input = false
   } = {}) {
     const results = [];
+    this._env = { format, planDestroy, resourceName, importId, input };
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -150,7 +147,7 @@ class Distributor {
       });
 
       this._eventEmitter.on('exit', (data) => {
-        const { code, isError, hash, message } = data;
+        const { code, isError, message } = data;
         this._workCounter--;
 
         if (code === 0) {
@@ -174,7 +171,9 @@ class Distributor {
     });
   }
 
-
+  /**
+   * Distribute component config to Distributor execution
+   */
   distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
 
@@ -192,22 +191,26 @@ class Distributor {
     }
   }
 
+  /**
+   * @param {String} hash
+   * @return {LocalDistributor|AwsDistributor}
+   */
   getDistributor(hash) {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
     switch (distributor) {
       case 'local':
-        this.distributor = new LocalDistributor(this.parameters, config, this._eventEmitter);
+        this.distributor = new LocalDistributor(this.parameters, config, this._env, this._eventEmitter);
         break;
       case 'lambda':
-        this.distributor = new AwsDistributor(this.parameters, config, this._eventEmitter);
+        this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
         break;
       case 'fargate':
-        this.distributor = new AwsDistributor(this.parameters);
+        this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
         break;
       default:
-        this.distributor = new LocalDistributor(this.parameters, config, this._eventEmitter);
+        this.distributor = new LocalDistributor(this.parameters, config, this._env, this._eventEmitter);
         break;
     }
 

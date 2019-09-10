@@ -10,22 +10,26 @@ class LocalDistributor {
   /**
    * @param {Object} parameters
    * @param {Object} config
+   * @param {Object} env
    * @param {EventListenerObject} emitter
    */
-  constructor(parameters, config, emitter) {
+  constructor(parameters, config, env, emitter) {
     this.emitter = emitter;
+    this._env = env;
     this.parameters = parameters;
     this.config = config;
     this._worker = path.join(__dirname, 'worker.js');
-    this._workersCount = 0;
     this._loggerWorker = path.join(__dirname, 'logger-worker.js');
-    this._loggerWorkerCount = 0;
-    this._loggerLastLog = {};
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
-
-    if (ApiHelper.tokenIsValid) {
-      this._createLoggerWorker();
-      this._threadsCount--;
+    //todo creating new instance multiplies logs
+    if (!this._loggerWorkerCount) {
+      this._loggerWorkerCount = 0;
+    }
+    if (!this._workersCount) {
+      this._workersCount = 0;
+    }
+    if (!this._loggerLastLog) {
+      this._loggerLastLog = {};
     }
 
     cluster.setupMaster({ exec: this._worker });
@@ -40,6 +44,8 @@ class LocalDistributor {
     cluster.setupMaster({ exec: this._worker });
     const cfgThread = this.config;
 
+    this.TERRAFORM_ACTIONS = actions;
+
     const worker = cluster.fork({
       THUB_RUN_ID: runId,
       TERRAFORM_ACTIONS: actions,
@@ -49,6 +55,18 @@ class LocalDistributor {
 
     this._workersCount++;
     worker.send({ workerType: 'default', data: cfgThread, parameters: this.parameters });
+
+
+    ApiHelper.on('loggerWork', () => {
+      console.log('LOGGER EVENT ');
+
+      if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
+        ApiHelper.setIsBusy();
+        return this._createLoggerWorker();
+      }
+
+      return false;
+    });
 
     cluster.on('message', (worker, data) => {
       if (data.isError) {
@@ -77,19 +95,32 @@ class LocalDistributor {
     });
   }
 
-  _createLoggerWorker(runId) {
+  /**
+   * @private
+   */
+  _createLoggerWorker() {
     cluster.setupMaster({ exec: this._loggerWorker });
 
-    this.loggerWorker = cluster.fork({ THUB_RUN_ID: runId, ...this._env });
+    this.loggerWorker = cluster.fork();
 
     this._loggerWorkerCount++;
 
     this.loggerWorker.send({ workerType: 'logger', data: ApiHelper.retrieveDataToSend(), parameters: this.parameters });
   }
 
+  /**
+   * @param {String[]} actions
+   * @param {String} runId
+   */
   distribute({ actions, runId } = {}) {
     if (this._workersCount < this._threadsCount) {
       this._createWorker(actions, runId);
+    }
+
+
+    if (ApiHelper.tokenIsValid) {
+      this._createLoggerWorker();
+      this._threadsCount--;
     }
   }
 

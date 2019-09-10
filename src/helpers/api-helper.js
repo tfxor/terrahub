@@ -17,7 +17,7 @@ class ApiHelper extends events.EventEmitter {
     this._workerIsFree = true;
     this._tokenIsValid = false;
     this._apiLogginStart = false;
-    this._logsRetrieveCount = 8;
+    this._logsDefaultRetrieveCount = 8;
     this._componentsExecutionList = {};
     this._errors = [];
   }
@@ -38,7 +38,7 @@ class ApiHelper extends events.EventEmitter {
    * Sends event to Distributor to execute logging
    */
   sendToWorker() {
-    if (this._errors) {
+    if (this._errors.length) {
       return;
     }
 
@@ -63,7 +63,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   isWorkForLogger() {
-    return this.isFinalRequest || this._promises.length || this._logs.length > this._logsRetrieveCount;
+    return this.isFinalRequest || this._promises.length || this._logs.length > this._logsDefaultRetrieveCount;
   }
 
   /**
@@ -105,7 +105,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Promise[]}
    */
   retrieveDataToSend(all = false) {
-    const _logs = this._logs.length ? this.retrieveLogs(all) : [];
+    const _logs = this._logs && this._logs.length ? this.retrieveLogs(all) : [];
     const _promises = this.retrievePromises().concat(_logs);
 
     this._promises = [];
@@ -118,7 +118,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Array}
    */
   retrievePromises() {
-    const { _promises } = this;
+    const _promises = this._promises;
     const onCreate = _promises.filter(({ url }) => url.split('/')[2] === 'create');
 
     if (onCreate.length) {
@@ -136,7 +136,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {Boolean} all
    * @return {Boolean | { body: { bulk: Object[]}, url: String }}
    */
-  retrieveLogs(all = false) {
+  retrieveLogs(all) {
     if (!this._logs.length) {
       return false;
     }
@@ -146,7 +146,7 @@ class ApiHelper extends events.EventEmitter {
     let _logs = [];
 
     if (!all) {
-      _logs = this._logs.splice(0, this._logsRetrieveCount);
+      _logs = this.logs;
     } else {
       _logs = this._logs;
       this._logs = [];
@@ -156,6 +156,15 @@ class ApiHelper extends events.EventEmitter {
       url,
       body: { bulk: [..._logs] }
     };
+  }
+
+  /**
+   * @return {Object[]}
+   */
+  get logs() {
+    const decimals = Math.floor(this._logs.length / 10);
+
+    return this._logs.splice(0, decimals ? decimals * 10 : this._logsDefaultRetrieveCount);
   }
 
   /**
@@ -200,7 +209,7 @@ class ApiHelper extends events.EventEmitter {
 
   /**
    * @param {Object} body
-   * @return {void | null | Promise}
+   * @return {void | null | Promise[]}
    */
   pushToLogs(body) {
     if (this.isCloudDeployer && body.component === 'main') {

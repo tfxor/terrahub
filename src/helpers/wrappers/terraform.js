@@ -100,8 +100,8 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (!this.parameters.isCloud && (!process.env.THUB_TOKEN_IS_VALID || !process.env.THUB_TOKEN_IS_VALID.length)) {
-      return Promise.resolve();
+    if (!process.env.THUB_TOKEN_IS_VALID && process.env.THUB_TOKEN_IS_VALID.length) {
+      return;
     }
 
     if (this.parameters.isCloud) {

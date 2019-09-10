@@ -2,6 +2,7 @@
 
 const fse = require('fs-extra');
 const { join } = require('path');
+const logger = require('../logger');
 const S3Helper = require('../s3-helper');
 const ApiHelper = require('../api-helper');
 const Websocket = require('./websocket');
@@ -15,11 +16,13 @@ class AwsDistributor {
   /**
    * @param {Object} parameters
    * @param {Object} config
+   * @param {Object} env
    * @param {EventListenerObject} emitter
    */
-  constructor(parameters, config, emitter) {
+  constructor(parameters, config, env, emitter) {
     this.parameters = parameters;
     this.componentConfig = config;
+    this.env = env;
     this.emitter = emitter;
     this._projectRoot = this.componentConfig.project.root;
     this.parameters.isCloud = true;
@@ -29,6 +32,11 @@ class AwsDistributor {
     this._errors = [];
   }
 
+  /**
+   * @param {String[]} actions
+   * @param {String} runId
+   * @return {EventInit}
+   */
   async distribute({ actions, runId }) {
     const cloudAccounts = await this._validateRequirements();
     this.updateEnvirmentVariables(cloudAccounts);
@@ -42,11 +50,9 @@ class AwsDistributor {
     const s3directory = this.config.api.replace('api', 'projects');
 
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
-    console.log('Uploading project to S3.');
+    console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
     const s3Prefix = [s3directory, accountId, runId].join('/');
-
-    console.log({ accountId, files, s3Prefix });
 
     const pathMap = files.map(it => ({
       localPath: join(this._projectRoot, it),
@@ -54,7 +60,7 @@ class AwsDistributor {
     }));
 
     await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
-    console.log('Directory uploaded to S3.');
+    logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
 
     this.parameters.jitPath = this.parameters.jitPath.replace('/cache', lambdaHomedir);
 
@@ -69,7 +75,7 @@ class AwsDistributor {
 
     try {
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
-      console.log(`[${this.componentConfig.name}] ${postResult.message}!`);
+      logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
     } catch (err) {
       this._dependencyTable = {};
       this._errors.push(err);
@@ -81,17 +87,13 @@ class AwsDistributor {
 
         if (AwsDistributor._isFinishMessage(message, this.componentConfig.hash)) {
           if (!this._errors.length) {
-            console.log(`[${this.componentConfig.name}] Successfully deployed!`);
+            logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
           }
-
           inProgress--;
-
-          console.log('ws on message: ', message);
 
           setImmediate(() => this.emitter.emit('message', { worker: '123456789', data: message }));
         }
         if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
-          this._dependencyTable = {};
           this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
 
           setImmediate(() => this.emitter.emit('exit', { isError: true, message: this._errors }));
@@ -99,133 +101,6 @@ class AwsDistributor {
       } catch (err) {
         throw new Error(err);
       }
-    });
-
-  }
-
-
-  /**
-   * @param {String[]} actions
-   * @param {Number} dependencyDirection
-   * @return {Promise}
-   * @override
-   */
-  async runActions(actions, { dependencyDirection = null } = {}) {
-    const cloudAccounts = await this._validateRequirements();
-    this.updateEnvirmentVariables(cloudAccounts);
-
-    const { data: { ticket_id } } = await this.websocketTicketCreate();
-    const { ws } = new Websocket(this.config.api, ticket_id);
-
-    let inProgress = 0;
-
-    const s3Helper = new S3Helper();
-    const s3directory = this.config.api.replace('api', 'projects');
-
-    // this._dependencyTable = this.buildDependencyTable(dependencyDirection);
-    const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
-    // this.logger.warn('Uploading project to S3.');
-    console.log('Uploading project to S3.');
-
-    const s3Prefix = [s3directory, accountId, this.runId].join('/');
-    const pathMap = files.map(it => ({
-      localPath: join(this._projectRoot, it),
-      s3Path: [s3Prefix, it].join('/')
-    }));
-
-    await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
-    // this.logger.warn('Directory uploaded to S3.');
-    console.log('Directory uploaded to S3.');
-
-
-    return new Promise((resolve, reject) => {
-      /**
-       * @private
-       */
-      const _distributeConfigs = () => {
-        Object.keys(this._dependencyTable).forEach(hash => {
-          const dependencies = this._dependencyTable[hash];
-
-          if (!Object.keys(dependencies).length) {
-            delete this._dependencyTable[hash];
-
-            _callLambdaExecutor(hash, _onFinishExecution);
-          }
-        });
-      };
-
-      /**
-       * @param {String} hash
-       * @param {Object} config
-       * @return {void}
-       * @private
-       */
-      const _onFinishExecution = (hash, config) => {
-        this.removeDependencies(this._dependencyTable, hash);
-
-        if (!this._errors.length) {
-          this.logger.info(`[${config.name}] Successfully deployed!`);
-        }
-
-        inProgress--;
-
-        if (Object.keys(this._dependencyTable).length) {
-          _distributeConfigs();
-        } else if (!inProgress) {
-          if (this._errors.length) {
-            return reject(this._errors);
-          }
-
-          return resolve();
-        }
-      };
-
-      /**
-       * @param {String} hash
-       * @param {Function} callback
-       * @private
-       */
-      const _callLambdaExecutor = async (hash, callback) => {
-        const config = this.projectConfig[hash];
-        this.parameters.jitPath = this.parameters.jitPath.replace('/cache', lambdaHomedir);
-
-        const body = JSON.stringify({
-          actions: actions,
-          thubRunId: this.runId,
-          config: config,
-          parameters: this.parameters
-        });
-
-        inProgress++;
-
-        try {
-          const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
-          this.logger.warn(`[${config.name}] ${postResult.message}!`);
-        } catch (err) {
-          this._dependencyTable = {};
-          this._errors.push(err);
-        }
-
-        ws.on('message', data => {
-          try {
-            const message = JSON.parse(data);
-
-            if (AwsDistributor._isFinishMessage(message, hash)) {
-              return callback(hash, config);
-            }
-            if (AwsDistributor._isFinishMessageWithErrors(message, hash)) {
-              this._dependencyTable = {};
-              this._errors.push(`[${config.name}] ${message.data.message}`);
-
-              return callback(hash, config);
-            }
-          } catch (err) {
-            throw new Error(err);
-          }
-        });
-      };
-
-      _distributeConfigs();
     });
   }
 
@@ -262,7 +137,6 @@ class AwsDistributor {
    * @param {Object} cloudAccounts
    */
   updateEnvirmentVariables(cloudAccounts) {
-    // Object.keys(this.componentConfig).forEach(hash => {
     const { cloudAccount } = this.componentConfig.terraform;
     const accountData = cloudAccounts.aws.find(it => it.name === cloudAccount);
 
@@ -288,7 +162,6 @@ class AwsDistributor {
     }
 
     Object.assign(process.env, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
-    // });
   }
 
   /**

@@ -8,8 +8,6 @@ const { exec } = require('child-process-promise');
 const objectDepth = require('object-depth');
 const GsHelper = require('./gs-helper');
 const S3Helper = require('./s3-helper');
-const HelpParser = require('./help-parser');
-const { DISTRIBUTOR } = require('./dictionary');
 const Downloader = require('../helpers/downloader');
 const { homePath, extend, homePathLambda } = require('./util');
 
@@ -54,7 +52,7 @@ class JitHelper {
           return JitHelper._generateVariable(config, parameters);
         }
       })
-      .then(() =>  HelpParser.Distributor !== DISTRIBUTOR.LOCAL ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
+      .then(() =>  parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
