@@ -568,8 +568,25 @@ class JitHelper {
    * @private
    */
   static _parsingTfvars(remoteTfvars, config) {
+    const regex = /\<\<EOT[^\=]+EOT/gms;
+    let m;
+    let newRemoteTfvars = remoteTfvars;
+    while ((m = regex.exec(remoteTfvars)) !== null) {
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+        m.forEach((match) => {
+            //const buff = new Buffer(match.replace(/\<\<EOT/g, "").replace(/EOT/g, "")); \r\n
+            let newValue = match.replace(/\<\<EOT/g, "").replace(/EOT/g, "").replace(/\n/g, "");
+            newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
+            newRemoteTfvars = newRemoteTfvars.replace(match, JSON.stringify(newValue));
+        });
+    }
+    
+    //console.log(newRemoteTfvars);
+    //process.exit();
     const { template } = config;
-    const remoteTfvarsJson = hcltojson(remoteTfvars);
+    const remoteTfvarsJson = hcltojson(newRemoteTfvars);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
     JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
@@ -641,8 +658,7 @@ class JitHelper {
     const tmpPath = JitHelper.buildTmpPath(config);
 
     const { tfvars } = config.template;
-
-    Object.keys(tfvars).forEach(it => {
+    Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {      
       let type = 'string';
 
       if (Array.isArray(tfvars[it])) {
