@@ -684,9 +684,7 @@ class JitHelper {
 
         return Promise.all(promises);
       })
-      .catch(err => {
-        throw new Error(err.toString());
-      });
+      .catch(err => { throw new Error(err.toString()); });
   }
 
   /**
@@ -740,11 +738,8 @@ class JitHelper {
     const base64data = buff.toString('base64');
 
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)
-      .then(result => {
-        return fse.outputFileSync(componentPath, result.stdout);
-      }).catch(err => {
-        return Promise.reject(err);
-      });
+      .then(result => { return fse.outputFileSync(componentPath, result.stdout); })
+      .catch(err => { return Promise.reject(err); });
   }
 
   /**
