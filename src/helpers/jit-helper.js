@@ -576,15 +576,12 @@ class JitHelper {
             regex.lastIndex++;
         }
         m.forEach((match) => {
-            //const buff = new Buffer(match.replace(/\<\<EOT/g, "").replace(/EOT/g, "")); \r\n
             let newValue = match.replace(/\<\<EOT/g, "").replace(/EOT/g, "").replace(/\n/g, "");
             newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
             newRemoteTfvars = newRemoteTfvars.replace(match, JSON.stringify(newValue));
         });
     }
-    
-    //console.log(newRemoteTfvars);
-    //process.exit();
+
     const { template } = config;
     const remoteTfvarsJson = hcltojson(newRemoteTfvars);
 
@@ -635,7 +632,6 @@ class JitHelper {
         case 'resource':
           name = 'main.tf';
           break;
-
         case 'tfvars':
           name = join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
           data = template[it];
@@ -685,7 +681,6 @@ class JitHelper {
       .then(() => fse.readdir(src))
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !regEx.test(src));
-
         const promises = nonTerrahubFiles.map(file =>
           fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {})
         );
