@@ -366,8 +366,7 @@ class JitHelper {
         let resourceByNameCopyStringify = JSON.stringify(resourceByNameCopy);
         const searchValue = JSON.stringify(oldProviderTerrahubVariable);
         resourceByNameCopyStringify = resourceByNameCopyStringify.replace(
-          searchValue.substring(1, searchValue.length - 1), 
-          tfvarValue
+          searchValue.substring(1, searchValue.length - 1), tfvarValue
         );
         resourcesByType[`${resourceName}_${tfvarValue}`] = JSON.parse(resourceByNameCopyStringify);
         return Promise.resolve();
@@ -572,9 +571,7 @@ class JitHelper {
     let m;
     let newRemoteTfvars = remoteTfvars;
     while ((m = regex.exec(remoteTfvars)) !== null) {
-        if (m.index === regex.lastIndex) {
-            regex.lastIndex++;
-        }
+        if (m.index === regex.lastIndex) { regex.lastIndex++; }
         m.forEach((match) => {
             let newValue = match.replace(/\<\<EOT/g, "").replace(/EOT/g, "").replace(/\n/g, "");
             newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
