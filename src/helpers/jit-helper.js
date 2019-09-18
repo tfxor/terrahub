@@ -649,14 +649,11 @@ class JitHelper {
    * @private
    */
   static _generateVariable(config) {
-    const variable = config.template.variable || {};
-    
+    const variable = config.template.variable || {};    
     const tmpPath = JitHelper.buildTmpPath(config);
-
     const { tfvars } = config.template;
     Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {      
       let type = 'string';
-
       if (Array.isArray(tfvars[it])) {
         type = 'list';
       } else if (typeof tfvars[it] === 'object' && JitHelper.checkTfVersion(config)) {
