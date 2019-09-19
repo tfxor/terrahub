@@ -117,7 +117,6 @@ class LocalDistributor {
       this._createWorker(actions, runId);
     }
 
-
     if (ApiHelper.tokenIsValid) {
       this._createLoggerWorker();
       this._threadsCount--;

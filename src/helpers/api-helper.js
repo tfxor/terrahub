@@ -121,7 +121,7 @@ class ApiHelper extends events.EventEmitter {
     const _promises = this._promises;
     const onCreate = _promises.filter(({ url }) => url.split('/')[2] === 'create');
 
-    if (onCreate.length) {
+    if (onCreate && onCreate.length) {
       this._promises = _promises.filter(({ url }) => url.split('/')[2] !== 'create');
 
       return onCreate;
@@ -451,7 +451,7 @@ class ApiHelper extends events.EventEmitter {
   sendErrorToApi() {
     if (this.tokenIsValid && this._apiLogginStart) {
       const runStatus = Dictionary.REALTIME.ERROR;
-      this._errors = true;
+      this._errors.push(true);
 
       this.endComponentsLogging();
       this.sendMainWorkflow({ status: 'update' }, runStatus);

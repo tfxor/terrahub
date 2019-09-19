@@ -77,7 +77,6 @@ class AwsDistributor {
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
     } catch (err) {
-      this._dependencyTable = {};
       this._errors.push(err);
     }
 
@@ -91,7 +90,7 @@ class AwsDistributor {
           }
           inProgress--;
 
-          setImmediate(() => this.emitter.emit('message', { worker: '123456789', data: message }));
+          setImmediate(() => this.emitter.emit('exit', { worker: 'lambda', code: 0, hash: this.config.hash }));
         }
         if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
           this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);

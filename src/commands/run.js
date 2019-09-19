@@ -1,7 +1,6 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const HelpParser = require('../helpers/help-parser');
 const DistributedCommand = require('../distributed-command');
 const { printListAsTree } = require('../helpers/log-helper');
 
@@ -43,10 +42,7 @@ class RunCommand extends DistributedCommand {
       throw new Error('Action aborted');
     }
 
-    // return HelpParser.Distributor === Dictionary.DISTRIBUTOR.LOCAL
-    //   ? this._runLocal(config)
-    //   : this._runCloud(config);
-
+    //todo discuss if linear actions will work correctly vs `step by step`
     return this._runLocal(config);
   }
 
