@@ -12,7 +12,7 @@ class ImportCommand extends TerraformCommand {
       .setName('import')
       .setDescription('run `terraform import` across multiple terrahub components')
       .addOption('config', 'c', 'Import resource', Array)
-      .addOption('provider', 'j', 'Specific provider to use for import. This is used for specifying aliases, such as aws.eu.', String, '')
+      .addOption('provider', 'j', 'Import provider', String, '')
     ;
   }
 
