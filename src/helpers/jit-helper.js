@@ -597,7 +597,7 @@ class JitHelper {
     const { terraform: { varFile } } = config;
     const regEx = /(s3|gs):\/\/.+.tfvars/gm;
 
-    return varFile.filter(src => regEx.test(src));
+    return varFile.filter(src => src.match(regEx));
   }
 
   /**
@@ -609,7 +609,7 @@ class JitHelper {
     const { terraform: { varFile } } = config;
     const regEx = /(s3|gs):\/\/.+.tfvars/gm;
 
-    return varFile.filter(src => !regEx.test(src));
+    return varFile.filter(src => !src.match(regEx));
   }
 
   /**
@@ -674,7 +674,7 @@ class JitHelper {
     return fse.ensureDir(tmpPath)
       .then(() => fse.readdir(src))
       .then(files => {
-        const nonTerrahubFiles = files.filter(src => !regEx.test(src));
+        const nonTerrahubFiles = files.filter(src => !src.match(regEx));
         const promises = nonTerrahubFiles.map(file =>
           fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {})
         );
