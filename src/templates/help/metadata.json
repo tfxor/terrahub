@@ -470,7 +470,7 @@
         {
           "name": "provider",
           "shortcut": "j",
-          "description": "Specific provider to use for import. This is used for specifying aliases, such as aws.eu.",
+          "description": "Import provider",
           "defaultValue": ""
         },
         {
