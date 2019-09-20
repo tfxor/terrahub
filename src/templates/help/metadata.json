@@ -468,6 +468,12 @@
           "description": "Import resource"
         },
         {
+          "name": "provider",
+          "shortcut": "j",
+          "description": "Specific provider to use for import. This is used for specifying aliases, such as aws.eu.",
+          "defaultValue": ""
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",

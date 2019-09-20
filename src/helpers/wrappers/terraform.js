@@ -382,6 +382,10 @@ class Terraform {
   import() {
     const options = { '-input': false };
     const args = ['-no-color'];
+    if (process.env.providerId !== '')
+    {
+      args.push(`-provider=${process.env.providerId}`);
+    }
     const values = [process.env.resourceName, process.env.importId];
     return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
       values));
