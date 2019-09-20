@@ -12,6 +12,7 @@ class ImportCommand extends TerraformCommand {
       .setName('import')
       .setDescription('run `terraform import` across multiple terrahub components')
       .addOption('config', 'c', 'Import resource', Array)
+      .addOption('provider', 'j', 'Import provider', String, '')
     ;
   }
 
@@ -20,6 +21,7 @@ class ImportCommand extends TerraformCommand {
    */
   run() {
     const configContentArr = this.getOption('config');
+    const providerContent = this.getOption('provider');
     const config = this.getFilteredConfig();
 
     const distributor = new Distributor(config, this.runId);
@@ -30,7 +32,8 @@ class ImportCommand extends TerraformCommand {
         return distributor
           .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
             resourceName: resourceData[0],
-            importId: resourceData[1]
+            importId: resourceData[1],
+            providerId: providerContent
           }).then(() => 'Done');
       })
     );
