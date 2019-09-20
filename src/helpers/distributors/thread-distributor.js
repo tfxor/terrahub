@@ -87,6 +87,7 @@ class ThreadDistributor extends AbstractDistributor {
    * @param {Number} dependencyDirection
    * @param {String} resourceName
    * @param {String} importId
+   * @param {String} providerId
    * @param {Boolean} input
    * @return {Promise}
    */
@@ -96,9 +97,10 @@ class ThreadDistributor extends AbstractDistributor {
     dependencyDirection = null,
     resourceName = '',
     importId = '',
+    providerId = '',
     input = false
   } = {}) {
-    this._env = { format, planDestroy, resourceName, importId, input };
+    this._env = { format, planDestroy, resourceName, importId, providerId, input };
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);

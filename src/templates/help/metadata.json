@@ -468,6 +468,12 @@
           "description": "Import resource"
         },
         {
+          "name": "provider",
+          "shortcut": "j",
+          "description": "Import provider",
+          "defaultValue": ""
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
