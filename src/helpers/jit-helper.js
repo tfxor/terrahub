@@ -52,7 +52,9 @@ class JitHelper {
           return JitHelper._generateVariable(config, parameters);
         }
       })    //todo this.config.distributor === 'lambda'
-      .then(() =>  parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
+      .then(() =>  config.distributor !== 'local'
+        ? Promise.resolve()
+        : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
@@ -714,7 +716,7 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config, parameters) {
-    const tmpPath = parameters.isCloud
+    const tmpPath = config.distributor === 'lambda'
       ? homePathLambda(parameters.jitPath, `${config.name}_${config.project.code}`)
       : homePath(parameters.jitPath, `${config.name}_${config.project.code}`);
 

@@ -13,7 +13,6 @@ class ApiHelper extends events.EventEmitter {
 
     this._logs = [];
     this._promises = [];
-    this._isCloud = false;
     this._workerIsFree = true;
     this._tokenIsValid = false;
     this._apiLogginStart = false;
@@ -30,8 +29,8 @@ class ApiHelper extends events.EventEmitter {
     this.fetch = parameters.fetch instanceof Fetch
       ? parameters.fetch : new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
 
-    this._isCloud = parameters.isCloud;
     this.config = parameters.config;
+    this.distributor = this.config.distributor;
   }
 
   /**
@@ -424,7 +423,7 @@ class ApiHelper extends events.EventEmitter {
   }
 
   get isCloudDeployer() {
-    return this._isCloud;
+    return ['lambda', 'fargate'].includes(this.distributor);
   }
 
   /**

@@ -98,7 +98,7 @@ class S3Helper {
 
     const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
     const credentials = prepareCredentialsFile(accountData, sourceProfile, config, true);
-    const credsPath = createCredentialsFile(credentials, config, 'tfvars', parameters.isCloud);
+    const credsPath = createCredentialsFile(credentials, config, 'tfvars', config.distributor);
 
     return Promise.resolve(credsPath);
   }
