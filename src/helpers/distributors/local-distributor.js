@@ -7,32 +7,32 @@ const { physicalCpuCount, threadsLimitCount } = require('../util');
 
 
 class LocalDistributor {
+
+  constructor() {
+    this._worker = path.join(__dirname, 'worker.js');
+    this._loggerWorker = path.join(__dirname, 'logger-worker.js');
+    this._loggerWorkerCount = 0;
+    this._workersCount = 0;
+    this._loggerLastLog = {};
+
+    cluster.setupMaster({ exec: this._worker });
+  }
+
   /**
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
-   * @param {EventListenerObject} emitter
+   * @param {Event} emitter
+   * @return {LocalDistributor}
    */
-  constructor(parameters, config, env, emitter) {
+  init(parameters, config, env, emitter) {
     this.emitter = emitter;
     this._env = env;
     this.parameters = parameters;
     this.config = config;
-    this._worker = path.join(__dirname, 'worker.js');
-    this._loggerWorker = path.join(__dirname, 'logger-worker.js');
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
-    //todo creating new instance multiplies logs
-    if (!this._loggerWorkerCount) {
-      this._loggerWorkerCount = 0;
-    }
-    if (!this._workersCount) {
-      this._workersCount = 0;
-    }
-    if (!this._loggerLastLog) {
-      this._loggerLastLog = {};
-    }
 
-    cluster.setupMaster({ exec: this._worker });
+    return this;
   }
 
   /**
@@ -143,7 +143,6 @@ class LocalDistributor {
           }
 
           this._loggerLastLog[data.workerId] = data.messages;
-
           ApiHelper.sendLogsToApi(data);
           break;
         case 'workflow':
@@ -201,4 +200,4 @@ class LocalDistributor {
   }
 }
 
-module.exports = LocalDistributor;
+module.exports = new LocalDistributor();

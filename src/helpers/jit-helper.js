@@ -733,7 +733,7 @@ class JitHelper {
   static convertJsonToHcl(componentPath, data, isHCL2, parameters) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = parameters.isCloud ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin') : join(parameters.binPath, arch);
+    const componentBinPath = join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);

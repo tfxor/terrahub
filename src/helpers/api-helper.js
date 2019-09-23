@@ -141,7 +141,7 @@ class ApiHelper extends events.EventEmitter {
       return false;
     }
 
-    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId}` +
+    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId || this.config.token}` +
       `?indexMapping=logs`;
     let _logs = [];
 
@@ -212,10 +212,10 @@ class ApiHelper extends events.EventEmitter {
    * @return {void | null | Promise[]}
    */
   pushToLogs(body) {
-    if (this.isCloudDeployer && body.component === 'main') {
+    if ((this.isCloudDeployer && body.component === 'main') || body.log === '✅Done') {
       const promise = {
         url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
-          `/document/create/${this.runId}?indexMapping=logs`,
+          `/document/create/${this.runId || this.config.token}?indexMapping=logs`,
         body: { bulk: [body] }
       };
 
@@ -272,7 +272,7 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @param {String} status
    * @param {String} [name]
-   * @param {String} [action]
+   * @param {String[]} [action]
    * @param {String} [hash]
    * @param {String[]} [actions]
    */
@@ -440,7 +440,7 @@ class ApiHelper extends events.EventEmitter {
    */
   sendLogToS3() {
     if (this.canApiLogsBeSent() && this._apiLogginStart) {
-      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId}`)
+      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId || this.config.token}`)
         .catch(error => console.log(error));
     }
   }

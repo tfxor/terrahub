@@ -261,13 +261,22 @@ class AbstractTerrahub {
    * @private
    */
   async _sendLogsToApi(status, ...args) {
-    if (this.parameters.isCloud) {
-      ApiHelper.init(this.parameters);
-      ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
+    switch (this._config.distributor) {
+      case 'local':
+        process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+        break;
+      case 'lambda':
+        ApiHelper.init(this.parameters);
+        ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
 
-      this.publish({ ...this._workflowOptions, status });
-    } else {
-      process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+        this.publish({ ...this._workflowOptions, status });
+        break;
+      case 'fargate':
+        //todo
+        break;
+      default:
+        process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+        break;
     }
 
     return Promise.resolve(...args);

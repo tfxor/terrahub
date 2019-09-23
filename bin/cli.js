@@ -10,7 +10,6 @@ const parameters = require('../src/parameters');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
-
 const Distributor = require('../src/helpers/distributors/distributor');
 
 /**
@@ -36,7 +35,7 @@ function commandCreate(logger = console) {
 
     const helpCommand = new HelpCommand(parameters, logger);
 
-    return HelpParser.getDistributor(helpCommand);
+    return new Distributor(helpCommand);
   }
   const Command = require(path.join(parameters.commandsPath, command));
   const _Command = new Command(parameters, logger);

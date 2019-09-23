@@ -6,9 +6,7 @@ const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
 
-/**
- * @abstract Class
- */
+
 class Distributor {
   /**
    * @param {Object} command
@@ -22,7 +20,6 @@ class Distributor {
     this.logger = command.logger;
     this.parameters = command.parameters;
     this.parameters.isCloud = false;
-    this.tokenIsValid = command._tokenIsValid || false;
   }
 
   /**
@@ -45,14 +42,12 @@ class Distributor {
         this.projectConfig = config;
       }
 
-      // console.log('runactions  step :', { actions, config, postActionFn, options });
       // eslint-disable-next-line no-await-in-loop
       const response = await this.runActions(actions, config, this.parameters, options);
 
       if (postActionFn) {
         return postActionFn(response);
       }
-      // }
     } catch (err) {
       return Promise.reject(err.message || err);
     }
@@ -201,7 +196,7 @@ class Distributor {
 
     switch (distributor) {
       case 'local':
-        this.distributor = new LocalDistributor(this.parameters, config, this._env, this._eventEmitter);
+        this.distributor = LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
         break;
       case 'lambda':
         this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
@@ -210,7 +205,7 @@ class Distributor {
         this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
         break;
       default:
-        this.distributor = new LocalDistributor(this.parameters, config, this._env, this._eventEmitter);
+        this.distributor = LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
         break;
     }
 
