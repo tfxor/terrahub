@@ -149,19 +149,6 @@ class RunCommand extends DistributedCommand {
   get _isApprovementRequired() {
     return ['apply', 'destroy'].some(it => this.getOption(it));
   }
-
-  /**
-   * @param {String} token
-   * @protected
-   * @return {void|Promise}
-   */
-  onTokenMissingOrInvalid(token) {
-    // if (HelpParser.Distributor !== 'local') {
-    //   return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
-    // }
-
-    return super.onTokenMissingOrInvalid(token);
-  }
 }
 
 module.exports = RunCommand;

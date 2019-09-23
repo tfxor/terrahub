@@ -23,6 +23,7 @@ class Terraform {
   constructor(config, parameters) {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
+    this._distributor = this._config.distributor;
     this._envVars = process.env;
     this._metadata = new Metadata(this._config, parameters);
     this.parameters = parameters;
@@ -71,7 +72,7 @@ class Terraform {
    * @return {String}
    */
   getBinary() {
-    return this.parameters.isCloud
+    return this._distributor === 'lambda'
       ? homePathLambda('terraform', this.getVersion(), 'terraform')
       : homePath('terraform', this.getVersion(), 'terraform');
   }
@@ -100,11 +101,11 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (!this.parameters.isCloud && !process.env.THUB_TOKEN_IS_VALID && process.env.THUB_TOKEN_IS_VALID.length) {
+    if (this._distributor === 'local' && !process.env.THUB_TOKEN_IS_VALID) {
       return;
     }
 
-    if (this.parameters.isCloud) {
+    if (this._distributor === 'lambda') {
       this._deleteDefaultEnvCreds();
     }
 
@@ -132,16 +133,16 @@ class Terraform {
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
         const credentials = prepareCredentialsFile(
-          accountData, sourceProfile, this._config, false, this.parameters.isCloud);
+          accountData, sourceProfile, this._config, false, this._distributor);
 
         switch (type) {
           case 'cloudAccount':
             this._deleteDefaultEnvCreds();
-            const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this.parameters.isCloud);
+            const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
 
             if (sourceProfile) {
               Object.assign(this._envVars, {
-                AWS_CONFIG_FILE: path.join(tempPath(this._config, this.parameters.isCloud), '.aws/config'),
+                AWS_CONFIG_FILE: path.join(tempPath(this._config, this._distributor), '.aws/config'),
                 AWS_SDK_LOAD_CONFIG: 1
               });
             }
@@ -149,7 +150,7 @@ class Terraform {
             Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
             break;
           case 'backendAccount':
-            const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this.parameters.isCloud);
+            const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
 
             Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
             break;
@@ -212,7 +213,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return (new Downloader()).download(this.getVersion(), this.parameters.isCloud);
+    return (new Downloader()).download(this.getVersion(), this._distributor);
   }
 
   /**

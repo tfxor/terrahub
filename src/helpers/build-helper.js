@@ -8,16 +8,16 @@ const { promiseSeries, spawner, tempPath } = require('./util');
 class BuildHelper {
   /**
    * @param {Object} config
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @return {Promise}
    */
-  static getComponentBuildTask(config, isCloud) {
+  static getComponentBuildTask(config, distributor) {
     const { build: buildConfig, name } = config;
 
     const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig) };
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
-    const awsConfigPath = path.join(tempPath(config, isCloud), '.aws/config');
-    const awsCloudAccountPath = path.join(tempPath(config, isCloud), 'aws_credentials_cloud');
+    const awsConfigPath = path.join(tempPath(config, distributor), '.aws/config');
+    const awsCloudAccountPath = path.join(tempPath(config, distributor), 'aws_credentials_cloud');
 
     if (fs.existsSync(awsConfigPath)) {
       Object.assign(env, {

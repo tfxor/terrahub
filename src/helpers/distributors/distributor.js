@@ -19,7 +19,6 @@ class Distributor {
     this.runId = command._runId;
     this.logger = command.logger;
     this.parameters = command.parameters;
-    this.parameters.isCloud = false;
   }
 
   /**
@@ -177,10 +176,14 @@ class Distributor {
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
-        this.getDistributor(hash).distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
+        try {
+          this.distributor = this.getDistributor(hash);
+          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
+        } catch (err) {
+          return this.logger.error(err);
+        }
 
         this._workCounter++;
-
         delete this._dependencyTable[hash];
       }
     }
@@ -196,20 +199,14 @@ class Distributor {
 
     switch (distributor) {
       case 'local':
-        this.distributor = LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
-        break;
+        return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
       case 'lambda':
-        this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
-        break;
+        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
       case 'fargate':
-        this.distributor = new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
-        break;
+        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
       default:
-        this.distributor = LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
-        break;
+        return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
     }
-
-    return this.distributor;
   }
 
   /**

@@ -8,10 +8,6 @@ const fs = require('fs-extra');
 const { exec } = require('child-process-promise');
 const logger = require('./logger');
 const parameters = require('../parameters');
-const { DISTRIBUTOR } = require('./dictionary');
-const DistributedCommand = require('../distributed-command');
-const AwsDistributor = require('./distributors/aws-distributor');
-const LocalDistributor = require('./distributors/local-distributor');
 
 
 class HelpParser {
@@ -117,48 +113,6 @@ class HelpParser {
       .catch(err => {
         throw new Error(`Failed to update AWS regions: ${err.message || err}`);
       });
-  }
-
-  /**
-   * Wraps command in Distributor
-   * @param {ObjectConstructor} command
-   * @return {LocalDistributor | AwsDistributor} new Distributor(Command)
-   */
-  static getDistributor(command) {
-    if (command instanceof DistributedCommand && !['configure', 'convert'].includes(command._name)) {
-      switch (this.Distributor) {
-        case DISTRIBUTOR.LOCAL:
-          return new LocalDistributor(command);
-        case DISTRIBUTOR.LAMBDA:
-          return new AwsDistributor(command);
-        case DISTRIBUTOR.FARGATE:
-          throw new Error('`Fargate` distributor comming soon.');
-        case DISTRIBUTOR.APP_ENGINE:
-          throw new Error('`Google App Engine` distributor comming soon.');
-        case DISTRIBUTOR.CLOUD_FUNCTIONS:
-          throw new Error('`Google Cloud Functions` distributor comming soon.');
-        default:
-          throw new Error('Error occurred. Please try again. If this problem persists, ' +
-            'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-            'https://github.com/TerraHubCorp/terrahub/issues');
-      }
-    } else {
-      return new LocalDistributor(command);
-    }
-  }
-
-  /**
-   * validates Distributor
-   * @return {String | Error}
-   */
-  static get Distributor() {
-    const { config: { distributor }} = parameters;
-
-    if (!Object.values(DISTRIBUTOR).includes(distributor)) {
-      throw new Error(`Error occurred: distributor with name \`${distributor}\` does not exist.`);
-    }
-
-    return distributor;
   }
 
   /**

@@ -406,17 +406,17 @@ class Util {
    * @param {Object} [sourceProfile]
    * @param {Object} config
    * @param {Boolean} tfvars
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @return {String}
    */
-  static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, isCloud = false) {
+  static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, distributor) {
     let credentials = '[terrahub]\n';
 
     if (sourceProfile) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
 
-      Util.createConfigProfile(accountData, config, isCloud);
+      Util.createConfigProfile(accountData, config, distributor);
     } else {
       credentials += `aws_access_key_id = ${accountData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${accountData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
@@ -441,11 +441,11 @@ class Util {
    * @param {String} credentials
    * @param {Object} config
    * @param {String} prefix
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @return {String}
    */
-  static createCredentialsFile(credentials, config, prefix, isCloud = false) {
-    const tmpPath = Util.tempPath(config, isCloud);
+  static createCredentialsFile(credentials, config, prefix, distributor) {
+    const tmpPath = Util.tempPath(config, distributor);
 
     fse.ensureDirSync(tmpPath);
 
@@ -460,13 +460,13 @@ class Util {
    * Creates in aws config profile \w arn role
    * @param {Object} sourceProfile
    * @param {Object} config
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @return {void}
    */
-  static createConfigProfile(sourceProfile, config, isCloud) {
+  static createConfigProfile(sourceProfile, config, distributor) {
     const { env_var: { AWS_ROLE_ARN: { value: arn } }, name  } = sourceProfile;
-    const tempPath = Util.tempPath(config, isCloud);
-    const configPath = isCloud ? path.join(tempPath, '.aws/config') : path.join(tempPath, '.aws/config');
+    const tempPath = Util.tempPath(config, distributor);
+    const configPath = path.join(tempPath, '.aws/config');
     const profile =
       `[profile default]\n` +
       `region = us-east-1\n` +
@@ -500,11 +500,11 @@ class Util {
 
   /**
    * @param {Object} config
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @return {String}
    */
-  static tempPath(config, isCloud) {
-    return isCloud
+  static tempPath(config, distributor) {
+    return distributor === 'lambda'
       ? Util.homePathLambda(config.project.code, config.name)
       : Util.homePath('temp', config.project.code, config.name);
   }

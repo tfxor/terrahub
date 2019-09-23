@@ -13,12 +13,14 @@ class Downloader {
   /**
    * Download & unzip file
    * @param {String} version
-   * @param {Boolean} isCloud
+   * @param {String} distributor
    * @returns {Promise}
    */
-  download(version, isCloud = false) {
+  download(version, distributor) {
     const url = Downloader._buildSrcUrl(version);
-    const binaryDir = isCloud ? homePathLambda('terraform', version) : homePath('terraform', version);
+    const binaryDir = distributor === 'lambda'
+      ? homePathLambda('terraform', version)
+      : homePath('terraform', version);
 
     return fse
       .ensureDir(binaryDir)

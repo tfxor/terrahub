@@ -51,7 +51,7 @@ class JitHelper {
         if (template.hasOwnProperty('tfvars')) {
           return JitHelper._generateVariable(config, parameters);
         }
-      })
+      })    //todo this.config.distributor === 'lambda'
       .then(() =>  parameters.isCloud ? Promise.resolve() : JitHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }

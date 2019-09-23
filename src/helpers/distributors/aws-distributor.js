@@ -25,11 +25,14 @@ class AwsDistributor {
     this.env = env;
     this.emitter = emitter;
     this._projectRoot = this.componentConfig.project.root;
-    this.parameters.isCloud = true;
+    this.parameters.isCloud = true; // todo remove
     this.config = this.parameters.config;
     this.fetch = this.parameters.fetch;
+    this._distributor = this.componentConfig.distributor;
 
     this._errors = [];
+
+    this._validateRequirements();
   }
 
   /**
@@ -38,7 +41,7 @@ class AwsDistributor {
    * @return {EventInit}
    */
   async distribute({ actions, runId }) {
-    const cloudAccounts = await this._validateRequirements();
+    const cloudAccounts = await this._getCloudAccounts();
     this.updateEnvirmentVariables(cloudAccounts);
 
     const { data: { ticket_id } } = await this.websocketTicketCreate();
@@ -104,24 +107,38 @@ class AwsDistributor {
   }
 
   /**
-   * @return {Promise}
+   * @return {void}
+   * @throws {error}
    * @private
    */
-  async _validateRequirements() {
+  _validateRequirements() {
+    if (!this.config.token) {
+      throw new Error('[AWS distributor] Please provide THUB_TOKEN for using.');
+    }
+
     if (!this.config.logs) {
-      throw new Error('Please enable logging in `.terrahub.json`.');
+      throw new Error('[AWS distributor] Please enable logging in `.terrahub.json`.');
     }
 
     const { cloudAccount, backendAccount } = this.componentConfig.terraform;
 
     if (!cloudAccount || !backendAccount) {
-      const errorMessage = `'${this.componentConfig.name}' do not have` +
+      const errorMessage = `[AWS distributor] '${this.componentConfig.name}' do not have` +
         ` CloudAccount and/or BackendAccount in config.`;
 
       throw new Error(errorMessage);
     }
+  }
 
+  /**
+   * @return {Promise}
+   * @throws {error}
+   * @private
+   */
+  async _getCloudAccounts() {
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    const { cloudAccount } = this.componentConfig.terraform;
+
     if (!cloudAccounts.aws.some(it => it.name === cloudAccount)) {
       const errorMessage = `'${this.componentConfig.name}' component do not have` +
         ` valid backendAccount in config.`;
@@ -145,17 +162,17 @@ class AwsDistributor {
 
     const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
     const credentials = prepareCredentialsFile(
-      accountData, sourceProfile, this.componentConfig, false, this.parameters.isCloud);
+      accountData, sourceProfile, this.componentConfig, false, this._distributor);
 
     ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
       .forEach(it => delete process.env[it]);
 
     const cloudCredsPath = createCredentialsFile(
-      credentials, this.componentConfig, 'cloud', this.parameters.isCloud);
+      credentials, this.componentConfig, 'cloud', this._distributor);
 
     if (sourceProfile) {
       Object.assign(process.env, {
-        AWS_CONFIG_FILE: join(tempPath(this.componentConfig, this.parameters.isCloud), '.aws/config'),
+        AWS_CONFIG_FILE: join(tempPath(this.componentConfig, this._distributor), '.aws/config'),
         AWS_SDK_LOAD_CONFIG: 1
       });
     }
