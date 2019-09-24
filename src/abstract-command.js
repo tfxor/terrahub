@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 const fse = require('fs-extra');
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
@@ -82,18 +81,6 @@ class AbstractCommand {
    */
   getDescription() {
     return this._description;
-  }
-
-  /**
-   * @param {String} name
-   * @return {String}
-   * @public
-   */
-  getConfigPath(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-
-    return config[key] ? path.join(config[key].project.root, config[key].root) : null;
   }
 
   /**
@@ -195,15 +182,6 @@ class AbstractCommand {
   }
 
   /**
-   * Get list of configuration files for the specified environment
-   * @param {String|Boolean} dir
-   * @returns {String[]}
-   */
-  listAllEnvConfig(dir = false) {
-    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.EVERY });
-  }
-
-  /**
    * Get full consolidated config
    * @returns {Object}
    */
@@ -226,14 +204,6 @@ class AbstractCommand {
   }
 
   /**
-   * @param {String} fullPath
-   * @returns {String}
-   */
-  relativePath(fullPath) {
-    return this._configLoader.relativePath(fullPath);
-  }
-
-  /**
    * Reload config-loader
    * @deprecated
    */
@@ -253,13 +223,6 @@ class AbstractCommand {
    */
   getDefaultFileName() {
     return this._configLoader.getDefaultFileName();
-  }
-
-  /**
-   * @returns {String}
-   */
-  getProjectFormat() {
-    return this._configLoader.getProjectFormat();
   }
 
   /**
