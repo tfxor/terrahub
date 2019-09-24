@@ -51,7 +51,7 @@ class JitHelper {
         if (template.hasOwnProperty('tfvars')) {
           return JitHelper._generateVariable(config, parameters);
         }
-      })    //todo this.config.distributor === 'lambda'
+      })
       .then(() =>  config.distributor !== 'local'
         ? Promise.resolve()
         : JitHelper._symLinkNonTerraHubFiles(config, parameters))
@@ -606,7 +606,7 @@ class JitHelper {
    * @private
    */
   static _createTerraformFiles(config, parameters) {
-    const { template, cfgEnv } = config;
+    const { template, cfgEnv, distributor } = config;
     const tmpPath = JitHelper.buildTmpPath(config, parameters);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
@@ -624,7 +624,8 @@ class JitHelper {
           break;
       }
 
-      return JitHelper.convertJsonToHcl(join(tmpPath, name), data, JitHelper.checkTfVersion(config), parameters);
+      return JitHelper.convertJsonToHcl(
+        join(tmpPath, name), data, JitHelper.checkTfVersion(config), parameters, distributor);
     });
 
     return Promise.all(promises);
@@ -637,7 +638,7 @@ class JitHelper {
    */
   static _generateVariable(config, parameters) {
     const variable = config.template.variable || {};
-
+    const { distributor } = config;
     const tmpPath = JitHelper.buildTmpPath(config, parameters);
 
     const { tfvars } = config.template;
@@ -657,7 +658,8 @@ class JitHelper {
 
       variable[it] = { type };
     });
-    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters);
+    return JitHelper.convertJsonToHcl(
+      join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config), parameters, distributor);
   }
 
   /**
@@ -730,12 +732,15 @@ class JitHelper {
    * @param {Object} data
    * @param {Boolean} isHCL2
    * @param {Object} parameters
+   * @param {String} [distributor]
    * @return {Promise}
    */
-  static convertJsonToHcl(componentPath, data, isHCL2, parameters) {
+  static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(parameters.binPath, arch);
+    const componentBinPath = distributor === 'lambda'
+      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
+      : join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = new Buffer(dataStringify);
