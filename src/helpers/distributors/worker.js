@@ -23,11 +23,14 @@ function getActions() {
  */
 function getTasks(config, parameters) {
   const terrahub = new Terrahub(config, process.env.THUB_RUN_ID, parameters);
+  const { distributor } = config;
 
   return getActions().map(action => options => {
     logger.updateContext({ action: action });
 
-    return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config, false);
+    return action !== 'build'
+      ? terrahub.getTask(action, options)
+      : BuildHelper.getComponentBuildTask(config, distributor);
   });
 }
 

@@ -283,6 +283,10 @@ class ConfigLoader {
     if (!config.hasOwnProperty('mapping')) {
       config.mapping = [];
     }
+
+    if (!config.hasOwnProperty('distributor')) {
+      config.distributor = 'local';
+    }
   }
 
   /**
@@ -308,6 +312,14 @@ class ConfigLoader {
 
       config.mapping.push('.');
       config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
+    }
+
+    if (config.hasOwnProperty('distributor')) {
+      const distributors = ['local', 'lambda', 'fargate', 'appEngine', 'cloudFunctions'];
+
+      if (!distributors.includes(config.distributor)) {
+        throw new Error(`Error in component's configuration! Unknown distributor.`);
+      }
     }
 
     if (config.hasOwnProperty('env')) {

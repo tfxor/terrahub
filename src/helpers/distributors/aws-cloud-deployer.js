@@ -78,6 +78,7 @@ class AwsDeployer {
    */
   async _runActions(actions, config, thubRunId, parameters) {
     const terrahub = new Terrahub(config, thubRunId, parameters, this.publish);
+    const { distributor } = config;
 
     logger.updateContext({
       runId: thubRunId,
@@ -87,7 +88,9 @@ class AwsDeployer {
     const tasks = actions.map(action => options => {
       logger.updateContext({ action: action });
 
-      return action !== 'build' ? terrahub.getTask(action, options) : BuildHelper.getComponentBuildTask(config, true);
+      return action !== 'build'
+        ? terrahub.getTask(action, options)
+        : BuildHelper.getComponentBuildTask(config, distributor);
     });
 
     return promiseSeries(tasks, (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})));

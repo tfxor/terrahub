@@ -48,7 +48,7 @@ class Distributor {
         return postActionFn(response);
       }
     } catch (err) {
-      return Promise.reject(err.message || err);
+      return Promise.reject(err);
     }
 
     await ApiHelper.sendMainWorkflow({ status: 'update' });
@@ -167,6 +167,7 @@ class Distributor {
 
   /**
    * Distribute component config to Distributor execution
+   * @return {void}
    */
   distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);

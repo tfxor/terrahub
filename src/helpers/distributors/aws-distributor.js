@@ -20,16 +20,14 @@ class AwsDistributor {
    * @param {EventListenerObject} emitter
    */
   constructor(parameters, config, env, emitter) {
-    this.parameters = parameters;
-    this.componentConfig = config;
     this.env = env;
     this.emitter = emitter;
-    this._projectRoot = this.componentConfig.project.root;
-    this.parameters.isCloud = true; // todo remove
-    this.config = this.parameters.config;
+    this.parameters = parameters;
+    this.componentConfig = config;
     this.fetch = this.parameters.fetch;
+    this.config = this.parameters.config;
     this._distributor = this.componentConfig.distributor;
-
+    this._projectRoot = this.componentConfig.project.root;
     this._errors = [];
 
     this._validateRequirements();
@@ -113,7 +111,7 @@ class AwsDistributor {
    */
   _validateRequirements() {
     if (!this.config.token) {
-      throw new Error('[AWS distributor] Please provide THUB_TOKEN for using.');
+      throw new Error('[AWS distributor] Please provide THUB_TOKEN.');
     }
 
     if (!this.config.logs) {
