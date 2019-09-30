@@ -39,8 +39,7 @@ class AwsDistributor {
    * @return {EventInit}
    */
   async distribute({ actions, runId }) {
-    const cloudAccounts = await this._getCloudAccounts();
-    this.updateEnvirmentVariables(cloudAccounts);
+    await this._updateCredentialsForS3();
 
     const { data: { ticket_id } } = await this.websocketTicketCreate();
     const { ws } = new Websocket(this.config.api, ticket_id);
@@ -118,64 +117,14 @@ class AwsDistributor {
       throw new Error('[AWS distributor] Please enable logging in `.terrahub.json`.');
     }
 
-    const { cloudAccount, backendAccount } = this.componentConfig.terraform;
+    const { cloudAccount } = this.componentConfig.terraform;
 
-    if (!cloudAccount || !backendAccount) {
+    if (!cloudAccount) {
       const errorMessage = `[AWS distributor] '${this.componentConfig.name}' do not have` +
-        ` CloudAccount and/or BackendAccount in config.`;
+        ` CloudAccount in config.`;
 
       throw new Error(errorMessage);
     }
-  }
-
-  /**
-   * @return {Promise}
-   * @throws {error}
-   * @private
-   */
-  async _getCloudAccounts() {
-    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const { cloudAccount } = this.componentConfig.terraform;
-
-    if (!cloudAccounts.aws.some(it => it.name === cloudAccount)) {
-      const errorMessage = `'${this.componentConfig.name}' component do not have` +
-        ` valid backendAccount in config.`;
-
-      throw new Error(errorMessage);
-    }
-
-    return cloudAccounts;
-  }
-
-  /**
-   * @param {Object} cloudAccounts
-   */
-  updateEnvirmentVariables(cloudAccounts) {
-    const { cloudAccount } = this.componentConfig.terraform;
-    const accountData = cloudAccounts.aws.find(it => it.name === cloudAccount);
-
-    if (!accountData) {
-      return;
-    }
-
-    const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
-    const credentials = prepareCredentialsFile(
-      accountData, sourceProfile, this.componentConfig, false, this._distributor);
-
-    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-      .forEach(it => delete process.env[it]);
-
-    const cloudCredsPath = createCredentialsFile(
-      credentials, this.componentConfig, 'cloud', this._distributor);
-
-    if (sourceProfile) {
-      Object.assign(process.env, {
-        AWS_CONFIG_FILE: join(tempPath(this.componentConfig, this._distributor), '.aws/config'),
-        AWS_SDK_LOAD_CONFIG: 1
-      });
-    }
-
-    Object.assign(process.env, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
   }
 
   /**
@@ -252,6 +201,35 @@ class AwsDistributor {
    */
   _fetchAccountId() {
     return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
+  }
+
+  /**
+   * @return {Promise<Object>}
+   * @private
+   */
+  _fetchTemporaryCredentials() {
+    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+  }
+
+  /**
+   * @return {void}
+   * @throws {error}
+   * @private
+   */
+  async _updateCredentialsForS3() {
+    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN',
+      'AWS_PROFILE', 'AWS_CONFIG_FILE', 'AWS_LOAD_CONFIG'].forEach(it => delete process.env[it]);
+
+    const tempCreds = await this._fetchTemporaryCredentials();
+    if (!tempCreds) {
+      throw new Error('[AWS Distributor] Can not retrieve temporary credentials.');
+    }
+
+    Object.assign(process.env, {
+      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
+      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
+      AWS_SESSION_TOKEN: tempCreds.SessionToken
+    });
   }
 }
 

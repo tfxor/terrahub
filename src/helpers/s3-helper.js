@@ -53,7 +53,7 @@ class S3Helper {
           .forEach(it => delete process.env[it]);
 
         AWS.config.credentials = new AWS.SharedIniFileCredentials(
-          { filename: credsPath, preferStaticCredentials: true });
+          { filename: credsPath, preferStaticCredentials: true, profile: 'terrahub' }); //todo profile = arnRole ? 'default' : 'terrahub'
 
         this._s3 = new AWS.S3();
       }

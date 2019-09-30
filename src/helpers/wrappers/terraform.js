@@ -117,7 +117,9 @@ class Terraform {
 
     ApiHelper.init(this.parameters);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const provider = Object.keys(this._config.template.provider).toString();
+    const provider = Array.isArray(this._config.template.provider)
+      ? Object.keys(this._config.template.provider[0]).toString()
+      : Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];
 
     if (providerAccounts) {
@@ -143,11 +145,15 @@ class Terraform {
             if (sourceProfile) {
               Object.assign(this._envVars, {
                 AWS_CONFIG_FILE: path.join(tempPath(this._config, this._distributor), '.aws/config'),
-                AWS_SDK_LOAD_CONFIG: 1
+                AWS_SDK_LOAD_CONFIG: 1,
+                AWS_PROFILE: 'default'
+              });
+            } else {
+              Object.assign(this._envVars, {
+                AWS_PROFILE: 'terrahub'
               });
             }
-
-            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath, AWS_PROFILE: 'default' });
+            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath });
             break;
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
