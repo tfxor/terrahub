@@ -411,7 +411,7 @@ class JitHelper {
 
   /**
    * @param {String} terrahubVariable
-   * @return {String, Array}
+   * @return {{variableName: String, variableNameNetArr: Array}}
    * @private
    */
   static _extractTerrahubVariableName(terrahubVariable) {

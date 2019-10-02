@@ -43,18 +43,13 @@ class S3Helper {
    * @returns {Promise}
    */
   getObject(bucketName, objectKey, config, parameters) {
-    if (!process.env.THUB_TOKEN_IS_VALID.length) {
+    if (!config.terraform.tfvarsAccount) {
       return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
     }
 
     return this._retriveCredsForTfVars(config, parameters).then(credsPath => {
       if (credsPath) {
-        ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'AWS_SDK_LOAD_CONFIG']
-          .forEach(it => delete process.env[it]);
-
-        AWS.config.credentials = new AWS.SharedIniFileCredentials(
-          { filename: credsPath, preferStaticCredentials: true, profile: 'terrahub' }); //todo profile = arnRole ? 'default' : 'terrahub'
-
+        AWS.config.s3 = { credentials: new AWS.SharedIniFileCredentials({ filename: credsPath, profile: 'terrahub' }) };
         this._s3 = new AWS.S3();
       }
 
