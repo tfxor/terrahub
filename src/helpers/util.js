@@ -464,22 +464,30 @@ class Util {
    * @return {void}
    */
   static createConfigProfile(sourceProfile, config, distributor) {
-    const { env_var: { AWS_ROLE_ARN: { value: arn } }, name  } = sourceProfile;
+    const { env_var: { AWS_ROLE_ARN: { value: arn } } } = sourceProfile;
     const tempPath = Util.tempPath(config, distributor);
     const configPath = path.join(tempPath, '.aws/config');
     const profile =
       `[profile default]\n` +
       `region = us-east-1\n` +
       `role_arn = ${arn}\n` +
-      `source_profile = ${name}\n`;
+      `source_profile = terrahub\n`;
 
     fse.ensureFileSync(configPath);
 
-    return fs.writeFile(configPath, profile, err => {
+    return fs.writeFileSync(configPath, profile, err => {
       if (err) {
         console.error(err);
       }
     });
+  }
+
+  /**
+   * @return {void}
+   */
+  static removeAwsEnvVars() {
+    return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN',
+      'AWS_PROFILE', 'AWS_CONFIG_FILE', 'AWS_LOAD_CONFIG'].forEach(it => delete process.env[it]);
   }
 
   /**
@@ -507,6 +515,29 @@ class Util {
     return distributor === 'lambda'
       ? Util.homePathLambda(config.project.code, config.name)
       : Util.homePath('temp', config.project.code, config.name);
+  }
+
+  /**
+   * @param {Object | null} arnRole
+   * @param {String} credsPath
+   * @param {Object} config
+   * @param {String} distributor
+   * @param {Object} environment
+   */
+  static setupAWSSharedFile(arnRole, credsPath, config, distributor, environment) {
+    if (arnRole) {
+      Object.assign(environment, {
+        AWS_CONFIG_FILE: path.join(Util.tempPath(config, distributor), '.aws/config'),
+        AWS_SDK_LOAD_CONFIG: 1,
+        AWS_PROFILE: 'default'
+      });
+    } else {
+      Object.assign(environment, {
+        AWS_PROFILE: 'terrahub'
+      });
+    }
+
+    Object.assign(environment, { AWS_SHARED_CREDENTIALS_FILE: credsPath });
   }
 }
 

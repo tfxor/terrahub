@@ -11,9 +11,8 @@ const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
-const {
-  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda, tempPath
-} = require('../util');
+const { extend, spawner, homePath, prepareCredentialsFile,
+  createCredentialsFile, homePathLambda, removeAwsEnvVars, setupAWSSharedFile } = require('../util');
 
 class Terraform {
   /**
@@ -101,19 +100,11 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (this._distributor === 'local' && !process.env.THUB_TOKEN_IS_VALID) {
-      return;
-    }
-
-    if (this._distributor === 'lambda') {
-      this._deleteDefaultEnvCreds();
-    }
+    if (this._distributor === 'local' && !process.env.THUB_TOKEN_IS_VALID) { return Promise.resolve(); }
+    if (this._distributor === 'lambda') { removeAwsEnvVars(); }
 
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
-
-    if (!accounts.length) {
-      return Promise.resolve();
-    }
+    if (!accounts.length) { return Promise.resolve(); }
 
     ApiHelper.init(this.parameters);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
@@ -126,38 +117,21 @@ class Terraform {
       accounts.forEach(type => {
         const _value = this._tf[type];
         const accountData = providerAccounts.find(it => it.name === _value);
-
-        if (!accountData) {
-          return;
-        }
+        if (!accountData) { return Promise.resolve(); }
 
         const sourceProfile = accountData.type === 'role'
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
-        const credentials = prepareCredentialsFile(
-          accountData, sourceProfile, this._config, false, this._distributor);
+        const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this._distributor);
 
         switch (type) {
           case 'cloudAccount':
-            this._deleteDefaultEnvCreds();
+            removeAwsEnvVars();
             const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
-
-            if (sourceProfile) {
-              Object.assign(this._envVars, {
-                AWS_CONFIG_FILE: path.join(tempPath(this._config, this._distributor), '.aws/config'),
-                AWS_SDK_LOAD_CONFIG: 1,
-                AWS_PROFILE: 'default'
-              });
-            } else {
-              Object.assign(this._envVars, {
-                AWS_PROFILE: 'terrahub'
-              });
-            }
-            Object.assign(this._envVars, { AWS_SHARED_CREDENTIALS_FILE: cloudCredsPath });
+            setupAWSSharedFile(sourceProfile, cloudCredsPath, this._config, this._distributor, this._envVars);
             break;
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
-
             Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
             break;
         }
@@ -547,15 +521,6 @@ class Terraform {
     }
 
     return `[${this.getName()}] ${stdout}`;
-  }
-
-  /**
-   * @return {void}
-   * @private
-   */
-  _deleteDefaultEnvCreds() {
-    return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-      .forEach(it => delete this._envVars[it]);
   }
 
   /**

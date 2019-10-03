@@ -1,36 +1,39 @@
 'use strict';
 
+const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const ApiHelper = require('../api-helper');
 const Websocket = require('./websocket');
+const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
-const {
-  globPromise, retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, tempPath, lambdaHomedir
-} = require('../util');
 
 class AwsDistributor {
+
+  constructor() {
+    this._errors = [];
+  }
 
   /**
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
    * @param {EventListenerObject} emitter
+   * @return {AwsDistributor}
    */
-  constructor(parameters, config, env, emitter) {
+  init(parameters, config, env, emitter) {
     this.env = env;
     this.emitter = emitter;
     this.parameters = parameters;
     this.componentConfig = config;
     this.fetch = this.parameters.fetch;
     this.config = this.parameters.config;
-    this._distributor = this.componentConfig.distributor;
     this._projectRoot = this.componentConfig.project.root;
-    this._errors = [];
 
     this._validateRequirements();
+
+    return this;
   }
 
   /**
@@ -40,14 +43,12 @@ class AwsDistributor {
    */
   async distribute({ actions, runId }) {
     await this._updateCredentialsForS3();
+    const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
+    const s3directory = this.config.api.replace('api', 'projects');
 
-    const { data: { ticket_id } } = await this.websocketTicketCreate();
-    const { ws } = new Websocket(this.config.api, ticket_id);
+    const ws = await this.getWebSocket();
 
     let inProgress = 0;
-
-    const s3Helper = new S3Helper();
-    const s3directory = this.config.api.replace('api', 'projects');
 
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
     console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
@@ -90,7 +91,7 @@ class AwsDistributor {
           }
           inProgress--;
 
-          setImmediate(() => this.emitter.emit('exit', { worker: 'lambda', code: 0, hash: this.config.hash }));
+          setImmediate(() => this.emitter.emit('exit', { worker: 'lambda', code: 0, hash: this.componentConfig.hash }));
         }
         if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
           this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
@@ -109,16 +110,10 @@ class AwsDistributor {
    * @private
    */
   _validateRequirements() {
-    if (!this.config.token) {
-      throw new Error('[AWS distributor] Please provide THUB_TOKEN.');
-    }
-
-    if (!this.config.logs) {
-      throw new Error('[AWS distributor] Please enable logging in `.terrahub.json`.');
-    }
+    if (!this.config.token) { throw new Error('[AWS distributor] Please provide THUB_TOKEN.'); }
+    if (!this.config.logs) { throw new Error('[AWS distributor] Please enable logging in `.terrahub.json`.'); }
 
     const { cloudAccount } = this.componentConfig.terraform;
-
     if (!cloudAccount) {
       const errorMessage = `[AWS distributor] '${this.componentConfig.name}' do not have` +
         ` CloudAccount in config.`;
@@ -217,13 +212,9 @@ class AwsDistributor {
    * @private
    */
   async _updateCredentialsForS3() {
-    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN',
-      'AWS_PROFILE', 'AWS_CONFIG_FILE', 'AWS_LOAD_CONFIG'].forEach(it => delete process.env[it]);
-
+    removeAwsEnvVars();
     const tempCreds = await this._fetchTemporaryCredentials();
-    if (!tempCreds) {
-      throw new Error('[AWS Distributor] Can not retrieve temporary credentials.');
-    }
+    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
 
     Object.assign(process.env, {
       AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
@@ -231,6 +222,22 @@ class AwsDistributor {
       AWS_SESSION_TOKEN: tempCreds.SessionToken
     });
   }
+
+  /**
+   * lazyload WebSocket
+   * @return {Promise<WebSocket>}
+   */
+  async getWebSocket() {
+    console.log('gettings Websocket instance :', this.webSocket);
+    if (!this.webSocket) {
+      const { data: { ticket_id } } = await this.websocketTicketCreate();
+      const { ws } = new Websocket(this.config.api, ticket_id);
+
+      this.webSocket = ws;
+    }
+
+    return this.webSocket;
+  }
 }
 
-module.exports = AwsDistributor;
+module.exports = new AwsDistributor();

@@ -3,14 +3,16 @@
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const Fetch = require('./fetch');
-const { retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile } = require('./util');
+const {
+  retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars, setupAWSSharedFile
+} = require('./util');
 
 class S3Helper {
   /**
-   *
+   * @param {Object} options
    */
-  constructor() {
-    this._s3 = new AWS.S3();
+  constructor(options = {}) {
+    this._s3 = new AWS.S3(options);
   }
 
   /**
@@ -47,10 +49,13 @@ class S3Helper {
       return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
     }
 
-    return this._retriveCredsForTfVars(config, parameters).then(credsPath => {
+    return this._retriveCredsForTfVars(config, parameters).then(data => {
+      const { credsPath, sourceProfile } = data;
+
       if (credsPath) {
-        AWS.config.s3 = { credentials: new AWS.SharedIniFileCredentials({ filename: credsPath, profile: 'terrahub' }) };
-        this._s3 = new AWS.S3();
+        removeAwsEnvVars();
+        this._s3 = new AWS.S3({ credentials: null });
+        setupAWSSharedFile(sourceProfile, credsPath, config, config.distributor, process.env);
       }
 
       return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
@@ -92,10 +97,10 @@ class S3Helper {
     }
 
     const sourceProfile = retrieveSourceProfile(accountData, cloudAccounts);
-    const credentials = prepareCredentialsFile(accountData, sourceProfile, config, true);
+    const credentials = prepareCredentialsFile(accountData, sourceProfile, config, true, config.distributor);
     const credsPath = createCredentialsFile(credentials, config, 'tfvars', config.distributor);
 
-    return Promise.resolve(credsPath);
+    return Promise.resolve({ credsPath, sourceProfile });
   }
 
   /**

@@ -126,7 +126,7 @@ class Distributor {
       this.distributeConfig();
 
       this._eventEmitter.on('message', (data) => {
-        const { data: response } = data;
+        const response = data.data || data;
 
         if (response.isError) {
           this._error = response.error;
@@ -145,6 +145,7 @@ class Distributor {
         this._workCounter--;
 
         if (code === 0) {
+          if (data.worker === 'lambda') { this.removeDependencies(this._dependencyTable, data.hash); }
           this.distributeConfig();
         }
 
@@ -202,9 +203,9 @@ class Distributor {
       case 'local':
         return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
       case 'lambda':
-        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
+        return AwsDistributor.init(this.parameters, config, this._env, this._eventEmitter);
       case 'fargate':
-        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
+        return AwsDistributor.init(this.parameters, config, this._env, this._eventEmitter);
       default:
         return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
     }

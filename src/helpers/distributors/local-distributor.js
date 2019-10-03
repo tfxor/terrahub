@@ -164,8 +164,6 @@ class LocalDistributor {
       worker.kill();
     });
 
-    this._dependencyTable = {};
-
     return (err.constructor === Error) ? err : new Error(`[Local distributor]: ${err.message || err}`);
   }
 

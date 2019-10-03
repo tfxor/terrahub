@@ -28,6 +28,7 @@ class AwsDeployer {
    */
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters } = requestData;
+    await this._updateCredentialsForS3();
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -113,6 +114,35 @@ class AwsDeployer {
     const data = await json.data;
 
     return data.id;
+  }
+
+  /**
+   * @return {void}
+   * @throws {error}
+   * @private
+   */
+  async _updateCredentialsForS3() {
+    ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN',
+      'AWS_PROFILE', 'AWS_CONFIG_FILE', 'AWS_LOAD_CONFIG'].forEach(it => delete process.env[it]);
+
+    const tempCreds = await this._fetchTemporaryCredentials();
+    if (!tempCreds) {
+      throw new Error('[AWS Distributor] Can not retrieve temporary credentials.');
+    }
+
+    Object.assign(process.env, {
+      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
+      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
+      AWS_SESSION_TOKEN: tempCreds.SessionToken
+    });
+  }
+
+  /**
+   * @return {Promise<Object>}
+   * @private
+   */
+  _fetchTemporaryCredentials() {
+    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
   }
 }
 
