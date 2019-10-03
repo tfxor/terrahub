@@ -331,7 +331,7 @@ class JitHelper {
             const { locals } = template;
             locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
             let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-            resourceByNameStringify = resourceByNameStringify.replace(localVariable.slice(0, -1), `local.${localVariableName}_${tfvarValue}`);
+            resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'g'), `local.${localVariableName}_${tfvarValue}`);
             resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
           });
 
