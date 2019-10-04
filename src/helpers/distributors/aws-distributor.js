@@ -11,20 +11,16 @@ const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
 
-  constructor() {
-    this._errors = [];
-  }
-
   /**
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
    * @param {EventListenerObject} emitter
-   * @return {AwsDistributor}
    */
-  init(parameters, config, env, emitter) {
+  constructor(parameters, config, env, emitter) {
+    this._errors = [];
     this.env = env;
-    this.emitter = emitter;
+    this.emitter = !this.emitter ? emitter : this.emitter;
     this.parameters = parameters;
     this.componentConfig = config;
     this.fetch = this.parameters.fetch;
@@ -32,8 +28,6 @@ class AwsDistributor {
     this._projectRoot = this.componentConfig.project.root;
 
     this._validateRequirements();
-
-    return this;
   }
 
   /**
@@ -46,7 +40,7 @@ class AwsDistributor {
     const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
     const s3directory = this.config.api.replace('api', 'projects');
 
-    const ws = await this.getWebSocket();
+    this.ws = await this.getWebSocket();
 
     let inProgress = 0;
 
@@ -81,7 +75,7 @@ class AwsDistributor {
       this._errors.push(err);
     }
 
-    ws.on('message', data => {
+    this.ws.on('message', data => {
       try {
         const message = JSON.parse(data);
 
@@ -228,7 +222,6 @@ class AwsDistributor {
    * @return {Promise<WebSocket>}
    */
   async getWebSocket() {
-    console.log('gettings Websocket instance :', this.webSocket);
     if (!this.webSocket) {
       const { data: { ticket_id } } = await this.websocketTicketCreate();
       const { ws } = new Websocket(this.config.api, ticket_id);
@@ -240,4 +233,4 @@ class AwsDistributor {
   }
 }
 
-module.exports = new AwsDistributor();
+module.exports = AwsDistributor;

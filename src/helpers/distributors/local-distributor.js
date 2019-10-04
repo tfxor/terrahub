@@ -58,8 +58,6 @@ class LocalDistributor {
 
 
     ApiHelper.on('loggerWork', () => {
-      console.log('LOGGER EVENT ');
-
       if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
         ApiHelper.setIsBusy();
         return this._createLoggerWorker();

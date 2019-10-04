@@ -203,9 +203,9 @@ class Distributor {
       case 'local':
         return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
       case 'lambda':
-        return AwsDistributor.init(this.parameters, config, this._env, this._eventEmitter);
+        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
       case 'fargate':
-        return AwsDistributor.init(this.parameters, config, this._env, this._eventEmitter);
+        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
       default:
         return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
     }
