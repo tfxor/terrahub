@@ -10,7 +10,8 @@ class ImportCommand extends DistributedCommand {
     this
       .setName('import')
       .setDescription('run `terraform import` across multiple terrahub components')
-      .addOption('config', 'c', 'Import resource', Array);
+      .addOption('config', 'c', 'Import resource', Array)
+      .addOption('provider', 'j', 'Import provider', String, '');
   }
 
   /**
@@ -18,6 +19,7 @@ class ImportCommand extends DistributedCommand {
    */
   async run() {
     const configContentArr = this.getOption('config');
+    const providerContent = this.getOption('provider');
     const config = this.getFilteredConfig();
 
     return Promise.all(
@@ -28,7 +30,8 @@ class ImportCommand extends DistributedCommand {
           actions: ['prepare', 'init', 'workspaceSelect', 'import'],
           config,
           resourceName: resourceData[0],
-          importId: resourceData[1]
+          importId: resourceData[1],
+          providerId: providerContent
         }];
       })
     );

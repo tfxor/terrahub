@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.3.7",
+  "version": "0.3.14",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-08-26T18:58:02.384Z",
+  "buildDate": "2019-10-03T14:26:02.568Z",
   "commands": [
     {
       "name": "apply",
@@ -466,6 +466,12 @@
           "name": "config",
           "shortcut": "c",
           "description": "Import resource"
+        },
+        {
+          "name": "provider",
+          "shortcut": "j",
+          "description": "Import provider",
+          "defaultValue": ""
         },
         {
           "name": "include",
