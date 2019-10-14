@@ -38,7 +38,7 @@ If you decided to use `terrahub` and not going to switch back to plain `terrafor
 
 ```yaml
 component:
-  name: 'jit_component'
+  name: 'terrahub_component'
   template:
     provider:
       aws:
@@ -54,7 +54,7 @@ component:
     
     data:
       aws_iam_policy_document:
-        jit_component_assume_role_policy:
+        terrahub_component_assume_role_policy:
           statement:
             - actions: ['sts:AssumeRole']
               principals:
@@ -63,9 +63,9 @@ component:
     
     resource:
       aws_iam_role:
-        jit_component_role:
-          name: 'jit_component_assume_role'
-          assume_role_policy: '${data.aws_iam_policy_document.jit_component_assume_role_policy.json}'
+        terrahub_component_role:
+          name: 'terrahub_component_assume_role'
+          assume_role_policy: '${data.aws_iam_policy_document.terrahub_component_assume_role_policy.json}'
 ```
 
 To make working with terrahub a pleasure we also adding into `locals` some additional info like:
@@ -74,14 +74,14 @@ To make working with terrahub a pleasure we also adding into `locals` some addit
 {
   "timestamp": 1544222111000,
   "component": {
-    "name": "jit_component",
-    "path": "/User/username/projects/current/jit_component",
-    "local": "/tmp/.terrahub/local_tfstate/owner/jit_docs",
-    "remote": "terraform/owner/jit_docs"
+    "name": "terrahub_component",
+    "path": "/User/username/projects/current/terrahub_component",
+    "local": "/tmp/.terrahub/local_tfstate/owner/terrahub_docs",
+    "remote": "terraform/owner/terrahub_docs"
   },
   "project": {
     "path": "/User/username/projects/current",
-    "name": "jit_docs",
+    "name": "terrahub_docs",
     "code": "abcd1234"
   }
 }

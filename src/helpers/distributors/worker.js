@@ -2,7 +2,7 @@
 
 const cluster = require('cluster');
 const logger = require('../logger');
-const JitHelper = require('../jit-helper');
+const HclHelper = require('../hcl-helper');
 const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
@@ -43,7 +43,7 @@ function run(config) {
     componentName: config.name,
   });
 
-  JitHelper.jitMiddleware(config)
+  HclHelper.middleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
