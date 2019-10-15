@@ -9,48 +9,48 @@ const { resolve, join } = require('path');
 const objectDepth = require('object-depth');
 const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
-const Downloader = require('../helpers/downloader');
-const { binPath, jitPath, tfstatePath } = require('../parameters');
+const Downloader = require('./downloader');
+const { binPath, hclPath, tfstatePath } = require('../parameters');
 
-class JitHelper {
+class HclHelper {
   /**
-   * JIT middleware (config to files)
+   * HCL middleware (config to files)
    * @param {Object} config
    * @return {Promise}
    */
-  static jitMiddleware(config) {
-    const transformedConfig = JitHelper._transformConfig(config);
+  static hclMiddleware(config) {
+    const transformedConfig = HclHelper._transformConfig(config);
 
-    if (!transformedConfig.isJit) {
+    if (!transformedConfig.isHcl) {
       return Promise.resolve(config);
     }
 
     const { template } = transformedConfig;
 
-    return Promise.resolve().then(() => JitHelper._moduleSourceRefactoring(template))
+    return Promise.resolve().then(() => HclHelper._moduleSourceRefactoring(template))
       .then(() => {
       // add "tfvars" if it is not described in config
-      const localTfvarsLinks = JitHelper._extractOnlyLocalTfvarsLinks(config);
+      const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(config);
       if (localTfvarsLinks.length > 0) {
-        return JitHelper._addLocalTfvars(config, localTfvarsLinks);
+        return HclHelper._addLocalTfvars(config, localTfvarsLinks);
       }
     }).then(() => {
       // add "tfvars" if it is not described in config
-      const remoteTfvarsLinks = JitHelper._extractOnlyRemoteTfvarsLinks(config);
+      const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(config);
       if (remoteTfvarsLinks.length > 0) {
-        return JitHelper._addTfvars(config, remoteTfvarsLinks);
+        return HclHelper._addTfvars(config, remoteTfvarsLinks);
       }
-    }).then(() => JitHelper._normalizeProvidersForResource(config))
-      .then(() => JitHelper._normalizeProvidersForData(config))
-      .then(() => JitHelper._normalizeTfvars(config))
-      .then(() => JitHelper._createTerraformFiles(config))
+    }).then(() => HclHelper._normalizeProvidersForResource(config))
+      .then(() => HclHelper._normalizeProvidersForData(config))
+      .then(() => HclHelper._normalizeTfvars(config))
+      .then(() => HclHelper._createTerraformFiles(config))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
-          return JitHelper._generateVariable(config);
+          return HclHelper._generateVariable(config);
         }
       })
-      .then(() => JitHelper._symLinkNonTerraHubFiles(config))
+      .then(() => HclHelper._symLinkNonTerraHubFiles(config))
       .then(() => config);
   }
 
@@ -62,13 +62,13 @@ class JitHelper {
    * @private
    */
   static _transformConfig(config) {
-    config.isJit = config.hasOwnProperty('template');
+    config.isHcl = config.hasOwnProperty('template');
 
-    if (config.isJit) {
+    if (config.isHcl) {
       const componentPath = join(config.project.root, config.root);
 
-      const localTfstatePath = JitHelper._normalizeBackendLocalPath(config);
-      const remoteTfstatePath = JitHelper._normalizeBackendS3Key(config);
+      const localTfstatePath = HclHelper._normalizeBackendLocalPath(config);
+      const remoteTfstatePath = HclHelper._normalizeBackendS3Key(config);
 
       config.template.locals = extend(config.template.locals, [{
         timestamp: Date.now(),
@@ -182,7 +182,7 @@ class JitHelper {
       const promises = Object.keys(resource).filter(resourceType => resource[resourceType])
         .map(resourceType => {
           const resourcesByType = resource[resourceType];
-          return JitHelper._parsingResourceByType(resourcesByType, template);
+          return HclHelper._parsingResourceByType(resourcesByType, template);
         });
       
       return Promise.all(promises);
@@ -205,7 +205,7 @@ class JitHelper {
       const promises = Object.keys(data).filter(resourceType => data[resourceType])
         .map(resourceType => {
           const resourcesByType = data[resourceType];
-          return JitHelper._parsingResourceByType(resourcesByType, template);
+          return HclHelper._parsingResourceByType(resourcesByType, template);
         });
       
       return Promise.all(promises);
@@ -229,7 +229,7 @@ class JitHelper {
           return Promise.resolve();
         }
 
-        return JitHelper._parsingResourceByName(resourcesByType, resourceName, template);        
+        return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);        
     });
 
     return Promise.all(promises);
@@ -246,7 +246,7 @@ class JitHelper {
   static _parsingResourceByName(resourcesByType, resourceName, template) {
     return Promise.resolve().then(() => {
       const resourceByName = resourcesByType[resourceName];
-      const providerTerrahubVariables = JitHelper._extractTerrahubVariables(
+      const providerTerrahubVariables = HclHelper._extractTerrahubVariables(
         JSON.stringify(resourceByName['provider'])
       );
       
@@ -257,7 +257,7 @@ class JitHelper {
         return Promise.resolve();
       }
       const providerTerrahubVariable = providerTerrahubVariables[0];
-      const { variableName } = JitHelper._extractTerrahubVariableName(
+      const { variableName } = HclHelper._extractTerrahubVariableName(
         providerTerrahubVariable
       );
       const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');        
@@ -267,13 +267,13 @@ class JitHelper {
       }
 
       let tfvarValues = tfvars[variableName];
-      if (!JitHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
+      if (!HclHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
         return Promise.resolve();
       }
       
       return Promise.resolve().then(() => {
         tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
-          JitHelper._parsingParamInResource(
+          HclHelper._parsingParamInResource(
             template, tfvarValue, oldProviderTerrahubVariable,
             resourcesByType, resourceName).then(() => {
             const { output } = template;
@@ -387,15 +387,15 @@ class JitHelper {
 
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template);
-      const templateStringifyArr = JitHelper._extractTerrahubVariables(templateStringify);
+      const templateStringifyArr = HclHelper._extractTerrahubVariables(templateStringify);
       if (templateStringifyArr) {
         templateStringifyArr.map(terrahubVariable => {
-          const { variableName, variableNameNetArr } = JitHelper._extractTerrahubVariableName(terrahubVariable);
+          const { variableName, variableNameNetArr } = HclHelper._extractTerrahubVariableName(terrahubVariable);
           const { tfvars, locals } = template;
           const variableValue = (tfvars && tfvars.hasOwnProperty(variableName))
-            ? JitHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr)
+            ? HclHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr)
             : (locals && locals.hasOwnProperty(variableName))
-              ? JitHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr) : '';
+              ? HclHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr) : '';
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
@@ -412,7 +412,7 @@ class JitHelper {
    * @private
    */
   static _extractTerrahubVariableName(terrahubVariable) {
-    const variableNameNetArr = JitHelper._extractTerrahubVariableElements(terrahubVariable);
+    const variableNameNetArr = HclHelper._extractTerrahubVariableElements(terrahubVariable);
     const variableNameNet = variableNameNetArr[0];
     const variableName = variableNameNet.replace(/\\"/g, '');
 
@@ -454,7 +454,7 @@ class JitHelper {
   static _extractValueFromTfvar(tfvarValue, variableNameNetArr) {
     let variableValue = '';
 
-    switch (JitHelper._checkTerrahubVariableType(tfvarValue)) {
+    switch (HclHelper._checkTerrahubVariableType(tfvarValue)) {
       case "list":
           if (variableNameNetArr.length == 2) {
             const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
@@ -528,11 +528,11 @@ class JitHelper {
       const prefix = remoteTfvarsLink.match(regExPrefix).shift().replace(regExPrefixBucket, '');
 
       const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
-        JitHelper.gsHelper.getObject(bucket, prefix).then(data => {
-          return JitHelper._parsingTfvars(data.toString(), config);
+        HclHelper.gsHelper.getObject(bucket, prefix).then(data => {
+          return HclHelper._parsingTfvars(data.toString(), config);
         }):
-        JitHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
-          return JitHelper._parsingTfvars(data.Body.toString(), config);
+        HclHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
+          return HclHelper._parsingTfvars(data.Body.toString(), config);
         });
 
       return promise;
@@ -551,7 +551,7 @@ class JitHelper {
       const localTfvarsLinkPath = resolve(config.project.root, config.root, localTfvarsLinks[it]);
       if (fse.existsSync(localTfvarsLinkPath)) {
         return fse.readFile(localTfvarsLinkPath).then(content => {
-          return JitHelper._parsingTfvars(content.toString(), config);
+          return HclHelper._parsingTfvars(content.toString(), config);
         });
       }
     });
@@ -580,11 +580,28 @@ class JitHelper {
     }
 
     const { template } = config;
-    const remoteTfvarsJson = hcltojson(newRemoteTfvars);
+    const regexQuotes = /\".+?\"\s*\=/g;
+    let mapOfKeys = new Map();
+    while ((m = regexQuotes.exec(newRemoteTfvars)) !== null) {
+        if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
+        m.forEach((match) => {
+          const timestamp = 'QuoteKey' + Number(new Date()); 
+          const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
+          mapOfKeys.set(timestamp, newValue);
+          newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
+        });
+    }
+
+    let strWithoutQuote = JSON.stringify(hcltojson(newRemoteTfvars));
+    for (const [key, value] of mapOfKeys) {
+      strWithoutQuote = strWithoutQuote.replace(JSON.stringify(`${key}`), `"${value}"`);
+    }
+
+    const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
     JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
-  
+
     return Promise.resolve();  
   }
 
@@ -619,7 +636,7 @@ class JitHelper {
    */
   static _createTerraformFiles(config) {
     const { template, cfgEnv } = config;
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = HclHelper.buildTmpPath(config);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -635,7 +652,7 @@ class JitHelper {
           break;
       }
 
-      return JitHelper.convertJsonToHcl(join(tmpPath, name), data, JitHelper.checkTfVersion(config));
+      return HclHelper.convertJsonToHcl(join(tmpPath, name), data, HclHelper.checkTfVersion(config));
     });
 
     return Promise.all(promises);
@@ -647,13 +664,13 @@ class JitHelper {
    */
   static _generateVariable(config) {
     const variable = config.template.variable || {};    
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = HclHelper.buildTmpPath(config);
     const { tfvars } = config.template;
     Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {      
       let type = 'string';
       if (Array.isArray(tfvars[it])) {
         type = 'list';
-      } else if (typeof tfvars[it] === 'object' && JitHelper.checkTfVersion(config)) {
+      } else if (typeof tfvars[it] === 'object' && HclHelper.checkTfVersion(config)) {
         for (let index = 0; index < objectDepth(tfvars[it]); index++) {
           type = `map(${type})`;          
         }
@@ -663,12 +680,12 @@ class JitHelper {
 
       variable[it] = { type };
     });
-    return JitHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, JitHelper.checkTfVersion(config));
+    return HclHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config));
   }
 
   static _symLinkNonTerraHubFiles(config) {
     const regEx = /\.terrahub.*(json|yml|yaml)$/;
-    const tmpPath = JitHelper.buildTmpPath(config);
+    const tmpPath = HclHelper.buildTmpPath(config);
     const src = join(config.project.root, config.root);
 
     return fse.ensureDir(tmpPath)
@@ -689,11 +706,11 @@ class JitHelper {
    * @private
    */
   static get s3Helper() {
-    if (!JitHelper._s3Helper) {
-      JitHelper._s3Helper = new S3Helper();
+    if (!HclHelper._s3Helper) {
+      HclHelper._s3Helper = new S3Helper();
     }
 
-    return JitHelper._s3Helper;
+    return HclHelper._s3Helper;
   }
 
   /**
@@ -701,11 +718,11 @@ class JitHelper {
    * @private
    */
   static get gsHelper() {
-    if (!JitHelper._gsHelper) {
-      JitHelper._gsHelper = new GsHelper();
+    if (!HclHelper._gsHelper) {
+      HclHelper._gsHelper = new GsHelper();
     }
 
-    return JitHelper._gsHelper;
+    return HclHelper._gsHelper;
   }
 
   /**
@@ -713,7 +730,7 @@ class JitHelper {
    * @return {String}
    */
   static buildTmpPath(config) {
-    const tmpPath = homePath(jitPath, `${config.name}_${config.project.code}`);
+    const tmpPath = homePath(hclPath, `${config.name}_${config.project.code}`);
     fse.ensureDirSync(tmpPath);
 
     return tmpPath;
@@ -756,4 +773,4 @@ class JitHelper {
   }
 }
 
-module.exports = JitHelper;
+module.exports = HclHelper;
