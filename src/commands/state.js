@@ -12,7 +12,7 @@ class StateCommand extends TerraformCommand {
       .setName('state')
       .setDescription('run `terraform state` across multiple terrahub components')
       .addOption('list', 'L', 'List resource(s) from terraform state', Boolean, false)
-      .addOption('delete', 'D', 'Remove resource(s) from terraform state', Array, [])
+      .addOption('delete', 'D', 'Delete resource(s) from terraform state', Array, [])
     ;
   }
 
