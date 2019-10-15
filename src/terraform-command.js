@@ -192,18 +192,28 @@ class TerraformCommand extends AbstractCommand {
 
     Object.keys(result).forEach(hash => {
       const node = result[hash];
-      const dependsOn = node.dependsOn.map(name => {
-        const dependentComponent = Object.keys(result).find(it => config[it].name === name);
-
-        return ConfigLoader.buildComponentHash(result[dependentComponent].root);
-      });
+      const dependsOn = node.dependsOn.map(name => this._createHashFromName(result, name));
 
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
 
-    console.log('extended Config :', result);
-
     return result;
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} name
+   * @return {String|boolean}
+   * @private
+   */
+  _createHashFromName(config, name) {
+    const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+    if (!dependentComponent) {
+      return false;
+    }
+
+    const dependentRelativePath = config[dependentComponent].root;
+    return ConfigLoader.buildComponentHash(dependentRelativePath);
   }
 
   /**
@@ -412,14 +422,11 @@ class TerraformCommand extends AbstractCommand {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      issues[hash] = node.dependsOn.filter(dep => {
-        const dependentComponent = Object.keys(config).find(it => config[it].name === dep);
-        if (!dependentComponent) {
+      issues[hash] = node.dependsOn.filter(name => {
+        const key = this._createHashFromName(config, name);
+        if (!key) {
           return true;
         }
-
-        const dependentRelativePath = config[dependentComponent].root;
-        const key = ConfigLoader.buildComponentHash(dependentRelativePath);
 
         return !config.hasOwnProperty(key);
       });
