@@ -221,7 +221,6 @@ class ConfigLoader {
         cfg.root = root;
 
         delete this._rootConfig[key];
-
         this._processComponentConfig(cfg, root);
         const hash = ConfigLoader.buildComponentHash(root);
         this._config[hash] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
@@ -288,10 +287,6 @@ class ConfigLoader {
       if (!Array.isArray(config.dependsOn)) {
         throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
       }
-
-      config.dependsOn.forEach((dep, index) => {
-        config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
-      });
     }
 
     if (config.hasOwnProperty('mapping')) {

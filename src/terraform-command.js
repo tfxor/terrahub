@@ -192,10 +192,16 @@ class TerraformCommand extends AbstractCommand {
 
     Object.keys(result).forEach(hash => {
       const node = result[hash];
-      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
+      const dependsOn = node.dependsOn.map(name => {
+        const dependentComponent = Object.keys(result).find(it => config[it].name === name);
+
+        return ConfigLoader.buildComponentHash(result[dependentComponent].root);
+      });
 
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
+
+    console.log('extended Config :', result);
 
     return result;
   }
@@ -407,15 +413,21 @@ class TerraformCommand extends AbstractCommand {
       const node = config[hash];
 
       issues[hash] = node.dependsOn.filter(dep => {
-        const key = ConfigLoader.buildComponentHash(dep);
+        const dependentComponent = Object.keys(config).find(it => config[it].name === dep);
+        if (!dependentComponent) {
+          return true;
+        }
+
+        const dependentRelativePath = config[dependentComponent].root;
+        const key = ConfigLoader.buildComponentHash(dependentRelativePath);
 
         return !config.hasOwnProperty(key);
       });
     });
 
     const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
-      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
-        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
+      return `'${config[it].name}' component depends on the component${issues[it].length > 1 ? 's' : ''} ` +
+        `'${issues[it].join(`', '`)}' that doesn't exist`;
     });
 
     if (messages.length) {
