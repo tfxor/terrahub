@@ -9,7 +9,7 @@ const { resolve, join } = require('path');
 const objectDepth = require('object-depth');
 const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
-const Downloader = require('./downloader');
+const Downloader = require('../helpers/downloader');
 const { binPath, hclPath, tfstatePath } = require('../parameters');
 
 class HclHelper {
