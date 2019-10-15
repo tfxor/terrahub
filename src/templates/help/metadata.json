@@ -1069,13 +1069,21 @@
         {
           "name": "list",
           "shortcut": "L",
+<<<<<<< HEAD
           "description": "List resources in the state",
+=======
+          "description": "List resource(s) from terraform state",
+>>>>>>> 8e4936dd641f46ca804a44e3e337cb33317d243e
           "defaultValue": false
         },
         {
           "name": "delete",
           "shortcut": "D",
+<<<<<<< HEAD
           "description": "Remove instances from the state",
+=======
+          "description": "Delete resource(s) from terraform state",
+>>>>>>> 8e4936dd641f46ca804a44e3e337cb33317d243e
           "defaultValue": []
         },
         {

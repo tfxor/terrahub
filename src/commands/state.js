@@ -11,8 +11,8 @@ class StateCommand extends TerraformCommand {
     this
       .setName('state')
       .setDescription('run `terraform state` across multiple terrahub components')
-      .addOption('list', 'L', 'List resources in the state', Boolean, false)
-      .addOption('delete', 'D', 'Remove instances from the state', Array, [])
+      .addOption('list', 'L', 'List resource(s) from terraform state', Boolean, false)
+      .addOption('delete', 'D', 'Delete resource(s) from terraform state', Array, [])
     ;
   }
 
@@ -26,7 +26,7 @@ class StateCommand extends TerraformCommand {
     this._delete = this.getOption('delete');
 
     if (this._delete.length > 0 && this._list) {
-      return Promise.reject(new Error(`Resource specification must include a resource type and name.`));
+      return Promise.reject(new Error(`Terraform slug (type and name) is missing. Please specify a valid terraform resource.`));
     }
 
     if (this._delete.length == 0 && this._list) {
@@ -38,7 +38,6 @@ class StateCommand extends TerraformCommand {
 
     return Promise.all(
       this._delete.map(it => {
-
         return distributor
           .runActions(['prepare', 'init', 'workspaceSelect', 'stateDelete'], {
             stateDelete: it
