@@ -67,7 +67,7 @@ const isDefault = cfg.env === 'default';
 module.exports = {
   args: args,
   cfgPath: cfgPath,
-  jitPath: path.join('cache', 'jit'),
+  hclPath: path.join('cache', 'hcl'),
   tfstatePath: path.join('cache', 'tfstate'),
   fetch: new Fetch(apiBase, cfg.token),
   binPath: path.join(__dirname, '..', 'bin'),
