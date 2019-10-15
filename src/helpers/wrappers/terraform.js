@@ -403,9 +403,9 @@ class Terraform {
    * https://www.terraform.io/docs/state/index.html
    * @return {Promise}
    */
-  stateRm() {
+  stateDelete() {
     const args = ['rm'];
-    const resourceAddress = process.env.stateRm;
+    const resourceAddress = process.env.stateDelete;
 
     if (!resourceAddress.includes('*')) {
       return this.run('state', args.concat([resourceAddress]));      

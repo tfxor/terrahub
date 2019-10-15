@@ -11,8 +11,8 @@ class StateCommand extends TerraformCommand {
     this
       .setName('state')
       .setDescription('run `terraform state` across multiple terrahub components')
-      .addOption('list', 'l', 'List resources in the state', Boolean, false)
-      .addOption('rm', 'r', 'Remove instances from the state', Array, [])
+      .addOption('list', 'L', 'List resources in the state', Boolean, false)
+      .addOption('delete', 'D', 'Remove instances from the state', Array, [])
     ;
   }
 
@@ -23,13 +23,13 @@ class StateCommand extends TerraformCommand {
     const config = this.getFilteredConfig();
     const distributor = new Distributor(config, this.runId);
     this._list = this.getOption('list')
-    this._rm = this.getOption('rm');
+    this._delete = this.getOption('delete');
 
-    if (this._rm.length > 0 && this._list) {
+    if (this._delete.length > 0 && this._list) {
       return Promise.reject(new Error(`Resource specification must include a resource type and name.`));
     }
 
-    if (this._rm.length == 0 && this._list) {
+    if (this._delete.length == 0 && this._list) {
       return distributor
       .runActions(['prepare', 'init', 'workspaceSelect', 'stateList'], {
         stateList: this._list
@@ -37,11 +37,11 @@ class StateCommand extends TerraformCommand {
     }
 
     return Promise.all(
-      this._rm.map(it => {
+      this._delete.map(it => {
 
         return distributor
-          .runActions(['prepare', 'init', 'workspaceSelect', 'stateRm'], {
-            stateRm: it
+          .runActions(['prepare', 'init', 'workspaceSelect', 'stateDelete'], {
+            stateDelete: it
           }).then(() => 'Done');
       })
     );

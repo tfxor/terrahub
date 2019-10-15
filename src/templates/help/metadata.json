@@ -1068,13 +1068,13 @@
       "options": [
         {
           "name": "list",
-          "shortcut": "l",
+          "shortcut": "L",
           "description": "List resources in the state",
           "defaultValue": false
         },
         {
-          "name": "rm",
-          "shortcut": "r",
+          "name": "delete",
+          "shortcut": "D",
           "description": "Remove instances from the state",
           "defaultValue": []
         },
