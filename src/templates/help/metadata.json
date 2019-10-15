@@ -1068,14 +1068,14 @@
       "options": [
         {
           "name": "list",
-          "shortcut": "l",
-          "description": "List resources in the state",
+          "shortcut": "L",
+          "description": "List resource(s) from terraform state",
           "defaultValue": false
         },
         {
-          "name": "rm",
-          "shortcut": "r",
-          "description": "Remove instances from the state",
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete resource(s) from terraform state",
           "defaultValue": []
         },
         {
