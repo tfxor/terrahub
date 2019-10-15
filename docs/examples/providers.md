@@ -4,7 +4,7 @@
 
 Just follow the [terraform][1] documentation.
 
-### Templates using cached HCL2
+### Templates using cached HCL
 
 General use-case (w/ `alias` example):
 

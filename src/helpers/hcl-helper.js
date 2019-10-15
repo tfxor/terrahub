@@ -580,11 +580,28 @@ class HclHelper {
     }
 
     const { template } = config;
-    const remoteTfvarsJson = hcltojson(newRemoteTfvars);
+    const regexQuotes = /\".+?\"\s*\=/g;
+    let mapOfKeys = new Map();
+    while ((m = regexQuotes.exec(newRemoteTfvars)) !== null) {
+        if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
+        m.forEach((match) => {
+          const timestamp = 'QuoteKey' + Number(new Date()); 
+          const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
+          mapOfKeys.set(timestamp, newValue);
+          newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
+        });
+    }
+
+    let strWithoutQuote = JSON.stringify(hcltojson(newRemoteTfvars));
+    for (const [key, value] of mapOfKeys) {
+      strWithoutQuote = strWithoutQuote.replace(JSON.stringify(`${key}`), `"${value}"`);
+    }
+
+    const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
     JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
-  
+
     return Promise.resolve();  
   }
 
