@@ -189,31 +189,82 @@ class TerraformCommand extends AbstractCommand {
     });
 
     this._checkDependenciesExist(result);
-
-    Object.keys(result).forEach(hash => {
-      const node = result[hash];
-      const dependsOn = node.dependsOn.map(name => this._createHashFromName(result, name));
-
-      node.dependsOn = Util.arrayToObject(dependsOn);
-    });
+    this._processDependsOn(result);
 
     return result;
   }
 
   /**
-   * @param {Object} config
-   * @param {String} name
+   * @param {Object} componentConfig
    * @return {String|boolean}
    * @private
    */
-  _createHashFromName(config, name) {
-    const dependentComponent = Object.keys(config).find(it => config[it].name === name);
-    if (!dependentComponent) {
-      return false;
-    }
+  _createHashFromName(componentConfig) {
+    const dependentRelativePath = componentConfig.root;
 
-    const dependentRelativePath = config[dependentComponent].root;
     return ConfigLoader.buildComponentHash(dependentRelativePath);
+  }
+
+  /**
+   * @param {Object} config
+   * @private
+   */
+  _processDependsOn(config) {
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+      const dependsOn = node.dependsOn.map(name => {
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        const dependentConfig = config[dependentComponent];
+
+        this.processRemoteStateTemplate(config, dependentConfig, hash);
+
+        return this._createHashFromName(dependentConfig);
+      });
+
+      node.dependsOn = Util.arrayToObject(dependsOn);
+    });
+  }
+
+  /**
+   * Automatically defines terraform_remote_state from dependencies
+   * @param {Object} config
+   * @param {Object} dependentConfig
+   * @param {String} hash
+   */
+  processRemoteStateTemplate(config, dependentConfig, hash) {
+    const { template, name } = dependentConfig;
+
+    if (template.terraform && template.terraform.backend) {
+      const backend = template.terraform.backend;
+      if (!config[hash].template.data || !config[hash].template.data['terraform_remote_state']) {
+        config[hash].template.data = { 'terraform_remote_state': {} };
+      }
+
+      switch (Object.keys(backend)[0]) {
+        case 'local':
+          const localRemoteConfig = {
+            [name]: {
+              backend: 'local',
+              config: {}
+            }
+          };
+          Object.keys(backend.local).forEach(it => localRemoteConfig[name].config[it] = backend.local[it]);
+
+          Object.assign(config[hash].template.data['terraform_remote_state'], localRemoteConfig);
+          break;
+        case 's3':
+          const s3RemoteConfig = {
+            [name]: {
+              backend: 's3',
+              config: {}
+            }
+          };
+          Object.keys(backend.s3).forEach(it => s3RemoteConfig[name].config[it] = backend.s3[it]);
+
+          Object.assign(config[hash].template.data['terraform_remote_state'], s3RemoteConfig);
+          break;
+      }
+    }
   }
 
   /**
@@ -423,7 +474,10 @@ class TerraformCommand extends AbstractCommand {
       const node = config[hash];
 
       issues[hash] = node.dependsOn.filter(name => {
-        const key = this._createHashFromName(config, name);
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        const dependentConfig = config[dependentComponent];
+
+        const key = this._createHashFromName(dependentConfig);
         if (!key) {
           return true;
         }
