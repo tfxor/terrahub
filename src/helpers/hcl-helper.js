@@ -18,10 +18,10 @@ class HclHelper {
    * @param {Object} config
    * @return {Promise}
    */
-  static hclMiddleware(config) {
+  static middleware(config) {
     const transformedConfig = HclHelper._transformConfig(config);
 
-    if (!transformedConfig.isHcl) {
+    if (!transformedConfig.isTemplate) {
       return Promise.resolve(config);
     }
 
@@ -62,9 +62,9 @@ class HclHelper {
    * @private
    */
   static _transformConfig(config) {
-    config.isHcl = config.hasOwnProperty('template');
+    config.isTemplate = config.hasOwnProperty('template');
 
-    if (config.isHcl) {
+    if (config.isTemplate) {
       const componentPath = join(config.project.root, config.root);
 
       const localTfstatePath = HclHelper._normalizeBackendLocalPath(config);
@@ -229,7 +229,7 @@ class HclHelper {
           return Promise.resolve();
         }
 
-        return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);        
+        return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);
     });
 
     return Promise.all(promises);

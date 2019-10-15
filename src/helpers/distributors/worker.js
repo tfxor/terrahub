@@ -43,7 +43,7 @@ function run(config) {
     componentName: config.name,
   });
 
-  HclHelper.hclMiddleware(config)
+  HclHelper.middleware(config)
     .then(cfg => promiseSeries(getTasks(cfg), (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {
       if (lastResult.action !== 'output') {
