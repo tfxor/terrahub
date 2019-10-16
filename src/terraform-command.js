@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
@@ -8,7 +10,7 @@ const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
-const { config: { listLimit, logs } } = require('./parameters');
+const { config: { listLimit, logs }, hclPath } = require('./parameters');
 
 const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
@@ -226,17 +228,20 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * Automatically defines terraform_remote_state from dependencies
+   * Defines terraform_remote_state from dependencies
    * @param {Object} config
    * @param {Object} dependentConfig
    * @param {String} hash
    */
   processRemoteStateTemplate(config, dependentConfig, hash) {
-    const { template, name } = dependentConfig;
+    const { project, template, name } = dependentConfig;
+    const configBackendExist = template.terraform && template.terraform.backend;
+    const cachedBackendPath = Util.homePath('cache/hcl', `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
-    if (template.terraform && template.terraform.backend) {
-      const backend = template.terraform.backend;
-      const backendType = Object.keys(backend)[0];
+    if (configBackendExist || cachedBackendExist) {
+      const backend = configBackendExist ? template.terraform.backend : null;
+      const backendType = backend ? Object.keys(backend)[0] : 'local';
 
       if (!config[hash].template.data || !config[hash].template.data['terraform_remote_state']) {
         config[hash].template.data = { 'terraform_remote_state': {} };
@@ -250,10 +255,18 @@ class TerraformCommand extends AbstractCommand {
 
       switch (backendType) {
         case 'local':
-          Object.keys(backend.local).forEach(it => defaultRemoteConfig[name].config[it] = backend.local[it]);
+          if (backend) {
+            Object.keys(backend.local).forEach(it => {
+              defaultRemoteConfig[name].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
+                ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
+                : defaultRemoteConfig[name].config[it] = backend.local[it];
+            });
+          } else {
+            defaultRemoteConfig[name].config['path'] = cachedBackendPath;
+          }
           break;
         case 's3':
-          Object.keys(backend.s3).forEach(it => defaultRemoteConfig[name].config[it] = backend.s3[it]);
+          Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[name].config[it] = backend.s3[it]; });
           break;
       }
 
@@ -470,12 +483,12 @@ class TerraformCommand extends AbstractCommand {
 
       issues[hash] = node.dependsOn.filter(name => {
         const dependentComponent = Object.keys(config).find(it => config[it].name === name);
-        const dependentConfig = config[dependentComponent];
-
-        const key = this._createHashFromName(dependentConfig);
-        if (!key) {
+        if(!dependentComponent) {
           return true;
         }
+
+        const dependentConfig = config[dependentComponent];
+        const key = this._createHashFromName(dependentConfig);
 
         return !config.hasOwnProperty(key);
       });
