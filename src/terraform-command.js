@@ -189,7 +189,7 @@ class TerraformCommand extends AbstractCommand {
     });
 
     this._checkDependenciesExist(result);
-    this._processDependsOn(result);
+    this._processDependencies(result);
 
     return result;
   }
@@ -209,7 +209,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object} config
    * @private
    */
-  _processDependsOn(config) {
+  _processDependencies(config) {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
       const dependsOn = node.dependsOn.map(name => {
@@ -236,34 +236,29 @@ class TerraformCommand extends AbstractCommand {
 
     if (template.terraform && template.terraform.backend) {
       const backend = template.terraform.backend;
+      const backendType = Object.keys(backend)[0];
+
       if (!config[hash].template.data || !config[hash].template.data['terraform_remote_state']) {
         config[hash].template.data = { 'terraform_remote_state': {} };
       }
 
-      switch (Object.keys(backend)[0]) {
-        case 'local':
-          const localRemoteConfig = {
-            [name]: {
-              backend: 'local',
-              config: {}
-            }
-          };
-          Object.keys(backend.local).forEach(it => localRemoteConfig[name].config[it] = backend.local[it]);
+      const defaultRemoteConfig = {
+        [name]: {
+          config: {}
+        }
+      };
 
-          Object.assign(config[hash].template.data['terraform_remote_state'], localRemoteConfig);
+      switch (backendType) {
+        case 'local':
+          Object.keys(backend.local).forEach(it => defaultRemoteConfig[name].config[it] = backend.local[it]);
           break;
         case 's3':
-          const s3RemoteConfig = {
-            [name]: {
-              backend: 's3',
-              config: {}
-            }
-          };
-          Object.keys(backend.s3).forEach(it => s3RemoteConfig[name].config[it] = backend.s3[it]);
-
-          Object.assign(config[hash].template.data['terraform_remote_state'], s3RemoteConfig);
+          Object.keys(backend.s3).forEach(it => defaultRemoteConfig[name].config[it] = backend.s3[it]);
           break;
       }
+
+      defaultRemoteConfig[name].backend = backendType;
+      Object.assign(config[hash].template.data['terraform_remote_state'], defaultRemoteConfig);
     }
   }
 
