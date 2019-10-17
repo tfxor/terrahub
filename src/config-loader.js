@@ -77,6 +77,7 @@ class ConfigLoader {
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
+      this._projectDistributor = this._rootConfig['project'].distributor;
 
       this._handleProjectConfig();
 
@@ -285,7 +286,7 @@ class ConfigLoader {
     }
 
     if (!config.hasOwnProperty('distributor')) {
-      config.distributor = 'local';
+      config.distributor = this._projectDistributor || 'local';
     }
   }
 
