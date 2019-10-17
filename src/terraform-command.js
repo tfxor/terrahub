@@ -494,7 +494,7 @@ class TerraformCommand extends AbstractCommand {
 
     const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
       return `'${config[it].name}' component depends on the component${issues[it].length > 1 ? 's' : ''} ` +
-        `'${issues[it].join(`', '`)}' that doesn't exist`;
+        `'${issues[it].join(`', '`)}' that either are not included or do not exist`;
     });
 
     if (messages.length) {
