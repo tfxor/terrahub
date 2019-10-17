@@ -266,7 +266,7 @@ class AbstractTerrahub {
         process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
         break;
       case 'lambda':
-        ApiHelper.init(this.parameters);
+        ApiHelper.init(this.parameters, this._config.distributor);
         ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
 
         this.publish({ ...this._workflowOptions, status });

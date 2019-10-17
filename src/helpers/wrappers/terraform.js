@@ -106,7 +106,7 @@ class Terraform {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
     if (!accounts.length) { return Promise.resolve(); }
 
-    ApiHelper.init(this.parameters);
+    ApiHelper.init(this.parameters, this._distributor);
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     const provider = Array.isArray(this._config.template.provider)
       ? Object.keys(this._config.template.provider[0]).toString()

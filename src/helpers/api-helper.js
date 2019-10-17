@@ -24,13 +24,13 @@ class ApiHelper extends events.EventEmitter {
   /**
    * Initialize with parameters
    * @param {Object} parameters
+   * @param {String} distributor
    */
-  init(parameters) { //todo: Remove in future
+  init(parameters, distributor = 'local') { //todo: Remove in future
     this.fetch = parameters.fetch instanceof Fetch
       ? parameters.fetch : new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
-
     this.config = parameters.config;
-    this.distributor = this.config.distributor;
+    this.distributor = distributor;
   }
 
   /**
@@ -211,7 +211,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {void | null | Promise[]}
    */
   pushToLogs(body) {
-    if ((this.isCloudDeployer && body.component === 'main') || body.log === '✅Done') {
+    if (body.component === 'main' || body.log === '✅Done') {
       const promise = {
         url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
           `/document/create/${this.runId || this.config.token}?indexMapping=logs`,

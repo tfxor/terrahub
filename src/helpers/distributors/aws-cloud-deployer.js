@@ -52,7 +52,7 @@ class AwsDeployer {
         await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
       }
 
-      const promises = ApiHelper.retrieveDataToSend();
+      const promises = ApiHelper.retrieveDataToSend(true);
       await Promise.all(ApiHelper.asyncFetch(promises));
 
     } catch (error) {
