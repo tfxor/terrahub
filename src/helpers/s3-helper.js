@@ -2,9 +2,11 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const { join, relative } = require('path');
 const Fetch = require('./fetch');
 const {
-  retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars, setupAWSSharedFile
+  retrieveSourceProfile, prepareCredentialsFile, createCredentialsFile,
+  removeAwsEnvVars, setupAWSSharedFile, globPromise, arrayUnCommon
 } = require('./util');
 
 class S3Helper {
@@ -59,6 +61,120 @@ class S3Helper {
       }
 
       return this._s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
+    });
+  }
+
+  /**
+   * Pseudo-sync
+   * @param {String} rootPath
+   * @param {String} s3Prefix
+   * @param {String[]} relativePaths
+   * @return {Promise}
+   */
+  async syncPaths(rootPath, s3Prefix, relativePaths) {
+    const [localFiles, s3Keys] = await Promise.all([
+      globPromise('**', { cwd: rootPath, dot: true, nodir: true }),
+      this.listByPrefixes(S3Helper.METADATA_BUCKET, relativePaths.map(it => join(s3Prefix, it)))
+    ]);
+    // uncommonOne - required files that need to be downloaded
+    // uncommonTwo - redundant files that need to be deleted
+    const { uncommonOne, uncommonTwo } = arrayUnCommon(s3Keys.map(key => relative(s3Prefix, key)), localFiles);
+
+    return Promise.all([
+      this.downloadObjects(
+        S3Helper.METADATA_BUCKET,
+        uncommonOne.map(it => ({ key: join(s3Prefix, it), destination: join(rootPath, it) }))
+      ),
+      S3Helper.deleteFiles(uncommonTwo.map(it => join(rootPath, it)))
+    ]);
+  }
+
+  /**
+   * @param {String} bucketName
+   * @param {String[]} prefixes
+   * @param {{ returnChunks: Boolean }} options
+   * @return {Promise<String[]|Array[]>}
+   */
+  async listByPrefixes(bucketName, prefixes, options = {}) {
+    const { returnChunks = false } = options;
+
+    const results = await Promise.all(
+      prefixes.map(it => this.listObjects(bucketName, it, { returnChunks: returnChunks }))
+    );
+
+    return [].concat(...results);
+  }
+
+  /**
+   * @param {String} bucketName
+   * @param {String} prefix
+   * @param {{ returnChunks: Boolean }} options
+   * @return {Promise<String[]|Array[]>}
+   */
+  async listObjects(bucketName, prefix = '/', { returnChunks = false } = {}) {
+    const commonParams = {
+      Bucket: bucketName,
+      Prefix: prefix
+    };
+    const chunks = [];
+
+    let isTruncated = true;
+    let continuationToken = null;
+
+    while (isTruncated) {
+      const params = continuationToken
+        ? ({ ContinuationToken: continuationToken, ...commonParams })
+        : commonParams;
+
+      // eslint-disable-next-line no-await-in-loop
+      const data = await this._s3.listObjectsV2(params).promise();
+
+      chunks.push(data.Contents.map(content => content.Key));
+
+      isTruncated = data.IsTruncated;
+      continuationToken = data.NextContinuationToken;
+    }
+
+    return returnChunks ? chunks : [].concat(...chunks);
+  }
+
+  /**
+   * @param {String} bucketName
+   * @param {{ key: String, destination: String }[]} objects
+   * @return {Promise}
+   */
+  downloadObjects(bucketName, objects) {
+    return Promise.all(
+      objects.map(it => {
+        const stream = this._s3.getObject({
+          Bucket: bucketName,
+          Key: it.key
+        }).createReadStream();
+
+        return S3Helper.writeFileStream(stream, it.destination);
+      })
+    );
+  }
+
+  /**
+   * @param {String[]} paths
+   * @return {Promise}
+   */
+  static deleteFiles(paths) {
+    return Promise.all(paths.map(it => fse.remove(it)));
+  }
+
+  /**
+   * @param {ReadableStream} fileStream
+   * @param {String} destination
+   * @return {Promise}
+   */
+  static async writeFileStream(fileStream, destination) {
+    await fse.ensureFile(destination);
+
+    return new Promise(resolve => {
+      fileStream.on('end', () => resolve());
+      fileStream.pipe(fse.createWriteStream(destination));
     });
   }
 

@@ -380,6 +380,56 @@ class Util {
   }
 
   /**
+   * @param {String[]} arrayOne
+   * @param {String[]} arrayTwo
+   * @return {{common: String[], uncommonOne: String[], uncommonTwo: String[]}}
+   */
+  static arrayUnCommon(arrayOne, arrayTwo) {
+    const uncommonOne = [];
+    const common = [];
+    const uncommonTwo = [];
+
+    const sortedOne = arrayOne.sort();
+    const sortedTwo = arrayTwo.sort();
+
+    let i = 0,
+      j = 0;
+
+    while (i < sortedOne.length && j < sortedTwo.length) {
+      const first = sortedOne[i];
+      const second = sortedTwo[j];
+
+      switch (first.localeCompare(second)) {
+        case -1:
+          uncommonOne.push(first);
+          i++;
+          break;
+
+        case 0:
+          common.push(first);
+          i++;
+          j++;
+          break;
+
+        case 1:
+          uncommonTwo.push(second);
+          j++;
+          break;
+      }
+    }
+
+    // add everything left
+    uncommonOne.push(...sortedOne.slice(i));
+    uncommonTwo.push(...sortedTwo.slice(j));
+
+    return {
+      uncommonOne,
+      common,
+      uncommonTwo
+    };
+  }
+
+  /**
    * @param {String} pattern
    * @param {Object} options
    * @return {Promise}

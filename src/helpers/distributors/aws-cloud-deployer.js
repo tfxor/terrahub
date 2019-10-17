@@ -3,6 +3,7 @@
 const fse = require('fs-extra');
 const Fetch = require('../fetch');
 const logger = require('../logger');
+const S3Helper = require('../s3-helper')
 const ApiHelper = require('../api-helper');
 const JitHelper = require('../jit-helper');
 const { promiseSeries } = require('../util');
@@ -11,8 +12,8 @@ const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
 
-  constructor({ s3fs, parameters, publish }) {
-    this.s3Helper = s3fs;
+  constructor({ parameters, publish }) {
+    this.s3 = new S3Helper();
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this.publish = publish;
   }
@@ -42,7 +43,7 @@ class AwsDeployer {
       const accountId = await this._fetchAccountId();
       const s3Prefix = [`projects-${api}`, accountId, thubRunId].join('/');
 
-      await this.s3Helper.syncPaths(config.project.root, s3Prefix, config.mapping);
+      await this.s3.syncPaths(config.project.root, s3Prefix, config.mapping);
 
       const cfg = await JitHelper.jitMiddleware(config, parameters);
       await this._runActions(actions, cfg, thubRunId, parameters);
