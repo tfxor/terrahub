@@ -202,9 +202,7 @@ class TerraformCommand extends AbstractCommand {
    * @private
    */
   _createHashFromName(componentConfig) {
-    const dependentRelativePath = componentConfig.root;
-
-    return ConfigLoader.buildComponentHash(dependentRelativePath);
+    return ConfigLoader.buildComponentHash(componentConfig.root);
   }
 
   /**
