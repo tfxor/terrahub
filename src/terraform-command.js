@@ -234,7 +234,7 @@ class TerraformCommand extends AbstractCommand {
   processRemoteStateTemplate(config, dependentConfig, hash) {
     const { project, template, name } = dependentConfig;
     const configBackendExist = template.terraform && template.terraform.backend;
-    const cachedBackendPath = Util.homePath('cache/hcl', `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
     if (!(configBackendExist || cachedBackendExist)) { return; }
