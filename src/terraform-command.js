@@ -197,15 +197,6 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} componentConfig
-   * @return {String|boolean}
-   * @private
-   */
-  _createHashFromName(componentConfig) {
-    return ConfigLoader.buildComponentHash(componentConfig.root);
-  }
-
-  /**
    * @param {Object} config
    * @private
    */
@@ -218,7 +209,7 @@ class TerraformCommand extends AbstractCommand {
 
         this.processRemoteStateTemplate(config, dependentConfig, hash);
 
-        return this._createHashFromName(dependentConfig);
+        return ConfigLoader.buildComponentHash(dependentConfig.root);
       });
 
       node.dependsOn = Util.arrayToObject(dependsOn);
@@ -484,7 +475,7 @@ class TerraformCommand extends AbstractCommand {
         }
 
         const dependentConfig = config[dependentComponent];
-        const key = this._createHashFromName(dependentConfig);
+        const key = ConfigLoader.buildComponentHash(dependentConfig.root);
 
         return !config.hasOwnProperty(key);
       });
