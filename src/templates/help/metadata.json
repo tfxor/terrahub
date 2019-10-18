@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.3.12",
+  "version": "0.3.15",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-09-20T21:29:47.054Z",
+  "buildDate": "2019-10-15T13:41:31.121Z",
   "commands": [
     {
       "name": "apply",
@@ -999,6 +999,84 @@
           "shortcut": "c",
           "description": "Run your terraform execution in cloud",
           "defaultValue": false
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "p",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
+          "defaultValue": "auto"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "description": "run `terraform state` across multiple terrahub components",
+      "options": [
+        {
+          "name": "list",
+          "shortcut": "L",
+          "description": "List resource(s) from terraform state",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete resource(s) from terraform state",
+          "defaultValue": []
         },
         {
           "name": "include",

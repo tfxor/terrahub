@@ -10,7 +10,7 @@ const Downloader = require('../helpers/downloader');
 const TerraformCommand = require('../terraform-command');
 const { jsonToYaml, yamlToJson } = require('../helpers/util');
 const { binPath, config, commandsPath } = require('../parameters');
-const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
+const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/hcl-helper');
 
 class ConvertCommand extends TerraformCommand {
   /**
