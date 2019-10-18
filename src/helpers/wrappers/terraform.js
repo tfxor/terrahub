@@ -382,13 +382,19 @@ class Terraform {
   import() {
     const options = { '-input': false };
     const args = ['-no-color'];
-    const values = [process.env.resourceName, process.env.importId];
-    if (process.env.providerId !== '') {
-      args.push(`-provider=${process.env.providerId}`);
-    }
+    const linesSource = JSON.parse(process.env.importLines);
+    const lines = (linesSource.length == 1) ? linesSource[0] : linesSource;
 
-    return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
-      values));
+    return Promise.all(
+      lines.map(line => this.run('import',
+        args.concat(
+          (line.provider !== '') ? `-provider=${line.provider}` : '',
+          this._varFile(),
+          this._var(),
+          this._optsToArgs(options),
+          [line.fullAddress, line.value]))
+      )
+    );
   }
 
   /**
@@ -409,16 +415,17 @@ class Terraform {
     const resourceAddress = process.env.stateDelete;
 
     if (!resourceAddress.includes('*')) {
-      return this.run('state', args.concat([resourceAddress]));      
+      return this.run('state', args.concat([resourceAddress]));
     }
-    
-    return this.run('state', ['list']).then(buffer => {
-      let promises = [];
-      buffer.toString().split('\n')
-        .filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
-        .forEach(id => promises.push(new Promise(() => this.run('state', args.concat([id])))));
-      return Promise.all(promises);
-    });    
+
+    return this.run('state', ['list']).then(buffer => buffer.toString().split('\n').filter(x => x))
+      .then(elements => (elements.length > 0)
+        ? elements.filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
+        : []
+      ).then(elements => (elements.length > 0)
+        ? Promise.all(elements.map(element => this.run('state', args.concat([element]))))
+        : Promise.resolve({})
+      );
   }
 
   /**
@@ -473,7 +480,7 @@ class Terraform {
     return this
       .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), localBackend, this._var()));
   }
-  
+
 
   /**
    * https://www.terraform.io/docs/commands/show.html

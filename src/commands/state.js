@@ -41,9 +41,9 @@ class StateCommand extends TerraformCommand {
         return distributor
           .runActions(['prepare', 'init', 'workspaceSelect', 'stateDelete'], {
             stateDelete: it
-          }).then(() => 'Done');
+          });
       })
-    );
+    ).then(() => 'Done');
   }
 }
 

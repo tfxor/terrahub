@@ -465,7 +465,8 @@
         {
           "name": "config",
           "shortcut": "c",
-          "description": "Import resource"
+          "description": "Import resource",
+          "defaultValue": []
         },
         {
           "name": "provider",

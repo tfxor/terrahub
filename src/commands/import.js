@@ -29,39 +29,40 @@ class ImportCommand extends TerraformCommand {
     const config = this.getFilteredConfig();
 
     const distributor = new Distributor(config, this.runId);
-
-    if (!batch && configContentArr) {
+    if (!batch || configContentArr.length > 0) {
+      let linesMap = [];
       return Promise.all(
         configContentArr.map(it => {
           const resourceData = it.split('=');
-
-          return distributor
-            .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
-              resourceName: resourceData[0],
-              importId: resourceData[1],
-              providerId: providerContent
-            });
-        })
-      ).then(() => 'Done');
+          linesMap.push({
+            fullAddress: resourceData[0],
+            value: resourceData[1],
+            provider: providerContent
+          })
+          return linesMap;
+        }))
+        .then(lines => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(lines) }))
+        .then(() => 'Done');
     }
 
     const batchPath = resolve(config[Object.keys(config)[0]].project.root, batch);
     if (fse.existsSync(batchPath)) {
-      return fse.readFile(batchPath).then(content => {
-        const lines = content.toString().split('\n');
-        const promises = lines.map(line => {
-          console.log(line);
-          const elements = line.replace('\r','').split(',');
-          const providerAlias = providerContent || (elements.length == 4 ? elements[3] : '');
-          return distributor
-            .runActions(['prepare', 'init', 'workspaceSelect', 'import'], {
-              resourceName: elements[1],
-              importId: elements[2],
-              providerId: providerAlias
-            });
-        });
-        return Promise.all(promises).then(() => 'Done');
-      });
+      return fse.readFile(batchPath)
+        .then(content => content.toString().split('\n'))
+        .then(lines => {
+          let linesMap = [];
+          lines.forEach(line => {
+            const elements = line.replace('\r', '').split(',');
+            linesMap.push({
+              fullAddress: elements[1],
+              value: elements[2],
+              provider: providerContent || (elements.length == 4 ? elements[3] : '')
+            })
+          });
+          return linesMap;
+        })
+        .then(lines => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(lines) }))
+        .then(() => 'Done');
     }
   }
 }
