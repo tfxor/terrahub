@@ -376,7 +376,7 @@ class Terraform {
   }
 
   /**
-   * https://www.terraform.io/docs/commands/import.html
+   * https://www.terraform.io/docs/import/index.html
    * @return {Promise}
    */
   import() {
@@ -388,6 +388,36 @@ class Terraform {
     }
     return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
       values));
+  }
+
+  /**
+   * https://www.terraform.io/docs/state/index.html
+   * @return {Promise}
+   */
+  stateList() {
+    const args = ['list'];
+    return this.run('state', args);
+  }
+
+  /**
+   * https://www.terraform.io/docs/state/index.html
+   * @return {Promise}
+   */
+  stateDelete() {
+    const args = ['rm'];
+    const resourceAddress = process.env.stateDelete;
+
+    if (!resourceAddress.includes('*')) {
+      return this.run('state', args.concat([resourceAddress]));      
+    }
+    
+    return this.run('state', ['list']).then(buffer => {
+      const promises = [];
+      buffer.toString().split('\n')
+        .filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
+        .forEach(id => promises.push(new Promise(() => this.run('state', args.concat([id])))));
+      return Promise.all(promises);
+    });    
   }
 
   /**
