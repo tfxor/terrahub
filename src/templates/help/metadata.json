@@ -474,6 +474,12 @@
           "defaultValue": ""
         },
         {
+          "name": "batch",
+          "shortcut": "b",
+          "description": "Import batch",
+          "defaultValue": ""
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",

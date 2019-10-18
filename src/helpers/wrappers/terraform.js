@@ -386,6 +386,7 @@ class Terraform {
     if (process.env.providerId !== '') {
       args.push(`-provider=${process.env.providerId}`);
     }
+
     return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
       values));
   }
@@ -412,7 +413,7 @@ class Terraform {
     }
     
     return this.run('state', ['list']).then(buffer => {
-      const promises = [];
+      let promises = [];
       buffer.toString().split('\n')
         .filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
         .forEach(id => promises.push(new Promise(() => this.run('state', args.concat([id])))));
