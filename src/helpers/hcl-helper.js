@@ -748,7 +748,7 @@ class HclHelper {
     const componentBinPath = join(binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
-    const buff = new Buffer(dataStringify);
+    const buff = Buffer.from(dataStringify);
     const base64data = buff.toString('base64');
 
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)
