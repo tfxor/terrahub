@@ -27,6 +27,10 @@ class ImportCommand extends TerraformCommand {
     const providerContent = this.getOption('provider');
     const batch = this.getOption('batch');
     const include = this.getOption('include');
+    const exclude = this.getOption('exclude');
+    const includeRegex = this.getOption('include-regex');
+    const excludeRegex = this.getOption('exclude-regex');
+    
     const config = this.getFilteredConfig();
     const distributor = new Distributor(config, this.runId);
     if (!batch || configContentArr.length > 0) {
@@ -61,7 +65,13 @@ class ImportCommand extends TerraformCommand {
             } else {
               autoIndex.index++;
             }
-            if (include.includes(elements[0])) {
+            const filters = [
+              includeRegex.length ? includeRegex.some(regex => regex.test(elements[0])) : null,
+              include.length ? include.includes(elements[0]) : null,
+              excludeRegex.length ? !excludeRegex.some(regex => regex.test(elements[0])) : null,
+              exclude.length ? !exclude.includes(config[hash].name) : null
+            ].filter(Boolean);
+            if (filters[0]) {
               linesMap.push({
                 fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
                 value: elements[2],
