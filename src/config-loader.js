@@ -252,7 +252,9 @@ class ConfigLoader {
 
       this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
-      this._config[componentHash] = extend({ root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
+
+      this._config[componentHash] = extend({ root: componentPath },
+        [this._componentDefaults(), this._rootConfig, config]);
     });
 
     rootPaths[this._rootPath] = null;
@@ -296,6 +298,14 @@ class ConfigLoader {
 
       config.mapping.push('.');
       config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
+    }
+
+    if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
+      const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
+
+      console.log(dynamicRemoteStates);
+      // process.exit(0);
+
     }
 
     if (config.hasOwnProperty('env')) {

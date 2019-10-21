@@ -27,6 +27,7 @@ class TerraformCommand extends AbstractCommand {
   constructor(input, logger) {
     super(input, logger);
 
+    this._terraformRemoteStates = {};
     this._runId = Util.uuid();
 
     this.logger.updateContext({
@@ -190,10 +191,25 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
+    this._proccesRemoteStates(result);
     this._checkDependenciesExist(result);
     this._processDependencies(result);
 
+    // console.log('_terraformRemoteStates : ', this._terraformRemoteStates);
+    console.dir(result['9e757889bda0b2a21a6b8286592ac1bb'], { depth: 10 });
+    process.exit(0);
+
     return result;
+  }
+
+  _proccesRemoteStates(config) {
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+
+      if(node.hasOwnProperty('template') && node.template.hasOwnProperty('dynamic')) {
+        this._terraformRemoteStates[hash] = node.template.dynamic.data.terraform_remote_state;
+      }
+    });
   }
 
   /**
@@ -224,6 +240,11 @@ class TerraformCommand extends AbstractCommand {
    */
   processRemoteStateTemplate(config, dependentConfig, hash) {
     const { project, template, name } = dependentConfig;
+
+    if (!this._terraformRemoteStates[hash].find(it => it.component === name)) { return; }
+
+    console.log('Exist :)', name, hash);
+
     const configBackendExist = template.terraform && template.terraform.backend;
     const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
@@ -240,6 +261,9 @@ class TerraformCommand extends AbstractCommand {
         config: {}
       }
     };
+
+    console.log('backend found', backendType);
+
 
     switch (backendType) {
       case 'local':
