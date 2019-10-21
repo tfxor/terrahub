@@ -383,15 +383,18 @@ class Terraform {
     const options = { '-input': false };
     const args = ['-no-color'];
     const lines = JSON.parse(process.env.importLines);
+    const varFile = this._varFile();
 
     for (const line of lines) {
-      await this.run('import',
-        args.concat(
-          (line.provider !== '') ? `-provider=${line.provider}` : '',
-          this._varFile(),
-          this._var(),
-          this._optsToArgs(options),
-          [line.fullAddress, line.value]));
+      if (varFile[0].includes(line.component)) {
+        await this.run('import',
+          args.concat(
+            (line.provider !== '') ? `-provider=${line.provider}` : '',
+            this._varFile(),
+            this._var(),
+            this._optsToArgs(options),
+            [line.fullAddress, line.value]));
+      }
     }
 
     return Promise.resolve({});

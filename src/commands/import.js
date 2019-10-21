@@ -73,6 +73,7 @@ class ImportCommand extends TerraformCommand {
             ].filter(Boolean);
             if (filters[0]) {
               linesMap.push({
+                component: elements[0],
                 fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
                 value: elements[2],
                 provider: providerContent || (elements.length == 4 ? elements[3] : '')
