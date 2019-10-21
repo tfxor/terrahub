@@ -29,18 +29,18 @@ class HclHelper {
 
     return Promise.resolve().then(() => HclHelper._moduleSourceRefactoring(template))
       .then(() => {
-      // add "tfvars" if it is not described in config
-      const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(config);
-      if (localTfvarsLinks.length > 0) {
-        return HclHelper._addLocalTfvars(config, localTfvarsLinks);
-      }
-    }).then(() => {
-      // add "tfvars" if it is not described in config
-      const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(config);
-      if (remoteTfvarsLinks.length > 0) {
-        return HclHelper._addTfvars(config, remoteTfvarsLinks);
-      }
-    }).then(() => HclHelper._normalizeProvidersForResource(config))
+        // add "tfvars" if it is not described in config
+        const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(config);
+        if (localTfvarsLinks.length > 0) {
+          return HclHelper._addLocalTfvars(config, localTfvarsLinks);
+        }
+      }).then(() => {
+        // add "tfvars" if it is not described in config
+        const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(config);
+        if (remoteTfvarsLinks.length > 0) {
+          return HclHelper._addTfvars(config, remoteTfvarsLinks);
+        }
+      }).then(() => HclHelper._normalizeProvidersForResource(config))
       .then(() => HclHelper._normalizeProvidersForData(config))
       .then(() => HclHelper._normalizeTfvars(config))
       .then(() => HclHelper._createTerraformFiles(config))
@@ -54,7 +54,7 @@ class HclHelper {
       .then(() => config);
   }
 
-  
+
   /**
    * Transform template config
    * @param {Object} config
@@ -108,7 +108,7 @@ class HclHelper {
         }
       });
     }
-    
+
     const { terraform } = template;
 
     if (terraform) {
@@ -148,7 +148,7 @@ class HclHelper {
         }
       });
     }
-    
+
     const { terraform } = template;
     if (terraform) {
       const { backend } = terraform;
@@ -184,7 +184,7 @@ class HclHelper {
           const resourcesByType = resource[resourceType];
           return HclHelper._parsingResourceByType(resourcesByType, template);
         });
-      
+
       return Promise.all(promises);
     }
 
@@ -207,7 +207,7 @@ class HclHelper {
           const resourcesByType = data[resourceType];
           return HclHelper._parsingResourceByType(resourcesByType, template);
         });
-      
+
       return Promise.all(promises);
     }
 
@@ -225,31 +225,31 @@ class HclHelper {
     const promises = Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
       .map(resourceName => {
         const resourceByName = resourcesByType[resourceName];
-        if (! resourceByName.hasOwnProperty('provider')) {
+        if (!resourceByName.hasOwnProperty('provider')) {
           return Promise.resolve();
         }
 
         return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);
-    });
+      });
 
     return Promise.all(promises);
   }
 
-   /**
-   * 
-   * @param {Object} resourcesByType 
-   * @param {String} resourceName
-   * @param {Object} template 
-   * @return {Promise}
-   * @private
-   */
+  /**
+  * 
+  * @param {Object} resourcesByType 
+  * @param {String} resourceName
+  * @param {Object} template 
+  * @return {Promise}
+  * @private
+  */
   static _parsingResourceByName(resourcesByType, resourceName, template) {
     return Promise.resolve().then(() => {
       const resourceByName = resourcesByType[resourceName];
       const providerTerrahubVariables = HclHelper._extractTerrahubVariables(
         JSON.stringify(resourceByName['provider'])
       );
-      
+
       return providerTerrahubVariables;
     }).then(providerTerrahubVariables => {
 
@@ -260,7 +260,7 @@ class HclHelper {
       const { variableName } = HclHelper._extractTerrahubVariableName(
         providerTerrahubVariable
       );
-      const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');        
+      const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');
       const { tfvars } = template;
       if (!tfvars && !tfvars.hasOwnProperty(variableName)) {
         return Promise.resolve();
@@ -270,37 +270,37 @@ class HclHelper {
       if (!HclHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
         return Promise.resolve();
       }
-      
+
       return Promise.resolve().then(() => {
         tfvarValues.filter(elem => elem !== 'default').forEach(tfvarValue => {
           HclHelper._parsingParamInResource(
             template, tfvarValue, oldProviderTerrahubVariable,
             resourcesByType, resourceName).then(() => {
-            const { output } = template;
+              const { output } = template;
 
-            if (output) {
-              const promisesOutput = Object.keys(output).filter(outputName => output[outputName])
-              .filter(elem => output[elem].value.includes(resourceName))
-              .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
-              .map(outputName => {
-                  const outputByName = output[outputName];
-                  const regExOutput = /map\((.+?)\)/gm;
-                  const outputVariables = outputByName.value.match(regExOutput);
+              if (output) {
+                const promisesOutput = Object.keys(output).filter(outputName => output[outputName])
+                  .filter(elem => output[elem].value.includes(resourceName))
+                  .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
+                  .map(outputName => {
+                    const outputByName = output[outputName];
+                    const regExOutput = /map\((.+?)\)/gm;
+                    const outputVariables = outputByName.value.match(regExOutput);
 
-                  if (outputVariables) {
-                    outputVariables.map(outputVariable => {
-                      let outputMap = outputVariable.slice(4,-1).split(',');
-                      outputMap.push(outputMap[0].replace(oldProviderTerrahubVariable, tfvarValue));
-                      outputMap.push(outputMap[1].replace(`.${resourceName}.`, `.${resourceName}_${tfvarValue}.`));
-                      output[outputName].value = output[outputName].value.replace(outputVariable, `map(${outputMap.join(',')})`);
-                    });
-                  }
-                });
-              return Promise.all(promisesOutput);
-            }
+                    if (outputVariables) {
+                      outputVariables.map(outputVariable => {
+                        let outputMap = outputVariable.slice(4, -1).split(',');
+                        outputMap.push(outputMap[0].replace(oldProviderTerrahubVariable, tfvarValue));
+                        outputMap.push(outputMap[1].replace(`.${resourceName}.`, `.${resourceName}_${tfvarValue}.`));
+                        output[outputName].value = output[outputName].value.replace(outputVariable, `map(${outputMap.join(',')})`);
+                      });
+                    }
+                  });
+                return Promise.all(promisesOutput);
+              }
 
-            return Promise.resolve();
-          });
+              return Promise.resolve();
+            });
         });
       });
     });
@@ -319,59 +319,59 @@ class HclHelper {
     let resourceByNameCopy = Object.assign({}, resourceByName);
     const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
-      const paramByName = JSON.stringify(resourceByName[paramName]);
-      return Promise.resolve().then(() => {
-        const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
-        const localVariables = paramByName.match(regExLocal);
+        const paramByName = JSON.stringify(resourceByName[paramName]);
+        return Promise.resolve().then(() => {
+          const regExLocal = /local\.+[a-zA-Z0-9\-_]+(\}|\[|\.|\ |\)|\,)/gm;
+          const localVariables = paramByName.match(regExLocal);
 
-        if (localVariables) {
-          let unique = [...new Set(localVariables)];
-          const promises = unique.map(localVariable => {
-            const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
-            const { locals } = template;
-            locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
-            let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-            resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'g'), `local.${localVariableName}_${tfvarValue}`);
-            resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
-          });
+          if (localVariables) {
+            let unique = [...new Set(localVariables)];
+            const promises = unique.map(localVariable => {
+              const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
+              const { locals } = template;
+              locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
+              let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+              resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'g'), `local.${localVariableName}_${tfvarValue}`);
+              resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
+            });
 
-          return Promise.all(promises);
-        }
+            return Promise.all(promises);
+          }
 
-        return Promise.resolve();
-      }).then(() => {
-        const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
-        const dataVariables = paramByName.match(regExData);
+          return Promise.resolve();
+        }).then(() => {
+          const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
+          const dataVariables = paramByName.match(regExData);
 
-        if (dataVariables) {
-          let unique = [...new Set(dataVariables)];
-          const promises = unique.map(dataVariable => {
-            const dataPath = dataVariable.split('.');
-            let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-            resourceByNameStringify = resourceByNameStringify.replace(
-              dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
-            resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
-          });
-          
-          return Promise.all(promises);
-        }
+          if (dataVariables) {
+            let unique = [...new Set(dataVariables)];
+            const promises = unique.map(dataVariable => {
+              const dataPath = dataVariable.split('.');
+              let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
+              resourceByNameStringify = resourceByNameStringify.replace(
+                dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
+              resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
+            });
 
-        return Promise.resolve();
-      }).then(() => {
-        if (resourceByNameCopy.hasOwnProperty('provider')) {
-          resourceByNameCopy['provider'] = resourceByName['provider']
-            .replace(oldProviderTerrahubVariable, tfvarValue);
-        }
-        
-        let resourceByNameCopyStringify = JSON.stringify(resourceByNameCopy);
-        const searchValue = JSON.stringify(oldProviderTerrahubVariable);
-        resourceByNameCopyStringify = resourceByNameCopyStringify.replace(
-          searchValue.substring(1, searchValue.length - 1), tfvarValue
-        );
-        resourcesByType[`${resourceName}_${tfvarValue}`] = JSON.parse(resourceByNameCopyStringify);
-        return Promise.resolve();
+            return Promise.all(promises);
+          }
+
+          return Promise.resolve();
+        }).then(() => {
+          if (resourceByNameCopy.hasOwnProperty('provider')) {
+            resourceByNameCopy['provider'] = resourceByName['provider']
+              .replace(oldProviderTerrahubVariable, tfvarValue);
+          }
+
+          let resourceByNameCopyStringify = JSON.stringify(resourceByNameCopy);
+          const searchValue = JSON.stringify(oldProviderTerrahubVariable);
+          resourceByNameCopyStringify = resourceByNameCopyStringify.replace(
+            searchValue.substring(1, searchValue.length - 1), tfvarValue
+          );
+          resourcesByType[`${resourceName}_${tfvarValue}`] = JSON.parse(resourceByNameCopyStringify);
+          return Promise.resolve();
+        });
       });
-    });
 
     return Promise.all(promises);
   }
@@ -399,7 +399,7 @@ class HclHelper {
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
-      config['template'] = JSON.parse(templateStringify); 
+      config['template'] = JSON.parse(templateStringify);
 
       return Promise.resolve();
     });
@@ -456,12 +456,12 @@ class HclHelper {
 
     switch (HclHelper._checkTerrahubVariableType(tfvarValue)) {
       case "list":
-          if (variableNameNetArr.length == 2) {
-            const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
-            variableValue = tfvarValue[indexOfElement];
-          } else {
-            variableValue = tfvarValue.join('|');
-          }
+        if (variableNameNetArr.length == 2) {
+          const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
+          variableValue = tfvarValue[indexOfElement];
+        } else {
+          variableValue = tfvarValue.join('|');
+        }
         break;
       case 'string':
         variableValue = tfvarValue;
@@ -506,9 +506,9 @@ class HclHelper {
           module[it].source = resolve(template.locals.component.path, source);
         }
       });
-      
+
       return Promise.all(promises);
-    } 
+    }
 
     return Promise.resolve();
   }
@@ -530,7 +530,7 @@ class HclHelper {
       const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
         HclHelper.gsHelper.getObject(bucket, prefix).then(data => {
           return HclHelper._parsingTfvars(data.toString(), config);
-        }):
+        }) :
         HclHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
           return HclHelper._parsingTfvars(data.Body.toString(), config);
         });
@@ -555,7 +555,7 @@ class HclHelper {
         });
       }
     });
-    
+
     return Promise.all(promises);
   }
 
@@ -571,25 +571,25 @@ class HclHelper {
     let m;
     let newRemoteTfvars = remoteTfvars;
     while ((m = regex.exec(remoteTfvars)) !== null) {
-        if (m.index === regex.lastIndex) { regex.lastIndex++; }
-        m.forEach((match) => {
-            let newValue = match.replace(/\<\<EOT/g, "").replace(/EOT/g, "").replace(/\n/g, "");
-            newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
-            newRemoteTfvars = newRemoteTfvars.replace(match, JSON.stringify(newValue));
-        });
+      if (m.index === regex.lastIndex) { regex.lastIndex++; }
+      m.forEach((match) => {
+        let newValue = match.replace(/\<\<EOT/g, "").replace(/EOT/g, "").replace(/\n/g, "");
+        newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
+        newRemoteTfvars = newRemoteTfvars.replace(match, JSON.stringify(newValue));
+      });
     }
 
     const { template } = config;
     const regexQuotes = /\".+?\"\s*\=/g;
     let mapOfKeys = new Map();
     while ((m = regexQuotes.exec(newRemoteTfvars)) !== null) {
-        if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
-        m.forEach((match) => {
-          const timestamp = 'QuoteKey' + Number(new Date()); 
-          const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
-          mapOfKeys.set(timestamp, newValue);
-          newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
-        });
+      if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
+      m.forEach((match) => {
+        const timestamp = 'QuoteKey' + Number(new Date());
+        const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
+        mapOfKeys.set(timestamp, newValue);
+        newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
+      });
     }
 
     let strWithoutQuote = JSON.stringify(hcltojson(newRemoteTfvars));
@@ -600,9 +600,9 @@ class HclHelper {
     const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-    JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
 
-    return Promise.resolve();  
+    return Promise.resolve();
   }
 
   /**
@@ -663,16 +663,16 @@ class HclHelper {
    * @private
    */
   static _generateVariable(config) {
-    const variable = config.template.variable || {};    
+    const variable = config.template.variable || {};
     const tmpPath = HclHelper.buildTmpPath(config);
     const { tfvars } = config.template;
-    Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {      
+    Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {
       let type = 'string';
       if (Array.isArray(tfvars[it])) {
         type = 'list';
       } else if (typeof tfvars[it] === 'object' && HclHelper.checkTfVersion(config)) {
         for (let index = 0; index < objectDepth(tfvars[it]); index++) {
-          type = `map(${type})`;          
+          type = `map(${type})`;
         }
       } else if (typeof tfvars[it] === 'object') {
         type = 'map';
@@ -693,7 +693,7 @@ class HclHelper {
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !src.match(regEx));
         const promises = nonTerrahubFiles.map(file =>
-          fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {})
+          fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => { })
         );
 
         return Promise.all(promises);
@@ -760,7 +760,7 @@ class HclHelper {
    * @param {Object} config
    * @return {Boolean}
    */
-  static checkTfVersion(config) {    
+  static checkTfVersion(config) {
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;

@@ -379,22 +379,23 @@ class Terraform {
    * https://www.terraform.io/docs/import/index.html
    * @return {Promise}
    */
-  import() {
+  async import() {
     const options = { '-input': false };
     const args = ['-no-color'];
     const linesSource = JSON.parse(process.env.importLines);
     const lines = (linesSource.length == 1) ? linesSource[0] : linesSource;
 
-    return Promise.all(
-      lines.map(line => this.run('import',
+    for (const line of lines) {
+      await this.run('import',
         args.concat(
           (line.provider !== '') ? `-provider=${line.provider}` : '',
           this._varFile(),
           this._var(),
           this._optsToArgs(options),
-          [line.fullAddress, line.value]))
-      )
-    );
+          [line.fullAddress, line.value]));
+    }
+
+    return Promise.resolve({});
   }
 
   /**

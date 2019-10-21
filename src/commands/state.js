@@ -13,7 +13,7 @@ class StateCommand extends TerraformCommand {
       .setDescription('run `terraform state` across multiple terrahub components')
       .addOption('list', 'L', 'List resource(s) from terraform state', Boolean, false)
       .addOption('delete', 'D', 'Delete resource(s) from terraform state', Array, [])
-    ;
+      ;
   }
 
   /**
@@ -31,9 +31,9 @@ class StateCommand extends TerraformCommand {
 
     if (this._delete.length == 0 && this._list) {
       return distributor
-      .runActions(['prepare', 'init', 'workspaceSelect', 'stateList'], {
-        stateList: this._list
-      }).then(() => Promise.resolve('Done'));
+        .runActions(['prepare', 'init', 'workspaceSelect', 'stateList'], {
+          stateList: this._list
+        }).then(() => Promise.resolve('Done'));
     }
 
     return Promise.all(

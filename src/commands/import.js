@@ -26,6 +26,7 @@ class ImportCommand extends TerraformCommand {
     const configContentArr = this.getOption('config');
     const providerContent = this.getOption('provider');
     const batch = this.getOption('batch');
+    const include = this.getOption('include');
     const config = this.getFilteredConfig();
 
     const distributor = new Distributor(config, this.runId);
@@ -41,23 +42,35 @@ class ImportCommand extends TerraformCommand {
           })
           return linesMap;
         }))
-        .then(lines => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(lines) }))
+        .then(lines => Promise.all(lines.map(line => distributor.runActions(
+          ['prepare', 'init', 'workspaceSelect', 'import'],
+          { importLine: JSON.stringify(line) }))))
         .then(() => 'Done');
     }
 
     const batchPath = resolve(config[Object.keys(config)[0]].project.root, batch);
     if (fse.existsSync(batchPath)) {
       return fse.readFile(batchPath)
-        .then(content => content.toString().split('\n'))
-        .then(lines => {
+        .then(content => {
+          const lines = content.toString().split('\n')
           let linesMap = [];
+          let autoIndex = { name: '', index: 0 };
           lines.forEach(line => {
             const elements = line.replace('\r', '').split(',');
-            linesMap.push({
-              fullAddress: elements[1],
-              value: elements[2],
-              provider: providerContent || (elements.length == 4 ? elements[3] : '')
-            })
+            const elementsCount = (content.toString().match(new RegExp(elements[1], "g")) || []).length;
+            if (autoIndex.name != elements[1]) {
+              autoIndex.name = elements[1];
+              autoIndex.index = 0;
+            } else {
+              autoIndex.index++;
+            }
+            if (include.includes(elements[0])) {
+              linesMap.push({
+                fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
+                value: elements[2],
+                provider: providerContent || (elements.length == 4 ? elements[3] : '')
+              });
+            }
           });
           return linesMap;
         })
