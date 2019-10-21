@@ -382,8 +382,7 @@ class Terraform {
   async import() {
     const options = { '-input': false };
     const args = ['-no-color'];
-    const linesSource = JSON.parse(process.env.importLines);
-    const lines = (linesSource.length == 1) ? linesSource[0] : linesSource;
+    const lines = JSON.parse(process.env.importLines);
 
     for (const line of lines) {
       await this.run('import',

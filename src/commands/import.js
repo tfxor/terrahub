@@ -32,19 +32,17 @@ class ImportCommand extends TerraformCommand {
     const distributor = new Distributor(config, this.runId);
     if (!batch || configContentArr.length > 0) {
       let linesMap = [];
-      return Promise.all(
-        configContentArr.map(it => {
-          const resourceData = it.split('=');
-          linesMap.push({
-            fullAddress: resourceData[0],
-            value: resourceData[1],
-            provider: providerContent
-          })
-          return linesMap;
-        }))
-        .then(lines => Promise.all(lines.map(line => distributor.runActions(
-          ['prepare', 'init', 'workspaceSelect', 'import'],
-          { importLine: JSON.stringify(line) }))))
+      configContentArr.map(it => {
+        const resourceData = it.split('=');
+        linesMap.push({
+          fullAddress: resourceData[0],
+          value: resourceData[1],
+          provider: providerContent
+        });
+      });
+      return distributor.runActions(
+        ['prepare', 'init', 'workspaceSelect', 'import'],
+        { importLines: JSON.stringify(linesMap) })
         .then(() => 'Done');
     }
 
