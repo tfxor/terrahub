@@ -69,9 +69,8 @@ class ImportCommand extends TerraformCommand {
               });
             }
           });
-          return linesMap;
+          return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(linesMap) });
         })
-        .then(lines => distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(lines) }))
         .then(() => 'Done');
     }
   }
