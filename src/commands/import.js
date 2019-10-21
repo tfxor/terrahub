@@ -28,7 +28,6 @@ class ImportCommand extends TerraformCommand {
     const batch = this.getOption('batch');
     const include = this.getOption('include');
     const config = this.getFilteredConfig();
-
     const distributor = new Distributor(config, this.runId);
     if (!batch || configContentArr.length > 0) {
       let linesMap = [];
