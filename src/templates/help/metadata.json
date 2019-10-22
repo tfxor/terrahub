@@ -481,6 +481,12 @@
           "defaultValue": ""
         },
         {
+          "name": "overwrite",
+          "shortcut": "O",
+          "description": "Overwrite existing elements in tfstate",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",

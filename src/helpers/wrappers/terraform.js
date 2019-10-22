@@ -384,9 +384,22 @@ class Terraform {
     const args = ['-no-color'];
     const lines = JSON.parse(process.env.importLines);
     const varFile = this._varFile();
+    let existedResouces = [];
+
+    await this.run('state', ['list'])
+      .then(buffer => buffer.toString().split('\n').filter(x => x))
+      .then(elements => { existedResouces = elements; });
 
     for (const line of lines) {
-      if (varFile[0].includes(line.component)) {
+      let startImport = (existedResouces.length == 0) ? true : false;
+      if (existedResouces.includes(line.fullAddress) && line.overwrite) {
+        await this.run('state', ['list', 'rm', line.fullAddress]);
+        startImport = true;
+      } else if (!existedResouces.includes(line.fullAddress)) {
+        startImport = true;
+      }
+
+      if ((varFile[0].split('/').includes(`${line.component}_${line.hash}`) || line.component === '') && startImport) {
         await this.run('import',
           args.concat(
             (line.provider !== '') ? `-provider=${line.provider}` : '',

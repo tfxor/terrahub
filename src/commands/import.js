@@ -16,6 +16,7 @@ class ImportCommand extends TerraformCommand {
       .addOption('config', 'c', 'Import resource', Array, [])
       .addOption('provider', 'j', 'Import provider', String, '')
       .addOption('batch', 'b', 'Import batch', String, '')
+      .addOption('overwrite', 'O', 'Overwrite existing elements in tfstate', Boolean, false)
       ;
   }
 
@@ -28,9 +29,10 @@ class ImportCommand extends TerraformCommand {
     const batch = this.getOption('batch');
     const include = this.getOption('include');
     const exclude = this.getOption('exclude');
+    const overwrite = this.getOption('overwrite');
     const includeRegex = this.getOption('include-regex');
     const excludeRegex = this.getOption('exclude-regex');
-    
+
     const config = this.getFilteredConfig();
     const distributor = new Distributor(config, this.runId);
     if (!batch || configContentArr.length > 0) {
@@ -38,9 +40,12 @@ class ImportCommand extends TerraformCommand {
       configContentArr.map(it => {
         const resourceData = it.split('=');
         linesMap.push({
+          component: '',
           fullAddress: resourceData[0],
           value: resourceData[1],
-          provider: providerContent
+          provider: providerContent,
+          overwrite: overwrite,
+          hash: config[Object.keys(config)[0]].project.code
         });
       });
       return distributor.runActions(
@@ -69,14 +74,16 @@ class ImportCommand extends TerraformCommand {
               includeRegex.length ? includeRegex.some(regex => regex.test(elements[0])) : null,
               include.length ? include.includes(elements[0]) : null,
               excludeRegex.length ? !excludeRegex.some(regex => regex.test(elements[0])) : null,
-              exclude.length ? !exclude.includes(config[hash].name) : null
+              exclude.length ? !exclude.includes(elements[0]) : null
             ].filter(Boolean);
             if (filters[0]) {
               linesMap.push({
                 component: elements[0],
                 fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
                 value: elements[2],
-                provider: providerContent || (elements.length == 4 ? elements[3] : '')
+                provider: providerContent || (elements.length == 4 ? elements[3] : ''),
+                overwrite: overwrite,
+                hash: config[Object.keys(config)[0]].project.code
               });
             }
           });
