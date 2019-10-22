@@ -388,10 +388,12 @@ class Terraform {
 
     await this.run('state', ['list'])
       .then(buffer => buffer.toString().split('\n').filter(x => x))
-      .then(elements => { existedResouces = elements; });
+      .then(elements => { existedResouces = elements; })
+      .catch(() => { });
 
     for (const line of lines) {
       let startImport = (existedResouces.length == 0) ? true : false;
+
       if (existedResouces.includes(line.fullAddress) && line.overwrite) {
         await this.run('state', ['list', 'rm', line.fullAddress]);
         startImport = true;
