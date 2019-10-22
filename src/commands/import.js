@@ -45,7 +45,7 @@ class ImportCommand extends TerraformCommand {
           value: resourceData[1],
           provider: (providerContent !== '') ? `-provider=${providerContent}` : '',
           overwrite: overwrite,
-          hash: config[Object.keys(config)[0]].project.code
+          hash: Object.values(config)[0].project.code
         });
       });
       return distributor.runActions(
@@ -54,7 +54,7 @@ class ImportCommand extends TerraformCommand {
         .then(() => 'Done');
     }
 
-    const batchPath = resolve(config[Object.keys(config)[0]].project.root, batch);
+    const batchPath = resolve(Object.values(config)[0].project.root, batch);
     if (fse.existsSync(batchPath)) {
       return fse.readFile(batchPath)
         .then(content => {
