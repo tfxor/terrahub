@@ -427,15 +427,6 @@ class Terraform {
    * https://www.terraform.io/docs/state/index.html
    * @return {Promise}
    */
-  stateList() {
-    const args = ['list'];
-    return this.run('state', args);
-  }
-
-  /**
-   * https://www.terraform.io/docs/state/index.html
-   * @return {Promise}
-   */
   stateDelete() {
     const args = ['rm'];
     const resourceAddress = process.env.stateDelete;
