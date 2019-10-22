@@ -169,8 +169,8 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {Object} config 
+   *
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
@@ -192,8 +192,8 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {Object} config 
+   *
+   * @param {Object} config
    * @return {Promise}
    * @private
    */
@@ -215,9 +215,9 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {Object} resourcesByType 
-   * @param {Object} template 
+   *
+   * @param {Object} resourcesByType
+   * @param {Object} template
    * @return {Promise}
    * @private
    */
@@ -236,10 +236,10 @@ class HclHelper {
   }
 
   /**
-  * 
-  * @param {Object} resourcesByType 
+  *
+  * @param {Object} resourcesByType
   * @param {String} resourceName
-  * @param {Object} template 
+  * @param {Object} template
   * @return {Promise}
   * @private
   */
@@ -307,12 +307,12 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {*} template 
-   * @param {*} tfvarValue 
-   * @param {*} oldProviderTerrahubVariable 
-   * @param {*} resourcesByType 
-   * @param {*} resourceName 
+   *
+   * @param {*} template
+   * @param {*} tfvarValue
+   * @param {*} oldProviderTerrahubVariable
+   * @param {*} resourcesByType
+   * @param {*} resourceName
    */
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
@@ -405,8 +405,8 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {String} terrahubVariable  
+   *
+   * @param {String} terrahubVariable
    * @return {String, Array}
    * @private
    */
@@ -419,8 +419,8 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {Object} terrahubVariable 
+   *
+   * @param {Object} terrahubVariable
    * @return {Array}
    * @private
    */
@@ -432,8 +432,8 @@ class HclHelper {
   }
 
   /**
-   * 
-   * @param {String} templateStringify 
+   *
+   * @param {String} templateStringify
    * @return {Array}
    * @private
    */
@@ -475,10 +475,10 @@ class HclHelper {
   }
 
   /**
-   * 
+   *
    * @param {Object} tfvarValue
    * @return {String}
-   * @private 
+   * @private
    */
   static _checkTerrahubVariableType(tfvarValue) {
     let type = 'string';
@@ -559,7 +559,7 @@ class HclHelper {
   }
 
   /**
-   * 
+   *
    * @param {String} remoteTfvars
    * @param {Object} config
    * @return {Promise}
