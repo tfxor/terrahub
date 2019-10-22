@@ -386,8 +386,7 @@ class Terraform {
     const varFile = this._varFile();
     let existedResouces = [];
 
-    await this.run('state', ['list'])
-      .then(buffer => buffer.toString().split('\n').filter(x => x))
+    await this.resourceList()
       .then(elements => { existedResouces = elements; })
       .catch(() => { });
 
@@ -419,6 +418,15 @@ class Terraform {
    * https://www.terraform.io/docs/state/index.html
    * @return {Promise}
    */
+  async resourceList() {
+    const buffer = await this.run('state', ['list']);
+    return buffer.toString().split('\n').filter(x => x);
+  }
+
+  /**
+   * https://www.terraform.io/docs/state/index.html
+   * @return {Promise}
+   */
   stateList() {
     const args = ['list'];
     return this.run('state', args);
@@ -436,7 +444,7 @@ class Terraform {
       return this.run('state', args.concat([resourceAddress]));
     }
 
-    return this.run('state', ['list']).then(buffer => buffer.toString().split('\n').filter(x => x))
+    return this.resourceList()
       .then(elements => (elements.length > 0)
         ? elements.filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
         : []
