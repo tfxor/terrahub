@@ -465,13 +465,26 @@
         {
           "name": "config",
           "shortcut": "c",
-          "description": "Import resource"
+          "description": "Import resource",
+          "defaultValue": []
         },
         {
           "name": "provider",
           "shortcut": "j",
           "description": "Import provider",
           "defaultValue": ""
+        },
+        {
+          "name": "batch",
+          "shortcut": "b",
+          "description": "Import batch",
+          "defaultValue": ""
+        },
+        {
+          "name": "overwrite",
+          "shortcut": "O",
+          "description": "Overwrite existing elements in tfstate",
+          "defaultValue": false
         },
         {
           "name": "include",
