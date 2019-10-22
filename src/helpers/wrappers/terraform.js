@@ -402,7 +402,7 @@ class Terraform {
       if (isCorrectComponent && (startImport || !existedResouces.includes(line.fullAddress))) {
         await this.run('import',
           args.concat(
-            (line.provider !== '') ? `-provider=${line.provider}` : '',
+            line.provider,
             this._varFile(),
             this._var(),
             this._optsToArgs(options),

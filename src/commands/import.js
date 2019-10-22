@@ -43,7 +43,7 @@ class ImportCommand extends TerraformCommand {
           component: '',
           fullAddress: resourceData[0],
           value: resourceData[1],
-          provider: providerContent,
+          provider: (providerContent !== '') ? `-provider=${providerContent}` : '',
           overwrite: overwrite,
           hash: config[Object.keys(config)[0]].project.code
         });
@@ -81,7 +81,7 @@ class ImportCommand extends TerraformCommand {
                 component: elements[0],
                 fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
                 value: elements[2],
-                provider: providerContent || (elements.length == 4 ? elements[3] : ''),
+                provider: providerContent || (elements.length == 4 ? `-provider=${elements[3]}` : ''),
                 overwrite: overwrite,
                 hash: config[Object.keys(config)[0]].project.code
               });
