@@ -268,6 +268,12 @@ class TerraformCommand extends AbstractCommand {
     }
   }
 
+  /**
+   * @param {String} hash
+   * @param {Object} dependentConfig
+   * @return {String | undefined}
+   * @private
+   */
   _retrieveRemoteStateNames(hash, dependentConfig) {
     const { name } = dependentConfig;
     const varsExists = new RegExp('\\${(.*?)}', 'gm');
@@ -310,11 +316,7 @@ class TerraformCommand extends AbstractCommand {
     const backend = configBackendExist ? template.terraform.backend : null;
     const backendType = backend ? Object.keys(backend)[0] : 'local';
 
-    if (!config[hash].template.data) {
-      config[hash].template.data = { 'terraform_remote_state': {}};
-    } else if(!config[hash].template.data['terraform_remote_state']) {
-      config[hash].template.data['terraform_remote_state'] = {};
-    }
+    this._createTerraformRemoteStateObject(config);
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
     const defaultRemoteConfig = {
@@ -323,22 +325,37 @@ class TerraformCommand extends AbstractCommand {
       }
     };
 
-    if (backendType === 'local') {
-      if (backend) {
-        Object.keys(backend.local).forEach(it => {
-          defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
-            ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
-            : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
-        });
-      } else {
-        defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
-      }
-    } else if (backendType === 's3') {
-      Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+    switch (backendType) {
+      case 'local':
+        if (backend) {
+          Object.keys(backend.local).forEach(it => {
+            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
+              ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
+              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+          });
+        } else {
+          defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
+        }
+        break;
+      case 's3':
+        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+        break;
     }
 
     defaultRemoteConfig[remoteStateName].backend = backendType;
     Object.assign(config[hash].template.data['terraform_remote_state'], defaultRemoteConfig);
+  }
+
+  /**
+   * @param {Object} config
+   * @private
+   */
+  _createTerraformRemoteStateObject(config) {
+    if (!config[hash].template.data) {
+      config[hash].template.data = { 'terraform_remote_state': {}};
+    } else if(!config[hash].template.data['terraform_remote_state']) {
+      config[hash].template.data['terraform_remote_state'] = {};
+    }
   }
 
   /**

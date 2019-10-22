@@ -281,24 +281,30 @@ class ConfigLoader {
 
   /**
    * @param {Object} config
-   * @return {String[]}
+   * @throws {Error}
    * @private
    */
   _validateDynamicData(config) {
-    const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
-    const regexExists = new RegExp(`[*]`, 'm');
-    let names = dynamicRemoteStates.map(it => it.component);
-    names.map((it, i) => {
-      if (regexExists.test(it)) {
-        const test = it.replace('*', '');
-        const regex = new RegExp(test, 'm');
-        names.splice(i, 1);
+    if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
+      const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
+      const regexExists = new RegExp(`[*]`, 'm');
+      let names = dynamicRemoteStates.map(it => it.component);
+      names.map((it, i) => {
+        if (regexExists.test(it)) {
+          const test = it.replace('*', '');
+          const regex = new RegExp(test, 'm');
+          names.splice(i, 1);
 
-        names = [...config.dependsOn.filter(it => regex.test(it) && !names.includes(it)), ...names];
+          names = [...config.dependsOn.filter(it => regex.test(it) && !names.includes(it)), ...names];
+        }
+      });
+
+      const errors = names.filter(it => !config.dependsOn.includes(it));
+      if (errors.length) {
+        throw new Error(`Component${errors.length > 1 ? '\'s' : ''} '${errors.join(`', '`)}' from ` +
+          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`);
       }
-    });
-
-    return names.filter(it => !config.dependsOn.includes(it));
+    }
   }
 
   /**
@@ -322,14 +328,7 @@ class ConfigLoader {
       config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
     }
 
-    if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
-      const errors = this._validateDynamicData(config);
-
-      if (errors.length) {
-        throw new Error(`Component${errors.length > 1 ? '\'s' : ''} '${errors.join(`', '`)}' from ` +
-          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`);
-      }
-    }
+    this._validateDynamicData(config);
 
     if (config.hasOwnProperty('env')) {
       ['hook', 'build'].filter(key => !!config[key]).forEach(key => {
