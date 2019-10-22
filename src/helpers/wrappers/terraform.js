@@ -383,7 +383,7 @@ class Terraform {
     const options = { '-input': false };
     const args = ['-no-color'];
     const lines = JSON.parse(process.env.importLines);
-    const varFile = this._varFile();
+    const varFile = this._varFile()[0].split('/');
     let existedResouces = [];
 
     await this.resourceList()
@@ -398,9 +398,9 @@ class Terraform {
         startImport = true;
       }
 
-      const isCorrectComponent = varFile[0].split('/').includes(`${line.component}_${line.hash}`) || line.component === '';
+      const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`);
 
-      if (isCorrectComponent && startImport) {
+      if ((isCorrectComponent || line.component === '') && startImport) {
         await this.run('import',
           args.concat(
             (line.provider !== '') ? `-provider=${line.provider}` : '',
