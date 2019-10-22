@@ -379,24 +379,48 @@ class Terraform {
    * https://www.terraform.io/docs/import/index.html
    * @return {Promise}
    */
-  import() {
+  async import() {
     const options = { '-input': false };
     const args = ['-no-color'];
-    const values = [process.env.resourceName, process.env.importId];
-    if (process.env.providerId !== '') {
-      args.push(`-provider=${process.env.providerId}`);
+    const lines = JSON.parse(process.env.importLines);
+    const varFile = this._varFile()[0].split('/');
+    let existedResouces = [];
+
+    await this.resourceList()
+      .then(elements => { existedResouces = elements; })
+      .catch(() => { });
+    let startImport = existedResouces.length == 0;
+
+    for (const line of lines) {
+      if (existedResouces.includes(line.fullAddress) && line.overwrite) {
+        await this.run('state', ['rm', line.fullAddress]);
+        startImport = true;
+      }
+
+      const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`) || line.component === '';
+
+      if (isCorrectComponent && (startImport || !existedResouces.includes(line.fullAddress))) {
+        await this.run('import',
+          args.concat(
+            line.provider,
+            this._varFile(),
+            this._var(),
+            this._optsToArgs(options),
+            [line.fullAddress, line.value])
+        );
+      }
     }
-    return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
-      values));
+
+    return Promise.resolve({});
   }
 
   /**
    * https://www.terraform.io/docs/state/index.html
    * @return {Promise}
    */
-  stateList() {
-    const args = ['list'];
-    return this.run('state', args);
+  async resourceList() {
+    const buffer = await this.run('state', ['list']);
+    return buffer.toString().split('\n').filter(x => x);
   }
 
   /**
@@ -408,16 +432,17 @@ class Terraform {
     const resourceAddress = process.env.stateDelete;
 
     if (!resourceAddress.includes('*')) {
-      return this.run('state', args.concat([resourceAddress]));      
+      return this.run('state', args.concat([resourceAddress]));
     }
-    
-    return this.run('state', ['list']).then(buffer => {
-      const promises = [];
-      buffer.toString().split('\n')
-        .filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
-        .forEach(id => promises.push(new Promise(() => this.run('state', args.concat([id])))));
-      return Promise.all(promises);
-    });    
+
+    return this.resourceList()
+      .then(elements => (elements.length > 0)
+        ? elements.filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
+        : []
+      ).then(elements => (elements.length > 0)
+        ? Promise.all(elements.map(element => this.run('state', args.concat([element]))))
+        : Promise.resolve({})
+      );
   }
 
   /**
@@ -472,7 +497,7 @@ class Terraform {
     return this
       .run('refresh', ['-no-color'].concat(this._optsToArgs(options), this._varFile(), localBackend, this._var()));
   }
-  
+
 
   /**
    * https://www.terraform.io/docs/commands/show.html
