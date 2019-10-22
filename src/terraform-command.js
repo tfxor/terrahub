@@ -196,6 +196,8 @@ class TerraformCommand extends AbstractCommand {
     this._checkDependenciesExist(result);
     this._processDependencies(result);
 
+    process.exit();
+
     return result;
   }
 
@@ -321,21 +323,18 @@ class TerraformCommand extends AbstractCommand {
       }
     };
 
-    switch (backendType) {
-      case 'local':
-        if (backend) {
-          Object.keys(backend.local).forEach(it => {
-            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
-              ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
-              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
-          });
-        } else {
-          defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
-        }
-        break;
-      case 's3':
-        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
-        break;
+    if (backendType === 'local') {
+      if (backend) {
+        Object.keys(backend.local).forEach(it => {
+          defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
+            ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
+            : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+        });
+      } else {
+        defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
+      }
+    } else if (backendType === 's3') {
+      Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
     }
 
     defaultRemoteConfig[remoteStateName].backend = backendType;
