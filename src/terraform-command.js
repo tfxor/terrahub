@@ -305,7 +305,7 @@ class TerraformCommand extends AbstractCommand {
   processRemoteStateTemplate(config, dependentConfig, hash) {
     const { project, template, name } = dependentConfig;
 
-    if (!this._terraformRemoteStates[hash].find(it => it.component === name)) { return; }
+    if (!this._terraformRemoteStates[hash] || !this._terraformRemoteStates[hash].find(it => it.component === name)) { return; }
 
     const configBackendExist = template.terraform && template.terraform.backend;
     const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
