@@ -232,7 +232,7 @@ class HclHelper {
         return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);
       });
 
-    return Promise.all(promises);
+    return Promise.all(promises).then(() => { });
   }
 
   /**
@@ -340,9 +340,8 @@ class HclHelper {
 
           return Promise.resolve();
         }).then(() => {
-          const regExData = /data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/gm;
+          const regExData = new RegExp(/data\.+[a-zA-Z0-9\-_]+\.+[a-zA-Z0-9\-_]+(\.)/, 'gm');
           const dataVariables = paramByName.match(regExData);
-
           if (dataVariables) {
             let unique = [...new Set(dataVariables)];
             const promises = unique.map(dataVariable => {
