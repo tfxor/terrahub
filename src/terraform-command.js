@@ -192,16 +192,14 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
-    this._proccesRemoteStates(result);
+    this._processRemoteStates(result);
     this._checkDependenciesExist(result);
     this._processDependencies(result);
-
-    process.exit();
 
     return result;
   }
 
-  _proccesRemoteStates(config) {
+  _processRemoteStates(config) {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
 
@@ -297,6 +295,16 @@ class TerraformCommand extends AbstractCommand {
   }
 
   /**
+   * @param {String} hash
+   * @param {String} name
+   * @return {Boolean}
+   * @private
+   */
+ _remoteStateExist(hash, name) {
+    return this._terraformRemoteStates[hash] && this._terraformRemoteStates[hash].find(it => it.component === name)
+ }
+
+  /**
    * Defines terraform_remote_state from dependencies
    * @param {Object} config
    * @param {Object} dependentConfig
@@ -305,7 +313,7 @@ class TerraformCommand extends AbstractCommand {
   processRemoteStateTemplate(config, dependentConfig, hash) {
     const { project, template, name } = dependentConfig;
 
-    if (!this._terraformRemoteStates[hash] || !this._terraformRemoteStates[hash].find(it => it.component === name)) { return; }
+    if (!this._remoteStateExist(hash, name)) { return; }
 
     const configBackendExist = template.terraform && template.terraform.backend;
     const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
@@ -316,7 +324,7 @@ class TerraformCommand extends AbstractCommand {
     const backend = configBackendExist ? template.terraform.backend : null;
     const backendType = backend ? Object.keys(backend)[0] : 'local';
 
-    this._createTerraformRemoteStateObject(config);
+    this._createTerraformRemoteStateObject(config, hash);
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
     const defaultRemoteConfig = {
@@ -350,7 +358,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object} config
    * @private
    */
-  _createTerraformRemoteStateObject(config) {
+  _createTerraformRemoteStateObject(config, hash) {
     if (!config[hash].template.data) {
       config[hash].template.data = { 'terraform_remote_state': {}};
     } else if(!config[hash].template.data['terraform_remote_state']) {
