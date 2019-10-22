@@ -389,18 +389,17 @@ class Terraform {
     await this.resourceList()
       .then(elements => { existedResouces = elements; })
       .catch(() => { });
+    let startImport = existedResouces.length == 0;
 
     for (const line of lines) {
-      let startImport = existedResouces.length == 0 || !existedResouces.includes(line.fullAddress);
-
       if (existedResouces.includes(line.fullAddress) && line.overwrite) {
         await this.run('state', ['rm', line.fullAddress]);
         startImport = true;
       }
 
-      const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`);
+      const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`) || line.component === '';
 
-      if ((isCorrectComponent || line.component === '') && startImport) {
+      if (isCorrectComponent && (startImport || !existedResouces.includes(line.fullAddress))) {
         await this.run('import',
           args.concat(
             (line.provider !== '') ? `-provider=${line.provider}` : '',
