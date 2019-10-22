@@ -398,9 +398,9 @@ class Terraform {
         startImport = true;
       }
 
-      const isCorrectComponent = varFile[0].split('/').includes(`${line.component}_${line.hash}`);
+      const isCorrectComponent = varFile[0].split('/').includes(`${line.component}_${line.hash}`) || line.component === '';
 
-      if ((isCorrectComponent || line.component === '') && startImport) {
+      if (isCorrectComponent && startImport) {
         await this.run('import',
           args.concat(
             (line.provider !== '') ? `-provider=${line.provider}` : '',
