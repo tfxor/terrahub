@@ -392,12 +392,12 @@ class Terraform {
       .catch(() => { });
 
     for (const line of lines) {
-      let startImport = (existedResouces.length == 0) ? true : false;
+      let startImport = (existedResouces.length == 0 || !existedResouces.includes(line.fullAddress))
+        ? true
+        : false;
 
       if (existedResouces.includes(line.fullAddress) && line.overwrite) {
         await this.run('state', ['list', 'rm', line.fullAddress]);
-        startImport = true;
-      } else if (!existedResouces.includes(line.fullAddress)) {
         startImport = true;
       }
 
