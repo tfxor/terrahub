@@ -31,7 +31,7 @@ class StateCommand extends TerraformCommand {
 
     if (this._delete.length == 0 && this._list) {
       return distributor
-        .runActions(['prepare', 'init', 'workspaceSelect', 'stateList'], {
+        .runActions(['prepare', 'init', 'workspaceSelect', 'resourceList'], {
           stateList: this._list
         }).then(() => Promise.resolve('Done'));
     }
