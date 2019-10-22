@@ -398,14 +398,17 @@ class Terraform {
         startImport = true;
       }
 
-      if ((varFile[0].split('/').includes(`${line.component}_${line.hash}`) || line.component === '') && startImport) {
+      const isCorrectComponent = varFile[0].split('/').includes(`${line.component}_${line.hash}`);
+
+      if ((isCorrectComponent || line.component === '') && startImport) {
         await this.run('import',
           args.concat(
             (line.provider !== '') ? `-provider=${line.provider}` : '',
             this._varFile(),
             this._var(),
             this._optsToArgs(options),
-            [line.fullAddress, line.value]));
+            [line.fullAddress, line.value])
+        );
       }
     }
 
