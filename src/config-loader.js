@@ -302,10 +302,23 @@ class ConfigLoader {
 
     if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
       const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
+      const regexExists = new RegExp(`[*]`, 'm');
+      let names = dynamicRemoteStates.map(it => it.component);
+      names.map((it, i) => {
+        if (regexExists.test(it)) {
+          const test = it.replace('*', '');
+          const regex = new RegExp(test, 'm');
+          names.splice(i, 1);
 
-      console.log(dynamicRemoteStates);
-      // process.exit(0);
+          names = [...config.dependsOn.filter(it => regex.test(it) && !names.includes(it)), ...names];
+        }
+      });
 
+      const errors = names.filter(it => !config.dependsOn.includes(it));
+      if (errors.length) {
+        throw new Error(`Component${errors.length > 1 ? '\'s' : ''} '${errors.join(`', '`)}' from ` +
+          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`);
+      }
     }
 
     if (config.hasOwnProperty('env')) {
