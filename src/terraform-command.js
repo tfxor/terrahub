@@ -1,14 +1,17 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
+const getPropertyFromPath = require('lodash.get');
 const GitHelper = require('./helpers/git-helper');
 const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
-const { config: { listLimit, logs } } = require('./parameters');
+const { config: { listLimit, logs }, hclPath } = require('./parameters');
 
 const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
@@ -25,6 +28,7 @@ class TerraformCommand extends AbstractCommand {
   constructor(input, logger) {
     super(input, logger);
 
+    this._terraformRemoteStates = {};
     this._runId = Util.uuid();
 
     this.logger.updateContext({
@@ -58,9 +62,8 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(token => {
       this._tokenIsValid = token;
 
-      if (this._tokenIsValid && logs) {
-        this.logger.updateContext({ canLogBeSentToApi: true });
-      }
+      if (this._tokenIsValid && logs) { this.logger.updateContext({ canLogBeSentToApi: true }); }
+      if (!this._tokenIsValid) { this.checkCloudAccountRequirements(this.getExtendedConfig()); }
 
       return Promise.resolve();
     }).then(() => this._checkProjectDataMissing()).then(() => {
@@ -188,16 +191,187 @@ class TerraformCommand extends AbstractCommand {
       result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
     });
 
+    this._processRemoteStates(result);
     this._checkDependenciesExist(result);
+    this._processDependencies(result);
 
-    Object.keys(result).forEach(hash => {
-      const node = result[hash];
-      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
+    return result;
+  }
+
+  /**
+   * @param {Object} config
+   * @private
+   */
+  _processRemoteStates(config) {
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+
+      if (node.hasOwnProperty('template') && node.template.hasOwnProperty('dynamic')) {
+        const regexExists = new RegExp(`[*]`, 'm');
+        const dynamicRemoteStates = node.template.dynamic.data.terraform_remote_state;
+        this._terraformRemoteStates[hash] = [];
+
+        dynamicRemoteStates.forEach(it => {
+          const { name, provider, component } = it;
+
+          if (regexExists.test(component)) {
+            const regex = new RegExp(component.replace('*', ''), 'm');
+            const include = config[hash].dependsOn.filter(
+              it => regex.test(it) && !dynamicRemoteStates.some(data => data.component === it));
+
+            include.forEach(it => {
+              const defaultObj = {
+                component: it,
+                name: `${name.replace('*', it)}`,
+                ...(provider && { provider: provider })
+              };
+
+              this._terraformRemoteStates[hash].push(defaultObj);
+            });
+          } else {
+            this._terraformRemoteStates[hash].push(it);
+          }
+        });
+
+        delete node.template.dynamic;
+      }
+    });
+  }
+
+  /**
+   * @param {Object} config
+   * @throws {ListException}
+   * @private
+   */
+  _processDependencies(config) {
+    this._errors = [];
+
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+      const dependsOn = node.dependsOn.map(name => {
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        const dependentConfig = config[dependentComponent];
+
+        this.processRemoteStateTemplate(config, dependentConfig, hash);
+
+        return ConfigLoader.buildComponentHash(dependentConfig.root);
+      });
 
       node.dependsOn = Util.arrayToObject(dependsOn);
     });
 
-    return result;
+    if (this._errors.length) {
+      const messages = this._errors.map(error => `For component ${error.name} can not find ${error.variable} variable`);
+      throw new ListException(messages, {
+        header: 'Some components do not have defined variables:',
+        style: ListException.NUMBER
+      });
+    }
+  }
+
+  /**
+   * @param {String} hash
+   * @param {Object} dependentConfig
+   * @return {String | undefined}
+   * @private
+   */
+  _retrieveRemoteStateNames(hash, dependentConfig) {
+    const { name } = dependentConfig;
+    const varsExists = new RegExp('\\${(.*?)}', 'gm');
+
+    return this._terraformRemoteStates[hash].filter(it => it.component === name).map(it => {
+      const vars = it.name.match(varsExists) || [];
+
+      vars.forEach(variable => {
+        const thubKeyWord = 'tfvars.terrahub';
+        const path = variable.slice(2, -1);
+        const property = getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'local'))
+          || getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'tfvars'));
+        if (!property) {
+          this._errors.push({ name, variable });
+        }
+
+        it.name = it.name.replace(variable, property);
+      });
+
+      return it.name;
+    });
+  }
+
+  /**
+   * @param {String} hash
+   * @param {String} name
+   * @return {Boolean}
+   * @private
+   */
+  _remoteStateExist(hash, name) {
+    return this._terraformRemoteStates[hash] && this._terraformRemoteStates[hash].find(it => it.component === name);
+  }
+
+  /**
+   * Defines terraform_remote_state from dependencies
+   * @param {Object} config
+   * @param {Object} dependentConfig
+   * @param {String} hash
+   */
+  processRemoteStateTemplate(config, dependentConfig, hash) {
+    const { project, template, name } = dependentConfig;
+
+    if (!this._remoteStateExist(hash, name)) { return; }
+
+    const configBackendExist = template.terraform && template.terraform.backend;
+    const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendExist = fs.existsSync(cachedBackendPath);
+
+    if (!(configBackendExist || cachedBackendExist)) { return; }
+
+    const backend = configBackendExist ? template.terraform.backend : null;
+    const backendType = backend ? Object.keys(backend)[0] : 'local';
+
+    this._createTerraformRemoteStateObject(config, hash);
+
+    const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
+    const defaultRemoteConfig = {
+      [remoteStateName]: {
+        config: {}
+      }
+    };
+
+    switch (backendType) {
+      case 'local':
+        if (backend) {
+          Object.keys(backend.local).forEach(it => {
+            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
+              ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
+              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+          });
+        } else {
+          defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
+        }
+        break;
+      case 's3':
+        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+        break;
+      case 'gcs':
+        Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });
+        break;
+    }
+
+    defaultRemoteConfig[remoteStateName].backend = backendType;
+    Object.assign(config[hash].template.data['terraform_remote_state'], defaultRemoteConfig);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} hash
+   * @private
+   */
+  _createTerraformRemoteStateObject(config, hash) {
+    if (!config[hash].template.data) {
+      config[hash].template.data = { 'terraform_remote_state': {} };
+    } else if (!config[hash].template.data['terraform_remote_state']) {
+      config[hash].template.data['terraform_remote_state'] = {};
+    }
   }
 
   /**
@@ -406,16 +580,22 @@ class TerraformCommand extends AbstractCommand {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
 
-      issues[hash] = node.dependsOn.filter(dep => {
-        const key = ConfigLoader.buildComponentHash(dep);
+      issues[hash] = node.dependsOn.filter(name => {
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        if (!dependentComponent) {
+          return true;
+        }
+
+        const dependentConfig = config[dependentComponent];
+        const key = ConfigLoader.buildComponentHash(dependentConfig.root);
 
         return !config.hasOwnProperty(key);
       });
     });
 
     const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
-      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
-        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
+      return `'${config[it].name}' component depends on the component${issues[it].length > 1 ? 's' : ''} ` +
+        `'${issues[it].join(`', '`)}' that either are not included or do not exist`;
     });
 
     if (messages.length) {

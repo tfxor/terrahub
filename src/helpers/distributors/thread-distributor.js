@@ -1,6 +1,5 @@
 'use strict';
 
-const os = require('os');
 const path = require('path');
 const cluster = require('cluster');
 const { config } = require('../../parameters');
@@ -84,23 +83,23 @@ class ThreadDistributor extends AbstractDistributor {
    * @param {String[]} actions
    * @param {String} format
    * @param {Boolean} planDestroy
+   * @param {Boolean} stateList
    * @param {Number} dependencyDirection
-   * @param {String} resourceName
-   * @param {String} importId
-   * @param {String} providerId
+   * @param {String} stateDelete
+   * @param {String} importLines
    * @param {Boolean} input
    * @return {Promise}
    */
   runActions(actions, {
     format = '',
     planDestroy = false,
+    stateList = false,
     dependencyDirection = null,
-    resourceName = '',
-    importId = '',
-    providerId = '',
+    stateDelete = '',
+    importLines = '',
     input = false
   } = {}) {
-    this._env = { format, planDestroy, resourceName, importId, providerId, input };
+    this._env = { format, planDestroy, stateList, stateDelete, importLines, input };
 
     const results = [];
     this._dependencyTable = this.buildDependencyTable(this.config, dependencyDirection);
