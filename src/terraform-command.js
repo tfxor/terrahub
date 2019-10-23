@@ -352,6 +352,9 @@ class TerraformCommand extends AbstractCommand {
       case 's3':
         Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
         break;
+      case 'gcs':
+        Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });
+        break;
     }
 
     defaultRemoteConfig[remoteStateName].backend = backendType;
