@@ -95,13 +95,8 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (!process.env.THUB_TOKEN_IS_VALID.length) {
-      return Promise.resolve();
-    }
-
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
-
-    if (!accounts.length) {
+    if (!accounts.length || !process.env.THUB_TOKEN_IS_VALID.length) {
       return Promise.resolve();
     }
 
@@ -407,7 +402,7 @@ class Terraform {
             this._var(),
             this._optsToArgs(options),
             [line.fullAddress, line.value])
-        );
+        ).catch(() => { });
       }
     }
 
@@ -419,8 +414,12 @@ class Terraform {
    * @return {Promise}
    */
   async resourceList() {
-    const buffer = await this.run('state', ['list']);
-    return buffer.toString().split('\n').filter(x => x);
+    try {
+      const buffer = await this.run('state', ['list']);
+      return buffer.toString().split('\n').filter(x => x);
+    } catch (error) {
+      return [];
+    }
   }
 
   /**
@@ -442,7 +441,7 @@ class Terraform {
       ).then(elements => (elements.length > 0)
         ? Promise.all(elements.map(element => this.run('state', args.concat([element]))))
         : Promise.resolve({})
-      );
+      ).catch(() => { });
   }
 
   /**
