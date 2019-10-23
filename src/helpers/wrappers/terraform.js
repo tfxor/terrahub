@@ -402,7 +402,7 @@ class Terraform {
             this._var(),
             this._optsToArgs(options),
             [line.fullAddress, line.value])
-        );
+        ).catch(() => { });
       }
     }
 
@@ -414,8 +414,12 @@ class Terraform {
    * @return {Promise}
    */
   async resourceList() {
-    const buffer = await this.run('state', ['list']);
-    return buffer.toString().split('\n').filter(x => x);
+    try {
+      const buffer = await this.run('state', ['list']);
+      return buffer.toString().split('\n').filter(x => x);
+    } catch (error) {
+      return [];
+    }
   }
 
   /**
@@ -437,7 +441,7 @@ class Terraform {
       ).then(elements => (elements.length > 0)
         ? Promise.all(elements.map(element => this.run('state', args.concat([element]))))
         : Promise.resolve({})
-      );
+      ).catch(() => { });
   }
 
   /**
