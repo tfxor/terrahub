@@ -76,8 +76,7 @@ class ImportCommand extends TerraformCommand {
               excludeRegex.length ? !excludeRegex.some(regex => new RegExp(regex).test(elements[0])) : null,
               exclude.length ? !exclude.includes(elements[0]) : null
             ].filter(Boolean);
-            console.log(filters);
-            process.exit();
+
             if (filters[0]) {
               linesMap.push({
                 component: elements[0],
