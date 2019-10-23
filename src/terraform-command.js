@@ -277,7 +277,8 @@ class TerraformCommand extends AbstractCommand {
     const varsExists = new RegExp('\\${(.*?)}', 'gm');
 
     return this._terraformRemoteStates[hash].filter(it => it.component === name).map(it => {
-      const vars = it.name.match(varsExists);
+      const vars = it.name.match(varsExists) || [];
+
       vars.forEach(variable => {
         const thubKeyWord = 'tfvars.terrahub';
         const path = variable.slice(2, -1);
