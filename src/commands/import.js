@@ -71,11 +71,13 @@ class ImportCommand extends TerraformCommand {
               autoIndex.index++;
             }
             const filters = [
-              includeRegex.length ? includeRegex.some(regex => regex.test(elements[0])) : null,
+              includeRegex.length ? includeRegex.some(regex => new RegExp(regex).test(elements[0])) : null,
               include.length ? include.includes(elements[0]) : null,
-              excludeRegex.length ? !excludeRegex.some(regex => regex.test(elements[0])) : null,
+              excludeRegex.length ? !excludeRegex.some(regex => new RegExp(regex).test(elements[0])) : null,
               exclude.length ? !exclude.includes(elements[0]) : null
             ].filter(Boolean);
+            console.log(filters);
+            process.exit();
             if (filters[0]) {
               linesMap.push({
                 component: elements[0],
