@@ -83,6 +83,7 @@ class TerraformCommand extends AbstractCommand {
 
       return Promise.resolve();
     }).then(() => this._checkProjectDuplicateComponents())
+      .then(() => this._checkCloudAccountsRequirements())
       .catch(err => {
         const error = err.constructor === String ? new Error(err) : err;
 
@@ -124,6 +125,22 @@ class TerraformCommand extends AbstractCommand {
       throw new ListException(messages, {
         header: 'Some components have duplicates in project:',
         style: ListException.NUMBER
+      });
+    }
+
+    return Promise.resolve();
+  }
+
+  _checkCloudAccountsRequirements() {
+    if (!this._tokenIsValid) {
+      const fullConfig = this.getExtendedConfig();
+      Object.keys(fullConfig).forEach(hash => {
+        const accounts = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
+          .filter(it => /Account/.test(it));
+        if (accounts.length) {
+          this.logger.warn(`If you want to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component ` +
+            `please provide THUB_TOKEN.`);
+        }
       });
     }
 
