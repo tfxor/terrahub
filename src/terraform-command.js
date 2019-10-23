@@ -62,9 +62,8 @@ class TerraformCommand extends AbstractCommand {
     return super.validate().then(token => {
       this._tokenIsValid = token;
 
-      if (this._tokenIsValid && logs) {
-        this.logger.updateContext({ canLogBeSentToApi: true });
-      }
+      if (this._tokenIsValid && logs) { this.logger.updateContext({ canLogBeSentToApi: true }); }
+      if (!this._tokenIsValid) { this.checkCloudAccountRequirements(this.getExtendedConfig()); }
 
       return Promise.resolve();
     }).then(() => this._checkProjectDataMissing()).then(() => {
@@ -83,7 +82,6 @@ class TerraformCommand extends AbstractCommand {
 
       return Promise.resolve();
     }).then(() => this._checkProjectDuplicateComponents())
-      .then(() => this._checkCloudAccountsRequirements())
       .catch(err => {
         const error = err.constructor === String ? new Error(err) : err;
 
@@ -125,22 +123,6 @@ class TerraformCommand extends AbstractCommand {
       throw new ListException(messages, {
         header: 'Some components have duplicates in project:',
         style: ListException.NUMBER
-      });
-    }
-
-    return Promise.resolve();
-  }
-
-  _checkCloudAccountsRequirements() {
-    if (!this._tokenIsValid) {
-      const fullConfig = this.getExtendedConfig();
-      Object.keys(fullConfig).forEach(hash => {
-        const accounts = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
-          .filter(it => /Account/.test(it));
-        if (accounts.length) {
-          this.logger.warn(`If you want to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component ` +
-            `please provide THUB_TOKEN.`);
-        }
       });
     }
 
@@ -216,6 +198,10 @@ class TerraformCommand extends AbstractCommand {
     return result;
   }
 
+  /**
+   * @param {Object} config
+   * @private
+   */
   _processRemoteStates(config) {
     Object.keys(config).forEach(hash => {
       const node = config[hash];
@@ -300,7 +286,7 @@ class TerraformCommand extends AbstractCommand {
         const thubKeyWord = 'tfvars.terrahub';
         const path = variable.slice(2, -1);
         const property = getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'local'))
-          || getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'tfvars')) ;
+          || getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'tfvars'));
         if (!property) {
           this._errors.push({ name, variable });
         }
@@ -318,9 +304,9 @@ class TerraformCommand extends AbstractCommand {
    * @return {Boolean}
    * @private
    */
- _remoteStateExist(hash, name) {
-    return this._terraformRemoteStates[hash] && this._terraformRemoteStates[hash].find(it => it.component === name)
- }
+  _remoteStateExist(hash, name) {
+    return this._terraformRemoteStates[hash] && this._terraformRemoteStates[hash].find(it => it.component === name);
+  }
 
   /**
    * Defines terraform_remote_state from dependencies
@@ -374,12 +360,13 @@ class TerraformCommand extends AbstractCommand {
 
   /**
    * @param {Object} config
+   * @param {String} hash
    * @private
    */
   _createTerraformRemoteStateObject(config, hash) {
     if (!config[hash].template.data) {
-      config[hash].template.data = { 'terraform_remote_state': {}};
-    } else if(!config[hash].template.data['terraform_remote_state']) {
+      config[hash].template.data = { 'terraform_remote_state': {} };
+    } else if (!config[hash].template.data['terraform_remote_state']) {
       config[hash].template.data['terraform_remote_state'] = {};
     }
   }
