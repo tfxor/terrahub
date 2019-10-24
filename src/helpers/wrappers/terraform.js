@@ -164,6 +164,7 @@ class Terraform {
     logger.debug(JSON.stringify(this._config, null, 2));
 
     return this._checkTerraformBinary()
+      .then(() => new Promise(resolve=> setTimeout(() => resolve(), 1000)))
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
       .then(() => this._fetchEnvironmentVariables())
