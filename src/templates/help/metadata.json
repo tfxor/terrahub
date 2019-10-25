@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.3.14",
+  "version": "0.3.18",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-10-03T14:26:02.568Z",
+  "buildDate": "2019-10-23T17:44:42.076Z",
   "commands": [
     {
       "name": "apply",
@@ -465,13 +465,26 @@
         {
           "name": "config",
           "shortcut": "c",
-          "description": "Import resource"
+          "description": "Import resource",
+          "defaultValue": []
         },
         {
           "name": "provider",
           "shortcut": "j",
           "description": "Import provider",
           "defaultValue": ""
+        },
+        {
+          "name": "batch",
+          "shortcut": "b",
+          "description": "Import batch",
+          "defaultValue": ""
+        },
+        {
+          "name": "overwrite",
+          "shortcut": "O",
+          "description": "Overwrite existing elements in tfstate",
+          "defaultValue": false
         },
         {
           "name": "include",
@@ -993,6 +1006,84 @@
           "shortcut": "b",
           "description": "Enable build command as part of automated workflow",
           "defaultValue": false
+        },
+        {
+          "name": "include",
+          "shortcut": "i",
+          "description": "List of components to include (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude",
+          "shortcut": "x",
+          "description": "List of components to exclude (comma separated values)",
+          "defaultValue": []
+        },
+        {
+          "name": "include-regex",
+          "shortcut": "I",
+          "description": "List of components to include (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "exclude-regex",
+          "shortcut": "X",
+          "description": "List of components to exclude (regex search)",
+          "defaultValue": []
+        },
+        {
+          "name": "git-diff",
+          "shortcut": "g",
+          "description": "List of components to include (git diff)",
+          "defaultValue": []
+        },
+        {
+          "name": "var",
+          "shortcut": "r",
+          "description": "Variable(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "var-file",
+          "shortcut": "l",
+          "description": "Variable file(s) to be used by terraform",
+          "defaultValue": []
+        },
+        {
+          "name": "dependency",
+          "shortcut": "p",
+          "description": "Set dependency validation strategy (auto, ignore, include)",
+          "defaultValue": "auto"
+        },
+        {
+          "name": "env",
+          "shortcut": "e",
+          "description": "Workspace environment",
+          "defaultValue": "default"
+        },
+        {
+          "name": "help",
+          "shortcut": "h",
+          "description": "Show list of available commands",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "description": "run `terraform state` across multiple terrahub components",
+      "options": [
+        {
+          "name": "list",
+          "shortcut": "L",
+          "description": "List resource(s) from terraform state",
+          "defaultValue": false
+        },
+        {
+          "name": "delete",
+          "shortcut": "D",
+          "description": "Delete resource(s) from terraform state",
+          "defaultValue": []
         },
         {
           "name": "include",

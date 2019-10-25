@@ -265,6 +265,21 @@ class AbstractCommand {
     this.logger.warn('THUB_TOKEN is not provided.');
     return Promise.resolve();
   }
+
+  /**
+   * @param {Object} fullConfig
+   * @return {void}
+   */
+  checkCloudAccountRequirements(fullConfig) {
+    Object.keys(fullConfig).forEach(hash => {
+      const accounts = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
+        .filter(it => /Account/.test(it));
+      if (accounts.length) {
+        this.logger.warn(`If you want to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component ` +
+          `please provide THUB_TOKEN.`);
+      }
+    });
+  }
 }
 
 module.exports = AbstractCommand;

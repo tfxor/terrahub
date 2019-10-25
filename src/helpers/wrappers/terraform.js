@@ -41,7 +41,7 @@ class Terraform {
         var: {},
         varFile: [],
         backend: {},
-        version: '0.12.9',
+        version: '0.12.12',
         backup: false,
         workspace: 'default'
       }
@@ -100,13 +100,13 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    if (this._distributor === 'local' && !process.env.THUB_TOKEN_IS_VALID) { return Promise.resolve(); }
+    const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
+
+    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) { return Promise.resolve(); }
     if (this._distributor === 'lambda') { removeAwsEnvVars(); }
 
-    const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
-    if (!accounts.length) { return Promise.resolve(); }
-
     ApiHelper.init(this.parameters, this._distributor);
+
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     const provider = Array.isArray(this._config.template.provider)
       ? Object.keys(this._config.template.provider[0]).toString()
@@ -168,6 +168,7 @@ class Terraform {
     logger.debug(JSON.stringify(this._config, null, 2));
 
     return this._checkTerraformBinary()
+      .then(() => new Promise(resolve => setTimeout(() => resolve(), 1000)))
       .then(() => this._checkWorkspaceSupport())
       .then(() => this._checkResourceDir())
       .then(() => this._fetchEnvironmentVariables())
@@ -376,18 +377,77 @@ class Terraform {
   }
 
   /**
-   * https://www.terraform.io/docs/commands/import.html
+   * https://www.terraform.io/docs/import/index.html
    * @return {Promise}
    */
-  import() {
+  async import() {
     const options = { '-input': false };
     const args = ['-no-color'];
-    const values = [process.env.resourceName, process.env.importId];
-    if (process.env.providerId !== '') {
-      args.push(`-provider=${process.env.providerId}`);
+    const lines = JSON.parse(process.env.importLines);
+    const varFile = this._varFile()[0].split('/');
+    let existedResouces = [];
+
+    await this.resourceList()
+      .then(elements => { existedResouces = elements; })
+      .catch(() => { });
+    let startImport = existedResouces.length == 0;
+
+    for (const line of lines) {
+      if (existedResouces.includes(line.fullAddress) && line.overwrite) {
+        await this.run('state', ['rm', line.fullAddress]);
+        startImport = true;
+      }
+
+      const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`) || line.component === '';
+
+      if (isCorrectComponent && (startImport || !existedResouces.includes(line.fullAddress))) {
+        await this.run('import',
+          args.concat(
+            line.provider,
+            this._varFile(),
+            this._var(),
+            this._optsToArgs(options),
+            [line.fullAddress, line.value])
+        ).catch(() => { });
+      }
     }
-    return this.run('import', args.concat(this._varFile(), this._var(), this._optsToArgs(options),
-      values));
+
+    return Promise.resolve({});
+  }
+
+  /**
+   * https://www.terraform.io/docs/state/index.html
+   * @return {Promise}
+   */
+  async resourceList() {
+    try {
+      const buffer = await this.run('state', ['list']);
+      return buffer.toString().split('\n').filter(x => x);
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * https://www.terraform.io/docs/state/index.html
+   * @return {Promise}
+   */
+  stateDelete() {
+    const args = ['rm'];
+    const resourceAddress = process.env.stateDelete;
+
+    if (!resourceAddress.includes('*')) {
+      return this.run('state', args.concat([resourceAddress]));
+    }
+
+    return this.resourceList()
+      .then(elements => (elements.length > 0)
+        ? elements.filter(elem => elem.includes((resourceAddress === '*' ? '' : resourceAddress.split('*')[0])))
+        : []
+      ).then(elements => (elements.length > 0)
+        ? Promise.all(elements.map(element => this.run('state', args.concat([element]))))
+        : Promise.resolve({})
+      ).catch(() => { });
   }
 
   /**

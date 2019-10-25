@@ -55,8 +55,8 @@ async function syncExitProcess(code, message, error = false) {
 
   if (error) {
     Array.isArray(message)
-      ? message.forEach(err => logger.error(err.message || err || 'Error occurred'))
-      : logger.error(message.message || message || 'Error occurred');
+      ? message.forEach(err => logger.error(err || 'Error occurred'))
+      : logger.error(message || 'Error occurred');
   } else {
     message ? logger.info(message) : null;
   }

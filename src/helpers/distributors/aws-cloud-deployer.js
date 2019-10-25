@@ -3,9 +3,9 @@
 const fse = require('fs-extra');
 const Fetch = require('../fetch');
 const logger = require('../logger');
-const S3Helper = require('../s3-helper')
+const S3Helper = require('../s3-helper');
 const ApiHelper = require('../api-helper');
-const JitHelper = require('../jit-helper');
+const HclHelper = require('../hcl-helper');
 const { promiseSeries } = require('../util');
 const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
@@ -45,11 +45,11 @@ class AwsDeployer {
 
       await this.s3.syncPaths(config.project.root, s3Prefix, config.mapping);
 
-      const cfg = await JitHelper.jitMiddleware(config, parameters);
+      const cfg = await HclHelper.middleware(config, parameters);
       await this._runActions(actions, cfg, thubRunId, parameters);
 
       if (cfg.isJit) {
-        await fse.remove(JitHelper.buildTmpPath(cfg, parameters));
+        await fse.remove(HclHelper.buildTmpPath(cfg, parameters));
       }
 
       const promises = ApiHelper.retrieveDataToSend(true);

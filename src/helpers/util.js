@@ -58,7 +58,7 @@ class Util {
    * @returns {Object}
    */
   static yamlToJson(srcFile) {
-    return yaml.safeLoad(fs.readFileSync(srcFile));
+    return yaml.safeLoad(fs.readFileSync(srcFile)) || {};
   }
 
   /**

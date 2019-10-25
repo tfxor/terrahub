@@ -48,7 +48,6 @@ class AwsDistributor {
     console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
     const s3Prefix = [s3directory, accountId, runId].join('/');
-
     const pathMap = files.map(it => ({
       localPath: join(this._projectRoot, it),
       s3Path: [s3Prefix, it].join('/')
@@ -57,8 +56,7 @@ class AwsDistributor {
     await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
     logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
 
-    this.parameters.jitPath = this.parameters.jitPath.replace('/cache', lambdaHomedir);
-
+    this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
     const body = JSON.stringify({
       actions: actions,
       thubRunId: runId,
@@ -78,19 +76,29 @@ class AwsDistributor {
     this.ws.on('message', data => {
       try {
         const message = JSON.parse(data);
+        const defaultMessage = { worker: 'lambda', hash: this.componentConfig.hash };
 
         if (AwsDistributor._isFinishMessage(message, this.componentConfig.hash)) {
           if (!this._errors.length) {
             logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
           }
           inProgress--;
-
-          setImmediate(() => this.emitter.emit('exit', { worker: 'lambda', code: 0, hash: this.componentConfig.hash }));
+          setImmediate(() => this.emitter.emit('message', {
+            ...defaultMessage, ...{ isError: false, message: message.data.message }
+          }));
+          setImmediate(() => this.emitter.emit('exit', {
+            ...defaultMessage, ...{ code: 0 }
+          }));
         }
         if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
           this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
 
-          setImmediate(() => this.emitter.emit('exit', { isError: true, message: this._errors }));
+          setImmediate(() => this.emitter.emit('message', {
+            ...defaultMessage, ...{ isError: true, message: this._errors }
+          }));
+          setImmediate(() => this.emitter.emit('exit', {
+            ...defaultMessage, ...{ code: 1 }
+          }));
         }
       } catch (err) {
         throw new Error(err);

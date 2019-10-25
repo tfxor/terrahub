@@ -8,7 +8,7 @@ const logger = require('../helpers/logger');
 const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
 const { yamlToJson } = require('../helpers/util');
-const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/jit-helper');
+const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/hcl-helper');
 const LocalDistributor = require('../helpers/distributors/local-distributor');
 
 class ConvertCommand extends DistributedCommand {
@@ -42,7 +42,6 @@ class ConvertCommand extends DistributedCommand {
     }
 
     await Promise.all(Object.keys(config).map(hash => this._convertComponent(config[hash], format)));
-
     return 'Done';
   }
 

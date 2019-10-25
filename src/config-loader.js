@@ -257,8 +257,9 @@ class ConfigLoader {
       // Delete in case of delete
       config = Object.assign(config, config.component);
 
-      this._validateProperties(config);
+      this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
+
       this._config[componentHash] = extend(
         { root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
     });
@@ -280,13 +281,41 @@ class ConfigLoader {
    * @param {Object} config
    * @private
    */
-  _validateProperties(config) {
+  _validateComponentConfig(config) {
     if (!config.hasOwnProperty('mapping')) {
       config.mapping = [];
     }
 
     if (!config.hasOwnProperty('distributor')) {
       config.distributor = this._projectDistributor || 'local';
+    }
+  }
+
+  /**
+   * @param {Object} config
+   * @throws {Error}
+   * @private
+   */
+  _validateDynamicData(config) {
+    if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
+      const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
+      const regexExists = new RegExp(`[*]`, 'm');
+      let names = dynamicRemoteStates.map(it => it.component);
+      names.map((it, i) => {
+        if (regexExists.test(it)) {
+          const test = it.replace('*', '');
+          const regex = new RegExp(test, 'm');
+          names.splice(i, 1);
+
+          names = [...config.dependsOn.filter(it => regex.test(it) && !names.includes(it)), ...names];
+        }
+      });
+
+      const errors = names.filter(it => !config.dependsOn.includes(it));
+      if (errors.length) {
+        throw new Error(`Component${errors.length > 1 ? '\'s' : ''} '${errors.join(`', '`)}' from ` +
+          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`);
+      }
     }
   }
 
@@ -300,10 +329,6 @@ class ConfigLoader {
       if (!Array.isArray(config.dependsOn)) {
         throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
       }
-
-      config.dependsOn.forEach((dep, index) => {
-        config.dependsOn[index] = this.relativePath(path.resolve(this._rootPath, componentPath, dep));
-      });
     }
 
     if (config.hasOwnProperty('mapping')) {
@@ -322,6 +347,8 @@ class ConfigLoader {
         throw new Error(`Error in component's configuration! Unknown distributor.`);
       }
     }
+
+    this._validateDynamicData(config);
 
     if (config.hasOwnProperty('env')) {
       ['hook', 'build'].filter(key => !!config[key]).forEach(key => {

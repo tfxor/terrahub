@@ -1,10 +1,13 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const LogHelper = require('./helpers/log-helper');
+const getPropertyFromPath = require('lodash.get');
 const GitHelper = require('./helpers/git-helper');
+const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
@@ -22,6 +25,7 @@ class DistributedCommand extends AbstractCommand {
   constructor(parameters, logger) {
     super(parameters, logger);
 
+    this._terraformRemoteStates = {};
     this._runId = Util.uuid();
 
     this.logger.updateContext({
@@ -48,20 +52,18 @@ class DistributedCommand extends AbstractCommand {
   }
 
   /**
-   *
    * @returns {Promise}
    */
   async validate() {
     try {
       this._tokenIsValid = await super.validate();
 
-      if (this._tokenIsValid && this.terrahubCfg.logs) {
-        this.logger.updateContext({ canLogBeSentToApi: true });
-      }
+      if (this._tokenIsValid && this.terrahubCfg.logs) { this.logger.updateContext({ canLogBeSentToApi: true }); }
+      if (!this._tokenIsValid) { this.checkCloudAccountRequirements(this.getExtendedConfig()); }
 
-      await this.checkProjectDataMissing();
+      await this._checkProjectDataMissing();
 
-      if (this.isComponentsCountZero() && this.getName() !== 'configure') {
+      if (this._isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
@@ -72,8 +74,7 @@ class DistributedCommand extends AbstractCommand {
         throw new Error('Some of components were not found: ' + nonExistingComponents.join(', '));
       }
 
-      const fullConfig = this.getExtendedConfig();
-      return this.checkProjectDuplicateComponents(fullConfig);
+      return this._checkProjectDuplicateComponents();
     } catch (err) {
 
       const error = err.constructor === String ? new Error(err) : err;
@@ -87,6 +88,315 @@ class DistributedCommand extends AbstractCommand {
    */
   get runId() {
     return this._runId;
+  }
+
+  /**
+   * @returns {Promise}
+   * @private
+   */
+  _checkProjectDuplicateComponents() {
+    const fullConfig = this.getExtendedConfig();
+    const result = {};
+
+    Object.keys(fullConfig).forEach(hash => {
+      const { name, root } = fullConfig[hash];
+
+      if (result.hasOwnProperty(name)) {
+        result[name].push(root);
+      } else {
+        result[name] = [root];
+      }
+    });
+
+    const duplicates = Object.keys(result).filter(it => result[it].length > 1);
+
+    if (duplicates.length) {
+      const messages = duplicates.map(it => `component '${it}' ` +
+        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
+
+      throw new ListException(messages, {
+        header: 'Some components have duplicates in project:',
+        style: ListException.NUMBER
+      });
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  _checkProjectDataMissing() {
+    const projectConfig = this._configLoader.getProjectConfig();
+    const missingData = ['root', 'name', 'code'].find(it => !projectConfig[it]);
+
+    if (!missingData) {
+      return Promise.resolve();
+    } else if (missingData === 'root') {
+      throw new Error('Configuration file not found. Either re-run the same command ' +
+        'in project\'s root or initialize new project with `terrahub project`.');
+    } else {
+      return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
+        `(e.g. ${missingData === 'code' ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `
+      ).then(answer => {
+
+        try {
+          this._configLoader.addToGlobalConfig(missingData, answer);
+        } catch (error) {
+          this.logger.debug(error);
+        }
+
+        this._configLoader.updateRootConfig();
+
+        return this._checkProjectDataMissing();
+      });
+    }
+  }
+
+  /**
+   * Get extended config object
+   * @returns {Object}
+   */
+  getExtendedConfig() {
+    if (!this._extendedConfig) {
+      this._extendedConfig = this._initExtendedConfig();
+    }
+
+    return this._extendedConfig;
+  }
+
+  /**
+   * Initialize extended config
+   * @returns {Object}
+   */
+  _initExtendedConfig() {
+    const result = {};
+    const config = super.getConfig();
+    const cliParams = {
+      terraform: {
+        var: this.getVar(),
+        varFile: this.getVarFile()
+      }
+    };
+
+    Object.keys(config).forEach(hash => {
+      // hash is required in distributor to remove components from dependency table
+      result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
+    });
+
+    this._processRemoteStates(result);
+    this._checkDependenciesExist(result);
+    this._processDependencies(result);
+
+    return result;
+  }
+
+  /**
+   * @param {Object} config
+   * @private
+   */
+  _processRemoteStates(config) {
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+
+      if (node.hasOwnProperty('template') && node.template.hasOwnProperty('dynamic')) {
+        const regexExists = new RegExp(`[*]`, 'm');
+        const dynamicRemoteStates = node.template.dynamic.data.terraform_remote_state;
+        this._terraformRemoteStates[hash] = [];
+
+        dynamicRemoteStates.forEach(it => {
+          const { name, provider, component } = it;
+
+          if (regexExists.test(component)) {
+            const regex = new RegExp(component.replace('*', ''), 'm');
+            const include = config[hash].dependsOn.filter(
+              it => regex.test(it) && !dynamicRemoteStates.some(data => data.component === it));
+
+            include.forEach(it => {
+              const defaultObj = {
+                component: it,
+                name: `${name.replace('*', it)}`,
+                ...(provider && { provider: provider })
+              };
+
+              this._terraformRemoteStates[hash].push(defaultObj);
+            });
+          } else {
+            this._terraformRemoteStates[hash].push(it);
+          }
+        });
+
+        delete node.template.dynamic;
+      }
+    });
+  }
+
+  /**
+   * @param {Object} config
+   * @throws {ListException}
+   * @private
+   */
+  _processDependencies(config) {
+    this._errors = [];
+
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+      const dependsOn = node.dependsOn.map(name => {
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        const dependentConfig = config[dependentComponent];
+
+        this.processRemoteStateTemplate(config, dependentConfig, hash);
+
+        return ConfigLoader.buildComponentHash(dependentConfig.root);
+      });
+
+      node.dependsOn = Util.arrayToObject(dependsOn);
+    });
+
+    if (this._errors.length) {
+      const messages = this._errors.map(error => `For component ${error.name} can not find ${error.variable} variable`);
+      throw new ListException(messages, {
+        header: 'Some components do not have defined variables:',
+        style: ListException.NUMBER
+      });
+    }
+  }
+
+  /**
+   * @param {String} hash
+   * @param {Object} dependentConfig
+   * @return {String | undefined}
+   * @private
+   */
+  _retrieveRemoteStateNames(hash, dependentConfig) {
+    const { name } = dependentConfig;
+    const varsExists = new RegExp('\\${(.*?)}', 'gm');
+
+    return this._terraformRemoteStates[hash].filter(it => it.component === name).map(it => {
+      const vars = it.name.match(varsExists) || [];
+
+      vars.forEach(variable => {
+        const thubKeyWord = 'tfvars.terrahub';
+        const path = variable.slice(2, -1);
+        const property = getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'local'))
+          || getPropertyFromPath(dependentConfig.template, path.replace(thubKeyWord, 'tfvars'));
+        if (!property) {
+          this._errors.push({ name, variable });
+        }
+
+        it.name = it.name.replace(variable, property);
+      });
+
+      return it.name;
+    });
+  }
+
+  /**
+   * @param {String} hash
+   * @param {String} name
+   * @return {Boolean}
+   * @private
+   */
+  _remoteStateExist(hash, name) {
+    return this._terraformRemoteStates[hash] && this._terraformRemoteStates[hash].find(it => it.component === name);
+  }
+
+  /**
+   * Defines terraform_remote_state from dependencies
+   * @param {Object} config
+   * @param {Object} dependentConfig
+   * @param {String} hash
+   */
+  processRemoteStateTemplate(config, dependentConfig, hash) {
+    const { project, template, name } = dependentConfig;
+
+    if (!this._remoteStateExist(hash, name)) { return; }
+
+    const configBackendExist = template.terraform && template.terraform.backend;
+    const cachedBackendPath = Util.homePath(this.parameters.hclPath, `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendExist = fs.existsSync(cachedBackendPath);
+
+    if (!(configBackendExist || cachedBackendExist)) { return; }
+
+    const backend = configBackendExist ? template.terraform.backend : null;
+    const backendType = backend ? Object.keys(backend)[0] : 'local';
+
+    this._createTerraformRemoteStateObject(config, hash);
+
+    const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
+    const defaultRemoteConfig = {
+      [remoteStateName]: {
+        config: {}
+      }
+    };
+
+    switch (backendType) {
+      case 'local':
+        if (backend) {
+          Object.keys(backend.local).forEach(it => {
+            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
+              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), backend.local[it])
+              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+          });
+        } else {
+          defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
+        }
+        break;
+      case 's3':
+        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+        break;
+      case 'gcs':
+        Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });
+        break;
+    }
+
+    defaultRemoteConfig[remoteStateName].backend = backendType;
+    Object.assign(config[hash].template.data['terraform_remote_state'], defaultRemoteConfig);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} hash
+   * @private
+   */
+  _createTerraformRemoteStateObject(config, hash) {
+    if (!config[hash].template.data) {
+      config[hash].template.data = { 'terraform_remote_state': {} };
+    } else if (!config[hash].template.data['terraform_remote_state']) {
+      config[hash].template.data['terraform_remote_state'] = {};
+    }
+  }
+
+  /**
+   * Get filtered config
+   * @returns {Object}
+   */
+  getFilteredConfig() {
+    const fullConfig = this.getExtendedConfig();
+    const config = { ...fullConfig};
+    const gitDiff = this.getGitDiff();
+    const includeRegex = this.getIncludesRegex();
+    const include = this.getIncludes();
+    const excludeRegex = this.getExcludesRegex();
+    const exclude = this.getExcludes();
+
+    const filters = [
+      gitDiff.length ? hash => gitDiff.includes(hash) : null,
+      includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
+      include.length ? hash => include.includes(config[hash].name) : null,
+      excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
+      exclude.length ? hash => !exclude.includes(config[hash].name) : null
+    ].filter(Boolean);
+
+    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
+    process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
+
+    if (!Object.keys(filteredConfig).length) {
+      throw new Error(`No components available for the '${this.getName()}' action.`);
+    }
+
+    return filteredConfig;
   }
 
   /**
@@ -168,106 +478,11 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(result);
   }
 
-
-  /**
-   * @returns {Array}
-   */
-  getVarFile() {
-    return this.getOption('var-file');
-  }
-
-  /**
-   * @returns {Object}
-   */
-  getVar() {
-    let result = {};
-
-    this.getOption('var').forEach(item => {
-      Object.assign(result, Args.toObject(item));
-    });
-
-    return result;
-  }
-
   /**
    * @return {String}
    */
   getDependencyOption() {
     return this.getOption('dependency');
-  }
-
-  /**
-   * Get extended config object
-   * @returns {Object}
-   */
-  getExtendedConfig() {
-    if (!this._extendedConfig) {
-      this._extendedConfig = this._initExtendedConfig();
-    }
-
-    return this._extendedConfig;
-  }
-
-  /**
-   * Get filtered config
-   * @returns {Object}
-   */
-  getFilteredConfig() {
-    const fullConfig = this.getExtendedConfig();
-    const config = { ...fullConfig};
-    const gitDiff = this.getGitDiff();
-    const includeRegex = this.getIncludesRegex();
-    const include = this.getIncludes();
-    const excludeRegex = this.getExcludesRegex();
-    const exclude = this.getExcludes();
-
-    const filters = [
-      gitDiff.length ? hash => gitDiff.includes(hash) : null,
-      includeRegex.length ? hash => includeRegex.some(regex => regex.test(config[hash].name)) : null,
-      include.length ? hash => include.includes(config[hash].name) : null,
-      excludeRegex.length ? hash => !excludeRegex.some(regex => regex.test(config[hash].name)) : null,
-      exclude.length ? hash => !exclude.includes(config[hash].name) : null
-    ].filter(Boolean);
-
-    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
-    process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
-
-    if (!Object.keys(filteredConfig).length) {
-      throw new Error(`No components available for the '${this.getName()}' action.`);
-    }
-
-    return filteredConfig;
-  }
-
-  /**
-   * Initialize extended config
-   * @returns {Object}
-   */
-  _initExtendedConfig() {
-    const result = {};
-    const config = super.getConfig();
-    const cliParams = {
-      terraform: {
-        var: this.getVar(),
-        varFile: this.getVarFile()
-      }
-    };
-
-    Object.keys(config).forEach(hash => {
-      // hash is required in distributor to remove components from dependency table
-      result[hash] = Util.extend(config[hash], [cliParams, { hash: hash }]);
-    });
-
-    this.checkDependenciesExist(result);
-
-    Object.keys(result).forEach(hash => {
-      const node = result[hash];
-      const dependsOn = node.dependsOn.map(ConfigLoader.buildComponentHash);
-
-      node.dependsOn = Util.arrayToObject(dependsOn);
-    });
-
-    return result;
   }
 
   /**
@@ -293,6 +508,96 @@ class DistributedCommand extends AbstractCommand {
     }
 
     return this._dependencyStrategy;
+  }
+
+  /**
+   * @param {Object|Array} config
+   * @param {Boolean} autoApprove
+   * @param {String} customQuestion
+   * @return {Promise}
+   */
+  askForApprovement(config, autoApprove = false, customQuestion = '') {
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
+
+    const action = this.getName();
+
+    if (autoApprove) {
+      this.logger.log(`Option 'auto-approve' is enabled, therefore '${action}' ` +
+        `action is executed with no confirmation.`);
+
+      return Promise.resolve(true);
+    }
+
+    const defaultQuestion = `Do you want to perform 'terrahub ${action}' action? (y/N) `;
+
+    return Util.yesNoQuestion(customQuestion || defaultQuestion);
+  }
+
+  /**
+   * @param {Object|Array} config
+   */
+  warnExecutionStarted(config) {
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
+
+    const action = this.getName();
+
+    this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
+  }
+
+  /**
+   * @returns {Array}
+   */
+  getVarFile() {
+    return this.getOption('var-file');
+  }
+
+  /**
+   * @returns {Object}
+   */
+  getVar() {
+    let result = {};
+
+    this.getOption('var').map(item => {
+      Object.assign(result, Args.toObject(item));
+    });
+
+    return result;
+  }
+
+  /**
+   * Check all components dependencies existence
+   * @param {Object} config
+   */
+  _checkDependenciesExist(config) {
+    const issues = {};
+
+    Object.keys(config).forEach(hash => {
+      const node = config[hash];
+
+      issues[hash] = node.dependsOn.filter(name => {
+        const dependentComponent = Object.keys(config).find(it => config[it].name === name);
+        if (!dependentComponent) {
+          return true;
+        }
+
+        const dependentConfig = config[dependentComponent];
+        const key = ConfigLoader.buildComponentHash(dependentConfig.root);
+
+        return !config.hasOwnProperty(key);
+      });
+    });
+
+    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
+      return `'${config[it].name}' component depends on the component${issues[it].length > 1 ? 's' : ''} ` +
+        `'${issues[it].join(`', '`)}' that either are not included or do not exist`;
+    });
+
+    if (messages.length) {
+      throw new ListException(messages, {
+        header: 'TerraHub failed because of the following issues:',
+        style: ListException.NUMBER
+      });
+    }
   }
 
   /**
@@ -391,106 +696,6 @@ class DistributedCommand extends AbstractCommand {
   }
 
   /**
-   * @param {Object} fullConfig
-   * @returns {Promise}
-   */
-  checkProjectDuplicateComponents(fullConfig) {
-    const result = {};
-
-    Object.keys(fullConfig).forEach(hash => {
-      const { name, root } = fullConfig[hash];
-
-      if (result.hasOwnProperty(name)) {
-        result[name].push(root);
-      } else {
-        result[name] = [root];
-      }
-    });
-
-    const duplicates = Object.keys(result).filter(it => result[it].length > 1);
-
-    if (duplicates.length) {
-      const messages = duplicates.map(it => `component '${it}' ` +
-        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
-
-      throw new ListException(messages, {
-        header: 'Some components have duplicates in project:',
-        style: ListException.NUMBER
-      });
-    }
-
-    return Promise.resolve();
-  }
-
-  /**
-   * @return {Promise}
-   */
-  checkProjectDataMissing() {
-    const projectConfig = this._configLoader.getProjectConfig();
-    const missingData = ['root', 'name', 'code'].find(it => !projectConfig[it]);
-
-    if (!missingData) {
-      return Promise.resolve();
-    } else if (missingData === 'root') {
-      throw new Error('Configuration file not found. Either re-run the same command ' +
-        'in project\'s root or initialize new project with `terrahub project`.');
-    } else {
-      return Util.askQuestion(`Global config is missing project ${missingData}. Please provide value` +
-        `(e.g. ${missingData === 'code'
-          ? this.getProjectCode(projectConfig.name) : 'terrahub-demo'}): `).then(answer => {
-
-        try {
-          this._configLoader.addToGlobalConfig(missingData, answer);
-        } catch (error) {
-          this.logger.debug(error);
-        }
-
-        this._configLoader.updateRootConfig();
-
-        return this.checkProjectDataMissing();
-      });
-    }
-  }
-
-  /**
-   * Check all components dependencies existence
-   * @param {Object} config
-   */
-  checkDependenciesExist(config) {
-    const issues = {};
-
-    Object.keys(config).forEach(hash => {
-      const node = config[hash];
-
-      issues[hash] = node.dependsOn.filter(dep => {
-        const key = ConfigLoader.buildComponentHash(dep);
-
-        return !config.hasOwnProperty(key);
-      });
-    });
-
-    const messages = Object.keys(issues).filter(it => issues[it].length).map(it => {
-      return `'${config[it].name}' component depends on the component in '${issues[it].join(`', '`)}' ` +
-        `director${issues[it].length > 1 ? 'ies' : 'y'} that doesn't exist`;
-    });
-
-    if (messages.length) {
-      throw new ListException(messages, {
-        header: 'TerraHub failed because of the following issues:',
-        style: ListException.NUMBER
-      });
-    }
-  }
-
-
-  /**
-   * @returns {Boolean}
-   */
-  isComponentsCountZero() {
-    return (this._configLoader.componentsCount() === 0);
-  }
-
-  /**
    * Returns an array of error strings related to
    * all components' dependencies are included in config
    * @param {Object} config
@@ -571,6 +776,14 @@ class DistributedCommand extends AbstractCommand {
   }
 
   /**
+   * @returns {Boolean}
+   * @private
+   */
+  _isComponentsCountZero() {
+    return (this._configLoader.componentsCount() === 0);
+  }
+
+  /**
    * @return {String[]}
    * @private
    */
@@ -579,41 +792,6 @@ class DistributedCommand extends AbstractCommand {
     const names = Object.keys(cfg).map(hash => cfg[hash].name);
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
-  }
-
-
-  /**
-   * @param {Object|Array} config
-   */
-  warnExecutionStarted(config) {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
-
-    const action = this.getName();
-
-    this.logger.warn(`'terrahub ${action}' action is executed for above list of components.`);
-  }
-
-  /**
-   * @param {Object|Array} config
-   * @param {Boolean} autoApprove
-   * @param {String} customQuestion
-   * @return {Promise}
-   */
-  askForApprovement(config, autoApprove = false, customQuestion = '') {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, this.parameters.listLimit);
-
-    const action = this.getName();
-
-    if (autoApprove) {
-      this.logger.log(`Option 'auto-approve' is enabled, therefore '${action}' ` +
-        `action is executed with no confirmation.`);
-
-      return Promise.resolve(true);
-    }
-
-    const defaultQuestion = `Do you want to perform 'terrahub ${action}' action? (y/N) `;
-
-    return Util.yesNoQuestion(customQuestion || defaultQuestion);
   }
 }
 

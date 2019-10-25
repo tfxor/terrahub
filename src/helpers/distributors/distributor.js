@@ -35,17 +35,19 @@ class Distributor {
     }
 
     try {
-      const [{ actions, config, postActionFn, ...options }] = result;
+      for (const step of result) {
+        const { actions, config, postActionFn, ...options } = step;
 
-      if (config) {
-        this.projectConfig = config;
-      }
+        if (config) {
+          this.projectConfig = config;
+        }
 
-      // eslint-disable-next-line no-await-in-loop
-      const response = await this.runActions(actions, config, this.parameters, options);
+        // eslint-disable-next-line no-await-in-loop
+        const response = await this.runActions(actions, config, this.parameters, options);
 
-      if (postActionFn) {
-        return postActionFn(response);
+        if (postActionFn) {
+          return postActionFn(response);
+        }
       }
     } catch (err) {
       return Promise.reject(err);
@@ -105,20 +107,31 @@ class Distributor {
    * @param {String[]} actions
    * @param {Object} config
    * @param {Object} parameters
-   * @param {Object} options
+   * @param {String} format
+   * @param {Boolean} planDestroy
+   * @param {Boolean} stateList
+   * @param {Number} dependencyDirection
+   * @param {String} stateDelete
+   * @param {String} importLines
+   * @param {String} resourceName
+   * @param {String} importId
+   * @param {Boolean} input
    * @return {Promise}
-   * @abstract
    */
   async runActions(actions, config, parameters, {
     format = '',
     planDestroy = false,
+    stateList = false,
     dependencyDirection = null,
+    stateDelete = '',
     resourceName = '',
     importId = '',
+    importLines = '',
     input = false
   } = {}) {
     const results = [];
-    this._env = { format, planDestroy, resourceName, importId, input };
+    const errors = [];
+    this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
@@ -129,7 +142,7 @@ class Distributor {
         const response = data.data || data;
 
         if (response.isError) {
-          this._error = response.error;
+          errors.push(...(response.error || response.message));
           return;
         }
 
@@ -141,27 +154,17 @@ class Distributor {
       });
 
       this._eventEmitter.on('exit', (data) => {
-        const { code, isError, message } = data;
+        const { code } = data;
         this._workCounter--;
 
         if (code === 0) {
-          if (data.worker === 'lambda') { this.removeDependencies(this._dependencyTable, data.hash); }
           this.distributeConfig();
-        }
-
-        if (isError) {
-          this._error = message;
         }
 
         const hashes = Object.keys(this._dependencyTable);
 
-        if (!hashes.length && !this._workCounter) {
-          if (this._error) {
-            return reject(this._error);
-          } else {
-            return resolve(results);
-          }
-        }
+        if (!hashes.length && !this._workCounter && !errors.length) { return resolve(results); }
+        if (errors.length && !this._workCounter) { return reject(errors); }
       });
     });
   }
