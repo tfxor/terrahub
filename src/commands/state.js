@@ -29,11 +29,11 @@ class StateCommand extends DistributedCommand {
     }
 
     if (this._delete.length === 0 && this._list) {
-      return Promise.resolve([{
+      return [{
         actions: ['prepare', 'init', 'workspaceSelect', 'resourceList'],
         config,
         stateList: this._list
-      }]);
+      }];
     }
 
     return this._delete.map(it => ({
