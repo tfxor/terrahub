@@ -70,7 +70,7 @@ class LocalDistributor {
       if (data.isError) {
         this._error = this._handleError(data.error);
 
-        setImmediate(() => this.emitter.emit('exit', { isError: true, message: this._error }));
+        setImmediate(() => this.emitter.emit('message', { isError: true, message: this._error }));
       }
 
       if (data.isLogger || data.workerLogger) {

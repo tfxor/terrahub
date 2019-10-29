@@ -142,7 +142,7 @@ class Distributor {
         const response = data.data || data;
 
         if (response.isError) {
-          errors.push(...(response.error || response.message));
+          errors.push(response.error || response.message); //lambda ...
           return;
         }
 

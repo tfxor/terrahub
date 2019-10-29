@@ -263,7 +263,7 @@ class HclHelper {
       );
       const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');
       const { tfvars } = template;
-      if (!tfvars && !tfvars.hasOwnProperty(variableName)) {
+      if (!tfvars || !tfvars.hasOwnProperty(variableName)) {
         return Promise.resolve();
       }
 

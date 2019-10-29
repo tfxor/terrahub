@@ -56,7 +56,6 @@ class S3Helper {
 
       if (credsPath) {
         removeAwsEnvVars();
-        this._s3 = new AWS.S3({ credentials: null });
         setupAWSSharedFile(sourceProfile, credsPath, config, config.distributor, process.env);
       }
 
