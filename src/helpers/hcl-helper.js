@@ -596,17 +596,11 @@ class HclHelper {
       strWithoutQuote = strWithoutQuote.replace(JSON.stringify(`${key}`), `"${value}"`);
     }
 
-    if (strWithoutQuote !== '{}') {
-      const remoteTfvarsJson = JSON.parse(strWithoutQuote);
+    const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
-      template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-        JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
+      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
 
-      return Promise.resolve();
-    }
-
-    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}))
-      .replace(/}{/g, ",").replace(/{,/g, "{"));
     return Promise.resolve();
   }
 
@@ -652,7 +646,7 @@ class HclHelper {
           name = 'main.tf';
           break;
         case 'tfvars':
-          name = join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
+          name = join(`${cfgEnv}.tfvars`);
           data = template[it];
           break;
       }
