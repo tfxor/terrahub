@@ -646,7 +646,7 @@ class HclHelper {
           name = 'main.tf';
           break;
         case 'tfvars':
-          name = join(`${cfgEnv}.tfvars`);
+          name = join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
           data = template[it];
           break;
       }
