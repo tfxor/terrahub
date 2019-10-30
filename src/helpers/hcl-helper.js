@@ -596,11 +596,17 @@ class HclHelper {
       strWithoutQuote = strWithoutQuote.replace(JSON.stringify(`${key}`), `"${value}"`);
     }
 
-    const remoteTfvarsJson = JSON.parse(strWithoutQuote);
+    if (strWithoutQuote !== '{}') {
+      const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
-    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+      template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
+        JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
 
+      return Promise.resolve();
+    }
+
+    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}))
+      .replace(/}{/g, ",").replace(/{,/g, "{"));
     return Promise.resolve();
   }
 
