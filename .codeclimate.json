@@ -1,5 +1,8 @@
 {
   "version": "2",
+  "exclude_patterns": [
+    "./bin/converter/main.go"
+  ],
   "checks": {
     "file-lines": {
       "config": {
