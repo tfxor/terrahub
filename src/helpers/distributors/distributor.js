@@ -13,7 +13,7 @@ class Distributor {
    */
   constructor(command) {
     this._eventEmitter = new events.EventEmitter();
-    this._workCounter = 0;
+    this._workCounter = -1;
 
     this.command = command;
     this.runId = command._runId;
