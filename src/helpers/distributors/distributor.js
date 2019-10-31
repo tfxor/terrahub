@@ -35,20 +35,20 @@ class Distributor {
     }
 
     try {
-      for (const step of result) {
-        const { actions, config, postActionFn, ...options } = step;
+      // for (const step of result) {
+      const [{ actions, config, postActionFn, ...options }] = result;
 
-        if (config) {
-          this.projectConfig = config;
-        }
-
-        // eslint-disable-next-line no-await-in-loop
-        const response = await this.runActions(actions, config, this.parameters, options);
-
-        if (postActionFn) {
-          return postActionFn(response);
-        }
+      if (config) {
+        this.projectConfig = config;
       }
+
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.runActions(actions, config, this.parameters, options);
+
+      if (postActionFn) {
+        return postActionFn(response);
+      }
+      // }
     } catch (err) {
       return Promise.reject(err);
     }
@@ -141,15 +141,14 @@ class Distributor {
       this._eventEmitter.on('message', (data) => {
         const response = data.data || data;
 
-        if (response.isError) {
-          errors.push(response.error || response.message); //lambda ...
-          return;
-        }
+        // if (response.isError) {
+        //   errors.push(...(response.error || response.message)); //lambda ...
+        //   return;
+        // }
 
         if (response && !results.some(it => it.id === response.id)) {
           results.push(response);
         }
-
         this.removeDependencies(this._dependencyTable, response.hash);
       });
 
@@ -157,13 +156,12 @@ class Distributor {
         const { code } = data;
         this._workCounter--;
 
-        if (code === 0) {
+        if (code === 0 && this._workCounter < 25) {
           this.distributeConfig();
         }
 
         const hashes = Object.keys(this._dependencyTable);
-
-        if (!hashes.length && !this._workCounter && !errors.length) { return resolve(results); }
+        if (!hashes.length && this._workCounter === 1) { return resolve(results); }
         if (errors.length && !this._workCounter) { return reject(errors); }
       });
     });
@@ -176,16 +174,15 @@ class Distributor {
   distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
 
-    for (let index = 0; index < hashes.length; index++) {
+    for (let index = 0; index < hashes.length && this._workCounter < 25; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
         try {
-          this.distributor = this.getDistributor(hash);
-          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
+          this.distributor = this.getDistributor(hash).distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         } catch (err) {
-          return this.logger.error(err);
+          this.logger.error(err);
         }
 
         this._workCounter++;
