@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 class Websocket {
 
   constructor(env, ticket) {
-    this.baseUrl = env === 'api' ? `wss://apiws.terrahub.io/v1` : `wss://apiws-${env.split('-')[1]}.terrahub.io/v1`;
+    this.baseUrl = `wss://apiws-${env.split('-')[1]}.terrahub.io/v1`;
     this.ws = new WebSocket(`${this.baseUrl}?ticket_id=${ticket}`);
 
   }
