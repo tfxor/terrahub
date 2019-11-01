@@ -94,15 +94,20 @@ class AwsDistributor {
           this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
 
           setImmediate(() => this.emitter.emit('message', {
-            ...defaultMessage, ...{ isError: true, message: this._errors }
+            ...defaultMessage, ...{ isError: true, message: this._errors, hash: this.componentConfig.hash }
           }));
           setImmediate(() => this.emitter.emit('exit', {
-            ...defaultMessage, ...{ code: 1 }
+            ...defaultMessage, ...{ code: 0 } // Error code -> 1 !!
           }));
+
         }
       } catch (err) {
-        throw new Error(err);
+        console.log('this.ws.', err);
       }
+    });
+
+    this.ws.on('error', err => {
+      console.log(err);
     });
   }
 
