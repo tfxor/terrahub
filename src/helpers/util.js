@@ -111,12 +111,12 @@ class Util {
       if (!node.dependsOn.length) {
         tree[hash] = node;
       } else {
-        const key = Util.toMd5(node.dependsOn[0]);
-        if (!object.hasOwnProperty(key)) {
+        const dependentHash = Object.keys(object).find(it => object[it].name === node.dependsOn[0]);
+        if (!object.hasOwnProperty(dependentHash)) {
           throw new Error(`Couldn't find dependency '${node.dependsOn[0]}'`);
         }
 
-        object[key].children.push(node);
+        object[dependentHash].children.push(node);
       }
     });
 
