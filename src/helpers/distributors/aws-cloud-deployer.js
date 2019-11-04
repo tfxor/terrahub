@@ -12,10 +12,9 @@ const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
 
-  constructor({ parameters, publish }) {
+  constructor({ parameters }) {
     this.s3 = new S3Helper();
     this.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
-    this.publish = publish;
   }
 
   /**
@@ -59,14 +58,14 @@ class AwsDeployer {
       return {
         message: error.message || error,
         hash: config.hash,
-        status: 'error'
+        isError: true
       };
     }
 
     return {
       message: `Component '${config.name}' has been successfully deployed.`,
       hash: config.hash,
-      status: 'finish'
+      isError: false
     };
   }
 
@@ -79,7 +78,7 @@ class AwsDeployer {
    * @private
    */
   async _runActions(actions, config, thubRunId, parameters) {
-    const terrahub = new Terrahub(config, thubRunId, parameters, this.publish);
+    const terrahub = new Terrahub(config, thubRunId, parameters);
     const { distributor } = config;
 
     logger.updateContext({

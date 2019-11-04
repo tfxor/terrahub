@@ -15,12 +15,12 @@ class AwsDistributor {
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
-   * @param {EventListenerObject} emitter
+   * @param {Function} emit
    */
-  constructor(parameters, config, env, emitter) {
+  constructor(parameters, config, env, emit) {
     this._errors = [];
     this.env = env;
-    this.emitter = !this.emitter ? emitter : this.emitter;
+    this.emit = emit;
     this.parameters = parameters;
     this.componentConfig = config;
     this.fetch = this.parameters.fetch;
@@ -42,8 +42,6 @@ class AwsDistributor {
 
     this.ws = await this.getWebSocket();
 
-    let inProgress = 0;
-
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
     console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
@@ -64,8 +62,6 @@ class AwsDistributor {
       parameters: this.parameters
     });
 
-    inProgress++;
-
     try {
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
@@ -75,30 +71,24 @@ class AwsDistributor {
 
     this.ws.on('message', data => {
       try {
-        const message = JSON.parse(data);
+        const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda', hash: this.componentConfig.hash };
+        if (parsedData.action === 'aws-cloud-deployer' && parsedData.data.message) {
+          const { data: { isError, hash, message } } = parsedData;
+          if (!isError && this.componentConfig.hash === hash) {
+            if (!this._errors.length) { //TODO need this verification ?
+              logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
+            }
 
-        if (AwsDistributor._isFinishMessage(message, this.componentConfig.hash)) {
-          if (!this._errors.length) {
-            logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
+            this.emit('message', { ...defaultMessage, ...{ isError, message } });
+            this.emit('exit', { ...defaultMessage, ...{ code: 0 } });
           }
-          inProgress--;
-          setImmediate(() => this.emitter.emit('message', {
-            ...defaultMessage, ...{ isError: false, message: message.data.message }
-          }));
-          setImmediate(() => this.emitter.emit('exit', {
-            ...defaultMessage, ...{ code: 0 }
-          }));
-        }
-        if (AwsDistributor._isFinishMessageWithErrors(message, this.componentConfig.hash)) {
-          this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
+          if (isError && this.componentConfig.hash === hash) {
+            this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
 
-          setImmediate(() => this.emitter.emit('message', {
-            ...defaultMessage, ...{ isError: true, message: this._errors }
-          }));
-          setImmediate(() => this.emitter.emit('exit', {
-            ...defaultMessage, ...{ code: 1 }
-          }));
+            this.emit('message', { ...defaultMessage, ...{ isError: true, message: this._errors } });
+            this.emit('exit', { ...defaultMessage, ...{ code: 1 } });
+          }
         }
       } catch (err) {
         throw new Error(err);
@@ -122,30 +112,6 @@ class AwsDistributor {
 
       throw new Error(errorMessage);
     }
-  }
-
-  /**
-   * @param {Object} message
-   * @param {String} componentHash
-   * @return {Boolean}
-   * @private
-   */
-  static _isFinishMessage(message, componentHash) {
-    const { action, data: { status, hash } } = message;
-
-    return action === 'aws-cloud-deployer' && status === 'finish' && componentHash === hash;
-  }
-
-  /**
-   * @param {Object} message
-   * @param {String} componentHash
-   * @return {Boolean}
-   * @private
-   */
-  static _isFinishMessageWithErrors(message, componentHash) {
-    const { action, data: { status, hash } } = message;
-
-    return action === 'aws-cloud-deployer' && status === 'error' && componentHash === hash;
   }
 
   /**

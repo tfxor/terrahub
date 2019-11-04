@@ -5,7 +5,10 @@ const cluster = require('cluster');
 const ApiHelper = require('../api-helper');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
 
-
+/**
+ * @classdesc Singletone LocalDistributor class.
+ * @class
+ */
 class LocalDistributor {
 
   constructor() {
@@ -15,6 +18,8 @@ class LocalDistributor {
     this._workersCount = 0;
     this._loggerLastLog = {};
 
+    this.subscribe();
+
     cluster.setupMaster({ exec: this._worker });
   }
 
@@ -22,17 +27,54 @@ class LocalDistributor {
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
-   * @param {Event} emitter
+   * @param {Function} emit
    * @return {LocalDistributor}
    */
-  init(parameters, config, env, emitter) {
-    this.emitter = emitter;
+  init(parameters, config, env, emit) {
+    this.emit = emit;
     this._env = env;
     this.parameters = parameters;
     this.config = config;
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
 
     return this;
+  }
+
+  /**
+   * Subscribes for events from `cluster` workers' and `LoggerWorker`
+   */
+  subscribe() {
+    ApiHelper.on('loggerWork', () => {
+      if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
+        ApiHelper.setIsBusy();
+        return this._createLoggerWorker();
+      }
+
+      return false;
+    });
+
+    cluster.on('message', (worker, data) => {
+      if (data.isError) {
+        this._error = this._handleError(data.error);
+        this.emit('message', { isError: true, message: this._error });
+      }
+
+      if (data.isLogger || data.workerLogger) {
+        return this._loggerMessageHandler(data);
+      }
+
+      if (data.data) {
+        this.emit('message', { worker: worker.id, data: data });
+      }
+    });
+
+    cluster.on('exit', (worker, code) => {
+      if (LocalDistributor._getWorkerName(worker) !== 'logger-worker') {
+        this._workersCount--;
+
+        this.emit('exit', { worker, code, hash: this.config.hash });
+      }
+    });
   }
 
   /**
@@ -55,42 +97,6 @@ class LocalDistributor {
 
     this._workersCount++;
     worker.send({ workerType: 'default', data: cfgThread, parameters: this.parameters });
-
-
-    ApiHelper.on('loggerWork', () => {
-      if (!this.loggerWorker || (this.loggerWorker && this.loggerWorker.isDead())) {
-        ApiHelper.setIsBusy();
-        return this._createLoggerWorker();
-      }
-
-      return false;
-    });
-
-    cluster.on('message', (worker, data) => {
-      if (data.isError) {
-        this._error = this._handleError(data.error);
-
-        setImmediate(() => this.emitter.emit('message', { isError: true, message: this._error }));
-      }
-
-      if (data.isLogger || data.workerLogger) {
-        return this._loggerMessageHandler(data);
-      }
-
-      if (data.data) {
-        setImmediate(() => this.emitter.emit('message', { worker: worker.id, data: data }));
-      }
-    });
-
-    cluster.on('exit', (worker, code) => {
-      if (LocalDistributor._getWorkerName(worker) === 'logger-worker') {
-        return;
-      }
-
-      this._workersCount--;
-
-      setImmediate(() => this.emitter.emit('exit', { worker, code, hash: this.config.hash }));
-    });
   }
 
   /**

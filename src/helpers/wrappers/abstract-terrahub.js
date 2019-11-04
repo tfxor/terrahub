@@ -15,9 +15,8 @@ class AbstractTerrahub {
    * @param {Object} cfg
    * @param {String} thubRunId
    * @param {Object} parameters
-   * @param {Function} [publish]
    */
-  constructor(cfg, thubRunId, parameters, publish) {
+  constructor(cfg, thubRunId, parameters) {
     this._runId = thubRunId;
     this._action = '';
     this.parameters = parameters;
@@ -27,7 +26,6 @@ class AbstractTerrahub {
     this._terraform = new Terraform(cfg, this.parameters);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
-    this.publish = publish;
   }
 
   /**
@@ -268,8 +266,6 @@ class AbstractTerrahub {
       case 'lambda':
         ApiHelper.init(this.parameters, this._config.distributor);
         ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
-
-        this.publish({ ...this._workflowOptions, status });
         break;
       case 'fargate':
         //todo

@@ -5,6 +5,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
+const { physicalCpuCount, threadsLimitCount } = require('../util');
 
 
 class Distributor {
@@ -14,11 +15,15 @@ class Distributor {
   constructor(command) {
     this._eventEmitter = new events.EventEmitter();
     this._workCounter = 0;
+    this._localWorkerCounter = 0;
+    this._lambdaWorkerCounter = 0;
+
 
     this.command = command;
     this.runId = command._runId;
     this.logger = command.logger;
     this.parameters = command.parameters;
+    this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
   }
 
   /**
@@ -35,20 +40,20 @@ class Distributor {
     }
 
     try {
-      for (const step of result) {
-        const { actions, config, postActionFn, ...options } = step;
+      // for (const step of result) {
+      const [{ actions, config, postActionFn, ...options }] = result;
 
-        if (config) {
-          this.projectConfig = config;
-        }
-
-        // eslint-disable-next-line no-await-in-loop
-        const response = await this.runActions(actions, config, this.parameters, options);
-
-        if (postActionFn) {
-          return postActionFn(response);
-        }
+      if (config) {
+        this.projectConfig = config;
       }
+
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.runActions(actions, config, this.parameters, options);
+
+      if (postActionFn) {
+        return postActionFn(response);
+      }
+      // }
     } catch (err) {
       return Promise.reject(err);
     }
@@ -142,7 +147,7 @@ class Distributor {
         const response = data.data || data;
 
         if (response.isError) {
-          errors.push(response.error || response.message); //lambda ...
+          errors.push(response.error || response.message); //TODO lambda ...
           return;
         }
 
@@ -154,8 +159,14 @@ class Distributor {
       });
 
       this._eventEmitter.on('exit', (data) => {
-        const { code } = data;
+        const { code, worker } = data;
         this._workCounter--;
+
+        if (worker === 'lambda') {
+          this._lambdaWorkerCounter--;
+        } else {
+          this._localWorkerCounter--;
+        }
 
         if (code === 0) {
           this.distributeConfig();
@@ -175,8 +186,7 @@ class Distributor {
    */
   distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
-
-    for (let index = 0; index < hashes.length; index++) {
+    for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
@@ -188,7 +198,7 @@ class Distributor {
           return this.logger.error(err);
         }
 
-        this._workCounter++;
+        this._workCounter++; // todo ???
         delete this._dependencyTable[hash];
       }
     }
@@ -204,13 +214,19 @@ class Distributor {
 
     switch (distributor) {
       case 'local':
-        return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
+        this._localWorkerCounter++;
+        return LocalDistributor.init(
+          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       case 'lambda':
-        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
+        this._lambdaWorkerCounter++;
+        return new AwsDistributor(
+          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       case 'fargate':
-        return new AwsDistributor(this.parameters, config, this._env, this._eventEmitter);
+        return new AwsDistributor(
+          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       default:
-        return LocalDistributor.init(this.parameters, config, this._env, this._eventEmitter);
+        return LocalDistributor.init(
+          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
     }
   }
 
