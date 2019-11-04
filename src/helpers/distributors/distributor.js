@@ -1,6 +1,7 @@
 'use strict';
 
 const events = require('events');
+const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
@@ -18,11 +19,11 @@ class Distributor {
     this._localWorkerCounter = 0;
     this._lambdaWorkerCounter = 0;
 
-
     this.command = command;
     this.runId = command._runId;
     this.logger = command.logger;
     this.parameters = command.parameters;
+    this.fetch = this.parameters.fetch;
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
   }
 
@@ -32,6 +33,7 @@ class Distributor {
   async run() {
     await this.command.validate();
     await this.sendLogsToApi();
+    await this.initWebSocket(); //todo init WS only if exist lambda distributor
 
     const result = await this.command.run();
 
@@ -162,11 +164,7 @@ class Distributor {
         const { code, worker } = data;
         this._workCounter--;
 
-        if (worker === 'lambda') {
-          this._lambdaWorkerCounter--;
-        } else {
-          this._localWorkerCounter--;
-        }
+        worker === 'lambda' ? this._lambdaWorkerCounter-- : this._localWorkerCounter--;
 
         if (code === 0) {
           this.distributeConfig();
@@ -220,10 +218,14 @@ class Distributor {
       case 'lambda':
         this._lambdaWorkerCounter++;
         return new AwsDistributor(
-          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
+          this.parameters, config, this._env,
+          (event, message) => this._eventEmitter.emit(event, message),
+          this.webSocket);
       case 'fargate':
         return new AwsDistributor(
-          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
+          this.parameters, config, this._env,
+          (event, message) => this._eventEmitter.emit(event, message),
+          this.webSocket);
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
@@ -246,6 +248,27 @@ class Distributor {
       project: projectConfig,
       environment: environment
     });
+  }
+
+  /**
+   * @return {Promise}
+   */
+  websocketTicketCreate() {
+    return this.fetch.get('thub/ticket/create');
+  }
+
+  /**
+   * lazy initialize WebSocket
+   * @return {Promise<WebSocket>}
+   */
+  async initWebSocket() {
+    if (!this.webSocket) {
+      const { data: { ticket_id } } = await this.websocketTicketCreate();
+      const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
+
+      this.webSocket = ws;
+    }
+    return Promise.resolve();
   }
 }
 

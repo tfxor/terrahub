@@ -5,7 +5,6 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const Websocket = require('./websocket');
 const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
@@ -16,8 +15,9 @@ class AwsDistributor {
    * @param {Object} config
    * @param {Object} env
    * @param {Function} emit
+   * @param {Function} webSocket
    */
-  constructor(parameters, config, env, emit) {
+  constructor(parameters, config, env, emit, webSocket) {
     this._errors = [];
     this.env = env;
     this.emit = emit;
@@ -26,8 +26,42 @@ class AwsDistributor {
     this.fetch = this.parameters.fetch;
     this.config = this.parameters.config;
     this._projectRoot = this.componentConfig.project.root;
+    this.webSocket = webSocket;
 
     this._validateRequirements();
+    this._subscribe();
+  }
+
+  _subscribe() {
+    if (!this.webSocket) {
+      throw new Error('WebSocket is not initialized.');
+    }
+
+    this.webSocket.on('message', data => {
+      try {
+        const parsedData = JSON.parse(data);
+        const defaultMessage = { worker: 'lambda', hash: this.componentConfig.hash };
+        if (parsedData.action === 'aws-cloud-deployer' && parsedData.data.message) {
+          const { data: { isError, hash, message } } = parsedData;
+          if (!isError && this.componentConfig.hash === hash) {
+            if (!this._errors.length) { //TODO need this verification ?
+              logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
+            }
+
+            this.emit('message', { ...defaultMessage, ...{ isError, message } });
+            this.emit('exit', { ...defaultMessage, ...{ code: 0 } });
+          }
+          if (isError && this.componentConfig.hash === hash) {
+            this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
+
+            this.emit('message', { ...defaultMessage, ...{ isError: true, message: this._errors } });
+            this.emit('exit', { ...defaultMessage, ...{ code: 1 } });
+          }
+        }
+      } catch (err) {
+        throw new Error(err);
+      }
+    });
   }
 
   /**
@@ -39,8 +73,6 @@ class AwsDistributor {
     await this._updateCredentialsForS3();
     const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
     const s3directory = this.config.api.replace('api', 'projects');
-
-    this.ws = await this.getWebSocket();
 
     const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
     console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
@@ -68,32 +100,6 @@ class AwsDistributor {
     } catch (err) {
       this._errors.push(err);
     }
-
-    this.ws.on('message', data => {
-      try {
-        const parsedData = JSON.parse(data);
-        const defaultMessage = { worker: 'lambda', hash: this.componentConfig.hash };
-        if (parsedData.action === 'aws-cloud-deployer' && parsedData.data.message) {
-          const { data: { isError, hash, message } } = parsedData;
-          if (!isError && this.componentConfig.hash === hash) {
-            if (!this._errors.length) { //TODO need this verification ?
-              logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
-            }
-
-            this.emit('message', { ...defaultMessage, ...{ isError, message } });
-            this.emit('exit', { ...defaultMessage, ...{ code: 0 } });
-          }
-          if (isError && this.componentConfig.hash === hash) {
-            this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
-
-            this.emit('message', { ...defaultMessage, ...{ isError: true, message: this._errors } });
-            this.emit('exit', { ...defaultMessage, ...{ code: 1 } });
-          }
-        }
-      } catch (err) {
-        throw new Error(err);
-      }
-    });
   }
 
   /**
@@ -152,14 +158,6 @@ class AwsDistributor {
   }
 
   /**
-   * @return {Promise}
-   */
-  websocketTicketCreate() {
-    return this.fetch.get('thub/ticket/create');
-  }
-
-
-  /**
    * @return {Promise<String>}
    */
   _fetchAccountId() {
@@ -189,21 +187,6 @@ class AwsDistributor {
       AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
       AWS_SESSION_TOKEN: tempCreds.SessionToken
     });
-  }
-
-  /**
-   * lazyload WebSocket
-   * @return {Promise<WebSocket>}
-   */
-  async getWebSocket() {
-    if (!this.webSocket) {
-      const { data: { ticket_id } } = await this.websocketTicketCreate();
-      const { ws } = new Websocket(this.config.api, ticket_id);
-
-      this.webSocket = ws;
-    }
-
-    return this.webSocket;
   }
 }
 
