@@ -683,7 +683,7 @@ class HclHelper {
   }
 
   static _symLinkNonTerraHubFiles(config) {
-    const regEx = /\.terrahub.*(json|yml|yaml)$/;
+    const regEx = /\.terrahub.*(json|yml|yaml)|.*.tfvars$/;
     const tmpPath = HclHelper.buildTmpPath(config);
     const src = join(config.project.root, config.root);
 

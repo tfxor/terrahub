@@ -57,12 +57,14 @@ var (
 	withoutStartMap = []string{
 		"provisioner", "local-exec", "remote-exec", "chef", "file", "habitat", "puppet",
 		"filter", "versioning", "vpc_settings", "account_aggregation_source", "source",
-		"scope", "output_location", "targets", "event_selector", "data_resource",
+		"scope", "output_location", "targets", "event_selector", "data_resource", "s3_destination",
+		"global_filter", "approval_rule", "patch_filter",
 	}
 	withoutEqual = []string{
 		"statement", "condition", "principals", "assume_role", "filter", "versioning",
 		"vpc_settings", "account_aggregation_source", "source", "scope", "output_location",
-		"targets", "event_selector", "data_resource",
+		"targets", "event_selector", "data_resource", "s3_destination", "global_filter",
+		"approval_rule", "patch_filter",
 	}
 )
 
