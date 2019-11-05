@@ -594,7 +594,7 @@ class HclHelper {
     const remoteTfvarsJson = JSON.parse(strWithoutQuote);
 
     template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{"));
+      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
 
     return Promise.resolve();
   }
@@ -642,7 +642,7 @@ class HclHelper {
           name = 'main.tf';
           break;
         case 'tfvars':
-          name = join(cfgEnv === 'default' ? '' : 'workspace', `${cfgEnv}.tfvars`);
+          name = `${cfgEnv}.tfvars`;
           data = template[it];
           break;
       }
@@ -687,7 +687,7 @@ class HclHelper {
    * @private
    */
   static _symLinkNonTerraHubFiles(config, parameters) {
-    const regEx = /\.terrahub.*(json|yml|yaml)$/;
+    const regEx = /\.terrahub.*(json|yml|yaml)|.*.tfvars$/;
     const tmpPath = HclHelper.buildTmpPath(config, parameters);
     const src = join(config.project.root, config.root);
 
