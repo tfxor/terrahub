@@ -169,7 +169,13 @@ class Distributor {
         }
 
         const hashes = Object.keys(this._dependencyTable);
-
+        console.log({
+          hashes: hashes.length,
+          workers: this._workCounter,
+          lambda: this._lambdaWorkerCounter,
+          local: this._localWorkerCounter,
+          errors: errors.length
+        });
         if (!hashes.length && !this._workCounter && !errors.length) { return resolve(results); }
         if (errors.length && !this._workCounter) { return reject(errors); }
       });
