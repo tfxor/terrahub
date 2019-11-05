@@ -14,60 +14,23 @@ class AwsDistributor {
    * @param {Object} parameters
    * @param {Object} config
    * @param {Object} env
-   * @param {Function} emit
-   * @param {Function} webSocket
    */
-  constructor(parameters, config, env, emit, webSocket) {
+  constructor(parameters, config, env) {
     this._errors = [];
     this.env = env;
-    this.emit = emit;
     this.parameters = parameters;
     this.componentConfig = config;
     this.fetch = this.parameters.fetch;
     this.config = this.parameters.config;
     this._projectRoot = this.componentConfig.project.root;
-    this.webSocket = webSocket;
 
     this._validateRequirements();
-    this._subscribe();
-  }
-
-  _subscribe() {
-    if (!this.webSocket) {
-      throw new Error('WebSocket is not initialized.');
-    }
-
-    this.webSocket.on('message', data => {
-      try {
-        const parsedData = JSON.parse(data);
-        const defaultMessage = { worker: 'lambda', hash: this.componentConfig.hash };
-        if (parsedData.action === 'aws-cloud-deployer' && parsedData.data.message) {
-          const { data: { isError, hash, message } } = parsedData;
-          if (!isError && this.componentConfig.hash === hash) {
-            if (!this._errors.length) { //TODO need this verification ?
-              logger.info(`[${this.componentConfig.name}] Successfully deployed!`);
-            }
-
-            this.emit('message', { ...defaultMessage, ...{ isError, message } });
-            this.emit('exit', { ...defaultMessage, ...{ code: 0 } });
-          }
-          if (isError && this.componentConfig.hash === hash) {
-            this._errors.push(`[${this.componentConfig.name}] ${message.data.message}`);
-
-            this.emit('message', { ...defaultMessage, ...{ isError: true, message: this._errors } });
-            this.emit('exit', { ...defaultMessage, ...{ code: 1 } });
-          }
-        }
-      } catch (err) {
-        throw new Error(err);
-      }
-    });
   }
 
   /**
    * @param {String[]} actions
    * @param {String} runId
-   * @return {EventInit}
+   * @return {void}
    */
   async distribute({ actions, runId }) {
     await this._updateCredentialsForS3();

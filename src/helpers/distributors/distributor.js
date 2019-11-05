@@ -1,13 +1,13 @@
 'use strict';
 
 const events = require('events');
+const logger = require('../logger');
 const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
-
 
 class Distributor {
   /**
@@ -33,29 +33,29 @@ class Distributor {
   async run() {
     await this.command.validate();
     await this.sendLogsToApi();
-    await this.initWebSocket(); //todo init WS only if exist lambda distributor
+    if (this.command._tokenIsValid) { //todo init WS only if exist lambda distributor
+      await this._lambdaSubscribe();
+    }
 
     const result = await this.command.run();
 
     if (!Array.isArray(result)) {
       return Promise.resolve(result);
     }
-
     try {
-      // for (const step of result) {
-      const [{ actions, config, postActionFn, ...options }] = result;
+      for (const step of result) {
+        const { actions, config, postActionFn, ...options } = step;
 
-      if (config) {
-        this.projectConfig = config;
+        if (config) {
+          this.projectConfig = config;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        const response = await this.runActions(actions, config, this.parameters, options);
+
+        if (postActionFn) {
+          return postActionFn(response);
+        }
       }
-
-      // eslint-disable-next-line no-await-in-loop
-      const response = await this.runActions(actions, config, this.parameters, options);
-
-      if (postActionFn) {
-        return postActionFn(response);
-      }
-      // }
     } catch (err) {
       return Promise.reject(err);
     }
@@ -146,18 +146,16 @@ class Distributor {
       this.distributeConfig();
 
       this._eventEmitter.on('message', (data) => {
-        const response = data.data || data;
-
-        if (response.isError) {
-          errors.push(response.error || response.message); //TODO lambda ...
+        if (data.isError) {
+          errors.push(data.message);
           return;
         }
 
-        if (response && !results.some(it => it.id === response.id)) {
-          results.push(response);
+        if (data && !results.some(it => it.id === data.id)) {
+          results.push(data);
         }
 
-        this.removeDependencies(this._dependencyTable, response.hash);
+        this.removeDependencies(this._dependencyTable, data.hash);
       });
 
       this._eventEmitter.on('exit', (data) => {
@@ -196,7 +194,7 @@ class Distributor {
           return this.logger.error(err);
         }
 
-        this._workCounter++; // todo ???
+        this._workCounter++;
         delete this._dependencyTable[hash];
       }
     }
@@ -217,15 +215,9 @@ class Distributor {
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       case 'lambda':
         this._lambdaWorkerCounter++;
-        return new AwsDistributor(
-          this.parameters, config, this._env,
-          (event, message) => this._eventEmitter.emit(event, message),
-          this.webSocket);
+        return new AwsDistributor(this.parameters, config, this._env);
       case 'fargate':
-        return new AwsDistributor(
-          this.parameters, config, this._env,
-          (event, message) => this._eventEmitter.emit(event, message),
-          this.webSocket);
+        return new AwsDistributor(this.parameters, config, this._env);
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
@@ -258,17 +250,37 @@ class Distributor {
   }
 
   /**
-   * lazy initialize WebSocket
-   * @return {Promise<WebSocket>}
+   * subscribe to Lambda websocket
+   * @throws Error
+   * @return {Promise<void>}
    */
-  async initWebSocket() {
-    if (!this.webSocket) {
-      const { data: { ticket_id } } = await this.websocketTicketCreate();
-      const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
+  async _lambdaSubscribe() {
+    const { data: { ticket_id } } = await this.websocketTicketCreate();
+    const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
 
-      this.webSocket = ws;
-    }
-    return Promise.resolve();
+    ws.on('message', data => {
+      try {
+        const parsedData = JSON.parse(data);
+        const defaultMessage = { worker: 'lambda' };
+        if (parsedData.action === 'aws-cloud-deployer') {
+          const { data: { isError, hash, message } } = parsedData;
+          if (!isError) {
+            logger.info(`[${this.projectConfig[hash].name}] Successfully deployed!`);
+
+            this._eventEmitter.emit('message', { ...defaultMessage, ...{ isError, message, hash } });
+            this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 0 } });
+          }
+          if (isError) {
+            this._eventEmitter.emit('message',
+              { ...defaultMessage,
+                ...{ isError, message: `[${this.projectConfig[hash].name}] ${message}`, hash } });
+            this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 1 } });
+          }
+        }
+      } catch (e) {
+        throw new Error(e);
+      }
+    });
   }
 }
 
