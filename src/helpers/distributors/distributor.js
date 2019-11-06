@@ -18,6 +18,7 @@ class Distributor {
     this._workCounter = 0;
     this._localWorkerCounter = 0;
     this._lambdaWorkerCounter = 0;
+    this.errors = [];
 
     this.command = command;
     this.runId = command._runId;
@@ -137,7 +138,7 @@ class Distributor {
     input = false
   } = {}) {
     const results = [];
-    const errors = [];
+    // const errors = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
@@ -145,9 +146,10 @@ class Distributor {
     return new Promise((resolve, reject) => {
       this.distributeConfig();
 
-      this._eventEmitter.on('message', (data) => {
+      this._eventEmitter.on('message', (response) => {
+        const data = response.data || response;
         if (data.isError) {
-          errors.push(data.message);
+          this.errors.push(data.message);
           return;
         }
 
@@ -164,7 +166,7 @@ class Distributor {
 
         worker === 'lambda' ? this._lambdaWorkerCounter-- : this._localWorkerCounter--;
 
-        if (code === 0) {
+        if (code === 0 && !this.errors.length) {
           this.distributeConfig();
         }
 
@@ -174,10 +176,10 @@ class Distributor {
           workers: this._workCounter,
           lambda: this._lambdaWorkerCounter,
           local: this._localWorkerCounter,
-          errors: errors.length
+          errors: this.errors.length
         });
-        if (!hashes.length && !this._workCounter && !errors.length) { return resolve(results); }
-        if (errors.length && !this._workCounter) { return reject(errors); }
+        if (!hashes.length && !this._workCounter && !this.errors.length) { return resolve(results); }
+        if (this.errors.length && !this._workCounter) { return reject(this.errors); }
       });
     });
   }
@@ -193,15 +195,31 @@ class Distributor {
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
-        try {
-          this.distributor = this.getDistributor(hash);
+        // try {
+        this.distributor = this.getDistributor(hash);// //todo remove from lambdaWorkerCount (maybe make error hanlder that sends' error to EventEmitter)
+
+        if (this.distributor instanceof AwsDistributor) {
+          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId }).catch(err => {
+            console.log('distributor.distribute error :', err);
+            this._workCounter--;
+            this._lambdaWorkerCounter--;
+            this._eventEmitter.emit('message',
+              { ...{ worker: 'lambda' }, ...err });
+            this._eventEmitter.emit('exit', { worker: 'lambda', code: 1 });
+
+            this.errors.push(err.message);
+          });
+        } else {
           this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
-        } catch (err) {
-          return this.logger.error(err);
         }
 
         this._workCounter++;
         delete this._dependencyTable[hash];
+        // } catch (err) {
+        //   console.log('catched in distribuot.distributeConfig :', err);
+        //   return this.logger.error(err); //todo it's async distribute that is calling sync ...
+        // }
+
       }
     }
   }
@@ -278,8 +296,10 @@ class Distributor {
           }
           if (isError) {
             this._eventEmitter.emit('message',
-              { ...defaultMessage,
-                ...{ isError, message: `[${this.projectConfig[hash].name}] ${message}`, hash } });
+              {
+                ...defaultMessage,
+                ...{ isError, message: `[${this.projectConfig[hash].name}] ${message}`, hash }
+              });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 1 } });
           }
         }

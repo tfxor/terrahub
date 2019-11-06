@@ -28,7 +28,6 @@ class AwsDeployer {
    */
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters } = requestData;
-    await this._updateCredentialsForS3();
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -37,6 +36,7 @@ class AwsDeployer {
     });
 
     try {
+      await this._updateCredentialsForS3();
       config.project.root = AwsDeployer._projectDirectory;
       const api = parameters.config.api.split('-')[1];
       const accountId = await this._fetchAccountId();
@@ -55,6 +55,7 @@ class AwsDeployer {
       await Promise.all(ApiHelper.asyncFetch(promises));
 
     } catch (error) {
+      console.log('aws deployer cathced', error);
       return {
         message: error.message || error,
         hash: config.hash,
