@@ -7,7 +7,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
-const { physicalCpuCount, threadsLimitCount } = require('../util');
+const { physicalCpuCount, threadsLimitCount, removeAwsEnvVars } = require('../util');
 
 class Distributor {
   /**
@@ -44,19 +44,19 @@ class Distributor {
       return Promise.resolve(result);
     }
     try {
-      for (const step of result) {
-        const { actions, config, postActionFn, ...options } = step;
+      // for (const step of result) {
+      const [{ actions, config, postActionFn, ...options }] = result;
 
-        if (config) {
-          this.projectConfig = config;
-        }
-        // eslint-disable-next-line no-await-in-loop
-        const response = await this.runActions(actions, config, this.parameters, options);
-
-        if (postActionFn) {
-          return postActionFn(response);
-        }
+      if (config) {
+        this.projectConfig = config;
       }
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.runActions(actions, config, this.parameters, options);
+
+      if (postActionFn) {
+        return postActionFn(response);
+      }
+      // }
     } catch (err) {
       return Promise.reject(err);
     }
@@ -138,14 +138,23 @@ class Distributor {
     input = false
   } = {}) {
     const results = [];
-    // const errors = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
+    try {
+      await this.distributeConfig();
+    } catch (err) {
+      console.log('errors in distributeConfig:', err);
+    }
+    console.log('distributeConfig FINISHED.');
+    console.log({
+      workers: this._workCounter,
+      lambda: this._lambdaWorkerCounter,
+      local: this._localWorkerCounter,
+      errors: this.errors.length
+    });
     return new Promise((resolve, reject) => {
-      this.distributeConfig();
-
       this._eventEmitter.on('message', (response) => {
         const data = response.data || response;
         if (data.isError) {
@@ -160,14 +169,14 @@ class Distributor {
         this.removeDependencies(this._dependencyTable, data.hash);
       });
 
-      this._eventEmitter.on('exit', (data) => {
+      this._eventEmitter.on('exit', async (data) => {
         const { code, worker } = data;
         this._workCounter--;
 
         worker === 'lambda' ? this._lambdaWorkerCounter-- : this._localWorkerCounter--;
 
         if (code === 0 && !this.errors.length) {
-          this.distributeConfig();
+          await this.distributeConfig();
         }
 
         const hashes = Object.keys(this._dependencyTable);
@@ -188,40 +197,39 @@ class Distributor {
    * Distribute component config to Distributor execution
    * @return {void}
    */
-  distributeConfig() {
+  async distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
+    const promises = [];
+    await this._lazyLoadLambdaRequirements();
+
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
-        // try {
         this.distributor = this.getDistributor(hash);// //todo remove from lambdaWorkerCount (maybe make error hanlder that sends' error to EventEmitter)
-
         if (this.distributor instanceof AwsDistributor) {
-          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId }).catch(err => {
-            console.log('distributor.distribute error :', err);
-            this._workCounter--;
-            this._lambdaWorkerCounter--;
-            this._eventEmitter.emit('message',
-              { ...{ worker: 'lambda' }, ...err });
-            this._eventEmitter.emit('exit', { worker: 'lambda', code: 1 });
-
-            this.errors.push(err.message);
-          });
+          promises.push(
+            this.distributor.distribute({
+              actions: this.TERRAFORM_ACTIONS,
+              runId: this.runId,
+              accountId: this.accountId
+            })
+          );
         } else {
           this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         }
 
         this._workCounter++;
         delete this._dependencyTable[hash];
-        // } catch (err) {
-        //   console.log('catched in distribuot.distributeConfig :', err);
-        //   return this.logger.error(err); //todo it's async distribute that is calling sync ...
-        // }
-
       }
     }
+
+    if (promises.length) {
+      return Promise.all(promises);
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -245,6 +253,49 @@ class Distributor {
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
+    }
+  }
+
+  /**
+   * @return {Promise<String>}
+   */
+  _fetchAccountId() {
+    return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
+  }
+
+  /**
+   * @return {Promise<Object>}
+   * @private
+   */
+  _fetchTemporaryCredentials() {
+    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+  }
+
+  /**
+   * @return {void}
+   * @throws {error}
+   * @private
+   */
+  async _updateCredentialsForS3() {
+    removeAwsEnvVars();
+    const tempCreds = await this._fetchTemporaryCredentials();
+    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
+
+    Object.assign(process.env, {
+      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
+      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
+      AWS_SESSION_TOKEN: tempCreds.SessionToken
+    });
+
+    return true;
+  }
+
+  async _lazyLoadLambdaRequirements() {
+    if (!this.tempCreds) {
+      this.tempCreds = await this._updateCredentialsForS3();
+    }
+    if (!this.accountId) {
+      this.accountId = await this._fetchAccountId();
     }
   }
 
@@ -288,6 +339,9 @@ class Distributor {
         const defaultMessage = { worker: 'lambda' };
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;
+          if (!hash) { //todo Debug Info -> remove
+            console.log(parsedData);
+          }
           if (!isError) {
             logger.info(`[${this.projectConfig[hash].name}] Successfully deployed!`);
 

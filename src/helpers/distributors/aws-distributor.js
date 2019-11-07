@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
+const { globPromise, lambdaHomedir } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
@@ -30,15 +30,15 @@ class AwsDistributor {
   /**
    * @param {String[]} actions
    * @param {String} runId
+   * @param {String} accountId
    * @return {void}
    */
-  async distribute({ actions, runId }) {
+  async distribute({ actions, runId, accountId }) {
     try {
-      await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
       const s3directory = this.config.api.replace('api', 'projects');
+      const files = await this._buildFileList();
 
-      const [accountId, files] = await Promise.all([this._fetchAccountId(), this._buildFileList()]);
       console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
       const s3Prefix = [s3directory, accountId, runId].join('/');
@@ -49,33 +49,20 @@ class AwsDistributor {
 
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
       logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
-    } catch (err) {
-      // throw new Error(err);
-      return {
-        message: error.message || error,
-        hash: config.hash,
-        isError: true
-      };
-    }
 
-    this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
-    const body = JSON.stringify({
-      actions: actions,
-      thubRunId: runId,
-      config: this.componentConfig,
-      parameters: this.parameters
-    });
+      this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
+      const body = JSON.stringify({
+        actions: actions,
+        thubRunId: runId,
+        config: this.componentConfig,
+        parameters: this.parameters
+      });
 
-    try {
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
+      await Promise.resolve();
     } catch (err) {
-      // throw new Error(err);
-      return {
-        message: err.message || err,
-        hash: config.hash,
-        isError: true
-      };
+      throw new Error(`${err} ---> from distribute.distribute`);
     }
   }
 
@@ -132,38 +119,6 @@ class AwsDistributor {
 
       return [];
     }))).then(results => [].concat(...results));
-  }
-
-  /**
-   * @return {Promise<String>}
-   */
-  _fetchAccountId() {
-    return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
-  }
-
-  /**
-   * @return {Promise<Object>}
-   * @private
-   */
-  _fetchTemporaryCredentials() {
-    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
-  }
-
-  /**
-   * @return {void}
-   * @throws {error}
-   * @private
-   */
-  async _updateCredentialsForS3() {
-    removeAwsEnvVars();
-    const tempCreds = await this._fetchTemporaryCredentials();
-    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
-
-    Object.assign(process.env, {
-      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
-      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
-      AWS_SESSION_TOKEN: tempCreds.SessionToken
-    });
   }
 }
 

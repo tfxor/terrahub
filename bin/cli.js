@@ -84,7 +84,6 @@ try {
 
     await syncExitProcess(0, message);
   } catch (error) {
-    console.log('cathced errors in CLI.JS :', error)
     ApiHelper.sendErrorToApi();
 
     await syncExitProcess(1, error, true);
