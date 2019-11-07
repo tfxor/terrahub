@@ -207,15 +207,10 @@ class Distributor {
       const dependsOn = Object.keys(this._dependencyTable[hash]);
 
       if (!dependsOn.length) {
-        this.distributor = this.getDistributor(hash);// //todo remove from lambdaWorkerCount (maybe make error hanlder that sends' error to EventEmitter)
+        this.distributor = this.getDistributor(hash);
         if (this.distributor instanceof AwsDistributor) {
-          promises.push(
-            this.distributor.distribute({
-              actions: this.TERRAFORM_ACTIONS,
-              runId: this.runId,
-              accountId: this.accountId
-            })
-          );
+          promises.push(this.distributor.distribute(
+            { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId }));
         } else {
           this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         }
@@ -337,6 +332,7 @@ class Distributor {
       try {
         const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda' };
+
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;
           if (!hash) { //todo Debug Info -> remove
