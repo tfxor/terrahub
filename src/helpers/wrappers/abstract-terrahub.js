@@ -1,14 +1,13 @@
 'use strict';
 
 const path = require('path');
+const Fetch = require('../fetch');
 const logger = require('../logger');
 const Terraform = require('./terraform');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const ConfigLoader = require('../../config-loader');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
-
-const Fetch = require('../fetch');
 
 class AbstractTerrahub {
   /**
@@ -20,7 +19,7 @@ class AbstractTerrahub {
     this._runId = thubRunId;
     this._action = '';
     this.parameters = parameters;
-    this.parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization); //todo api-helper
+    this.parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this._config = cfg;
     this._project = cfg.project;
     this._terraform = new Terraform(cfg, this.parameters);

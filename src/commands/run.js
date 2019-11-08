@@ -42,8 +42,7 @@ class RunCommand extends DistributedCommand {
       throw new Error('Action aborted');
     }
 
-    //todo discuss if linear actions will work correctly vs `step by step`
-    return this._runLocal(config);
+    return this._run(config);
   }
 
   /**
@@ -65,7 +64,7 @@ class RunCommand extends DistributedCommand {
    * @return {Promise}
    * @private
    */
-  _runLocal(config) {
+  _run(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
 
     if (!this._isApply && !this._isDestroy) {
@@ -92,27 +91,6 @@ class RunCommand extends DistributedCommand {
     }];
 
     return Promise.resolve(destroyRun || applyRun || defaultRun );
-  }
-
-  /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  _runCloud(config) {
-    const actions = ['prepare', 'init', 'workspaceSelect'];
-
-    if (this._isBuild) {
-      throw new Error('`build` action is currently not available in AWS lambda.');
-    }
-    if (this._isDestroy) {
-      throw new Error('`destroy` action is currently not available in AWS lambda.');
-    }
-
-    const updateActions = !this._isApply ? ['plan'] : ['plan', 'apply'];
-    const dependencyDirection =  Dictionary.DIRECTION.FORWARD;
-
-    return Promise.resolve([{ config, actions: [...actions, ...updateActions], dependencyDirection }]);
   }
 
   /**

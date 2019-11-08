@@ -26,7 +26,7 @@ class ApiHelper extends events.EventEmitter {
    * @param {Object} parameters
    * @param {String} distributor
    */
-  init(parameters, distributor = 'local') { //todo: Remove in future
+  init(parameters, distributor = 'local') {
     this.fetch = parameters.fetch instanceof Fetch
       ? parameters.fetch : new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this.config = parameters.config;

@@ -34,7 +34,7 @@ class Distributor {
   async run() {
     await this.command.validate();
     await this.sendLogsToApi();
-    if (this.command._tokenIsValid) { //todo init WS only if exist lambda distributor
+    if (this.command._tokenIsValid) {
       await this._lambdaSubscribe();
     }
 
@@ -44,19 +44,19 @@ class Distributor {
       return Promise.resolve(result);
     }
     try {
-      // for (const step of result) {
-      const [{ actions, config, postActionFn, ...options }] = result;
+      for (const step of result) {
+        const { actions, config, postActionFn, ...options } = step;
 
-      if (config) {
-        this.projectConfig = config;
-      }
-      // eslint-disable-next-line no-await-in-loop
-      const response = await this.runActions(actions, config, this.parameters, options);
+        if (config) {
+          this.projectConfig = config;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        const response = await this.runActions(actions, config, this.parameters, options);
 
-      if (postActionFn) {
-        return postActionFn(response);
+        if (postActionFn) {
+          return postActionFn(response);
+        }
       }
-      // }
     } catch (err) {
       return Promise.reject(err);
     }
@@ -145,15 +145,9 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      console.log('errors in distributeConfig:', err);
+      throw new Error(`[Distributor]: ${err}`);
     }
-    console.log('distributeConfig FINISHED.');
-    console.log({
-      workers: this._workCounter,
-      lambda: this._lambdaWorkerCounter,
-      local: this._localWorkerCounter,
-      errors: this.errors.length
-    });
+
     return new Promise((resolve, reject) => {
       this._eventEmitter.on('message', (response) => {
         const data = response.data || response;
@@ -180,13 +174,7 @@ class Distributor {
         }
 
         const hashes = Object.keys(this._dependencyTable);
-        console.log({
-          hashes: hashes.length,
-          workers: this._workCounter,
-          lambda: this._lambdaWorkerCounter,
-          local: this._localWorkerCounter,
-          errors: this.errors.length
-        });
+
         if (!hashes.length && !this._workCounter && !this.errors.length) { return resolve(results); }
         if (this.errors.length && !this._workCounter) { return reject(this.errors); }
       });
@@ -335,9 +323,6 @@ class Distributor {
 
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;
-          if (!hash) { //todo Debug Info -> remove
-            console.log(parsedData);
-          }
           if (!isError) {
             logger.info(`[${this.projectConfig[hash].name}] Successfully deployed!`);
 

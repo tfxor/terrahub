@@ -55,7 +55,6 @@ class AwsDeployer {
       await Promise.all(ApiHelper.asyncFetch(promises));
 
     } catch (error) {
-      console.log('aws deployer cathced', error);
       return {
         message: error.message || error,
         hash: config.hash,

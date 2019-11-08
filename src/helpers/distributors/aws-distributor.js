@@ -62,7 +62,7 @@ class AwsDistributor {
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
       await Promise.resolve();
     } catch (err) {
-      throw new Error(`${err} ---> from distribute.distribute`);
+      throw new Error(`[AWS Distributor]: ${err}`);
     }
   }
 
