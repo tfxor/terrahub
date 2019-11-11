@@ -46,10 +46,6 @@ class ImportCommand extends DistributedCommand {
           hash: Object.values(config)[0].project.code
         });
       });
-      // return distributor.runActions(
-      //   ['prepare', 'init', 'workspaceSelect', 'import'],
-      //   { importLines: JSON.stringify(linesMap) })
-      //   .then(() => 'Done');
 
       return Promise.resolve([{
         actions: ['prepare', 'init', 'workspaceSelect', 'import'],
@@ -93,7 +89,6 @@ class ImportCommand extends DistributedCommand {
               });
             }
           });
-          // return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(linesMap) });
 
           return Promise.resolve([{
             actions: ['prepare', 'init', 'workspaceSelect', 'import'],

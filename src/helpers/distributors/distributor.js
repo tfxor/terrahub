@@ -147,8 +147,7 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      this.errors.push(err);
-      this._workCounter--;
+      throw new Error(err);
     }
 
     return new Promise((resolve, reject) => {
@@ -234,7 +233,14 @@ class Distributor {
         this._lambdaWorkerCounter++;
         return new AwsDistributor(this.parameters, config, this._env);
       case 'fargate':
-        return new AwsDistributor(this.parameters, config, this._env);
+        //todo
+        throw new Error('[Fargate Distributor]: This feature current is not available.');
+      case 'appEngine':
+        //todo
+        throw new Error('[AppEngine Distributor]: This feature current is not available.');
+      case 'cloudFunctions':
+        //todo
+        throw new Error('[CloudFunctions Distributor]: This feature current is not available.');
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
