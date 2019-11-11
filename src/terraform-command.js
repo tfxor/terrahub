@@ -324,7 +324,7 @@ class TerraformCommand extends AbstractCommand {
     const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
-    if (!(configBackendExist || cachedBackendExist)) { return; }
+    if (!configBackendExist && !cachedBackendExist) { return; }
 
     const backend = configBackendExist ? template.terraform.backend : null;
     const backendType = backend ? Object.keys(backend)[0] : 'local';
@@ -332,12 +332,12 @@ class TerraformCommand extends AbstractCommand {
     this._createTerraformRemoteStateObject(config, hash);
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
-    const remoteStateWorkspace = this._terraformRemoteStates[hash]
+    const { workspace } = this._terraformRemoteStates[hash]
         .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
 
     const defaultRemoteConfig = {
       [remoteStateName]: {
-        workspace: remoteStateWorkspace.workspace || '${terraform.workspace}',
+        workspace: workspace || '${terraform.workspace}',
         config: {}
       }
     };
