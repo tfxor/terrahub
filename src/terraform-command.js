@@ -212,7 +212,7 @@ class TerraformCommand extends AbstractCommand {
         this._terraformRemoteStates[hash] = [];
 
         dynamicRemoteStates.forEach(it => {
-          const { name, provider, component } = it;
+          const { name, provider, component, workspace } = it;
 
           if (regexExists.test(component)) {
             const regex = new RegExp(component.replace('*', ''), 'm');
@@ -223,6 +223,7 @@ class TerraformCommand extends AbstractCommand {
               const defaultObj = {
                 component: it,
                 name: `${name.replace('*', it)}`,
+                ...(workspace && { workspace: workspace }),
                 ...(provider && { provider: provider })
               };
 
@@ -331,8 +332,12 @@ class TerraformCommand extends AbstractCommand {
     this._createTerraformRemoteStateObject(config, hash);
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
+    const remoteStateWorkspace = this._terraformRemoteStates[hash]
+        .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
+
     const defaultRemoteConfig = {
       [remoteStateName]: {
+        workspace: remoteStateWorkspace.workspace || '${terraform.workspace}',
         config: {}
       }
     };
@@ -350,7 +355,9 @@ class TerraformCommand extends AbstractCommand {
         }
         break;
       case 's3':
-        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+        Object.keys(backend.s3).forEach(it => {
+          defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+        });
         break;
       case 'gcs':
         Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });
