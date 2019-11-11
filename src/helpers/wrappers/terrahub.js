@@ -2,6 +2,7 @@
 
 const logger = require('../logger');
 const Dictionary = require('../dictionary');
+const BuildHelper = require('../build-helper');
 const AbstractTerrahub = require('./abstract-terrahub');
 
 class Terrahub extends AbstractTerrahub {
@@ -111,7 +112,7 @@ class Terrahub extends AbstractTerrahub {
     const promise = this.parameters.fetch.post(url, options).catch(error => {
       const message = this._addNameToMessage('Failed to trigger parse function');
 
-      logger.error({...error, message });
+      logger.error({ ...error, message });
 
       return Promise.resolve();
     });
@@ -134,6 +135,29 @@ class Terrahub extends AbstractTerrahub {
     };
 
     return this.parameters.fetch.request(url, options);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} thubRunId
+   * @param {String[]} actions
+   * @return {Function[]}
+   */
+  getTasks({ config, thubRunId, actions } = {}) {
+    const { distributor } = config;
+
+    logger.updateContext({
+      runId: thubRunId,
+      componentName: config.name
+    });
+
+    return actions.map(action => options => {
+      logger.updateContext({ action: action });
+
+      return action !== 'build'
+        ? this.getTask(action, options)
+        : BuildHelper.getComponentBuildTask(config, distributor);
+    });
   }
 
   /**

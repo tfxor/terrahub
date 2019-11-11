@@ -589,6 +589,15 @@ class Util {
 
     Object.assign(environment, { AWS_SHARED_CREDENTIALS_FILE: credsPath });
   }
+
+  /**
+   * @return {void}
+   */
+  static deleteTempFolder() {
+    const tmpPath = Util.homePath('temp');
+
+    fse.removeSync(tmpPath);
+  }
 }
 
 module.exports = Util;

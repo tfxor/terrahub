@@ -10,6 +10,7 @@ const parameters = require('../src/parameters');
 const HelpCommand = require('../src/commands/.help');
 const ApiHelper = require('../src/helpers/api-helper');
 const HelpParser = require('../src/helpers/help-parser');
+const { deleteTempFolder } = require('../src/helpers/util');
 const Distributor = require('../src/helpers/distributors/distributor');
 
 /**
@@ -51,7 +52,7 @@ function commandCreate(logger = console) {
  */
 async function syncExitProcess(code, message, error = false) {
   await ApiHelper.promisesForSyncExit();
-  await ApiHelper.deleteTempFolder();
+  deleteTempFolder();
 
   if (error) {
     Array.isArray(message)

@@ -2,12 +2,10 @@
 
 const fse = require('fs-extra');
 const Fetch = require('../fetch');
-const logger = require('../logger');
 const S3Helper = require('../s3-helper');
 const ApiHelper = require('../api-helper');
 const HclHelper = require('../hcl-helper');
 const { promiseSeries } = require('../util');
-const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
 
 class AwsDeployer {
@@ -79,20 +77,7 @@ class AwsDeployer {
    */
   async _runActions(actions, config, thubRunId, parameters) {
     const terrahub = new Terrahub(config, thubRunId, parameters);
-    const { distributor } = config;
-
-    logger.updateContext({
-      runId: thubRunId,
-      componentName: config.name
-    });
-
-    const tasks = actions.map(action => options => {
-      logger.updateContext({ action: action });
-
-      return action !== 'build'
-        ? terrahub.getTask(action, options)
-        : BuildHelper.getComponentBuildTask(config, distributor);
-    });
+    const tasks = terrahub.getTasks({ config, thubRunId, actions });
 
     return promiseSeries(tasks, (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {})));
   }

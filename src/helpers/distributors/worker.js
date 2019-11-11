@@ -4,7 +4,6 @@ const cluster = require('cluster');
 const logger = require('../logger');
 const HclHelper = require('../hcl-helper');
 const { promiseSeries } = require('../util');
-const BuildHelper = require('../build-helper');
 const Terrahub = require('../wrappers/terrahub');
 
 /**
@@ -22,16 +21,11 @@ function getActions() {
  * @return {Function[]}
  */
 function getTasks(config, parameters) {
-  const terrahub = new Terrahub(config, process.env.THUB_RUN_ID, parameters);
-  const { distributor } = config;
+  const thubRunId = process.env.THUB_RUN_ID;
+  const terrahub = new Terrahub(config, thubRunId, parameters);
+  const actions = getActions();
 
-  return getActions().map(action => options => {
-    logger.updateContext({ action: action });
-
-    return action !== 'build'
-      ? terrahub.getTask(action, options)
-      : BuildHelper.getComponentBuildTask(config, distributor);
-  });
+  return terrahub.getTasks({ config, thubRunId, actions });
 }
 
 /**

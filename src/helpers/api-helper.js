@@ -422,6 +422,9 @@ class ApiHelper extends events.EventEmitter {
     return this._tokenIsValid;
   }
 
+  /**
+   * @return {Boolean}
+   */
   get isCloudDeployer() {
     return ['lambda', 'fargate'].includes(this.distributor);
   }
@@ -481,16 +484,6 @@ class ApiHelper extends events.EventEmitter {
 
     return this._cloudAccounts;
   }
-
-  /**
-   * @return {void}
-   */
-  deleteTempFolder() {
-    this.tmpPath = homePath('temp');
-
-    fse.removeSync(this.tmpPath);
-  }
-
 }
 
 module.exports = new ApiHelper();
