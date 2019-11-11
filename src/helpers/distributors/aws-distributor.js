@@ -16,7 +16,6 @@ class AwsDistributor {
    * @param {Object} env
    */
   constructor(parameters, config, env) {
-    this._errors = [];
     this.env = env;
     this.parameters = parameters;
     this.componentConfig = config;

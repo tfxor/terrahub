@@ -14,11 +14,11 @@ class Distributor {
    * @param {Object} command
    */
   constructor(command) {
+    this.errors = [];
     this._eventEmitter = new events.EventEmitter();
     this._workCounter = 0;
     this._localWorkerCounter = 0;
     this._lambdaWorkerCounter = 0;
-    this.errors = [];
 
     this.command = command;
     this.runId = command._runId;
@@ -36,6 +36,7 @@ class Distributor {
     await this.sendLogsToApi();
     if (this.command._tokenIsValid) {
       await this._lambdaSubscribe();
+      await this._loadLambdaRequirements();
     }
 
     const result = await this.command.run();
@@ -43,6 +44,7 @@ class Distributor {
     if (!Array.isArray(result)) {
       return Promise.resolve(result);
     }
+
     try {
       for (const step of result) {
         const { actions, config, postActionFn, ...options } = step;
@@ -145,7 +147,8 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      throw new Error(`[Distributor]: ${err}`);
+      this.errors.push(err);
+      this._workCounter--;
     }
 
     return new Promise((resolve, reject) => {
@@ -188,7 +191,6 @@ class Distributor {
   async distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
     const promises = [];
-    await this._lazyLoadLambdaRequirements();
 
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
@@ -273,7 +275,11 @@ class Distributor {
     return true;
   }
 
-  async _lazyLoadLambdaRequirements() {
+  /**
+   * @return {Promise<void>}
+   * @private
+   */
+  async _loadLambdaRequirements() {
     if (!this.tempCreds) {
       this.tempCreds = await this._updateCredentialsForS3();
     }
