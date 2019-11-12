@@ -1,9 +1,7 @@
 'use strict';
 
-const fse = require('fs-extra');
 const events = require('events');
 const Fetch = require('./fetch');
-const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
 
 class ApiHelper extends events.EventEmitter {
