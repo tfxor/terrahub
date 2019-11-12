@@ -83,20 +83,20 @@ func ConvertToYml(recursive bool) {
 
 // NormalizeTHub - Normalize
 func NormalizeTHub(recursive bool) {
-	countelement := 2
-	argsWithoutProg := os.Args[countelement:]
-	if len(argsWithoutProg) < countelement {
+	countElement := 2
+	argsWithoutProg := os.Args[countElement:]
+	if len(argsWithoutProg) < countElement {
 		fmt.Println("Set please all params!")
 		return
 	}
 	if recursive {
-		countelement++
+		countElement++
 	}
-	source := os.Args[countelement]
-	destination := os.Args[countelement+1]
+	source := os.Args[countElement]
+	destination := os.Args[countElement+1]
 	env := ""
-	if len(argsWithoutProg) > countelement+1 {
-		env = os.Args[countelement+2]
+	if len(argsWithoutProg) > countElement+1 {
+		env = os.Args[countElement+2]
 	}
 	if recursive {
 		terraform.NormalizeFolder(source, destination, env)
