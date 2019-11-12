@@ -7,7 +7,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const AwsDistributor = require('../distributors/aws-distributor');
 const LocalDistributor = require('../distributors/local-distributor');
-const { physicalCpuCount, threadsLimitCount, removeAwsEnvVars } = require('../util');
+const { physicalCpuCount, threadsLimitCount } = require('../util');
 
 class Distributor {
   /**
@@ -255,40 +255,10 @@ class Distributor {
   }
 
   /**
-   * @return {Promise<Object>}
-   * @private
-   */
-  _fetchTemporaryCredentials() {
-    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
-  }
-
-  /**
-   * @return {void}
-   * @throws {error}
-   * @private
-   */
-  async _updateCredentialsForS3() {
-    removeAwsEnvVars();
-    const tempCreds = await this._fetchTemporaryCredentials();
-    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
-
-    Object.assign(process.env, {
-      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
-      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
-      AWS_SESSION_TOKEN: tempCreds.SessionToken
-    });
-
-    return true;
-  }
-
-  /**
    * @return {Promise<void>}
    * @private
    */
   async _loadLambdaRequirements() {
-    if (!this.tempCreds) {
-      this.tempCreds = await this._updateCredentialsForS3();
-    }
     if (!this.accountId) {
       this.accountId = await this._fetchAccountId();
     }

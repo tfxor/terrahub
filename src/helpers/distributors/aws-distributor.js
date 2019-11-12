@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const { globPromise, lambdaHomedir } = require('../util');
+const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
@@ -34,6 +34,7 @@ class AwsDistributor {
    */
   async distribute({ actions, runId, accountId }) {
     try {
+      await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
@@ -119,6 +120,32 @@ class AwsDistributor {
 
       return [];
     }))).then(results => [].concat(...results));
+  }
+
+
+  /**
+   * @return {Promise<Object>}
+   * @private
+   */
+  _fetchTemporaryCredentials() {
+    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+  }
+
+  /**
+   * @return {void}
+   * @throws {error}
+   * @private
+   */
+  async _updateCredentialsForS3() {
+    removeAwsEnvVars();
+    const tempCreds = await this._fetchTemporaryCredentials();
+    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
+
+    Object.assign(process.env, {
+      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
+      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
+      AWS_SESSION_TOKEN: tempCreds.SessionToken
+    });
   }
 }
 
