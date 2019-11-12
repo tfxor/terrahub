@@ -3,7 +3,6 @@
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { join } = require('path');
-const logger = require('../logger');
 const S3Helper = require('../s3-helper');
 const { globPromise, lambdaHomedir } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
@@ -38,8 +37,6 @@ class AwsDistributor {
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
 
-      console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
-
       const s3Prefix = [s3directory, accountId, runId].join('/');
       const pathMap = files.map(it => ({
         localPath: join(this._projectRoot, it),
@@ -47,7 +44,6 @@ class AwsDistributor {
       }));
 
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
-      logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
 
       this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
       const body = JSON.stringify({
@@ -58,8 +54,7 @@ class AwsDistributor {
         env: this.env
       });
 
-      const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
-      logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
+      await this.fetch.post('cloud-deployer/aws/create', { body });
       await Promise.resolve();
     } catch (err) {
       throw new Error(`[AWS Distributor]: ${err}`);

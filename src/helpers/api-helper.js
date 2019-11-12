@@ -240,7 +240,8 @@ class ApiHelper extends events.EventEmitter {
       timestamp: Date.now() + this.logsTimestampAdder,
       component: data.context.componentName,
       log: message,
-      action: data.context.action
+      action: data.context.action,
+      distributor: this.distributor
     };
 
     this.pushToLogs(body);
