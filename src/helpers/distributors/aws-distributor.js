@@ -54,7 +54,8 @@ class AwsDistributor {
         actions: actions,
         thubRunId: runId,
         config: this.componentConfig,
-        parameters: this.parameters
+        parameters: this.parameters,
+        env: this.env
       });
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
