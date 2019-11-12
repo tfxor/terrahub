@@ -206,7 +206,7 @@ class DistributedCommand extends AbstractCommand {
         this._terraformRemoteStates[hash] = [];
 
         dynamicRemoteStates.forEach(it => {
-          const { name, provider, component } = it;
+          const { name, provider, component, workspace } = it;
 
           if (regexExists.test(component)) {
             const regex = new RegExp(component.replace('*', ''), 'm');
@@ -217,6 +217,7 @@ class DistributedCommand extends AbstractCommand {
               const defaultObj = {
                 component: it,
                 name: `${name.replace('*', it)}`,
+                ...(workspace && { workspace: workspace }),
                 ...(provider && { provider: provider })
               };
 
@@ -317,7 +318,7 @@ class DistributedCommand extends AbstractCommand {
     const cachedBackendPath = Util.homePath(this.parameters.hclPath, `${name}_${project.code}`, 'terraform.tfstate');
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
-    if (!(configBackendExist || cachedBackendExist)) { return; }
+    if (!configBackendExist && !cachedBackendExist) { return; }
 
     const backend = configBackendExist ? template.terraform.backend : null;
     const backendType = backend ? Object.keys(backend)[0] : 'local';
@@ -325,8 +326,12 @@ class DistributedCommand extends AbstractCommand {
     this._createTerraformRemoteStateObject(config, hash);
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
+    const { workspace } = this._terraformRemoteStates[hash]
+        .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
+
     const defaultRemoteConfig = {
       [remoteStateName]: {
+        workspace: workspace || '${terraform.workspace}',
         config: {}
       }
     };
@@ -344,7 +349,9 @@ class DistributedCommand extends AbstractCommand {
         }
         break;
       case 's3':
-        Object.keys(backend.s3).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]; });
+        Object.keys(backend.s3).forEach(it => {
+          defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+        });
         break;
       case 'gcs':
         Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });

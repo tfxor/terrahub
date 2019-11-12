@@ -171,8 +171,8 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/timeout/, /connection reset by peer/, /connection refused/,
-          /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+        return [/timeout/, /EOF/, /failed to decode/, /unable to verify checksum/,
+          /connection reset/, /connection refused/, /connection issue/].some(it => it.test(error.message));
       },
       maxRetries: this.parameters.config.retryCount,
       intermediateAction: (retries, maxRetries) => {
