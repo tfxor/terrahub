@@ -147,7 +147,8 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      throw new Error(err);
+      if (/This feature current is not available/.test(err)) { throw new Error(err); }
+      this.errors.push(err);
     }
 
     return new Promise((resolve, reject) => {
@@ -302,6 +303,12 @@ class Distributor {
       try {
         const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda' };
+
+        if (parsedData.action === 'logs') {
+          parsedData.data.forEach(it => {
+            if (it.action !== 'main' && it.distributor === 'lambda') { logger.log(it.log); }
+          });
+        }
 
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;

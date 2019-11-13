@@ -39,7 +39,7 @@ class AwsDistributor {
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
 
-      console.log(`[${this.componentConfig.name}] Uploading project to S3.`);
+      logger.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
       const s3Prefix = [s3directory, accountId, runId].join('/');
       const pathMap = files.map(it => ({

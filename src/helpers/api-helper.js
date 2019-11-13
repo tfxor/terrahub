@@ -1,9 +1,7 @@
 'use strict';
 
-const fse = require('fs-extra');
 const events = require('events');
 const Fetch = require('./fetch');
-const { homePath } = require('./util');
 const Dictionary = require('./dictionary');
 
 class ApiHelper extends events.EventEmitter {
@@ -240,7 +238,8 @@ class ApiHelper extends events.EventEmitter {
       timestamp: Date.now() + this.logsTimestampAdder,
       component: data.context.componentName,
       log: message,
-      action: data.context.action
+      action: data.context.action,
+      distributor: this.distributor
     };
 
     this.pushToLogs(body);
