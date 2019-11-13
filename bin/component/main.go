@@ -86,11 +86,11 @@ func GenerateHclFromYmlThubEnv() {
 		fmt.Println(err)
 	}
 	fileInfo, err := f.Readdir(-1)
-	f.Close()
+  _ = f.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
-	os.MkdirAll(terrahubComponentPath + string(os.PathSeparator) + "workspace", os.ModePerm)
+  _ = os.MkdirAll(terrahubComponentPath+string(os.PathSeparator)+"workspace", os.ModePerm)
 	for _, file := range fileInfo {
 		if !file.IsDir() && strings.Index(file.Name(), ".yml") > -1 && strings.Index(file.Name(), "terrahub.yml") == -1 {
 			StartProccesingFileEnv(terrahubComponentPath + string(os.PathSeparator) + file.Name(), file.Name(), terrahubComponentPath)
@@ -113,8 +113,8 @@ func StartProccesingFileEnv(source string, fileName string, destination string) 
 		}
 		env := strings.Replace(fileName, ".terrahub.", "", -1)
 		env = strings.Replace(env, ".yml", "", -1)
-		ioutil.WriteFile(destination + string(os.PathSeparator) + "workspace" + string(os.PathSeparator) +
-			env + ".tfvars", Clearing(b.String()), 0777)
+	  _ = ioutil.WriteFile(destination+string(os.PathSeparator)+"workspace"+string(os.PathSeparator)+
+		  env+".tfvars", Clearing(b.String()), 0777)
 	}
 	ProccesingDotTerrahubEnv(source)
 }
@@ -127,7 +127,7 @@ func PrepareJSON(terrahubComponent string) bool {
 	cmdName := "terrahub"
 	cmdArgs := []string{"prepare", "-i", terrahubComponent}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
-		fmt.Fprintln(os.Stderr, "There was an error running terrahub rev-parse command: ", err)
+	  _, _ = fmt.Fprintln(os.Stderr, "There was an error running terrahub rev-parse command: ", err)
 		os.Exit(1)
 	}
 	
@@ -143,7 +143,7 @@ func GenerateHcl(sourcePath string, destinationPath string) {
 		fmt.Println(err)
 	}
 	fileInfo, err := f.Readdir(-1)
-	f.Close()
+  _ = f.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -162,7 +162,7 @@ func ClearFolder(sourcePath string) {
 		fmt.Println(err)
 	}
 	fileInfo, err := f.Readdir(-1)
-	f.Close()
+  _ = f.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -219,7 +219,7 @@ func isError(err error) bool {
 		fmt.Println(err.Error())
 	}
 
-	return (err != nil)
+	return err != nil
 }
 
 func StartProccesingFile(source string, destination string) {
@@ -235,7 +235,7 @@ func StartProccesingFile(source string, destination string) {
 	if err != nil {
 		fmt.Printf("unable to print HCL: %s", err)
 	}
-	ioutil.WriteFile(destination, Clearing(b.String()), 0777)
+  _ = ioutil.WriteFile(destination, Clearing(b.String()), 0777)
 }
 
 func Clearing(input string) []byte {
@@ -272,7 +272,7 @@ func ProccesingDotTerrahub(source string) {
 	}
 	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
 	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
-	ioutil.WriteFile(source, []byte(sourceValue), 0777)
+  _ = ioutil.WriteFile(source, []byte(sourceValue), 0777)
 }
 
 func ProccesingDotTerrahubEnv(source string) {
@@ -291,7 +291,7 @@ func ProccesingDotTerrahubEnv(source string) {
 	}
 	sourceValue = strings.Replace(sourceValue, "\\n", "\n", -1)
 	sourceValue = strings.Replace(sourceValue, "\\", "", -1)
-	ioutil.WriteFile(source, []byte(sourceValue), 0777)
+  _ = ioutil.WriteFile(source, []byte(sourceValue), 0777)
 }
 
 func GetTfvarsTerrahubEnv(source string) []byte {

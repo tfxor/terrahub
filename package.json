@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.3.18",
+  "version": "0.3.31",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
   "main": "index.js",
   "preferGlobal": true,
@@ -32,14 +32,15 @@
     "hcl-to-json": "^0.1.1",
     "js-logger": "^1.6.0",
     "js-yaml": "^3.13.1",
-    "lodash.mergewith": "^4.6.2",
     "lodash.get": "^4.4.2",
+    "lodash.mergewith": "^4.6.2",
     "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",
     "object-depth": "^0.0.3",
     "semver": "^5.6.0",
     "treeify": "^1.1.0",
-    "twig": "^1.12.0"
+    "twig": "^1.12.0",
+    "ws": "^7.1.2"
   },
   "repository": {
     "type": "git",
@@ -84,5 +85,10 @@
     "google cloud platform",
     "azure",
     "microsoft azure"
-  ]
+  ],
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
+  }
 }

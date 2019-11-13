@@ -4,21 +4,24 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
-const { config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
-const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
+const {
+  toMd5, extend, yamlToJson, jsonToYaml
+} = require('./helpers/util');
 
 class ConfigLoader {
   /**
    * Constructor
+   * @param {Object} config
    */
-  constructor() {
+  constructor(config) {
     this._config = {};
+    this._terrahubConfig = config.config;
     this._rootPath = false;
     this._rootConfig = {};
     this._projectConfig = {};
-    this._format = '.' + config.format;
+    this._format = '.' + this._terrahubConfig.format;
 
     /**
      * Initialisation
@@ -33,7 +36,7 @@ class ConfigLoader {
    */
   _componentDefaults() {
     return {
-      cfgEnv: config.env,
+      cfgEnv: this._terrahubConfig.env,
       project: this.getProjectConfig(),
       hook: {},
       build: {},
@@ -67,11 +70,14 @@ class ConfigLoader {
 
     if (configFile) {
       this._format = path.extname(configFile);
-      this._fileName = config.isDefault ? `.terrahub${this._format}` : `.terrahub.${config.env}${this._format}`;
+      this._fileName = this._terrahubConfig.isDefault
+        ? `.terrahub${this._format}`
+        : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
       this._rootConfig = this._getConfig(configFile);
       this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
+      this._projectDistributor = this._rootConfig['project'].distributor;
 
       this._handleProjectConfig();
 
@@ -180,7 +186,7 @@ class ConfigLoader {
         break;
 
       case Dictionary.ENVIRONMENT.SPECIFIC:
-        searchPattern = `**/.terrahub.${config.env}.+(json|yml|yaml)`;
+        searchPattern = `**/.terrahub.${this._terrahubConfig.env}.+(json|yml|yaml)`;
         break;
 
       case Dictionary.ENVIRONMENT.EVERY:
@@ -221,6 +227,7 @@ class ConfigLoader {
         cfg.root = root;
 
         delete this._rootConfig[key];
+
         this._processComponentConfig(cfg, root);
         const hash = ConfigLoader.buildComponentHash(root);
         this._config[hash] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
@@ -253,8 +260,8 @@ class ConfigLoader {
       this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
 
-      this._config[componentHash] = extend({ root: componentPath },
-        [this._componentDefaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend(
+        { root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
     });
 
     rootPaths[this._rootPath] = null;
@@ -270,12 +277,17 @@ class ConfigLoader {
   }
 
   /**
+   * Validate's components' config fields'
    * @param {Object} config
    * @private
    */
   _validateComponentConfig(config) {
     if (!config.hasOwnProperty('mapping')) {
       config.mapping = [];
+    }
+
+    if (!config.hasOwnProperty('distributor')) {
+      config.distributor = this._projectDistributor || 'local';
     }
   }
 
@@ -328,6 +340,14 @@ class ConfigLoader {
       config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
     }
 
+    if (config.hasOwnProperty('distributor')) {
+      const distributors = ['local', 'lambda', 'fargate', 'appEngine', 'cloudFunctions'];
+
+      if (!distributors.includes(config.distributor)) {
+        throw new Error(`Error in component's configuration! Unknown distributor.`);
+      }
+    }
+
     this._validateDynamicData(config);
 
     if (config.hasOwnProperty('env')) {
@@ -336,7 +356,7 @@ class ConfigLoader {
           config[key].env = {};
         }
 
-        config[key].env.variables = Object.assign({}, config.env.variables, config[key].env.variables);
+        config[key].env.variables = { ...config.env.variables, ...config[key].env.variables};
       });
     }
 
@@ -369,7 +389,9 @@ class ConfigLoader {
    * @private
    */
   _find(pattern, path) {
-    return glob.sync(pattern, { cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns });
+    return glob.sync(pattern, {
+      cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns
+    });
   }
 
   /**
@@ -409,13 +431,13 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), this.getFileName());
-    const forceWorkspace = { terraform: { workspace: config.env } }; // Just remove to revert
+    const forceWorkspace = { terraform: { workspace: this._terrahubConfig.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;
       }
     };
-    return (!config.isDefault && fs.existsSync(envPath))
+    return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
   }

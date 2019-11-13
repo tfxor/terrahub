@@ -2,17 +2,16 @@
 
 const treeify = require('treeify');
 const { familyTree } = require('../helpers/util');
-const AbstractCommand = require('../abstract-command');
+const ConfigCommand = require('../config-command');
 
-class GraphCommand extends AbstractCommand {
+class GraphCommand extends ConfigCommand {
   /**
    * Command configuration
    */
   configure() {
     this
       .setName('graph')
-      .setDescription('show dependencies graph for terraform configuration mapped as terrahub components')
-    ;
+      .setDescription('show dependencies graph for terraform configuration mapped as terrahub components');
   }
 
   /**

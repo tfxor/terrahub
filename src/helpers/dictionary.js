@@ -48,6 +48,19 @@ class Dictionary {
       EVERY: 2
     };
   }
+
+  /**
+   * @return {{APP_ENGINE: string, FARGATE: string, CLOUD_FUNCTIONS: string, LOCAL: string, LAMBDA: string}}
+   */
+  static get DISTRIBUTOR() {
+    return {
+      LOCAL: 'local',
+      LAMBDA: 'lambda',
+      FARGATE: 'fargate',
+      APP_ENGINE: 'appEngine',
+      CLOUD_FUNCTIONS: 'cloudFunctions'
+    };
+  }
 }
 
 module.exports = Dictionary;
