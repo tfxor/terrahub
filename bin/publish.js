@@ -99,8 +99,9 @@ async function updateJsonFiles() {
  */
 async function npmPublish() {
   logger.info('Running npm publish');
-  const result = await exec(`dev="alpha" && test="beta" && stage="rc" && master="latest"` +
-    ` && npm publish --tag $(git branch | grep \\* | cut -d ' ' -f2)`);
+  const result = await exec('declare -a A=(["dev"]="alpha" ["test"]="beta" ["stage"]="rc" ["master"]="latest")' +
+    //' && npm publish --tag ${A["$(git branch | grep \\* | cut -d \" \" -f2)"]}');
+    ' && echo ${A["$(git branch | grep \\* | cut -d \" \" -f2)"]} > test.txt');
   if (result.error) {
     throw result.error;
   }
@@ -146,8 +147,8 @@ async function gitPush() {
     await npmVersion();
     await updateJsonFiles();
     await npmPublish();
-    await gitCommit();
-    await gitPush();
+    // await gitCommit();
+    // await gitPush();
     logger.info('Done');
     process.exit(0);
   } catch (error) {
