@@ -3,8 +3,9 @@
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
 const { join } = require('path');
+const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
+const { globPromise, lambdaHomedir } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
@@ -33,10 +34,11 @@ class AwsDistributor {
    */
   async distribute({ actions, runId, accountId }) {
     try {
-      await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
+
+      logger.log(`[${this.componentConfig.name}] Uploading project to S3.`);
 
       const s3Prefix = [s3directory, accountId, runId].join('/');
       const pathMap = files.map(it => ({
@@ -45,6 +47,7 @@ class AwsDistributor {
       }));
 
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
+      logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
 
       this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
       const body = JSON.stringify({
@@ -55,7 +58,8 @@ class AwsDistributor {
         env: this.env
       });
 
-      await this.fetch.post('cloud-deployer/aws/create', { body });
+      const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
+      logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
       await Promise.resolve();
     } catch (err) {
       throw new Error(`[AWS Distributor]: ${err}`);
@@ -115,31 +119,6 @@ class AwsDistributor {
 
       return [];
     }))).then(results => [].concat(...results));
-  }
-
-  /**
-   * @return {void}
-   * @throws {error}
-   * @private
-   */
-  async _updateCredentialsForS3() {
-    removeAwsEnvVars();
-    const tempCreds = await this._fetchTemporaryCredentials();
-    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
-
-    Object.assign(process.env, {
-      AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,
-      AWS_SECRET_ACCESS_KEY: tempCreds.SecretAccessKey,
-      AWS_SESSION_TOKEN: tempCreds.SessionToken
-    });
-  }
-
-  /**
-   * @return {Promise<Object>}
-   * @private
-   */
-  _fetchTemporaryCredentials() {
-    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
   }
 }
 

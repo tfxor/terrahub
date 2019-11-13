@@ -147,17 +147,9 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      if ('This feature current is not available'.test(err)) { throw new Error(err); }
+      if (/This feature current is not available/.test(err)) { throw new Error(err); }
       this.errors.push(err);
     }
-
-    console.log('distributeConfig FINISHED.');
-    console.log({
-      workers: this._workCounter,
-      lambda: this._lambdaWorkerCounter,
-      local: this._localWorkerCounter,
-      errors: this.errors.length
-    });
 
     return new Promise((resolve, reject) => {
       this._eventEmitter.on('message', (response) => {
@@ -185,14 +177,6 @@ class Distributor {
         }
 
         const hashes = Object.keys(this._dependencyTable);
-
-        console.log({
-          hashes: hashes.length,
-          workers: this._workCounter,
-          lambda: this._lambdaWorkerCounter,
-          local: this._localWorkerCounter,
-          errors: this.errors.length
-        });
 
         if (!hashes.length && !this._workCounter && !this.errors.length) { return resolve(results); }
         if (this.errors.length && !this._workCounter) { return reject(this.errors); }
@@ -329,6 +313,8 @@ class Distributor {
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;
           if (!isError) {
+            logger.info(`[${this.projectConfig[hash].name}] Successfully deployed!`);
+
             this._eventEmitter.emit('message', { ...defaultMessage, ...{ isError, message, hash } });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 0 } });
           }
