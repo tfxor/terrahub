@@ -222,7 +222,8 @@ class HclHelper {
    * @private
    */
   static _parsingResourceByType(resourcesByType, template) {
-    const promises = Object.keys(resourcesByType).filter(resourceName => resourcesByType[resourceName])
+    const promises = Object.keys(resourcesByType)
+      .filter(resourceName => resourcesByType[resourceName])
       .map(resourceName => {
         const resourceByName = resourcesByType[resourceName];
         if (!resourceByName.hasOwnProperty('provider') && !resourceByName.hasOwnProperty('provider!')) {
@@ -248,7 +249,7 @@ class HclHelper {
       const resourceByName = resourcesByType[resourceName];
       const providerKey = resourceByName.hasOwnProperty('provider') ? 'provider' : 'provider!';
       const providerTerrahubVariables = HclHelper._extractTerrahubVariables(
-        JSON.stringify(resourceByName[providerKey])
+        JSON.stringify(resourceByName[providerKey]);
       );
 
       return providerTerrahubVariables;
@@ -280,7 +281,8 @@ class HclHelper {
               const { output } = template;
 
               if (output) {
-                const promisesOutput = Object.keys(output).filter(outputName => output[outputName])
+                const promisesOutput = Object.keys(output)
+                  .filter(outputName => output[outputName])
                   .filter(elem => output[elem].value.includes(resourceName))
                   .filter(elem => output[elem].value.includes(oldProviderTerrahubVariable))
                   .map(outputName => {
@@ -352,8 +354,8 @@ class HclHelper {
             const promises = unique.map(dataVariable => {
               const dataPath = dataVariable.split('.');
               let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-              resourceByNameStringify = resourceByNameStringify.replace(
-                dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
+              resourceByNameStringify = resourceByNameStringify
+                .replace(dataVariable, dataVariable.replace(dataPath[2], `${dataPath[2]}_${tfvarValue}`));
               resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
             });
 
@@ -369,9 +371,8 @@ class HclHelper {
 
           let resourceByNameCopyStringify = JSON.stringify(resourceByNameCopy);
           const searchValue = JSON.stringify(oldProviderTerrahubVariable);
-          resourceByNameCopyStringify = resourceByNameCopyStringify.replace(
-            searchValue.substring(1, searchValue.length - 1), tfvarValue
-          );
+          resourceByNameCopyStringify = resourceByNameCopyStringify
+            .replace(searchValue.substring(1, searchValue.length - 1), tfvarValue);
           resourcesByType[`${resourceName}_${tfvarValue}`] = JSON.parse(resourceByNameCopyStringify);
           return Promise.resolve();
         });
