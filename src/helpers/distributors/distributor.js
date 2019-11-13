@@ -147,8 +147,17 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      throw new Error(err);
+      if ('This feature current is not available'.test(err)) { throw new Error(err); }
+      this.errors.push(err);
     }
+
+    console.log('distributeConfig FINISHED.');
+    console.log({
+      workers: this._workCounter,
+      lambda: this._lambdaWorkerCounter,
+      local: this._localWorkerCounter,
+      errors: this.errors.length
+    });
 
     return new Promise((resolve, reject) => {
       this._eventEmitter.on('message', (response) => {
@@ -176,6 +185,14 @@ class Distributor {
         }
 
         const hashes = Object.keys(this._dependencyTable);
+
+        console.log({
+          hashes: hashes.length,
+          workers: this._workCounter,
+          lambda: this._lambdaWorkerCounter,
+          local: this._localWorkerCounter,
+          errors: this.errors.length
+        });
 
         if (!hashes.length && !this._workCounter && !this.errors.length) { return resolve(results); }
         if (this.errors.length && !this._workCounter) { return reject(this.errors); }
