@@ -250,7 +250,7 @@ class HclHelper {
       const resourceByName = resourcesByType[resourceName];
       const providerKey = resourceByName.hasOwnProperty('provider') ? 'provider' : 'provider!';
       const providerTerrahubVariables = HclHelper._extractTerrahubVariables(
-        JSON.stringify(resourceByName[providerKey]);
+        JSON.stringify(resourceByName[providerKey])
       );
 
       return providerTerrahubVariables;
