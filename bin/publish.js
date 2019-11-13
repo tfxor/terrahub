@@ -36,7 +36,7 @@ switch (action) {
  */
 async function gitDiff() {
   logger.info('Running git diff');
-  const result = await exec('git diff');
+  const result = await exec(`git diff`);
   if (result.stdout || result.error) {
     throw new Error('You have unstaged changes, please, commit them before publishing');
   }
@@ -61,7 +61,7 @@ async function deleteNodeModules() {
  */
 async function installNodeModules() {
   logger.info('Running npm install');
-  const result = await exec('npm install --no-shrinkwrap --no-peer');
+  const result = await exec(`npm install --no-shrinkwrap --no-peer`);
   if (result.error) {
     throw new Error('[Failed] installing terrahub dependencies');
   }
@@ -99,8 +99,8 @@ async function updateJsonFiles() {
  */
 async function npmPublish() {
   logger.info('Running npm publish');
-  const result = await exec('dev="alpha" && test="beta" && stage="rc" && master="latest" && ' +
-    'BRANCH="$(git branch | grep \\* | cut -d \" \" -f2)" && npm publish --tag ${!BRANCH}');
+  const result = await exec(`dev="alpha" && test="beta" && stage="rc" && master="latest" && ` +
+    `BRANCH="$(git branch | grep \\* | cut -d ' ' -f2)" && npm publish --tag ${!BRANCH}`);
   if (result.error) {
     throw result.error;
   }
@@ -113,7 +113,7 @@ async function npmPublish() {
  */
 async function gitCommit() {
   logger.info('Running git commit');
-  const result = await exec('git add . && git commit -a -m "Publish terrahub help metadata"');
+  const result = await exec(`git add . && git commit -a -m "Publish terrahub help metadata"`);
   if (result.error) {
     throw new Error('[Failed] to commit');
   }
@@ -126,7 +126,7 @@ async function gitCommit() {
  */
 async function gitPush() {
   logger.info('Running git push');
-  const result = await exec('git push');
+  const result = await exec(`git push`);
   if (result.error) {
     throw result.error;
   }
