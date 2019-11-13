@@ -1,12 +1,11 @@
 'use strict';
 
 const path = require('path');
-const { cfgPath } = require('../parameters');
 const ConfigLoader = require('../config-loader');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { yesNoQuestion } = require('../helpers/util');
 
-class ConfigureCommand extends TerraformCommand {
+class ConfigureCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -33,7 +32,7 @@ class ConfigureCommand extends TerraformCommand {
   _addConfig() {
     const configContent = this.getOption('config');
     const global = this.getOption('global');
-    const data = configContent instanceof Array ? configContent : [configContent];
+    const data = Array.isArray(configContent) ? configContent : [configContent];
     const configAction = this.getOption('delete') ? '_deleteFromConfig' : '_updateConfig';
     return this._runAction(global, data, configAction);
   }
@@ -47,10 +46,10 @@ class ConfigureCommand extends TerraformCommand {
    */
   _runAction(global, data, configAction) {
     if (global) {
-      const content = ConfigLoader.readConfig(cfgPath);
+      const content = ConfigLoader.readConfig(this.cfgPath);
 
       data.forEach(it => this[configAction](it, content));
-      ConfigLoader.writeConfig(content, cfgPath);
+      ConfigLoader.writeConfig(content, this.cfgPath);
 
       return Promise.resolve('Done');
     }
@@ -172,20 +171,21 @@ class ConfigureCommand extends TerraformCommand {
    * @private
    */
   _intermediateFill(destination, key, regex) {
+    let _destinations = { ...destination };
     const match = key.match(regex);
     const finalKey = match ? match[1] : key;
     const value = match ? [] : {};
     if (Array.isArray(destination[finalKey])) {
       const index = match[2] || destination[finalKey].push(value);
-      destination = destination[finalKey][index];
+      _destinations = destination[finalKey][index];
     } else {
       if (!match && !(destination[finalKey] instanceof Object)) {
         destination[finalKey] = value;
       }
-      destination = destination[finalKey];
+      _destinations = destination[finalKey];
     }
 
-    return destination;
+    return _destinations;
   }
 
 
@@ -193,13 +193,13 @@ class ConfigureCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _deleteConfig() {
-    return this._getPromise().then(confirmed => {
-      if (!confirmed) {
-        return Promise.reject('Action aborted');
-      }
-      return this._addConfig();
-    });
+  async _deleteConfig() {
+    const confirmed = await this._getPromise();
+    if (!confirmed) {
+      throw new Error('Action aborted');
+    }
+
+    return this._addConfig();
   }
 
   /**
@@ -236,6 +236,15 @@ class ConfigureCommand extends TerraformCommand {
    */
   _isComponentTarget() {
     return ['include', 'exclude', 'exclude-regex', 'include-regex'].some(it => this.getOption(it).length);
+  }
+
+  /**
+   *
+   * @param {Object} config
+   * @return {String[]}
+   */
+  buildComponentList(config) {
+    return Object.keys(config).map(key => config[key].name);
   }
 }
 

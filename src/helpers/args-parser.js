@@ -87,7 +87,7 @@ class ArgsParser {
       return json;
     }
 
-    this.toArray(value).map(chunk => {
+    this.toArray(value).forEach(chunk => {
       let [key, value] = ArgsParser.toArray(chunk, ':');
       result[key] = value;
     });
@@ -113,8 +113,8 @@ class ArgsParser {
    * @returns {String}
    */
   static trim(value) {
-    let leading = new RegExp('^([\\s\'\"]*)', 'g');
-    let trailing = new RegExp('([\\s\'\"]*)$', 'g');
+    let leading = new RegExp('^([\\s\'"]*)', 'g');
+    let trailing = new RegExp('([\\s\'"]*)$', 'g');
 
     return value.trim().replace(leading, '').replace(trailing, '');
   }

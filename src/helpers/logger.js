@@ -3,7 +3,6 @@
 const cluster = require('cluster');
 const logger = require('js-logger');
 const ApiHelper = require('./api-helper');
-const { config: { logs } } = require('../parameters');
 
 class Logger {
   /**
@@ -21,7 +20,7 @@ class Logger {
     logger.setHandler((messages, context) => {
       consoleHandler(messages, context);
 
-      if (this._isTokenValid() && logs) {
+      if ((this._isTokenValid() && this._context.canLogBeSentToApi) || ApiHelper.isCloudDeployer) {
         this._sendLogToApi(messages);
       }
     });
@@ -42,7 +41,7 @@ class Logger {
   raw(message) {
     process.stdout.write(message);
 
-    if (this._isTokenValid()) {
+    if (this._isTokenValid() || ApiHelper.isCloudDeployer) {
       this._sendLogToApi([message]);
     }
   }
@@ -82,9 +81,10 @@ class Logger {
     if (message instanceof Error) {
       const { name } = this._logger.getLevel();
 
-      message = (name === logger.DEBUG.name) ?
-        message.stack :
-        message.message;
+      // eslint-disable-next-line no-param-reassign
+      message = (name === logger.DEBUG.name)
+        ? message.stack
+        : message.message;
     }
 
     this._logger.error('❌', message);
@@ -116,7 +116,7 @@ class Logger {
 
   /**
    * Send messages to ThreadDistributor to execute logging
-   * @param messages
+   * @param {String[]} messages
    * @private
    */
   _sendMessageToMaster(messages) {
@@ -125,7 +125,7 @@ class Logger {
       type: 'logs',
       workerLogger: true,
       messages,
-      context: this._context,
+      context: this._context
     });
   }
 

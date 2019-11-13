@@ -1,11 +1,14 @@
 'use strict';
 
+/* eslint-disable quotes */
+
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs-extra');
+const { exec } = require('child-process-promise');
 const logger = require('./logger');
-const exec = require('child-process-promise').exec;
-const { commandsPath, templates, packageJson } = require('../parameters');
+const parameters = require('../parameters');
+
 
 class HelpParser {
   /**
@@ -13,7 +16,7 @@ class HelpParser {
    * @return {String[]}
    */
   static getCommandsNameList() {
-    return glob.sync('*.js', { cwd: commandsPath }).map(fileName => path.basename(fileName, '.js'));
+    return glob.sync('*.js', { cwd: parameters.commandsPath }).map(fileName => path.basename(fileName, '.js'));
   }
 
   /**
@@ -24,8 +27,8 @@ class HelpParser {
    */
   static getCommandsInstances(list = this.getCommandsNameList()) {
     return list.map(commandName => {
-      const Command = require(path.join(commandsPath, commandName));
-      return new Command(0, logger);
+      const Command = require(path.join(parameters.commandsPath, commandName));
+      return new Command(parameters, logger);
     });
   }
 
@@ -60,7 +63,7 @@ class HelpParser {
    * @param {Boolean} updateBuildDate
    */
   static updateMetadata(updateBuildDate = true) {
-    const packageContent = require(packageJson);
+    const packageContent = require(parameters.packageJson);
     const commands = HelpParser.getCommandsInstances();
     const commandsDescription = HelpParser.getCommandsDescription(commands);
     const { buildDate } = require('../templates/help/metadata');
@@ -73,7 +76,7 @@ class HelpParser {
       commands: commandsDescription
     };
 
-    fs.writeJsonSync(templates.helpMetadata, json, { spaces: 2 });
+    fs.writeJsonSync(parameters.templates.helpMetadata, json, { spaces: 2 });
   }
 
   /**
@@ -83,8 +86,8 @@ class HelpParser {
    * @return {Boolean}
    */
   static hasInvalidOptions(command, args) {
-    const metadata = require(templates.helpMetadata);
-    const options = metadata.commands.find(it => it.name === command).options;
+    const metadata = require(parameters.templates.helpMetadata);
+    const { options } = metadata.commands.find(it => it.name === command);
 
     return !Object.keys(args).every(arg => options.find(it => it.name === arg || it.shortcut === arg));
   }
@@ -94,18 +97,17 @@ class HelpParser {
    * @return {Promise}
    */
   static updateAWSRegions() {
-    const command = `sh ${path.join(templates.help, 'scripts', 'aws_update.sh')}`;
+    const command = `sh ${path.join(parameters.templates.help, 'scripts', 'aws_update.sh')}`;
 
     return exec(command)
       .then(result => {
-        const stdout = result.stdout;
-        const stderr = result.stderr;
+        const { stdout, stderr } = result;
 
         if (!stderr) {
           const parsedResult = JSON.parse(stdout);
           const allRegions = [].concat(parsedResult, HelpParser.getPrivateAWSRegions());
 
-          fs.writeJsonSync(path.join(templates.help,  'regions.aws.json'), allRegions, { spaces: 2 });
+          fs.writeJsonSync(path.join(parameters.templates.help, 'regions.aws.json'), allRegions, { spaces: 2 });
         }
       })
       .catch(err => {

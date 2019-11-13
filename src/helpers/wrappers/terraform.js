@@ -5,24 +5,27 @@ const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
+const { execSync } = require('child_process');
 const logger = require('../logger');
 const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
-const { execSync } = require('child_process');
-const { config, fetch } = require('../../parameters');
-const { extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile } = require('../util');
+const { extend, spawner, homePath, prepareCredentialsFile,
+  createCredentialsFile, homePathLambda, removeAwsEnvVars, setupAWSSharedFile } = require('../util');
 
 class Terraform {
   /**
    * @param {Object} config
+   * @param {Object} parameters
    */
-  constructor(config) {
+  constructor(config, parameters) {
     this._config = extend({}, [this._defaults(), config]);
     this._tf = this._config.terraform;
+    this._distributor = this._config.distributor;
     this._envVars = process.env;
-    this._metadata = new Metadata(this._config);
+    this._metadata = new Metadata(this._config, parameters);
+    this.parameters = parameters;
 
     this._showLogs = !process.env.format;
     this._isWorkspaceSupported = false;
@@ -68,7 +71,9 @@ class Terraform {
    * @return {String}
    */
   getBinary() {
-    return homePath('terraform', this.getVersion(), 'terraform');
+    return this._distributor === 'lambda'
+      ? homePathLambda('terraform', this.getVersion(), 'terraform')
+      : homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -96,39 +101,38 @@ class Terraform {
    */
   async _setupVars() {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
-    if (!accounts.length || !process.env.THUB_TOKEN_IS_VALID.length) {
-      return Promise.resolve();
-    }
+
+    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) { return Promise.resolve(); }
+    if (this._distributor === 'lambda') { removeAwsEnvVars(); }
+
+    ApiHelper.init(this.parameters, this._distributor);
 
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const provider = Object.keys(this._config.template.provider).toString();
+    const provider = Array.isArray(this._config.template.provider)
+      ? Object.keys(this._config.template.provider[0]).toString()
+      : Object.keys(this._config.template.provider).toString();
     const providerAccounts = cloudAccounts[provider];
 
     if (providerAccounts) {
       accounts.forEach(type => {
         const _value = this._tf[type];
         const accountData = providerAccounts.find(it => it.name === _value);
-
-        if (!accountData) {
-          return;
-        }
+        if (!accountData) { return Promise.resolve(); }
 
         const sourceProfile = accountData.type === 'role'
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
 
-        const credentials = prepareCredentialsFile({ accountData, sourceProfile });
+        const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this._distributor);
 
         switch (type) {
           case 'cloudAccount':
-            ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE']
-              .forEach(it => delete this._envVars[it]);
-
-            Object.assign(this._envVars,
-              { AWS_SHARED_CREDENTIALS_FILE: createCredentialsFile(credentials, this._config, 'cloud') });
+            removeAwsEnvVars();
+            const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
+            setupAWSSharedFile(sourceProfile, cloudCredsPath, this._config, this._distributor, this._envVars);
             break;
           case 'backendAccount':
-            Object.assign(this._tf.backend,
-              { shared_credentials_file: createCredentialsFile(credentials, this._config, 'backend') });
+            const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
+            Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
             break;
         }
       });
@@ -190,7 +194,7 @@ class Terraform {
       return Promise.resolve();
     }
 
-    return (new Downloader()).download(this.getVersion());
+    return (new Downloader()).download(this.getVersion(), this._distributor);
   }
 
   /**
@@ -278,7 +282,7 @@ class Terraform {
     if (!this._isWorkspaceSupported) {
       return Promise.resolve();
     }
-    const workspace = this._tf.workspace;
+    const { workspace } = this._tf;
 
     return this.run('workspace', ['list'])
       .then(result => {
@@ -349,7 +353,8 @@ class Terraform {
         }
 
         const commandsList = this._envVars['TERRAFORM_ACTIONS'];
-        if (commandsList === 'prepare,workspaceSelect,plan,apply' || commandsList === 'prepare,workspaceSelect,plan,destroy') {
+        if (commandsList === 'prepare,workspaceSelect,plan,apply'
+          || commandsList === 'prepare,workspaceSelect,plan,destroy') {
           skip = false;
         }
 
@@ -586,7 +591,7 @@ class Terraform {
    * @return {Promise|*}
    */
   _getEnvVarsFromAPI() {
-    if (!config.token) {
+    if (!this.parameters.config.token) {
       return Promise.resolve({});
     }
     try {
@@ -599,7 +604,7 @@ class Terraform {
 
       const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
-        return fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+        return this.parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
             let test = JSON.parse(json.data.env_var);
             return Object.keys(test).reduce((acc, key) => {

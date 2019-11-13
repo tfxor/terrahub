@@ -1,52 +1,67 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 const logger = require('./logger');
-const { promiseSeries, spawner } = require('./util');
+const { promiseSeries, spawner, tempPath } = require('./util');
 
 class BuildHelper {
   /**
    * @param {Object} config
+   * @param {String} distributor
    * @return {Promise}
    */
-  static getComponentBuildTask(config) {
+  static getComponentBuildTask(config, distributor) {
     const { build: buildConfig, name } = config;
 
-    const env = Object.assign({}, process.env, BuildHelper._extractEnvVars(buildConfig));
+    const env = { ...process.env, ...BuildHelper._extractEnvVars(buildConfig) };
     const commandsList = BuildHelper._extractCommandsList(buildConfig);
+    const awsConfigPath = path.join(tempPath(config, distributor), '.aws/config');
+    const awsCloudAccountPath = path.join(tempPath(config, distributor), 'aws_credentials_cloud');
 
-    return promiseSeries(commandsList.map(it =>
-      () => {
-        let fullCommand = it;
+    if (fs.existsSync(awsConfigPath)) {
+      Object.assign(env, {
+        AWS_CONFIG_FILE: awsConfigPath,
+        AWS_SDK_LOAD_CONFIG: 1,
+      });
+    }
 
-        if (it.constructor === Object) {
-          const key = Object.keys(it)[0];
+    if (fs.existsSync(awsCloudAccountPath)) {
+      Object.assign(env, {
+        AWS_PROFILE: 'default',
+        AWS_SHARED_CREDENTIALS_FILE: awsCloudAccountPath
+      });
+    }
 
-          fullCommand = [key, it[key]].join(': ');
-        }
+    return promiseSeries(commandsList.map(it => async () => {
+      let fullCommand = it;
 
-        const isVerbose = !process.env.format;
-        const [command, ...args] = fullCommand.split(' ');
-        const options = {
-          cwd: path.join(config.project.root, config.root),
-          env: env,
-          shell: true
-        };
+      if (it.constructor === Object) {
+        const key = Object.keys(it)[0];
 
-        return spawner(command, args, options,
-          err => {
-            if (isVerbose) {
-              logger.error(BuildHelper._out(name, err));
-            }
-          },
-          data => {
-            if (isVerbose) {
-              logger.raw(BuildHelper._out(name, data));
-            }
-          }
-        );
+        fullCommand = [key, it[key]].join(': ');
       }
-    )).then(() => {
+
+      const isVerbose = !process.env.format;
+      const [command, ...args] = fullCommand.split(' ');
+      const options = {
+        cwd: path.join(config.project.root, config.root),
+        env: env,
+        shell: true
+      };
+
+      return spawner(command, args, options,
+        err => {
+          if (isVerbose) {
+            logger.error(BuildHelper._out(name, err));
+          }
+        },
+        data => {
+          if (isVerbose) {
+            logger.raw(BuildHelper._out(name, data));
+          }
+        });
+    })).then(() => {
       BuildHelper._printOutput(BuildHelper._out(name, `Build successfully finished.`), true);
 
       return Promise.resolve({ action: 'build' });
