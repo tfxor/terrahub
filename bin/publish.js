@@ -99,8 +99,8 @@ async function updateJsonFiles() {
  */
 async function npmPublish() {
   logger.info('Running npm publish');
-  const result = await exec(`dev="alpha" && test="beta" && stage="rc" && master="latest" && ` +
-    `BRANCH="$(git branch | grep \\* | cut -d ' ' -f2)" && npm publish --tag ${!BRANCH}`);
+  const result = await exec(`dev="alpha" && test="beta" && stage="rc" && master="latest"` +
+    ` && npm publish --tag $(git branch | grep \\* | cut -d ' ' -f2)`);
   if (result.error) {
     throw result.error;
   }
