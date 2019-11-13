@@ -1,9 +1,8 @@
 'use strict';
 
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class StateCommand extends TerraformCommand {
+class StateCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -13,37 +12,35 @@ class StateCommand extends TerraformCommand {
       .setDescription('run `terraform state` across multiple terrahub components')
       .addOption('list', 'L', 'List resource(s) from terraform state', Boolean, false)
       .addOption('delete', 'D', 'Delete resource(s) from terraform state', Array, [])
-      ;
+    ;
   }
 
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
-    this._list = this.getOption('list')
+    this._list = this.getOption('list');
     this._delete = this.getOption('delete');
 
     if (this._delete.length > 0 && this._list) {
-      return Promise.reject(new Error(`Terraform slug (type and name) is missing. Please specify a valid terraform resource.`));
+      return Promise.reject(new Error(`Terraform slug (type and name) is missing. ` +
+        `Please specify a valid terraform resource.`));
     }
 
-    if (this._delete.length == 0 && this._list) {
-      return distributor
-        .runActions(['prepare', 'init', 'workspaceSelect', 'resourceList'], {
-          stateList: this._list
-        }).then(() => Promise.resolve('Done'));
+    if (this._delete.length === 0 && this._list) {
+      return [{
+        actions: ['prepare', 'init', 'workspaceSelect', 'resourceList'],
+        config,
+        stateList: this._list
+      }];
     }
 
-    return Promise.all(
-      this._delete.map(it => {
-        return distributor
-          .runActions(['prepare', 'init', 'workspaceSelect', 'stateDelete'], {
-            stateDelete: it
-          });
-      })
-    ).then(() => 'Done');
+    return this._delete.map(it => ({
+      actions: ['prepare', 'init', 'workspaceSelect', 'stateDelete'],
+      config,
+      stateDelete: it
+    }));
   }
 }
 

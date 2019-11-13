@@ -11,22 +11,19 @@ const LogHelper = require('./helpers/log-helper');
 const Dictionary = require('./helpers/dictionary');
 const AbstractCommand = require('./abstract-command');
 const ListException = require('./exceptions/list-exception');
-const { config: { listLimit, logs }, hclPath } = require('./parameters');
 
 const DependenciesAuto = require('./helpers/dependency-strategy/dependencies-auto');
 const DependenciesIgnore = require('./helpers/dependency-strategy/dependencies-ignore');
 const DependenciesInclude = require('./helpers/dependency-strategy/dependencies-include');
 
-/**
- * @abstract
- */
-class TerraformCommand extends AbstractCommand {
+class DistributedCommand extends AbstractCommand {
+
   /**
-   * @param {Object} input
+   * @param {Object} parameters
    * @param {Logger} logger
    */
-  constructor(input, logger) {
-    super(input, logger);
+  constructor(parameters, logger) {
+    super(parameters, logger);
 
     this._terraformRemoteStates = {};
     this._runId = Util.uuid();
@@ -51,42 +48,39 @@ class TerraformCommand extends AbstractCommand {
       .addOption('git-diff', 'g', 'List of components to include (git diff)', Array, [])
       .addOption('var', 'r', 'Variable(s) to be used by terraform', Array, [])
       .addOption('var-file', 'l', 'Variable file(s) to be used by terraform', Array, [])
-      .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto')
-    ;
+      .addOption('dependency', 'p', 'Set dependency validation strategy (auto, ignore, include)', String, 'auto');
   }
 
   /**
    * @returns {Promise}
    */
-  validate() {
-    return super.validate().then(token => {
-      this._tokenIsValid = token;
+  async validate() {
+    try {
+      this._tokenIsValid = await super.validate();
 
-      if (this._tokenIsValid && logs) { this.logger.updateContext({ canLogBeSentToApi: true }); }
+      if (this._tokenIsValid && this.terrahubCfg.logs) { this.logger.updateContext({ canLogBeSentToApi: true }); }
       if (!this._tokenIsValid) { this.checkCloudAccountRequirements(this.getExtendedConfig()); }
 
-      return Promise.resolve();
-    }).then(() => this._checkProjectDataMissing()).then(() => {
+      await this._checkProjectDataMissing();
+
       if (this._isComponentsCountZero() && this.getName() !== 'configure') {
         throw new Error('No components defined in configuration file. '
           + 'Please create new component or include existing one with `terrahub component`');
       }
 
-      return Promise.resolve();
-    }).then(() => {
       const nonExistingComponents = this._getNonExistingComponents();
 
       if (nonExistingComponents.length) {
         throw new Error('Some of components were not found: ' + nonExistingComponents.join(', '));
       }
 
-      return Promise.resolve();
-    }).then(() => this._checkProjectDuplicateComponents())
-      .catch(err => {
-        const error = err.constructor === String ? new Error(err) : err;
+      return this._checkProjectDuplicateComponents();
+    } catch (err) {
 
-        return Promise.reject(error);
-      });
+      const error = err.constructor === String ? new Error(err) : err;
+
+      return Promise.reject(error);
+    }
   }
 
   /**
@@ -321,7 +315,7 @@ class TerraformCommand extends AbstractCommand {
     if (!this._remoteStateExist(hash, name)) { return; }
 
     const configBackendExist = template.terraform && template.terraform.backend;
-    const cachedBackendPath = Util.homePath(hclPath, `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendPath = Util.homePath(this.parameters.hclPath, `${name}_${project.code}`, 'terraform.tfstate');
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
     if (!configBackendExist && !cachedBackendExist) { return; }
@@ -347,7 +341,7 @@ class TerraformCommand extends AbstractCommand {
         if (backend) {
           Object.keys(backend.local).forEach(it => {
             defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
-              ? path.resolve(Util.homePath(hclPath, `${name}_${project.code}`), backend.local[it])
+              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), backend.local[it])
               : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
           });
         } else {
@@ -387,7 +381,7 @@ class TerraformCommand extends AbstractCommand {
    */
   getFilteredConfig() {
     const fullConfig = this.getExtendedConfig();
-    const config = Object.assign({}, fullConfig);
+    const config = { ...fullConfig};
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -530,7 +524,7 @@ class TerraformCommand extends AbstractCommand {
    * @return {Promise}
    */
   askForApprovement(config, autoApprove = false, customQuestion = '') {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
 
     const action = this.getName();
 
@@ -550,7 +544,7 @@ class TerraformCommand extends AbstractCommand {
    * @param {Object|Array} config
    */
   warnExecutionStarted(config) {
-    LogHelper.printListAuto(config, this.getProjectConfig().name, listLimit);
+    LogHelper.printListAuto(config, this.getProjectConfig().name, this.terrahubCfg.listLimit);
 
     const action = this.getName();
 
@@ -717,7 +711,7 @@ class TerraformCommand extends AbstractCommand {
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = Object.assign({}, config);
+    const checked = { ...config};
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -755,7 +749,7 @@ class TerraformCommand extends AbstractCommand {
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = Object.assign({}, config);
+    const checked = { ...config};
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -783,7 +777,7 @@ class TerraformCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
         ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
@@ -806,15 +800,6 @@ class TerraformCommand extends AbstractCommand {
 
     return this.getIncludes().filter(includeName => !names.includes(includeName));
   }
-
-  /**
-   *
-   * @param {Object} config
-   * @return {String[]}
-   */
-  buildComponentList(config) {
-    return Object.keys(config).map(key => config[key].name);
-  }
 }
 
-module.exports = TerraformCommand;
+module.exports = DistributedCommand;

@@ -1,10 +1,11 @@
 'use strict';
 
 const path = require('path');
+const Fetch = require('../fetch');
 const logger = require('../logger');
 const Terraform = require('./terraform');
+const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
-const { config } = require('../../parameters');
 const ConfigLoader = require('../../config-loader');
 const { promiseSeries, spawner, exponentialBackoff } = require('../util');
 
@@ -12,13 +13,16 @@ class AbstractTerrahub {
   /**
    * @param {Object} cfg
    * @param {String} thubRunId
+   * @param {Object} parameters
    */
-  constructor(cfg, thubRunId) {
+  constructor(cfg, thubRunId, parameters) {
     this._runId = thubRunId;
     this._action = '';
+    this.parameters = parameters;
+    this.parameters.fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
     this._config = cfg;
     this._project = cfg.project;
-    this._terraform = new Terraform(cfg);
+    this._terraform = new Terraform(cfg, this.parameters);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
   }
@@ -69,10 +73,10 @@ class AbstractTerrahub {
         return this._getTask();
       }
     }).then(data => {
-      data.action = this._action;
-      data.component = this._config.name;
+      const action = this._action;
+      const component = this._config.name;
 
-      return data;
+      return { ...data, action, component };
     });
   }
 
@@ -119,7 +123,7 @@ class AbstractTerrahub {
       switch (extension) {
         case '.js':
           return () => {
-            const promise = require(args[0])(this._config, res.buffer); // eslint-disable-line global-require
+            const promise = require(args[0])(this._config, res.buffer);
 
             return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
           };
@@ -151,12 +155,11 @@ class AbstractTerrahub {
         return true;
       });
 
-      error.message = this._addNameToMessage(originalMessage ?
+      const message = this._addNameToMessage(originalMessage ?
         `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
-        `An unknown error occurred in hook ${this._action} ${hook} execution.`
-      );
+        `An unknown error occurred in hook ${this._action} ${hook} execution.`);
 
-      return Promise.reject(error);
+      throw new Error({ ...error, message });
     });
   }
 
@@ -168,10 +171,10 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/verifying checksum for/, /timeout/, /connection reset by peer/,
-          /connection refused/, /connection issue/, /failed to decode/, /EOF/].some(it => it.test(error.message));
+        return [/timeout/, /EOF/, /failed to decode/, /unable to verify checksum/, /ECONNREFUSED/,
+          /connection reset/, /connection refused/, /connection issue/].some(it => it.test(error.message));
       },
-      maxRetries: config.retryCount,
+      maxRetries: this.parameters.config.retryCount,
       intermediateAction: (retries, maxRetries) => {
         logger.warn(this._addNameToMessage(`'terraform ${this._action}' failed. ` +
           `Retrying attempt ${retries} out of ${maxRetries} using exponential backoff approach...`));
@@ -191,10 +194,11 @@ class AbstractTerrahub {
     return spawner(
       binary,
       args,
-      Object.assign({
+      {
         cwd: path.join(this._config.project.root, this._config.root),
-        shell: true
-      }, options),
+        shell: true,
+        ...options
+      },
       err => logger.error(this._addNameToMessage(err.toString())),
       data => logger.raw(this._addNameToMessage(data.toString()))
     );
@@ -253,8 +257,22 @@ class AbstractTerrahub {
    * @return {Promise}
    * @private
    */
-  _sendLogsToApi(status, ...args) {
-    process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+  async _sendLogsToApi(status, ...args) {
+    switch (this._config.distributor) {
+      case 'local':
+        process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+        break;
+      case 'lambda':
+        ApiHelper.init(this.parameters, this._config.distributor);
+        ApiHelper.sendComponentFlow({ ...this._workflowOptions, status });
+        break;
+      case 'fargate':
+        //todo
+        break;
+      default:
+        process.send({ type: 'workflow', workerLogger: true, options: { ...this._workflowOptions, status } });
+        break;
+    }
 
     return Promise.resolve(...args);
   }

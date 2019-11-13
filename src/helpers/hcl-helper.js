@@ -2,24 +2,25 @@
 
 const fse = require('fs-extra');
 const semver = require('semver');
-const S3Helper = require('./s3-helper');
-const GsHelper = require('./gs-helper');
 const hcltojson = require('hcl-to-json');
 const { resolve, join } = require('path');
-const objectDepth = require('object-depth');
-const { homePath, extend } = require('./util');
 const { exec } = require('child-process-promise');
+const objectDepth = require('object-depth');
+const GsHelper = require('./gs-helper');
+const S3Helper = require('./s3-helper');
 const Downloader = require('../helpers/downloader');
-const { binPath, hclPath, tfstatePath } = require('../parameters');
+const { homePath, extend, homePathLambda } = require('./util');
+
 
 class HclHelper {
   /**
    * HCL middleware (config to files)
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    */
-  static middleware(config) {
-    const transformedConfig = HclHelper._transformConfig(config);
+  static middleware(config, parameters) {
+    const transformedConfig = HclHelper._transformConfig(config, parameters);
 
     if (!transformedConfig.isTemplate) {
       return Promise.resolve(config);
@@ -38,19 +39,21 @@ class HclHelper {
         // add "tfvars" if it is not described in config
         const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(config);
         if (remoteTfvarsLinks.length > 0) {
-          return HclHelper._addTfvars(config, remoteTfvarsLinks);
+          return HclHelper._addTfvars(config, remoteTfvarsLinks, parameters);
         }
       }).then(() => HclHelper._normalizeProvidersForResource(config))
       .then(() => HclHelper._normalizeProvidersForData(config))
       .then(() => HclHelper._normalizeTfvars(config))
-      .then(() => HclHelper._createTerraformFiles(config))
+      .then(() => HclHelper._createTerraformFiles(config, parameters))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
-          return HclHelper._generateVariable(config);
+          return HclHelper._generateVariable(config, parameters);
         }
       })
-      .then(() => HclHelper._symLinkNonTerraHubFiles(config))
+      .then(() => config.distributor !== 'local'
+        ? Promise.resolve()
+        : HclHelper._symLinkNonTerraHubFiles(config, parameters))
       .then(() => config);
   }
 
@@ -58,16 +61,17 @@ class HclHelper {
   /**
    * Transform template config
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Object}
    * @private
    */
-  static _transformConfig(config) {
+  static _transformConfig(config, parameters) {
     config.isTemplate = config.hasOwnProperty('template');
 
     if (config.isTemplate) {
       const componentPath = join(config.project.root, config.root);
 
-      const localTfstatePath = HclHelper._normalizeBackendLocalPath(config);
+      const localTfstatePath = HclHelper._normalizeBackendLocalPath(config, parameters);
       const remoteTfstatePath = HclHelper._normalizeBackendS3Key(config);
 
       config.template.locals = extend(config.template.locals, [{
@@ -92,13 +96,14 @@ class HclHelper {
   /**
    * Normalize Backend Local config
    * @param {Object} config
+   * @param {Object} parameters
    * @return {String}
    * @private
    */
-  static _normalizeBackendLocalPath(config) {
+  static _normalizeBackendLocalPath(config, parameters) {
     const { template } = config;
     const { locals } = template;
-    let localTfstatePath = homePath(tfstatePath, config.project.name);
+    let localTfstatePath = homePath(parameters.tfstatePath, config.project.name);
 
     if (locals) {
       Object.keys(locals).filter(it => locals[it]).map(() => {
@@ -169,7 +174,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {Object} config
    * @return {Promise}
    * @private
@@ -192,7 +196,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {Object} config
    * @return {Promise}
    * @private
@@ -215,7 +218,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {Object} resourcesByType
    * @param {Object} template
    * @return {Promise}
@@ -237,13 +239,12 @@ class HclHelper {
   }
 
   /**
-  *
-  * @param {Object} resourcesByType
-  * @param {String} resourceName
-  * @param {Object} template
-  * @return {Promise}
-  * @private
-  */
+   * @param {Object} resourcesByType
+   * @param {String} resourceName
+   * @param {Object} template
+   * @return {Promise}
+   * @private
+   */
   static _parsingResourceByName(resourcesByType, resourceName, template) {
     return Promise.resolve().then(() => {
       const resourceByName = resourcesByType[resourceName];
@@ -264,7 +265,7 @@ class HclHelper {
       );
       const oldProviderTerrahubVariable = providerTerrahubVariable.replace(/\\"/gm, '\"');
       const { tfvars } = template;
-      if (!tfvars && !tfvars.hasOwnProperty(variableName)) {
+      if (!tfvars || !tfvars.hasOwnProperty(variableName)) {
         return Promise.resolve();
       }
 
@@ -310,7 +311,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {*} template
    * @param {*} tfvarValue
    * @param {*} oldProviderTerrahubVariable
@@ -319,8 +319,7 @@ class HclHelper {
    */
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
-    let resourceByNameCopy = Object.assign({}, resourceByName);
-
+    let resourceByNameCopy = { ...resourceByName };
     const promises = Object.keys(resourceByName).filter(paramName => resourceByName[paramName])
       .filter(elem => elem !== 'provider').map(paramName => {
         const paramByName = JSON.stringify(resourceByName[paramName]);
@@ -411,9 +410,8 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {String} terrahubVariable
-   * @return {String, Array}
+   * @return {{variableName: String, variableNameNetArr: Array}}
    * @private
    */
   static _extractTerrahubVariableName(terrahubVariable) {
@@ -425,7 +423,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {Object} terrahubVariable
    * @return {Array}
    * @private
@@ -438,7 +435,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {String} templateStringify
    * @return {Array}
    * @private
@@ -460,8 +456,8 @@ class HclHelper {
     let variableValue = '';
 
     switch (HclHelper._checkTerrahubVariableType(tfvarValue)) {
-      case "list":
-        if (variableNameNetArr.length == 2) {
+      case 'list':
+        if (variableNameNetArr.length === 2) {
           const indexOfElement = variableNameNetArr[1].replace(/\\"/g, '');
           variableValue = tfvarValue[indexOfElement];
         } else {
@@ -481,7 +477,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {Object} tfvarValue
    * @return {String}
    * @private
@@ -490,8 +485,7 @@ class HclHelper {
     let type = 'string';
     if (Array.isArray(tfvarValue)) {
       type = 'list';
-    }
-    else if (typeof tfvarValue === 'object') {
+    } else if (typeof tfvarValue === 'object') {
       type = 'map';
     }
     return type;
@@ -521,9 +515,10 @@ class HclHelper {
   /**
    * @param {Object} config
    * @param {Array} remoteTfvarsLinks
+   * @param {Object} parameters
    * @return {Promise}
    */
-  static _addTfvars(config, remoteTfvarsLinks) {
+  static _addTfvars(config, remoteTfvarsLinks, parameters) {
     const promises = Object.keys(remoteTfvarsLinks).map(it => {
       const remoteTfvarsLink = remoteTfvarsLinks[it].replace(/'/g, '');
       const regExBucket = new RegExp('((s3|gs):\/\/)(.+?)([^\/]+)', 'gm');
@@ -536,7 +531,7 @@ class HclHelper {
         HclHelper.gsHelper.getObject(bucket, prefix).then(data => {
           return HclHelper._parsingTfvars(data.toString(), config);
         }) :
-        HclHelper.s3Helper.getObject(bucket, prefix, config).then(data => {
+        HclHelper.s3Helper.getObject(bucket, prefix, config, parameters).then(data => {
           return HclHelper._parsingTfvars(data.Body.toString(), config);
         });
 
@@ -565,7 +560,6 @@ class HclHelper {
   }
 
   /**
-   *
    * @param {String} remoteTfvars
    * @param {Object} config
    * @return {Promise}
@@ -636,12 +630,13 @@ class HclHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
-  static _createTerraformFiles(config) {
-    const { template, cfgEnv } = config;
-    const tmpPath = HclHelper.buildTmpPath(config);
+  static _createTerraformFiles(config, parameters) {
+    const { template, cfgEnv, distributor } = config;
+    const tmpPath = HclHelper.buildTmpPath(config, parameters);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
       let name = `${it}.tf`;
@@ -657,7 +652,7 @@ class HclHelper {
           break;
       }
 
-      return HclHelper.convertJsonToHcl(join(tmpPath, name), data, HclHelper.checkTfVersion(config));
+      return HclHelper.convertJsonToHcl(join(tmpPath, name), data, HclHelper.checkTfVersion(config), parameters, distributor);
     });
 
     return Promise.all(promises);
@@ -665,11 +660,13 @@ class HclHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @private
    */
-  static _generateVariable(config) {
+  static _generateVariable(config, parameters) {
     const variable = config.template.variable || {};
-    const tmpPath = HclHelper.buildTmpPath(config);
+    const tmpPath = HclHelper.buildTmpPath(config, parameters);
+    const { distributor } = config;
     const { tfvars } = config.template;
     Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {
       let type = 'string';
@@ -685,12 +682,18 @@ class HclHelper {
 
       variable[it] = { type };
     });
-    return HclHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config));
+    return HclHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config), parameters, distributor);
   }
 
-  static _symLinkNonTerraHubFiles(config) {
+  /**
+   * @param {Object} config
+   * @param {Object} parameters
+   * @return {Promise}
+   * @private
+   */
+  static _symLinkNonTerraHubFiles(config, parameters) {
     const regEx = /\.terrahub.*(json|yml|yaml)|.*.tfvars$/;
-    const tmpPath = HclHelper.buildTmpPath(config);
+    const tmpPath = HclHelper.buildTmpPath(config, parameters);
     const src = join(config.project.root, config.root);
 
     return fse.ensureDir(tmpPath)
@@ -732,10 +735,14 @@ class HclHelper {
 
   /**
    * @param {Object} config
+   * @param {Object} parameters
    * @return {String}
    */
-  static buildTmpPath(config) {
-    const tmpPath = homePath(hclPath, `${config.name}_${config.project.code}`);
+  static buildTmpPath(config, parameters) {
+    const tmpPath = config.distributor === 'lambda'
+      ? homePathLambda(parameters.hclPath, `${config.name}_${config.project.code}`)
+      : homePath(parameters.hclPath, `${config.name}_${config.project.code}`);
+
     fse.ensureDirSync(tmpPath);
 
     return tmpPath;
@@ -745,12 +752,16 @@ class HclHelper {
    * @param {String} componentPath
    * @param {Object} data
    * @param {Boolean} isHCL2
+   * @param {Object} parameters
+   * @param {String} [distributor]
    * @return {Promise}
    */
-  static convertJsonToHcl(componentPath, data, isHCL2) {
+  static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const arch = Downloader.getOsArch();
-    const componentBinPath = join(binPath, arch);
+    const componentBinPath = distributor === 'lambda'
+      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
+      : join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = Buffer.from(dataStringify);

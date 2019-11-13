@@ -1,12 +1,10 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const TerraformCommand = require('../terraform-command');
+const DistributedCommand = require('../distributed-command');
 const { printListAsTree } = require('../helpers/log-helper');
-const Distributor = require('../helpers/distributors/thread-distributor');
-const CloudDistributor = require('../helpers/distributors/cloud-distributor');
 
-class RunCommand extends TerraformCommand {
+class RunCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -18,15 +16,13 @@ class RunCommand extends TerraformCommand {
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
-      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false)
-      .addOption('cloud', 'c', 'Run your terraform execution in cloud', Boolean, false)
-    ;
+      .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false);
   }
 
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     this._isApply = this.getOption('apply');
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
@@ -41,15 +37,12 @@ class RunCommand extends TerraformCommand {
       return Promise.resolve('Done');
     }
 
-    return this._getPromise(config)
-      .then(isConfirmed => {
-        if (!isConfirmed) {
-          return Promise.reject('Action aborted');
-        }
+    const isConfirmed = await this._getPromise(config);
+    if (!isConfirmed) {
+      throw new Error('Action aborted');
+    }
 
-        return this.getOption('cloud') ? this._runCloud(config) : this._runLocal(config);
-      })
-      .then(() => Promise.resolve('Done'));
+    return this._run(config);
   }
 
   /**
@@ -57,15 +50,13 @@ class RunCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _getPromise(config) {
-    return Promise.resolve().then(() => {
-      if (this._isApprovementRequired) {
-        return this.askForApprovement(config, this.getOption('auto-approve'));
-      }
+  async _getPromise(config) {
+    if (this._isApprovementRequired) {
+      return this.askForApprovement(config, this.getOption('auto-approve'));
+    }
 
-      this.warnExecutionStarted(config);
-      return Promise.resolve(true);
-    });
+    this.warnExecutionStarted(config);
+    return true;
   }
 
   /**
@@ -73,9 +64,8 @@ class RunCommand extends TerraformCommand {
    * @return {Promise}
    * @private
    */
-  _runLocal(config) {
+  _run(config) {
     const actions = ['prepare', 'init', 'workspaceSelect'];
-    const distributor = new Distributor(config, this.runId);
 
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
@@ -85,32 +75,22 @@ class RunCommand extends TerraformCommand {
       actions.push('plan');
     }
 
-    return distributor.runActions(actions)
-      .then(() => !this._isApply ?
-        Promise.resolve() :
-        distributor.runActions(this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply'], {
-          dependencyDirection: Dictionary.DIRECTION.FORWARD
-        })
-      )
-      .then(() => !this._isDestroy ?
-        Promise.resolve() :
-        distributor.runActions(['plan', 'destroy'], {
-          dependencyDirection: Dictionary.DIRECTION.REVERSE,
-          planDestroy: true
-        })
-      );
-  }
+    const defaultRun = [{ actions, config: config, dependencyDirection: Dictionary.DIRECTION.FORWARD }];
 
-  /**
-   * @param {Object} cfg
-   * @return {Promise}
-   * @private
-   */
-  _runCloud(cfg) {
-    const actions = ['prepare', 'init', 'workspaceSelect', 'plan', 'apply'];
-    const distributor = new CloudDistributor(cfg);
+    const applyRun = !this._isApply ? false : [{
+      actions: [...actions, ...this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply']],
+      config: config,
+      dependencyDirection: Dictionary.DIRECTION.FORWARD
+    }];
 
-    return distributor.runActions(actions, { dependencyDirection: Dictionary.DIRECTION.FORWARD });
+    const destroyRun = !this._isDestroy ? false : [{
+      actions: [...actions, ...['plan', 'destroy']],
+      config: config,
+      dependencyDirection: Dictionary.DIRECTION.REVERSE,
+      planDestroy: true
+    }];
+
+    return Promise.resolve(destroyRun || applyRun || defaultRun );
   }
 
   /**
@@ -146,19 +126,6 @@ class RunCommand extends TerraformCommand {
    */
   get _isApprovementRequired() {
     return ['apply', 'destroy'].some(it => this.getOption(it));
-  }
-
-  /**
-   * @param {String} token
-   * @protected
-   * @return {void|Promise}
-   */
-  onTokenMissingOrInvalid(token) {
-    if (this.getOption('cloud')) {
-      return Promise.reject(new Error('Please provide valid THUB_TOKEN'));
-    }
-
-    return super.onTokenMissingOrInvalid(token);
   }
 }
 

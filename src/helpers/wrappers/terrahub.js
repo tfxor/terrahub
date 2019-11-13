@@ -2,7 +2,7 @@
 
 const logger = require('../logger');
 const Dictionary = require('../dictionary');
-const { config, fetch } = require('../../parameters');
+const BuildHelper = require('../build-helper');
 const AbstractTerrahub = require('./abstract-terrahub');
 
 class Terrahub extends AbstractTerrahub {
@@ -32,10 +32,9 @@ class Terrahub extends AbstractTerrahub {
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
-
-    let actionPromise = !config.token
+    let actionPromise = !this.parameters.config.token
       ? Promise.resolve()
-      : fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
+      : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
     return actionPromise.then(() => {
       return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
@@ -48,7 +47,7 @@ class Terrahub extends AbstractTerrahub {
    * @override
    */
   checkProject() {
-    if (!config.token) {
+    if (!this.parameters.config.token) {
       return Promise.resolve();
     }
 
@@ -56,8 +55,7 @@ class Terrahub extends AbstractTerrahub {
       name: this._project.name,
       hash: this._project.code
     };
-
-    return fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
       this._project.id = json.data.id;
 
       return Promise.resolve();
@@ -71,7 +69,8 @@ class Terrahub extends AbstractTerrahub {
    * @abstract
    */
   upload(data) {
-    if (!config.token || !data || !data.buffer || !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (!this.parameters.config.token || !data || !data.buffer ||
+      !['plan', 'apply', 'destroy'].includes(this._action)) {
       return Promise.resolve(data);
     }
 
@@ -89,7 +88,7 @@ class Terrahub extends AbstractTerrahub {
    * @private
    */
   _getKey() {
-    const dir = config.api.replace('api', 'public');
+    const dir = this.parameters.config.api.replace('api', 'public');
     const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
 
     return `${dir}/${this._timestamp}/${keyName}`;
@@ -110,10 +109,10 @@ class Terrahub extends AbstractTerrahub {
         thubRunId: this._runId
       })
     };
+    const promise = this.parameters.fetch.post(url, options).catch(error => {
+      const message = this._addNameToMessage('Failed to trigger parse function');
 
-    const promise = fetch.post(url, options).catch(error => {
-      error.message = this._addNameToMessage('Failed to trigger parse function');
-      logger.error(error);
+      logger.error({ ...error, message });
 
       return Promise.resolve();
     });
@@ -135,7 +134,30 @@ class Terrahub extends AbstractTerrahub {
       headers: { 'Content-Type': 'text/plain', 'x-amz-acl': 'bucket-owner-full-control' }
     };
 
-    return fetch.request(url, options);
+    return this.parameters.fetch.request(url, options);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} thubRunId
+   * @param {String[]} actions
+   * @return {Function[]}
+   */
+  getTasks({ config, thubRunId, actions } = {}) {
+    const { distributor } = config;
+
+    logger.updateContext({
+      runId: thubRunId,
+      componentName: config.name
+    });
+
+    return actions.map(action => options => {
+      logger.updateContext({ action: action });
+
+      return action !== 'build'
+        ? this.getTask(action, options)
+        : BuildHelper.getComponentBuildTask(config, distributor);
+    });
   }
 
   /**

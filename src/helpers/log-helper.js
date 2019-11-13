@@ -1,8 +1,8 @@
 'use strict';
 
+const treeify = require('treeify');
 const Util = require('./util');
 const logger = require('./logger');
-const treeify = require('treeify');
 
 /**
  * @static

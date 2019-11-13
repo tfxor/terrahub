@@ -4,12 +4,12 @@ class AbstractDependencyStrategy {
 
   /**
    * Returns filtered config
-   * @param {Object} fullConfig 
-   * @param {Function<boolean>[]} filters 
+   * @param {Object} fullConfig
+   * @param {Function<boolean>[]} filters
    * @returns {Object}
    */
   getExecutionList(fullConfig, filters) {
-    const config = Object.assign({}, fullConfig);
+    const config = { ...fullConfig };
 
     Object.keys(config)
       .filter(hash => filters.some(check => !check(hash)))

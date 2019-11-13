@@ -12,6 +12,7 @@ const mergeWith = require('lodash.mergewith');
 const childProcess = require('child_process');
 const { spawn } = require('child-process-promise');
 const { EOL, platform, cpus, homedir } = require('os');
+const { SpawnError } = require('../exceptions/errors');
 
 /**
  * @static
@@ -91,7 +92,7 @@ class Util {
         if (!outFile) {
           return resolve(data);
         }
-        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => err ? reject(err) : resolve());
+        fse.outputFile(outFile, data, { encoding: 'utf8' }, err => (err ? reject(err) : resolve()));
       });
     });
   }
@@ -103,7 +104,7 @@ class Util {
    */
   static familyTree(data) {
     const tree = {};
-    const object = Object.assign({}, data);
+    const object = { ...data };
 
     Object.keys(object).forEach(hash => {
       let node = object[hash];
@@ -231,10 +232,8 @@ class Util {
       onStdout(data);
     });
 
-    return promise.then(() => Buffer.concat(stdout)).catch(err => {
-      err.message = Buffer.concat(stderr).toString();
-
-      return Promise.reject(err);
+    return promise.then(() => Buffer.concat(stdout)).catch(error => {
+      throw new SpawnError(error, stderr);
     });
   }
 
@@ -264,10 +263,7 @@ class Util {
       }
 
       if (retries >= maxRetries) {
-        error.message += `${EOL}💡${options.component ? `[${options.component}]` : ''} `+
-          `Retried ${maxRetries} times, but still FAILED.`;
-
-        return Promise.reject(error);
+        Util.exitFromBackoffWithError(error, options, maxRetries);
       }
 
       return Util.setTimeoutPromise(1000 * Math.exp(retries++)).then(() => {
@@ -278,6 +274,23 @@ class Util {
     });
 
     return retry();
+  }
+
+  /**
+   * @param {Object} error
+   * @param {Object} options
+   * @param {Number} maxRetries
+   * @throws {Error}
+   */
+  static exitFromBackoffWithError(error, options, maxRetries) {
+    let { message } = error;
+
+    if (options.component) {
+      message += `${EOL}💡${options.component ? `[${options.component}]` : ''} ` +
+        `Retried ${maxRetries} times, but still FAILED.`;
+    }
+
+    throw new Error({ ...error, message: message });
   }
 
   /**
@@ -367,30 +380,93 @@ class Util {
   }
 
   /**
+   * @param {String[]} arrayOne
+   * @param {String[]} arrayTwo
+   * @return {{common: String[], uncommonOne: String[], uncommonTwo: String[]}}
+   */
+  static arrayUnCommon(arrayOne, arrayTwo) {
+    const uncommonOne = [];
+    const common = [];
+    const uncommonTwo = [];
+
+    const sortedOne = arrayOne.sort();
+    const sortedTwo = arrayTwo.sort();
+
+    let i = 0,
+      j = 0;
+
+    while (i < sortedOne.length && j < sortedTwo.length) {
+      const first = sortedOne[i];
+      const second = sortedTwo[j];
+
+      switch (first.localeCompare(second)) {
+        case -1:
+          uncommonOne.push(first);
+          i++;
+          break;
+
+        case 0:
+          common.push(first);
+          i++;
+          j++;
+          break;
+
+        case 1:
+          uncommonTwo.push(second);
+          j++;
+          break;
+      }
+    }
+
+    // add everything left
+    uncommonOne.push(...sortedOne.slice(i));
+    uncommonTwo.push(...sortedTwo.slice(j));
+
+    return {
+      uncommonOne,
+      common,
+      uncommonTwo
+    };
+  }
+
+  /**
    * @param {String} pattern
    * @param {Object} options
    * @return {Promise}
    */
   static globPromise(pattern, options) {
-    return new Promise((resolve, reject) =>
-      glob(pattern, options, (error, files) => error ? reject(error) : resolve(files))
-    );
+    return new Promise((resolve, reject) => glob(pattern, options,
+      (error, files) => (error ? reject(error) : resolve(files))));
+  }
+
+  /**
+   * Returns associate source profile
+   * @param {Object} accountData
+   * @param {Object} cloudAccounts
+   * @return {Object | null}
+   */
+  static retrieveSourceProfile(accountData, cloudAccounts) {
+    return accountData.type === 'role'
+      ? cloudAccounts.aws.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
   }
 
   /**
    * Compose AWS credentials string
    * @param {Object} accountData
    * @param {Object} [sourceProfile]
+   * @param {Object} config
    * @param {Boolean} tfvars
+   * @param {String} distributor
    * @return {String}
    */
-  static prepareCredentialsFile({ accountData, sourceProfile, tfvars = false }) {
-    let credentials = `[default]\n`;
+  static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, distributor) {
+    let credentials = '[terrahub]\n';
 
     if (sourceProfile) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
-        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n` +
-        `role_arn = ${accountData.env_var.AWS_ROLE_ARN.value}\n`;
+        `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
+
+      Util.createConfigProfile(accountData, config, distributor);
     } else {
       credentials += `aws_access_key_id = ${accountData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${accountData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
@@ -412,13 +488,14 @@ class Util {
 
   /**
    * Creates AWS credentials file in temp directory
-   * @param credentials
-   * @param config
-   * @param prefix
+   * @param {String} credentials
+   * @param {Object} config
+   * @param {String} prefix
+   * @param {String} distributor
    * @return {String}
    */
-  static createCredentialsFile(credentials, config, prefix) {
-    const tmpPath = Util.homePath('temp', config.project.code, config.name);
+  static createCredentialsFile(credentials, config, prefix, distributor) {
+    const tmpPath = Util.tempPath(config, distributor);
 
     fse.ensureDirSync(tmpPath);
 
@@ -427,6 +504,99 @@ class Util {
     fse.writeFileSync(credsPath, credentials);
 
     return credsPath;
+  }
+
+  /**
+   * Creates in aws config profile \w arn role
+   * @param {Object} sourceProfile
+   * @param {Object} config
+   * @param {String} distributor
+   * @return {void}
+   */
+  static createConfigProfile(sourceProfile, config, distributor) {
+    const { env_var: { AWS_ROLE_ARN: { value: arn } } } = sourceProfile;
+    const tempPath = Util.tempPath(config, distributor);
+    const configPath = path.join(tempPath, '.aws/config');
+    const profile =
+      `[profile default]\n` +
+      `region = us-east-1\n` +
+      `role_arn = ${arn}\n` +
+      `source_profile = terrahub\n`;
+
+    fse.ensureFileSync(configPath);
+
+    return fs.writeFileSync(configPath, profile, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  /**
+   * @return {void}
+   */
+  static removeAwsEnvVars() {
+    return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN',
+      'AWS_PROFILE', 'AWS_CONFIG_FILE', 'AWS_LOAD_CONFIG'].forEach(it => delete process.env[it]);
+  }
+
+  /**
+   * @return {String}
+   */
+  static get lambdaHomedir() {
+    return '/tmp';
+  }
+
+  /**
+   * Get terrahub home path in lambda
+   * @param {String} suffix
+   * @returns {*}
+   */
+  static homePathLambda(...suffix) {
+    return path.join(Util.lambdaHomedir, '.terrahub', ...suffix);
+  }
+
+  /**
+   * @param {Object} config
+   * @param {String} distributor
+   * @return {String}
+   */
+  static tempPath(config, distributor) {
+    return distributor === 'lambda'
+      ? Util.homePathLambda(config.project.code, config.name)
+      : Util.homePath('temp', config.project.code, config.name);
+  }
+
+  /**
+   * @param {Object | null} arnRole
+   * @param {String} credsPath
+   * @param {Object} config
+   * @param {String} distributor
+   * @param {Object} environment
+   */
+  static setupAWSSharedFile(arnRole, credsPath, config, distributor, environment) {
+    if (arnRole) {
+      Object.assign(environment, {
+        AWS_CONFIG_FILE: path.join(Util.tempPath(config, distributor), '.aws/config'),
+        AWS_SDK_LOAD_CONFIG: 1,
+        AWS_PROFILE: 'default'
+      });
+    } else {
+      Object.assign(environment, {
+        AWS_PROFILE: 'terrahub'
+      });
+    }
+
+    Object.assign(environment, { AWS_SHARED_CREDENTIALS_FILE: credsPath });
+  }
+
+  /**
+   * @return {void}
+   */
+  static deleteTempFolder() {
+    const tmpPath = Util.homePath('temp');
+
+    fse.removeSync(tmpPath);
   }
 }
 
