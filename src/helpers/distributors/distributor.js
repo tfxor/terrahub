@@ -160,7 +160,7 @@ class Distributor {
         }
 
         if (data && !results.some(it => it.id === data.id)) {
-          results.push(data);
+          results.push(data.data || data);
         }
 
         this.removeDependencies(this._dependencyTable, data.hash);
