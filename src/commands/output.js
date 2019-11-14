@@ -38,6 +38,8 @@ class OutputCommand extends DistributedCommand {
       format: this._format,
       postActionFn: results => {
         this._handleOutput(results);
+
+        return Promise.resolve();
       }
     }];
   }
@@ -74,7 +76,7 @@ class OutputCommand extends DistributedCommand {
           result[it.data.component] = JSON.parse(json);
         });
 
-        this.logger.raw(`${JSON.stringify(result)} \n`);
+        this.logger.raw(JSON.stringify(result));
     }
   }
 }
