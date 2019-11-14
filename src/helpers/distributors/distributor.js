@@ -56,7 +56,7 @@ class Distributor {
         const response = await this.runActions(actions, config, this.parameters, options);
 
         if (postActionFn) {
-          return postActionFn(response);
+          postActionFn(response);
         }
       }
     } catch (err) {

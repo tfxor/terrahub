@@ -38,8 +38,6 @@ class OutputCommand extends DistributedCommand {
       format: this._format,
       postActionFn: results => {
         this._handleOutput(results);
-
-        return this._format ? Promise.resolve() : Promise.resolve('Done');
       }
     }];
   }
@@ -69,14 +67,14 @@ class OutputCommand extends DistributedCommand {
         const result = {};
 
         results.forEach(it => {
-          const stdout = (Buffer.from(it.buffer)).toString('utf8');
+          const stdout = Buffer.from(it.data.buffer).toString('utf8');
           const indexStart = stdout.indexOf('{');
           const json = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
 
-          result[it.component] = JSON.parse(json);
+          result[it.data.component] = JSON.parse(json);
         });
 
-        this.logger.raw(JSON.stringify(result));
+        this.logger.raw(`${JSON.stringify(result)} \n`);
     }
   }
 }
