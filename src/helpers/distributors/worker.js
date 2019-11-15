@@ -52,8 +52,12 @@ function run(config, parameters) {
         data: Buffer.isBuffer(lastResult) ? lastResult.toString() : lastResult,
         isError: false,
         hash: config.hash
+      }, null, {}, (err, data) => {
+        if (err) {
+          process.exit(1);
+        }
+        process.exit(0);
       });
-      process.exit(0);
     })
     .catch(error => {
       process.send({
