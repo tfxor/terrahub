@@ -39,7 +39,7 @@ class AwsDistributor {
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
 
-      logger.log(`[${this.componentConfig.name}] Uploading project to S3.`);
+      logger.log(`[${this.componentConfig.name}] Uploading to S3...`);
 
       const s3Prefix = [s3directory, accountId, runId].join('/');
       const pathMap = files.map(it => ({
@@ -48,7 +48,7 @@ class AwsDistributor {
       }));
 
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
-      logger.warn(`[${this.componentConfig.name}] Directory uploaded to S3.`);
+      logger.warn(`[${this.componentConfig.name}] Upload to S3 was successful.`);
 
       this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
       const body = JSON.stringify({
@@ -73,13 +73,13 @@ class AwsDistributor {
    * @private
    */
   _validateRequirements() {
-    if (!this.config.token) { throw new Error('[AWS distributor] Please provide THUB_TOKEN.'); }
-    if (!this.config.logs) { throw new Error('[AWS distributor] Please enable logging in `.terrahub.json`.'); }
+    if (!this.config.token) { throw new Error('[AWS distributor] THUB_TOKEN is missing, but is required.'); }
+    if (!this.config.logs) { throw new Error('[AWS distributor] THUB_LOGS is missing, but is required.'); }
 
     const { cloudAccount } = this.componentConfig.terraform;
     if (!cloudAccount) {
-      const errorMessage = `[AWS distributor] '${this.componentConfig.name}' do not have` +
-        ` CloudAccount in config.`;
+      const errorMessage = `[AWS distributor] 'cloudAccount' configuration is required for` +
+        ` '${this.componentConfig.name}' component.`;
 
       throw new Error(errorMessage);
     }
@@ -139,7 +139,7 @@ class AwsDistributor {
   async _updateCredentialsForS3() {
     removeAwsEnvVars();
     const tempCreds = await this._fetchTemporaryCredentials();
-    if (!tempCreds) { throw new Error('[AWS Distributor] Can not retrieve temporary credentials.'); }
+    if (!tempCreds) { throw new Error('[AWS Distributor] Could NOT retrieve temporary credentials.'); }
 
     Object.assign(process.env, {
       AWS_ACCESS_KEY_ID: tempCreds.AccessKeyId,

@@ -63,7 +63,7 @@ class AwsDeployer {
     }
 
     return {
-      message: `Component '${config.name}' has been successfully deployed.`,
+      message: `Distributed execution for '${config.name}' component was successful.`,
       hash: config.hash,
       isError: false
     };
@@ -114,7 +114,7 @@ class AwsDeployer {
 
     const tempCreds = await this._fetchTemporaryCredentials();
     if (!tempCreds) {
-      throw new Error('[AWS Distributor] Can not retrieve temporary credentials.');
+      throw new Error('[AWS Distributor] Could NOT retrieve temporary credentials.');
     }
 
     Object.assign(process.env, {
