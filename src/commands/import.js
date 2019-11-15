@@ -2,10 +2,9 @@
 
 const fse = require('fs-extra');
 const { resolve } = require('path');
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class ImportCommand extends TerraformCommand {
+class ImportCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -17,13 +16,13 @@ class ImportCommand extends TerraformCommand {
       .addOption('provider', 'j', 'Import provider', String, '')
       .addOption('batch', 'b', 'Import batch', String, '')
       .addOption('overwrite', 'O', 'Overwrite existing elements in tfstate', Boolean, false)
-      ;
+    ;
   }
 
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const configContentArr = this.getOption('config');
     const providerContent = this.getOption('provider');
     const batch = this.getOption('batch');
@@ -34,10 +33,9 @@ class ImportCommand extends TerraformCommand {
     const excludeRegex = this.getOption('exclude-regex');
 
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
     if (!batch || configContentArr.length > 0) {
       let linesMap = [];
-      configContentArr.map(it => {
+      configContentArr.forEach(it => {
         const resourceData = it.split('=');
         linesMap.push({
           component: '',
@@ -48,23 +46,26 @@ class ImportCommand extends TerraformCommand {
           hash: Object.values(config)[0].project.code
         });
       });
-      return distributor.runActions(
-        ['prepare', 'init', 'workspaceSelect', 'import'],
-        { importLines: JSON.stringify(linesMap) })
-        .then(() => 'Done');
+
+      return Promise.resolve([{
+        actions: ['prepare', 'init', 'workspaceSelect', 'import'],
+        config,
+        importLines: JSON.stringify(linesMap)
+      }]);
     }
 
+    console.log('import', Object.values(config)[0].project.root, batch);
     const batchPath = resolve(Object.values(config)[0].project.root, batch);
     if (fse.existsSync(batchPath)) {
       return fse.readFile(batchPath)
         .then(content => {
-          const lines = content.toString().split('\n')
+          const lines = content.toString().split('\n');
           let linesMap = [];
           let autoIndex = { name: '', index: 0 };
           lines.forEach(line => {
             const elements = line.replace('\r', '').split(',');
-            const elementsCount = (content.toString().match(new RegExp(elements[1], "g")) || []).length;
-            if (autoIndex.name != elements[1]) {
+            const elementsCount = (content.toString().match(new RegExp(elements[1], 'g')) || []).length;
+            if (autoIndex.name !== elements[1]) {
               autoIndex.name = elements[1];
               autoIndex.index = 0;
             } else {
@@ -82,13 +83,18 @@ class ImportCommand extends TerraformCommand {
                 component: elements[0],
                 fullAddress: ((elementsCount > 1) ? `${autoIndex.name}[${autoIndex.index}]` : elements[1]),
                 value: elements[2],
-                provider: providerContent || (elements.length == 4 ? `-provider=${elements[3]}` : ''),
+                provider: providerContent || (elements.length === 4 ? `-provider=${elements[3]}` : ''),
                 overwrite: overwrite,
                 hash: config[Object.keys(config)[0]].project.code
               });
             }
           });
-          return distributor.runActions(['prepare', 'init', 'workspaceSelect', 'import'], { importLines: JSON.stringify(linesMap) });
+
+          return Promise.resolve([{
+            actions: ['prepare', 'init', 'workspaceSelect', 'import'],
+            config,
+            importLines: JSON.stringify(linesMap)
+          }]);
         })
         .then(() => 'Done');
     }

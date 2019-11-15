@@ -6,15 +6,15 @@ class DependencyInclude extends AbstractDependencyStrategy {
 
   /**
    * Returns updated config object with included dependencies
-   * @param {Object} fullConfig 
-   * @param {Function<boolean>[]} filters 
+   * @param {Object} fullConfig
+   * @param {Function<boolean>[]} filters
    * @returns {Object}
    */
   getExecutionList(fullConfig, filters) {
     const config = super.getExecutionList(fullConfig, filters);
     const hashesToCheck = Object.keys(config);
     const _newComponents = {};
-    const checked = Object.assign({}, config);
+    const checked = { ...config };
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -32,7 +32,7 @@ class DependencyInclude extends AbstractDependencyStrategy {
           _newComponents[it] = fullConfig[it];
           issues[it].push(hash);
         }
-      }); 
+      });
     }
 
     Object.keys(issues).filter(it => issues[it].length).forEach(hash => {
@@ -42,7 +42,7 @@ class DependencyInclude extends AbstractDependencyStrategy {
         `'${names.join(`' ,'`)}' component${names.length > 1 ? 's' : ''}`);
     });
 
-    return Object.assign({}, config, _newComponents);
+    return { ...config, ..._newComponents };
   }
 }
 

@@ -1,29 +1,32 @@
 'use strict';
 
-const path = require('path');
 const fse = require('fs-extra');
+const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
-const { fetch, config } = require('./parameters');
 const Dictionary = require('./helpers/dictionary');
-const { toMd5, homePath } = require('./helpers/util');
 const AuthenticationException = require('./exceptions/authentication-exception');
+
 
 /**
  * @abstract
  */
 class AbstractCommand {
   /**
-   * @param {Object} input
+   * @param {Object} parameters
    * @param {Logger} logger
    */
-  constructor(input, logger) {
+  constructor(parameters, logger) {
     this.logger = logger;
     this._name = null;
-    this._input = input;
     this._options = {};
     this._description = null;
-    this._configLoader = new ConfigLoader();
+    this.parameters = parameters;
+    this.logs = parameters.logs;
+    this.fetch = this.parameters.fetch;
+    this._input = this.parameters.args;
+    this.terrahubCfg = this.parameters.config;
+    this._configLoader = new ConfigLoader(parameters);
 
     this.configure();
     this.initialize();
@@ -40,7 +43,7 @@ class AbstractCommand {
    */
   _addDefaultOptions() {
     this
-      .addOption('env', 'e', 'Workspace environment', String, config.env)
+      .addOption('env', 'e', 'Workspace environment', String, this.parameters.config.env)
       .addOption('help', 'h', 'Show list of available commands', Boolean, false);
   }
 
@@ -81,18 +84,6 @@ class AbstractCommand {
   }
 
   /**
-   * @param {String} name
-   * @return {String}
-   * @public
-   */
-  getConfigPath(name) {
-    const config = this.getConfig();
-    const key = Object.keys(config).find(it => config[it].name === name);
-
-    return config[key] ? path.join(config[key].project.root, config[key].root) : null;
-  }
-
-  /**
    * Configure command option
    * @param {String} name
    * @param {String} shortcut
@@ -102,7 +93,9 @@ class AbstractCommand {
    * @returns {AbstractCommand}
    */
   addOption(name, shortcut, description, type = String, defaultValue = undefined) {
-    this._options[name] = { name, shortcut, description, type, defaultValue };
+    this._options[name] = {
+      name, shortcut, description, type, defaultValue
+    };
 
     return this;
   }
@@ -151,11 +144,10 @@ class AbstractCommand {
    */
   validate() {
     try {
-      fse.readJsonSync(homePath('.terrahub.json'));
+      fse.readJsonSync(Util.homePath('.terrahub.json'));
     } catch (error) {
       this.logger.error('Global `.terrahub.json` config is invalid. ' +
-        `Please make sure file's content is parsing JSON lint successfully.`
-      );
+        `Please make sure file's content is parsing JSON lint successfully.`);
     }
 
     const required = Object.keys(this._options).filter(name => {
@@ -190,15 +182,6 @@ class AbstractCommand {
   }
 
   /**
-   * Get list of configuration files for the specified environment
-   * @param {String|Boolean} dir
-   * @returns {String[]}
-   */
-  listAllEnvConfig(dir = false) {
-    return this._configLoader.listConfig({ dir: dir, env: Dictionary.ENVIRONMENT.EVERY });
-  }
-
-  /**
    * Get full consolidated config
    * @returns {Object}
    */
@@ -221,19 +204,11 @@ class AbstractCommand {
   }
 
   /**
-   * @param {String} fullPath
-   * @returns {String}
-   */
-  relativePath(fullPath) {
-    return this._configLoader.relativePath(fullPath);
-  }
-
-  /**
    * Reload config-loader
    * @deprecated
    */
   reloadConfig() {
-    this._configLoader = new ConfigLoader();
+    this._configLoader = new ConfigLoader(this.parameters);
   }
 
   /**
@@ -251,34 +226,27 @@ class AbstractCommand {
   }
 
   /**
-   * @returns {String}
-   */
-  getProjectFormat() {
-    return this._configLoader.getProjectFormat();
-  }
-
-  /**
    * Generate project code
    * @param {String} name
    * @returns {String}
    */
   getProjectCode(name) {
-    return toMd5(name + Date.now().toString()).slice(0, 8);
+    return Util.toMd5(name + Date.now().toString()).slice(0, 8);
   }
 
   /**
    * @return {Promise}
    */
   validateToken() {
-    if (!config.token) {
+    if (!this.parameters.config.token) {
       return this.onTokenMissingOrInvalid(null);
     }
 
-    return fetch.get('thub/account/retrieve')
+    return this.parameters.fetch.get('thub/account/retrieve')
       .then(res => Promise.resolve(!!res))
       .catch(err => {
         if (err instanceof AuthenticationException) {
-          return this.onTokenMissingOrInvalid(config.token);
+          return this.onTokenMissingOrInvalid(this.parameters.config.token);
         }
 
         throw err;

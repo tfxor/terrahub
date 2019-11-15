@@ -1,7 +1,6 @@
 'use strict';
 
 const URL = require('url');
-const fs = require('fs-extra');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;
 const AuthenticationException = require('../exceptions/authentication-exception');
@@ -26,7 +25,7 @@ class Fetch {
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse).catch(this._handleError);
+    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse).catch(Fetch._handleError);
   }
 
   /**
@@ -41,7 +40,7 @@ class Fetch {
     };
 
     return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
-      .then(this._handleResponse).catch(this._handleError);
+      .then(this._handleResponse).catch(Fetch._handleError);
   }
 
   /**
@@ -72,7 +71,6 @@ class Fetch {
    */
   _handleResponse(result) {
     return result.json().then(json => {
-
       let error;
       switch (result.status) {
         case 403:
@@ -100,12 +98,13 @@ class Fetch {
    * @throws {Error}
    * @private
    */
-  _handleError(error) {
+  static _handleError(error) {
+    let message;
     if (['EAI_AGAIN', 'NetworkingError'].includes(error.code)) {
-      error.message = 'Internet connection issue';
+      message = 'Internet connection issue';
     }
 
-    throw error;
+    throw message ? { ...error, message } : error;
   }
 }
 

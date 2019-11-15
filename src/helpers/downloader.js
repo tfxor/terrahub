@@ -4,7 +4,7 @@ const os = require('os');
 const url = require('url');
 const fse = require('fs-extra');
 const download = require('download');
-const { homePath } = require('./util');
+const { homePath, homePathLambda } = require('./util');
 
 /**
  * Terraform binaries downloader
@@ -13,11 +13,14 @@ class Downloader {
   /**
    * Download & unzip file
    * @param {String} version
+   * @param {String} distributor
    * @returns {Promise}
    */
-  download(version) {
-    const url = this._buildSrcUrl(version);
-    const binaryDir = homePath('terraform', version);
+  download(version, distributor) {
+    const url = Downloader._buildSrcUrl(version);
+    const binaryDir = distributor === 'lambda'
+      ? homePathLambda('terraform', version)
+      : homePath('terraform', version);
 
     return fse
       .ensureDir(binaryDir)
@@ -28,7 +31,7 @@ class Downloader {
    * @param {String} version
    * @returns {String}
    */
-  _buildSrcUrl(version) {
+  static _buildSrcUrl(version) {
     const arch = Downloader.getOsArch();
 
     return url.resolve(
@@ -40,7 +43,8 @@ class Downloader {
    * @returns {String}
    */
   static getOsArch() {
-    let arch, platform;
+    let arch,
+      platform;
 
     switch (os.arch()) {
       case 'x32':

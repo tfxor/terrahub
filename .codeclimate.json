@@ -1,5 +1,8 @@
 {
   "version": "2",
+  "exclude_patterns": [
+    "./bin/converter/main.go"
+  ],
   "checks": {
     "file-lines": {
       "config": {
@@ -33,7 +36,7 @@
   "engines": {
     "eslint": {
       "enabled": true,
-      "channel": "eslint-2",
+      "channel": "eslint-5",
       "config": {
         "config": ".eslintrc.json"
       }

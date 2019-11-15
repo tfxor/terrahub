@@ -1,10 +1,9 @@
 'use strict';
 
 const Dictionary = require('../helpers/dictionary');
-const TerraformCommand = require('../terraform-command');
-const Distributor = require('../helpers/distributors/thread-distributor');
+const DistributedCommand = require('../distributed-command');
 
-class ApplyCommand extends TerraformCommand {
+class ApplyCommand extends DistributedCommand {
   /**
    * Command configuration
    */
@@ -12,25 +11,28 @@ class ApplyCommand extends TerraformCommand {
     this
       .setName('apply')
       .setDescription('run `terraform apply` across multiple terrahub components')
-      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
-    ;
+      .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false);
   }
 
   /**
    * @returns {Promise}
    */
-  run() {
+  async run() {
     const config = this.getFilteredConfig();
-    const distributor = new Distributor(config, this.runId);
 
     this.checkDependencies(config);
 
-    return this.askForApprovement(config, this.getOption('auto-approve'))
-      .then(answer => answer ?
-        distributor.runActions(['prepare', 'workspaceSelect', 'plan', 'apply'], {
-          dependencyDirection: Dictionary.DIRECTION.FORWARD
-        }) : Promise.reject('Action aborted')
-      ).then(() => Promise.resolve('Done'));
+    const isApproved = await this.askForApprovement(config, this.getOption('auto-approve'));
+
+    if (!isApproved) {
+      throw new Error('Action aborted');
+    }
+
+    return [{
+      actions: ['prepare', 'workspaceSelect', 'plan', 'apply'],
+      config,
+      dependencyDirection: Dictionary.DIRECTION.FORWARD
+    }];
   }
 }
 
