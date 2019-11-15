@@ -75,7 +75,7 @@ class RunCommand extends DistributedCommand {
       actions.push('plan');
     }
 
-    const defaultRun = [{ actions, config: config, dependencyDirection: Dictionary.DIRECTION.FORWARD }];
+    const defaultRun = [{ actions, config: config }];
 
     const applyRun = !this._isApply ? false : [{
       actions: [...actions, ...this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply']],

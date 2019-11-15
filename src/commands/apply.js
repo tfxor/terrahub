@@ -30,6 +30,7 @@ class ApplyCommand extends DistributedCommand {
 
     return [{
       actions: ['prepare', 'workspaceSelect', 'plan', 'apply'],
+      config,
       dependencyDirection: Dictionary.DIRECTION.FORWARD
     }];
   }

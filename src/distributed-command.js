@@ -327,7 +327,7 @@ class DistributedCommand extends AbstractCommand {
 
     const remoteStateName = this._retrieveRemoteStateNames(hash, dependentConfig) || name;
     const { workspace } = this._terraformRemoteStates[hash]
-        .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
+      .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
 
     const defaultRemoteConfig = {
       [remoteStateName]: {
@@ -350,7 +350,12 @@ class DistributedCommand extends AbstractCommand {
         break;
       case 's3':
         Object.keys(backend.s3).forEach(it => {
-          defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+          if (backend.s3[it].includes('${tfvar.terrahub["component"]["name"]}')) {
+            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]
+              .replace('${tfvar.terrahub["component"]["name"]}', name);
+          } else {
+            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+          }
         });
         break;
       case 'gcs':
