@@ -3,7 +3,7 @@
 const fse = require('fs-extra');
 const semver = require('semver');
 const hcltojson = require('hcl-to-json');
-const { resolve, join } = require('path');
+const { resolve, join, extname } = require('path');
 const { exec } = require('child-process-promise');
 const objectDepth = require('object-depth');
 const GsHelper = require('./gs-helper');
@@ -758,6 +758,7 @@ class HclHelper {
    */
   static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
+    const fileType = extname(componentPath).replace('.', '');
     const arch = Downloader.getOsArch();
     const componentBinPath = distributor === 'lambda'
       ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
@@ -767,7 +768,7 @@ class HclHelper {
     const buff = Buffer.from(dataStringify);
     const base64data = buff.toString('base64');
 
-    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)
+    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1} -T ${fileType}`)
       .then(result => { return fse.outputFileSync(componentPath, result.stdout); })
       .catch(err => { return Promise.reject(err); });
   }

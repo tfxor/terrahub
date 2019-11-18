@@ -21,6 +21,7 @@ var (
   version           = false
   versionInfo       = "development"
   tf12format        = "yes"
+  filetype          = "tf"
   interpolation     = ""
   interpolationList = []string{
 	"provider", "schema",
@@ -78,6 +79,7 @@ func init() {
   flag.BoolVar(&version, "v", false, "Prints current app version")
   flag.StringVar(&input, "i", "", "Input string that contains the JSON configuration to convert.")
   flag.StringVar(&tf12format, "F", "", "Use Terraform 0.12 formatter. Default value is 'yes'.")
+  flag.StringVar(&filetype, "T", "", "Input file type format. Default value is 'tf'.")
 
   flag.Parse()
 }
@@ -232,7 +234,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 	  }
 	case string:
-	  if isFunction(v) && tf12format != "no" {
+	  if isFunction(v, level) && tf12format != "no" {
 		outHCL2 += v + "\n"
 	  } else {
 		outHCL2 += "\"" + v + "\"\n"
@@ -416,9 +418,9 @@ func mapOut(raw json.RawMessage) string {
   return outHCL2
 }
 
-func isFunction(val string) bool {
+func isFunction(val string, level int) bool {
   for _, element := range functionList {
-	if val == "local" {
+	if val == "local" || (filetype != "tf") {
 	  return false
 	}
 	startIndex := strings.Index(val, element)
