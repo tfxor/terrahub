@@ -72,6 +72,14 @@ class Fetch {
   _handleResponse(result) {
     return result.json().then(json => {
       let error;
+      if (result.status !== 200) {
+        console.log({
+          url: result.url,
+          code: result.status,
+          body: json
+        });
+      }
+
       switch (result.status) {
         case 403:
           error = new AuthenticationException('Provided THUB_TOKEN is invalid.');

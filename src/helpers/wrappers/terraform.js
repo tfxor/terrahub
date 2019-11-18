@@ -11,8 +11,10 @@ const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
-const { extend, spawner, homePath, prepareCredentialsFile,
-  createCredentialsFile, homePathLambda, removeAwsEnvVars, setupAWSSharedFile } = require('../util');
+const {
+  extend, spawner, homePath, prepareCredentialsFile, createCredentialsOrConfigFile, createConfigFile,
+  createCredentialsFile, homePathLambda, removeAwsEnvVars, setupAWSSharedFile
+} = require('../util');
 
 class Terraform {
   /**
@@ -100,45 +102,152 @@ class Terraform {
    * @private
    */
   async _setupVars() {
-    const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
+    const _terraformAccounts = ['backendAccount', 'cloudAccount'];
+    // returns { [terraformAccount]: value }
+    const configAccounts = Object.keys(this._tf).reduce(
+      (acum, it) => (_terraformAccounts.includes(it) ? { ...acum, ...{ [it]: this._tf[it] } } : acum), {});
 
-    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) { return Promise.resolve(); }
-    if (this._distributor === 'lambda') { removeAwsEnvVars(); }
+    if (this._distributor === 'local' && (!Object.keys(configAccounts).length || !process.env.THUB_TOKEN_IS_VALID)) {
+      return Promise.resolve();
+    }
+    if (this._distributor === 'lambda') { removeAwsEnvVars(); } // useless
 
     ApiHelper.init(this.parameters, this._distributor);
 
     const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    const provider = Array.isArray(this._config.template.provider)
-      ? Object.keys(this._config.template.provider[0]).toString()
-      : Object.keys(this._config.template.provider).toString();
+    const provider = 'aws';
     const providerAccounts = cloudAccounts[provider];
+    if (!providerAccounts) { return Promise.resolve(); }
 
-    if (providerAccounts) {
-      accounts.forEach(type => {
-        const _value = this._tf[type];
-        const accountData = providerAccounts.find(it => it.name === _value);
-        if (!accountData) { return Promise.resolve(); }
+    const _configAccountData = {};
+    Object.keys(configAccounts).forEach(type => {
+      const accountData = providerAccounts.find(it => it.name === configAccounts[type]);
+      if (accountData) {
+        _configAccountData[type] = accountData;
+      }
+    });
 
-        const sourceProfile = accountData.type === 'role'
-          ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+    Object.keys(_configAccountData).forEach(accountType => {
+      if (_configAccountData[accountType].type === 'role') {
+        const sourceProfile = providerAccounts.find(it => it.id === _configAccountData[accountType].env_var.AWS_SOURCE_PROFILE.id);
+        //logic with profiles
+        const credentials = this.___createCredentialsFileContent(_configAccountData[accountType], sourceProfile);
+        const configCreds = this.___createConfigCredentialsContent(_configAccountData, accountType);
+        const configPath = createConfigFile(configCreds, this._config, this._distributor); //credentials, config, distributor
+        const credentialsPath = createCredentialsFile(credentials, this._config, accountType, this._distributor);
 
-        const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this._distributor);
+        console.log({
+          credentials, credentialsPath,
+          configCreds, configPath
+        });
 
-        switch (type) {
-          case 'cloudAccount':
-            removeAwsEnvVars();
-            const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
-            setupAWSSharedFile(sourceProfile, cloudCredsPath, this._config, this._distributor, this._envVars);
-            break;
-          case 'backendAccount':
-            const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
-            Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
-            break;
+        if (accountType === 'cloudAccount') {
+          // removeAwsEnvVars(); // or this is useless
+          // Object.assign(process.env, {
+          //   AWS_CONFIG_FILE: configPath,
+          //   AWS_SDK_LOAD_CONFIG: 1,
+          //   AWS_PROFILE: accountType,
+          //   AWS_SHARED_CREDENTIALS_FILE: credentialsPath
+          // });
+        } else if (accountType === 'backendAccount') {
+          Object.assign(this._tf.backend, { shared_credentials_file: credentialsPath, profile: 'backend' });
+          // profile from default .aws/config file ONLY .....
+          Object.assign(this._envVars, {
+            // AWS_CONFIG_FILE: configPath,
+            AWS_SDK_LOAD_CONFIG: 1,
+            // AWS_PROFILE: accountType,
+            // AWS_SHARED_CREDENTIALS_FILE: credentialsPath
+          });
+          console.log('ENVS :', this._envVars);
         }
-      });
-    }
+
+        //config file
+        /*
+          [${accountType} profile]
+            region = us-east-1
+            role_arn = ${actualProfile[env_var][AWS_ROLE_ARN][value]}
+            source_profile = default
+         */
+        //credentials file
+        /*
+            [default]
+            aws_access_key_id = ${sourceProfile[env_var][AWS_ACCESS_KEY_ID][value]}
+            aws_secret_access_key = ${sourceProfile[env_var][AWS_SECRET_ACCESS_KEY][value]}
+            session_name = ${actualProfile.name}_${sourceProfile[env_var][AWS_ACCOUNT_ID][value]}
+         */
+
+
+        // ** PROFILES **
+        // accountType -> ONLY
+
+
+      } else {
+        //simple logic with shared File
+        console.log({
+          actualProfile: _configAccountData[accountType]
+        });
+        //credentials file
+        /*
+            [default]
+            aws_access_key_id = ${actualProfile[env_var][AWS_ACCESS_KEY_ID][value]}
+            aws_secret_access_key = ${actualProfile[env_var][AWS_SECRET_ACCESS_KEY][value]}
+            session_name = ${actualProfile.name}_${actualProfile[env_var][AWS_ACCOUNT_ID][value]}
+         */
+
+        // ** PROFILES **
+        // default -> ONLY
+      }
+    });
+
+    // _configAccountData.forEach(type => {
+    //   const _value = this._tf[type];
+    //   const accountData = providerAccounts.find(it => it.name === _value);
+    //   if (!accountData) { return Promise.resolve(); }
+    //
+    //   const sourceProfile = accountData.type === 'role'
+    //     ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
+    //
+    //   const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this._distributor);
+    //
+    //   switch (type) {
+    //     case 'cloudAccount':
+    //       removeAwsEnvVars(); // or this is useless
+    //       const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
+    //       setupAWSSharedFile(sourceProfile, cloudCredsPath, this._config, this._distributor, this._envVars);
+    //       break;
+    //     case 'backendAccount':
+    //       const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
+    //       Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
+    //       break;
+    //   }
+    // });
+
 
     return Promise.resolve();
+  }
+
+  ___createConfigCredentialsContent(accountData, accountType) {
+    let credentials = `[profile ${accountType}]\n`;
+    credentials += `region = us-east-1\n`;
+    credentials += `role_arn = ${accountData[accountType]['env_var']['AWS_ROLE_ARN']['value']}\n`;
+    credentials += `source_profile = terrahub\n`;
+
+    return credentials;
+  }
+
+  ___createCredentialsFileContent(actualProfile, sourceProfile = false) {
+    let credentials = '[terrahub]\n';
+    if (sourceProfile) {
+      credentials += `aws_access_key_id = ${sourceProfile['env_var']['AWS_ACCESS_KEY_ID']['value']}\n`;
+      credentials += `aws_secret_access_key = ${sourceProfile['env_var']['AWS_SECRET_ACCESS_KEY']['value']}\n`;
+      credentials += `session_name = ${actualProfile.name}_${sourceProfile['env_var']['AWS_ACCOUNT_ID']['value']}\n`;
+    } else {
+      credentials += `aws_access_key_id = ${actualProfile['env_var']['AWS_ACCESS_KEY_ID']['value']}\n`;
+      credentials += `aws_secret_access_key = ${actualProfile['env_var']['AWS_SECRET_ACCESS_KEY']['value']}\n`;
+      credentials += `session_name = ${actualProfile.name}_${actualProfile['env_var']['AWS_ACCOUNT_ID']['value']}\n`;
+    }
+
+    return credentials;
   }
 
   /**
@@ -521,7 +630,8 @@ class Terraform {
    */
   async run(cmd, args) {
     await this._setupVars();
-
+    console.log('RUN 1.cmd :', cmd);
+    console.log('RUN 2.envs :', this._envVars);
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }

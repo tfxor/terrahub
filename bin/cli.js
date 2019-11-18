@@ -52,7 +52,7 @@ function commandCreate(logger = console) {
  */
 async function syncExitProcess(code, message, error = false) {
   await ApiHelper.promisesForSyncExit();
-  deleteTempFolder();
+  // deleteTempFolder();
 
   if (error) {
     Array.isArray(message)

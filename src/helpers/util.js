@@ -507,6 +507,79 @@ class Util {
   }
 
   /**
+   * Creates AWS config file in temp directory
+   * @param {String} credentials
+   * @param {Object} config
+   * @param {String} distributor
+   * @return {String}
+   */
+  static createConfigFile(credentials, config, distributor) {
+    const profile = credentials.split('\n')[0];
+    const tmpPath = Util.tempPath(config, distributor);
+    fse.ensureDirSync(tmpPath);
+    const credsPath = path.join(tmpPath, '.aws/config');
+    if (!fs.existsSync(credsPath)) {
+      fse.ensureFileSync(credsPath);
+      fs.writeFileSync(credsPath, credentials);
+    } else {
+      fs.writeFileSync(credsPath, credentials);
+      // const fileContent = fs.readFileSync(credsPath, { encoding: 'utf-8'});
+      // if (fileContent.includes(profile)) {
+      //   let linesToDelete = 5;
+      //   let start = 0;
+      //   const fileContentArray = fileContent.split('\n');
+      //   fileContentArray.forEach((it, index) => {
+      //     if (it === profile) {
+      //       start = 1;
+      //       linesToDelete--;
+      //       delete fileContentArray[index];
+      //     }
+      //
+      //     if (start && linesToDelete) {
+      //       linesToDelete--;
+      //       delete fileContentArray[index];
+      //     }
+      //   });
+      //   const remainContent = fileContentArray.filter(Boolean).join('\n');
+      //   const newContent = remainContent + credentials;
+      //   fs.writeFileSync(credsPath, newContent);
+      // } else {
+      //   fs.appendFileSync(credsPath, '\n' + credentials);
+      // }
+    }
+
+    return credsPath;
+  }
+
+  static createCredentialsOrConfigFile(credentials, config, prefix, distributor, isConfig = false) {
+    const tmpPath = Util.tempPath(config, distributor);
+    fse.ensureDirSync(tmpPath);
+
+    const credsPath = isConfig ? path.join(tmpPath, '.aws/config') : path.join(tmpPath, `aws_credentials_${prefix}`);
+    console.log('credsPath ;', credsPath);
+    if (!fs.existsSync(credsPath)) {
+      fse.ensureFileSync(credsPath);
+    } else {
+      if (isConfig) {
+        const fileContent = fs.readFileSync(credsPath, { encoding: 'utf-8'});
+
+        console.log('fileContent :', fileContent);
+
+        if (fileContent.includes('backendAccount profile')) {
+          console.log('need to replace data in file');
+        }
+        console.log(' verify by profile name and replace or add data to file ');
+        //todo verify by profile name and replace or add data to file -> fs has flag for write from end
+      }
+    }
+
+    console.log(credsPath, credentials);
+    fse.writeFileSync(credsPath, credentials);
+
+    return credsPath;
+  }
+
+  /**
    * Creates in aws config profile \w arn role
    * @param {Object} sourceProfile
    * @param {Object} config
