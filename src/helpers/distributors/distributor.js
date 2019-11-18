@@ -147,7 +147,7 @@ class Distributor {
     try {
       await this.distributeConfig();
     } catch (err) {
-      if (/This feature current is not available/.test(err)) { throw new Error(err); }
+      if (/This feature is not available yet/.test(err)) { throw new Error(err); }
       this.errors.push(err);
     }
 
@@ -235,13 +235,13 @@ class Distributor {
         return new AwsDistributor(this.parameters, config, this._env);
       case 'fargate':
         //todo
-        throw new Error('[Fargate Distributor]: This feature current is not available.');
+        throw new Error('[Fargate Distributor]: This feature is not available yet.');
       case 'appEngine':
         //todo
-        throw new Error('[AppEngine Distributor]: This feature current is not available.');
+        throw new Error('[AppEngine Distributor]: This feature is not available yet.');
       case 'cloudFunctions':
         //todo
-        throw new Error('[CloudFunctions Distributor]: This feature current is not available.');
+        throw new Error('[CloudFunctions Distributor]: This feature is not available yet.');
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
@@ -313,7 +313,7 @@ class Distributor {
         if (parsedData.action === 'aws-cloud-deployer') {
           const { data: { isError, hash, message } } = parsedData;
           if (!isError) {
-            logger.info(`[${this.projectConfig[hash].name}] Successfully deployed!`);
+            logger.info(`[${this.projectConfig[hash].name}] Distributed execution was successful.`);
 
             this._eventEmitter.emit('message', { ...defaultMessage, ...{ isError, message, hash } });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 0 } });
