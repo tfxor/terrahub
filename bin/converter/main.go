@@ -232,7 +232,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 	  }
 	case string:
-	  if isFunction(v) && tf12format != "no" {
+	  if isFunction(v, level) && tf12format != "no" {
 		outHCL2 += v + "\n"
 	  } else {
 		outHCL2 += "\"" + v + "\"\n"
@@ -416,9 +416,9 @@ func mapOut(raw json.RawMessage) string {
   return outHCL2
 }
 
-func isFunction(val string) bool {
+func isFunction(val string, level int) bool {
   for _, element := range functionList {
-	if val == "local" {
+	if val == "local" || (val == "string" && level > 2) {
 	  return false
 	}
 	startIndex := strings.Index(val, element)
