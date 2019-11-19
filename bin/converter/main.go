@@ -9,6 +9,7 @@ import (
   "strconv"
   "strings"
 
+  "github.com/hashicorp/hcl"
   "github.com/hashicorp/hcl/hcl/printer"
   "github.com/hashicorp/hcl2/hclwrite"
 )
@@ -22,6 +23,7 @@ var (
   versionInfo       = "development"
   tf12format        = "yes"
   filetype          = "tf"
+  file              = false
   interpolation     = ""
   interpolationList = []string{
 	"provider", "schema",
@@ -80,6 +82,7 @@ func init() {
   flag.StringVar(&input, "i", "", "Input string that contains the JSON configuration to convert.")
   flag.StringVar(&tf12format, "F", "", "Use Terraform 0.12 formatter. Default value is 'yes'.")
   flag.StringVar(&filetype, "T", "", "Input file type format. Default value is 'tf'.")
+  flag.BoolVar(&file, "f", false, "Convert HCL file to JSON.")
 
   flag.Parse()
 }
@@ -95,7 +98,14 @@ func main() {
 	fmt.Println("error:", err)
 	return
   }
+
+  if file {
+	toJSON(data)
+	return
+  }
+
   input = string(data)
+
   if strings.Index(input, "{\\\"") > -1 {
 	input = strings.Replace(input, "{\\\"", "{'", -1)
 	input = strings.Replace(input, ", \\\"", ", '", -1)
@@ -436,4 +446,19 @@ func isFunction(val string, level int) bool {
   }
 
   return false
+}
+
+func toJSON(input []byte) {
+	var v interface{}
+	err := hcl.Unmarshal(input, &v)
+	if err != nil {
+		fmt.Errorf("unable to parse HCL: %s", err)
+	}
+
+	json, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		fmt.Errorf("unable to marshal json: %s", err)
+	}
+
+	fmt.Println(string(json))
 }
