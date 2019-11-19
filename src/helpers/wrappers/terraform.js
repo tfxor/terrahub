@@ -11,8 +11,10 @@ const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Downloader = require('../downloader');
-const { extend, spawner, homePath, prepareCredentialsFile,
-  createCredentialsFile, homePathLambda, removeAwsEnvVars, setupAWSSharedFile } = require('../util');
+const {
+  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda, removeAwsEnvVars,
+  setupAWSSharedFile
+} = require('../util');
 
 class Terraform {
   /**
@@ -102,7 +104,9 @@ class Terraform {
   async _setupVars() {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
 
-    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) { return Promise.resolve(); }
+    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) {
+      return Promise.resolve();
+    }
     if (this._distributor === 'lambda') { removeAwsEnvVars(); }
 
     ApiHelper.init(this.parameters, this._distributor);
@@ -121,7 +125,6 @@ class Terraform {
 
         const sourceProfile = accountData.type === 'role'
           ? providerAccounts.find(it => it.id === accountData.env_var.AWS_SOURCE_PROFILE.id) : null;
-
         const credentials = prepareCredentialsFile(accountData, sourceProfile, this._config, false, this._distributor);
 
         switch (type) {
@@ -129,10 +132,11 @@ class Terraform {
             removeAwsEnvVars();
             const cloudCredsPath = createCredentialsFile(credentials, this._config, 'cloud', this._distributor);
             setupAWSSharedFile(sourceProfile, cloudCredsPath, this._config, this._distributor, this._envVars);
+            Object.assign(this._envVars, { AWS_PROFILE: accountData.name });
             break;
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
-            Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath });
+            Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath, profile: accountData.name });
             break;
         }
       });
@@ -520,8 +524,6 @@ class Terraform {
    * @return {Promise}
    */
   async run(cmd, args) {
-    await this._setupVars();
-
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }

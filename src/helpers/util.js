@@ -460,7 +460,7 @@ class Util {
    * @return {String}
    */
   static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, distributor) {
-    let credentials = '[terrahub]\n';
+    let credentials = '[default]\n';
 
     if (sourceProfile) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
@@ -514,17 +514,20 @@ class Util {
    * @return {void}
    */
   static createConfigProfile(sourceProfile, config, distributor) {
-    const { env_var: { AWS_ROLE_ARN: { value: arn } } } = sourceProfile;
+    const { env_var: { AWS_ROLE_ARN: { value: arn } }, name } = sourceProfile;
     const tempPath = Util.tempPath(config, distributor);
     const configPath = path.join(tempPath, '.aws/config');
     const profile =
-      `[profile default]\n` +
+      `[profile ${name}]\n` +
       `region = us-east-1\n` +
       `role_arn = ${arn}\n` +
-      `source_profile = terrahub\n`;
+      `source_profile = default\n\n`;
+
+    if (fse.pathExistsSync(configPath)) {
+      return fs.appendFileSync(configPath, profile);
+    }
 
     fse.ensureFileSync(configPath);
-
     return fs.writeFileSync(configPath, profile, err => {
       if (err) {
         console.error(err);
@@ -579,7 +582,6 @@ class Util {
       Object.assign(environment, {
         AWS_CONFIG_FILE: path.join(Util.tempPath(config, distributor), '.aws/config'),
         AWS_SDK_LOAD_CONFIG: 1,
-        AWS_PROFILE: 'default'
       });
     } else {
       Object.assign(environment, {
