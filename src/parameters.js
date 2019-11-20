@@ -72,6 +72,7 @@ module.exports = {
   tfstatePath: path.join('cache', 'tfstate'),
   fetch: new Fetch(apiBase, cfg.token),
   binPath: path.join(__dirname, '..', 'bin'),
+  lambdaBinPath: path.join('/opt', 'nodejs', 'node_modules', 'lib-terrahub-cli', 'bin'),
   commandsPath: path.join(__dirname, 'commands'),
   packageJson: path.join(__dirname, '..', 'package.json'),
   config: {

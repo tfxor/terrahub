@@ -581,16 +581,15 @@ class HclHelper {
     
     const { template, distributor } = config;
 
-    const regexQuotes = /\".+?\"\s*\=/g;
+    const regexQuotes = /\".+?\"\s*\=/gm;
     let mapOfKeys = new Map();
-    while ((m = regexQuotes.exec(newRemoteTfvars)) !== null) {
-      if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
-      m.forEach((match) => {
-        const timestamp = 'QuoteKey' + Number(new Date());
-        const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
-        mapOfKeys.set(timestamp, newValue);
-        newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
-      });
+    let indexQuoteKey = 0;
+    for(const match of newRemoteTfvars.match(regexQuotes)) {
+      const timestamp = `QuoteKey${indexQuoteKey}`;
+      const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
+      mapOfKeys.set(timestamp, newValue);
+      newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
+      indexQuoteKey++;
     }
 
     const base64data = Buffer.from(newRemoteTfvars).toString('base64');
@@ -598,15 +597,16 @@ class HclHelper {
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
 
     const componentBinPath = distributor === 'lambda'
-      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
+      ? parameters.lambdaBinPath
       : join(parameters.binPath, arch);
 
     return exec(`${join(componentBinPath, `converter${extension}`)} -f -i '${base64data}'`)
       .then(result => {
         let strWithoutQuote = result.stdout;
         for (const [key, value] of mapOfKeys) {
-          strWithoutQuote = strWithoutQuote.replace(`${key}`, `"${value}"`);
-        }        
+          strWithoutQuote = strWithoutQuote.replace(`${key}`, `\\\"${value}\\\"`);
+        }
+
         const remoteTfvarsJson = JSON.parse(strWithoutQuote);
         template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
          JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
@@ -774,7 +774,7 @@ class HclHelper {
     const fileType = extname(componentPath).replace('.', '');
     const arch = Downloader.getOsArch();
     const componentBinPath = distributor === 'lambda'
-      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
+      ? parameters.lambdaBinPath
       : join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
