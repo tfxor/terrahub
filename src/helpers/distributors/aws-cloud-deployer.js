@@ -27,7 +27,7 @@ class AwsDeployer {
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters, env } = requestData;
 
-    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(',')}, env);
+    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(',') }, env);
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -53,7 +53,6 @@ class AwsDeployer {
 
       const promises = ApiHelper.retrieveDataToSend(true);
       await Promise.all(ApiHelper.asyncFetch(promises));
-
     } catch (error) {
       return {
         message: error.message || error,
