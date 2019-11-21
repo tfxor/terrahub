@@ -84,7 +84,7 @@ class Help extends AbstractCommand {
       allCommands.forEach(command => {
         command.separator = '.'.repeat(20 - command.name.length);
 
-        if (['component', 'configure', 'convert', 'graph', 'project'].includes(command.name)) {
+        if (['component', 'configure', 'convert', 'prepare', 'graph', 'project'].includes(command.name)) {
           variables.terrahubManagement.push(command);
         } else if (['build', 'list', 'run'].includes(command.name)) {
           variables.cloudAutomation.push(command);
