@@ -282,17 +282,7 @@ class Distributor {
 
     for (let index = 0; index < hashes.length; index++) {
       const hash = hashes[index].split('~')[0];
-      let parameters = {};
-
-      if (isBatch) {
-        parameters = { ...this.parameters };
-        delete parameters.args.b;
-
-        const line = JSON.parse(importLines)[index];
-        parameters.args = line.provider && line.provider !== ''
-          ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
-          : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
-      }
+      const parameters = this.replaceBatchToSimpleImport(importLines, index, isBatch);
 
       this.distributor = this.getDistributor(hash, isBatch ? parameters : false);
       if (this.distributor instanceof AwsDistributor) {
@@ -309,6 +299,28 @@ class Distributor {
     }
 
     return Promise.resolve();
+  }
+
+  /**
+   * @param {String} importLines
+   * @param {Number} index
+   * @param {Boolean} isBatch
+   * @return {{}|boolean}
+   */
+  replaceBatchToSimpleImport(importLines, index, isBatch = false) {
+    if (!isBatch) {
+      return false;
+    }
+
+    let parameters = { ...this.parameters };
+    delete parameters.args.b;
+
+    const line = JSON.parse(importLines)[index];
+    parameters.args = line.provider && line.provider !== ''
+      ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
+      : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
+
+    return parameters;
   }
 
   /**
