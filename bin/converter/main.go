@@ -33,7 +33,7 @@ var (
 		"provider", "schema",
 	}
 	functionList = []string{
-		"path", "local", "var", "module", "data", "string",
+		"path", "local", "var", "module", "data", "string", "aws",
 		"abs", "ceil", "floor", "log", "max", "min", "pow", "signum", "chomp",
 		"format", "formatlist", "indent", "join", "lower", "replace", "split",
 		"strrev", "substr", "title", "trimspace", "upper", "chunklist",
@@ -440,6 +440,9 @@ func isFunction(val string, level int) bool {
 		startIndex := strings.Index(val, element)
 		if startIndex == 0 {
 			if element == "data" && strings.Index(val, element+".") != 0 {
+				return false
+			}
+			if element == "aws" && strings.Index(val, element+".") != 0 {
 				return false
 			}
 			if element == "index" && strings.Index(val, "(") < 0 {
