@@ -289,11 +289,9 @@ class Distributor {
         delete parameters.args.b;
 
         const line = JSON.parse(importLines)[index];
-
-        Object.assign(parameters.args, { c: { [line.fullAddress]: line.value } });
-        if (line.provider && line.provider !== '') {
-          Object.assign(parameters.args, { j: line.provider });
-        }
+        parameters.args = line.provider && line.provider !== ''
+          ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
+          : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
       }
 
       this.distributor = this.getDistributor(hash, isBatch ? parameters : false);
@@ -362,7 +360,7 @@ class Distributor {
     const importActions = 'prepare,init,workspaceSelect,import';
     const { distributor } = Object.values(this.projectConfig)[0];
 
-    return importActions === this.TERRAFORM_ACTIONS && distributor === 'lambda';
+    return importActions === this.TERRAFORM_ACTIONS.join(',') && distributor === 'lambda';
   }
 
   /**
