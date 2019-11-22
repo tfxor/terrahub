@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-11-15T14:52:04.366Z",
+  "buildDate": "2019-11-21T13:59:56.908Z",
   "commands": [
     {
       "name": "apply",
@@ -814,7 +814,7 @@
     },
     {
       "name": "prepare",
-      "description": "run `terraform prepare` across multiple terrahub components",
+      "description": "prepare HCL formatted configurations in $HOME/.terrahub/cache/hcl/",
       "options": [
         {
           "name": "include",
