@@ -30,9 +30,10 @@ class AwsDistributor {
    * @param {String[]} actions
    * @param {String} runId
    * @param {String} accountId
+   * @param {Number} importIndex
    * @return {void}
    */
-  async distribute({ actions, runId, accountId }) {
+  async distribute({ actions, runId, accountId, importIndex }) {
     try {
       await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
@@ -51,12 +52,15 @@ class AwsDistributor {
       logger.warn(`[${this.componentConfig.name}] Upload to S3 was successful.`);
 
       this.parameters.hclPath = this.parameters.hclPath.replace('/cache', lambdaHomedir);
+
+      const getLine = () => JSON.stringify([JSON.parse(this.env.importLines)[importIndex]]);
+
       const body = JSON.stringify({
         actions: actions,
         thubRunId: runId,
         config: this.componentConfig,
         parameters: this.parameters,
-        env: this.env
+        env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
       });
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });

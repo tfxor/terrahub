@@ -56,7 +56,8 @@ class Distributor {
         const response = await this.runActions(actions, config, this.parameters, options);
 
         if (postActionFn) {
-          return postActionFn(response);
+          // eslint-disable-next-line no-await-in-loop
+          await postActionFn(response);
         }
       }
     } catch (err) {
@@ -102,6 +103,22 @@ class Distributor {
   }
 
   /**
+   * @param {String} importLines
+   * @return {Object}
+   */
+  buildImportDependencyTable(importLines) {
+    const table = {};
+    const batchLength = JSON.parse(importLines).length;
+    const componentHash = Object.keys(this.projectConfig)[0];
+
+    for (let i = 0; i < batchLength; i++) {
+      table[`${componentHash}~${i}`] = null;
+    }
+
+    return table;
+  }
+
+  /**
    * Remove dependencies on this component
    * @param {Object} dependencyTable
    * @param {String} hash
@@ -141,11 +158,16 @@ class Distributor {
   } = {}) {
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
-    this._dependencyTable = this.buildDependencyTable(dependencyDirection);
     this.TERRAFORM_ACTIONS = actions;
 
     try {
-      await this.distributeConfig();
+      if (this.isLambdaImportCommand()) {
+        this._dependencyTable = this.buildImportDependencyTable(importLines);
+        await this.distributeImportConfig(importLines);
+      } else {
+        this._dependencyTable = this.buildDependencyTable(dependencyDirection);
+        await this.distributeConfig();
+      }
     } catch (err) {
       if (/This feature is not available yet/.test(err)) { throw new Error(err); }
       this.errors.push(err);
@@ -219,9 +241,10 @@ class Distributor {
 
   /**
    * @param {String} hash
+   * @param {Object | boolean} parameters
    * @return {LocalDistributor|AwsDistributor}
    */
-  getDistributor(hash) {
+  getDistributor(hash, parameters = false) {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
@@ -232,7 +255,7 @@ class Distributor {
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       case 'lambda':
         this._lambdaWorkerCounter++;
-        return new AwsDistributor(this.parameters, config, this._env);
+        return new AwsDistributor(parameters ? parameters : this.parameters, config, this._env);
       case 'fargate':
         //todo
         throw new Error('[Fargate Distributor]: This feature is not available yet.');
@@ -246,6 +269,58 @@ class Distributor {
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
     }
+  }
+
+  /**
+   * @param {String} importLines
+   * @return {Promise}
+   */
+  distributeImportConfig(importLines) {
+    const hashes = Object.keys(this._dependencyTable);
+    const promises = [];
+    const isBatch = this.parameters.args.b;
+
+    for (let index = 0; index < hashes.length; index++) {
+      const hash = hashes[index].split('~')[0];
+      const parameters = this.replaceBatchToSimpleImport(importLines, index, isBatch);
+
+      this.distributor = this.getDistributor(hash, isBatch ? parameters : false);
+      if (this.distributor instanceof AwsDistributor) {
+        promises.push(this.distributor.distribute(
+          { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId, importIndex: index }));
+      }
+
+      this._workCounter++;
+      delete this._dependencyTable[hashes[index]];
+    }
+
+    if (promises.length) {
+      return Promise.all(promises);
+    }
+
+    return Promise.resolve();
+  }
+
+  /**
+   * @param {String} importLines
+   * @param {Number} index
+   * @param {Boolean} isBatch
+   * @return {{}|boolean}
+   */
+  replaceBatchToSimpleImport(importLines, index, isBatch = false) {
+    if (!isBatch) {
+      return false;
+    }
+
+    let parameters = { ...this.parameters };
+    delete parameters.args.b;
+
+    const line = JSON.parse(importLines)[index];
+    parameters.args = line.provider && line.provider !== ''
+      ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
+      : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
+
+    return parameters;
   }
 
   /**
@@ -288,6 +363,16 @@ class Distributor {
    */
   websocketTicketCreate() {
     return this.fetch.get('thub/ticket/create');
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isLambdaImportCommand() {
+    const importActions = 'prepare,init,workspaceSelect,import';
+    const { distributor } = Object.values(this.projectConfig)[0];
+
+    return importActions === this.TERRAFORM_ACTIONS.join(',') && distributor === 'lambda';
   }
 
   /**
