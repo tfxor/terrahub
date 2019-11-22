@@ -53,7 +53,6 @@ class AwsDeployer {
 
       const promises = ApiHelper.retrieveDataToSend(true);
       await Promise.all(ApiHelper.asyncFetch(promises));
-
     } catch (error) {
       return {
         message: error.message || error,
