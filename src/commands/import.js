@@ -54,7 +54,6 @@ class ImportCommand extends DistributedCommand {
       }]);
     }
 
-    console.log('import', Object.values(config)[0].project.root, batch);
     const batchPath = resolve(Object.values(config)[0].project.root, batch);
     if (fse.existsSync(batchPath)) {
       return fse.readFile(batchPath)
@@ -95,8 +94,7 @@ class ImportCommand extends DistributedCommand {
             config,
             importLines: JSON.stringify(linesMap)
           }]);
-        })
-        .then(() => 'Done');
+        });
     }
   }
 }

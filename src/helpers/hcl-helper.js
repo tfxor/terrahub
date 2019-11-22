@@ -2,8 +2,7 @@
 
 const fse = require('fs-extra');
 const semver = require('semver');
-const hcltojson = require('hcl-to-json');
-const { resolve, join } = require('path');
+const { resolve, join, extname } = require('path');
 const { exec } = require('child-process-promise');
 const objectDepth = require('object-depth');
 const GsHelper = require('./gs-helper');
@@ -33,7 +32,7 @@ class HclHelper {
         // add "tfvars" if it is not described in config
         const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(config);
         if (localTfvarsLinks.length > 0) {
-          return HclHelper._addLocalTfvars(config, localTfvarsLinks);
+          return HclHelper._addLocalTfvars(config, localTfvarsLinks, parameters);
         }
       }).then(() => {
         // add "tfvars" if it is not described in config
@@ -529,10 +528,10 @@ class HclHelper {
 
       const promise = (remoteTfvarsLink.substring(0, 2) === 'gs') ?
         HclHelper.gsHelper.getObject(bucket, prefix).then(data => {
-          return HclHelper._parsingTfvars(data.toString(), config);
+          return HclHelper._parsingTfvars(data.toString(), config, parameters);
         }) :
         HclHelper.s3Helper.getObject(bucket, prefix, config, parameters).then(data => {
-          return HclHelper._parsingTfvars(data.Body.toString(), config);
+          return HclHelper._parsingTfvars(data.Body.toString(), config, parameters);
         });
 
       return promise;
@@ -544,14 +543,15 @@ class HclHelper {
   /**
    * @param {Object} config
    * @param {Array} localTfvarsLinks
+   * @param {Object} parameters
    * @return {Promise}
    */
-  static _addLocalTfvars(config, localTfvarsLinks) {
+  static _addLocalTfvars(config, localTfvarsLinks, parameters) {
     const promises = Object.keys(localTfvarsLinks).map(it => {
       const localTfvarsLinkPath = resolve(config.project.root, config.root, localTfvarsLinks[it]);
       if (fse.existsSync(localTfvarsLinkPath)) {
         return fse.readFile(localTfvarsLinkPath).then(content => {
-          return HclHelper._parsingTfvars(content.toString(), config);
+          return HclHelper._parsingTfvars(content.toString(), config, parameters);
         });
       }
     });
@@ -562,10 +562,11 @@ class HclHelper {
   /**
    * @param {String} remoteTfvars
    * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
-  static _parsingTfvars(remoteTfvars, config) {
+  static _parsingTfvars(remoteTfvars, config, parameters) {
     const regex = /\<\<EOT[^\=]+EOT/gms;
     let m;
     let newRemoteTfvars = remoteTfvars;
@@ -578,30 +579,43 @@ class HclHelper {
       });
     }
 
-    const { template } = config;
-    const regexQuotes = /\".+?\"\s*\=/g;
+    const { template, distributor } = config;
+
+
+    const regexQuotes = /\".+?\"\s*\=/gm;
     let mapOfKeys = new Map();
-    while ((m = regexQuotes.exec(newRemoteTfvars)) !== null) {
-      if (m.index === regexQuotes.lastIndex) { regexQuotes.lastIndex++; }
-      m.forEach((match) => {
-        const timestamp = 'QuoteKey' + Number(new Date());
+    let indexQuoteKey = 0;
+    if (newRemoteTfvars.match(regexQuotes)) {
+      for (const match of newRemoteTfvars.match(regexQuotes)) {
+        const timestamp = `QuoteKey${indexQuoteKey}`;
         const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
         mapOfKeys.set(timestamp, newValue);
         newRemoteTfvars = newRemoteTfvars.replace(match, timestamp + ' = ');
-      });
+        indexQuoteKey++;
+      }
     }
 
-    let strWithoutQuote = JSON.stringify(hcltojson(newRemoteTfvars));
-    for (const [key, value] of mapOfKeys) {
-      strWithoutQuote = strWithoutQuote.replace(JSON.stringify(`${key}`), `"${value}"`);
-    }
+    const base64data = Buffer.from(newRemoteTfvars).toString('base64');
+    const arch = Downloader.getOsArch();
+    const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
 
-    const remoteTfvarsJson = JSON.parse(strWithoutQuote);
+    const componentBinPath = distributor === 'lambda'
+      ? parameters.lambdaBinPath
+      : join(parameters.binPath, arch);
 
-    template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-      JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
+    return exec(`${join(componentBinPath, `converter${extension}`)} -f -i '${base64data}'`)
+      .then(result => {
+        let strWithoutQuote = result.stdout;
+        for (const [key, value] of mapOfKeys) {
+          strWithoutQuote = strWithoutQuote.replace(`${key}`, `\\\"${value}\\\"`);
+        }
 
-    return Promise.resolve();
+        const remoteTfvarsJson = JSON.parse(strWithoutQuote);
+        template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
+          JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
+        return Promise.resolve();
+      })
+      .catch(err => { return Promise.reject(err); });
   }
 
   /**
@@ -668,6 +682,7 @@ class HclHelper {
     const tmpPath = HclHelper.buildTmpPath(config, parameters);
     const { distributor } = config;
     const { tfvars } = config.template;
+
     Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {
       let type = 'string';
       if (Array.isArray(tfvars[it])) {
@@ -682,6 +697,7 @@ class HclHelper {
 
       variable[it] = { type };
     });
+
     return HclHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config), parameters, distributor);
   }
 
@@ -758,16 +774,17 @@ class HclHelper {
    */
   static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
+    const fileType = extname(componentPath).replace('.', '');
     const arch = Downloader.getOsArch();
     const componentBinPath = distributor === 'lambda'
-      ? join('/opt/nodejs/node_modules/lib-terrahub-cli/bin')
+      ? parameters.lambdaBinPath
       : join(parameters.binPath, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = Buffer.from(dataStringify);
     const base64data = buff.toString('base64');
 
-    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1}`)
+    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1} -T ${fileType}`)
       .then(result => { return fse.outputFileSync(componentPath, result.stdout); })
       .catch(err => { return Promise.reject(err); });
   }
