@@ -138,7 +138,7 @@ class ApiHelper extends events.EventEmitter {
       return false;
     }
 
-    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId || this.config.token}` +
+    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId || process.env.THUB_RUN_ID}` +
       `?indexMapping=logs`;
     let _logs = [];
 
@@ -212,7 +212,7 @@ class ApiHelper extends events.EventEmitter {
     if (body.component === 'main' || body.log === '✅Done') {
       const promise = {
         url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
-          `/document/create/${this.runId || this.config.token}?indexMapping=logs`,
+          `/document/create/${this.runId || process.env.THUB_RUN_ID}?indexMapping=logs`,
         body: { bulk: [body] }
       };
 
@@ -441,7 +441,7 @@ class ApiHelper extends events.EventEmitter {
    */
   sendLogToS3() {
     if (this.canApiLogsBeSent() && this._apiLogginStart) {
-      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId || this.config.token}`)
+      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId || process.env.THUB_RUN_ID}`)
         .catch(error => console.log(error));
     }
   }
