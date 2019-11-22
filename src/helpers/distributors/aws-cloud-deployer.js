@@ -27,7 +27,7 @@ class AwsDeployer {
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters, env } = requestData;
 
-    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(',')}, env);
+    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), THUB_RUN_ID: thubRunId}, env);
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -53,7 +53,6 @@ class AwsDeployer {
 
       const promises = ApiHelper.retrieveDataToSend(true);
       await Promise.all(ApiHelper.asyncFetch(promises));
-
     } catch (error) {
       return {
         message: error.message || error,
@@ -63,7 +62,7 @@ class AwsDeployer {
     }
 
     return {
-      message: `Component '${config.name}' has been successfully deployed.`,
+      message: `Distributed execution for '${config.name}' component was successful.`,
       hash: config.hash,
       isError: false
     };
@@ -114,7 +113,7 @@ class AwsDeployer {
 
     const tempCreds = await this._fetchTemporaryCredentials();
     if (!tempCreds) {
-      throw new Error('[AWS Distributor] Can not retrieve temporary credentials.');
+      throw new Error('[AWS Distributor] Could NOT retrieve temporary credentials.');
     }
 
     Object.assign(process.env, {
