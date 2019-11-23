@@ -10,7 +10,7 @@ class DestroyCommand extends DistributedCommand {
   configure() {
     this
       .setName('destroy')
-      .setDescription('run `terraform destroy` across multiple terrahub components')
+      .setDescription('run distributedly `terraform destroy` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false);
   }
 

@@ -9,7 +9,7 @@ class PrepareCommand extends DistributedCommand {
   configure() {
     this
       .setName('prepare')
-      .setDescription('prepare HCL formatted configurations in $HOME/.terrahub/cache/hcl/');
+      .setDescription('prepare cached HCL versions of terraform in $HOME/.terrahub/cache/hcl/');
   }
 
   /**
