@@ -340,9 +340,14 @@ class DistributedCommand extends AbstractCommand {
       case 'local':
         if (backend) {
           Object.keys(backend.local).forEach(it => {
-            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
-              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), backend.local[it])
-              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+            let _path = backend.local[it];
+            if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
+              _path = _path.replace('${tfvar.terrahub["component"]["name"]}', remoteStateName);
+            }
+
+            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(_path))
+              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), _path)
+              : defaultRemoteConfig[remoteStateName].config[it] = _path;
           });
         } else {
           defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
@@ -350,12 +355,12 @@ class DistributedCommand extends AbstractCommand {
         break;
       case 's3':
         Object.keys(backend.s3).forEach(it => {
-          if (backend.s3[it].includes('${tfvar.terrahub["component"]["name"]}')) {
-            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]
-              .replace('${tfvar.terrahub["component"]["name"]}', name);
-          } else {
-            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+          let _path = backend.s3[it];
+          if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
+            _path = _path.replace('${tfvar.terrahub["component"]["name"]}', remoteStateName);
           }
+
+          defaultRemoteConfig[remoteStateName].config[it] = _path;
         });
         break;
       case 'gcs':

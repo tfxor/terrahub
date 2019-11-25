@@ -16,7 +16,7 @@ class WorkspaceCommand extends DistributedCommand {
   configure() {
     this
       .setName('workspace')
-      .setDescription('run `terraform workspace` across multiple terrahub components')
+      .setDescription('run distributedly `terraform workspace` across multiple terrahub components')
       .addOption('delete', 'D', 'Delete workspace environment (paired with --env)', Boolean, false)
       .addOption('list', 'L', 'Shows list of terrahub components', Boolean, false);
   }
