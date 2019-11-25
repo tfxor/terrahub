@@ -35,10 +35,8 @@ class Distributor {
   async run() {
     await this.command.validate();
     await this.sendLogsToApi();
-    if (this.command._tokenIsValid) {
-      await this._lambdaSubscribe();
-      await this._loadLambdaRequirements();
-    }
+    await this._lambdaSubscribe();
+    await this._loadLambdaRequirements();
 
     const result = await this.command.run();
 
@@ -338,7 +336,7 @@ class Distributor {
    * @private
    */
   async _loadLambdaRequirements() {
-    if (!this.accountId) {
+    if (this.command._tokenIsValid && !this.accountId) {
       this.accountId = await this._fetchAccountId();
     }
   }
@@ -384,6 +382,9 @@ class Distributor {
    * @return {Promise<void>}
    */
   async _lambdaSubscribe() {
+    if (!this.command._tokenIsValid) {
+      return Promise.resolve();
+    }
     const { data: { ticket_id } } = await this.websocketTicketCreate();
     const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
 
