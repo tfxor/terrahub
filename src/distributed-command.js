@@ -391,7 +391,7 @@ class DistributedCommand extends AbstractCommand {
    */
   getFilteredConfig() {
     const fullConfig = this.getExtendedConfig();
-    const config = { ...fullConfig};
+    const config = { ...fullConfig };
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -721,7 +721,7 @@ class DistributedCommand extends AbstractCommand {
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = { ...config};
+    const checked = { ...config };
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -759,7 +759,7 @@ class DistributedCommand extends AbstractCommand {
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = { ...config};
+    const checked = { ...config };
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -787,7 +787,7 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
         ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
