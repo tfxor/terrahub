@@ -5,9 +5,10 @@ const logger = require('../logger');
 const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
+const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('../distributors/aws-distributor');
-const LocalDistributor = require('../distributors/local-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
+const LocalDistributor = require('../distributors/local-distributor');
 
 class Distributor {
   /**
@@ -34,10 +35,8 @@ class Distributor {
   async run() {
     await this.command.validate();
     await this.sendLogsToApi();
-    if (this.command._tokenIsValid) {
-      await this._lambdaSubscribe();
-      await this._loadLambdaRequirements();
-    }
+    await this._lambdaSubscribe();
+    await this._loadLambdaRequirements();
 
     const result = await this.command.run();
 
@@ -56,6 +55,9 @@ class Distributor {
         const response = await this.runActions(actions, config, this.parameters, options);
 
         if (postActionFn) {
+          if (this.command instanceof OutputCommand) {
+            return postActionFn(response);
+          }
           // eslint-disable-next-line no-await-in-loop
           await postActionFn(response);
         }
@@ -63,7 +65,6 @@ class Distributor {
     } catch (err) {
       return Promise.reject(err);
     }
-
     await ApiHelper.sendMainWorkflow({ status: 'update' });
 
     return Promise.resolve('Done');
@@ -335,7 +336,7 @@ class Distributor {
    * @private
    */
   async _loadLambdaRequirements() {
-    if (!this.accountId) {
+    if (this.command._tokenIsValid && !this.accountId) {
       this.accountId = await this._fetchAccountId();
     }
   }
@@ -381,6 +382,9 @@ class Distributor {
    * @return {Promise<void>}
    */
   async _lambdaSubscribe() {
+    if (!this.command._tokenIsValid) {
+      return Promise.resolve();
+    }
     const { data: { ticket_id } } = await this.websocketTicketCreate();
     const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
 

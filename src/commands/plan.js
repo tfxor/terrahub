@@ -9,7 +9,7 @@ class PlanCommand extends DistributedCommand {
   configure() {
     this
       .setName('plan')
-      .setDescription('run `terraform plan` across multiple terrahub components')
+      .setDescription('run distributedly `terraform plan` across multiple terrahub components')
       .addOption('destroy', 'd', 'Runs the command with destroy plan', Boolean, false);
   }
 

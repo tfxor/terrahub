@@ -1,12 +1,12 @@
 {
   "name": "terrahub",
-  "version": "0.4.5",
+  "version": "0.4.8",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-11-22T16:42:17.313Z",
+  "buildDate": "2019-11-25T20:04:57.284Z",
   "commands": [
     {
       "name": "apply",
-      "description": "run `terraform apply` across multiple terrahub components",
+      "description": "run distributedly `terraform apply` across multiple terrahub components",
       "options": [
         {
           "name": "auto-approve",
@@ -370,7 +370,7 @@
     },
     {
       "name": "destroy",
-      "description": "run `terraform destroy` across multiple terrahub components",
+      "description": "run distributedly `terraform destroy` across multiple terrahub components",
       "options": [
         {
           "name": "auto-approve",
@@ -460,7 +460,7 @@
     },
     {
       "name": "import",
-      "description": "run `terraform import` across multiple terrahub components",
+      "description": "run distributedly `terraform import` across multiple terrahub components",
       "options": [
         {
           "name": "config",
@@ -550,7 +550,7 @@
     },
     {
       "name": "init",
-      "description": "run `terraform init` across multiple terrahub components",
+      "description": "run distributedly `terraform init` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -664,7 +664,7 @@
     },
     {
       "name": "output",
-      "description": "run `terraform output` across multiple terrahub components",
+      "description": "run distributedly `terraform output` across multiple terrahub components",
       "options": [
         {
           "name": "format",
@@ -742,7 +742,7 @@
     },
     {
       "name": "plan",
-      "description": "run `terraform plan` across multiple terrahub components",
+      "description": "run distributedly `terraform plan` across multiple terrahub components",
       "options": [
         {
           "name": "destroy",
@@ -814,7 +814,7 @@
     },
     {
       "name": "prepare",
-      "description": "prepare HCL formatted configurations in $HOME/.terrahub/cache/hcl/",
+      "description": "prepare cached HCL versions of terraform in $HOME/.terrahub/cache/hcl/",
       "options": [
         {
           "name": "include",
@@ -909,7 +909,7 @@
     },
     {
       "name": "refresh",
-      "description": "run `terraform refresh` across multiple terrahub components",
+      "description": "run distributedly `terraform refresh` across multiple terrahub components",
       "options": [
         {
           "name": "include",
@@ -1071,7 +1071,7 @@
     },
     {
       "name": "state",
-      "description": "run `terraform state` across multiple terrahub components",
+      "description": "run distributedly `terraform state` across multiple terrahub components",
       "options": [
         {
           "name": "list",
@@ -1149,7 +1149,7 @@
     },
     {
       "name": "workspace",
-      "description": "run `terraform workspace` across multiple terrahub components",
+      "description": "run distributedly `terraform workspace` across multiple terrahub components",
       "options": [
         {
           "name": "delete",

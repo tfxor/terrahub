@@ -11,7 +11,7 @@ class ImportCommand extends DistributedCommand {
   configure() {
     this
       .setName('import')
-      .setDescription('run `terraform import` across multiple terrahub components')
+      .setDescription('run distributedly `terraform import` across multiple terrahub components')
       .addOption('config', 'c', 'Import resource', Array, [])
       .addOption('provider', 'j', 'Import provider', String, '')
       .addOption('batch', 'b', 'Import batch', String, '')
