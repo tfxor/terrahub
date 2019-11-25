@@ -10,7 +10,7 @@ class ApplyCommand extends DistributedCommand {
   configure() {
     this
       .setName('apply')
-      .setDescription('run `terraform apply` across multiple terrahub components')
+      .setDescription('run distributedly `terraform apply` across multiple terrahub components')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false);
   }
 

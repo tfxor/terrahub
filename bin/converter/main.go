@@ -55,6 +55,9 @@ var (
 		"locals", "module", "output", "variable", "resource", "data", "terraform",
 		"provider",
 	}
+	functionListWithDot = []string{
+		"aws", "data",
+	}
 	resourceDoNotPrint = []string{
 		"locals", "terraform", "data", "resource",
 	}
@@ -248,7 +251,11 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 			}
 		case string:
-			if isFunction(v, level) && tf12format != "no" {
+			itIsFor := false
+			if strings.Index(v, "for") > 0 && strings.Replace(v, " ", "", -1)[0:4] == "{for" {
+				itIsFor = true
+			}
+			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
 				outHCL2 += v + "\n"
 			} else {
 				outHCL2 += "\"" + v + "\"\n"
@@ -439,10 +446,7 @@ func isFunction(val string, level int) bool {
 		}
 		startIndex := strings.Index(val, element)
 		if startIndex == 0 {
-			if element == "data" && strings.Index(val, element+".") != 0 {
-				return false
-			}
-			if element == "aws" && strings.Index(val, element+".") != 0 {
+			if Contains(functionListWithDot, element) && strings.Index(val, element+".") != 0 {
 				return false
 			}
 			if element == "index" && strings.Index(val, "(") < 0 {

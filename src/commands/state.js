@@ -9,7 +9,7 @@ class StateCommand extends DistributedCommand {
   configure() {
     this
       .setName('state')
-      .setDescription('run `terraform state` across multiple terrahub components')
+      .setDescription('run distributedly `terraform state` across multiple terrahub components')
       .addOption('list', 'L', 'List resource(s) from terraform state', Boolean, false)
       .addOption('delete', 'D', 'Delete resource(s) from terraform state', Array, [])
     ;
