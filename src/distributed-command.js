@@ -340,9 +340,14 @@ class DistributedCommand extends AbstractCommand {
       case 'local':
         if (backend) {
           Object.keys(backend.local).forEach(it => {
-            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(backend.local[it]))
-              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), backend.local[it])
-              : defaultRemoteConfig[remoteStateName].config[it] = backend.local[it];
+            let _path = backend.local[it];
+            if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
+              _path = _path.replace('${tfvar.terrahub["component"]["name"]}', name);
+            }
+
+            defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(_path))
+              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), _path)
+              : defaultRemoteConfig[remoteStateName].config[it] = _path;
           });
         } else {
           defaultRemoteConfig[remoteStateName].config['path'] = cachedBackendPath;
@@ -350,12 +355,12 @@ class DistributedCommand extends AbstractCommand {
         break;
       case 's3':
         Object.keys(backend.s3).forEach(it => {
-          if (backend.s3[it].includes('${tfvar.terrahub["component"]["name"]}')) {
-            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it]
-              .replace('${tfvar.terrahub["component"]["name"]}', name);
-          } else {
-            defaultRemoteConfig[remoteStateName].config[it] = backend.s3[it];
+          let _path = backend.s3[it];
+          if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
+            _path = _path.replace('${tfvar.terrahub["component"]["name"]}', name);
           }
+
+          defaultRemoteConfig[remoteStateName].config[it] = _path;
         });
         break;
       case 'gcs':
@@ -386,7 +391,7 @@ class DistributedCommand extends AbstractCommand {
    */
   getFilteredConfig() {
     const fullConfig = this.getExtendedConfig();
-    const config = { ...fullConfig};
+    const config = { ...fullConfig };
     const gitDiff = this.getGitDiff();
     const includeRegex = this.getIncludesRegex();
     const include = this.getIncludes();
@@ -716,7 +721,7 @@ class DistributedCommand extends AbstractCommand {
   getDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = { ...config};
+    const checked = { ...config };
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -754,7 +759,7 @@ class DistributedCommand extends AbstractCommand {
   getReverseDependencyIssues(config) {
     const fullConfig = this.getExtendedConfig();
     const hashesToCheck = Object.keys(config);
-    const checked = { ...config};
+    const checked = { ...config };
     const issues = {};
 
     Object.keys(fullConfig).forEach(it => { issues[it] = []; });
@@ -782,7 +787,7 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}`+
+      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
         ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }

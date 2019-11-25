@@ -10,7 +10,7 @@ class OutputCommand extends DistributedCommand {
   configure() {
     this
       .setName('output')
-      .setDescription('run `terraform output` across multiple terrahub components')
+      .setDescription('run distributedly `terraform output` across multiple terrahub components')
       .addOption('format', 'o', 'Specify the output format (text or json)', String, '')
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false);
   }
