@@ -5,6 +5,7 @@ const logger = require('../logger');
 const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
+const Prepare = require('../prepare-helper');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('../distributors/aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
@@ -156,7 +157,8 @@ class Distributor {
     importId = '',
     importLines = '',
     input = false
-  } = {}) {
+  } = {}) {    
+    await Prepare.prepare(config, parameters);
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this.TERRAFORM_ACTIONS = actions;
@@ -370,7 +372,7 @@ class Distributor {
    * @return {boolean}
    */
   isLambdaImportCommand() {
-    const importActions = 'prepare,init,workspaceSelect,import';
+    const importActions = 'init,workspaceSelect,import';
     const { distributor } = Object.values(this.projectConfig)[0];
 
     return importActions === this.TERRAFORM_ACTIONS.join(',') && distributor === 'lambda';

@@ -28,7 +28,7 @@ class DestroyCommand extends DistributedCommand {
     }
 
     return [{
-      actions: ['prepare', 'init', 'workspaceSelect', 'plan', 'destroy'],
+      actions: ['init', 'workspaceSelect', 'plan', 'destroy'],
       config,
       planDestroy: true,
       dependencyDirection: Dictionary.DIRECTION.REVERSE

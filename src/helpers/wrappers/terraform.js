@@ -1,18 +1,15 @@
 'use strict';
 
 const fs = require('fs');
-const URL = require('url');
 const path = require('path');
 const fse = require('fs-extra');
-const semver = require('semver');
-const { execSync } = require('child_process');
 const logger = require('../logger');
 const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
-const Downloader = require('../downloader');
+const Prepare = require('../prepare-helper');
 const {
-  extend, spawner, homePath, prepareCredentialsFile, createCredentialsFile, homePathLambda, removeAwsEnvVars,
+  spawner, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars,
   setupAWSSharedFile
 } = require('../util');
 
@@ -22,7 +19,7 @@ class Terraform {
    * @param {Object} parameters
    */
   constructor(config, parameters) {
-    this._config = extend({}, [this._defaults(), config]);
+    this._config = Prepare.prepareConfigWithHash(config);
     this._tf = this._config.terraform;
     this._distributor = this._config.distributor;
     this._envVars = process.env;
@@ -30,24 +27,7 @@ class Terraform {
     this.parameters = parameters;
 
     this._showLogs = !process.env.format;
-    this._isWorkspaceSupported = false;
-  }
-
-  /**
-   * @return {Object}
-   * @private
-   */
-  _defaults() {
-    return {
-      terraform: {
-        var: {},
-        varFile: [],
-        backend: {},
-        version: '0.12.16',
-        backup: false,
-        workspace: 'default'
-      }
-    };
+    this._isWorkspaceSupported = Prepare._checkWorkspaceSupport(this._config);
   }
 
   /**
@@ -56,26 +36,6 @@ class Terraform {
    */
   getName() {
     return this._config.name || this._config.root;
-  }
-
-  /**
-   * @return {String}
-   */
-  getVersion() {
-    if (!semver.valid(this._tf.version)) {
-      throw new Error(`Terraform version ${this._tf.version} is invalid`);
-    }
-
-    return this._tf.version;
-  }
-
-  /**
-   * @return {String}
-   */
-  getBinary() {
-    return this._distributor === 'lambda'
-      ? homePathLambda('terraform', this.getVersion(), 'terraform')
-      : homePath('terraform', this.getVersion(), 'terraform');
   }
 
   /**
@@ -162,59 +122,6 @@ class Terraform {
     });
 
     return result;
-  }
-
-  /**
-   * Perform terraform init & all required checks
-   * @return {Promise}
-   */
-  prepare() {
-    logger.debug(JSON.stringify(this._config, null, 2));
-
-    return this._checkTerraformBinary()
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 1000)))
-      .then(() => this._checkWorkspaceSupport())
-      .then(() => this._checkResourceDir())
-      .then(() => this._fetchEnvironmentVariables())
-      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
-  }
-
-  /**
-   * Fetch environment variables from api
-   * @return {Promise}
-   */
-  _fetchEnvironmentVariables() {
-    return this._getEnvVarsFromAPI().then(data => {
-      return Object.assign(this._envVars, data);
-    });
-  }
-
-  /**
-   * Ensure binary exists (download otherwise)
-   * @return {Promise}
-   */
-  _checkTerraformBinary() {
-    if (fs.existsSync(this.getBinary())) {
-      return Promise.resolve();
-    }
-
-    return (new Downloader()).download(this.getVersion(), this._distributor);
-  }
-
-  /**
-   * @return {Promise}
-   * @private
-   */
-  _checkResourceDir() {
-    return fse.ensureDir(this._metadata.getRoot());
-  }
-
-  /**
-   * Check if workspaces supported
-   * @private
-   */
-  _checkWorkspaceSupport() {
-    this._isWorkspaceSupported = semver.satisfies(this.getVersion(), '>=0.9.0');
   }
 
   /**
@@ -357,8 +264,8 @@ class Terraform {
         }
 
         const commandsList = this._envVars['TERRAFORM_ACTIONS'];
-        if (commandsList === 'prepare,workspaceSelect,plan,apply'
-          || commandsList === 'prepare,workspaceSelect,plan,destroy') {
+        if (commandsList === 'workspaceSelect,plan,apply'
+          || commandsList === 'workspaceSelect,plan,destroy') {
           skip = false;
         }
 
@@ -527,7 +434,7 @@ class Terraform {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
-    return this._spawn(this.getBinary(), [cmd, ...args], {
+    return this._spawn(Prepare.getBinary(this._config), [cmd, ...args], {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
       shell: true
@@ -586,41 +493,6 @@ class Terraform {
     }
 
     return `[${this.getName()}] ${stdout}`;
-  }
-
-  /**
-   * Get Resources from TerraHub API
-   * @return {Promise|*}
-   */
-  _getEnvVarsFromAPI() {
-    if (!this.parameters.config.token) {
-      return Promise.resolve({});
-    }
-    try {
-      const urlGet = execSync('git remote get-url origin', { cwd: this._config.project.root, stdio: 'pipe' });
-      const data = Buffer.from(urlGet).toString('utf-8');
-      const isUrl = !!URL.parse(data).host;
-      // works for gitlab/github/bitbucket, add azure, google, amazon
-      const urlData = /\/\/(?:.*@)?([^.]+).*?\/([^.]*)/;
-      const sshData = /@([^.]*).*:(.*).*(?=\.)/;
-
-      const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
-      if (repo && provider) {
-        return this.parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
-          if (Object.keys(json.data).length) {
-            let test = JSON.parse(json.data.env_var);
-            return Object.keys(test).reduce((acc, key) => {
-              acc[key] = test[key].value;
-              return acc;
-            }, {});
-          }
-        }).catch(() => Promise.resolve({}));
-      } else {
-        return Promise.resolve({});
-      }
-    } catch (err) {
-      return Promise.resolve({});
-    }
   }
 }
 
