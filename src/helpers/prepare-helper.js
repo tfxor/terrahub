@@ -14,16 +14,26 @@ const {
   } = require('./util');
 
 class PrepareHelper {
+  /**
+   * @param {Object} config
+   * @return {Object}
+   */
   static prepareConfig(config) {
     return extend({}, [PrepareHelper._defaults(), config[Object.keys(config)[0]]]);
   }
 
+  /**
+   * @param {Object} config
+   * @return {Object}
+   */
   static prepareConfigWithHash(config) {
     return extend({}, [PrepareHelper._defaults(), config]);
   }
 
   /**
    * Perform terraform init & all required checks
+   * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    */
   static prepare(config, parameters) {
@@ -56,6 +66,7 @@ class PrepareHelper {
 
   /**
    * Ensure binary exists (download otherwise)
+   * @param {Object} config
    * @return {Promise}
    */
   static _checkTerraformBinary(config) {
@@ -67,6 +78,7 @@ class PrepareHelper {
   }
 
   /**
+   * @param {Object} config
    * @return {String}
    */
   static getBinary(config) {
@@ -76,6 +88,7 @@ class PrepareHelper {
   }
 
   /**
+   * @param {Object} config
    * @return {String}
    */
   static getVersion(config) {
@@ -87,6 +100,7 @@ class PrepareHelper {
   }
 
   /**
+   * @param {Object} config
    * Check if workspaces supported
    * @private
    */
@@ -95,6 +109,8 @@ class PrepareHelper {
   }
 
   /**
+   * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    * @private
    */
@@ -104,6 +120,8 @@ class PrepareHelper {
 
   /**
    * Fetch environment variables from api
+   * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise}
    */
   static _fetchEnvironmentVariables(config, parameters) {
@@ -114,6 +132,8 @@ class PrepareHelper {
 
   /**
    * Get Resources from TerraHub API
+   * @param {Object} config
+   * @param {Object} parameters
    * @return {Promise|*}
    */
   static _getEnvVarsFromAPI(config, parameters) {
