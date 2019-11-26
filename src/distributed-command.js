@@ -342,7 +342,7 @@ class DistributedCommand extends AbstractCommand {
           Object.keys(backend.local).forEach(it => {
             let _path = backend.local[it];
             if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
-              _path = _path.replace('${tfvar.terrahub["component"]["name"]}', remoteStateName);
+              _path = _path.replace('${tfvar.terrahub["component"]["name"]}', name);
             }
 
             defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(_path))
@@ -357,7 +357,7 @@ class DistributedCommand extends AbstractCommand {
         Object.keys(backend.s3).forEach(it => {
           let _path = backend.s3[it];
           if (_path.includes('${tfvar.terrahub["component"]["name"]}')) {
-            _path = _path.replace('${tfvar.terrahub["component"]["name"]}', remoteStateName);
+            _path = _path.replace('${tfvar.terrahub["component"]["name"]}', name);
           }
 
           defaultRemoteConfig[remoteStateName].config[it] = _path;
