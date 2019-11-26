@@ -340,6 +340,13 @@ class Terraform {
   plan() {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
+    const { providerId } = process.env;
+    if (providerId) {
+      const { targets } = this._config;
+      if (targets.length) {
+        Object.assign(options, { '-target': `${targets[providerId]}` });
+      }
+    }
 
     return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(buffer => {

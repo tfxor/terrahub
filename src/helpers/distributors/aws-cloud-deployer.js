@@ -27,7 +27,7 @@ class AwsDeployer {
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters, env } = requestData;
 
-    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), THUB_RUN_ID: thubRunId}, env);
+    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), THUB_RUN_ID: thubRunId }, env);
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -56,14 +56,14 @@ class AwsDeployer {
     } catch (error) {
       return {
         message: error.message || error,
-        hash: config.hash,
+        hash: this.getHash(config, env),
         isError: true
       };
     }
 
     return {
-      message: `Distributed execution for '${config.name}' component was successful.`,
-      hash: config.hash,
+      message: `Distributed execution for '${this.getName(config, env)}' component was successful.`,
+      hash: this.getHash(config, env),
       isError: false
     };
   }
@@ -129,6 +129,24 @@ class AwsDeployer {
    */
   _fetchTemporaryCredentials() {
     return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+  }
+
+  /**
+   * @param {Object} config
+   * @param {Object} env
+   * @return {String}
+   */
+  getHash(config, env) {
+    return env.providerId ? `${config.hash}_${env.providerId}` : config.hash;
+  }
+
+  /**
+   * @param {Object} config
+   * @param {Object} env
+   * @return {String}
+   */
+  getName(config, env) {
+    return env.providerId ? `${config.name}[${env.providerId}]` : config.name;
   }
 }
 
