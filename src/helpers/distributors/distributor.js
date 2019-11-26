@@ -218,7 +218,7 @@ class Distributor {
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
-      const providerId = hash.includes('_') ? hash.split('_')[1] : false;
+      const providerId = this.getImportId(hash);
 
       if (!dependsOn.length) {
         this.distributor = this.getDistributor(hash, false, providerId);
@@ -379,6 +379,14 @@ class Distributor {
     const { distributor } = Object.values(this.projectConfig)[0];
 
     return importActions === this.TERRAFORM_ACTIONS.join(',') && distributor === 'lambda';
+  }
+
+  /**
+   * @param {String} hash
+   * @return {String | boolean}
+   */
+  getImportId(hash) {
+    return hash.includes('_') ? hash.split('_')[1] : false;
   }
 
   /**
