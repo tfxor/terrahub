@@ -33,7 +33,7 @@ class OutputCommand extends DistributedCommand {
     const config = this.getFilteredConfig();
 
     return [{
-      actions: ['prepare', 'output'],
+      actions: ['output'],
       config,
       format: this._format,
       postActionFn: results => {

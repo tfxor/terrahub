@@ -16,11 +16,6 @@ class AwsDeployer {
   }
 
   /**
-   * Preparation
-   */
-  prepare() {}
-
-  /**
    * @param {Object} requestData
    * @return {Promise}
    */

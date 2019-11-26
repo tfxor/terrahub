@@ -22,7 +22,7 @@ class PlanCommand extends DistributedCommand {
     this.warnExecutionStarted(config);
 
     return [{
-      actions: ['prepare', 'workspaceSelect', 'plan'],
+      actions: ['workspaceSelect', 'plan'],
       config,
       planDestroy: this.getOption('destroy')
     }];
