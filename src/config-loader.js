@@ -454,7 +454,6 @@ class ConfigLoader {
         return srcValue;
       }
     };
-
     return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
