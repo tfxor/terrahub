@@ -158,7 +158,7 @@ class Distributor {
     importLines = '',
     input = false
   } = {}) {    
-    await Prepare.prepare(config, parameters);
+    // await Prepare.prepare(config, parameters);
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this.TERRAFORM_ACTIONS = actions;

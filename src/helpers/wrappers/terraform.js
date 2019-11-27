@@ -19,7 +19,7 @@ class Terraform {
    * @param {Object} parameters
    */
   constructor(config, parameters) {
-    this._config = Prepare.prepareConfigWithHash(config);
+    this._config = config;
     this._tf = this._config.terraform;
     this._distributor = this._config.distributor;
     this._envVars = process.env;
