@@ -429,7 +429,7 @@ class ConfigLoader {
    * @private
    */
   _getConfig(cfgPath) {
-    const cfg = ConfigLoader.readConfig(cfgPath);
+    const cfg = extend({}, [this._defaults(),ConfigLoader.readConfig(cfgPath)]);
     const envPath = path.join(path.dirname(cfgPath), this.getFileName());
     const forceWorkspace = { terraform: { workspace: this._terrahubConfig.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
@@ -437,9 +437,27 @@ class ConfigLoader {
         return srcValue;
       }
     };
+
     return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
+  }
+
+  /**
+   * @return {Object}
+   * @private
+   */
+  _defaults() {
+    return {
+      terraform: {
+        var: {},
+        varFile: [],
+        backend: {},
+        version: '0.12.16',
+        backup: false,
+        workspace: 'default'
+      }
+    };
   }
 
   /**

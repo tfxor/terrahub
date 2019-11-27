@@ -10,18 +10,10 @@ const Downloader = require('./downloader');
 const Dictionary = require('./dictionary');
 const { execSync } = require('child_process');
 const {
-    extend, homePath, homePathLambda
+    homePath, homePathLambda
   } = require('./util');
 
 class PrepareHelper {
-  /**
-   * @param {Object} config
-   * @return {Object}
-   */
-  static prepareConfigWithHash(config) {
-    return extend({}, [PrepareHelper._defaults(), config]);
-  }
-
   /**
    * Perform terraform init & all required checks
    * @param {Object} config
@@ -36,23 +28,6 @@ class PrepareHelper {
       .then(() => PrepareHelper._checkResourceDir(config, parameters))
       .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
-  }
-
-  /**
-   * @return {Object}
-   * @private
-   */
-  static _defaults() {
-    return {
-      terraform: {
-        var: {},
-        varFile: [],
-        backend: {},
-        version: '0.12.16',
-        backup: false,
-        workspace: 'default'
-      }
-    };
   }
 
   /**

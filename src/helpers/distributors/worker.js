@@ -42,7 +42,7 @@ function run(config, parameters) {
 
   HclHelper.middleware(config, parameters)
     .then(async (cfg) => {
-      await Prepare.prepare(config, parameters);
+      await Prepare.prepare(cfg, parameters);
       return cfg;
     })
     .then(cfg => promiseSeries(getTasks(cfg, parameters),

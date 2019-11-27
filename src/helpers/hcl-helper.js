@@ -5,7 +5,6 @@ const semver = require('semver');
 const GsHelper = require('./gs-helper');
 const S3Helper = require('./s3-helper');
 const objectDepth = require('object-depth');
-const Prepare = require('./prepare-helper');
 const { exec } = require('child-process-promise');
 const { resolve, join, extname } = require('path');
 const Downloader = require('../helpers/downloader');
@@ -90,7 +89,7 @@ class HclHelper {
       }]);
     }
 
-    return Prepare.prepareConfigWithHash(config);
+    return config;
   }
 
   /**
