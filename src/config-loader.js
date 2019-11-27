@@ -75,7 +75,7 @@ class ConfigLoader {
         : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
-      this._rootConfig = this._getConfig(configFile);
+      this._rootConfig = extend({}, [this._defaults(), this._getConfig(configFile)]);
       this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
       this._projectDistributor = this._rootConfig['project'].distributor;
 
@@ -87,6 +87,23 @@ class ConfigLoader {
       this._rootConfig = {};
       this._projectConfig = {};
     }
+  }
+
+    /**
+   * @return {Object}
+   * @private
+   */
+  _defaults() {
+    return {
+      terraform: {
+        var: {},
+        varFile: [],
+        backend: {},
+        version: '0.12.16',
+        backup: false,
+        workspace: 'default'
+      }
+    };
   }
 
   /**
@@ -429,7 +446,7 @@ class ConfigLoader {
    * @private
    */
   _getConfig(cfgPath) {
-    const cfg = extend({}, [this._defaults(),ConfigLoader.readConfig(cfgPath)]);
+    const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), this.getFileName());
     const forceWorkspace = { terraform: { workspace: this._terrahubConfig.env } }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
@@ -441,23 +458,6 @@ class ConfigLoader {
     return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
       ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
       : cfg;
-  }
-
-  /**
-   * @return {Object}
-   * @private
-   */
-  _defaults() {
-    return {
-      terraform: {
-        var: {},
-        varFile: [],
-        backend: {},
-        version: '0.12.16',
-        backup: false,
-        workspace: 'default'
-      }
-    };
   }
 
   /**
