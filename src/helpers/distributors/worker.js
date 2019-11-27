@@ -39,7 +39,7 @@ function run(config, parameters) {
     runId: process.env.THUB_RUN_ID,
     componentName: config.name,
   });
-  config = Prepare.prepareConfigWithHash(config);
+
   HclHelper.middleware(config, parameters)
     .then(async (cfg) => {
       await Prepare.prepare(config, parameters);
