@@ -299,7 +299,7 @@ class Terraform {
    * @return {Promise}
    */
   async import() {
-    const options = { '-input': false };
+    const options = { '-input': false};
     const args = ['-no-color'];
     const lines = JSON.parse(process.env.importLines);
     const varFile = this._varFile()[0].split('/');
@@ -325,8 +325,13 @@ class Terraform {
             this._varFile(),
             this._var(),
             this._optsToArgs(options),
+            this._optsToArgs(this._distributor === 'lambda' ? {'-state-out': './terraform.tfstate'} : {}),
             [line.fullAddress, line.value])
-        ).catch(() => { });
+        ).then(async () => {
+          if (this._distributor === 'lambda') {
+            await this.run('state', ['push', './terraform.tfstate']);
+          }
+        }).catch(() => { });
       }
     }
 
