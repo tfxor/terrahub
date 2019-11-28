@@ -19,7 +19,7 @@ class Terraform {
    * @param {Object} parameters
    */
   constructor(config, parameters) {
-    this._config = Prepare.prepareConfigWithHash(config);
+    this._config = config;
     this._tf = this._config.terraform;
     this._distributor = this._config.distributor;
     this._envVars = process.env;
@@ -247,6 +247,13 @@ class Terraform {
   plan() {
     const options = { '-out': this._metadata.getPlanPath(), '-input': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
+    const { providerId } = process.env;
+    if (providerId) {
+      const { targets } = this._config;
+      if (targets.length) {
+        Object.assign(options, { '-target': `${targets[providerId]}` });
+      }
+    }
 
     return this.run('plan', args.concat(this._varFile(), this._var(), this._optsToArgs(options)))
       .then(buffer => {

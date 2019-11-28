@@ -5,7 +5,6 @@ const logger = require('../logger');
 const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
-const Prepare = require('../prepare-helper');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('../distributors/aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
@@ -77,6 +76,7 @@ class Distributor {
    * @protected
    */
   buildDependencyTable(direction) {
+    this._propagateConfigsByTargets();
     const keys = Object.keys(this.projectConfig);
 
     const result = keys.reduce((acc, key) => {
@@ -158,7 +158,6 @@ class Distributor {
     importLines = '',
     input = false
   } = {}) {
-    await Prepare.prepare(config, parameters);
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this.TERRAFORM_ACTIONS = actions;
@@ -220,8 +219,10 @@ class Distributor {
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
+      const providerId = this.getImportId(hash);
+
       if (!dependsOn.length) {
-        const distributor = this.getDistributor(hash);
+        const distributor = this.getDistributor(hash, false, providerId);
 
         if (distributor instanceof AwsDistributor) {
           promises.push(distributor.distribute(
@@ -245,9 +246,10 @@ class Distributor {
   /**
    * @param {String} hash
    * @param {Object | boolean} parameters
+   * @param {Object | boolean} providerId
    * @return {LocalDistributor|AwsDistributor}
    */
-  getDistributor(hash, parameters = false) {
+  getDistributor(hash, parameters = false, providerId = false) {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
@@ -258,7 +260,10 @@ class Distributor {
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
       case 'lambda':
         this._lambdaWorkerCounter++;
-        return new AwsDistributor(parameters ? parameters : this.parameters, config, this._env);
+        return new AwsDistributor(
+          parameters ? parameters : this.parameters,
+          config,
+          providerId ? {...this._env, providerId: providerId } : this._env);
       case 'fargate':
         //todo
         throw new Error('[Fargate Distributor]: This feature is not available yet.');
@@ -376,6 +381,31 @@ class Distributor {
     const { distributor } = Object.values(this.projectConfig)[0];
 
     return importActions === this.TERRAFORM_ACTIONS.join(',') && distributor === 'lambda';
+  }
+
+  /**
+   * @param {String} hash
+   * @return {String | boolean}
+   */
+  getImportId(hash) {
+    return hash.includes('_') ? hash.split('_')[1] : false;
+  }
+
+  /**
+   * @return {void}
+   * @private
+   */
+  _propagateConfigsByTargets() {
+    Object.keys(this.projectConfig).forEach(hash => {
+      const { distributor } = this.projectConfig[hash];
+      const { targets } = this.projectConfig[hash];
+      if (distributor === 'lambda' && targets && targets.length) {
+        targets.forEach((target, index) => {
+          Object.assign(this.projectConfig, { [`${hash}_${index}`]: this.projectConfig[hash] });
+        });
+        delete this.projectConfig[hash];
+      }
+    });
   }
 
   /**

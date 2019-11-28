@@ -10,26 +10,10 @@ const Downloader = require('./downloader');
 const Dictionary = require('./dictionary');
 const { execSync } = require('child_process');
 const {
-    extend, homePath, homePathLambda
+    homePath, homePathLambda
   } = require('./util');
 
 class PrepareHelper {
-  /**
-   * @param {Object} config
-   * @return {Object}
-   */
-  static prepareConfig(config) {
-    return extend({}, [PrepareHelper._defaults(), config[Object.keys(config)[0]]]);
-  }
-
-  /**
-   * @param {Object} config
-   * @return {Object}
-   */
-  static prepareConfigWithHash(config) {
-    return extend({}, [PrepareHelper._defaults(), config]);
-  }
-
   /**
    * Perform terraform init & all required checks
    * @param {Object} config
@@ -37,31 +21,13 @@ class PrepareHelper {
    * @return {Promise}
    */
   static prepare(config, parameters) {
-    const configWithoutHash = PrepareHelper.prepareConfig(config);
-    logger.debug(JSON.stringify(configWithoutHash, null, 2));
+    logger.debug(JSON.stringify(config, null, 2));
 
-    return PrepareHelper._checkTerraformBinary(configWithoutHash)
+    return PrepareHelper._checkTerraformBinary(config)
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 1000)))
-      .then(() => PrepareHelper._checkResourceDir(configWithoutHash, parameters))
-      .then(() => PrepareHelper._fetchEnvironmentVariables(configWithoutHash, parameters))
+      .then(() => PrepareHelper._checkResourceDir(config, parameters))
+      .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
-  }
-
-  /**
-   * @return {Object}
-   * @private
-   */
-  static _defaults() {
-    return {
-      terraform: {
-        var: {},
-        varFile: [],
-        backend: {},
-        version: '0.12.16',
-        backup: false,
-        workspace: 'default'
-      }
-    };
   }
 
   /**
@@ -82,7 +48,7 @@ class PrepareHelper {
    * @return {String}
    */
   static getBinary(config) {
-    return config._distributor === 'lambda'
+    return config.distributor === 'lambda'
       ? homePathLambda('terraform', PrepareHelper.getVersion(config), 'terraform')
       : homePath('terraform', PrepareHelper.getVersion(config), 'terraform');
   }
