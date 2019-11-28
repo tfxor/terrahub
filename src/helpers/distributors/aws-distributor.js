@@ -30,7 +30,7 @@ class AwsDistributor {
    * @param {String[]} actions
    * @param {String} runId
    * @param {String} accountId
-   * @param {Number} importIndex
+   * @param {Number?} importIndex
    * @return {void}
    */
   async distribute({ actions, runId, accountId, importIndex }) {

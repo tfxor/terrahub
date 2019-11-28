@@ -157,7 +157,7 @@ class Distributor {
     importId = '',
     importLines = '',
     input = false
-  } = {}) {    
+  } = {}) {
     await Prepare.prepare(config, parameters);
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
@@ -220,14 +220,14 @@ class Distributor {
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
       const dependsOn = Object.keys(this._dependencyTable[hash]);
-
       if (!dependsOn.length) {
-        this.distributor = this.getDistributor(hash);
-        if (this.distributor instanceof AwsDistributor) {
-          promises.push(this.distributor.distribute(
+        const distributor = this.getDistributor(hash);
+
+        if (distributor instanceof AwsDistributor) {
+          promises.push(distributor.distribute(
             { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId }));
         } else {
-          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
+          distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         }
 
         this._workCounter++;
@@ -286,10 +286,10 @@ class Distributor {
     for (let index = 0; index < hashes.length; index++) {
       const hash = hashes[index].split('~')[0];
       const parameters = this.replaceBatchToSimpleImport(importLines, index, isBatch);
+      const distributor = this.getDistributor(hash, isBatch ? parameters : false);
 
-      this.distributor = this.getDistributor(hash, isBatch ? parameters : false);
-      if (this.distributor instanceof AwsDistributor) {
-        promises.push(this.distributor.distribute(
+      if (distributor instanceof AwsDistributor) {
+        promises.push(distributor.distribute(
           { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId, importIndex: index }));
       }
 
