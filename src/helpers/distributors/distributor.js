@@ -170,7 +170,7 @@ class Distributor {
         await this.distributeConfig();
       }
     } catch (err) {
-      if (/This feature is not available yet/.test(err)) { throw new Error(err); }
+      if ([/This feature is not available yet/, /[AWS distributor]/].some(it => it.test(err))) { throw new Error(err); }
       this.errors.push(err);
     }
 
