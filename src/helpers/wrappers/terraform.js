@@ -325,17 +325,39 @@ class Terraform {
             this._varFile(),
             this._var(),
             this._optsToArgs(options),
-            this._optsToArgs(this._distributor === 'lambda' ? {'-state-out': './terraform.tfstate'} : {}),
+            this._optsToArgs(this._stateFile()),
             [line.fullAddress, line.value])
         ).then(async () => {
           if (this._distributor === 'lambda') {
-            await this.run('state', ['push', './terraform.tfstate']);
+            await this.run('state', ['push', `'${this._stateFilePath()}'`]);
           }
         }).catch(() => { });
       }
     }
 
     return Promise.resolve({});
+  }
+
+  /**
+   * Prepare -state-out
+   * @return {Object}
+   * @private
+   */
+  _stateFile() {
+    if (this._distributor === 'lambda') {
+      return {'-state-out': `'${this._stateFilePath()}'`};
+    }
+
+    return {};
+  }
+
+  /**
+   * Prepare -state-out-path
+   * @return {String}
+   * @private
+   */
+  _stateFilePath() {
+    return path.join(this._metadata.getRoot(), 'terraform.tfstate');
   }
 
   /**
