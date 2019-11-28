@@ -157,7 +157,7 @@ class Distributor {
     importId = '',
     importLines = '',
     input = false
-  } = {}) {    
+  } = {}) {
     await Prepare.prepare(config, parameters);
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
@@ -172,7 +172,7 @@ class Distributor {
         await this.distributeConfig();
       }
     } catch (err) {
-      if (/This feature is not available yet/.test(err)) { throw new Error(err); }
+      if ([/This feature is not available yet/, /[AWS distributor]/].some(it => it.test(err))) { throw new Error(err); }
       this.errors.push(err);
     }
 
