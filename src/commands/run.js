@@ -66,16 +66,16 @@ class RunCommand extends DistributedCommand {
    */
   _run(config) {
     const actions = ['init', 'workspaceSelect'];
+    let defaultRun = [{ actions, config: config }];
 
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
         actions.push('build');
+        Object.assign(defaultRun[0], { dependencyDirection: Dictionary.DIRECTION.FORWARD });
       }
 
       actions.push('plan');
     }
-
-    const defaultRun = [{ actions, config: config }];
 
     const applyRun = !this._isApply ? false : [{
       actions: [...actions, ...this._isBuild ? ['build', 'plan', 'apply'] : ['plan', 'apply']],
