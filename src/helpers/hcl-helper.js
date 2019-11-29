@@ -2,11 +2,11 @@
 
 const fse = require('fs-extra');
 const semver = require('semver');
-const { resolve, join, extname } = require('path');
-const { exec } = require('child-process-promise');
-const objectDepth = require('object-depth');
 const GsHelper = require('./gs-helper');
 const S3Helper = require('./s3-helper');
+const objectDepth = require('object-depth');
+const { exec } = require('child-process-promise');
+const { resolve, join, extname } = require('path');
 const Downloader = require('../helpers/downloader');
 const { homePath, extend, homePathLambda } = require('./util');
 

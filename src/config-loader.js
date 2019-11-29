@@ -75,7 +75,7 @@ class ConfigLoader {
         : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
-      this._rootConfig = this._getConfig(configFile);
+      this._rootConfig = extend({}, [this._defaults(), this._getConfig(configFile)]);
       this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
       this._projectDistributor = this._rootConfig['project'].distributor;
 
@@ -87,6 +87,23 @@ class ConfigLoader {
       this._rootConfig = {};
       this._projectConfig = {};
     }
+  }
+
+    /**
+   * @return {Object}
+   * @private
+   */
+  _defaults() {
+    return {
+      terraform: {
+        var: {},
+        varFile: [],
+        backend: {},
+        version: '0.12.16',
+        backup: false,
+        workspace: 'default'
+      }
+    };
   }
 
   /**

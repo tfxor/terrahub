@@ -5,6 +5,7 @@ const Fetch = require('../fetch');
 const S3Helper = require('../s3-helper');
 const ApiHelper = require('../api-helper');
 const HclHelper = require('../hcl-helper');
+const Prepare = require('../prepare-helper');
 const { promiseSeries } = require('../util');
 const Terrahub = require('../wrappers/terrahub');
 
@@ -40,6 +41,7 @@ class AwsDeployer {
       await this.s3.syncPaths(config.project.root, s3Prefix, config.mapping);
 
       const cfg = await HclHelper.middleware(config, parameters);
+      await Prepare.prepare(cfg, parameters);
       await this._runActions(actions, cfg, thubRunId, parameters);
 
       if (cfg.isJit) {
