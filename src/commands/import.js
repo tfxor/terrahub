@@ -2,6 +2,7 @@
 
 const fse = require('fs-extra');
 const { resolve } = require('path');
+const { homePath } = require('../helpers/util');
 const DistributedCommand = require('../distributed-command');
 
 class ImportCommand extends DistributedCommand {
@@ -89,10 +90,31 @@ class ImportCommand extends DistributedCommand {
             }
           });
 
+          let stateMove;
+
           return Promise.resolve([{
             actions: ['init', 'workspaceSelect', 'import'],
             config,
-            importLines: JSON.stringify(linesMap)
+            importLines: JSON.stringify(linesMap),
+            postActionFn: (response) => {
+              const tmpPath = homePath('temp', config[response[0].hash].project.code, config[response[0].hash].name);
+              stateMove = linesMap.map((line, index) => {
+                const tfstatePath = resolve(tmpPath, `${response[0].hash}_${index}.tfstate`);
+
+                return {
+                  statePath: tfstatePath,
+                  stateOut: '/Users/andreyluchianic/.terrahub/cache/hcl/landing_zone_subnet_eef16dcf/terraform.tfstate',
+                  id: line.fullAddress
+                };
+              });
+              console.dir(stateMove, { depth: 3 });
+
+// state mv -state="../../../temp/eef16dcf/landing_zone_subnet/3c84b4a049322b3f677386bee29a1aaa_11.tfstate" -state-out="terraform.tfstate" "aws_subnet.landing_zone_subnet[11]" "aws_subnet.landing_zone_subnet[11]"
+            }
+          }, {
+            actions: ['stateMove'],
+            config,
+            stateMove: JSON.stringify(stateMove)
           }]);
         });
     }

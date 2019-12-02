@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+const fse = require('fs-extra');
 const events = require('events');
 const logger = require('../logger');
 const WebSocket = require('./websocket');
@@ -7,7 +9,7 @@ const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('../distributors/aws-distributor');
-const { physicalCpuCount, threadsLimitCount } = require('../util');
+const { physicalCpuCount, threadsLimitCount, homePath } = require('../util');
 const LocalDistributor = require('../distributors/local-distributor');
 
 class Distributor {
@@ -16,10 +18,10 @@ class Distributor {
    */
   constructor(command) {
     this.errors = [];
-    this._eventEmitter = new events.EventEmitter();
     this._workCounter = 0;
     this._localWorkerCounter = 0;
     this._lambdaWorkerCounter = 0;
+    this._eventEmitter = new events.EventEmitter();
 
     this.command = command;
     this.runId = command._runId;
@@ -143,6 +145,7 @@ class Distributor {
    * @param {String} importLines
    * @param {String} resourceName
    * @param {String} importId
+   * @param {String} stateMove
    * @param {Boolean} input
    * @return {Promise}
    */
@@ -155,10 +158,11 @@ class Distributor {
     resourceName = '',
     importId = '',
     importLines = '',
+    stateMove = '',
     input = false
   } = {}) {
     const results = [];
-    this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
+    this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, stateMove, input };
     this.TERRAFORM_ACTIONS = actions;
 
     try {
@@ -223,7 +227,7 @@ class Distributor {
       if (!dependsOn.length) {
         const distributor = this.getDistributor(hash, false, providerId);
 
-        if (distributor instanceof AwsDistributor) {
+        if (distributor instanceof AwsDistributor && this.TERRAFORM_ACTIONS !== 'stateMove') {
           promises.push(distributor.distribute(
             { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId }));
         } else {
@@ -446,6 +450,16 @@ class Distributor {
               });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 1 } });
           }
+        }
+
+        if (parsedData.action === 'aws-cloud-deployer-state') {
+          const { data: { state, index, hash } } = parsedData;
+          const tmpPath = homePath('temp', this.projectConfig[hash].project.code, this.projectConfig[hash].name);
+          const fileName = path.resolve(tmpPath, `${hash}_${index}.tfstate`);
+
+          fse.ensureDir(tmpPath);
+          fse.ensureFileSync(fileName);
+          fse.writeFileSync(fileName, JSON.parse(state));
         }
       } catch (e) {
         throw new Error(e);

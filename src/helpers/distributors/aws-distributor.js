@@ -34,6 +34,7 @@ class AwsDistributor {
    * @return {void}
    */
   async distribute({ actions, runId, accountId, importIndex }) {
+    console.log({ actions, runId, accountId, importIndex });
     try {
       await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
@@ -60,7 +61,9 @@ class AwsDistributor {
         thubRunId: runId,
         config: this.componentConfig,
         parameters: this.parameters,
-        env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
+        env: importIndex || importIndex === 0
+          ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}
+          : this.env
       });
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });

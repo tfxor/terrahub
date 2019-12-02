@@ -368,6 +368,24 @@ class Terraform {
       ).catch(() => { });
   }
 
+  async stateMove() {
+    console.log('stateMove :', process.env);
+
+    // const args = ['mv'];
+    const stateMove = process.env.stateMove;
+    const moveObjectArgs = JSON.parse(stateMove);
+
+    for (let obj of moveObjectArgs) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.run('state', ['mv', this._optsToArgs({
+        '-state': obj.statePath,
+        '-state-out': obj.stateOut
+      }), obj.id, obj.id]);
+    }
+
+    return Promise.resolve();
+  }
+
   /**
    * https://www.terraform.io/docs/commands/apply.html
    * @return {Promise}

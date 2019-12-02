@@ -598,7 +598,7 @@ class Util {
   static deleteTempFolder() {
     const tmpPath = Util.homePath('temp');
 
-    if (fse.ensureDir(tmpPath)) {
+    if (fs.existsSync(tmpPath)) {
       fse.removeSync(tmpPath);
     }
   }
