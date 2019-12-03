@@ -282,7 +282,7 @@ class HclHelper {
       }).then(() => {
         const { output } = template;
 
-        if (output && resourcesByType.hasOwnProperty('provider')) {
+        if (output && resourcesByType[resourceName].hasOwnProperty('provider')) {
           const promisesOutput = Object.keys(output)
             .filter(outputName => output[outputName])
             .filter(elem => output[elem].value.includes(resourceName))
