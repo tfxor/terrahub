@@ -329,7 +329,8 @@ class HclHelper {
               try {
                 locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
                 let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-                resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'g'), `local.${localVariableName}_${tfvarValue}`);
+                resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'gm'), `local.${localVariableName}_${tfvarValue}`);
+                resourceByNameStringify = resourceByNameStringify.replace(JSON.stringify(oldProviderTerrahubVariable).slice(1, -1), tfvarValue);
                 resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
               }
               catch (e) { }
