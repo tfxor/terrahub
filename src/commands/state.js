@@ -30,14 +30,14 @@ class StateCommand extends DistributedCommand {
 
     if (this._delete.length === 0 && this._list) {
       return [{
-        actions: ['prepare', 'init', 'workspaceSelect', 'resourceList'],
+        actions: ['init', 'workspaceSelect', 'resourceList'],
         config,
         stateList: this._list
       }];
     }
 
     return this._delete.map(it => ({
-      actions: ['prepare', 'init', 'workspaceSelect', 'stateDelete'],
+      actions: ['init', 'workspaceSelect', 'stateDelete'],
       config,
       stateDelete: it
     }));

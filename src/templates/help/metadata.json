@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-11-26T17:49:33.235Z",
+  "buildDate": "2019-11-27T13:51:35.401Z",
   "commands": [
     {
       "name": "apply",
@@ -750,72 +750,6 @@
           "description": "Runs the command with destroy plan",
           "defaultValue": false
         },
-        {
-          "name": "include",
-          "shortcut": "i",
-          "description": "List of components to include (comma separated values)",
-          "defaultValue": []
-        },
-        {
-          "name": "exclude",
-          "shortcut": "x",
-          "description": "List of components to exclude (comma separated values)",
-          "defaultValue": []
-        },
-        {
-          "name": "include-regex",
-          "shortcut": "I",
-          "description": "List of components to include (regex search)",
-          "defaultValue": []
-        },
-        {
-          "name": "exclude-regex",
-          "shortcut": "X",
-          "description": "List of components to exclude (regex search)",
-          "defaultValue": []
-        },
-        {
-          "name": "git-diff",
-          "shortcut": "g",
-          "description": "List of components to include (git diff)",
-          "defaultValue": []
-        },
-        {
-          "name": "var",
-          "shortcut": "r",
-          "description": "Variable(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "var-file",
-          "shortcut": "l",
-          "description": "Variable file(s) to be used by terraform",
-          "defaultValue": []
-        },
-        {
-          "name": "dependency",
-          "shortcut": "p",
-          "description": "Set dependency validation strategy (auto, ignore, include)",
-          "defaultValue": "auto"
-        },
-        {
-          "name": "env",
-          "shortcut": "e",
-          "description": "Workspace environment",
-          "defaultValue": "default"
-        },
-        {
-          "name": "help",
-          "shortcut": "h",
-          "description": "Show list of available commands",
-          "defaultValue": false
-        }
-      ]
-    },
-    {
-      "name": "prepare",
-      "description": "prepare cached HCL versions of terraform in $HOME/.terrahub/cache/hcl/",
-      "options": [
         {
           "name": "include",
           "shortcut": "i",
