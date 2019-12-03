@@ -3,6 +3,7 @@
 const cluster = require('cluster');
 const logger = require('../logger');
 const HclHelper = require('../hcl-helper');
+const Prepare = require('../prepare-helper');
 const { promiseSeries } = require('../util');
 const Terrahub = require('../wrappers/terrahub');
 
@@ -40,6 +41,10 @@ function run(config, parameters) {
   });
 
   HclHelper.middleware(config, parameters)
+    .then(async (cfg) => {
+      await Prepare.prepare(cfg, parameters);
+      return cfg;
+    })
     .then(cfg => promiseSeries(getTasks(cfg, parameters),
       (prev, fn) => prev.then(data => fn(data ? { skip: !!data.skip } : {}))))
     .then(lastResult => {

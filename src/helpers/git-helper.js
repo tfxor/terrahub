@@ -8,7 +8,7 @@ class GitHelper {
   /**
    * @param {Error} error
    * @param {String} appPath
-   * @return {*}
+   * @throws {Error}
    */
   static handleGitDiffError(error, appPath) {
     logger.debug(error);
@@ -20,10 +20,12 @@ class GitHelper {
         message = 'Git is not installed on this device.';
       } else if (/Not a git repository/i.test(stderr)) {
         message = `Git repository not found in '${appPath}'.`;
+      } else {
+        message = stderr;
       }
     }
 
-    return { ...error, message };
+    throw message || error;
   }
 
   /**
