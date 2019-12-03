@@ -21,7 +21,7 @@ class RefreshCommand extends DistributedCommand {
     this.warnExecutionStarted(config);
 
     return [{
-      actions: ['prepare', 'workspaceSelect', 'refresh'],
+      actions: ['workspaceSelect', 'refresh'],
       config,
     }];
   }

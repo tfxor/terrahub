@@ -108,7 +108,7 @@ class WorkspaceCommand extends DistributedCommand {
     this.warnExecutionStarted(config);
 
     return [{
-      actions: ['prepare', 'init', action],
+      actions: ['init', action],
       config: config,
       postActionFn: results => this._handleWorkspaceList(results, message)
     }];

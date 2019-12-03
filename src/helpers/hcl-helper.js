@@ -2,11 +2,11 @@
 
 const fse = require('fs-extra');
 const semver = require('semver');
-const { resolve, join, extname } = require('path');
-const { exec } = require('child-process-promise');
-const objectDepth = require('object-depth');
 const GsHelper = require('./gs-helper');
 const S3Helper = require('./s3-helper');
+const objectDepth = require('object-depth');
+const { exec } = require('child-process-promise');
+const { resolve, join, extname } = require('path');
 const Downloader = require('../helpers/downloader');
 const { homePath, extend, homePathLambda } = require('./util');
 
@@ -282,7 +282,7 @@ class HclHelper {
       }).then(() => {
         const { output } = template;
 
-        if (output) {
+        if (output && resourcesByType[resourceName].hasOwnProperty('provider')) {
           const promisesOutput = Object.keys(output)
             .filter(outputName => output[outputName])
             .filter(elem => output[elem].value.includes(resourceName))
@@ -329,7 +329,8 @@ class HclHelper {
               try {
                 locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
                 let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-                resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'g'), `local.${localVariableName}_${tfvarValue}`);
+                resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'gm'), `local.${localVariableName}_${tfvarValue}`);
+                resourceByNameStringify = resourceByNameStringify.replace(JSON.stringify(oldProviderTerrahubVariable).slice(1, -1), tfvarValue);
                 resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
               }
               catch (e) { }
