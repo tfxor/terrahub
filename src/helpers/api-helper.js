@@ -5,7 +5,6 @@ const Fetch = require('./fetch');
 const Dictionary = require('./dictionary');
 
 class ApiHelper extends events.EventEmitter {
-
   constructor() {
     super();
 
@@ -74,8 +73,7 @@ class ApiHelper extends events.EventEmitter {
       return Promise.resolve();
     }
 
-    const _promises = [...this.retrievePromises(), this.retrieveLogs(true)]
-      .filter(Boolean);
+    const _promises = [...this.retrievePromises(), this.retrieveLogs(true)].filter(Boolean);
 
     return Promise.all(this.asyncFetch(_promises)).then(() => {
       const _promises = this.retrievePromises();
@@ -115,7 +113,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Array}
    */
   retrievePromises() {
-    const _promises = this._promises;
+    const { _promises } = this;
     const onCreate = _promises.filter(({ url }) => url.split('/')[2] === 'create');
 
     if (onCreate && onCreate.length) {
@@ -138,8 +136,7 @@ class ApiHelper extends events.EventEmitter {
       return false;
     }
 
-    const url = `https://${this.config.api}.terrahub.io/v1/elasticsearch/document/create/${this.runId || process.env.THUB_RUN_ID}` +
-      `?indexMapping=logs`;
+    const url = `https://${this.config.api}.terrahub.io/v1/thub/logs/create/${this.runId || process.env.THUB_RUN_ID}`;
     let _logs = [];
 
     if (!all) {
@@ -211,8 +208,7 @@ class ApiHelper extends events.EventEmitter {
   pushToLogs(body) {
     if (body.component === 'main' || body.log === '✅Done') {
       const promise = {
-        url: `https://${this.config.api}.terrahub.io/v1/elasticsearch` +
-          `/document/create/${this.runId || process.env.THUB_RUN_ID}?indexMapping=logs`,
+        url: `https://${this.config.api}.terrahub.io/v1/thub/logs/create/${this.runId || process.env.THUB_RUN_ID}`,
         body: { bulk: [body] }
       };
 
@@ -281,7 +277,10 @@ class ApiHelper extends events.EventEmitter {
 
     if (this.tokenIsValid && this._isComponentUseCase(status, action, actions)) {
       this.sendDataToApi({
-        source: 'component', status, hash, name
+        source: 'component',
+        status,
+        hash,
+        name
       });
     }
   }
@@ -368,9 +367,9 @@ class ApiHelper extends events.EventEmitter {
     }
 
     return {
-      'terraformHash': hash,
-      'terraformName': name,
-      'terraformRunUuid': this.runId,
+      terraformHash: hash,
+      terraformName: name,
+      terraformRunUuid: this.runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
   }
@@ -385,12 +384,12 @@ class ApiHelper extends events.EventEmitter {
     const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
 
     return {
-      'terraformRunId': this.runId,
+      terraformRunId: this.runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
       projectHash: this.projectHash,
       projectName: this.projectName,
-      'terraformRunStatus': ApiHelper.getRunStatus(status, runStatus),
-      'terraformRunWorkspace': this.environment || 'default'
+      terraformRunStatus: ApiHelper.getRunStatus(status, runStatus),
+      terraformRunWorkspace: this.environment || 'default'
     };
   }
 
@@ -439,10 +438,16 @@ class ApiHelper extends events.EventEmitter {
   /**
    * @return {Promise}
    */
-  sendLogToS3() {
+  saveRealtimeAndLogs() {
     if (this.canApiLogsBeSent() && this._apiLogginStart) {
-      return this.fetch.post(`https://${this.config.api}.terrahub.io/v1/elasticsearch/logs/save/${this.runId || process.env.THUB_RUN_ID}`)
-        .catch(error => console.log(error));
+      return Promise.all([
+        this.fetch
+          .post(`https://${this.config.api}.terrahub.io/v1/thub/logs/save/${this.runId || process.env.THUB_RUN_ID}`)
+          .catch(error => console.log(error)),
+        this.fetch
+          .post(`https://${this.config.api}.terrahub.io/v1/thub/realtime/save/${this.runId || process.env.THUB_RUN_ID}`)
+          .catch(error => console.log(error))
+      ]);
     }
   }
 
