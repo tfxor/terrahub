@@ -141,6 +141,11 @@ class Terraform {
    * @return {Promise}
    */
   async init() {
+    const checkActionsList = 'init,workspaceSelect,import';
+    if ( checkActionsList === this._envVars['TERRAFORM_ACTIONS'] && this._distributor === 'lambda' ) {
+      await fse.move(this._backendNormalPath(), this._backendPath(), { overwrite: true });
+    }
+
     await this._setupVars();
 
     return this.run(
@@ -325,12 +330,59 @@ class Terraform {
             this._varFile(),
             this._var(),
             this._optsToArgs(options),
+            this._optsToArgs(this._stateFile()),
             [line.fullAddress, line.value])
-        ).catch(() => { });
+        ).then(async () => {
+          if (this._distributor === 'lambda') {
+            await fse.move(this._backendPath(), this._backendNormalPath(), { overwrite: true });
+            await this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
+            await this.run('state', ['push', `'${this._stateFilePath()}'`]);
+          }
+        }).catch(() => { });
       }
     }
 
     return Promise.resolve({});
+  }
+
+  /**
+   * Prepare -state-out
+   * @return {Object}
+   * @private
+   */
+  _stateFile() {
+    if (this._distributor === 'lambda') {
+      return {'-state-out': `'${this._stateFilePath()}'`};
+    }
+
+    return {};
+  }
+
+  /**
+   * Prepare -state-out-path
+   * @return {String}
+   * @private
+   */
+  _stateFilePath() {
+    return path.join(this._metadata.getRoot(), 'localTfstate', 'terraform.tfstate');
+  }
+
+  /**
+   * Prepare backend path
+   * @return {String}
+   * @private
+   */
+  _backendPath() {
+    return path.join(this._metadata.getRoot(), 'backend', 'terraform.tf');
+  }
+
+  /**
+   * Prepare backend normal path
+   * @return {String}
+   * @private
+   */
+  _backendNormalPath() {
+    return path.join(this._metadata.getRoot(), 'terraform.tf');
   }
 
   /**
