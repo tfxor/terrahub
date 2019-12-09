@@ -21,7 +21,7 @@ class Terrahub extends AbstractTerrahub {
       projectId: this._project.id,
       componentHash: this._componentHash,
       componentName: this._config.name,
-      terraformRunId: this._runId,
+      runId: this._runId,
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
