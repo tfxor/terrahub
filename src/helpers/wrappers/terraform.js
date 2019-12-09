@@ -141,11 +141,6 @@ class Terraform {
    * @return {Promise}
    */
   async init() {
-    const checkActionsList = 'init,workspaceSelect,import';
-    if ( checkActionsList === this._envVars['TERRAFORM_ACTIONS'] && this._distributor === 'lambda' ) {
-      await fse.move(this._backendNormalPath(), this._backendPath(), { overwrite: true });
-    }
-
     await this._setupVars();
 
     return this.run(
@@ -310,6 +305,8 @@ class Terraform {
     const varFile = this._varFile()[0].split('/');
     let existedResouces = [];
 
+    
+
     await this.resourceList()
       .then(elements => { existedResouces = elements; })
       .catch(() => { });
@@ -324,6 +321,12 @@ class Terraform {
       const isCorrectComponent = varFile.includes(`${line.component}_${line.hash}`) || line.component === '';
 
       if (isCorrectComponent && (startImport || !existedResouces.includes(line.fullAddress))) {
+        if (this._distributor === 'lambda') {
+          await fse.ensureDir(this._stateFolderPath());
+          await this.run('state', ['pull', '>', `'${this._stateFilePath()}'`]);
+          await fse.move(this._backendNormalPath(), this._backendPath(), { overwrite: true });
+          await this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false })]);
+        }
         await this.run('import',
           args.concat(
             line.provider,
@@ -335,7 +338,7 @@ class Terraform {
         ).then(async () => {
           if (this._distributor === 'lambda') {
             await fse.move(this._backendPath(), this._backendNormalPath(), { overwrite: true });
-            await this.run('init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
+            await this.run('init', ['-no-color', '-force-copy', '-reconfigure', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
             await this.run('state', ['push', `'${this._stateFilePath()}'`]);
           }
         }).catch(() => { });
@@ -365,6 +368,15 @@ class Terraform {
    */
   _stateFilePath() {
     return path.join(this._metadata.getRoot(), 'localTfstate', 'terraform.tfstate');
+  }
+
+  /**
+   * Prepare -state-out-path
+   * @return {String}
+   * @private
+   */
+  _stateFolderPath() {
+    return path.join(this._metadata.getRoot(), 'localTfstate');
   }
 
   /**
