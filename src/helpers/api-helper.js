@@ -360,16 +360,16 @@ class ApiHelper extends events.EventEmitter {
    * @private
    */
   _composeComponentBody(status, hash, name) {
-    const time = status === 'create' ? 'terrahubComponentStarted' : 'terrahubComponentFinished';
+    const time = status === 'create' ? 'componentStartedAt' : 'componentFinishedAt';
 
     if (status === 'create') {
       this._componentsExecutionList[hash] = name;
     }
 
     return {
-      terraformHash: hash,
-      terraformName: name,
-      terraformRunUuid: this.runId,
+      hash,
+      name,
+      runId: this.runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
   }
@@ -381,15 +381,15 @@ class ApiHelper extends events.EventEmitter {
    * @private
    */
   _composeWorkflowBody(status, runStatus) {
-    const time = status === 'create' ? 'terraformRunStarted' : 'terraformRunFinished';
+    const time = status === 'create' ? 'runStartedAt' : 'runFinishedAt';
 
     return {
-      terraformRunId: this.runId,
+      runId: this.runId,
       [time]: new Date().toISOString().slice(0, 19).replace('T', ' '),
       projectHash: this.projectHash,
       projectName: this.projectName,
-      terraformRunStatus: ApiHelper.getRunStatus(status, runStatus),
-      terraformRunWorkspace: this.environment || 'default'
+      runStatus: ApiHelper.getRunStatus(status, runStatus),
+      runWorkspace: this.environment || 'default'
     };
   }
 
