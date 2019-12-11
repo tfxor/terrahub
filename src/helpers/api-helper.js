@@ -333,7 +333,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {string}
    */
   static getUrl(source, status) {
-    return `thub/${source === 'workflow' ? 'terraform-run' : 'terrahub-component'}/${status}`;
+    return `thub/${source === 'workflow' ? 'run' : 'component'}/${status}`;
   }
 
   /**
