@@ -62,7 +62,7 @@ async function syncExitProcess(code, message, error = false) {
     message ? logger.info(message) : null;
   }
 
-  await ApiHelper.sendLogToS3();
+  await ApiHelper.saveRealtimeAndLogs();
 
   return process.exit(code);
 }
