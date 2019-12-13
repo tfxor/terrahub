@@ -17,12 +17,12 @@ class Terrahub extends AbstractTerrahub {
     let error = null;
     let actionPromiseComponent = Promise.resolve();
     let payload = {
-      action: this._action,
-      status: data.status,
-      projectId: this._project.id,
-      componentHash: this._componentHash,
-      componentName: this._config.name,
       runId: this._runId,
+      status: data.status,
+      action: this._action,
+      projectId: this._project.id,
+      componentName: this._config.name,
+      componentHash: this._componentHash,
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
@@ -33,9 +33,9 @@ class Terrahub extends AbstractTerrahub {
 
     if (payload.action === 'init' && data.status === Dictionary.REALTIME.START) {
       const componentPayload = {
-        hash: this._componentHash,
-        name: this._config.name,
         runId: this._runId,
+        name: this._config.name,
+        hash: this._componentHash,
         componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
 
@@ -52,13 +52,8 @@ class Terrahub extends AbstractTerrahub {
       ? Promise.resolve()
       : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
-    return Promise.allSettled([actionPromiseComponent, actionPromise]).then(results => {
-      results.forEach(result => {
-        if (result.status === 'rejected') {
-          return Promise.reject(result.reason);
-        }
-        return Promise.resolve(result.value);
-      });
+    return Promise.allSettled([actionPromiseComponent, actionPromise]).then(() => {
+      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
     });
   }
 
@@ -76,7 +71,7 @@ class Terrahub extends AbstractTerrahub {
       name: this._project.name,
       hash: this._project.code
     };
-    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then((json) => {
       this._project.id = json.data.id;
 
       return Promise.resolve();
@@ -130,7 +125,7 @@ class Terrahub extends AbstractTerrahub {
         thubRunId: this._runId
       })
     };
-    const promise = this.parameters.fetch.post(url, options).catch(error => {
+    const promise = this.parameters.fetch.post(url, options).catch((error) => {
       const message = this._addNameToMessage('Failed to trigger parse function');
 
       logger.error({ ...error, message });
@@ -172,7 +167,7 @@ class Terrahub extends AbstractTerrahub {
       componentName: config.name
     });
 
-    return actions.map(action => options => {
+    return actions.map((action) => (options) => {
       logger.updateContext({ action: action });
 
       return action !== 'build'
