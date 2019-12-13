@@ -137,19 +137,16 @@ class ApiHelper extends events.EventEmitter {
     }
 
     const url = `https://${this.config.api}.terrahub.io/v1/thub/logs/create/${this.runId || process.env.THUB_RUN_ID}`;
-    let _logs = [];
+    let _logs;
 
     if (!all) {
       _logs = this.logs;
     } else {
-      _logs = this._logs;
+      ({_logs} = this);
       this._logs = [];
     }
 
-    return {
-      url,
-      body: { bulk: [..._logs] }
-    };
+    return { url, body: { bulk: [..._logs] } };
   }
 
   /**
