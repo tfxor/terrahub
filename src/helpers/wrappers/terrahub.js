@@ -15,6 +15,7 @@ class Terrahub extends AbstractTerrahub {
    */
   on(data, err = null) {
     let error = null;
+    let actionPromiseComponent = Promise.resolve();
     let payload = {
       action: this._action,
       status: data.status,
@@ -30,15 +31,34 @@ class Terrahub extends AbstractTerrahub {
       payload.error = error.message.trim();
     }
 
+    if (payload.action === 'init' && data.status === Dictionary.REALTIME.START) {
+      const componentPayload = {
+        hash: this._componentHash,
+        name: this._config.name,
+        runId: this._runId,
+        componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      };
+
+      actionPromiseComponent = !this.parameters.config.token
+        ? Promise.resolve()
+        : this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
+    }
+
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
-    let actionPromise = !this.parameters.config.token
+
+    const actionPromise = !this.parameters.config.token
       ? Promise.resolve()
       : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
-    return actionPromise.then(() => {
-      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
+    return Promise.allSettled([actionPromiseComponent, actionPromise]).then(results => {
+      results.forEach(result => {
+        if (result.status === 'rejected') {
+          return Promise.reject(result.reason);
+        }
+        return Promise.resolve(result.value);
+      });
     });
   }
 

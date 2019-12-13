@@ -273,12 +273,14 @@ class ApiHelper extends events.EventEmitter {
     }
 
     if (this.tokenIsValid && this._isComponentUseCase(status, action, actions)) {
-      this.sendDataToApi({
-        source: 'component',
-        status,
-        hash,
-        name
-      });
+      if (status !== 'create') {
+        this.sendDataToApi({
+          source: 'component',
+          status,
+          hash,
+          name
+        });
+      }
     }
   }
 
