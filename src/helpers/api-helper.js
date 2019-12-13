@@ -183,7 +183,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   get isFinalRequest() {
-    return this._promises.length && this._promises.find(({ url }) => url === 'thub/terraform-run/update');
+    return this._promises.length && this._promises.find(({ url }) => url === 'thub/run/update');
   }
 
   /**
