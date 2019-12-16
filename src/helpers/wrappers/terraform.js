@@ -338,8 +338,9 @@ class Terraform {
         ).then(async () => {
           if (this._distributor === 'lambda') {
             await fse.move(this._backendPath(), this._backendNormalPath(), { overwrite: true });
-            await this.run('init', ['-no-color', '-force-copy', '-reconfigure', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
-            await this.run('state', ['push', `'${this._stateFilePath()}'`]);
+            await this.run('init', ['-no-color', '-reconfigure', this._optsToArgs({ '-input': false }), ...this._backend(), '.']);
+            await this.run('refresh', ['-no-color'].concat(this._varFile(), this._var()));
+            await this.run('state', ['mv', `-state=${this._stateFilePath()}`, `"${line.fullAddress}"`, `"${line.fullAddress}"`]);
           }
         }).catch(() => { });
       }
@@ -477,7 +478,7 @@ class Terraform {
     if (template && template.hasOwnProperty('terraform')) {
       const { backend } = template.terraform;
       if (backend && backend.hasOwnProperty('local')) {
-        localBackend.push(`-state='${backend.local.path}'`);
+        localBackend.push(`-state=${backend.local.path}`);
       }
     }
 

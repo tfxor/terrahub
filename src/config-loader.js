@@ -264,7 +264,7 @@ class ConfigLoader {
       let config = this._getConfig(configPath);
 
       if (config.hasOwnProperty('project')) {
-        rootPaths[path.dirname(configPath)] = null;
+        //rootPaths[path.dirname(configPath)] = null;
         return;
       }
 
@@ -508,7 +508,7 @@ class ConfigLoader {
    * @return {String[]}
    */
   static get defaultIgnorePatterns() {
-    return ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+    return ['**/node_modules/**', '**/.git/**'];
   }
 
   /**

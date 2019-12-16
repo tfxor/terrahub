@@ -324,7 +324,7 @@ class ApiHelper extends events.EventEmitter {
    * @private
    */
   _isWorkflowUseCase() {
-    return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace'].includes(this.commandName);
+    return ['apply', 'build', 'destroy', 'init', 'plan', 'run', 'workspace', 'import'].includes(this.commandName);
   }
 
   /**
