@@ -573,9 +573,7 @@ class DistributedCommand extends AbstractCommand {
   getVar() {
     let result = {};
 
-    this.getOption('var').map(item => {
-      Object.assign(result, Args.toObject(item));
-    });
+    this.getOption('var').map(item => Object.assign(result, Args.toObject(item)));
 
     return result;
   }
@@ -786,8 +784,9 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 ? 's that are dependencies' : ' that is dependency'}` +
-        ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
+      return `'${names.join(`', '`)}' component${names.length > 1 
+        ? 's that are dependencies' : ' that is dependency'}`
+        + ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });
   }
 

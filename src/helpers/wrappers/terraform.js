@@ -310,7 +310,7 @@ class Terraform {
     await this.resourceList()
       .then(elements => { existedResouces = elements; })
       .catch(() => { });
-    let startImport = existedResouces.length == 0;
+    let startImport = existedResouces.length === 0;
 
     for (const line of lines) {
       if (existedResouces.includes(line.fullAddress) && line.overwrite) {

@@ -1,6 +1,6 @@
 {
   "name": "terrahub",
-  "version": "0.4.12",
+  "version": "0.4.15",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
   "main": "index.js",
   "preferGlobal": true,
@@ -19,8 +19,8 @@
     "url": "https://github.com/TerraHubCorp/terrahub/issues"
   },
   "engines": {
-    "node": ">=8.0",
-    "npm": ">=5.0"
+    "node": ">=10.16",
+    "npm": ">=6.9"
   },
   "dependencies": {
     "@google-cloud/storage": "^2.5.0",

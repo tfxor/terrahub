@@ -1,6 +1,5 @@
 'use strict';
 
-const os = require('os');
 const events = require('events');
 const logger = require('../logger');
 const WebSocket = require('./websocket');
