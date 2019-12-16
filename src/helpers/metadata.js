@@ -36,7 +36,9 @@ class Metadata {
    * @return {String}
    */
   getRoot() {
-    return this._cfg.isTemplate ? buildTmpPath(this._cfg, this._parameters) : path.join(this._cfg.project.root, this._cfg.root);
+    return this._cfg.isTemplate
+      ? buildTmpPath(this._cfg, this._parameters)
+      : path.join(this._cfg.project.root, this._cfg.root);
   }
 
   /**

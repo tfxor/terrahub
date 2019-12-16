@@ -89,7 +89,7 @@ class ConfigLoader {
     }
   }
 
-    /**
+  /**
    * @return {Object}
    * @private
    */
@@ -318,7 +318,7 @@ class ConfigLoader {
       const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
       const regexExists = new RegExp(`[*]`, 'm');
       let names = dynamicRemoteStates.map(it => it.component);
-      names.map((it, i) => {
+      names.forEach((it, i) => {
         if (regexExists.test(it)) {
           const test = it.replace('*', '');
           const regex = new RegExp(test, 'm');
