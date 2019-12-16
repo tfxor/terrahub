@@ -52,8 +52,10 @@ class Terrahub extends AbstractTerrahub {
       ? Promise.resolve()
       : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
 
-    return Promise.all([actionPromiseComponent, actionPromise]).then(() => {
-      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
+    return actionPromiseComponent.then(() => {
+      return actionPromise.then(() => {
+        return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
+      });
     });
   }
 
