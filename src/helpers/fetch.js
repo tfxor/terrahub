@@ -25,7 +25,9 @@ class Fetch {
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse).catch(Fetch._handleError);
+    return fetch(URL.resolve(this.baseUrl, url), params)
+      .then(this._handleResponse)
+      .catch(Fetch._handleError);
   }
 
   /**
@@ -40,7 +42,8 @@ class Fetch {
     };
 
     return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
-      .then(this._handleResponse).catch(Fetch._handleError);
+      .then(this._handleResponse)
+      .catch(Fetch._handleError);
   }
 
   /**
@@ -79,9 +82,11 @@ class Fetch {
 
         case 500:
         case 504:
-          error = new Error('Error occurred. Please try again. If this problem persists, ' +
-            'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-            'https://github.com/TerraHubCorp/terrahub/issues');
+          error = new Error(
+            'Error occurred. Please try again. If this problem persists, ' +
+              'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
+              'https://github.com/TerraHubCorp/terrahub/issues'
+          );
           break;
       }
 
