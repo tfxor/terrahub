@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2019-12-12T20:25:33.180Z",
+  "buildDate": "2019-12-16T15:11:16.360Z",
   "commands": [
     {
       "name": "apply",
