@@ -15,7 +15,6 @@ class Terrahub extends AbstractTerrahub {
    */
   async on(data, err = null) {
     let error = null;
-    let actionPromiseComponent = Promise.resolve();
     let payload = {
       runId: this._runId,
       status: data.status,
@@ -43,8 +42,6 @@ class Terrahub extends AbstractTerrahub {
       if (this.parameters.config.token) {
         await this.parameters.fetch.post('thub/component/create', {body: JSON.stringify(componentPayload)});
       }
-
-      await actionPromiseComponent;
     }
 
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
