@@ -26,16 +26,7 @@ class Terrahub extends AbstractTerrahub {
     };
 
     if (this._action === 'init' && data.status === Dictionary.REALTIME.START) {
-      const componentPayload = {
-        runId: this._runId,
-        name: this._config.name,
-        hash: this._componentHash,
-        componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
-      };
-
-      if (this.parameters.config.token) {
-        await this.parameters.fetch.post('thub/component/create', {body: JSON.stringify(componentPayload)});
-      }
+      await this.createComponent();
     }
 
     if (err) {
@@ -46,7 +37,7 @@ class Terrahub extends AbstractTerrahub {
       realtimePayload.metadata = data.metadata;
     }
     if (this.parameters.config.token) {
-      await this.parameters.fetch.post('thub/realtime/create', {body: JSON.stringify(realtimePayload)});
+      await this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(realtimePayload) });
     }
 
     return realtimePayload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
@@ -74,14 +65,33 @@ class Terrahub extends AbstractTerrahub {
   }
 
   /**
+   * @return {Promise}
+   * @private
+   */
+  createComponent() {
+    const componentPayload = {
+      runId: this._runId,
+      name: this._config.name,
+      hash: this._componentHash,
+      componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    };
+
+    return this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
+  }
+
+  /**
    * @param {Object} data
    * @return {Promise}
    * @private
    * @abstract
    */
   upload(data) {
-    if (!this.parameters.config.token || !data || !data.buffer ||
-      !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (
+      !this.parameters.config.token ||
+      !data ||
+      !data.buffer ||
+      !['plan', 'apply', 'destroy'].includes(this._action)
+    ) {
       return Promise.resolve(data);
     }
 
