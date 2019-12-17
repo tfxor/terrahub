@@ -75,11 +75,6 @@ class Fetch {
    */
   _handleResponse(result) {
     return result.json().then((json) => {
-      console.log({
-        url: result.url,
-        code: result.status,
-        body: json
-      });
       let error;
       switch (result.status) {
         case 403:
