@@ -13,7 +13,7 @@ class Terrahub extends AbstractTerrahub {
    * @private
    * @override
    */
-  on(data, err = null) {
+  async on(data, err = null) {
     let error = null;
     let actionPromiseComponent = Promise.resolve();
     let payload = {
@@ -40,25 +40,22 @@ class Terrahub extends AbstractTerrahub {
       };
 
       console.log(componentPayload);
-      actionPromiseComponent = !this.parameters.config.token
-        ? Promise.resolve()
-        : this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
+      if (!this.parameters.config.token) {
+        await this.parameters.fetch.post('thub/component/create', {body: JSON.stringify(componentPayload)});
+      }
+
+      await actionPromiseComponent;
     }
 
     if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
       payload.metadata = data.metadata;
     }
 
-    console.log(payload);
-    const actionPromise = !this.parameters.config.token
-      ? Promise.resolve()
-      : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
+    if (!this.parameters.config.token) {
+      await this.parameters.fetch.post('thub/realtime/create', {body: JSON.stringify(payload)});
 
-    return actionPromiseComponent.then(() => {
-      return actionPromise.then(() => {
-        return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
-      });
-    });
+      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
+    }
   }
 
   /**
