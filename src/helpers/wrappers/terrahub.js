@@ -39,6 +39,7 @@ class Terrahub extends AbstractTerrahub {
         componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
 
+      console.log(componentPayload);
       actionPromiseComponent = !this.parameters.config.token
         ? Promise.resolve()
         : this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
@@ -48,6 +49,7 @@ class Terrahub extends AbstractTerrahub {
       payload.metadata = data.metadata;
     }
 
+    console.log(payload);
     const actionPromise = !this.parameters.config.token
       ? Promise.resolve()
       : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
