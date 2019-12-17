@@ -74,7 +74,7 @@ class Fetch {
    * @private
    */
   _handleResponse(result) {
-    return result.json().then((json) => {
+    return result.json().then(json => {
       let error;
       switch (result.status) {
         case 403:
