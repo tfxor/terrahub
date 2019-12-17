@@ -25,7 +25,7 @@ class Terrahub extends AbstractTerrahub {
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
-    if (this._action === 'init' && data.status === Dictionary.REALTIME.START) {
+    if (this._action === 'init' && data.status === Dictionary.REALTIME.START && this.parameters.config.token) {
       await this.createComponent();
     }
 
