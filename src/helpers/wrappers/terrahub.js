@@ -15,7 +15,7 @@ class Terrahub extends AbstractTerrahub {
    */
   async on(data, err = null) {
     let error = null;
-    let payload = {
+    let realtimePayload = {
       runId: this._runId,
       status: data.status,
       action: this._action,
@@ -25,12 +25,7 @@ class Terrahub extends AbstractTerrahub {
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
-    if (err) {
-      error = err instanceof Error ? err : new Error(err || 'Unknown error');
-      payload.error = error.message.trim();
-    }
-
-    if (payload.action === 'init' && data.status === Dictionary.REALTIME.START) {
+    if (this._action === 'init' && data.status === Dictionary.REALTIME.START) {
       const componentPayload = {
         runId: this._runId,
         name: this._config.name,
@@ -38,21 +33,23 @@ class Terrahub extends AbstractTerrahub {
         componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
 
-      console.log(componentPayload);
       if (this.parameters.config.token) {
         await this.parameters.fetch.post('thub/component/create', {body: JSON.stringify(componentPayload)});
       }
     }
 
-    if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
-      payload.metadata = data.metadata;
+    if (err) {
+      error = err instanceof Error ? err : new Error(err || 'Unknown error');
+      realtimePayload.error = error.message.trim();
     }
-
+    if (realtimePayload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
+      realtimePayload.metadata = data.metadata;
+    }
     if (this.parameters.config.token) {
-      await this.parameters.fetch.post('thub/realtime/create', {body: JSON.stringify(payload)});
+      await this.parameters.fetch.post('thub/realtime/create', {body: JSON.stringify(realtimePayload)});
     }
 
-    return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
+    return realtimePayload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
   }
 
   /**

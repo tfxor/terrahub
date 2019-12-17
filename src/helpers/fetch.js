@@ -3,6 +3,7 @@
 const URL = require('url');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;
+const NotFoundException = require('../exceptions/not-found-exception');
 const AuthenticationException = require('../exceptions/authentication-exception');
 
 class Fetch {
@@ -83,6 +84,9 @@ class Fetch {
       switch (result.status) {
         case 403:
           error = new AuthenticationException('Provided THUB_TOKEN is invalid.');
+          break;
+        case 404:
+          error = new NotFoundException(json);
           break;
 
         case 500:
