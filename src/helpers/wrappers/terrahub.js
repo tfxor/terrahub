@@ -40,7 +40,7 @@ class Terrahub extends AbstractTerrahub {
       };
 
       console.log(componentPayload);
-      if (!this.parameters.config.token) {
+      if (this.parameters.config.token) {
         await this.parameters.fetch.post('thub/component/create', {body: JSON.stringify(componentPayload)});
       }
 
@@ -51,11 +51,11 @@ class Terrahub extends AbstractTerrahub {
       payload.metadata = data.metadata;
     }
 
-    if (!this.parameters.config.token) {
+    if (this.parameters.config.token) {
       await this.parameters.fetch.post('thub/realtime/create', {body: JSON.stringify(payload)});
-
-      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
     }
+
+    return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
   }
 
   /**
