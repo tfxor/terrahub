@@ -3,6 +3,7 @@
 const URL = require('url');
 const merge = require('lodash.mergewith');
 const fetch = require('node-fetch').default;
+const NotFoundException = require('../exceptions/not-found-exception');
 const AuthenticationException = require('../exceptions/authentication-exception');
 
 class Fetch {
@@ -25,7 +26,9 @@ class Fetch {
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), params).then(this._handleResponse).catch(Fetch._handleError);
+    return fetch(URL.resolve(this.baseUrl, url), params)
+      .then(this._handleResponse)
+      .catch(Fetch._handleError);
   }
 
   /**
@@ -40,7 +43,8 @@ class Fetch {
     };
 
     return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
-      .then(this._handleResponse).catch(Fetch._handleError);
+      .then(this._handleResponse)
+      .catch(Fetch._handleError);
   }
 
   /**
@@ -76,12 +80,17 @@ class Fetch {
         case 403:
           error = new AuthenticationException('Provided THUB_TOKEN is invalid.');
           break;
+        case 404:
+          error = new NotFoundException(json);
+          break;
 
         case 500:
         case 504:
-          error = new Error('Error occurred. Please try again. If this problem persists, ' +
-            'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-            'https://github.com/TerraHubCorp/terrahub/issues');
+          error = new Error(
+            'Error occurred. Please try again. If this problem persists, ' +
+              'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
+              'https://github.com/TerraHubCorp/terrahub/issues'
+          );
           break;
       }
 

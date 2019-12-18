@@ -13,33 +13,34 @@ class Terrahub extends AbstractTerrahub {
    * @private
    * @override
    */
-  on(data, err = null) {
+  async on(data, err = null) {
     let error = null;
-    let payload = {
-      action: this._action,
-      status: data.status,
-      projectId: this._project.id,
-      componentHash: this._componentHash,
-      componentName: this._config.name,
+    let realtimePayload = {
       runId: this._runId,
+      status: data.status,
+      action: this._action,
+      projectId: this._project.id,
+      componentName: this._config.name,
+      componentHash: this._componentHash,
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
+    if (this._action === 'init' && data.status === Dictionary.REALTIME.START && this.parameters.config.token) {
+      await this.createComponent();
+    }
+
     if (err) {
       error = err instanceof Error ? err : new Error(err || 'Unknown error');
-      payload.error = error.message.trim();
+      realtimePayload.error = error.message.trim();
+    }
+    if (realtimePayload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
+      realtimePayload.metadata = data.metadata;
+    }
+    if (this.parameters.config.token) {
+      await this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(realtimePayload) });
     }
 
-    if (payload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
-      payload.metadata = data.metadata;
-    }
-    let actionPromise = !this.parameters.config.token
-      ? Promise.resolve()
-      : this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(payload) });
-
-    return actionPromise.then(() => {
-      return payload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
-    });
+    return realtimePayload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
   }
 
   /**
@@ -56,11 +57,26 @@ class Terrahub extends AbstractTerrahub {
       name: this._project.name,
       hash: this._project.code
     };
-    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then(json => {
+    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then((json) => {
       this._project.id = json.data.id;
 
       return Promise.resolve();
     });
+  }
+
+  /**
+   * @return {Promise}
+   * @private
+   */
+  createComponent() {
+    const componentPayload = {
+      runId: this._runId,
+      name: this._config.name,
+      hash: this._componentHash,
+      componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    };
+
+    return this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
   }
 
   /**
@@ -70,8 +86,12 @@ class Terrahub extends AbstractTerrahub {
    * @abstract
    */
   upload(data) {
-    if (!this.parameters.config.token || !data || !data.buffer ||
-      !['plan', 'apply', 'destroy'].includes(this._action)) {
+    if (
+      !this.parameters.config.token ||
+      !data ||
+      !data.buffer ||
+      !['plan', 'apply', 'destroy'].includes(this._action)
+    ) {
       return Promise.resolve(data);
     }
 
@@ -110,7 +130,7 @@ class Terrahub extends AbstractTerrahub {
         thubRunId: this._runId
       })
     };
-    const promise = this.parameters.fetch.post(url, options).catch(error => {
+    const promise = this.parameters.fetch.post(url, options).catch((error) => {
       const message = this._addNameToMessage('Failed to trigger parse function');
 
       logger.error({ ...error, message });
@@ -152,7 +172,7 @@ class Terrahub extends AbstractTerrahub {
       componentName: config.name
     });
 
-    return actions.map(action => options => {
+    return actions.map((action) => (options) => {
       logger.updateContext({ action: action });
 
       return action !== 'build'

@@ -15,8 +15,7 @@ class ImportCommand extends DistributedCommand {
       .addOption('config', 'c', 'Import resource', Array, [])
       .addOption('provider', 'j', 'Import provider', String, '')
       .addOption('batch', 'b', 'Import batch', String, '')
-      .addOption('overwrite', 'O', 'Overwrite existing elements in tfstate', Boolean, false)
-    ;
+      .addOption('overwrite', 'O', 'Overwrite existing elements in tfstate', Boolean, false);
   }
 
   /**

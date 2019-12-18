@@ -9,9 +9,7 @@ const Metadata = require('./metadata');
 const Downloader = require('./downloader');
 const Dictionary = require('./dictionary');
 const { execSync } = require('child_process');
-const {
-    homePath, homePathLambda
-  } = require('./util');
+const { homePath, homePathLambda } = require('./util');
 
 class PrepareHelper {
   /**
@@ -68,6 +66,7 @@ class PrepareHelper {
   /**
    * @param {Object} config
    * Check if workspaces supported
+   * @returns {Boolean}
    * @private
    */
   static _checkWorkspaceSupport(config) {
