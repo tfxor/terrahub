@@ -6,6 +6,9 @@ logs
 .idea
 .vscode
 
+# Code formatters
+.prettierrc.json
+
 # Runtime data
 pids
 *.pid
