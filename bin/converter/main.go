@@ -71,7 +71,7 @@ var (
 		"global_filter", "approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
 		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
 		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers",
+		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage",
 	}
 	withoutEqual = []string{
 		"statement", "condition", "principals", "assume_role", "filter", "versioning",
@@ -80,7 +80,7 @@ var (
 		"approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
 		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
 		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers",
+		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage",
 	}
 )
 
