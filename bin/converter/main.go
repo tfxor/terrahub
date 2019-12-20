@@ -71,7 +71,11 @@ var (
 		"global_filter", "approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
 		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
 		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers",
+		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
+		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
+		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
+		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
+		"alias", "scaling_configuration",
 	}
 	withoutEqual = []string{
 		"statement", "condition", "principals", "assume_role", "filter", "versioning",
@@ -80,7 +84,11 @@ var (
 		"approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
 		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
 		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers",
+		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
+		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
+		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
+		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
+		"alias", "scaling_configuration",
 	}
 )
 
@@ -252,7 +260,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		case string:
 			itIsFor := false
-			if strings.Index(v, "for") > 0 && strings.Replace(v, " ", "", -1)[0:4] == "{for" {
+			if strings.Index(v, "aws") > -1 && strings.Replace(v, " ", "", -1)[0:4] == "aws_" {
 				itIsFor = true
 			}
 			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
