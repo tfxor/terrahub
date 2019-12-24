@@ -222,7 +222,6 @@ class AbstractTerrahub {
     return this.checkProject()
       .then(() => this.on({ status: Dictionary.REALTIME.START }))
       .then(() => this._sendLogsToApi('create'))
-      .then(() => this.on({ status: Dictionary.REALTIME.START }))
       .then(() => this._hook('before'))
       .then(() => this._runTerraformCommand(this._action))
       .then(data => this.upload(data))
