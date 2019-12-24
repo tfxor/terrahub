@@ -88,7 +88,7 @@ var (
 		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
 		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
 		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
-		"alias", "scaling_configuration",
+		"scaling_configuration",
 	}
 )
 
@@ -260,7 +260,8 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		case string:
 			itIsFor := false
-			if strings.Index(v, "aws") > -1 && strings.Replace(v, " ", "", -1)[0:4] == "aws_" {
+			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
+			(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
 			if (isFunction(v, level) || itIsFor) && tf12format != "no" {

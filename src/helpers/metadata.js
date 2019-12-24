@@ -88,9 +88,10 @@ class Metadata {
     const backup = this._cfg.terraform.backup || '.backup';
     const { workspace } = this._cfg.terraform;
     const realRootPath = path.join(this._cfg.project.root, this._cfg.root);
-
-    // @todo discuss w/ Eugene how and where to backup
-    return path.join(realRootPath, backup, workspace === 'default' ? './' : workspace);
+    const backupPath = path.join(realRootPath, backup, workspace === 'default' ? './' : workspace);
+    
+    fse.ensureDirSync(backupPath);
+    return backupPath;
   }
 
   /**

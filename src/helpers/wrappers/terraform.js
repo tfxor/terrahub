@@ -305,6 +305,8 @@ class Terraform {
     const varFile = this._varFile()[0].split('/');
     let existedResouces = [];
 
+    
+
     await this.resourceList()
       .then(elements => { existedResouces = elements; })
       .catch(() => { });
@@ -325,12 +327,62 @@ class Terraform {
             this._varFile(),
             this._var(),
             this._optsToArgs(options),
+            this._optsToArgs(this._stateFile()),
             [line.fullAddress, line.value])
         ).catch(() => { });
       }
     }
 
     return Promise.resolve({});
+  }
+
+  /**
+   * Prepare -state-out
+   * @return {Object}
+   * @private
+   */
+  _stateFile() {
+    if (this._distributor === 'lambda') {
+      return {'-state-out': `'${this._stateFilePath()}'`};
+    }
+
+    return {};
+  }
+
+  /**
+   * Prepare -state-out-path
+   * @return {String}
+   * @private
+   */
+  _stateFilePath() {
+    return path.join(this._metadata.getRoot(), 'localTfstate', 'terraform.tfstate');
+  }
+
+  /**
+   * Prepare -state-out-path
+   * @return {String}
+   * @private
+   */
+  _stateFolderPath() {
+    return path.join(this._metadata.getRoot(), 'localTfstate');
+  }
+
+  /**
+   * Prepare backend path
+   * @return {String}
+   * @private
+   */
+  _backendPath() {
+    return path.join(this._metadata.getRoot(), 'backend', 'terraform.tf');
+  }
+
+  /**
+   * Prepare backend normal path
+   * @return {String}
+   * @private
+   */
+  _backendNormalPath() {
+    return path.join(this._metadata.getRoot(), 'terraform.tf');
   }
 
   /**
@@ -413,7 +465,7 @@ class Terraform {
     if (template && template.hasOwnProperty('terraform')) {
       const { backend } = template.terraform;
       if (backend && backend.hasOwnProperty('local')) {
-        localBackend.push(`-state='${backend.local.path}'`);
+        localBackend.push(`-state=${backend.local.path}`);
       }
     }
 
