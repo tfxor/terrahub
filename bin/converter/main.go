@@ -260,10 +260,8 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		case string:
 			itIsFor := false
-			if strings.Index(v, "aws") > -1 && strings.Replace(v, " ", "", -1)[0:4] == "aws_" {
-				itIsFor = true
-			}
-			if strings.Index(v, "aws") > -1 && strings.Replace(v, " ", "", -1)[0:4] == "aws_" {
+			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
+			(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
 			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
