@@ -64,7 +64,11 @@ async function syncExitProcess(code, message, error = false) {
 
   await ApiHelper.saveRealtimeAndLogs();
 
-  return process.exit(code);
+  if (code !== 0) {
+    return process.exit(code);
+  }
+
+  return Promise.resolve();
 }
 
 
