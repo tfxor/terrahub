@@ -43,6 +43,14 @@ class Distributor {
     const result = await this.command.run();
 
     if (!Array.isArray(result)) {
+      if (this.ws !== null) {
+        this.ws.onopen = () => {
+          if (this.ws.readyState === 1) {
+            this.ws.close(1000, 'Done');
+          }
+        };
+      }
+
       return Promise.resolve(result);
     }
 
