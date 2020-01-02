@@ -67,8 +67,6 @@ async function syncExitProcess(code, message, error = false) {
   if (code !== 0) {
     return process.exit(code);
   }
-
-  return Promise.resolve();
 }
 
 
