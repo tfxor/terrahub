@@ -27,6 +27,8 @@ class Distributor {
     this.parameters = command.parameters;
     this.fetch = this.parameters.fetch;
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
+
+    this.ws = null;
   }
 
   /**
@@ -66,6 +68,8 @@ class Distributor {
       return Promise.reject(err);
     }
     await ApiHelper.sendMainWorkflow({ status: 'update' });
+
+    this.ws.close(1000, 'Done');
 
     return Promise.resolve('Done');
   }
@@ -416,9 +420,9 @@ class Distributor {
       return Promise.resolve();
     }
     const { data: { ticket_id } } = await this.websocketTicketCreate();
-    const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
+    this.ws = new WebSocket(this.parameters.config.api, ticket_id).ws;
 
-    ws.on('message', data => {
+    this.ws.on('message', data => {
       try {
         const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda' };

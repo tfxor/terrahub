@@ -24,7 +24,7 @@ if (!semver.satisfies(process.version, engines.node)) {
 /**
  * Command create
  * @param {logger|*} logger
- * @returns {*}
+ * @returns {Distributor}
  */
 function commandCreate(logger = console) {
   const command = parameters.args._.shift();
