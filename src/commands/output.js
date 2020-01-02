@@ -73,7 +73,7 @@ class OutputCommand extends DistributedCommand {
           const indexStart = stdout.indexOf('{');
           const json = stdout[0] !== '{' ? stdout.substring(indexStart, stdout.length) : stdout;
 
-          result[it.component] = JSON.parse(json);
+          result[it.component] = JSON.parse(json.toString());
         });
 
         this.logger.raw(JSON.stringify(result));

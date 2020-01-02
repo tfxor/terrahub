@@ -508,7 +508,7 @@ class ConfigLoader {
    * @return {String[]}
    */
   static get defaultIgnorePatterns() {
-    return ['**/node_modules/**', '**/.terraform/**', '**/.git/**'];
+    return ['**/node_modules/**', '**/.git/**'];
   }
 
   /**
