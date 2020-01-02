@@ -24,7 +24,7 @@ if (!semver.satisfies(process.version, engines.node)) {
 /**
  * Command create
  * @param {logger|*} logger
- * @returns {*}
+ * @returns {Distributor}
  */
 function commandCreate(logger = console) {
   const command = parameters.args._.shift();
@@ -64,7 +64,9 @@ async function syncExitProcess(code, message, error = false) {
 
   await ApiHelper.saveRealtimeAndLogs();
 
-  return process.exit(code);
+  if (code !== 0) {
+    return process.exit(code);
+  }
 }
 
 
