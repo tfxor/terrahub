@@ -69,7 +69,9 @@ class Distributor {
     }
     await ApiHelper.sendMainWorkflow({ status: 'update' });
 
-    this.ws.close(1000, 'Done');
+    if (this.ws !== null) {
+      this.ws.close(1000, 'Done');
+    }
 
     return Promise.resolve('Done');
   }
