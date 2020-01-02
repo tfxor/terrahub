@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 
 class Websocket {
 
-  /**fet
+  /** Constructor
    * @param {String} env
    * @param {String} ticket
    */
