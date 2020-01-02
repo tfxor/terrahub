@@ -43,13 +43,7 @@ class Distributor {
     const result = await this.command.run();
 
     if (!Array.isArray(result)) {
-      if (this.ws !== null) {
-        this.ws.onopen = () => {
-          if (this.ws.readyState === 1) {
-            this.ws.close(1000, 'Done');
-          }
-        };
-      }
+      this._closeWsConnections();
 
       return Promise.resolve(result);
     }
@@ -76,10 +70,7 @@ class Distributor {
       return Promise.reject(err);
     }
     await ApiHelper.sendMainWorkflow({ status: 'update' });
-
-    if (this.ws !== null) {
-      this.ws.close(1000, 'Done');
-    }
+    this._closeWsConnections();
 
     return Promise.resolve('Done');
   }
@@ -464,6 +455,23 @@ class Distributor {
         throw new Error(e);
       }
     });
+  }
+
+  /**
+   * Close opened websocket connections
+   */
+  _closeWsConnections() {
+    if (this.ws !== null) {
+      if (this.ws.readyState === 0) {
+        this.ws.onopen = () => {
+          if (this.ws.readyState === 1) {
+            this.ws.close(1000, 'Done');
+          }
+        };
+      } else {
+        this.ws.close(1000, 'Done');
+      }
+    }
   }
 }
 
