@@ -201,6 +201,8 @@ class Util {
    */
   static yesNoQuestion(question) {
     return Util.askQuestion(question).then(answer => {
+      Util.readLineInterface.close();
+
       return Promise.resolve(['y', 'yes'].includes(answer.toLowerCase()));
     });
   }
