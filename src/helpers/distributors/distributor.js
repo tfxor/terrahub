@@ -27,6 +27,8 @@ class Distributor {
     this.parameters = command.parameters;
     this.fetch = this.parameters.fetch;
     this._threadsCount = this.parameters.usePhysicalCpu ? physicalCpuCount() : threadsLimitCount(this.parameters);
+
+    this.ws = null;
   }
 
   /**
@@ -41,6 +43,8 @@ class Distributor {
     const result = await this.command.run();
 
     if (!Array.isArray(result)) {
+      this._closeWsConnections();
+
       return Promise.resolve(result);
     }
 
@@ -66,6 +70,7 @@ class Distributor {
       return Promise.reject(err);
     }
     await ApiHelper.sendMainWorkflow({ status: 'update' });
+    this._closeWsConnections();
 
     return Promise.resolve('Done');
   }
@@ -416,9 +421,9 @@ class Distributor {
       return Promise.resolve();
     }
     const { data: { ticket_id } } = await this.websocketTicketCreate();
-    const { ws } = new WebSocket(this.parameters.config.api, ticket_id);
+    this.ws = new WebSocket(this.parameters.config.api, ticket_id).ws;
 
-    ws.on('message', data => {
+    this.ws.on('message', data => {
       try {
         const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda' };
@@ -450,6 +455,23 @@ class Distributor {
         throw new Error(e);
       }
     });
+  }
+
+  /**
+   * Close opened websocket connections
+   */
+  _closeWsConnections() {
+    if (this.ws !== null) {
+      if (this.ws.readyState === 0) {
+        this.ws.onopen = () => {
+          if (this.ws.readyState === 1) {
+            this.ws.close(1000, 'Done');
+          }
+        };
+      } else {
+        this.ws.close(1000, 'Done');
+      }
+    }
   }
 }
 
