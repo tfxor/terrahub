@@ -22,7 +22,6 @@ class PrepareHelper {
     logger.debug(JSON.stringify(config, null, 2));
 
     return PrepareHelper._checkTerraformBinary(config)
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 1000)))
       .then(() => PrepareHelper._checkResourceDir(config, parameters))
       .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
@@ -34,11 +33,22 @@ class PrepareHelper {
    * @return {Promise}
    */
   static _checkTerraformBinary(config) {
-    if (fs.existsSync(PrepareHelper.getBinary(config))) {
-      return Promise.resolve();
-    }
+    try {
+      const stat = fs.statSync(PrepareHelper.getBinary(config));
 
-    return (new Downloader()).download(PrepareHelper.getVersion(config), config.distributor);
+      if (stat !== null && stat.isFile()) {
+        return Promise.resolve();
+      }
+    } catch (error) {
+      switch (error.code) {
+        case 'ENOENT':
+          return (new Downloader()).download(PrepareHelper.getVersion(config), config.distributor);
+        case 'ETXTBSY':
+          return Promise.resolve();
+        default:
+          throw error;
+      }
+    }
   }
 
   /**
