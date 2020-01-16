@@ -259,12 +259,17 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 			}
 		case string:
+			isBlock := false
+			if v[len(v) - 1] == '!' {
+				isBlock = true
+				v = v[0:len(v) - 1]
+			}
 			itIsFor := false
 			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
 			(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
-			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
+			if (isFunction(v, level) || itIsFor || isBlock) && tf12format != "no" {
 				outHCL2 += v + "\n"
 			} else {
 				outHCL2 += "\"" + v + "\"\n"
