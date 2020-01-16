@@ -65,30 +65,18 @@ var (
 		"provider", "variable",
 	}
 	withoutStartMap = []string{
-		"provisioner", "local-exec", "lifecycle", "remote-exec", "chef", "file", "habitat", "puppet",
-		"filter", "versioning", "vpc_settings", "account_aggregation_source", "source",
-		"scope", "output_location", "targets", "event_selector", "data_resource", "s3_destination",
-		"global_filter", "approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
-		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
-		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
-		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
-		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
-		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
-		"alias", "scaling_configuration",
+		"provisioner", "local-exec",
+		"remote-exec", "chef", "file", "habitat", "puppet",
+		"filter", "vpc_settings", "account_aggregation_source", "stage",
+		"scope", "output_location", "targets", "data_resource", "s3_destination",
+		"global_filter", "approval_rule", "patch_filter", "schema",
+		"environment_variable", "egress", "ingress",
 	}
 	withoutEqual = []string{
-		"statement", "condition", "principals", "assume_role", "filter", "versioning",
-		"vpc_settings", "account_aggregation_source", "source", "scope", "output_location",
-		"targets", "event_selector", "data_resource", "s3_destination", "global_filter",
-		"approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
-		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
-		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
-		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
-		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
-		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
-		"scaling_configuration",
+		"assume_role", "filter", "vpc_settings", "account_aggregation_source",
+		"scope", "output_location", "targets", "data_resource", "s3_destination",
+		"global_filter", "approval_rule", "patch_filter", "stage", "schema",
+		"environment_variable", "egress", "ingress",
 	}
 )
 
@@ -261,7 +249,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		case string:
 			itIsFor := false
 			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
-			(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
+				(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
 			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
@@ -327,9 +315,9 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 func mapIn2Level(i string, level int, raw json.RawMessage) string {
 	var outHCL2 = ""
 	isBlock := false
-	if i[len(i) - 1] == '!' {
+	if i[len(i)-1] == '!' {
 		isBlock = true
-		i = i[0:len(i) - 1]
+		i = i[0 : len(i)-1]
 	}
 	switch level {
 	case 0:
@@ -352,9 +340,9 @@ func mapIn2Level(i string, level int, raw json.RawMessage) string {
 func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
 	var outHCL2 = ""
 	isBlock := false
-	if i[len(i) - 1] == '!' {
+	if i[len(i)-1] == '!' {
 		isBlock = true
-		i = i[0:len(i) - 1]
+		i = i[0 : len(i)-1]
 	}
 	switch level {
 	case 0:
