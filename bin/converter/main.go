@@ -326,12 +326,17 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 
 func mapIn2Level(i string, level int, raw json.RawMessage) string {
 	var outHCL2 = ""
+	isBlock := false
+	if i[len(i) - 1] == '!' {
+		isBlock = true
+		i = i[0:len(i) - 1]
+	}
 	switch level {
 	case 0:
 	case 1:
 		outHCL2 = "\"" + i + "\""
 	default:
-		if Contains(withoutEqual, i) {
+		if Contains(withoutEqual, i) || isBlock {
 			outHCL2 = i
 		} else {
 			outHCL2 = checkPoint(i) + " ="
@@ -346,7 +351,11 @@ func mapIn2Level(i string, level int, raw json.RawMessage) string {
 
 func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
 	var outHCL2 = ""
-
+	isBlock := false
+	if i[len(i) - 1] == '!' {
+		isBlock = true
+		i = i[0:len(i) - 1]
+	}
 	switch level {
 	case 0:
 	case 1:
@@ -354,12 +363,12 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 		outHCL2 = resourceType + " \"" + lastIndex + "\" \"" + i + "\""
 	default:
 		if ContainsOneOfElement(i, []string{"/", ",", "."}) || lastIndex == "provisioner" {
-			if Contains(withoutStartMap, i) {
+			if Contains(withoutStartMap, i) || isBlock {
 				outHCL2 = "\"" + i + "\" "
 			} else {
 				outHCL2 = "\"" + i + "\" ="
 			}
-		} else if Contains(withoutStartMap, i) || Contains(withoutEqual, i) {
+		} else if Contains(withoutStartMap, i) || Contains(withoutEqual, i) || isBlock {
 			outHCL2 = i + " "
 		} else {
 			outHCL2 = checkPoint(i) + " ="
