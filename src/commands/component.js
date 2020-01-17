@@ -133,22 +133,24 @@ class ComponentCommand extends ConfigCommand {
    */
   async _addExistingComponent(name) {
     const directory = path.resolve(this._directory);
-    const projectPath = this.getAppPath();
-    const componentPath = this._configLoader.relativePath(process.cwd());
-    const terraform = new Terraform({ root: componentPath, project: { root: projectPath } }, this.parameters);
 
-    const { workspaces } = await terraform.workspaceList();
+    // @TODO: REWRITE THIS PART OF THE CODE
+    // const projectPath = this.getAppPath();
+    // const componentPath = this._configLoader.relativePath(process.cwd());
+    // const terraform = new Terraform({ root: componentPath, project: { root: projectPath } }, this.parameters);
 
-    try {
-      workspaces.forEach(it => {
-        if (it !== 'default') {
-          const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
-          ConfigLoader.writeConfig({}, outFile);
-        }
-      });
-    } catch (err) {
-      this.logger.warn(err);
-    }
+    // const { workspaces } = await terraform.workspaceList();
+
+    // try {
+    //   workspaces.forEach(it => {
+    //     if (it !== 'default') {
+    //       const outFile = path.join(directory, `.terrahub.${it}${this.getProjectFormat()}`);
+    //       ConfigLoader.writeConfig({}, outFile);
+    //     }
+    //   });
+    // } catch (err) {
+    //   this.logger.warn(err);
+    // }
 
     const existing = this._findExistingComponent();
 
