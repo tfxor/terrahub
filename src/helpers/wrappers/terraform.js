@@ -428,18 +428,19 @@ class Terraform {
     const { sentinel } = this._config;
     const sentinelArgs = ['-global'];
     const promises = [];
-    sentinel.forEach(element => {
-      promises.push(this.runSentinel('apply', 
-        sentinelArgs.concat(
-          this._optsToArgs({ 
-            'input': '"`' + Prepare.getBinary(this._config) + ' show -json ' + this._metadata.getPlanPath() + '`"',
-            '-color': false
-          }),
-          [`${this._metadata.getObjectPath(element)}`]
-        )
-      ));
-    });
-
+    if (sentinel && sentinel.length > 0) {
+      sentinel.forEach(element => {
+        promises.push(this.runSentinel('apply', 
+          sentinelArgs.concat(
+            this._optsToArgs({ 
+              'input': '"`' + Prepare.getBinary(this._config) + ' show -json ' + this._metadata.getPlanPath() + '`"',
+              '-color': false
+            }),
+            [`${this._metadata.getObjectPath(element)}`]
+          )
+        ));
+      });
+    }
     return Promise.all(promises).then(() => {
       const backupPath = this._metadata.getStateBackupPath();
       fse.ensureFileSync(backupPath);
