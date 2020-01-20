@@ -477,10 +477,10 @@ class Terraform {
   /**
    * https://www.terraform.io/docs/commands/show.html
    * @param {String} planOrStatePath
-   * @return {Promise}
+   * @return {Promise<String>}
    */
   show(planOrStatePath) {
-    return this.run('show', ['-no-color', planOrStatePath]);
+    return this.run('show', ['-json', planOrStatePath]);
   }
 
   /**

@@ -85,7 +85,7 @@ class Terrahub extends AbstractTerrahub {
    * @private
    * @abstract
    */
-  upload(data) {
+  async upload(data) {
     if (
       !this.parameters.config.token ||
       !data ||
@@ -97,6 +97,12 @@ class Terrahub extends AbstractTerrahub {
 
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
+
+    // console.dir({ key, url, data: data.buffer.toString() }, { depth: null });
+    // console.dir(this._config.terraform.version, { depth: null });
+
+    const show = await this._terraform.show(this._terraform._metadata.getPlanPath());
+    console.dir(JSON.parse(show), { depth: null });
 
     return this._putObject(url, data.buffer)
       .then(() => this._callParseLambda(key))
