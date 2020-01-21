@@ -94,92 +94,88 @@ class AbstractTerrahub {
     if (['abort', 'skip'].includes(res.status)) {
       return Promise.resolve(res);
     }
-
-    let hookPath;
-    try {
-      hookPath = this._config.hook[this._action][hook];
-      if (this._config.hook[this._action].hasOwnProperty('sentinel')) {
-        return Sentinel.run(
-          this._config,
-          this._action,
-          hook,
-          this._metadata.getObjectPath()
-        );
-      }
-    } catch (error) {
-      return Promise.resolve(res);
+    const promises = [];
+    if (this._config.hasOwnProperty('hook') &&
+      this._config.hook.hasOwnProperty(this._action) &&
+      this._config.hook[this._action].hasOwnProperty('sentinel')) {
+      promises.push(Sentinel.run(
+        this._config,
+        this._action,
+        hook,
+        this._metadata.getObjectPath()
+      ));
     }
 
-    if (!hookPath) {
-      return Promise.resolve(res);
-    }
-
-    if (this._config && this._config.hook.env) {
-      Object.assign(process.env, this._config.hook.env.variables);
-    }
-
-    return this._promiseSeries(Array.isArray(hookPath) ? hookPath : [hookPath], hook, res);
-  }
-
-  /**
-   * @param {Array} commandsList
-   * @param {String} hook
-   * @param {Object} res
-   * @return {Promise}
-   * @private
-   */
-  _promiseSeries(commandsList, hook, res) {
-    return promiseSeries(commandsList.map(it => {
-      const args = it.split(' ');
-      const extension = path.extname(args[0]);
-
-      // If the first arg is a script file get its absolute path
-      if (extension) {
-        args[0] = path.resolve(this._project.root, this._config.root, args[0]);
+    return Promise.all(promises).then(() => {
+      let hookPath;
+      if (this._config.hasOwnProperty('hook') &&
+        this._config.hook.hasOwnProperty(this._action) &&
+        this._config.hook[this._action].hasOwnProperty(hook) &&
+        this._config.hook[this._action][hook]) {
+        hookPath = this._config.hook[this._action][hook];
+      } else {
+        return Promise.resolve(res);
       }
 
-      logger.warn(this._addNameToMessage(`Executing hook '${it}' ${hook} ${this._action} action.`));
-      let command;
-      switch (extension) {
-        case '.js':
-          return () => {
-            const promise = require(args[0])(this._config, res.buffer);
-
-            return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
-          };
-
-        case '.sh':
-          command = 'bash';
-          break;
-
-        default:
-          command = args.shift();
-          break;
+      if (this._config && this._config.hook.env) {
+        Object.assign(process.env, this._config.hook.env.variables);
       }
 
-      return () => this._spawn(command, args, { env: process.env }).then(() => Promise.resolve(res));
-    })).catch(error => {
-      let originalMessage;
+      const commandsList = Array.isArray(hookPath) ? hookPath : [hookPath];
 
-      ['message', 'stderr'].find(key => {
-        if (!error[key]) {
-          return false;
+      return promiseSeries(commandsList.map(it => {
+        const args = it.split(' ');
+        const extension = path.extname(args[0]);
+
+        // If the first arg is a script file get its absolute path
+        if (extension) {
+          args[0] = path.resolve(this._project.root, this._config.root, args[0]);
         }
 
-        const trimmed = error[key].toString().trim();
-        if (!trimmed) {
-          return false;
+        logger.warn(this._addNameToMessage(`Executing hook '${it}' ${hook} ${this._action} action.`));
+        let command;
+        switch (extension) {
+          case '.js':
+            return () => {
+              const promise = require(args[0])(this._config, res.buffer);
+
+              return (promise instanceof Promise ? promise : Promise.resolve()).then(() => Promise.resolve(res));
+            };
+
+          case '.sh':
+            command = 'bash';
+            break;
+
+          default:
+            command = args.shift();
+            break;
         }
 
-        originalMessage = trimmed;
-        return true;
+        return () => this._spawn(command, args, { env: process.env }).then(() => Promise.resolve(res));
+      })).catch(error => {
+        let originalMessage;
+
+        ['message', 'stderr'].find(key => {
+          if (!error[key]) {
+            return false;
+          }
+
+          const trimmed = error[key].toString().trim();
+          if (!trimmed) {
+            return false;
+          }
+
+          originalMessage = trimmed;
+          return true;
+        });
+
+        const message = this._addNameToMessage(originalMessage ?
+          `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
+          `An unknown error occurred in hook ${this._action} ${hook} execution.`);
+
+        throw new Error({ ...error, message });
       });
-
-      const message = this._addNameToMessage(originalMessage ?
-        `An error occurred in hook ${this._action} ${hook} execution: ${originalMessage}` :
-        `An unknown error occurred in hook ${this._action} ${hook} execution.`);
-
-      throw new Error({ ...error, message });
+      
     });
   }
 
