@@ -425,31 +425,13 @@ class Terraform {
    * @return {Promise}
    */
   apply() {
-    const { sentinel } = this._config;
-    const sentinelArgs = ['-global'];
-    const promises = [];
-    if (sentinel && sentinel.length > 0) {
-      sentinel.forEach(element => {
-        promises.push(this.runSentinel('apply', 
-          sentinelArgs.concat(
-            this._optsToArgs({ 
-              'input': '"`' + Prepare.getBinary(this._config) + ' show -json ' + this._metadata.getPlanPath() + '`"',
-              '-color': false
-            }),
-            [`${this._metadata.getObjectPath(element)}`]
-          )
-        ));
-      });
-    }
-    return Promise.all(promises).then(() => {
-      const backupPath = this._metadata.getStateBackupPath();
-      fse.ensureFileSync(backupPath);
-      const options = { '-backup': backupPath, '-auto-approve': true, '-input': false };
+    const backupPath = this._metadata.getStateBackupPath();
+    fse.ensureFileSync(backupPath);
+    const options = { '-backup': backupPath, '-auto-approve': true, '-input': false };
 
-      return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
-        .then(() => this._getStateContent())
-        .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
-    });
+    return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
+      .then(() => this._getStateContent())
+      .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
 
   /**
@@ -512,23 +494,6 @@ class Terraform {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
     return this._spawn(Prepare.getBinary(this._config), [cmd, ...args], {
-      cwd: this._metadata.getRoot(),
-      env: this._envVars,
-      shell: true
-    });
-  }
-
-  /**
-   * Run sentinet command
-   * @param {String} cmd
-   * @param {Array} args
-   * @return {String}
-   */
-  async runSentinel(cmd, args) {
-    if (this._showLogs) {
-      logger.warn(`[${this.getName()}] sentinel ${cmd} ${args.join(' ')}`);
-    }
-    return this._spawn('sentinel', [cmd, ...args], {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
       shell: true

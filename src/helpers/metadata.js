@@ -66,11 +66,10 @@ class Metadata {
   }
 
   /**
-   * @param {String} fileName
    * @returns {String}
    */
-  getObjectPath(fileName) {
-    return path.join(this._base, fileName);
+  getObjectPath() {
+    return this._base;
   }
 
   /**

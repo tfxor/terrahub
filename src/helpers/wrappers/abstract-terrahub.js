@@ -3,7 +3,9 @@
 const path = require('path');
 const Fetch = require('../fetch');
 const logger = require('../logger');
+const Metadata = require('../metadata');
 const Terraform = require('./terraform');
+const Sentinel = require('./sentinel');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const ConfigLoader = require('../../config-loader');
@@ -23,6 +25,7 @@ class AbstractTerrahub {
     this._config = cfg;
     this._project = cfg.project;
     this._terraform = new Terraform(cfg, this.parameters);
+    this._metadata = new Metadata(cfg, this.parameters);
     this._timestamp = Math.floor(Date.now() / 1000).toString();
     this._componentHash = ConfigLoader.buildComponentHash(this._config.root);
   }
@@ -93,10 +96,21 @@ class AbstractTerrahub {
     }
 
     let hookPath;
+    let sentinelExist;
     try {
       hookPath = this._config.hook[this._action][hook];
+      sentinelExist = this._config.hook[this._action].hasOwnProperty('sentinel');
     } catch (error) {
       return Promise.resolve(res);
+    }
+
+    if (sentinelExist) {
+      return Sentinel.run(
+        this._config,
+        this._action,
+        hook,
+        this._metadata.getObjectPath()
+      );
     }
 
     if (!hookPath) {
