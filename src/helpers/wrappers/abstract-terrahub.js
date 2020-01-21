@@ -96,21 +96,18 @@ class AbstractTerrahub {
     }
 
     let hookPath;
-    let sentinelExist;
     try {
       hookPath = this._config.hook[this._action][hook];
-      sentinelExist = this._config.hook[this._action].hasOwnProperty('sentinel');
+      if (this._config.hook[this._action].hasOwnProperty('sentinel')) {
+        return Sentinel.run(
+          this._config,
+          this._action,
+          hook,
+          this._metadata.getObjectPath()
+        );
+      }
     } catch (error) {
       return Promise.resolve(res);
-    }
-
-    if (sentinelExist) {
-      return Sentinel.run(
-        this._config,
-        this._action,
-        hook,
-        this._metadata.getObjectPath()
-      );
     }
 
     if (!hookPath) {
@@ -121,9 +118,18 @@ class AbstractTerrahub {
       Object.assign(process.env, this._config.hook.env.variables);
     }
 
-    const commandsList = Array.isArray(hookPath) ? hookPath : [hookPath];
+    return this._promiseSeries(Array.isArray(hookPath) ? hookPath : [hookPath], hook, res);
+  }
 
-    return promiseSeries(commandsList.map(it => {
+  /**
+   * @param {Array} commandsList
+   * @param {String} hook
+   * @param {Object} res
+   * @return {Promise}
+   * @private
+   */
+  _promiseSeries(commandsList, hook, res) {
+    promiseSeries(commandsList.map(it => {
       const args = it.split(' ');
       const extension = path.extname(args[0]);
 
