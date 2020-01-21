@@ -129,7 +129,7 @@ class AbstractTerrahub {
    * @private
    */
   _promiseSeries(commandsList, hook, res) {
-    promiseSeries(commandsList.map(it => {
+    return promiseSeries(commandsList.map(it => {
       const args = it.split(' ');
       const extension = path.extname(args[0]);
 
