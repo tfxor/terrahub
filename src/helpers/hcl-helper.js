@@ -40,7 +40,8 @@ class HclHelper {
         if (remoteTfvarsLinks.length > 0) {
           return HclHelper._addTfvars(config, remoteTfvarsLinks, parameters);
         }
-      }).then(() => HclHelper._normalizeProvidersForResource(config))
+      })
+      .then(() => HclHelper._normalizeProvidersForResource(config))
       .then(() => HclHelper._normalizeProvidersForData(config))
       .then(() => HclHelper._normalizeTfvars(config))
       .then(() => HclHelper._createTerraformFiles(config, parameters))
@@ -148,7 +149,7 @@ class HclHelper {
       Object.keys(locals).filter(it => locals[it]).map(() => {
         const { component } = locals;
         if (component && component.remote) {
-          localTfstatePath = component.remote;
+          remoteTfstatePath = component.remote;
         }
       });
     }
@@ -234,7 +235,9 @@ class HclHelper {
         return HclHelper._parsingResourceByName(resourcesByType, resourceName, template);
       });
 
-    return Promise.all(promises).then(() => { });
+    return Promise.all(promises).then(() => {
+      // continue regardless of then
+    });
   }
 
   /**
@@ -269,7 +272,7 @@ class HclHelper {
       }
 
       let tfvarValues = tfvars[variableName];
-      if (!HclHelper._checkTerrahubVariableType(tfvarValues) == 'list' || !tfvarValues) {
+      if (!HclHelper._checkTerrahubVariableType(tfvarValues) === 'list' || !tfvarValues) {
         return Promise.resolve();
       }
 
@@ -310,6 +313,7 @@ class HclHelper {
    * @param {*} oldProviderTerrahubVariable
    * @param {*} resourcesByType
    * @param {*} resourceName
+   * @returns {Promise}
    */
   static _parsingParamInResource(template, tfvarValue, oldProviderTerrahubVariable, resourcesByType, resourceName) {
     const resourceByName = resourcesByType[resourceName];
@@ -327,13 +331,22 @@ class HclHelper {
               const localVariableName = localVariable.slice(0, -1).replace(/local\./, '');
               const { locals } = template;
               try {
-                locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(oldProviderTerrahubVariable, tfvarValue);
+                locals[`${localVariableName}_${tfvarValue}`] = locals[localVariableName].replace(
+                  oldProviderTerrahubVariable, tfvarValue
+                );
                 let resourceByNameStringify = JSON.stringify(resourceByNameCopy[paramName]);
-                resourceByNameStringify = resourceByNameStringify.replace(new RegExp(localVariable.slice(0, -1), 'gm'), `local.${localVariableName}_${tfvarValue}`);
-                resourceByNameStringify = resourceByNameStringify.replace(JSON.stringify(oldProviderTerrahubVariable).slice(1, -1), tfvarValue);
+                resourceByNameStringify = resourceByNameStringify.replace(
+                  new RegExp(localVariable.slice(0, -1), 'gm'),
+                  `local.${localVariableName}_${tfvarValue}`
+                );
+                resourceByNameStringify = resourceByNameStringify.replace(
+                  JSON.stringify(oldProviderTerrahubVariable).slice(1, -1), tfvarValue
+                );
                 resourceByNameCopy[paramName] = JSON.parse(resourceByNameStringify);
               }
-              catch (e) { }
+              catch (e) {
+                // continue regardless of error
+              }
             });
 
             return Promise.all(promises);
@@ -382,7 +395,7 @@ class HclHelper {
    * @private
    */
   static _normalizeTfvars(config) {
-    const template = config['template'];
+    const { template } = config;
 
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template).replace(/\"provider\!\"\:\".+?\"\,/gm, '');
@@ -543,12 +556,11 @@ class HclHelper {
    * @return {Promise}
    */
   static _addLocalTfvars(config, localTfvarsLinks, parameters) {
-    const promises = Object.keys(localTfvarsLinks).map(it => {
+    const promises = Object.keys(localTfvarsLinks).map(async it => {
       const localTfvarsLinkPath = resolve(config.project.root, config.root, localTfvarsLinks[it]);
       if (fse.existsSync(localTfvarsLinkPath)) {
-        return fse.readFile(localTfvarsLinkPath).then(content => {
-          return HclHelper._parsingTfvars(content.toString(), config, parameters);
-        });
+        const content = await fse.readFile(localTfvarsLinkPath);
+        return HclHelper._parsingTfvars(content.toString(), config, parameters);
       }
     });
 
@@ -569,9 +581,11 @@ class HclHelper {
     while ((m = regex.exec(remoteTfvars)) !== null) {
       if (m.index === regex.lastIndex) { regex.lastIndex++; }
       m.forEach((match) => {
-        let newValue = match.replace(/\<\<EOF/g, "").replace(/EOF/g, "").replace(/\n/g, "");
-        newValue = newValue.replace(/\r/g, "").replace(/  /g, "");
-        newRemoteTfvars = newRemoteTfvars.replace(match, `"${Buffer.from(JSON.stringify(newValue)).toString('base64')}"`);
+        let newValue = match.replace(/\<\<EOF/g, '').replace(/EOF/g, '').replace(/\n/g, '');
+        newValue = newValue.replace(/\r/g, '').replace(/ {2}/g, '');
+        newRemoteTfvars = newRemoteTfvars.replace(
+          match, `"${Buffer.from(JSON.stringify(newValue)).toString('base64')}"`
+        );
       });
     }
 
@@ -581,7 +595,7 @@ class HclHelper {
     const regexQuotes = /\".+?\"\s*\=/gm;
     if (newRemoteTfvars.match(regexQuotes)) {
       for (const match of newRemoteTfvars.match(regexQuotes)) {
-        const newValue = match.replace(/\"/g, "").replace(/ /g, "").replace(/=/g, "");
+        const newValue = match.replace(/\"/g, '').replace(/ /g, '').replace(/[=]/g, '');
         mapOfKeysQuote.set(`QuoteKey${indexQuoteKey}`, newValue);
         newRemoteTfvars = newRemoteTfvars.replace(match, `QuoteKey${indexQuoteKey} = `);
         indexQuoteKey++;
@@ -606,7 +620,7 @@ class HclHelper {
 
         const remoteTfvarsJson = JSON.parse(strWithoutQuote);
         template['tfvars'] = JSON.parse((JSON.stringify(config.template.tfvars || {}) +
-          JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ",").replace(/{,/g, "{").replace(/,}/g, "}"));
+          JSON.stringify(remoteTfvarsJson)).replace(/}{/g, ',').replace(/{,/g, '{').replace(/,}/g, '}'));
 
         return Promise.resolve();
       })
@@ -661,7 +675,10 @@ class HclHelper {
           break;
       }
 
-      return HclHelper.convertJsonToHcl(join(tmpPath, name), data, HclHelper.checkTfVersion(config), parameters, distributor);
+      return HclHelper.convertJsonToHcl(
+        join(tmpPath, name), data, HclHelper.checkTfVersion(config),
+        parameters, distributor
+      );
     });
 
     return Promise.all(promises);
@@ -670,6 +687,7 @@ class HclHelper {
   /**
    * @param {Object} config
    * @param {Object} parameters
+   * @returns {Promise}
    * @private
    */
   static _generateVariable(config, parameters) {
@@ -693,7 +711,10 @@ class HclHelper {
       variable[it] = { type };
     });
 
-    return HclHelper.convertJsonToHcl(join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config), parameters, distributor);
+    return HclHelper.convertJsonToHcl(
+      join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config),
+      parameters, distributor
+    );
   }
 
   /**
@@ -711,8 +732,10 @@ class HclHelper {
       .then(() => fse.readdir(src))
       .then(files => {
         const nonTerrahubFiles = files.filter(src => !src.match(regEx));
-        const promises = nonTerrahubFiles.map(file =>
-          fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => { })
+        const promises = nonTerrahubFiles.map(
+          file => fse.ensureSymlink(join(src, file), join(tmpPath, file)).catch(() => {
+            // continue regardless of error
+          })
         );
 
         return Promise.all(promises);
