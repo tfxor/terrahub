@@ -66,17 +66,10 @@ var (
 	}
 	withoutStartMap = []string{
 		"provisioner", "local-exec",
-		"remote-exec", "chef", "file", "habitat", "puppet",
-		"filter", "vpc_settings", "account_aggregation_source", "stage",
-		"scope", "output_location", "targets", "data_resource", "s3_destination",
-		"global_filter", "approval_rule", "patch_filter", "schema",
-		"environment_variable", "egress", "ingress",
+		"remote-exec", "chef", "file", "habitat", "puppet", "scope",
 	}
 	withoutEqual = []string{
-		"assume_role", "filter", "vpc_settings", "account_aggregation_source",
-		"scope", "output_location", "targets", "data_resource", "s3_destination",
-		"global_filter", "approval_rule", "patch_filter", "stage", "schema",
-		"environment_variable", "egress", "ingress",
+		"assume_role", "scope",
 	}
 )
 
@@ -207,15 +200,22 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			if interpolation != "" && level < 2 {
 				outHCL2 += walkJson(v, 1, "", resourceType, "")
 			} else if v[0] == 123 {
-
+				isBlock := false
+				if len(lastIndex) > 1 && lastIndex[len(lastIndex) - 1] == '!' {
+					isBlock = true
+				}
 				if i == 0 {
 					if lastIndex != "provisioner" {
 						outHCL2 += " {\n"
 					}
 				} else if lastIndex == "provisioner" {
 					outHCL2 += lastIndex + " "
-				} else if Contains(withoutEqual, lastIndex) {
-					outHCL2 += lastIndex + " {\n"
+				} else if Contains(withoutEqual, lastIndex) || isBlock {
+					newLastIndex := lastIndex
+					if isBlock {
+						newLastIndex = newLastIndex[0:len(newLastIndex) - 1]
+					}
+					outHCL2 += newLastIndex + " {\n"
 				} else {
 					outHCL2 += lastIndex + " = {\n"
 				}
@@ -248,7 +248,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		case string:
 			isBlock := false
-			if v[len(v) - 1] == '!' {
+			if len(v) > 1 && v[len(v) - 1] == '!' {
 				isBlock = true
 				v = v[0:len(v) - 1]
 			}
@@ -320,7 +320,7 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 func mapIn2Level(i string, level int, raw json.RawMessage) string {
 	var outHCL2 = ""
 	isBlock := false
-	if i[len(i)-1] == '!' {
+	if len(i) > 1 && i[len(i)-1] == '!' {
 		isBlock = true
 		i = i[0 : len(i)-1]
 	}
@@ -345,7 +345,7 @@ func mapIn2Level(i string, level int, raw json.RawMessage) string {
 func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
 	var outHCL2 = ""
 	isBlock := false
-	if i[len(i)-1] == '!' {
+	if len(i) > 1 && i[len(i)-1] == '!' {
 		isBlock = true
 		i = i[0 : len(i)-1]
 	}
