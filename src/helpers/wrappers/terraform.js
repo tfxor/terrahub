@@ -480,16 +480,17 @@ class Terraform {
    * @return {Promise<String>}
    */
   show(planOrStatePath) {
-    return this.run('show', ['-json', planOrStatePath]);
+    return this.run('show', ['-json', planOrStatePath], true);
   }
 
   /**
    * Run terraform command
    * @param {String} cmd
    * @param {Array} args
+   * @param {Boolen} isShow=false
    * @return {Promise}
    */
-  async run(cmd, args) {
+  async run(cmd, args, isShow=false) {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
@@ -497,7 +498,7 @@ class Terraform {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
       shell: true
-    });
+    }, isShow);
   }
 
   /**
@@ -521,15 +522,16 @@ class Terraform {
    * @param {String} command
    * @param {Array} args
    * @param {Object} options
+   * @param {Boolen} isShow=false
    * @return {Promise}
    * @private
    */
-  _spawn(command, args, options) {
+  _spawn(command, args, options, isShow=false) {
     return spawner(
       command, args, options,
       err => logger.error(this._out(err)),
       data => {
-        if (this._showLogs) {
+        if (this._showLogs === true && isShow === false) {
           logger.raw(this._out(data));
         }
       }
