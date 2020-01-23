@@ -64,13 +64,6 @@ var (
 	doubleScope = []string{
 		"provider", "variable",
 	}
-	withoutStartMap = []string{
-		"provisioner", "local-exec",
-		"remote-exec", "chef", "file", "habitat", "puppet", "scope",
-	}
-	withoutEqual = []string{
-		"assume_role", "scope",
-	}
 )
 
 func init() {
@@ -140,9 +133,13 @@ func ContainsOneOfElement(x string, a []string) bool {
 	return false
 }
 
-func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType string, lastIndex string) string {
+func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType string, lastIndex string, isArray ...bool) string {
+	equalSymbol := " = "
+	if len(isArray) > 0 {
+		equalSymbol = ""
+	}
 	if raw[0] == 123 && raw[0] == 125 { //  123 is `{` => object
-		outHCL2 += " {}\n"
+		outHCL2 += equalSymbol + "{}\n"
 	} else if raw[0] == 123 { //  123 is `{` => object
 		var cont Map
 		_ = json.Unmarshal(raw, &cont)
@@ -170,8 +167,10 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += mapIn1LevelAndSubLevel(i, level, v)
 			case "module", "output", "variable", "provider":
 				outHCL2 += mapIn2Level(i, level, v)
-			case "resource", "data":
+			case "resource":
 				outHCL2 += mapIn3Level(i, level, v, lastIndex, resourceType)
+			case "data":
+				outHCL2 += mapIn3LevelData(i, level, v, lastIndex, resourceType)
 			default:
 				outHCL2 += mapIn(i, level, v, resourceType)
 			}
@@ -192,7 +191,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		}
 	} else if raw[0] == 91 && raw[1] == 93 { // 91 is `[`  => array
-		outHCL2 += " []\n"
+		outHCL2 += equalSymbol + "[]\n"
 	} else if raw[0] == 91 { // 91 is `[`  => array
 		var cont Array
 		_ = json.Unmarshal(raw, &cont)
@@ -200,24 +199,14 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			if interpolation != "" && level < 2 {
 				outHCL2 += walkJson(v, 1, "", resourceType, "")
 			} else if v[0] == 123 {
-				isBlock := false
-				if len(lastIndex) > 1 && lastIndex[len(lastIndex) - 1] == '!' {
-					isBlock = true
-				}
 				if i == 0 {
 					if lastIndex != "provisioner" {
 						outHCL2 += " {\n"
 					}
 				} else if lastIndex == "provisioner" {
-					outHCL2 += lastIndex + " "
-				} else if Contains(withoutEqual, lastIndex) || isBlock {
-					newLastIndex := lastIndex
-					if isBlock {
-						newLastIndex = newLastIndex[0:len(newLastIndex) - 1]
-					}
-					outHCL2 += newLastIndex + " {\n"
+					outHCL2 += lastIndex
 				} else {
-					outHCL2 += lastIndex + " = {\n"
+					outHCL2 += lastIndex + " {\n"
 				}
 				outHCL2 += walkJson(v, level, "", resourceType, lastIndex)
 				if lastIndex != "provisioner" {
@@ -225,9 +214,9 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				}
 			} else {
 				if i == 0 {
-					outHCL2 += " [\n"
+					outHCL2 += equalSymbol + "[\n"
 				}
-				outHCL2 += walkJson(v, level+1, "", resourceType, "")
+				outHCL2 += walkJson(v, level+1, "", resourceType, "", true)
 				if i < len(cont)-1 {
 					outHCL2 = outHCL2[0:len(outHCL2)-1] + ",\n"
 				} else {
@@ -242,14 +231,14 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		switch v := val.(type) {
 		case float64:
 			if tf12format == "no" {
-				outHCL2 += "\"" + strconv.FormatFloat(v, 'f', -1, 64) + "\"\n"
+				outHCL2 += equalSymbol + "\"" + strconv.FormatFloat(v, 'f', -1, 64) + "\"\n"
 			} else {
-				outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
+				outHCL2 += equalSymbol + strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 			}
 		case string:
-			isBlock := false
+			notString := false
 			if len(v) > 1 && v[len(v) - 1] == '!' {
-				isBlock = true
+				notString = true
 				v = v[0:len(v) - 1]
 			}
 			itIsFor := false
@@ -257,16 +246,16 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
-			if (isFunction(v, level) || itIsFor || isBlock) && tf12format != "no" {
-				outHCL2 += v + "\n"
+			if (isFunction(v, level) || itIsFor || notString) && tf12format != "no" {
+				outHCL2 += equalSymbol + v + "\n"
 			} else {
-				outHCL2 += "\"" + v + "\"\n"
+				outHCL2 += equalSymbol + "\"" + v + "\"\n"
 			}
 		case bool:
 			if tf12format == "no" {
-				outHCL2 += "\"" + strconv.FormatBool(v) + "\"\n"
+				outHCL2 += equalSymbol + "\"" + strconv.FormatBool(v) + "\"\n"
 			} else {
-				outHCL2 += strconv.FormatBool(v) + "\n"
+				outHCL2 += equalSymbol + strconv.FormatBool(v) + "\n"
 			}
 		case nil:
 			outHCL2 += ""
@@ -284,9 +273,12 @@ func mapIn1Level(i string, level int, raw json.RawMessage) string {
 	case 0:
 		outHCL2 = i
 	default:
-		outHCL2 = i + " = "
+		outHCL2 = i
 	}
 	if raw[0] == 123 {
+		if level > 0 {
+			outHCL2 += " = "
+		}
 		outHCL2 += " {\n"
 	}
 
@@ -308,7 +300,7 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 	case 2:
 		outHCL2 = "\"" + i + "\""
 	default:
-		outHCL2 = checkPoint(i) + " = "
+		outHCL2 = checkPoint(i) + " "
 	}
 	if raw[0] == 123 && level != 1 {
 		outHCL2 += " {\n"
@@ -319,21 +311,12 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 
 func mapIn2Level(i string, level int, raw json.RawMessage) string {
 	var outHCL2 = ""
-	isBlock := false
-	if len(i) > 1 && i[len(i)-1] == '!' {
-		isBlock = true
-		i = i[0 : len(i)-1]
-	}
 	switch level {
 	case 0:
 	case 1:
 		outHCL2 = "\"" + i + "\""
 	default:
-		if Contains(withoutEqual, i) || isBlock {
-			outHCL2 = i
-		} else {
-			outHCL2 = checkPoint(i) + " ="
-		}
+		outHCL2 = checkPoint(i)
 	}
 	if raw[0] == 123 && level >= 1 {
 		outHCL2 += " {\n"
@@ -344,11 +327,6 @@ func mapIn2Level(i string, level int, raw json.RawMessage) string {
 
 func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
 	var outHCL2 = ""
-	isBlock := false
-	if len(i) > 1 && i[len(i)-1] == '!' {
-		isBlock = true
-		i = i[0 : len(i)-1]
-	}
 	switch level {
 	case 0:
 	case 1:
@@ -356,15 +334,9 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 		outHCL2 = resourceType + " \"" + lastIndex + "\" \"" + i + "\""
 	default:
 		if ContainsOneOfElement(i, []string{"/", ",", "."}) || lastIndex == "provisioner" {
-			if Contains(withoutStartMap, i) || isBlock {
-				outHCL2 = "\"" + i + "\" "
-			} else {
-				outHCL2 = "\"" + i + "\" ="
-			}
-		} else if Contains(withoutStartMap, i) || Contains(withoutEqual, i) || isBlock {
-			outHCL2 = i + " "
+			outHCL2 = "\"" + i + "\" "
 		} else {
-			outHCL2 = checkPoint(i) + " ="
+			outHCL2 = checkPoint(i)
 		}
 
 	}
@@ -375,17 +347,42 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 	return outHCL2
 }
 
+func mapIn3LevelData(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
+	var outHCL2 = ""
+	switch level {
+	case 0:
+	case 1:
+	case 2:
+		outHCL2 = resourceType + " \"" + lastIndex + "\" \"" + i + "\""
+	default:
+		if ContainsOneOfElement(i, []string{"/", ",", "."}) || lastIndex == "provisioner" {
+			outHCL2 = "\"" + i + "\" "
+		} else {
+			outHCL2 = checkPoint(i)
+		}
+
+	}
+	if raw[0] == 123 && level >= 2 {
+		if (Contains([]string{"config", "vars"}, i)) {
+			outHCL2 += " = "
+		}
+		outHCL2 += " {\n"
+	}
+
+	return outHCL2
+}
+
 func mapIn(i string, level int, raw json.RawMessage, resourceType string) string {
 	var outHCL2 string
 
 	if interpolation != "" && level == 1 {
-		outHCL2 = " \"" + i + "\" "
+		outHCL2 = " \"" + i + "\""
 	} else if raw[0] != 91 || level > 0 || resourceType == "" {
-		outHCL2 = checkPoint(i) + " ="
+		outHCL2 = checkPoint(i)
 	}
 
 	if raw[0] == 123 {
-		outHCL2 += " {\n"
+		outHCL2 += " = {\n"
 	}
 
 	return outHCL2
