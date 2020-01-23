@@ -1,5 +1,6 @@
 'use strict';
 
+const semver = require('semver');
 const logger = require('../logger');
 const Dictionary = require('../dictionary');
 const BuildHelper = require('../build-helper');
@@ -85,22 +86,33 @@ class Terrahub extends AbstractTerrahub {
    * @private
    * @abstract
    */
-  upload(data) {
+  async upload(data) {
     if (
       !this.parameters.config.token ||
       !data ||
       !data.buffer ||
       !['plan', 'apply', 'destroy'].includes(this._action)
     ) {
-      return Promise.resolve(data);
+      return data;
     }
 
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
+    const terraformVersion = this._config.terraform.version;
 
-    return this._putObject(url, data.buffer)
-      .then(() => this._callParseLambda(key))
-      .then(() => Promise.resolve(data));
+    if (semver.satisfies(terraformVersion, '>=0.12.0')) {
+      const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
+
+      await this._putObject(url, planAsJson);
+      await this._callParseLambda(key, true);
+
+      return data;
+    }
+
+    await this._putObject(url, data.buffer);
+    await this._callParseLambda(key, false);
+
+    return data;
   }
 
   /**
@@ -117,15 +129,17 @@ class Terrahub extends AbstractTerrahub {
 
   /**
    * @param {String} key
+   * @param {Boolean} isHcl2
    * @return {Promise}
    * @private
    */
-  _callParseLambda(key) {
+  _callParseLambda(key, isHcl2) {
     const url = `thub/resource/parse-${this._action}`;
 
     const options = {
       body: JSON.stringify({
-        key: key,
+        key,
+        isHcl2,
         projectId: this._project.id,
         thubRunId: this._runId
       })
@@ -144,11 +158,11 @@ class Terrahub extends AbstractTerrahub {
   /**
    * Put object via bucket url
    * @param {String} url
-   * @param {Buffer} body
+   * @param {Buffer|String} body
    * @return {Promise}
    * @private
    */
-  _putObject(url, body) {
+  async _putObject(url, body) {
     const options = {
       method: 'PUT',
       body: body,
