@@ -99,14 +99,12 @@ class Terrahub extends AbstractTerrahub {
     const key = this._getKey();
     const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
     const terraformVersion = this._config.terraform.version;
-    console.log(key);
 
     if (semver.satisfies(terraformVersion, '>=0.12.0')) {
       if (this._action === 'plan') {
         const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
         await this._putObject(url, planAsJson);
       } else {
-        console.log(data.buffer.toString())
         await this._putObject(url, data.buffer);
       }
 
