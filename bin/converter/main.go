@@ -65,30 +65,11 @@ var (
 		"provider", "variable",
 	}
 	withoutStartMap = []string{
-		"provisioner", "local-exec", "lifecycle", "remote-exec", "chef", "file", "habitat", "puppet",
-		"filter", "versioning", "vpc_settings", "account_aggregation_source", "source",
-		"scope", "output_location", "targets", "event_selector", "data_resource", "s3_destination",
-		"global_filter", "approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
-		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
-		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
-		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
-		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
-		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
-		"alias", "scaling_configuration",
+		"provisioner", "local-exec",
+		"remote-exec", "chef", "file", "habitat", "puppet", "scope",
 	}
 	withoutEqual = []string{
-		"statement", "condition", "principals", "assume_role", "filter", "versioning",
-		"vpc_settings", "account_aggregation_source", "source", "scope", "output_location",
-		"targets", "event_selector", "data_resource", "s3_destination", "global_filter",
-		"approval_rule", "patch_filter", "endpoint_configuration", "settings", "origin",
-		"custom_error_response", "custom_origin_config", "default_cache_behavior", "viewer_certificate",
-		"forwarded_values", "restrictions", "cookies", "geo_restriction", "cache", "environment", "artifacts",
-		"environment_variable", "cognito_identity_providers", "ordered_cache_behavior", "stage", "action",
-		"artifact_store", "schema", "email_configuration", "password_policy", "string_attribute_constraints",
-		"admin_create_user_config", "verification_message_template", "invite_message_template", "tracing_config",
-		"vpc_config", "egress", "ingress", "cors_rule", "website", "lifecycle_rule", "expiration", "lambda_function",
-		"scaling_configuration",
+		"assume_role", "scope",
 	}
 )
 
@@ -219,15 +200,22 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			if interpolation != "" && level < 2 {
 				outHCL2 += walkJson(v, 1, "", resourceType, "")
 			} else if v[0] == 123 {
-
+				isBlock := false
+				if len(lastIndex) > 1 && lastIndex[len(lastIndex) - 1] == '!' {
+					isBlock = true
+				}
 				if i == 0 {
 					if lastIndex != "provisioner" {
 						outHCL2 += " {\n"
 					}
 				} else if lastIndex == "provisioner" {
 					outHCL2 += lastIndex + " "
-				} else if Contains(withoutEqual, lastIndex) {
-					outHCL2 += lastIndex + " {\n"
+				} else if Contains(withoutEqual, lastIndex) || isBlock {
+					newLastIndex := lastIndex
+					if isBlock {
+						newLastIndex = newLastIndex[0:len(newLastIndex) - 1]
+					}
+					outHCL2 += newLastIndex + " {\n"
 				} else {
 					outHCL2 += lastIndex + " = {\n"
 				}
@@ -259,12 +247,17 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += strconv.FormatFloat(v, 'f', -1, 64) + "\n"
 			}
 		case string:
+			isBlock := false
+			if len(v) > 1 && v[len(v) - 1] == '!' {
+				isBlock = true
+				v = v[0:len(v) - 1]
+			}
 			itIsFor := false
 			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
-			(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
+				(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
 				itIsFor = true
 			}
-			if (isFunction(v, level) || itIsFor) && tf12format != "no" {
+			if (isFunction(v, level) || itIsFor || isBlock) && tf12format != "no" {
 				outHCL2 += v + "\n"
 			} else {
 				outHCL2 += "\"" + v + "\"\n"
@@ -326,12 +319,17 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 
 func mapIn2Level(i string, level int, raw json.RawMessage) string {
 	var outHCL2 = ""
+	isBlock := false
+	if len(i) > 1 && i[len(i)-1] == '!' {
+		isBlock = true
+		i = i[0 : len(i)-1]
+	}
 	switch level {
 	case 0:
 	case 1:
 		outHCL2 = "\"" + i + "\""
 	default:
-		if Contains(withoutEqual, i) {
+		if Contains(withoutEqual, i) || isBlock {
 			outHCL2 = i
 		} else {
 			outHCL2 = checkPoint(i) + " ="
@@ -346,7 +344,11 @@ func mapIn2Level(i string, level int, raw json.RawMessage) string {
 
 func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, resourceType string) string {
 	var outHCL2 = ""
-
+	isBlock := false
+	if len(i) > 1 && i[len(i)-1] == '!' {
+		isBlock = true
+		i = i[0 : len(i)-1]
+	}
 	switch level {
 	case 0:
 	case 1:
@@ -354,12 +356,12 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 		outHCL2 = resourceType + " \"" + lastIndex + "\" \"" + i + "\""
 	default:
 		if ContainsOneOfElement(i, []string{"/", ",", "."}) || lastIndex == "provisioner" {
-			if Contains(withoutStartMap, i) {
+			if Contains(withoutStartMap, i) || isBlock {
 				outHCL2 = "\"" + i + "\" "
 			} else {
 				outHCL2 = "\"" + i + "\" ="
 			}
-		} else if Contains(withoutStartMap, i) || Contains(withoutEqual, i) {
+		} else if Contains(withoutStartMap, i) || Contains(withoutEqual, i) || isBlock {
 			outHCL2 = i + " "
 		} else {
 			outHCL2 = checkPoint(i) + " ="
