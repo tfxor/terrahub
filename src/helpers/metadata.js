@@ -68,6 +68,13 @@ class Metadata {
   /**
    * @returns {String}
    */
+  getObjectPath() {
+    return this._base;
+  }
+
+  /**
+   * @returns {String}
+   */
   getStatePath() {
     return path.join(this._base, Metadata.STATE);
   }
