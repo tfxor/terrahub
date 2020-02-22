@@ -101,9 +101,13 @@ class Terrahub extends AbstractTerrahub {
     const terraformVersion = this._config.terraform.version;
 
     if (semver.satisfies(terraformVersion, '>=0.12.0')) {
-      const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
+      if (this._action === 'plan') {
+        const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
+        await this._putObject(url, planAsJson);
+      } else {
+        await this._putObject(url, data.buffer);
+      }
 
-      await this._putObject(url, planAsJson);
       await this._callParseLambda(key, true);
 
       return data;
