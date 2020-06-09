@@ -3,14 +3,14 @@
 ## Source path
 THUB_SRC=${1}
 if [ -z "${THUB_SRC}" ]; then
-  echo '[ERROR]: THUB_SRC variable is empty. Aborting...'
+  echo '[ERROR] THUB_SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## S3 bucket name
 THUB_S3_PATH=${2-${THUB_S3_PATH}}
 if [ -z "${THUB_S3_PATH}" ]; then
-  echo '[ERROR]: THUB_S3_PATH variable is empty. Aborting...'
+  echo '[ERROR] THUB_S3_PATH variable is empty. Aborting...'
   exit 1
 fi
 
@@ -24,7 +24,7 @@ fi
 
 ## Checking if THUB_BUILD_OK is true
 if [ ! "${THUB_BUILD_OK}" = "true" ]; then
-  echo '[INFO]: Build was NOT executed ==> Files will NOT be uploaded.'
+  echo '[INFO] Build was NOT executed ==> Files will NOT be uploaded.'
   exit 0
 fi
 
@@ -35,6 +35,6 @@ if [ -d "${THUB_SRC}" ]; then
 elif [ -f "${THUB_SRC}" ]; then
   aws s3 cp ${THUB_SRC} ${THUB_S3_PATH} ${THUB_AWS_OPTIONS}
 else
-  echo "[ERROR]: ${THUB_SRC} is not valid"
+  echo "[ERROR] ${THUB_SRC} is not valid"
   exit 1
 fi
