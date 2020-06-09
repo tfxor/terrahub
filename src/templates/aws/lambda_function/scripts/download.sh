@@ -25,13 +25,13 @@ aws --version > /dev/null 2>&1 || { echo >&2 'awscli is missing. Aborting...'; e
 THUB_CHECK_TYPE=$(aws s3 ls ${THUB_S3_PATH} ${THUB_AWS_OPTIONS} || echo "")
 if [ -z "${THUB_CHECK_TYPE}" ]; then
   echo "[INFO]: ${THUB_S3_PATH} does NOT exist ==> First execution."
-  echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
+  echo 'THUB_BUILD_OK="true"' >> .terrahub_build.env
   exit 0
 fi
 
 ## Downloading from S3
 echo '[INFO]: Downloading THUB_SRC from THUB_S3_PATH'
-if [[ $THUB_CHECK_TYPE = *" PRE "* ]]; then
+if echo $THUB_CHECK_TYPE | grep -q " PRE "; then
   aws s3 sync ${THUB_S3_PATH} ${THUB_SRC} ${THUB_AWS_OPTIONS}
 else
   aws s3 cp ${THUB_S3_PATH} ${THUB_SRC} ${THUB_AWS_OPTIONS}
