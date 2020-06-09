@@ -99,7 +99,7 @@ class ConfigLoader {
         var: {},
         varFile: [],
         backend: {},
-        version: '0.12.21',
+        version: '0.12.26',
         backup: false,
         workspace: 'default'
       }
