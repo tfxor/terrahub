@@ -92,14 +92,14 @@
 #     build:
 #       commands:
 #         - echo "BUILD: Running build step"
-#         - ./scripts/compile.sh
+#         - ./scripts/compile.sh /usr/bin/env node build.js
+#         - ./scripts/zip.sh -j $THUB_LAMBDA_ZIP $THUB_BUILD_PATH/*.js*
 #       finally:
 #         - echo "BUILD: build step successful"
 #     post_build:
 #       commands:
 #         - echo "BUILD: Running post_build step"
 #         - ./scripts/shasum.sh $THUB_LAMBDA_TXT
-#         - ./scripts/zip.sh $THUB_LAMBDA_ZIP $THUB_BUILD_PATH/*.js*
 #         - ./scripts/upload.sh $THUB_LAMBDA_ZIP $THUB_S3_PATH/$THUB_LAMBDA_ZIP
 #         - ./scripts/upload.sh $THUB_LAMBDA_TXT $THUB_S3_PATH/$THUB_LAMBDA_TXT
 #         - rm -f .terrahub_build.env $THUB_LAMBDA_ZIP
