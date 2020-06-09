@@ -32,7 +32,7 @@ fi
 echo "THUB_SHA=\"${THUB_SHA}\"" >> .terrahub_build.env
 echo "[INFO] Current SHA256 => ${THUB_SHA}"
 if [ "${THUB_BUILD_OK}" = "true" ]; then
-  echo "[INFO]: THUB_BUILD_OK='${THUB_BUILD_OK}' ==> Skipping comparing SHA256 sums."
+  echo "[INFO] THUB_BUILD_OK='${THUB_BUILD_OK}' ==> Skipping comparing SHA256 sums."
   exit 0
 fi
 
@@ -40,7 +40,7 @@ fi
 THUB_COMPARE=$(head -n 1 ${THUB_SRC})
 echo "[INFO] S3 Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" = "${THUB_COMPARE}" ]; then
-  echo '[INFO]: Build is NOT required.'
+  echo '[INFO] Build is NOT required.'
   exit 0
 fi
 
