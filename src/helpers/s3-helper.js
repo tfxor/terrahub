@@ -25,7 +25,7 @@ class S3Helper {
    * @returns {Promise}
    */
   writeFile(bucketName, objectKey, body = '') {
-    return this._s3.upload({ Bucket: bucketName, Key: objectKey, Body: body });
+    return this._s3.upload({ Bucket: bucketName, Key: objectKey, Body: body }).promise();
     // return this._s3.putObject({ Bucket: bucketName, Key: objectKey, Body: body }).promise();
   }
 
@@ -36,7 +36,7 @@ class S3Helper {
    */
   uploadFiles(bucketName, pathMap) {
     return Promise.all(
-      pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.createReadStream(path.localPath))));
+      pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.readFileSync(path.localPath))));
   }
 
   /**
