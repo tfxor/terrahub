@@ -472,6 +472,8 @@ class Util {
     } else {
       credentials += `aws_access_key_id = ${accountData.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${accountData.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
+      
+      credentials = credentials.replace('[default]', `[${accountData.name}]`);
     }
 
     if (tfvars) {
