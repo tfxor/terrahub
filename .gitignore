@@ -24,3 +24,5 @@ package-lock.json
 
 # deb installer
 *.deb
+
+.history/
