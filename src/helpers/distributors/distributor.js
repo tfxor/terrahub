@@ -229,7 +229,7 @@ class Distributor {
         this.distributor = this.getDistributor(hash, false, providerId);
         if (this.distributor instanceof AwsDistributor) {
           promises.push(this.distributor.distribute(
-            { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId }));
+            { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId, indexCount: index }));
         } else {
           this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         }

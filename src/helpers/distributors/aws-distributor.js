@@ -31,9 +31,10 @@ class AwsDistributor {
    * @param {String} runId
    * @param {String} accountId
    * @param {Number} importIndex
+   * @param {Number} indexCount
    * @return {void}
    */
-  async distribute({ actions, runId, accountId, importIndex }) {
+  async distribute({ actions, runId, accountId, importIndex, indexCount }) {
     try {
       await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
@@ -63,7 +64,9 @@ class AwsDistributor {
         env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
       });
 
-      await setTimeoutPromise(15 * 1000);
+      if (indexCount !== 0 && indexCount % 5 === 0) {
+        await setTimeoutPromise((indexCount + 35) * 1000);
+      }
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
