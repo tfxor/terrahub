@@ -65,6 +65,7 @@ class AwsDistributor {
       });
 
       if (indexCount !== 0 && indexCount % 5 === 0) {
+        logger.log(`[AWS Distributor] Waiting... ${indexCount + 35} seconds`);
         await setTimeoutPromise((indexCount + 35) * 1000);
       }
 
