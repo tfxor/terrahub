@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
+const { globPromise, lambdaHomedir, removeAwsEnvVars, setTimeoutPromise } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
@@ -62,6 +62,8 @@ class AwsDistributor {
         parameters: this.parameters,
         env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
       });
+
+      await setTimeoutPromise(15 * 1000);
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
