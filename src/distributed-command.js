@@ -475,21 +475,21 @@ class DistributedCommand extends AbstractCommand {
       .forEach(hash => { result[hash] = null; });
 
     // Add components' dependencies to the execution list
-    let newHashes = Object.keys(result);
+    // let newHashes = Object.keys(result);
 
-    while (newHashes.length) {
-      const componentHash = newHashes.pop();
-      const { dependsOn } = config[componentHash];
+    // while (newHashes.length) {
+    //   const componentHash = newHashes.pop();
+    //   const { dependsOn } = config[componentHash];
 
-      if (dependsOn) {
-        Object.keys(dependsOn)
-          .filter(hash => !result.hasOwnProperty(hash))
-          .forEach(hash => {
-            newHashes.push(hash);
-            result[hash] = null;
-          });
-      }
-    }
+    //   if (dependsOn) {
+    //     Object.keys(dependsOn)
+    //       .filter(hash => !result.hasOwnProperty(hash))
+    //       .forEach(hash => {
+    //         newHashes.push(hash);
+    //         result[hash] = null;
+    //       });
+    //   }
+    // }
 
     return Object.keys(result);
   }

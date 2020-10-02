@@ -34,9 +34,9 @@ class AwsDeployer {
     try {
       await this._updateCredentialsForS3();
       config.project.root = AwsDeployer._projectDirectory;
-      const api = parameters.config.api.split('-')[1];
+      const api = parameters.config.api === 'api' ? '' : `-${parameters.config.api.split('-')[1]}`;
       const accountId = await this._fetchAccountId();
-      const s3Prefix = [`projects-${api}`, accountId, thubRunId].join('/');
+      const s3Prefix = [`projects${api}`, accountId, thubRunId].join('/');
 
       await this.s3.syncPaths(config.project.root, s3Prefix, config.mapping);
 
