@@ -47,6 +47,7 @@ class AwsDistributor {
         s3Path: [s3Prefix, it].join('/')
       }));
 
+      logger.warn(`[${this.componentConfig.name}] Uploading to S3...`);
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
       logger.warn(`[${this.componentConfig.name}] Upload to S3 was successful.`);
 
