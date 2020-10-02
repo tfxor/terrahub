@@ -31,16 +31,15 @@ class AwsDistributor {
    * @param {String} runId
    * @param {String} accountId
    * @param {Number} importIndex
+   * @param {Number} indexCount
    * @return {void}
    */
-  async distribute({ actions, runId, accountId, importIndex }) {
+  async distribute({ actions, runId, accountId, importIndex, indexCount }) {
     try {
       await this._updateCredentialsForS3();
       const s3Helper = new S3Helper({ credentials: new AWS.EnvironmentCredentials('AWS') });
       const s3directory = this.config.api.replace('api', 'projects');
       const files = await this._buildFileList();
-
-      logger.log(`[${this.componentConfig.name}] Uploading to S3...`);
 
       const s3Prefix = [s3directory, accountId, runId].join('/');
       const pathMap = files.map(it => ({
@@ -48,6 +47,7 @@ class AwsDistributor {
         s3Path: [s3Prefix, it].join('/')
       }));
 
+      logger.warn(`[${this.componentConfig.name}] Uploading to S3...`);
       await s3Helper.uploadFiles(S3Helper.METADATA_BUCKET, pathMap);
       logger.warn(`[${this.componentConfig.name}] Upload to S3 was successful.`);
 
@@ -62,6 +62,15 @@ class AwsDistributor {
         parameters: this.parameters,
         env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
       });
+
+      //// wait feature
+      // if (indexCount !== 0 && indexCount % 10 === 0) {
+      //   logger.log(`[AWS Distributor] Waiting... ${indexCount + 20} seconds`);
+      //   for (let i = 0; i <= (indexCount + 20); i += 5) {
+      //     logger.log(`[AWS Distributor] Still waiting... ${i} seconds out of ${indexCount + 20}`);
+      //     await setTimeoutPromise((indexCount + 20 - i) * 1000);
+      //   }
+      // }
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
