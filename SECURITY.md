@@ -1,7 +1,7 @@
 # Security Policy
 
 ## Reporting a Vulnerability
-**DO NOT CREATE AN ISSUE** to report a security problem. Instead, please send an email to security@cloudready.ai
+**DO NOT CREATE AN ISSUE** to report a security problem. Instead, please send an email to security@terrahub.io
 
 ## Incident Response Process
 In case an incident is discovered or reported, we will follow the following process to contain, respond and remediate:
@@ -25,12 +25,10 @@ Once the incident is confirmed to be resolved, we will summarize the lessons lea
 ## Vulnerability Management Plan
 
 ### Keep permissions to a minimum
-The CloudReady.ai uses the least amount of access to limit the impact of possible security incidents, see Information collection and use.
-
-If someone would get access to the WIP app, the worst thing they could do is to read out contents from pull requests, limited to repositories the WIP got installed on.
+The TerraHub CLI uses the least amount of access to limit the impact of possible security incidents.
 
 ### Secure accounts with access
-The [CloudReady Organization](https://github.com/CloudReadyAI) on GitHub requires 2FA authorization for all members.
+The [TerraHub Organization](https://github.com/TerraHubCorp) on GitHub requires 2FA authorization for all members.
 
 ### Critical Updates and Security Notices
 We learn about critical software updates and security threats from these sources:
