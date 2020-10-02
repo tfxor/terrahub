@@ -280,7 +280,11 @@ class Distributor {
     switch (distributor) {
       case 'local':
         this._localWorkerCounter++;
-        return LocalDistributor.init(this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message)
+        return LocalDistributor.init(
+          this.parameters,
+          config,
+          this._env,
+          (event, message) => this._eventEmitter.emit(event, message)
         );
       case 'lambda':
         this._lambdaWorkerCounter++;

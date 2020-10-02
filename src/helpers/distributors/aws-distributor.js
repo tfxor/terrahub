@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const { join } = require('path');
 const logger = require('../logger');
 const S3Helper = require('../s3-helper');
-const { globPromise, lambdaHomedir, removeAwsEnvVars, setTimeoutPromise } = require('../util');
+const { globPromise, lambdaHomedir, removeAwsEnvVars } = require('../util');
 const { defaultIgnorePatterns } = require('../../config-loader');
 
 class AwsDistributor {
