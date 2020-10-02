@@ -50,7 +50,8 @@
     "zones": [
       "ap-northeast-2a",
       "ap-northeast-2b",
-      "ap-northeast-2c"
+      "ap-northeast-2c",
+      "ap-northeast-2d"
     ]
   },
   {
@@ -76,7 +77,8 @@
     "public": true,
     "zones": [
       "ca-central-1a",
-      "ca-central-1b"
+      "ca-central-1b",
+      "ca-central-1d"
     ]
   },
   {
