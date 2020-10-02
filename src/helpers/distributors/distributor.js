@@ -6,9 +6,9 @@ const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const OutputCommand = require('../../commands/output');
-const AwsDistributor = require('../distributors/aws-distributor');
+const AwsDistributor = require('./aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
-const LocalDistributor = require('../distributors/local-distributor');
+const LocalDistributor = require('./local-distributor');
 
 class Distributor {
   /**
@@ -57,6 +57,7 @@ class Distributor {
         }
         // eslint-disable-next-line no-await-in-loop
         const response = await this.runActions(actions, config, this.parameters, options);
+        logger.warn('Run actions finished');
 
         if (postActionFn) {
           if (this.command instanceof OutputCommand) {
@@ -69,6 +70,7 @@ class Distributor {
     } catch (err) {
       return Promise.reject(err);
     }
+
     await ApiHelper.sendMainWorkflow({ status: 'update' });
     this._closeWsConnections();
 
@@ -91,14 +93,14 @@ class Distributor {
 
     switch (direction) {
       case Dictionary.DIRECTION.FORWARD:
-        keys.forEach(key => {
+        keys.forEach((key) => {
           Object.assign(result[key], this.projectConfig[key].dependsOn);
         });
         break;
 
       case Dictionary.DIRECTION.REVERSE:
-        keys.forEach(key => {
-          Object.keys(this.projectConfig[key].dependsOn).forEach(hash => {
+        keys.forEach((key) => {
+          Object.keys(this.projectConfig[key].dependsOn).forEach((hash) => {
             result[hash][key] = null;
           });
         });
@@ -131,7 +133,7 @@ class Distributor {
    * @protected
    */
   removeDependencies(dependencyTable, hash) {
-    Object.keys(dependencyTable).forEach(key => {
+    Object.keys(dependencyTable).forEach((key) => {
       delete dependencyTable[key][hash];
     });
   }
@@ -151,20 +153,50 @@ class Distributor {
    * @param {Boolean} input
    * @return {Promise}
    */
-  async runActions(actions, config, parameters, {
-    format = '',
-    planDestroy = false,
-    stateList = false,
-    dependencyDirection = null,
-    stateDelete = '',
-    resourceName = '',
-    importId = '',
-    importLines = '',
-    input = false
-  } = {}) {
+  async runActions(
+    actions,
+    config,
+    parameters,
+    {
+      format = '',
+      planDestroy = false,
+      stateList = false,
+      dependencyDirection = null,
+      stateDelete = '',
+      resourceName = '',
+      importId = '',
+      importLines = '',
+      input = false
+    } = {}
+  ) {
     const results = [];
     this._env = { format, planDestroy, resourceName, importId, importLines, stateList, stateDelete, input };
     this.TERRAFORM_ACTIONS = actions;
+
+    this._eventEmitter.on('message', (response) => {
+      const data = response.data || response;
+      if (data.isError) {
+        this.errors.push(data.message);
+        return;
+      }
+
+      if (data && !results.some((it) => it.id === data.id)) {
+        results.push(data.data || data);
+      }
+
+      this.removeDependencies(this._dependencyTable, data.hash);
+    });
+
+    this._eventEmitter.on('exit', async (data) => {
+      const { code, worker } = data;
+      this._workCounter--;
+
+      worker === 'lambda' ? this._lambdaWorkerCounter-- : this._localWorkerCounter--;
+
+      if (code === 0 && !this.errors.length) {
+        await this.distributeConfig();
+      }
+    });
 
     try {
       if (this.isLambdaImportCommand()) {
@@ -175,46 +207,29 @@ class Distributor {
         await this.distributeConfig();
       }
     } catch (err) {
-      if ([/This feature is not available yet/, /[AWS distributor]/].some(it => it.test(err))) { throw new Error(err); }
+      if ([/This feature is not available yet/, /[AWS distributor]/].some((it) => it.test(err))) {
+        throw new Error(err);
+      }
       this.errors.push(err);
     }
 
     return new Promise((resolve, reject) => {
-      this._eventEmitter.on('message', (response) => {
-        const data = response.data || response;
-        if (data.isError) {
-          this.errors.push(data.message);
-          return;
-        }
-
-        if (data && !results.some(it => it.id === data.id)) {
-          results.push(data.data || data);
-        }
-
-        this.removeDependencies(this._dependencyTable, data.hash);
-      });
-
       this._eventEmitter.on('exit', async (data) => {
-        const { code, worker } = data;
-        this._workCounter--;
-
-        worker === 'lambda' ? this._lambdaWorkerCounter-- : this._localWorkerCounter--;
-
-        if (code === 0 && !this.errors.length) {
-          await this.distributeConfig();
-        }
-
         const hashes = Object.keys(this._dependencyTable);
 
-        if (!hashes.length && !this._workCounter && !this.errors.length) { return resolve(results); }
-        if (this.errors.length && !this._workCounter) { return reject(this.errors); }
+        if (!hashes.length && !this._workCounter && !this.errors.length) {
+          return resolve(results);
+        }
+        if (this.errors.length && !this._workCounter) {
+          return reject(this.errors);
+        }
       });
     });
   }
 
   /**
    * Distribute component config to Distributor execution
-   * @return {void}
+   * @return {Promise<void>}
    */
   async distributeConfig() {
     const hashes = Object.keys(this._dependencyTable);
@@ -228,8 +243,14 @@ class Distributor {
       if (!dependsOn.length) {
         this.distributor = this.getDistributor(hash, false, providerId);
         if (this.distributor instanceof AwsDistributor) {
-          promises.push(this.distributor.distribute(
-            { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId }));
+          promises.push(
+            this.distributor.distribute({
+              actions: this.TERRAFORM_ACTIONS,
+              runId: this.runId,
+              accountId: this.accountId,
+              indexCount: index
+            })
+          );
         } else {
           this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
         }
@@ -260,13 +281,18 @@ class Distributor {
       case 'local':
         this._localWorkerCounter++;
         return LocalDistributor.init(
-          this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
+          this.parameters,
+          config,
+          this._env,
+          (event, message) => this._eventEmitter.emit(event, message)
+        );
       case 'lambda':
         this._lambdaWorkerCounter++;
         return new AwsDistributor(
           parameters ? parameters : this.parameters,
           config,
-          providerId ? {...this._env, providerId: providerId } : this._env);
+          providerId ? { ...this._env, providerId: providerId } : this._env
+        );
       case 'fargate':
         //todo
         throw new Error('[Fargate Distributor]: This feature is not available yet.');
@@ -297,8 +323,14 @@ class Distributor {
 
       this.distributor = this.getDistributor(hash, isBatch ? parameters : false);
       if (this.distributor instanceof AwsDistributor) {
-        promises.push(this.distributor.distribute(
-          { actions: this.TERRAFORM_ACTIONS, runId: this.runId, accountId: this.accountId, importIndex: index }));
+        promises.push(
+          this.distributor.distribute({
+            actions: this.TERRAFORM_ACTIONS,
+            runId: this.runId,
+            accountId: this.accountId,
+            importIndex: index
+          })
+        );
       }
 
       this._workCounter++;
@@ -327,9 +359,10 @@ class Distributor {
     delete parameters.args.b;
 
     const line = JSON.parse(importLines)[index];
-    parameters.args = line.provider && line.provider !== ''
-      ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
-      : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
+    parameters.args =
+      line.provider && line.provider !== ''
+        ? { ...parameters.args, ...{ c: { [line.fullAddress]: line.value, j: line.provider } } }
+        : { ...parameters.args, ...{ c: { [line.fullAddress]: line.value } } };
 
     return parameters;
   }
@@ -338,7 +371,7 @@ class Distributor {
    * @return {Promise<String>}
    */
   _fetchAccountId() {
-    return this.fetch.get('thub/account/retrieve').then(json => Promise.resolve(json.data.id));
+    return this.fetch.get('thub/account/retrieve').then((json) => Promise.resolve(json.data.id));
   }
 
   /**
@@ -399,7 +432,7 @@ class Distributor {
    * @private
    */
   _propagateConfigsByTargets() {
-    Object.keys(this.projectConfig).forEach(hash => {
+    Object.keys(this.projectConfig).forEach((hash) => {
       const { distributor } = this.projectConfig[hash];
       const { targets } = this.projectConfig[hash];
       if (distributor === 'lambda' && targets && targets.length) {
@@ -420,34 +453,38 @@ class Distributor {
     if (!this.command._tokenIsValid) {
       return Promise.resolve();
     }
-    const { data: { ticket_id } } = await this.websocketTicketCreate();
+    const {
+      data: { ticket_id }
+    } = await this.websocketTicketCreate();
     this.ws = new WebSocket(this.parameters.config.api, ticket_id).ws;
 
-    this.ws.on('message', data => {
+    this.ws.on('message', (data) => {
       try {
         const parsedData = JSON.parse(data);
         const defaultMessage = { worker: 'lambda' };
 
         if (parsedData.action === 'logs') {
-          parsedData.data.forEach(it => {
+          parsedData.data.forEach((it) => {
             if (it.action !== 'main' && it.distributor === 'lambda') { logger.log(it.log); }
           });
         }
 
         if (parsedData.action === 'aws-cloud-deployer') {
-          const { data: { isError, hash, message } } = parsedData;
+          const {
+            data: { isError, hash, message }
+          } = parsedData;
           if (!isError) {
             logger.info(`[${this.projectConfig[hash].name}] Distributed execution was successful.`);
 
             this._eventEmitter.emit('message', { ...defaultMessage, ...{ isError, message, hash } });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 0 } });
+
           }
           if (isError) {
-            this._eventEmitter.emit('message',
-              {
-                ...defaultMessage,
-                ...{ isError, message: `[${this.projectConfig[hash].name}] ${message}`, hash }
-              });
+            this._eventEmitter.emit('message', {
+              ...defaultMessage,
+              ...{ isError, message: `[${this.projectConfig[hash].name}] ${message}`, hash }
+            });
             this._eventEmitter.emit('exit', { ...defaultMessage, ...{ code: 1 } });
           }
         }
