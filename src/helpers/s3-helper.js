@@ -26,7 +26,6 @@ class S3Helper {
    */
   writeFile(bucketName, objectKey, body = '') {
     return this._s3.upload({ Bucket: bucketName, Key: objectKey, Body: body }).promise();
-    // return this._s3.putObject({ Bucket: bucketName, Key: objectKey, Body: body }).promise();
   }
 
   /**

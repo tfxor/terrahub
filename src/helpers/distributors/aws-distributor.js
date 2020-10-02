@@ -63,10 +63,14 @@ class AwsDistributor {
         env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
       });
 
-      if (indexCount !== 0 && indexCount % 5 === 0) {
-        logger.log(`[AWS Distributor] Waiting... ${indexCount + 35} seconds`);
-        await setTimeoutPromise((indexCount + 35) * 1000);
-      }
+      //// wait feature
+      // if (indexCount !== 0 && indexCount % 10 === 0) {
+      //   logger.log(`[AWS Distributor] Waiting... ${indexCount + 20} seconds`);
+      //   for (let i = 0; i <= (indexCount + 20); i += 5) {
+      //     logger.log(`[AWS Distributor] Still waiting... ${i} seconds out of ${indexCount + 20}`);
+      //     await setTimeoutPromise((indexCount + 20 - i) * 1000);
+      //   }
+      // }
 
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
