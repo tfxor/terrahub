@@ -262,7 +262,7 @@ class AbstractCommand {
       throw new AuthenticationException('Provided THUB_TOKEN is not valid.');
     }
 
-    this.logger.warn('THUB_TOKEN is not provided.');
+    this.logger.warn('THUB_TOKEN is missing.');
     return Promise.resolve();
   }
 
@@ -275,8 +275,9 @@ class AbstractCommand {
       const accounts = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
         .filter(it => /Account/.test(it));
       if (accounts.length) {
-        this.logger.warn(`If you want to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component ` +
-          `please provide THUB_TOKEN.`);
+        this.logger.warn(
+          `Please provide valid THUB_TOKEN, in order to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component.`
+        );
       }
     });
   }
