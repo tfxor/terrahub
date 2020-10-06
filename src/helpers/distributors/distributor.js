@@ -461,6 +461,11 @@ class Distributor {
     this.ws.on('message', (data) => {
       try {
         const parsedData = JSON.parse(data);
+
+        if (parsedData.thubRunId !== this.runId) {
+          return ;
+        }
+
         const defaultMessage = { worker: 'lambda' };
 
         if (parsedData.action === 'logs') {
@@ -470,9 +475,8 @@ class Distributor {
         }
 
         if (parsedData.action === 'aws-cloud-deployer') {
-          const {
-            data: { isError, hash, message }
-          } = parsedData;
+          const { data: { isError, hash, message } } = parsedData;
+
           if (!isError) {
             logger.info(`[${this.projectConfig[hash].name}] Distributed execution was successful.`);
 
