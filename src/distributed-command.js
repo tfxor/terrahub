@@ -410,8 +410,7 @@ class DistributedCommand extends AbstractCommand {
     process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
 
     if (!Object.keys(filteredConfig).length) {
-      return filteredConfig;
-      // throw new Error(`No components available for the '${this.getName()}' action.`);
+      throw new Error(`No components available for the '${this.getName()}' action.`);
     }
 
     return filteredConfig;
