@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const fse = require('fs-extra');
+const logger = require('./logger');
 const { join, relative } = require('path');
 const Fetch = require('./fetch');
 const {
@@ -35,7 +36,19 @@ class S3Helper {
    */
   uploadFiles(bucketName, pathMap) {
     return Promise.all(
-      pathMap.map(path => this.writeFile(bucketName, path.s3Path, fse.readFileSync(path.localPath))));
+      pathMap.map(path => {
+        try {
+          const body = fse.readFileSync(path.localPath);
+          
+          return this.writeFile(bucketName, path.s3Path, body);
+        } catch (error) {
+          if (error.code === 'ENOENT') {
+            logger.warn(`Could not upload ${path.localPath}. No such file or directory.`);
+          }
+
+          return Promise.resolve();
+        }
+      }));
   }
 
   /**
