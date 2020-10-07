@@ -375,6 +375,8 @@ class ConfigLoader {
 
         config[key].env.variables = { ...config.env.variables, ...config[key].env.variables};
       });
+
+      config.processEnv = config.env.variables;
     }
 
     ['env', 'component'].forEach(key => delete config[key]);

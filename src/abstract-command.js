@@ -274,9 +274,12 @@ class AbstractCommand {
     Object.keys(fullConfig).forEach(hash => {
       const accounts = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
         .filter(it => /Account/.test(it));
-      if (accounts.length) {
+      const configsCloudConfig = fullConfig[hash].terraform && Object.keys(fullConfig[hash].terraform)
+        .filter(it => /cloudConfig/.test(it));
+      if (accounts.length && !configsCloudConfig.length) {
         this.logger.warn(
-          `Please provide valid THUB_TOKEN, in order to use '${accounts.join('\', \'')}' in '${fullConfig[hash].name}' component.`
+          `Please provide valid THUB_TOKEN, in order to use '${accounts.join('\', \'')}'`
+            + ` in '${fullConfig[hash].name}' component.`
         );
       }
     });

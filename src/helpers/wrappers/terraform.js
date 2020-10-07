@@ -10,7 +10,7 @@ const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
 const {
   spawner, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars,
-  setupAWSSharedFile
+  setupAWSSharedFile, parseCloudConfig
 } = require('../util');
 
 class Terraform {
@@ -63,18 +63,53 @@ class Terraform {
    */
   async _setupVars() {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
+    const configs = Object.keys(this._tf).filter(it => /backendConfig|cloudConfig/.test(it));
 
-    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) {
+    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID) && !configs.length) {
       return Promise.resolve();
     }
     if (this._distributor === 'lambda') { removeAwsEnvVars(); }
 
     ApiHelper.init(this.parameters, this._distributor);
 
-    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    let cloudAccounts = {};
     const provider = Array.isArray(this._config.template.provider)
       ? Object.keys(this._config.template.provider[0]).toString()
       : Object.keys(this._config.template.provider).toString();
+
+    if (accounts.length && process.env.THUB_TOKEN_IS_VALID) {
+      cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    } else {
+      if (configs.length > 0) {
+        cloudAccounts.aws = [];
+
+        configs.forEach(configName => {
+          switch (configName) {
+            case 'backendConfig':
+              Object.assign(this._tf.backend, this._tf[configName]);
+              break;
+            case 'cloudConfig':
+              if (provider !== 'aws') {
+                return Promise.resolve();
+              }
+              const forConcat = parseCloudConfig(provider, this._tf[configName]);
+              cloudAccounts.aws = cloudAccounts.aws.concat(forConcat);
+          }
+        });
+      }
+    }
+
+    if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount')) {
+      accounts.push('cloudAccount');
+      this._tf.cloudAccount = Array.isArray(this._config.template.provider)
+        ? this._config.template.provider[0][provider].profile || 'default'
+        : this._config.template.provider[provider].profile || 'default';
+    }
+    if (!configs.includes('backendConfig') && !accounts.includes('backendAccount') && configs.includes('cloudConfig')) {
+      accounts.push('backendAccount');
+      this._tf.backendAccount = this._tf.cloudAccount;
+    }
+
     const providerAccounts = cloudAccounts[provider];
 
     if (providerAccounts) {
@@ -491,6 +526,11 @@ class Terraform {
    * @return {Promise}
    */
   async run(cmd, args, isShow=false) {
+    if (this._config.project.env) {
+      if (this._config.project.env.variables) {
+        this._envVars = { ...this._envVars, ...this._config.project.env.variables };
+      }
+    }
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
