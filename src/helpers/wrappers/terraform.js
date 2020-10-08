@@ -100,6 +100,9 @@ class Terraform {
             }
             const forConcat = parseCloudConfig(provider, this._tf[configName]);
             cloudAccounts.aws = cloudAccounts.aws.concat(forConcat);
+            break;
+          default:
+            break;
         }
       });
     }
@@ -138,6 +141,8 @@ class Terraform {
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
             Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath, profile: accountData.name });
+            break;
+          default:
             break;
         }
       });
