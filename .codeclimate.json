@@ -12,7 +12,7 @@
     },
     "method-complexity": {
       "config": {
-        "threshold": 20
+        "threshold": 25
       }
     },
     "method-lines": {
