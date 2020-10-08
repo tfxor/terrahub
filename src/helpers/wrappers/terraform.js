@@ -76,6 +76,9 @@ class Terraform {
     const provider = Array.isArray(this._config.template.provider)
       ? Object.keys(this._config.template.provider[0]).toString()
       : Object.keys(this._config.template.provider).toString();
+    const providerProfile = Array.isArray(this._config.template.provider)
+      ? this._config.template.provider[0][provider].profile || 'default'
+      : this._config.template.provider[provider].profile || 'default';
 
     if (accounts.length && process.env.THUB_TOKEN_IS_VALID) {
       cloudAccounts = await ApiHelper.retrieveCloudAccounts();
@@ -87,9 +90,7 @@ class Terraform {
         switch (configName) {
           case 'backendConfig':
             if (!this._tf[configName].profile) {
-              this._tf[configName].profile = Array.isArray(this._config.template.provider)
-                ? this._config.template.provider[0][provider].profile || 'default'
-                : this._config.template.provider[provider].profile || 'default';
+              this._tf[configName].profile = providerProfile;
             }
             Object.assign(this._tf.backend, this._tf[configName]);
             break;
@@ -105,11 +106,12 @@ class Terraform {
 
     if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount')) {
       accounts.push('cloudAccount');
-      this._tf.cloudAccount = Array.isArray(this._config.template.provider)
-        ? this._config.template.provider[0][provider].profile || 'default'
-        : this._config.template.provider[provider].profile || 'default';
+      this._tf.cloudAccount = providerProfile;
     }
-    if (!configs.includes('backendConfig') && !accounts.includes('backendAccount') && configs.includes('cloudConfig')) {
+    if (
+      !configs.includes('backendConfig')
+      && !accounts.includes('backendAccount')
+      && configs.includes('cloudConfig')) {
       accounts.push('backendAccount');
       this._tf.backendAccount = this._tf.cloudAccount;
     }
