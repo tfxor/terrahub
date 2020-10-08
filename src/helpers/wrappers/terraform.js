@@ -79,35 +79,33 @@ class Terraform {
 
     if (accounts.length && process.env.THUB_TOKEN_IS_VALID) {
       cloudAccounts = await ApiHelper.retrieveCloudAccounts();
-    } else {
-      if (configs.length > 0) {
-        cloudAccounts.aws = [];
+    }
+    if (configs.length > 0) {
+      cloudAccounts.aws = [];
 
-        configs.forEach(configName => {
-          switch (configName) {
-            case 'backendConfig':
-              Object.assign(this._tf.backend, this._tf[configName]);
-              break;
-            case 'cloudConfig':
-              if (provider !== 'aws') {
-                return Promise.resolve();
-              }
-              const forConcat = parseCloudConfig(provider, this._tf[configName]);
-              cloudAccounts.aws = cloudAccounts.aws.concat(forConcat);
-          }
-        });
-      }
+      configs.forEach(configName => {
+        switch (configName) {
+          case 'backendConfig':
+            if (!this._tf[configName].profile) {
+              this._tf[configName].profile = Array.isArray(this._config.template.provider)
+                ? this._config.template.provider[0][provider].profile || 'default'
+                : this._config.template.provider[provider].profile || 'default';
+            }
+            Object.assign(this._tf.backend, this._tf[configName]);
+            break;
+          case 'cloudConfig':
+            if (provider !== 'aws') {
+              return Promise.resolve();
+            }
+            const forConcat = parseCloudConfig(provider, this._tf[configName]);
+            cloudAccounts.aws = cloudAccounts.aws.concat(forConcat);
+        }
+      });
     }
 
     if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount')) {
       accounts.push('cloudAccount');
       this._tf.cloudAccount = Array.isArray(this._config.template.provider)
-        ? this._config.template.provider[0][provider].profile || 'default'
-        : this._config.template.provider[provider].profile || 'default';
-    }
-    if (configs.includes('backendConfig') && !accounts.includes('backendAccount')) {
-      accounts.push('backendAccount');
-      this._tf.backendAccount = Array.isArray(this._config.template.provider)
         ? this._config.template.provider[0][provider].profile || 'default'
         : this._config.template.provider[provider].profile || 'default';
     }
