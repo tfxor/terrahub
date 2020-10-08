@@ -372,6 +372,8 @@ class DistributedCommand extends AbstractCommand {
       case 'gcs':
         Object.keys(backend.gcs).forEach(it => { defaultRemoteConfig[remoteStateName].config[it] = backend.gcs[it]; });
         break;
+      default:
+        break;
     }
 
     defaultRemoteConfig[remoteStateName].backend = backendType;

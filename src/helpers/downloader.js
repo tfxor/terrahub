@@ -17,14 +17,14 @@ class Downloader {
    * @returns {Promise}
    */
   download(version, distributor) {
-    const url = Downloader._buildSrcUrl(version);
+    const urlDownload = Downloader._buildSrcUrl(version);
     const binaryDir = distributor === 'lambda'
       ? homePathLambda('terraform', version)
       : homePath('terraform', version);
 
     return fse
       .ensureDir(binaryDir)
-      .then(() => download(url, binaryDir, { extract: true }));
+      .then(() => download(urlDownload, binaryDir, { extract: true }));
   }
 
   /**
