@@ -105,6 +105,12 @@ class Terraform {
         ? this._config.template.provider[0][provider].profile || 'default'
         : this._config.template.provider[provider].profile || 'default';
     }
+    if (configs.includes('backendConfig') && !accounts.includes('backendAccount')) {
+      accounts.push('backendAccount');
+      this._tf.backendAccount = Array.isArray(this._config.template.provider)
+        ? this._config.template.provider[0][provider].profile || 'default'
+        : this._config.template.provider[provider].profile || 'default';
+    }
     if (!configs.includes('backendConfig') && !accounts.includes('backendAccount') && configs.includes('cloudConfig')) {
       accounts.push('backendAccount');
       this._tf.backendAccount = this._tf.cloudAccount;
