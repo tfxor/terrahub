@@ -331,7 +331,7 @@ class DistributedCommand extends AbstractCommand {
 
     const defaultRemoteConfig = {
       [remoteStateName]: {
-        workspace: workspace || '${terraform.workspace}',
+        workspace: workspace || 'terraform.workspace',
         config: {
           ...(
             Object.prototype.hasOwnProperty.call(config[hash].terraform, 'backendConfig')
