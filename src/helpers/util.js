@@ -595,6 +595,13 @@ class Util {
               value: terraformConfig[profile].aws_session_token
             } };
         }
+
+        if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'region')) {
+          toPush.env_var = { ...toPush.env_var,
+            'AWS_REGION': {
+              value: terraformConfig[profile].region
+            } };
+        }
     
         toPush.type = 'access';
       }
