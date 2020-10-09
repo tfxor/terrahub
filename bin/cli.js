@@ -51,8 +51,6 @@ function commandCreate(logger = console) {
  * @return {Promise}
  */
 async function syncExitProcess(code, message, error = false) {
-  logger.warn('Finishing execution...');
-
   await ApiHelper.promisesForSyncExit();
   deleteTempFolder();
 

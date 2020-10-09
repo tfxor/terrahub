@@ -277,6 +277,15 @@ class Distributor {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
+    if (config.project.env) {
+      if (config.project.env.variables) {
+        this._env = { ...this._env, ...config.project.env.variables };
+      }
+    }
+    if (config.processEnv) {
+      this._env = { ...this._env, ...config.processEnv };
+    }
+
     switch (distributor) {
       case 'local':
         this._localWorkerCounter++;

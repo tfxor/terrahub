@@ -485,7 +485,11 @@ class Util {
         `region = ${region.value || region}\n`;
     }
 
-    credentials += `session_name = ${accountData.name}_${accountData.env_var.AWS_ACCOUNT_ID.value}`;
+    if (accountData.env_var.AWS_ACCOUNT_ID) {
+      credentials += `session_name = ${accountData.name}_${accountData.env_var.AWS_ACCOUNT_ID.value}\n\n`;
+    } else {
+      credentials += `session_name = ${accountData.name}_${Date.now()}\n\n`;
+    }
 
     return credentials;
   }
@@ -537,6 +541,68 @@ class Util {
         console.error(err);
       }
     });
+  }
+
+  /**
+   * @param {String} provider
+   * @param {Object} terraformConfig
+   * @returns {Array}
+   */
+  static parseCloudConfig(provider, terraformConfig) {
+    if (provider !== 'aws') {
+      return [];
+    }
+
+    const res = [];
+    Object.keys(terraformConfig).forEach(profile => {
+      const toPush = {
+        id: profile,
+        name: profile,
+        provider: 'aws',
+        active: 1
+      };
+    
+      if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'role_arn')) {
+        toPush.env_var = {
+          'AWS_ROLE_ARN': { value: terraformConfig[profile].role_arn },
+          'AWS_SOURCE_PROFILE': {
+            value: terraformConfig[profile].source_profile,
+            id: terraformConfig[profile].source_profile
+          }
+        };
+    
+        toPush.type = 'role';
+      } else {
+        toPush.env_var = {
+          'AWS_ACCESS_KEY_ID': {
+            value: terraformConfig[profile].aws_access_key_id
+          },
+          'AWS_SECRET_ACCESS_KEY': {
+            value: terraformConfig[profile].aws_secret_access_key
+          }
+        };
+
+        if (terraformConfig[profile].aws_session_token) {
+          toPush.env_var = { ...toPush.env_var,
+            'AWS_SESSION_TOKEN': {
+              value: terraformConfig[profile].aws_session_token
+            } };
+        }
+    
+        toPush.type = 'access';
+      }
+
+      if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'region')) {
+        toPush.env_var = { ...toPush.env_var,
+          'AWS_REGION': {
+            value: terraformConfig[profile].region
+          } };
+      }
+
+      res.push(toPush);
+    });
+
+    return res;
   }
 
   /**
