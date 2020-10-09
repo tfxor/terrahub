@@ -92,6 +92,9 @@ class Terraform {
             if (!this._tf[configName].profile && !this._tf[configName].access_key) {
               this._tf[configName].profile = providerProfile;
             }
+            if (this._tf[configName].profile === 'default') {
+              delete this._tf[configName].profile;
+            }
             Object.assign(this._tf.backend, this._tf[configName]);
             break;
           case 'cloudConfig':
