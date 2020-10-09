@@ -6,7 +6,6 @@ const fse = require('fs-extra');
 const Util = require('../helpers/util');
 const ConfigLoader = require('../config-loader');
 const ConfigCommand = require('../config-command');
-const Terraform = require('../helpers/wrappers/terraform');
 const { printListAsTree } = require('../helpers/log-helper');
 
 class ComponentCommand extends ConfigCommand {

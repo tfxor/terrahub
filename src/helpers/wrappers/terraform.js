@@ -10,7 +10,7 @@ const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
 const {
   spawner, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars,
-  setupAWSSharedFile
+  setupAWSSharedFile, parseCloudConfig
 } = require('../util');
 
 class Terraform {
@@ -63,18 +63,62 @@ class Terraform {
    */
   async _setupVars() {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
+    const configs = Object.keys(this._tf).filter(it => /backendConfig|cloudConfig/.test(it));
 
-    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID)) {
+    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID) && !configs.length) {
       return Promise.resolve();
     }
     if (this._distributor === 'lambda') { removeAwsEnvVars(); }
 
     ApiHelper.init(this.parameters, this._distributor);
 
-    const cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    let cloudAccounts = {};
     const provider = Array.isArray(this._config.template.provider)
       ? Object.keys(this._config.template.provider[0]).toString()
       : Object.keys(this._config.template.provider).toString();
+    const providerProfile = Array.isArray(this._config.template.provider)
+      ? this._config.template.provider[0][provider].profile || 'default'
+      : this._config.template.provider[provider].profile || 'default';
+
+    if (accounts.length && process.env.THUB_TOKEN_IS_VALID) {
+      cloudAccounts = await ApiHelper.retrieveCloudAccounts();
+    }
+    if (configs.length > 0) {
+      cloudAccounts.aws = [];
+
+      configs.forEach(configName => {
+        switch (configName) {
+          case 'backendConfig':
+            if (!this._tf[configName].profile && !this._tf[configName].access_key) {
+              this._tf[configName].profile = providerProfile;
+            }
+            Object.assign(this._tf.backend, this._tf[configName]);
+            break;
+          case 'cloudConfig':
+            if (provider !== 'aws') {
+              return Promise.resolve();
+            }
+            const forConcat = parseCloudConfig(provider, this._tf[configName]);
+            cloudAccounts.aws = cloudAccounts.aws.concat(forConcat);
+            break;
+          default:
+            break;
+        }
+      });
+    }
+
+    if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount')) {
+      accounts.push('cloudAccount');
+      this._tf.cloudAccount = providerProfile;
+    }
+    if (
+      !configs.includes('backendConfig')
+      && !accounts.includes('backendAccount')
+      && configs.includes('cloudConfig')) {
+      accounts.push('backendAccount');
+      this._tf.backendAccount = this._tf.cloudAccount;
+    }
+
     const providerAccounts = cloudAccounts[provider];
 
     if (providerAccounts) {
@@ -97,6 +141,8 @@ class Terraform {
           case 'backendAccount':
             const backCredsPath = createCredentialsFile(credentials, this._config, 'backend', this._distributor);
             Object.assign(this._tf.backend, { shared_credentials_file: backCredsPath, profile: accountData.name });
+            break;
+          default:
             break;
         }
       });
@@ -491,6 +537,11 @@ class Terraform {
    * @return {Promise}
    */
   async run(cmd, args, isShow=false) {
+    if (this._config.project.env) {
+      if (this._config.project.env.variables) {
+        this._envVars = { ...this._envVars, ...this._config.project.env.variables };
+      }
+    }
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }

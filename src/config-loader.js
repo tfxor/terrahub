@@ -209,6 +209,8 @@ class ConfigLoader {
       case Dictionary.ENVIRONMENT.EVERY:
         searchPattern = '**/.terrahub*.+(json|yml|yaml)';
         break;
+      default:
+        break;
     }
 
     let searchPaths;
@@ -324,7 +326,7 @@ class ConfigLoader {
           const regex = new RegExp(test, 'm');
           names.splice(i, 1);
 
-          names = [...config.dependsOn.filter(it => regex.test(it) && !names.includes(it)), ...names];
+          names = [...config.dependsOn.filter(item => regex.test(item) && !names.includes(item)), ...names];
         }
       });
 
@@ -375,6 +377,8 @@ class ConfigLoader {
 
         config[key].env.variables = { ...config.env.variables, ...config[key].env.variables};
       });
+
+      config.processEnv = config.env.variables;
     }
 
     ['env', 'component'].forEach(key => delete config[key]);
@@ -401,13 +405,13 @@ class ConfigLoader {
   /**
    * Find files by pattern
    * @param {String} pattern
-   * @param {String} path
+   * @param {String} filePath
    * @returns {String[]}
    * @private
    */
-  _find(pattern, path) {
+  _find(pattern, filePath) {
     return glob.sync(pattern, {
-      cwd: path, absolute: true, dot: true, ignore: this.ignorePatterns
+      cwd: filePath, absolute: true, dot: true, ignore: this.ignorePatterns
     });
   }
 
