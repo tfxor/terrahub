@@ -570,13 +570,6 @@ class Util {
             id: terraformConfig[profile].source_profile
           }
         };
-
-        if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'region')) {
-          toPush.env_var = { ...toPush.env_var,
-            'AWS_REGION': {
-              value: terraformConfig[profile].region
-            } };
-        }
     
         toPush.type = 'role';
       } else {
@@ -595,15 +588,15 @@ class Util {
               value: terraformConfig[profile].aws_session_token
             } };
         }
-
-        if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'region')) {
-          toPush.env_var = { ...toPush.env_var,
-            'AWS_REGION': {
-              value: terraformConfig[profile].region
-            } };
-        }
     
         toPush.type = 'access';
+      }
+
+      if (Object.prototype.hasOwnProperty.call(terraformConfig[profile], 'region')) {
+        toPush.env_var = { ...toPush.env_var,
+          'AWS_REGION': {
+            value: terraformConfig[profile].region
+          } };
       }
 
       res.push(toPush);
