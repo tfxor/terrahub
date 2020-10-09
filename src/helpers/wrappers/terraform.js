@@ -89,7 +89,7 @@ class Terraform {
       configs.forEach(configName => {
         switch (configName) {
           case 'backendConfig':
-            if (!this._tf[configName].profile && !this._tf[configName].access_key) {
+            if (!this._tf[configName].profile && providerProfile !== 'default') {
               this._tf[configName].profile = providerProfile;
             }
             Object.assign(this._tf.backend, this._tf[configName]);
