@@ -92,6 +92,8 @@ class Fetch {
               'https://github.com/TerraHubCorp/terrahub/issues'
           );
           break;
+        default:
+          break;
       }
 
       if (error) {
