@@ -24,7 +24,11 @@ class PrepareHelper {
     return PrepareHelper._checkTerraformBinary(config)
       .then(() => PrepareHelper._checkResourceDir(config, parameters))
       .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
-      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
+      .then(() => ({ status: Dictionary.REALTIME.SUCCESS }))
+      .catch((error) => {
+        if (error.code && error.code === 'ETXTBSY') { return Promise.resolve(); }
+        else { throw error; }
+      });
   }
 
   /**
