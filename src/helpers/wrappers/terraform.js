@@ -537,14 +537,10 @@ class Terraform {
    * @return {Promise}
    */
   async run(cmd, args, isShow=false) {
-    if (this._config.project.env) {
-      if (this._config.project.env.variables) {
-        this._envVars = { ...this._envVars, ...this._config.project.env.variables };
-      }
-    }
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
+
     return this._spawn(Prepare.getBinary(this._config), [cmd, ...args], {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
