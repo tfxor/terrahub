@@ -279,11 +279,11 @@ class Distributor {
 
     if (config.project.env) {
       if (config.project.env.variables) {
-        this._env = { ...this._env, ...config.project.env.variables };
+        Object.assign(this._env, config.project.env.variables);
       }
     }
     if (config.processEnv) {
-      this._env = { ...this._env, ...config.processEnv };
+      Object.assign(this._env, config.processEnv);
     }
 
     switch (distributor) {
