@@ -330,10 +330,10 @@ class DistributedCommand extends AbstractCommand {
     const { workspace } = this._terraformRemoteStates[hash]
       .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
 
-    const isHcl2 = semver.satisfies(config[hash].terraform.version, '>=0.12.0');
+    // const isHcl2 = semver.satisfies(config[hash].terraform.version, '>=0.12.0'); 
     const defaultRemoteConfig = {
       [remoteStateName]: {
-        workspace: workspace || (isHcl2 ? 'terraform.workspace' : '${terraform.workspace}'),
+        workspace: workspace || '${terraform.workspace}',
         config: {
           ...(
             Object.prototype.hasOwnProperty.call(config[hash].terraform, 'backendConfig')
