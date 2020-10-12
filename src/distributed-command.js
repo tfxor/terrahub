@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const semver = require('semver');
+// const semver = require('semver');
 const Util = require('./helpers/util');
 const Args = require('./helpers/args-parser');
 const ConfigLoader = require('./config-loader');
