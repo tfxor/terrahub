@@ -80,7 +80,7 @@ class Terraform {
       ? this._config.template.provider[0][provider].profile || 'default'
       : this._config.template.provider[provider].profile || 'default';
 
-    if (accounts.length) {
+    if (accounts.length && ApiHelper.tokenIsValid) {
       cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     }
     if (configs.length > 0) {
