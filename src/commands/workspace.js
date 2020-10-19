@@ -28,6 +28,7 @@ class WorkspaceCommand extends DistributedCommand {
     const promises = [];
     let filesToRemove = [];
     const kill = this.getOption('delete');
+    const tfWorkspace = this.getOption('env') || 'default';
     const configs = this.getFilteredConfig();
 
     const rootPath = this.getAppPath();
@@ -40,6 +41,8 @@ class WorkspaceCommand extends DistributedCommand {
     const nonIncludedComponents = envConfigsList.slice(1).filter(it => !dirPaths.includes(path.dirname(it)));
     const includeRootConfig = !kill || (kill && !nonIncludedComponents.length);
 
+    const hash = Object.keys(configs)[0];
+    this.config = configs[hash];
     const { name: projectName, code } = this.getProjectConfig();
 
     if (this.getOption('list')) {
@@ -50,14 +53,14 @@ class WorkspaceCommand extends DistributedCommand {
       configsList.unshift(rootConfigPath);
     }
 
-    if (this.config.isDefault) {
+    if (this.config && this.config.isDefault) {
       return this._workspace('workspaceSelect', configs, 'Done');
     }
 
     configsList.forEach((configPath, i) => {
       const dir = path.dirname(configPath);
       const envConfig = path.join(dir, this.getFileName());
-      const tfvarsName = path.join('workspace', `${this.config.env}.tfvars`);
+      const tfvarsName = path.join('workspace', `${tfWorkspace}.tfvars`);
       const tfvarsPath = path.join(dir, tfvarsName);
 
       if (!fs.existsSync(envConfig) && !kill) {
@@ -73,7 +76,7 @@ class WorkspaceCommand extends DistributedCommand {
         ConfigLoader.writeConfig(creating.getRaw(), envConfig);
 
         if (i !== 0 || !includeRootConfig) { // Skip root path
-          promises.push(renderTwig(template, { name: projectName, code, env: this.config.env }, tfvarsPath));
+          promises.push(renderTwig(template, { name: projectName, code, env: tfWorkspace }, tfvarsPath));
         }
       }
 
@@ -87,7 +90,7 @@ class WorkspaceCommand extends DistributedCommand {
 
     if (!kill) {
       let isUpdate = promises.length !== (configsList.length - 1);
-      let message = `TerraHub environment '${this.config.env}' was ${isUpdate ? 'updated' : 'created'}`;
+      let message = `TerraHub environment '${tfWorkspace}' was ${isUpdate ? 'updated' : 'created'}`;
 
       await Promise.all(promises);
 
@@ -110,7 +113,7 @@ class WorkspaceCommand extends DistributedCommand {
     return [{
       actions: ['init', action],
       config: config,
-      postActionFn: results => this._handleWorkspaceList(results, message)
+      // postActionFn: results => this._handleWorkspaceList(results, message)
     }];
   }
 
