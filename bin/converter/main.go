@@ -53,13 +53,13 @@ var (
 	}
 	resourceTypeList = []string{
 		"locals", "module", "output", "variable", "resource", "data", "terraform",
-		"provider",
+		"provider", "required_providers",
 	}
 	functionListWithDot = []string{
 		"aws", "data",
 	}
 	resourceDoNotPrint = []string{
-		"locals", "terraform", "data", "resource",
+		"locals", "terraform", "data", "resource", "required_providers",
 	}
 	doubleScope = []string{
 		"provider", "variable",
@@ -147,6 +147,10 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		var cont Map
 		_ = json.Unmarshal(raw, &cont)
 		for i, v := range cont {
+			if (i == "backend" && level == 0 && resourceType == "required_providers") {
+				resourceType = lastIndex
+				level = 1
+			} 
 			if Contains(resourceTypeList, i) && ((Contains(doubleScope, i) && (v[0] == 91 || v[0] == 123)) || !Contains(doubleScope, i)) {
 				interpolation = ""
 				if !Contains(interpolationList, resourceType) {
@@ -163,17 +167,18 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += resourceType + " "
 			}
 
+			
 			switch resourceType {
 			case "locals":
 				outHCL2 += mapIn1Level(i, level, v)
 			case "terraform":
 				outHCL2 += mapIn1LevelAndSubLevel(i, level, v)
 			case "module", "output", "variable", "provider":
-				outHCL2 += mapIn2Level(i, level, v)
+				outHCL2 += mapIn2Level(i, level, v, lastIndex)
 			case "resource", "data":
 				outHCL2 += mapIn3Level(i, level, v, lastIndex, resourceType)
 			default:
-				outHCL2 += mapIn(i, level, v, resourceType)
+				outHCL2 += mapIn(i, level, v, resourceType, lastIndex)
 			}
 
 			outHCL2 += walkJson(v, level+1, "", resourceType, i)
@@ -317,7 +322,7 @@ func mapIn1LevelAndSubLevel(i string, level int, raw json.RawMessage) string {
 	return outHCL2
 }
 
-func mapIn2Level(i string, level int, raw json.RawMessage) string {
+func mapIn2Level(i string, level int, raw json.RawMessage, lastIndex string) string {
 	var outHCL2 = ""
 	isBlock := false
 	if len(i) > 1 && i[len(i)-1] == '!' {
@@ -375,13 +380,14 @@ func mapIn3Level(i string, level int, raw json.RawMessage, lastIndex string, res
 	return outHCL2
 }
 
-func mapIn(i string, level int, raw json.RawMessage, resourceType string) string {
+func mapIn(i string, level int, raw json.RawMessage, resourceType string, lastIndex string) string {
 	var outHCL2 string
-
 	if interpolation != "" && level == 1 {
 		outHCL2 = " \"" + i + "\" "
-	} else if raw[0] != 91 || level > 0 || resourceType == "" {
+	} else if (raw[0] != 91 || level > 0 || resourceType == "") && i != "required_providers" {
 		outHCL2 = checkPoint(i) + " ="
+	} else if i == "required_providers" {
+		outHCL2 = i + " "
 	}
 
 	if raw[0] == 123 {
@@ -451,6 +457,9 @@ func mapOut(raw json.RawMessage) string {
 }
 
 func isFunction(val string, level int) bool {
+	if (val == "terraform.workspace") {
+		return true
+	}
 	for _, element := range functionList {
 		if val == "local" || (filetype != "tf") {
 			return false
