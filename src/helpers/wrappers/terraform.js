@@ -87,7 +87,7 @@ class Terraform {
     console.log(`const provider => ${provider}`);
     console.log(`const providerProfile => ${providerProfile}`);
 
-    if (accounts.length && process.env.THUB_TOKEN_IS_VALID) {
+    if (accounts.length) {
       cloudAccounts = await ApiHelper.retrieveCloudAccounts();
       console.log(`fetched cloudAccounts => ${JSON.stringify(cloudAccounts, null, 2)}`);
     }
