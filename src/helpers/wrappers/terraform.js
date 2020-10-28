@@ -77,7 +77,7 @@ class Terraform {
     let provider = this._tf.provider || 'aws';
 
     const providerFromTemplate = parseProviderFromTemplate(this._config);
-    if (providerFromTemplate !== null) {
+    if (providerFromTemplate !== null && providerFromTemplate !== provider) {
       provider = providerFromTemplate;
     }
     if (accounts.length > 0 && configs.length === 0) {
