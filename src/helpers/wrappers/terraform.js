@@ -92,7 +92,7 @@ class Terraform {
             if (!this._tf[configName].profile && provider === 'aws') {
               const profile = parseAwsProfileFromTemplate(this._config);
               if (profile !== 'default' && profile !== null) {
-                this._tf[configName].profile = parseAwsProfileFromTemplate(this._config);
+                this._tf[configName].profile = profile;
               }
             }
             Object.assign(this._tf.backend, this._tf[configName]);
