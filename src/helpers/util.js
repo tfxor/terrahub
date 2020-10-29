@@ -672,6 +672,36 @@ class Util {
       fse.removeSync(tmpPath);
     }
   }
+
+  /**
+   * Parse provider from template
+   * @param {Object} config
+   * @returns {String|null}
+   */
+  static parseProviderFromTemplate(config) {
+    if (!config.template) {
+      return null;
+    }
+
+    return Array.isArray(config.template.provider)
+      ? Object.keys(config.template.provider[0]).toString()
+      : Object.keys(config.template.provider).toString();
+  }
+
+  /**
+   * Parse aws profile from template
+   * @param {Object} config
+   * @returns {String|null}
+   */
+  static parseAwsProfileFromTemplate(config) {
+    if (!config.template) {
+      return null;
+    }
+
+    return Array.isArray(config.template.provider)
+      ? config.template.provider[0].aws.profile || 'default'
+      : config.template.provider.aws.profile || 'default';
+  }
 }
 
 module.exports = Util;
