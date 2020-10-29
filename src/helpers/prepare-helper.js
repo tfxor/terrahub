@@ -26,9 +26,6 @@ class PrepareHelper {
       .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }))
       .catch((error) => {
-        console.log('ERROR PrepareHelper prepare');
-        console.log(error);
-        console.log(error.code);
         if (error.code && error.code === 'ETXTBSY') { return Promise.resolve(); }
         else { throw error; }
       });
@@ -47,9 +44,6 @@ class PrepareHelper {
         return Promise.resolve();
       }
     } catch (error) {
-      console.log('ERROR _checkTerraformBinary');
-      console.log(error);
-      console.log(error.code);
       switch (error.code) {
         case 'ENOENT':
           return (new Downloader()).download(PrepareHelper.getVersion(config), config.distributor);
