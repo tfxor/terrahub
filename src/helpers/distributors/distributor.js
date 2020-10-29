@@ -5,6 +5,7 @@ const logger = require('../logger');
 const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
+const Prepare = require('../prepare-helper');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('./aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
@@ -52,10 +53,13 @@ class Distributor {
       for (const step of result) {
         const { actions, config, postActionFn, ...options } = step;
 
+        const firstOne = Object.keys(config).find(it => it);
+
         if (config) {
           this.projectConfig = config;
         }
         // eslint-disable-next-line no-await-in-loop
+        await Prepare.checkTerraformBinary(config[firstOne]);
         const response = await this.runActions(actions, config, this.parameters, options);
         logger.warn('Run actions finished');
 
