@@ -22,7 +22,7 @@
     },
     "method-count": {
       "config": {
-        "threshold": 35
+        "threshold": 40
       }
     },
     "argument-count": {

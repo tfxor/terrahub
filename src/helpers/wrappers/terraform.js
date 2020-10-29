@@ -10,7 +10,7 @@ const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
 const {
   spawner, prepareCredentialsFile, createCredentialsFile, removeAwsEnvVars,
-  setupAWSSharedFile, parseCloudConfig
+  setupAWSSharedFile, parseCloudConfig, parseProviderFromTemplate, parseAwsProfileFromTemplate
 } = require('../util');
 
 class Terraform {
@@ -72,14 +72,14 @@ class Terraform {
 
     ApiHelper.init(this.parameters, this._distributor);
 
-    let cloudAccounts = {};
-    const provider = Array.isArray(this._config.template.provider)
-      ? Object.keys(this._config.template.provider[0]).toString()
-      : Object.keys(this._config.template.provider).toString();
-    const providerProfile = Array.isArray(this._config.template.provider)
-      ? this._config.template.provider[0][provider].profile || 'default'
-      : this._config.template.provider[provider].profile || 'default';
 
+    let cloudAccounts = {};
+    let provider = this._tf.provider || 'aws';
+
+    const providerFromTemplate = parseProviderFromTemplate(this._config);
+    if (providerFromTemplate !== null && providerFromTemplate !== provider) {
+      provider = providerFromTemplate;
+    }
     if (accounts.length > 0 && configs.length === 0) {
       cloudAccounts = await ApiHelper.retrieveCloudAccounts();
     }
@@ -89,8 +89,11 @@ class Terraform {
       configs.forEach(configName => {
         switch (configName) {
           case 'backendConfig':
-            if (!this._tf[configName].profile && providerProfile !== 'default') {
-              this._tf[configName].profile = providerProfile;
+            if (!this._tf[configName].profile && provider === 'aws') {
+              const profile = parseAwsProfileFromTemplate(this._config);
+              if (profile !== 'default' && profile !== null) {
+                this._tf[configName].profile = profile;
+              }
             }
             Object.assign(this._tf.backend, this._tf[configName]);
             break;
@@ -107,9 +110,9 @@ class Terraform {
       });
     }
 
-    if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount')) {
+    if (configs.includes('cloudConfig') && !accounts.includes('cloudAccount') && provider === 'aws') {
       accounts.push('cloudAccount');
-      this._tf.cloudAccount = providerProfile;
+      this._tf.cloudAccount = parseAwsProfileFromTemplate(this._config);
     }
     if (
       !configs.includes('backendConfig')
