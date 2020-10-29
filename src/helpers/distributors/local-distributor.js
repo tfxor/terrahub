@@ -168,6 +168,9 @@ class LocalDistributor {
       worker.kill();
     });
 
+    console.log('ERROR _handleError');
+    console.log(err);
+
     return (err.constructor === Error) ? err : new Error(`[Local distributor]: ${err.message || err}`);
   }
 
