@@ -23,7 +23,7 @@ class Downloader {
       ? homePathLambda('terraform', version)
       : homePath('terraform', version);
 
-    if (path.join(binaryDir, 'terraform')) {
+    if (fse.existsSync(path.join(binaryDir, 'terraform'))) {
       return Promise.resolve();
     }
 
