@@ -21,8 +21,7 @@ class PrepareHelper {
   static prepare(config, parameters) {
     logger.debug(JSON.stringify(config, null, 2));
 
-    return PrepareHelper._checkTerraformBinary(config)
-      .then(() => PrepareHelper._checkResourceDir(config, parameters))
+    return PrepareHelper._checkResourceDir(config, parameters)
       .then(() => PrepareHelper._fetchEnvironmentVariables(config, parameters))
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }))
       .catch((error) => {
@@ -36,7 +35,7 @@ class PrepareHelper {
    * @param {Object} config
    * @return {Promise}
    */
-  static _checkTerraformBinary(config) {
+  static checkTerraformBinary(config) {
     try {
       const stat = fs.statSync(PrepareHelper.getBinary(config));
 
