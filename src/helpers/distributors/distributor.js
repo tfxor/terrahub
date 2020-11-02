@@ -53,13 +53,20 @@ class Distributor {
       for (const step of result) {
         const { actions, config, postActionFn, ...options } = step;
 
-        const firstOne = Object.keys(config).find(it => it);
+        const hashes = Object.keys(config);
+        const terraformVersions = Array.from(new Set(hashes.map(hash => config[hash].terraform.version)));
+        const distributors = Array.from(new Set(hashes.map(hash => config[hash].distributor))) || [];
+
+        if (distributors.includes('local')) {
+          for (const terraformVersion of terraformVersions) {
+            await Prepare.checkTerraformBinary(terraformVersion, 'local');
+          }
+        }
 
         if (config) {
           this.projectConfig = config;
         }
         // eslint-disable-next-line no-await-in-loop
-        await Prepare.checkTerraformBinary(config[firstOne]);
         const response = await this.runActions(actions, config, this.parameters, options);
         logger.warn('Run actions finished');
 
