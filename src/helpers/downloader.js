@@ -2,7 +2,6 @@
 
 const os = require('os');
 const url = require('url');
-const path = require('path');
 const fse = require('fs-extra');
 const download = require('download');
 const { homePath, homePathLambda } = require('./util');
@@ -22,10 +21,6 @@ class Downloader {
     const binaryDir = distributor === 'lambda'
       ? homePathLambda('terraform', version)
       : homePath('terraform', version);
-
-    if (fse.existsSync(path.join(binaryDir, 'terraform'))) {
-      return Promise.resolve();
-    }
 
     return fse
       .ensureDir(binaryDir)

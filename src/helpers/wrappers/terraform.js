@@ -544,7 +544,7 @@ class Terraform {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
 
-    return this._spawn(Prepare.getBinary(this._config), [cmd, ...args], {
+    return this._spawn(Prepare.getBinary(this._config.distributor, this._config.terraform.version), [cmd, ...args], {
       cwd: this._metadata.getRoot(),
       env: this._envVars,
       shell: true
