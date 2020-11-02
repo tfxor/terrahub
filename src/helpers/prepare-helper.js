@@ -32,12 +32,13 @@ class PrepareHelper {
 
   /**
    * Ensure binary exists (download otherwise)
-   * @param {Object} config
+   * @param {String} version
+   * @param {String} distributor
    * @return {Promise}
    */
-  static checkTerraformBinary(config) {
+  static checkTerraformBinary(version, distributor) {
     try {
-      const stat = fs.statSync(PrepareHelper.getBinary(config));
+      const stat = fs.statSync(PrepareHelper.getBinary(distributor, version));
 
       if (stat !== null && stat.isFile()) {
         return Promise.resolve();
@@ -45,7 +46,7 @@ class PrepareHelper {
     } catch (error) {
       switch (error.code) {
         case 'ENOENT':
-          return (new Downloader()).download(PrepareHelper.getVersion(config), config.distributor);
+          return (new Downloader()).download(PrepareHelper.getVersion(version), distributor);
         case 'ETXTBSY':
           return Promise.resolve();
         default:
@@ -55,25 +56,38 @@ class PrepareHelper {
   }
 
   /**
-   * @param {Object} config
+   * @param {String} distributor
+   * @param {String} version
    * @return {String}
    */
-  static getBinary(config) {
-    return config.distributor === 'lambda'
-      ? homePathLambda('terraform', PrepareHelper.getVersion(config), 'terraform')
-      : homePath('terraform', PrepareHelper.getVersion(config), 'terraform');
+  static getBinary(distributor, version) {
+    return distributor === 'lambda'
+      ? homePathLambda('terraform', PrepareHelper.getVersion(version), 'terraform')
+      : homePath('terraform', PrepareHelper.getVersion(version), 'terraform');
   }
 
   /**
-   * @param {Object} config
-   * @return {String}
+   * @param {String|Object} src
+   * @return {String|null}
    */
-  static getVersion(config) {
-    if (!semver.valid(config.terraform.version)) {
-      throw new Error(`Terraform version ${config.terraform.version} is invalid`);
+  static getVersion(src) {
+    if (typeof src === 'string') {
+      if (!semver.valid(src)) {
+        throw new Error(`Terraform version ${src} is invalid`);
+      }
+  
+      return src;
     }
 
-    return config.terraform.version;
+    if (typeof src === 'object') {
+      if (!semver.valid(src.terraform.version)) {
+        throw new Error(`Terraform version ${src.terraform.version} is invalid`);
+      }
+  
+      return src.terraform.version;
+    }
+
+    return null;
   }
 
   /**
