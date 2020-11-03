@@ -32,7 +32,7 @@ class Sentinel {
   _test() {
     return Promise.resolve();
   }
-  
+
   /**
    * https://docs.hashicorp.com/sentinel/commands/apply
    * @return {Promise}
@@ -44,9 +44,17 @@ class Sentinel {
     const promises = [];
 
     if (testPaths.length > 0) {
-      testPaths.forEach(element => {
+      testPaths.forEach((element) => {
         const cmd = [];
-        cmd.push(`input=${'"`' + Prepare.getBinary(this._config) + ' show -json ' + this._getPlanPath() + '`"'}`);
+        cmd.push(
+          `input=${
+            '"`' +
+            Prepare.getBinary(this._config.distributor, this._config.terraform.version) +
+            ' show -json ' +
+            this._getPlanPath() +
+            '`"'
+          }`
+        );
         cmd.push(`-color=${false}`);
         const args = [`${this._getTestPath(element)}`];
         promises.push(this._spawn('apply', sentinelArgs.concat(cmd, args)));
@@ -84,9 +92,12 @@ class Sentinel {
    * @private
    */
   async _spawn(cmd, args) {
-    return spawner(this._getBinary(), [cmd, ...args], {cwd: this._componentPath, shell: true},
-      err => logger.error(this._outMessage(err)),
-      data => {
+    return spawner(
+      this._getBinary(),
+      [cmd, ...args],
+      { cwd: this._componentPath, shell: true },
+      (err) => logger.error(this._outMessage(err)),
+      (data) => {
         if (this._showLogs) {
           logger.raw(this._outMessage(data));
         }
@@ -176,11 +187,10 @@ class Sentinel {
   _download() {
     const arch = Downloader.getOsArch();
     const fullUrl = url.resolve(
-      'https://releases.hashicorp.com/sentinel/', `${this._getVersion()}/sentinel_${this._getVersion()}_${arch}.zip`
+      'https://releases.hashicorp.com/sentinel/',
+      `${this._getVersion()}/sentinel_${this._getVersion()}_${arch}.zip`
     );
-    return fse
-      .ensureDir(this._getBinaryPath())
-      .then(() => download(fullUrl, this._getBinaryPath(), { extract: true }));
+    return fse.ensureDir(this._getBinaryPath()).then(() => download(fullUrl, this._getBinaryPath(), { extract: true }));
   }
 
   /**
@@ -207,15 +217,15 @@ class Sentinel {
    * @param {String} componentPath
    * @return {Promise}
    */
-  static run(config, action, when, componentPath){
+  static run(config, action, when, componentPath) {
     const sentinel = new Sentinel(config, action, componentPath);
     sentinel.checkSentinelBinary();
     switch (action) {
       case 'plan':
-        return (when === 'after') ? sentinel.runByCommand() : Promise.resolve();
+        return when === 'after' ? sentinel.runByCommand() : Promise.resolve();
       case 'apply':
       case 'destroy':
-        return (when === 'before') ? sentinel.runByCommand() : Promise.resolve();
+        return when === 'before' ? sentinel.runByCommand() : Promise.resolve();
       default:
         return Promise.resolve();
     }
