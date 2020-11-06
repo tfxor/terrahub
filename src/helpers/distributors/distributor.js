@@ -112,9 +112,12 @@ class Distributor {
       case Dictionary.DIRECTION.REVERSE:
         keys.forEach((key) => {
           Object.keys(this.projectConfig[key].dependsOn).forEach((hash) => {
-            result[hash][key] = null;
+            result[key][hash] = null;
           });
         });
+        break;
+      
+      default:
         break;
     }
 
@@ -248,27 +251,27 @@ class Distributor {
 
     for (let index = 0; index < hashes.length && this._localWorkerCounter < this._threadsCount; index++) {
       const hash = hashes[index];
-      const dependsOn = Object.keys(this._dependencyTable[hash]);
+      // const dependsOn = Object.keys(this._dependencyTable[hash]);
       const providerId = this.getImportId(hash);
 
-      if (!dependsOn.length) {
-        this.distributor = this.getDistributor(hash, false, providerId);
-        if (this.distributor instanceof AwsDistributor) {
-          promises.push(
-            this.distributor.distribute({
-              actions: this.TERRAFORM_ACTIONS,
-              runId: this.runId,
-              accountId: this.accountId,
-              indexCount: index
-            })
-          );
-        } else {
-          this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
-        }
-
-        this._workCounter++;
-        delete this._dependencyTable[hash];
+      // if (dependsOn.length) {
+      this.distributor = this.getDistributor(hash, false, providerId);
+      if (this.distributor instanceof AwsDistributor) {
+        promises.push(
+          this.distributor.distribute({
+            actions: this.TERRAFORM_ACTIONS,
+            runId: this.runId,
+            accountId: this.accountId,
+            indexCount: index
+          })
+        );
+      } else {
+        this.distributor.distribute({ actions: this.TERRAFORM_ACTIONS, runId: this.runId });
       }
+
+      this._workCounter++;
+      delete this._dependencyTable[hash];
+      // }
     }
 
     if (promises.length) {
