@@ -110,9 +110,23 @@ class Distributor {
         break;
 
       case Dictionary.DIRECTION.REVERSE:
-        keys.forEach((key) => {
+        const hashesAreDependency = [];
+
+        keys.forEach((keyCheck) => {
+          keys.forEach((key) => {
+            const { dependsOn } = this.projectConfig[key];
+
+            if (Object.keys(dependsOn).includes(keyCheck)) {
+              hashesAreDependency.push(keyCheck);
+            }
+          });
+        });
+
+        Array.from(new Set(hashesAreDependency)).forEach((key) => {
           Object.keys(this.projectConfig[key].dependsOn).forEach((hash) => {
-            result[hash][key] = null;
+            if (keys.includes(hash)) {
+              result[hash][key] = null;
+            }
           });
         });
         break;

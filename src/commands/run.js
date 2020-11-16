@@ -27,7 +27,8 @@ class RunCommand extends DistributedCommand {
     this._isDestroy = this.getOption('destroy');
     this._isBuild = this.getOption('build');
 
-    const config = this.getFilteredConfig();
+    const direction = +this._isApply + +this._isDestroy * 2;
+    const config = this.getFilteredConfig(direction);
 
     this._checkDependencies(config);
 

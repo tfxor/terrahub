@@ -113,7 +113,7 @@ class DistributedCommand extends AbstractCommand {
 
     if (duplicates.length) {
       const messages = duplicates.map(it => `component '${it}' ` +
-        `has duplicates in '${result[it].join(`' ,'`)}' directories`);
+        `has duplicates in '${result[it].join(`', '`)}' directories`);
 
       throw new ListException(messages, {
         header: 'Some components have duplicates in project:',
@@ -397,9 +397,10 @@ class DistributedCommand extends AbstractCommand {
 
   /**
    * Get filtered config
+   * @param {Number} direction
    * @returns {Object}
    */
-  getFilteredConfig() {
+  getFilteredConfig(direction) {
     const fullConfig = this.getExtendedConfig();
     const config = { ...fullConfig };
     const gitDiff = this.getGitDiff();
@@ -416,7 +417,7 @@ class DistributedCommand extends AbstractCommand {
       exclude.length ? hash => !exclude.includes(config[hash].name) : null
     ].filter(Boolean);
 
-    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
+    const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters, direction);
     process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
 
     if (!Object.keys(filteredConfig).length) {
