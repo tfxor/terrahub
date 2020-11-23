@@ -7,7 +7,7 @@
   "checks": {
     "file-lines": {
       "config": {
-        "threshold": 550
+        "threshold": 555
       }
     },
     "method-complexity": {
