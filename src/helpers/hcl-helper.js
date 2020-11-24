@@ -506,18 +506,20 @@ class HclHelper {
    */
   static _moduleSourceRefactoring(template) {
     const { module } = template;
-    if (module) {
-      const promises = Object.keys(module).filter(it => module[it]).map(it => {
-        const { source } = module[it];
-        if (source) {
-          module[it].source = resolve(template.locals.component.path, source);
-        }
-      });
-
-      return Promise.all(promises);
+    if (!module) {
+      return Promise.resolve();
     }
+    const promises = Object.keys(module).filter(it => module[it]).map(it => {
+      const { source } = module[it];
+      if (source) {
+        const absPath = resolve(template.locals.component.path, source);
+        if (fse.existsSync(absPath)) {
+          module[it].source = absPath;
+        }
+      }
+    });
 
-    return Promise.resolve();
+    return Promise.all(promises);
   }
 
   /**
