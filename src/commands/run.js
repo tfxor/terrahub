@@ -15,6 +15,7 @@ class RunCommand extends DistributedCommand {
       .addOption('apply', 'a', 'Enable apply command as part of automated workflow', Boolean, false)
       .addOption('destroy', 'd', 'Enable destroy command as part of automated workflow', Boolean, false)
       .addOption('auto-approve', 'y', 'Auto approve terraform execution', Boolean, false)
+      .addOption('ignore-missing', 's', 'Ignore missing terraform state(s)', Boolean, false)
       .addOption('dry-run', 'u', 'Prints the list of components that are included in the action', Boolean, false)
       .addOption('build', 'b', 'Enable build command as part of automated workflow', Boolean, false);
   }
