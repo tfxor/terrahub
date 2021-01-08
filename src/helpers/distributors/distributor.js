@@ -187,8 +187,7 @@ class Distributor {
     this._eventEmitter.on('message', (response) => {
       const data = response.data || response;
       if (data.isError) {
-        this.errors.push(data.message);
-        return;
+        return this._isErrorIgnoredOption(data.message);
       }
 
       if (data && !results.some((it) => it.id === data.id)) {
@@ -445,6 +444,21 @@ class Distributor {
    */
   getImportId(hash) {
     return hash.includes('_') ? hash.split('_')[1] : false;
+  }
+
+  /**
+   * Is error ignored option
+   * @param {Error} error 
+   * @return {void}
+   * @private
+   */
+  _isErrorIgnoredOption(error) {
+    if (this.command.getName() === 'run' && this.command.getOption('ignore-missing') === true) {
+      if (error.message.includes('Error: Unable to find remote state')) {
+        return;
+      }
+    }
+    this.errors.push(error);
   }
 
   /**
