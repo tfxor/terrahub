@@ -1,8 +1,8 @@
 {
   "name": "terrahub",
-  "version": "0.4.40",
+  "version": "0.4.41",
   "description": "terraform automation and orchestration tool. learn more by visiting www.terrahub.io/how-it-works",
-  "buildDate": "2020-11-24T15:44:49.940Z",
+  "buildDate": "2021-01-08T17:34:15.944Z",
   "commands": [
     {
       "name": "apply",
@@ -930,6 +930,12 @@
           "defaultValue": false
         },
         {
+          "name": "ignore-missing",
+          "shortcut": "s",
+          "description": "Ignore missing terraform state(s)",
+          "defaultValue": false
+        },
+        {
           "name": "dry-run",
           "shortcut": "u",
           "description": "Prints the list of components that are included in the action",
@@ -939,12 +945,6 @@
           "name": "build",
           "shortcut": "b",
           "description": "Enable build command as part of automated workflow",
-          "defaultValue": false
-        },
-        {
-          "name": "ignore-missing",
-          "shortcut": "s",
-          "description": "Ignore missing terraform state(s)",
           "defaultValue": false
         },
         {
