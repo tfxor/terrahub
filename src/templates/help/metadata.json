@@ -942,6 +942,12 @@
           "defaultValue": false
         },
         {
+          "name": "ignore-missing",
+          "shortcut": "s",
+          "description": "Ignore missing terraform state(s)",
+          "defaultValue": false
+        },
+        {
           "name": "include",
           "shortcut": "i",
           "description": "List of components to include (comma separated values)",
