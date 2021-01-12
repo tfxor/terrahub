@@ -147,10 +147,10 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 		var cont Map
 		_ = json.Unmarshal(raw, &cont)
 		for i, v := range cont {
-			if (i == "backend" && level == 0 && resourceType == "required_providers") {
+			if i == "backend" && level == 0 && resourceType == "required_providers" {
 				resourceType = lastIndex
 				level = 1
-			} 
+			}
 			if Contains(resourceTypeList, i) && ((Contains(doubleScope, i) && (v[0] == 91 || v[0] == 123)) || !Contains(doubleScope, i)) {
 				interpolation = ""
 				if !Contains(interpolationList, resourceType) {
@@ -167,7 +167,6 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += resourceType + " "
 			}
 
-			
 			switch resourceType {
 			case "locals":
 				outHCL2 += mapIn1Level(i, level, v)
@@ -206,7 +205,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				outHCL2 += walkJson(v, 1, "", resourceType, "")
 			} else if v[0] == 123 {
 				isBlock := false
-				if len(lastIndex) > 1 && lastIndex[len(lastIndex) - 1] == '!' {
+				if len(lastIndex) > 1 && lastIndex[len(lastIndex)-1] == '!' {
 					isBlock = true
 				}
 				if i == 0 {
@@ -218,7 +217,7 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 				} else if Contains(withoutEqual, lastIndex) || isBlock {
 					newLastIndex := lastIndex
 					if isBlock {
-						newLastIndex = newLastIndex[0:len(newLastIndex) - 1]
+						newLastIndex = newLastIndex[0 : len(newLastIndex)-1]
 					}
 					outHCL2 += newLastIndex + " {\n"
 				} else {
@@ -253,13 +252,14 @@ func walkJson(raw json.RawMessage, level int, outHCL2 string, resourceType strin
 			}
 		case string:
 			isBlock := false
-			if len(v) > 1 && v[len(v) - 1] == '!' {
+			if len(v) > 1 && v[len(v)-1] == '!' {
 				isBlock = true
-				v = v[0:len(v) - 1]
+				v = v[0 : len(v)-1]
 			}
 			itIsFor := false
 			if (strings.Index(v, "for") > 0 || strings.Index(v, "aws") > -1) &&
-				(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_") {
+				(strings.Replace(v, " ", "", -1)[0:4] == "{for" || strings.Replace(v, " ", "", -1)[0:4] == "aws_" ||
+				strings.Replace(v, " ", "", -1)[0:4] == "[for") {
 				itIsFor = true
 			}
 			if (isFunction(v, level) || itIsFor || isBlock) && tf12format != "no" {
@@ -457,7 +457,7 @@ func mapOut(raw json.RawMessage) string {
 }
 
 func isFunction(val string, level int) bool {
-	if (val == "terraform.workspace") {
+	if val == "terraform.workspace" {
 		return true
 	}
 	for _, element := range functionList {

@@ -803,6 +803,7 @@ class HclHelper {
     const dataStringify = JSON.stringify(data);
     const buff = Buffer.from(dataStringify);
     const base64data = buff.toString('base64');
+
     return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1} -T ${fileType}`)
       .then(result => { return fse.outputFileSync(componentPath, result.stdout); })
       .catch(err => { return Promise.reject(err); });
