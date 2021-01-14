@@ -65,6 +65,14 @@ function run(config, parameters) {
       });
     })
     .catch(error => {
+      if (parameters.args.s || parameters.args['ignore-missing']) {
+        if (error.message.includes('Error: Unable to find remote state')) {
+          logger.warn(`[${config.name}] Detected \`Error: Unable to find remote state\`.` +
+          ' Option --ignore-missing is enabled, therefore this error was ignored.');
+          process.exit(0);
+        }
+      }
+
       process.send({
         id: cluster.worker.id,
         error: error.message || error,
