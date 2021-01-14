@@ -456,7 +456,7 @@ class Distributor {
    */
   _isErrorIgnoredOption(error) {
     if (this.command.getName() === 'run' && this.command.getOption('ignore-missing') === true) {
-      if (!/Unable to find remote state/.test(error.message) || !/No stored state was found/.test(error.message)) {
+      if (!/Unable to find remote state/.test(error.message)) {
         this.errors.push(error);
       }
     } else {
