@@ -187,7 +187,9 @@ class Distributor {
     this._eventEmitter.on('message', (response) => {
       const data = response.data || response;
       if (data.isError) {
-        return this._isErrorIgnoredOption(data.message);
+        this._isErrorIgnoredOption(data.message);
+
+        return;
       }
 
       if (data && !results.some((it) => it.id === data.id)) {
@@ -454,16 +456,12 @@ class Distributor {
    */
   _isErrorIgnoredOption(error) {
     if (this.command.getName() === 'run' && this.command.getOption('ignore-missing') === true) {
-      if (error.message.includes('Unable to find remote state')
-        || error.message.includes('No stored state was found')) {
-        console.log(`INFO: ERR MESSAGE IS ==> "${error.message}"`);
-        console.log(`INFO: COMMAND NAME IS => ${this.command.getName()} AND OPTION IS ${this.command.getOption('ignore-missing')}`);
-
-        return;
+      if (!/Unable to find remote state/.test(error.message) || !/No stored state was found/.test(error.message)) {
+        this.errors.push(error);
       }
+    } else {
+      this.errors.push(error);
     }
-
-    this.errors.push(error);
   }
 
   /**
