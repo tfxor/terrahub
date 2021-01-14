@@ -453,7 +453,8 @@ class Distributor {
    * @private
    */
   _isErrorIgnoredOption(error) {
-    console.log(`INFO ERR MESSAGE IS ==> ${error.message}`);
+    console.log(`INFO: ERR MESSAGE IS ==> ${error.message}`);
+    console.log(`INFO: COMMAND NAME IS => ${this.command.getName()} AND OPTION IS ${this.command.getOption('ignore-missing')}`);
 
     if (this.command.getName() === 'run' && this.command.getOption('ignore-missing') === true) {
       if (error.message.includes('Unable to find remote state')
