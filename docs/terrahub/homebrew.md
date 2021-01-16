@@ -1,10 +1,10 @@
 # Publish on Homebrew
 
 Fork from https://github.com/Homebrew/homebrew-core
-into https://github.com/TerraHubCorp/homebrew-core
+into https://github.com/tfxor/homebrew-core
 
 ```shell
-git clone https://github.com/TerraHubCorp/homebrew-core.git
+git clone https://github.com/tfxor/homebrew-core.git
 ```
 
 ```
@@ -18,7 +18,7 @@ git fetch upstream
 ```
 
 ```shell
-brew create https://github.com/terrahubcorp/terrahub/archive/v0.2.8.tar.gz
+brew create https://github.com/tfxor/terrahub/archive/v0.2.8.tar.gz
 ```
 
 ```shell
@@ -30,5 +30,5 @@ git commit -a -m "add new formula"
 ```
 
 ```
-https://github.com/TerraHubCorp/homebrew-core/blob/master/Formula/terrahub.rb
+https://github.com/tfxor/homebrew-core/blob/master/Formula/terrahub.rb
 ```
