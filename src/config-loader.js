@@ -4,11 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const fse = require('fs-extra');
+const Util = require('./helpers/util');
 const Dictionary = require('./helpers/dictionary');
 const ListException = require('./exceptions/list-exception');
-const {
-  toMd5, extend, yamlToJson, jsonToYaml
-} = require('./helpers/util');
+const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
 class ConfigLoader {
   /**
@@ -17,6 +16,7 @@ class ConfigLoader {
    */
   constructor(config) {
     this._config = {};
+    this._parameters = config;
     this._terrahubConfig = config.config;
     this._rootPath = false;
     this._rootConfig = {};
@@ -44,7 +44,7 @@ class ConfigLoader {
       children: [],
       terraform: {},
       dependsOn: [],
-      env: { variables: {} }
+      env: { variables: {} },
     };
   }
 
@@ -57,7 +57,7 @@ class ConfigLoader {
     return {
       root: this._rootPath,
       include: [],
-      exclude: []
+      exclude: [],
     };
   }
 
@@ -75,8 +75,14 @@ class ConfigLoader {
         : `.terrahub.${this._terrahubConfig.env}${this._format}`;
       this._defaultFileName = `.terrahub${this._format}`;
       this._rootPath = path.dirname(configFile);
-      this._rootConfig = extend({}, [this._defaults(), this._getConfig(configFile)]);
-      this._projectConfig = Object.assign(this._projectDefaults(), this._rootConfig['project']);
+      this._rootConfig = extend({}, [
+        this._defaults(),
+        this._getConfig(configFile),
+      ]);
+      this._projectConfig = Object.assign(
+        this._projectDefaults(),
+        this._rootConfig['project']
+      );
       this._projectDistributor = this._rootConfig['project'].distributor;
 
       this._handleProjectConfig();
@@ -101,8 +107,8 @@ class ConfigLoader {
         backend: {},
         version: '0.12.26',
         backup: false,
-        workspace: 'default'
-      }
+        workspace: 'default',
+      },
     };
   }
 
@@ -126,8 +132,77 @@ class ConfigLoader {
    * @private
    */
   _findRootConfig(dirPath) {
-    let projectConfigPath = null;
+    let projectConfigPath = this._checkConfigFile(dirPath);
+    if (projectConfigPath === null) {
+      this._createMissingTerrahubFile(dirPath);
+      projectConfigPath = this._checkConfigFile(dirPath);
+    }
 
+    return projectConfigPath;
+  }
+
+  _createMissingTerrahubFile(dirPath) {
+    const name = dirPath.split('/').pop();
+    const code = Util.toMd5(name + Date.now().toString()).slice(0, 8);
+    const format =
+      this._terrahubConfig.format === 'yaml'
+        ? 'yml'
+        : this._terrahubConfig.format;
+    const srcFileProject = path.join(
+      this._parameters.templates.config,
+      'project',
+      `.terrahub.${format}.twig`
+    );
+    const srcFileComponent = path.join(
+      this._parameters.templates.config,
+      'component',
+      `.terrahub.null.${format}.twig`
+    );
+    const outFileProject = path.join(
+      dirPath,
+      this._terrahubConfig.defaultFileName
+    );
+    const outFileComponentPath = path.join(dirPath, `component_${name}`);
+    const outFileComponent = path.join(
+      outFileComponentPath,
+      this._terrahubConfig.defaultFileName
+    );
+    const srcDataProject = fse.readFileSync(srcFileProject, 'utf8');
+    const srcDataComponent = fse.readFileSync(srcFileComponent, 'utf8');
+    const re = new RegExp('{{ name }}', 'g');
+    const filesList = fse.readdirSync(dirPath);
+
+    fse.mkdirsSync(outFileComponentPath);
+    filesList
+      .filter((item) => ![`component_${name}`].includes(item))
+      .forEach((item) => {
+        fse.moveSync(
+          path.join(dirPath, item),
+          path.join(outFileComponentPath, item)
+        );
+      });
+    fse.outputFileSync(
+      outFileProject,
+      Buffer.from(
+        srcDataProject.replace(re, name).replace('{{ code }}', code),
+        'utf8'
+      ),
+      { encoding: 'utf8' }
+    );
+    fse.outputFileSync(
+      outFileComponent,
+      Buffer.from(srcDataComponent.replace(re, `component_${name}`), 'utf8'),
+      { encoding: 'utf8' }
+    );
+  }
+
+  /**
+   * @param {String} dirPath
+   * @return {String}
+   * @private
+   */
+  _checkConfigFile(dirPath) {
+    let projectConfigPath = null;
     let currentDir = null;
     let lowerDir = dirPath;
 
@@ -141,12 +216,12 @@ class ConfigLoader {
         const [configPath] = files; // if multiple configs found take the first
         const config = ConfigLoader.readConfig(configPath);
 
-        if (config.hasOwnProperty('project')) { // check if it is as project config
+        if (config.hasOwnProperty('project')) {
+          // check if it is as project config
           projectConfigPath = configPath;
         }
       }
     }
-
     return projectConfigPath;
   }
 
@@ -217,12 +292,12 @@ class ConfigLoader {
     if (dir) {
       searchPaths = [dir];
     } else if (include.length) {
-      searchPaths = include.map(it => path.resolve(this.appPath(), it));
+      searchPaths = include.map((it) => path.resolve('.', it));
     } else {
       searchPaths = [this.appPath()];
     }
 
-    return [].concat(...searchPaths.map(it => this._find(searchPattern, it)));
+    return [].concat(...searchPaths.map((it) => this._find(searchPattern, it)));
   }
 
   /**
@@ -238,7 +313,7 @@ class ConfigLoader {
    * @private
    */
   _handleRootConfig() {
-    Object.keys(this._rootConfig).forEach(key => {
+    Object.keys(this._rootConfig).forEach((key) => {
       const cfg = this._rootConfig[key];
 
       if (cfg.hasOwnProperty('root')) {
@@ -249,7 +324,11 @@ class ConfigLoader {
 
         this._processComponentConfig(cfg, root);
         const hash = ConfigLoader.buildComponentHash(root);
-        this._config[hash] = extend({}, [this._componentDefaults(), this._rootConfig, cfg]);
+        this._config[hash] = extend({}, [
+          this._componentDefaults(),
+          this._rootConfig,
+          cfg,
+        ]);
       }
     });
   }
@@ -262,7 +341,7 @@ class ConfigLoader {
     const configPaths = this.listConfig();
     const rootPaths = {};
 
-    configPaths.forEach(configPath => {
+    configPaths.forEach((configPath) => {
       let config = this._getConfig(configPath);
 
       if (config.hasOwnProperty('project')) {
@@ -279,8 +358,11 @@ class ConfigLoader {
       this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
 
-      this._config[componentHash] = extend(
-        { root: componentPath }, [this._componentDefaults(), this._rootConfig, config]);
+      this._config[componentHash] = extend({ root: componentPath }, [
+        this._componentDefaults(),
+        this._rootConfig,
+        config,
+      ]);
     });
 
     rootPaths[this._rootPath] = null;
@@ -289,8 +371,9 @@ class ConfigLoader {
     if (pathsArray.length > 1) {
       throw new ListException(pathsArray, {
         header: 'Multiple root configs identified in this project:',
-        footer: 'ONLY 1 root config per project is allowed. Please remove all the other and try again.',
-        style: ListException.NUMBER
+        footer:
+          'ONLY 1 root config per project is allowed. Please remove all the other and try again.',
+        style: ListException.NUMBER,
       });
     }
   }
@@ -316,24 +399,37 @@ class ConfigLoader {
    * @private
    */
   _validateDynamicData(config) {
-    if (config.hasOwnProperty('template') && config.template.hasOwnProperty('dynamic')) {
-      const dynamicRemoteStates = config.template.dynamic.data.terraform_remote_state;
+    if (
+      config.hasOwnProperty('template') &&
+      config.template.hasOwnProperty('dynamic')
+    ) {
+      const dynamicRemoteStates =
+        config.template.dynamic.data.terraform_remote_state;
       const regexExists = new RegExp(`[*]`, 'm');
-      let names = dynamicRemoteStates.map(it => it.component);
+      let names = dynamicRemoteStates.map((it) => it.component);
       names.forEach((it, i) => {
         if (regexExists.test(it)) {
           const test = it.replace('*', '');
           const regex = new RegExp(test, 'm');
           names.splice(i, 1);
 
-          names = [...config.dependsOn.filter(item => regex.test(item) && !names.includes(item)), ...names];
+          names = [
+            ...config.dependsOn.filter(
+              (item) => regex.test(item) && !names.includes(item)
+            ),
+            ...names,
+          ];
         }
       });
 
-      const errors = names.filter(it => !config.dependsOn.includes(it));
+      const errors = names.filter((it) => !config.dependsOn.includes(it));
       if (errors.length) {
-        throw new Error(`Component${errors.length > 1 ? '\'s' : ''} '${errors.join(`', '`)}' from ` +
-          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`);
+        throw new Error(
+          `Component${errors.length > 1 ? '\'s' : ''} '${errors.join(
+            `', '`
+          )}' from ` +
+            `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`
+        );
       }
     }
   }
@@ -346,42 +442,61 @@ class ConfigLoader {
   _processComponentConfig(config, componentPath) {
     if (config.hasOwnProperty('dependsOn')) {
       if (!Array.isArray(config.dependsOn)) {
-        throw new Error(`Error in component's configuration! DependsOn of '${config.name}' must be an array!`);
+        throw new Error(
+          `Error in component's configuration! DependsOn of '${config.name}' must be an array!`
+        );
       }
     }
 
     if (config.hasOwnProperty('mapping')) {
       if (!Array.isArray(config.mapping)) {
-        throw new Error(`Error in component's configuration! CI Mapping of '${config.name}' must be an array!`);
+        throw new Error(
+          `Error in component's configuration! CI Mapping of '${config.name}' must be an array!`
+        );
       }
 
       config.mapping.push('.');
-      config.mapping = [...new Set(config.mapping.map(it => path.join(componentPath, it)))];
+      config.mapping = [
+        ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
+      ];
     }
 
     if (config.hasOwnProperty('distributor')) {
-      const distributors = ['local', 'lambda', 'fargate', 'appEngine', 'cloudFunctions'];
+      const distributors = [
+        'local',
+        'lambda',
+        'fargate',
+        'appEngine',
+        'cloudFunctions',
+      ];
 
       if (!distributors.includes(config.distributor)) {
-        throw new Error(`Error in component's configuration! Unknown distributor.`);
+        throw new Error(
+          `Error in component's configuration! Unknown distributor.`
+        );
       }
     }
 
     this._validateDynamicData(config);
 
     if (config.hasOwnProperty('env')) {
-      ['hook', 'build'].filter(key => !!config[key]).forEach(key => {
-        if (!config[key].env) {
-          config[key].env = {};
-        }
+      ['hook', 'build']
+        .filter((key) => !!config[key])
+        .forEach((key) => {
+          if (!config[key].env) {
+            config[key].env = {};
+          }
 
-        config[key].env.variables = { ...config.env.variables, ...config[key].env.variables};
-      });
+          config[key].env.variables = {
+            ...config.env.variables,
+            ...config[key].env.variables,
+          };
+        });
 
       config.processEnv = config.env.variables;
     }
 
-    ['env', 'component'].forEach(key => delete config[key]);
+    ['env', 'component'].forEach((key) => delete config[key]);
   }
 
   /**
@@ -393,7 +508,9 @@ class ConfigLoader {
       const { mapping } = this._projectConfig;
 
       if (!(mapping instanceof Array)) {
-        throw new Error(`Error in project's configuration! CI Mapping of the project must be an array!`);
+        throw new Error(
+          `Error in project's configuration! CI Mapping of the project must be an array!`
+        );
       }
 
       mapping.forEach((dep, index) => {
@@ -411,7 +528,10 @@ class ConfigLoader {
    */
   _find(pattern, filePath) {
     return glob.sync(pattern, {
-      cwd: filePath, absolute: true, dot: true, ignore: this.ignorePatterns
+      cwd: filePath,
+      absolute: true,
+      dot: true,
+      ignore: this.ignorePatterns,
     });
   }
 
@@ -452,14 +572,20 @@ class ConfigLoader {
   _getConfig(cfgPath) {
     const cfg = ConfigLoader.readConfig(cfgPath);
     const envPath = path.join(path.dirname(cfgPath), this.getFileName());
-    const forceWorkspace = { terraform: { workspace: this._terrahubConfig.env } }; // Just remove to revert
+    const forceWorkspace = {
+      terraform: { workspace: this._terrahubConfig.env },
+    }; // Just remove to revert
     const overwrite = (objValue, srcValue) => {
       if (Array.isArray(objValue)) {
         return srcValue;
       }
     };
-    return (!this._terrahubConfig.isDefault && fs.existsSync(envPath))
-      ? extend(cfg, [ConfigLoader.readConfig(envPath), forceWorkspace], overwrite)
+    return !this._terrahubConfig.isDefault && fs.existsSync(envPath)
+      ? extend(
+        cfg,
+        [ConfigLoader.readConfig(envPath), forceWorkspace],
+        overwrite
+      )
       : cfg;
   }
 
