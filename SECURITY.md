@@ -28,7 +28,7 @@ Once the incident is confirmed to be resolved, we will summarize the lessons lea
 The TerraHub CLI uses the least amount of access to limit the impact of possible security incidents.
 
 ### Secure accounts with access
-The [TerraHub Organization](https://github.com/TerraHubCorp) on GitHub requires 2FA authorization for all members.
+The [TerraHub Organization](https://github.com/tfxor) on GitHub requires 2FA authorization for all members.
 
 ### Critical Updates and Security Notices
 We learn about critical software updates and security threats from these sources:
