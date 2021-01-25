@@ -148,50 +148,24 @@ class ConfigLoader {
       this._terrahubConfig.format === 'yaml'
         ? 'yml'
         : this._terrahubConfig.format;
-    const srcFileProject = path.join(
+    const srcFile = path.join(
       this._parameters.templates.config,
       'project',
-      `.terrahub.${format}.twig`
+      `.terrahub.all.${format}.twig`
     );
-    const srcFileComponent = path.join(
-      this._parameters.templates.config,
-      'component',
-      `.terrahub.null.${format}.twig`
-    );
-    const outFileProject = path.join(
+    const outFile = path.join(
       dirPath,
       this._terrahubConfig.defaultFileName
     );
-    const outFileComponentPath = path.join(dirPath, `component_${name}`);
-    const outFileComponent = path.join(
-      outFileComponentPath,
-      this._terrahubConfig.defaultFileName
-    );
-    const srcDataProject = fse.readFileSync(srcFileProject, 'utf8');
-    const srcDataComponent = fse.readFileSync(srcFileComponent, 'utf8');
+    const srcData = fse.readFileSync(srcFile, 'utf8');
     const re = new RegExp('{{ name }}', 'g');
-    const filesList = fse.readdirSync(dirPath);
 
-    fse.mkdirsSync(outFileComponentPath);
-    filesList
-      .filter((item) => ![`component_${name}`].includes(item))
-      .forEach((item) => {
-        fse.moveSync(
-          path.join(dirPath, item),
-          path.join(outFileComponentPath, item)
-        );
-      });
     fse.outputFileSync(
-      outFileProject,
+      outFile,
       Buffer.from(
-        srcDataProject.replace(re, name).replace('{{ code }}', code),
+        srcData.replace(re, name).replace('{{ code }}', code),
         'utf8'
       ),
-      { encoding: 'utf8' }
-    );
-    fse.outputFileSync(
-      outFileComponent,
-      Buffer.from(srcDataComponent.replace(re, `component_${name}`), 'utf8'),
       { encoding: 'utf8' }
     );
   }
@@ -344,7 +318,7 @@ class ConfigLoader {
     configPaths.forEach((configPath) => {
       let config = this._getConfig(configPath);
 
-      if (config.hasOwnProperty('project')) {
+      if (config.hasOwnProperty('project') && !config.hasOwnProperty('component')) {
         rootPaths[path.dirname(configPath)] = null;
         return;
       }
@@ -413,12 +387,14 @@ class ConfigLoader {
           const regex = new RegExp(test, 'm');
           names.splice(i, 1);
 
-          names = [
-            ...config.dependsOn.filter(
-              (item) => regex.test(item) && !names.includes(item)
-            ),
-            ...names,
-          ];
+          if (config.dependsOn !== undefined) {
+            names = [
+              ...config.dependsOn.filter(
+                (item) => regex.test(item) && !names.includes(item)
+              ),
+              ...names,
+            ];
+          }
         }
       });
 
