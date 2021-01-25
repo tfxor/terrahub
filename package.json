@@ -14,9 +14,9 @@
     "url": "https://www.terrahub.io"
   },
   "license": "MPL-2.0",
-  "homepage": "https://github.com/TerraHubCorp/terrahub#readme",
+  "homepage": "https://github.com/tfxor/terrahub#readme",
   "bugs": {
-    "url": "https://github.com/TerraHubCorp/terrahub/issues"
+    "url": "https://github.com/tfxor/terrahub/issues"
   },
   "engines": {
     "node": ">=10.16",
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TerraHubCorp/terrahub.git"
+    "url": "git+https://github.com/tfxor/terrahub.git"
   },
   "node_deb": {
     "init": "none",

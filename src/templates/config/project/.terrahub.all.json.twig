@@ -1,0 +1,18 @@
+{
+  "project": {
+    "name": "{{ name }}",
+    "code": "{{ code }}",
+    "include": ["."],
+    "exclude": [
+      "**/.terraform/**",
+      "**/node_modules/**",
+      "**/.git/**"
+    ]
+  },
+  "component": {
+    "name": "{{ name }}"
+  },
+  "terraform": {
+    "varFile": ["default.tfvars"]
+  }
+}

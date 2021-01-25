@@ -38,7 +38,7 @@ Before we get started, here are a few things we expect from you (and that you sh
 
 ## How to contribute
 
-If you'd like to contribute, start by searching through the [issues](https://github.com/TerraHubCorp/terrahub/issues) and [pull requests](https://github.com/TerraHubCorp/terrahub/pulls) to see whether someone else has raised a similar idea or question.
+If you'd like to contribute, start by searching through the [issues](https://github.com/tfxor/terrahub/issues) and [pull requests](https://github.com/tfxor/terrahub/pulls) to see whether someone else has raised a similar idea or question.
 
 If you don't see your idea listed, and you think it fits into the goals of this guide, do one of the following:
 * **If your contribution is minor,** such as a typo fix, open a pull request.
@@ -47,7 +47,7 @@ If you don't see your idea listed, and you think it fits into the goals of this 
 
 ## Style guide
 
-If you're writing content, see the [style guide](https://github.com/TerraHubCorp/styleguide/blob/master/README.md) that we adopted as a team.
+If you're writing content, see the [style guide](https://github.com/tfxor/styleguide/blob/master/README.md) that we adopted as a team.
 
 
 ## Setting up your environment
@@ -56,7 +56,7 @@ This project is built using [nodejs](https://nodejs.org) and published using [np
 
 Once you have that set up, run:
 
-    git clone git@github.com:TerraHubCorp/terrahub.git
+    git clone git@github.com:tfxor/terrahub.git
     cd ./terrahub/
     npm install
     node ./bin/cli.js --help
@@ -71,6 +71,6 @@ To submit a contribution for review, issue a pull request with comments introduc
 
 ## Community
 
-Discussions about this project take place on this repository's [Issues](https://github.com/TerraHubCorp/terrahub/issues) and [Pull Requests](https://github.com/TerraHubCorp/terrahub/pulls) sections. Anybody is welcome to join these conversations.
+Discussions about this project take place on this repository's [Issues](https://github.com/tfxor/terrahub/issues) and [Pull Requests](https://github.com/tfxor/terrahub/pulls) sections. Anybody is welcome to join these conversations.
 
 Whenever possible, do not take these conversations to private channels, including contacting the maintainers directly. Keeping communications public means everybody can benefit and learn from the conversations.
