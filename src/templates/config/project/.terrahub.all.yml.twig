@@ -1,0 +1,19 @@
+## project config
+project:
+  name: '{{ name }}'
+  code: '{{ code }}'
+  include:
+    - '.'
+  exclude:
+    - '**/.terraform/**'
+    - '**/node_modules/**'
+    - '**/.git/**'
+
+## terraform config
+terraform:
+  varFile:
+    - 'default.tfvars'
+
+## local config
+component:
+  name: {{ name }}

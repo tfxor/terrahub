@@ -4,6 +4,6 @@ Official guide for [Running Terraform in Automation](https://terraform.io/guides
 
 TerraHub takes terraform automation to a new level of simplicity and built-in capabilities. Here below is how it works:
 
-![TerraHub Automation](https://raw.githubusercontent.com/TerraHubCorp/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
+![TerraHub Automation](https://raw.githubusercontent.com/tfxor/terrahub/dev/docs/images/terrahub-automation.png "TerraHub Automation")
 
 To learn more, please visit [TerraHub Website](https://www.terrahub.io/how-it-works)

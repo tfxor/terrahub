@@ -89,7 +89,7 @@ class Fetch {
           error = new Error(
             'Error occurred. Please try again. If this problem persists, ' +
               'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-              'https://github.com/TerraHubCorp/terrahub/issues'
+              'https://github.com/tfxor/terrahub/issues'
           );
           break;
         default:
