@@ -266,7 +266,7 @@ class ConfigLoader {
     if (dir) {
       searchPaths = [dir];
     } else if (include.length) {
-      searchPaths = include.map((it) => path.resolve('.', it));
+      searchPaths = include.map((it) => path.resolve(this.appPath(), it));
     } else {
       searchPaths = [this.appPath()];
     }
