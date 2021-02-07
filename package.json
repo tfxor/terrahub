@@ -23,24 +23,24 @@
     "npm": ">=6.9"
   },
   "dependencies": {
-    "@google-cloud/storage": "^4.1.0",
-    "aws-sdk": "^2.478.0",
+    "@google-cloud/storage": "^5.7.4",
+    "aws-sdk": "^2.804.0",
     "child-process-promise": "^2.2.1",
-    "download": "^7.1.0",
-    "fs-extra": "^7.0.1",
-    "glob": "^7.1.2",
+    "download": "^8.0.0",
+    "fs-extra": "^9.1.0",
+    "glob": "^7.1.6",
     "hcl-to-json": "^0.1.1",
-    "js-logger": "^1.6.0",
-    "js-yaml": "^3.13.1",
+    "js-logger": "^1.6.1",
+    "js-yaml": "^4.0.0",
     "lodash.get": "^4.4.2",
     "lodash.mergewith": "^4.6.2",
-    "minimist": "^1.2.0",
-    "node-fetch": "^2.3.0",
+    "minimist": "^1.2.5",
+    "node-fetch": "^2.6.1",
     "object-depth": "^0.0.3",
-    "semver": "^5.6.0",
+    "semver": "^7.3.4",
     "treeify": "^1.1.0",
-    "twig": "^1.12.0",
-    "ws": "^7.1.2"
+    "twig": "^1.15.4",
+    "ws": "^7.4.3"
   },
   "repository": {
     "type": "git",
@@ -87,8 +87,8 @@
     "microsoft azure"
   ],
   "devDependencies": {
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
