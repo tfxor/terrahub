@@ -242,7 +242,7 @@ class S3Helper {
     if (!this._cloudAccounts) {
       const fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
       // To do ...
-      const result = await fetch.get(`https://${parameters.config.api}.terrahub.io/cloud-account`);
+      const result = await fetch.get(`https://${parameters.config.api}.terrahub.io/provider`);
       this._cloudAccounts = result.data;
     }
 

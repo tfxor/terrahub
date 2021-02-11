@@ -478,7 +478,7 @@ class ApiHelper extends events.EventEmitter {
    */
   async retrieveCloudAccounts() {
     if (!this._cloudAccounts) {
-      const result = await this.fetch.get(`https://${this.config.api}.terrahub.io/cloud-account`);
+      const result = await this.fetch.get(`https://${this.config.api}.terrahub.io/provider`);
       this._cloudAccounts = result.data;
     }
 
