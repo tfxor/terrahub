@@ -135,7 +135,6 @@ class ApiHelper extends events.EventEmitter {
     if (!this._logs.length) {
       return false;
     }
-    // To do ...
     const url = `https://${this.config.api}.terrahub.io/logs`;
     let _logs;
 
