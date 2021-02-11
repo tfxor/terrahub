@@ -61,7 +61,7 @@ async function syncExitProcess(code, message, error = false) {
   } else {
     message ? logger.info(message) : null;
   }
-  
+
   await ApiHelper.saveRealtimeAndLogs();
 
   if (code !== 0) {

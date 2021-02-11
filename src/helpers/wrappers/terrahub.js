@@ -158,7 +158,7 @@ class Terrahub extends AbstractTerrahub {
 
       return Promise.resolve();
     });
-  
+
     return process.env.DEBUG ? promise : Promise.resolve();
   }
 
