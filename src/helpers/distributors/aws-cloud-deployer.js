@@ -35,7 +35,8 @@ class AwsDeployer {
       await this._updateCredentialsForS3();
       config.project.root = AwsDeployer._projectDirectory;
       const api = parameters.config.api === 'api' ? '' : `-${parameters.config.api.split('-')[1]}`;
-      const accountId = await this._fetchAccountId();
+      const fetchAccount = await this._fetchAccountId();
+      const { accountId } = fetchAccount.data;
       const s3Prefix = [`projects${api}`, accountId, thubRunId].join('/');
 
       await this.s3.syncPaths(config.project.root, s3Prefix, config.mapping);
@@ -94,7 +95,7 @@ class AwsDeployer {
    * @private
    */
   async _fetchAccountId() {
-    const json = await this.fetch.get('thub/account/retrieve');
+    const json = await this.fetch.get('token');
     const data = await json.data;
 
     return data.id;
@@ -126,7 +127,8 @@ class AwsDeployer {
    * @private
    */
   _fetchTemporaryCredentials() {
-    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+    // To do ..
+    return this.fetch.get('credentials').then(json => Promise.resolve(json.data));
   }
 
   /**

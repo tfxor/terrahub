@@ -242,7 +242,7 @@ class AbstractCommand {
       return this.onTokenMissingOrInvalid(null);
     }
 
-    return this.parameters.fetch.get('thub/account/retrieve')
+    return this.parameters.fetch.get('token')
       .then(res => Promise.resolve(!!res))
       .catch(err => {
         if (err instanceof AuthenticationException) {

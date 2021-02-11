@@ -72,6 +72,7 @@ class AwsDistributor {
       //   }
       // }
 
+      // To do ...
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
       await Promise.resolve();
@@ -141,7 +142,8 @@ class AwsDistributor {
    * @private
    */
   _fetchTemporaryCredentials() {
-    return this.fetch.get('thub/credentials/retrieve').then(json => Promise.resolve(json.data));
+    // To do ...
+    return this.fetch.get('credentials').then(json => Promise.resolve(json.data));
   }
 
   /**

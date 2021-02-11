@@ -135,8 +135,8 @@ class ApiHelper extends events.EventEmitter {
     if (!this._logs.length) {
       return false;
     }
-
-    const url = `https://${this.config.api}.terrahub.io/v1/thub/logs/create/${this.runId || process.env.THUB_RUN_ID}`;
+    // To do ...
+    const url = `https://${this.config.api}.terrahub.io/logs`;
     let _logs;
 
     if (!all) {
@@ -146,7 +146,7 @@ class ApiHelper extends events.EventEmitter {
       this._logs = [];
     }
 
-    return { url, body: { bulk: [..._logs] } };
+    return { url, body: { bulk: [..._logs], runId: this.runId || process.env.THUB_RUN_ID } };
   }
 
   /**
@@ -183,7 +183,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {Boolean}
    */
   get isFinalRequest() {
-    return this._promises.length && this._promises.find(({ url }) => url === 'thub/run/update');
+    return this._promises.length && this._promises.find(({ url }) => url === 'run/update');
   }
 
   /**
@@ -205,8 +205,8 @@ class ApiHelper extends events.EventEmitter {
   pushToLogs(body) {
     if (body.component === 'main' || body.log === '✅Done') {
       const promise = {
-        url: `https://${this.config.api}.terrahub.io/v1/thub/logs/create/${this.runId || process.env.THUB_RUN_ID}`,
-        body: { bulk: [body] }
+        url: `https://${this.config.api}.terrahub.io/logs`,
+        body: { bulk: [body], runId: this.runId || process.env.THUB_RUN_ID }
       };
 
       return this.asyncFetch(promise);
@@ -332,7 +332,7 @@ class ApiHelper extends events.EventEmitter {
    * @return {string}
    */
   static getUrl(source, status) {
-    return `thub/${source === 'workflow' ? 'run' : 'component'}/${status}`;
+    return `${source === 'workflow' ? 'run' : 'component'}/${status}`;
   }
 
   /**
@@ -441,10 +441,8 @@ class ApiHelper extends events.EventEmitter {
     if (this.canApiLogsBeSent() && this._apiLogginStart) {
       return Promise.all([
         this.fetch
-          .post(`https://${this.config.api}.terrahub.io/v1/thub/logs/save/${this.runId || process.env.THUB_RUN_ID}`)
-          .catch(error => console.log(error)),
-        this.fetch
-          .post(`https://${this.config.api}.terrahub.io/v1/thub/realtime/save/${this.runId || process.env.THUB_RUN_ID}`)
+          .post(`https://${this.config.api}.terrahub.io/logs/save`,
+            { body: JSON.stringify({ runId: this.runId || process.env.THUB_RUN_ID } )})
           .catch(error => console.log(error))
       ]);
     }
@@ -481,7 +479,7 @@ class ApiHelper extends events.EventEmitter {
    */
   async retrieveCloudAccounts() {
     if (!this._cloudAccounts) {
-      const result = await this.fetch.get(`https://${this.config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      const result = await this.fetch.get(`https://${this.config.api}.terrahub.io/cloud-account`);
       this._cloudAccounts = result.data;
     }
 

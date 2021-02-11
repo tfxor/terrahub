@@ -241,7 +241,8 @@ class S3Helper {
   async _retrieveCloudAccounts(config, parameters) {
     if (!this._cloudAccounts) {
       const fetch = new Fetch(parameters.fetch.baseUrl, parameters.fetch.authorization);
-      const result = await fetch.get(`https://${parameters.config.api}.terrahub.io/v1/thub/cloud-account/retrieve`);
+      // To do ...
+      const result = await fetch.get(`https://${parameters.config.api}.terrahub.io/cloud-account`);
       this._cloudAccounts = result.data;
     }
 
@@ -254,7 +255,7 @@ class S3Helper {
    * @constructor
    */
   static get METADATA_BUCKET() {
-    return 'data-lake-terrahub-us-east-1';
+    return process.env.THUB_BUCKET || 'data-lake-terrahub-us-east-1';
   }
 }
 

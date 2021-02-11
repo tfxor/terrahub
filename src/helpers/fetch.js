@@ -37,12 +37,16 @@ class Fetch {
    * @return {Promise}
    */
   post(url, opts = {}) {
+    const urlInitArr = url.split('/');
+    const isUpdate = urlInitArr.find((el) => el === 'update');
     const defaults = {
-      method: 'POST',
+      method: (isUpdate !== undefined && isUpdate !== null) ? 'PATCH' : 'POST',
       headers: this._getHeaders()
     };
 
-    return fetch(URL.resolve(this.baseUrl, url), merge(defaults, opts))
+    return fetch(URL.resolve(this.baseUrl, urlInitArr.filter(
+      (el) => !['create', 'update'].includes(el)).join('/')
+    ), merge(defaults, opts))
       .then(this._handleResponse)
       .catch(Fetch._handleError);
   }
@@ -64,6 +68,7 @@ class Fetch {
   _getHeaders() {
     return {
       'Authorization': this.authorization,
+      'x-tfxor-auth-source': 'token',
       'Content-Type': 'application/json'
     };
   }
