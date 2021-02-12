@@ -68,7 +68,7 @@ class Util {
    * @returns {*}
    */
   static jsonToYaml(json, outFile = false) {
-    const data = yaml.safeDump(json, {});
+    const data = yaml.dump(json, {});
 
     return outFile ? fse.outputFileSync(outFile, data) : data;
   }
