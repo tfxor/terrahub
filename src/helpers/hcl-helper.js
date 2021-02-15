@@ -612,7 +612,7 @@ class HclHelper {
       ? parameters.lambdaBinPath
       : join(parameters.binPath, arch);
 
-    return exec(`${join(componentBinPath, `converter${extension}`)} -f -i '${base64data}'`)
+    return exec(`"${join(componentBinPath, `converter${extension}`)}" -f -i '${base64data}'`)
       .then(result => {
         let strWithoutQuote = result.stdout;
 
@@ -804,7 +804,7 @@ class HclHelper {
     const buff = Buffer.from(dataStringify);
     const base64data = buff.toString('base64');
 
-    return exec(`${join(componentBinPath, `converter${extension}`)} -i '${base64data}' ${formatHCL1} -T ${fileType}`)
+    return exec(`"${join(componentBinPath, `converter${extension}`)}" -i '${base64data}' ${formatHCL1} -T ${fileType}`)
       .then(result => { return fse.outputFileSync(componentPath, result.stdout); })
       .catch(err => { return Promise.reject(err); });
   }

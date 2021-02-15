@@ -379,8 +379,8 @@ class ConvertCommand extends DistributedCommand {
     let extension = '';
     if (arch.indexOf('windows') > -1) extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} ` +
-      `-thub ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
+    return exec(`"${join(componentBinPath, `component${extension}`)}" ` +
+      `-thub ${buildTmpPath(config, this.parameters)} "${configPath}" ${config.name}`);
   }
 
   /**
@@ -417,8 +417,8 @@ class ConvertCommand extends DistributedCommand {
     let extension = '';
     if (arch.indexOf('windows') > -1) extension = '.exe';
 
-    return exec(`${join(componentBinPath, `component${extension}`)} ` +
-      `-json ${buildTmpPath(config, this.parameters)} ${configPath} ${config.name}`);
+    return exec(`"${join(componentBinPath, `component${extension}`)}" ` +
+      `-json ${buildTmpPath(config, this.parameters)} "${configPath}" ${config.name}`);
   }
 
   /**
@@ -435,7 +435,7 @@ class ConvertCommand extends DistributedCommand {
     let extension = '';
     if (arch.indexOf('windows') > -1) extension = '.exe';
 
-    return exec(`${join(componentBinPath, `generator${extension}`)} -thub ${configPath}${sep} ${configPath}${sep}`);
+    return exec(`"${join(componentBinPath, `generator${extension}`)}" -thub "${configPath}${sep}" "${configPath}${sep}"`);
   }
 
   /**

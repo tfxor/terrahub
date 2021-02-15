@@ -97,7 +97,7 @@ class HelpParser {
    * @return {Promise}
    */
   static updateAWSRegions() {
-    const command = `sh ${path.join(parameters.templates.help, 'scripts', 'aws_update.sh')}`;
+    const command = `sh "${path.join(parameters.templates.help, 'scripts', 'aws_update.sh')}"`;
 
     return exec(command)
       .then(result => {
