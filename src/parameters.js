@@ -46,6 +46,7 @@ if (!fse.existsSync(cfgPath)) {
 const def = {
   env: 'default',
   api: 'api',
+  apiUrl: 'terrahub.io',
   logs: false,
   token: false,
   listLimit: 5,
@@ -57,12 +58,13 @@ const def = {
 const env = {
   env: _getEnv(args),
   api: process.env.THUB_API,
+  apiUrl: process.env.THUB_API,
   token: process.env.THUB_TOKEN,
   format: process.env.THUB_CONFIG_FORMAT
 };
 
 const cfg = extend(def, [fse.readJsonSync(cfgPath, { throws: false }), env]);
-const apiBase = `https://${cfg.api}.terrahub.io/v1/`;
+const apiBase = `https://${cfg.api}.terrahub.io/`;
 const isDefault = cfg.env === 'default';
 
 module.exports = {

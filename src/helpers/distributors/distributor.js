@@ -390,7 +390,7 @@ class Distributor {
    * @return {Promise<String>}
    */
   _fetchAccountId() {
-    return this.fetch.get('thub/account/retrieve').then((json) => Promise.resolve(json.data.id));
+    return this.fetch.get('token').then((json) => Promise.resolve(json.data.accountId));
   }
 
   /**
@@ -419,13 +419,6 @@ class Distributor {
       project: projectConfig,
       environment: environment
     });
-  }
-
-  /**
-   * @return {Promise}
-   */
-  websocketTicketCreate() {
-    return this.fetch.get('thub/ticket/create');
   }
 
   /**
@@ -487,10 +480,8 @@ class Distributor {
     if (!this.command._tokenIsValid) {
       return Promise.resolve();
     }
-    const {
-      data: { ticket_id }
-    } = await this.websocketTicketCreate();
-    this.ws = new WebSocket(this.parameters.config.api, ticket_id).ws;
+
+    this.ws = new WebSocket(this.parameters.config.api, process.env.THUB_TOKEN).ws;
 
     this.ws.on('message', (data) => {
       try {

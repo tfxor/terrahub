@@ -66,7 +66,7 @@ class ProjectCommand extends ConfigCommand {
     }
 
     try {
-      const json = await this.fetch.get(`thub/project/validate?hash=${code}`);
+      const json = await this.fetch.get(`project/validate?hash=${code}`);
 
       return json.data.isValid;
     } catch (err) {

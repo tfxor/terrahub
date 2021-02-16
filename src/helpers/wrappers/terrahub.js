@@ -20,7 +20,8 @@ class Terrahub extends AbstractTerrahub {
       runId: this._runId,
       status: data.status,
       action: this._action,
-      projectId: this._project.id,
+      projectName: this._project.name,
+      projectId: this._project.code,
       componentName: this._config.name,
       componentHash: this._componentHash,
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -32,13 +33,14 @@ class Terrahub extends AbstractTerrahub {
 
     if (err) {
       error = err instanceof Error ? err : new Error(err || 'Unknown error');
-      realtimePayload.error = error.message.trim();
+      realtimePayload.error = JSON.stringify(error.message);
     }
     if (realtimePayload.action === 'plan' && data.status === Dictionary.REALTIME.SUCCESS) {
-      realtimePayload.metadata = data.metadata;
+      realtimePayload.metadata = JSON.stringify(data.metadata);
     }
+
     if (this.parameters.config.token) {
-      await this.parameters.fetch.post('thub/realtime/create', { body: JSON.stringify(realtimePayload) });
+      await this.parameters.fetch.post('realtime/create', { body: JSON.stringify(realtimePayload) });
     }
 
     return realtimePayload.hasOwnProperty('error') ? Promise.reject(error) : Promise.resolve(data);
@@ -58,7 +60,7 @@ class Terrahub extends AbstractTerrahub {
       name: this._project.name,
       hash: this._project.code
     };
-    return this.parameters.fetch.post('thub/project/create', { body: JSON.stringify(payload) }).then((json) => {
+    return this.parameters.fetch.post('project/create', { body: JSON.stringify(payload) }).then((json) => {
       this._project.id = json.data.id;
 
       return Promise.resolve();
@@ -71,13 +73,15 @@ class Terrahub extends AbstractTerrahub {
    */
   createComponent() {
     const componentPayload = {
+      projectName: this._project.name,
+      projectId: this._project.code,
       runId: this._runId,
       name: this._config.name,
       hash: this._componentHash,
       componentStartedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
 
-    return this.parameters.fetch.post('thub/component/create', { body: JSON.stringify(componentPayload) });
+    return this.parameters.fetch.post('component/create', { body: JSON.stringify(componentPayload) });
   }
 
   /**
@@ -127,7 +131,6 @@ class Terrahub extends AbstractTerrahub {
   _getKey() {
     const dir = this.parameters.config.api.replace('api', 'public');
     const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
-
     return `${dir}/${this._timestamp}/${keyName}`;
   }
 
@@ -138,7 +141,7 @@ class Terrahub extends AbstractTerrahub {
    * @private
    */
   _callParseLambda(key, isHcl2) {
-    const url = `thub/resource/parse-${this._action}`;
+    const url = `resource/parse-${this._action}`;
 
     const options = {
       body: JSON.stringify({
@@ -205,7 +208,7 @@ class Terrahub extends AbstractTerrahub {
    * @constructor
    */
   static get METADATA_DOMAIN() {
-    return 'https://data-lake-terrahub-us-east-1.s3.amazonaws.com';
+    return `https://${process.env.THUB_BUCKET || 'data-lake-terrahub-us-east-1'}.s3.amazonaws.com`;
   }
 }
 

@@ -58,7 +58,7 @@ class Util {
    * @returns {Object}
    */
   static yamlToJson(srcFile) {
-    return yaml.safeLoad(fs.readFileSync(srcFile)) || {};
+    return yaml.load(fs.readFileSync(srcFile)) || {};
   }
 
   /**
@@ -68,7 +68,7 @@ class Util {
    * @returns {*}
    */
   static jsonToYaml(json, outFile = false) {
-    const data = yaml.safeDump(json, {});
+    const data = yaml.dump(json, {});
 
     return outFile ? fse.outputFileSync(outFile, data) : data;
   }

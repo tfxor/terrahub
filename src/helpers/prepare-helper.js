@@ -142,7 +142,7 @@ class PrepareHelper {
 
       const [, provider, repo] = isUrl ? data.match(urlData) : data.match(sshData);
       if (repo && provider) {
-        return parameters.fetch.get(`thub/variables/retrieve?repoName=${repo}&source=${provider}`).then(json => {
+        return parameters.fetch.get(`variables?repoName=${repo}&provider=${provider}`).then(json => {
           if (Object.keys(json.data).length) {
             let test = JSON.parse(json.data.env_var);
             return Object.keys(test).reduce((acc, key) => {

@@ -177,7 +177,7 @@ class ListCommand extends ConfigCommand {
       return Promise.resolve([]);
     }
 
-    const json = await this.parameters.fetch.get('thub/listing/retrieve?type=list');
+    const json = await this.parameters.fetch.get('listing?type=list');
     const data = json.data.map(row => {
       return {
         service: row.service_name,
