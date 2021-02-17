@@ -245,7 +245,7 @@ class ApiHelper extends events.EventEmitter {
     if (status === 'create') {
       this.runId = runId;
       this.commandName = commandName;
-      this.projectHash = project.code;
+      this.projectHash = project.code.toString();
       this.projectName = project.name;
       this.environment = environment;
     }

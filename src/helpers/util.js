@@ -636,8 +636,8 @@ class Util {
    */
   static tempPath(config, distributor) {
     return distributor === 'lambda'
-      ? Util.homePathLambda(config.project.code, config.name)
-      : Util.homePath('temp', config.project.code, config.name);
+      ? Util.homePathLambda(config.project.code.toString(), config.name)
+      : Util.homePath('temp', config.project.code.toString(), config.name);
   }
 
   /**
