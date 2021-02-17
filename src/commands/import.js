@@ -42,7 +42,7 @@ class ImportCommand extends DistributedCommand {
           value: resourceData[1],
           provider: (providerContent !== '') ? `-provider=${providerContent}` : '',
           overwrite: overwrite,
-          hash: Object.values(config)[0].project.code
+          hash: Object.values(config)[0].project.code.toString()
         });
       });
 
@@ -83,7 +83,7 @@ class ImportCommand extends DistributedCommand {
                 value: elements[2],
                 provider: providerContent || (elements.length === 4 ? `-provider=${elements[3]}` : ''),
                 overwrite: overwrite,
-                hash: config[Object.keys(config)[0]].project.code
+                hash: config[Object.keys(config)[0]].project.code.toString()
               });
             }
           });

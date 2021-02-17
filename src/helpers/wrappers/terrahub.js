@@ -21,7 +21,7 @@ class Terrahub extends AbstractTerrahub {
       status: data.status,
       action: this._action,
       projectName: this._project.name,
-      projectId: this._project.code,
+      projectId: this._project.code.toString(),
       componentName: this._config.name,
       componentHash: this._componentHash,
       realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -58,7 +58,7 @@ class Terrahub extends AbstractTerrahub {
 
     const payload = {
       name: this._project.name,
-      hash: this._project.code
+      hash: this._project.code.toString()
     };
     return this.parameters.fetch.post('project/create', { body: JSON.stringify(payload) }).then((json) => {
       this._project.id = json.data.id;
@@ -74,7 +74,7 @@ class Terrahub extends AbstractTerrahub {
   createComponent() {
     const componentPayload = {
       projectName: this._project.name,
-      projectId: this._project.code,
+      projectId: this._project.code.toString(),
       runId: this._runId,
       name: this._config.name,
       hash: this._componentHash,

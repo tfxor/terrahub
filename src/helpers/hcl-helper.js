@@ -85,7 +85,7 @@ class HclHelper {
         project: {
           path: config.project.root,
           name: config.project.name,
-          code: config.project.code
+          code: config.project.code.toString()
         }
       }]);
     }
@@ -776,8 +776,8 @@ class HclHelper {
    */
   static buildTmpPath(config, parameters) {
     const tmpPath = config.distributor === 'lambda'
-      ? homePathLambda(parameters.hclPath, `${config.name}_${config.project.code}`)
-      : homePath(parameters.hclPath, `${config.name}_${config.project.code}`);
+      ? homePathLambda(parameters.hclPath, `${config.name}_${config.project.code.toString()}`)
+      : homePath(parameters.hclPath, `${config.name}_${config.project.code.toString()}`);
 
     fse.ensureDirSync(tmpPath);
 

@@ -27,7 +27,7 @@ class DistributedCommand extends AbstractCommand {
     super(parameters, logger);
 
     this._terraformRemoteStates = {};
-    this._runId = Util.uuid();
+    this._runId = process.env.THUB_RUN_ID || Util.uuid();
 
     this.logger.updateContext({
       runId: this._runId,
@@ -316,7 +316,9 @@ class DistributedCommand extends AbstractCommand {
     if (!this._remoteStateExist(hash, name)) { return; }
 
     const configBackendExist = template.terraform && template.terraform.backend;
-    const cachedBackendPath = Util.homePath(this.parameters.hclPath, `${name}_${project.code}`, 'terraform.tfstate');
+    const cachedBackendPath = Util.homePath(
+      this.parameters.hclPath, `${name}_${project.code.toString()}`, 'terraform.tfstate'
+    );
     const cachedBackendExist = fs.existsSync(cachedBackendPath);
 
     if (!configBackendExist && !cachedBackendExist) { return; }
@@ -354,7 +356,7 @@ class DistributedCommand extends AbstractCommand {
             }
 
             defaultRemoteConfig[remoteStateName].config[it] = (it === 'path' && !path.isAbsolute(_path))
-              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code}`), _path)
+              ? path.resolve(Util.homePath(this.parameters.hclPath, `${name}_${project.code.toString()}`), _path)
               : defaultRemoteConfig[remoteStateName].config[it] = _path;
           });
         } else {
