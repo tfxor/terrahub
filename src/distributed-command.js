@@ -27,7 +27,7 @@ class DistributedCommand extends AbstractCommand {
     super(parameters, logger);
 
     this._terraformRemoteStates = {};
-    this._runId = Util.uuid();
+    this._runId = process.env.THUB_RUN_ID || Util.uuid();
 
     this.logger.updateContext({
       runId: this._runId,

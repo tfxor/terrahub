@@ -351,7 +351,8 @@ class Terraform {
     const options = { '-input': false };
     const args = ['-no-color'];
     const lines = JSON.parse(process.env.importLines);
-    const varFile = this._varFile()[0].split('/');
+    const varFile = this._varFile().length === 0
+      ? [] : this._varFile()[0].split('/');
     let existedResouces = [];
 
     
