@@ -188,7 +188,7 @@ class AbstractTerrahub {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
         return [/timeout/, /EOF/, /failed to decode/, /unable to verify checksum/, /ECONNREFUSED/,
-          /connection reset/, /connection refused/,
+          /connection reset/, /connection refused/, /Failed to query available provider packages/,
           /connection issue/, /ECONNRESET/].some(it => it.test(error.message));
       },
       maxRetries: this.parameters.config.retryCount,
