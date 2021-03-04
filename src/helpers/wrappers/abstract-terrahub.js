@@ -187,9 +187,10 @@ class AbstractTerrahub {
   _runTerraformCommand(command) {
     return exponentialBackoff(() => this._terraform[command](), {
       conditionFunction: error => {
-        return [/timeout/, /EOF/, /failed to decode/, /unable to verify checksum/, /ECONNREFUSED/,
-          /connection reset/, /connection refused/, /Failed to query available provider packages/,
-          /connection issue/, /ECONNRESET/].some(it => it.test(error.message));
+        return [/timeout/, /failed to decode/, /failed to query/, /unable to verify/,
+          /could not load plugin/, /unrecognized remote plugin/, /rpc error/,
+          /connection reset/, /connection refused/, /connection issue/,
+          /ECONNREFUSED/, /ECONNRESET/, /EOF/].some(it => it.test(error.message));
       },
       maxRetries: this.parameters.config.retryCount,
       intermediateAction: (retries, maxRetries) => {
