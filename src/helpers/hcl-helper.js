@@ -7,7 +7,7 @@ const S3Helper = require('./s3-helper');
 const objectDepth = require('object-depth');
 const { exec } = require('child-process-promise');
 const { resolve, join, extname } = require('path');
-const Downloader = require('../helpers/downloader');
+const Downloader = require('./downloader');
 const { homePath, extend, homePathLambda } = require('./util');
 
 
@@ -19,10 +19,11 @@ class HclHelper {
    * @return {Promise}
    */
   static middleware(config, parameters) {
-    const transformedConfig = HclHelper._transformConfig(config, parameters);
+    const replacedConfig = HclHelper._replaceENV(config);
+    const transformedConfig = HclHelper._transformConfig(replacedConfig, parameters);
 
     if (!transformedConfig.isTemplate) {
-      return Promise.resolve(config);
+      return Promise.resolve(replacedConfig);
     }
 
     const { template } = transformedConfig;
@@ -30,33 +31,52 @@ class HclHelper {
     return Promise.resolve().then(() => HclHelper._moduleSourceRefactoring(template))
       .then(() => {
         // add "tfvars" if it is not described in config
-        const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(config);
+        const localTfvarsLinks = HclHelper._extractOnlyLocalTfvarsLinks(replacedConfig);
         if (localTfvarsLinks.length > 0) {
-          return HclHelper._addLocalTfvars(config, localTfvarsLinks, parameters);
+          return HclHelper._addLocalTfvars(replacedConfig, localTfvarsLinks, parameters);
         }
       }).then(() => {
         // add "tfvars" if it is not described in config
-        const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(config);
+        const remoteTfvarsLinks = HclHelper._extractOnlyRemoteTfvarsLinks(replacedConfig);
         if (remoteTfvarsLinks.length > 0) {
-          return HclHelper._addTfvars(config, remoteTfvarsLinks, parameters);
+          return HclHelper._addTfvars(replacedConfig, remoteTfvarsLinks, parameters);
         }
       })
-      .then(() => HclHelper._normalizeProvidersForResource(config))
-      .then(() => HclHelper._normalizeProvidersForData(config))
-      .then(() => HclHelper._normalizeTfvars(config))
-      .then(() => HclHelper._createTerraformFiles(config, parameters))
+      .then(() => HclHelper._normalizeProvidersForResource(replacedConfig))
+      .then(() => HclHelper._normalizeProvidersForData(replacedConfig))
+      .then(() => HclHelper._normalizeTfvars(replacedConfig))
+      .then(() => HclHelper._createTerraformFiles(replacedConfig, parameters))
       .then(() => {
         // generate "variable.tf" if it is not described in config
         if (template.hasOwnProperty('tfvars')) {
-          return HclHelper._generateVariable(config, parameters);
+          return HclHelper._generateVariable(replacedConfig, parameters);
         }
       })
-      .then(() => config.distributor !== 'local'
+      .then(() => replacedConfig.distributor !== 'local'
         ? Promise.resolve()
-        : HclHelper._symLinkNonTerraHubFiles(config, parameters))
-      .then(() => config);
+        : HclHelper._symLinkNonTerraHubFiles(replacedConfig, parameters))
+      .then(() => replacedConfig);
   }
 
+
+  static _replaceENV(config) {
+    const regExTfvars = /\$\{+[a-zA-Z0-9_\-]+\}/gm;
+    let templateStringify = JSON.stringify(config);
+    const templateStringifyArr = templateStringify.match(regExTfvars);
+
+    if (templateStringifyArr !== null) {
+      for (const terrahubVariable of templateStringifyArr) {
+        templateStringify = templateStringify.replace(
+          terrahubVariable,
+          process.env[
+            terrahubVariable.replace(/[\'\{\}\$]/g,'')
+          ]
+        );
+      }
+    }
+    const replacedConfig = JSON.parse(templateStringify);
+    return replacedConfig;
+  }
 
   /**
    * Transform template config
@@ -413,6 +433,11 @@ class HclHelper {
               break;
             case locals && locals.hasOwnProperty(variableName):
               variableValue = HclHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr);
+              break;
+            case config && config.hasOwnProperty(variableName.replace('env', 'processEnv')):
+              variableValue = HclHelper._extractValueFromTfvar(
+                config[variableName.replace('env', 'processEnv')], variableNameNetArr
+              );
               break;
             case project && project.hasOwnProperty(variableName) && project[variableName].hasOwnProperty('variables'):
               variableValue = HclHelper._extractValueFromTfvar(project[variableName].variables, variableNameNetArr);
