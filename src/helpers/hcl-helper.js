@@ -395,19 +395,32 @@ class HclHelper {
    * @private
    */
   static _normalizeTfvars(config) {
-    const { template } = config;
+    const { template, project } = config;
 
     return Promise.resolve().then(() => {
       let templateStringify = JSON.stringify(template).replace(/\"provider\!\"\:\".+?\"\,/gm, '');
       const templateStringifyArr = HclHelper._extractTerrahubVariables(templateStringify);
+
       if (templateStringifyArr) {
         templateStringifyArr.map(terrahubVariable => {
           const { variableName, variableNameNetArr } = HclHelper._extractTerrahubVariableName(terrahubVariable);
           const { tfvars, locals } = template;
-          const variableValue = (tfvars && tfvars.hasOwnProperty(variableName))
-            ? HclHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr)
-            : (locals && locals.hasOwnProperty(variableName))
-              ? HclHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr) : '';
+
+          let variableValue;
+          switch (true) {
+            case tfvars && tfvars.hasOwnProperty(variableName):
+              variableValue = HclHelper._extractValueFromTfvar(tfvars[variableName], variableNameNetArr);
+              break;
+            case locals && locals.hasOwnProperty(variableName):
+              variableValue = HclHelper._extractValueFromTfvar(locals[variableName], variableNameNetArr);
+              break;
+            case project && project.hasOwnProperty(variableName) && project[variableName].hasOwnProperty('variables'):
+              variableValue = HclHelper._extractValueFromTfvar(project[variableName].variables, variableNameNetArr);
+              break;
+            default:
+              variableValue = '';
+              break;
+          }
           templateStringify = templateStringify.replace(terrahubVariable, variableValue);
         });
       }
