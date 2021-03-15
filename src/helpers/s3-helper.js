@@ -255,7 +255,7 @@ class S3Helper {
    * @constructor
    */
   static get METADATA_BUCKET() {
-    return process.env.THUB_BUCKET || 'data-lake-terrahub-us-east-1';
+    return process.env.THUB_BUCKET || 'api.tfxor.com';
   }
 }
 

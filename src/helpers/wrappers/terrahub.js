@@ -208,7 +208,7 @@ class Terrahub extends AbstractTerrahub {
    * @constructor
    */
   static get METADATA_DOMAIN() {
-    return `https://${process.env.THUB_BUCKET || 'data-lake-terrahub-us-east-1'}.s3.amazonaws.com`;
+    return `https://${process.env.THUB_BUCKET || 'api.tfxor.com'}.s3.amazonaws.com`;
   }
 }
 
