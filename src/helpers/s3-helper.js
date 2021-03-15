@@ -39,7 +39,7 @@ class S3Helper {
       pathMap.map(path => {
         try {
           const body = fse.readFileSync(path.localPath);
-          
+
           return this.writeFile(bucketName, path.s3Path, body);
         } catch (error) {
           if (error.code === 'ENOENT') {
