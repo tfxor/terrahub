@@ -463,8 +463,7 @@ class Util {
    */
   static prepareCredentialsFile(accountData, sourceProfile, config, tfvars = false, distributor) {
     let credentials = '[default]\n';
-
-    if (sourceProfile) {
+    if (sourceProfile !== undefined) {
       credentials += `aws_access_key_id = ${sourceProfile.env_var.AWS_ACCESS_KEY_ID.value}\n` +
         `aws_secret_access_key = ${sourceProfile.env_var.AWS_SECRET_ACCESS_KEY.value}\n`;
 

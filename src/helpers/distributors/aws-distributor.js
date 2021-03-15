@@ -72,12 +72,12 @@ class AwsDistributor {
       //   }
       // }
 
-      // To do ...
       const postResult = await this.fetch.post('cloud-deployer/aws/create', { body });
       logger.warn(`[${this.componentConfig.name}] ${postResult.message}!`);
       await Promise.resolve();
     } catch (err) {
-      throw new Error(`[AWS Distributor]: ${err}`);
+      throw new Error(`[AWS Distributor]: ${err.notificationType !== undefined && err.notificationType === 'error'
+        ? err.message : err}`);
     }
   }
 
@@ -142,7 +142,6 @@ class AwsDistributor {
    * @private
    */
   _fetchTemporaryCredentials() {
-    // To do ...
     return this.fetch.get('credentials').then(json => Promise.resolve(json.data));
   }
 
