@@ -39,7 +39,7 @@ class S3Helper {
       pathMap.map(path => {
         try {
           const body = fse.readFileSync(path.localPath);
-          
+
           return this.writeFile(bucketName, path.s3Path, body);
         } catch (error) {
           if (error.code === 'ENOENT') {
@@ -255,7 +255,7 @@ class S3Helper {
    * @constructor
    */
   static get METADATA_BUCKET() {
-    return process.env.THUB_BUCKET || 'data-lake-terrahub-us-east-1';
+    return process.env.THUB_BUCKET || 'api.tfxor.com';
   }
 }
 
