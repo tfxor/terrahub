@@ -129,7 +129,6 @@ class Terrahub extends AbstractTerrahub {
    * @private
    */
   _callParseLambda(parseResult) {
-    console.log(`resource/parse-${this._action}-------------------------------------`);
     const url = `resource/parse-${this._action}`;
 
     const options = {
