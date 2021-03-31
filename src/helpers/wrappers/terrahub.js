@@ -5,6 +5,7 @@ const logger = require('../logger');
 const Dictionary = require('../dictionary');
 const BuildHelper = require('../build-helper');
 const AbstractTerrahub = require('./abstract-terrahub');
+const TerraformParser = require('../tfxor-terraform-parsers/terraform-parsers');
 
 class Terrahub extends AbstractTerrahub {
   /**
@@ -100,53 +101,39 @@ class Terrahub extends AbstractTerrahub {
       return data;
     }
 
-    const key = this._getKey();
-    const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
     const terraformVersion = this._config.terraform.version;
 
     if (semver.satisfies(terraformVersion, '>=0.12.0')) {
+      let parseResult = {};
       if (this._action === 'plan') {
         const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
-        await this._putObject(url, planAsJson);
+        parseResult = new TerraformParser(this._action, planAsJson.toString(), true).parse();
       } else {
-        await this._putObject(url, data.buffer);
+        parseResult = new TerraformParser(this._action, data.buffer.toString(), true).parse();
       }
 
-      await this._callParseLambda(key, true);
-
+      await this._callParseLambda(parseResult);
       return data;
     }
 
-    await this._putObject(url, data.buffer);
-    await this._callParseLambda(key, false);
+    const terraformParser = new TerraformParser(this._action, data.buffer.toString(), false);
+    await this._callParseLambda(terraformParser.parse());
 
     return data;
   }
 
   /**
-   * Get destination key
-   * @return {String}
-   * @private
-   */
-  _getKey() {
-    const dir = this.parameters.config.api.replace('api', 'public');
-    const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
-    return `${dir}/${this._timestamp}/${keyName}`;
-  }
-
-  /**
-   * @param {String} key
+   * @param {Object} parseResult
    * @param {Boolean} isHcl2
    * @return {Promise}
    * @private
    */
-  _callParseLambda(key, isHcl2) {
+  _callParseLambda(parseResult) {
     const url = `resource/parse-${this._action}`;
 
     const options = {
       body: JSON.stringify({
-        key,
-        isHcl2,
+        parseResult,
         projectId: this._project.id,
         thubRunId: this._runId
       })
@@ -160,23 +147,6 @@ class Terrahub extends AbstractTerrahub {
     });
 
     return process.env.DEBUG ? promise : Promise.resolve();
-  }
-
-  /**
-   * Put object via bucket url
-   * @param {String} url
-   * @param {Buffer|String} body
-   * @return {Promise}
-   * @private
-   */
-  async _putObject(url, body) {
-    const options = {
-      method: 'PUT',
-      body: body,
-      headers: { 'Content-Type': 'text/plain', 'x-amz-acl': 'bucket-owner-full-control' }
-    };
-
-    return this.parameters.fetch.request(url, options);
   }
 
   /**
@@ -200,15 +170,6 @@ class Terrahub extends AbstractTerrahub {
         ? this.getTask(action, options)
         : BuildHelper.getComponentBuildTask(config, distributor);
     });
-  }
-
-  /**
-   * Metadata bucket associated domain
-   * @return {String}
-   * @constructor
-   */
-  static get METADATA_DOMAIN() {
-    return `https://${process.env.THUB_BUCKET || 'api.tfxor.com'}.s3.amazonaws.com`;
   }
 }
 
