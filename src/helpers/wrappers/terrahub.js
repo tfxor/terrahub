@@ -107,9 +107,9 @@ class Terrahub extends AbstractTerrahub {
       let parseResult = {};
       if (this._action === 'plan') {
         const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
-        parseResult = new TerraformParser(this._action, planAsJson.toString(), true).parse();
+        parseResult = (new TerraformParser(this._action, planAsJson.toString(), true)).parse();
       } else {
-        parseResult = new TerraformParser(this._action, data.buffer.toString(), true).parse();
+        parseResult = (new TerraformParser(this._action, data.buffer.toString(), true)).parse();
       }
 
       await this._callParseLambda(parseResult);
@@ -131,12 +131,13 @@ class Terrahub extends AbstractTerrahub {
   _callParseLambda(parseResult) {
     const url = `resource/parse-${this._action}`;
 
+    const re = /\\\\"/gm;
     const options = {
       body: JSON.stringify({
-        parseResult,
+        parseResult: parseResult,
         projectId: this._project.id,
         thubRunId: this._runId
-      })
+      }).replace(re, '\\\"')
     };
     const promise = this.parameters.fetch.post(url, options).catch((error) => {
       const message = this._addNameToMessage('Failed to trigger parse function');

@@ -31,7 +31,7 @@ class TerraformParsers {
         return new TerraformApplyParser(this._isHcl2, this._rawContent, ServicesNames, Date.now().toString()).parse();
 
       case 'destroy':
-        break;
+        return JSON.parse(this._rawContent);
 
       default:
         throw new Error(`Terraform parse mode ${this._mode} is invalid. Valid: [plan, apply, destroy].`);
