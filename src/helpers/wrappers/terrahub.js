@@ -1,10 +1,12 @@
 'use strict';
 
+const { STS } = require('aws-sdk');
 const semver = require('semver');
 const logger = require('../logger');
 const Dictionary = require('../dictionary');
 const BuildHelper = require('../build-helper');
 const AbstractTerrahub = require('./abstract-terrahub');
+const TerraformParser = require('../tfxor-terraform-parsers/terraform-parsers');
 
 class Terrahub extends AbstractTerrahub {
   /**
@@ -16,6 +18,7 @@ class Terrahub extends AbstractTerrahub {
    */
   async on(data, err = null) {
     let error = null;
+
     let realtimePayload = {
       runId: this._runId,
       status: data.status,
@@ -24,8 +27,17 @@ class Terrahub extends AbstractTerrahub {
       projectId: this._project.code.toString(),
       componentName: this._config.name,
       componentHash: this._componentHash,
-      realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      providerAccount: 'n/a'
     };
+
+    try {
+      const sts = new STS();
+      const { Account: account} = await sts.getCallerIdentity({}).promise();
+      realtimePayload.providerAccount = account;
+    } catch (error) {
+      logger.error(error);
+    }
 
     if (this._action === 'init' && data.status === Dictionary.REALTIME.START && this.parameters.config.token) {
       await this.createComponent();
@@ -100,56 +112,48 @@ class Terrahub extends AbstractTerrahub {
       return data;
     }
 
-    const key = this._getKey();
-    const url = `${Terrahub.METADATA_DOMAIN}/${key}`;
     const terraformVersion = this._config.terraform.version;
 
+    let parseResult = {};
     if (semver.satisfies(terraformVersion, '>=0.12.0')) {
       if (this._action === 'plan') {
         const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
-        await this._putObject(url, planAsJson);
+        parseResult = (new TerraformParser(this._action, planAsJson.toString(), true)).parse();
       } else {
-        await this._putObject(url, data.buffer);
+        parseResult = (new TerraformParser(this._action, data.buffer.toString(), true)).parse();
       }
 
-      await this._callParseLambda(key, true);
-
+      parseResult.componentName = this._config.name;
+      parseResult.componentHash = this._componentHash;
+      await this._callParseLambda(parseResult);
       return data;
     }
 
-    await this._putObject(url, data.buffer);
-    await this._callParseLambda(key, false);
+    const terraformParser = new TerraformParser(this._action, data.buffer.toString(), false);
+    parseResult = terraformParser.parse();
+    parseResult.componentName = this._config.name;
+    parseResult.componentHash = this._componentHash;
+    await this._callParseLambda(parseResult);
 
     return data;
   }
 
   /**
-   * Get destination key
-   * @return {String}
-   * @private
-   */
-  _getKey() {
-    const dir = this.parameters.config.api.replace('api', 'public');
-    const keyName = `${this._componentHash}-terraform-${this._action}.txt`;
-    return `${dir}/${this._timestamp}/${keyName}`;
-  }
-
-  /**
-   * @param {String} key
+   * @param {Object} parseResult
    * @param {Boolean} isHcl2
    * @return {Promise}
    * @private
    */
-  _callParseLambda(key, isHcl2) {
+  _callParseLambda(parseResult) {
     const url = `resource/parse-${this._action}`;
 
+    const re = /\\\\"/gm;
     const options = {
       body: JSON.stringify({
-        key,
-        isHcl2,
+        parseResult: parseResult,
         projectId: this._project.id,
         thubRunId: this._runId
-      })
+      }).replace(re, '\\\"')
     };
     const promise = this.parameters.fetch.post(url, options).catch((error) => {
       const message = this._addNameToMessage('Failed to trigger parse function');
@@ -160,23 +164,6 @@ class Terrahub extends AbstractTerrahub {
     });
 
     return process.env.DEBUG ? promise : Promise.resolve();
-  }
-
-  /**
-   * Put object via bucket url
-   * @param {String} url
-   * @param {Buffer|String} body
-   * @return {Promise}
-   * @private
-   */
-  async _putObject(url, body) {
-    const options = {
-      method: 'PUT',
-      body: body,
-      headers: { 'Content-Type': 'text/plain', 'x-amz-acl': 'bucket-owner-full-control' }
-    };
-
-    return this.parameters.fetch.request(url, options);
   }
 
   /**
@@ -200,15 +187,6 @@ class Terrahub extends AbstractTerrahub {
         ? this.getTask(action, options)
         : BuildHelper.getComponentBuildTask(config, distributor);
     });
-  }
-
-  /**
-   * Metadata bucket associated domain
-   * @return {String}
-   * @constructor
-   */
-  static get METADATA_DOMAIN() {
-    return `https://${process.env.THUB_BUCKET || 'api.tfxor.com'}.s3.amazonaws.com`;
   }
 }
 

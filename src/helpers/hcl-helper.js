@@ -69,7 +69,7 @@ class HclHelper {
         templateStringify = templateStringify.replace(
           terrahubVariable,
           process.env[
-            terrahubVariable.replace(/[\'\{\}\$]/g,'')
+            terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }

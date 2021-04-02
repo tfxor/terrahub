@@ -35,9 +35,12 @@
     "lodash.get": "^4.4.2",
     "lodash.mergewith": "^4.6.2",
     "minimist": "^1.2.5",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "object-depth": "^0.0.3",
     "semver": "^7.3.4",
+    "terraform-plan-parser": "^1.6.0",
     "treeify": "^1.1.0",
     "twig": "^1.15.4",
     "ws": "^7.4.3"
