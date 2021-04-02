@@ -1,5 +1,6 @@
 'use strict';
 
+const { STS } = require('aws-sdk');
 const semver = require('semver');
 const logger = require('../logger');
 const Dictionary = require('../dictionary');
@@ -17,6 +18,7 @@ class Terrahub extends AbstractTerrahub {
    */
   async on(data, err = null) {
     let error = null;
+
     let realtimePayload = {
       runId: this._runId,
       status: data.status,
@@ -25,8 +27,17 @@ class Terrahub extends AbstractTerrahub {
       projectId: this._project.code.toString(),
       componentName: this._config.name,
       componentHash: this._componentHash,
-      realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      realtimeCreatedAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      providerAccount: 'n/a'
     };
+
+    try {
+      const sts = new STS();
+      const { Account: account} = await sts.getCallerIdentity({}).promise();
+      realtimePayload.providerAccount = account;
+    } catch (error) {
+      logger.error(error);
+    }
 
     if (this._action === 'init' && data.status === Dictionary.REALTIME.START && this.parameters.config.token) {
       await this.createComponent();
@@ -103,8 +114,8 @@ class Terrahub extends AbstractTerrahub {
 
     const terraformVersion = this._config.terraform.version;
 
+    let parseResult = {};
     if (semver.satisfies(terraformVersion, '>=0.12.0')) {
-      let parseResult = {};
       if (this._action === 'plan') {
         const planAsJson = await this._terraform.show(this._terraform._metadata.getPlanPath());
         parseResult = (new TerraformParser(this._action, planAsJson.toString(), true)).parse();
@@ -112,12 +123,17 @@ class Terrahub extends AbstractTerrahub {
         parseResult = (new TerraformParser(this._action, data.buffer.toString(), true)).parse();
       }
 
+      parseResult.componentName = this._config.name;
+      parseResult.componentHash = this._componentHash;
       await this._callParseLambda(parseResult);
       return data;
     }
 
     const terraformParser = new TerraformParser(this._action, data.buffer.toString(), false);
-    await this._callParseLambda(terraformParser.parse());
+    parseResult = terraformParser.parse();
+    parseResult.componentName = this._config.name;
+    parseResult.componentHash = this._componentHash;
+    await this._callParseLambda(parseResult);
 
     return data;
   }
