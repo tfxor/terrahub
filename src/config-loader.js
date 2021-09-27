@@ -404,7 +404,7 @@ class ConfigLoader {
           `Component${errors.length > 1 ? '\'s' : ''} '${errors.join(
             `', '`
           )}' from ` +
-            `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`
+          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`
         );
       }
     }
@@ -470,6 +470,19 @@ class ConfigLoader {
         });
 
       config.processEnv = config.env.variables;
+
+      ['hook', 'build']
+        .filter((key) => !!config[key])
+        .forEach((key) => {
+          if (!config[key].env) {
+            config[key].env = {};
+          }
+
+          config.processEnv = {
+            ...config.processEnv,
+            ...config[key].env.variables,
+          };
+        });
     }
 
     ['env', 'component'].forEach((key) => delete config[key]);
