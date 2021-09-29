@@ -171,4 +171,4 @@
 #      - terrahub build -i {{ name }}
 #  hook:
 #    apply:
-#      after: if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh ]] then; ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/s3_bucket/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
+#      after: if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh ]] then; ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/s3_bucket/upload.sh $TERRAHUB_BUILD_PATH $TERRAHUB_S3_PATH --cache-control max-age=$TERRAHUB_MAX_AGE

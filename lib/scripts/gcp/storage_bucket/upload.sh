@@ -1,32 +1,32 @@
 #!/bin/bash
 
 ## Source path
-THUB_SRC=${1}
-if [ -z "${THUB_SRC}" ]; then
-  echo 'ERROR: THUB_SRC variable is empty. Aborting...'
+SRC=${1}
+if [ -z "${SRC}" ]; then
+  echo 'ERROR: SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## Google Storage bucket name
-THUB_GS_PATH=${2-${THUB_GS_PATH}}
-if [ -z "${THUB_GS_PATH}" ]; then
-  echo 'ERROR: THUB_GS_PATH variable is empty. Aborting...'
+GS_PATH=${2-${GS_PATH}}
+if [ -z "${GS_PATH}" ]; then
+  echo 'ERROR: GS_PATH variable is empty. Aborting...'
   exit 1
 fi
 
 ## Setup environmental variables
 [ -f .terrahub_build.env ] && . .terrahub_build.env
 
-## Checking if THUB_BUILD_OK is true
-if [ "${THUB_BUILD_OK}" == "true" ]; then
-  ## Sync THUB_SRC to THUB_GS_PATH
+## Checking if BUILD_OK is true
+if [ "${BUILD_OK}" == "true" ]; then
+  ## Sync SRC to GS_PATH
   gsutil --version > /dev/null 2>&1 || { echo >&2 'gsutil is missing. Aborting...'; exit 1; }
-  if [[ -d "${THUB_SRC}" ]]; then
-    gsutil -m rsync -d -r ${THUB_SRC} ${THUB_GS_PATH}
-  elif [[ -f "${THUB_SRC}" ]]; then
-    gsutil -m cp ${THUB_SRC} ${THUB_GS_PATH}
+  if [[ -d "${SRC}" ]]; then
+    gsutil -m rsync -d -r ${SRC} ${GS_PATH}
+  elif [[ -f "${SRC}" ]]; then
+    gsutil -m cp ${SRC} ${GS_PATH}
   else
-    echo "ERROR: ${THUB_SRC} is not valid"
+    echo "ERROR: ${SRC} is not valid"
     exit 1
   fi
 else
