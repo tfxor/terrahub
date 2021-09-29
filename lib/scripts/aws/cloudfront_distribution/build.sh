@@ -6,7 +6,7 @@ if [[ -z "${TERRAHUB_VAR_S3_BUCKET_NAME}" ]]; then
 fi
 
 # Initialize terrahub build temporary file
-_CWD="$( cd "$(dirname "$0")/.." >/dev/null 2>&1 ; pwd -P )"
+_CWD="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 export TERRAHUB_BUILD_TEMP_VARS="/tmp/.env-$(date '+%Y%m%d%H%M%S%N%Z')"
 
 if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
@@ -21,8 +21,8 @@ if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
 fi
 
 # Invalidate CloudFront distribution
-echo "[EXEC] ${_CWD}/scripts/invalidate.sh ${TERRAHUB_VAR_S3_BUCKET_NAME}"
-${_CWD}/scripts/invalidate.sh ${TERRAHUB_VAR_S3_BUCKET_NAME}
+echo "[EXEC] ${_CWD}/invalidate.sh ${TERRAHUB_VAR_S3_BUCKET_NAME}"
+${_CWD}/invalidate.sh ${TERRAHUB_VAR_S3_BUCKET_NAME}
 
 # Cleanup terrahub build temporary file
 if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
