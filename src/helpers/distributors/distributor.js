@@ -481,14 +481,14 @@ class Distributor {
       return Promise.resolve();
     }
 
-    this.ws = new WebSocket(this.parameters.config.api, process.env.THUB_TOKEN).ws;
+    this.ws = new WebSocket(this.parameters.config.api, process.env.TERRAHUB_TOKEN).ws;
 
     this.ws.on('message', (data) => {
       try {
         const parsedData = JSON.parse(data);
 
         if (parsedData.thubRunId !== this.runId) {
-          return ;
+          return;
         }
 
         const defaultMessage = { worker: 'lambda' };

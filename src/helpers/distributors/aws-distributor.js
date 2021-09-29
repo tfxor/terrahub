@@ -60,7 +60,7 @@ class AwsDistributor {
         thubRunId: runId,
         config: this.componentConfig,
         parameters: this.parameters,
-        env: importIndex ? {...this.env, ...{ importLines: getLine(), importIndex: importIndex }}  : this.env
+        env: importIndex ? { ...this.env, ...{ importLines: getLine(), importIndex: importIndex } } : this.env
       });
 
       //// wait feature
@@ -87,8 +87,8 @@ class AwsDistributor {
    * @private
    */
   _validateRequirements() {
-    if (!this.config.token) { throw new Error('[AWS distributor] THUB_TOKEN is missing, but is required.'); }
-    if (!this.config.logs) { throw new Error('[AWS distributor] THUB_LOGS is missing, but is required.'); }
+    if (!this.config.token) { throw new Error('[AWS distributor] TERRAHUB_TOKEN is missing, but is required.'); }
+    if (!this.config.logs) { throw new Error('[AWS distributor] TERRAHUB_LOGS is missing, but is required.'); }
 
     const { cloudAccount } = this.componentConfig.terraform;
     if (!cloudAccount) {

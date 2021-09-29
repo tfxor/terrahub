@@ -141,11 +141,11 @@ class ApiHelper extends events.EventEmitter {
     if (!all) {
       _logs = this.logs;
     } else {
-      ({_logs} = this);
+      ({ _logs } = this);
       this._logs = [];
     }
 
-    return { url, body: { bulk: [..._logs], runId: this.runId || process.env.THUB_RUN_ID } };
+    return { url, body: { bulk: [..._logs], runId: this.runId || process.env.TERRAHUB_RUN_ID } };
   }
 
   /**
@@ -205,7 +205,7 @@ class ApiHelper extends events.EventEmitter {
     if (body.component === 'main' || body.log === '✅Done') {
       const promise = {
         url: `https://${this.config.api}.terrahub.io/logs`,
-        body: { bulk: [body], runId: this.runId || process.env.THUB_RUN_ID }
+        body: { bulk: [body], runId: this.runId || process.env.TERRAHUB_RUN_ID }
       };
 
       return this.asyncFetch(promise);
@@ -441,7 +441,7 @@ class ApiHelper extends events.EventEmitter {
       return Promise.all([
         this.fetch
           .post(`https://${this.config.api}.terrahub.io/logs/save`,
-            { body: JSON.stringify({ runId: this.runId || process.env.THUB_RUN_ID } )})
+            { body: JSON.stringify({ runId: this.runId || process.env.TERRAHUB_RUN_ID }) })
           .catch(error => console.log(error))
       ]);
     }

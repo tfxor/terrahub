@@ -13,7 +13,7 @@ class Logger {
 
     logger.useDefaults({
       defaultLevel: logger[level],
-      formatter: (messages, context) => {}
+      formatter: (messages, context) => { }
     });
 
     const consoleHandler = logger.createDefaultHandler();
@@ -96,7 +96,7 @@ class Logger {
    */
   _isTokenValid() {
     if (cluster.isWorker) {
-      return process.env.THUB_TOKEN_IS_VALID;
+      return process.env.TERRAHUB_TOKEN_IS_VALID;
     }
 
     return ApiHelper.tokenIsValid;

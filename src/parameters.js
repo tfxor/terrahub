@@ -13,9 +13,9 @@ const { extend, homePath } = require('./helpers/util');
  * @private
  */
 function _getEnv(args) {
-  const _args = {...args};
-  if (process.env.hasOwnProperty('THUB_ENV')) {
-    _args.env = _args.e = process.env.THUB_ENV;
+  const _args = { ...args };
+  if (process.env.hasOwnProperty('TERRAHUB_ENV')) {
+    _args.env = _args.e = process.env.TERRAHUB_ENV;
   }
 
   return _args.env || _args.e;
@@ -57,10 +57,10 @@ const def = {
 };
 const env = {
   env: _getEnv(args),
-  api: process.env.THUB_API,
-  apiUrl: process.env.THUB_API,
-  token: process.env.THUB_TOKEN,
-  format: process.env.THUB_CONFIG_FORMAT
+  api: process.env.TERRAHUB_API,
+  apiUrl: process.env.TERRAHUB_API,
+  token: process.env.TERRAHUB_TOKEN,
+  format: process.env.TERRAHUB_CONFIG_FORMAT
 };
 
 const cfg = extend(def, [fse.readJsonSync(cfgPath, { throws: false }), env]);

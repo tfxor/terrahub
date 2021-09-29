@@ -27,7 +27,7 @@ class DistributedCommand extends AbstractCommand {
     super(parameters, logger);
 
     this._terraformRemoteStates = {};
-    this._runId = process.env.THUB_RUN_ID || Util.uuid();
+    this._runId = process.env.TERRAHUB_RUN_ID || Util.uuid();
 
     this.logger.updateContext({
       runId: this._runId,
@@ -332,7 +332,7 @@ class DistributedCommand extends AbstractCommand {
     const { workspace } = this._terraformRemoteStates[hash]
       .find(it => it.workspace && it.name === remoteStateName[0]) || { workspace: '' };
 
-    const isHcl2 = semver.satisfies(config[hash].terraform.version, '>=0.12.0'); 
+    const isHcl2 = semver.satisfies(config[hash].terraform.version, '>=0.12.0');
     const defaultRemoteConfig = {
       [remoteStateName]: {
         workspace: workspace || (isHcl2 ? 'terraform.workspace' : '${terraform.workspace}'),
@@ -419,7 +419,7 @@ class DistributedCommand extends AbstractCommand {
     ].filter(Boolean);
 
     const filteredConfig = this.getDependencyStrategy().getExecutionList(fullConfig, filters);
-    process.env.THUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
+    process.env.TERRAHUB_EXECUTION_LIST = Object.keys(filteredConfig).map(it => `${filteredConfig[it].name}:${it}`);
 
     if (!Object.keys(filteredConfig).length) {
       throw new Error(`No components available for the '${this.getName()}' action.`);
@@ -796,7 +796,7 @@ class DistributedCommand extends AbstractCommand {
     return Object.keys(issues).filter(it => issues[it].length).map(hash => {
       const names = issues[hash].map(it => fullConfig[it].name);
 
-      return `'${names.join(`', '`)}' component${names.length > 1 
+      return `'${names.join(`', '`)}' component${names.length > 1
         ? 's that are dependencies' : ' that is dependency'}`
         + ` of '${fullConfig[hash].name}' ${names.length > 1 ? 'are' : 'is'} excluded from the execution list`;
     });

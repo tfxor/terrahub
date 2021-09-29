@@ -138,40 +138,37 @@
 # build:
 #   env:
 #     variables:
-#       THUB_ENV: "dev"
-#       THUB_INDEX_FILE: "index.txt"
-#       THUB_DEEP_BUCKET: "s3://"
-#       THUB_PARAMETERS_PATH: ".terrahub_build.env"
-#       THUB_S3_PATH: "s3://"
-#       THUB_BUILD_PATH: "build"
-#       THUB_SOURCE_PATH: ""
-#       THUB_BUILD_OK: "false"
-#       THUB_MAX_AGE: "600"
+#       TERRAHUB_BUILD_OK: false
+#       TERRAHUB_BUILD_S3_DEPLOY: s3://
+#       TERRAHUB_BUILD_INDEX_FILE: index.txt
+#       TERRAHUB_BUILD_DOTENV_FILE: .env
+#       TERRAHUB_BUILD_COMPILE_FILE: ${TERRAHUB_PROJECT_HOME}/bin/compile-frontend.sh
+#       TERRAHUB_BUILD_LOCAL_PATH: ${TERRAHUB_PROJECT_HOME}/apps/frontend
+#       TERRAHUB_BUILD_SOURCE_PATH: ${TERRAHUB_PROJECT_HOME}/apps/frontend/src
+#       TERRAHUB_VAR_S3_BUCKET_NAME: s3-
+#       TERRAHUB_VAR_S3_BUCKET_MAX_AGE: 600
 #   phases:
 #     pre_build:
 #       commands:
-#         - echo "BUILD: Running pre_build step"
-#         - ./scripts/download.sh $THUB_PARAMETERS_PATH $THUB_DEEP_BUCKET
-#         - ./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE
-#         - ./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH
+#         - echo '[BUILD] Running pre_build step'
 #       finally:
-#         - echo "BUILD: pre_build step successful"
+#         - echo '[BUILD] Finished pre_build step'
 #     build:
 #       commands:
-#         - echo "BUILD: Running build step"
-#         - ./scripts/compile.sh
+#         - echo '[BUILD] Running build step'
+#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh ]] then; ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/s3_bucket/build.sh || { echo >&2 "[ERROR] Failed to run 'build.sh'. Aborting..."; exit 1; }
 #       finally:
-#         - echo "BUILD: build step successful"
+#         - echo '[BUILD] Finished build step'
 #     post_build:
 #       commands:
-#         - echo "BUILD: Running post_build step"
-#         - ./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE
-#         - ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
-#         - rm -f .terrahub_build.env $THUB_INDEX_FILE
+#         - echo '[BUILD] Running post_build step'
 #       finally:
-#         - echo "BUILD: post_build step successful"
+#         - echo '[BUILD] Finished post_build step'
 
 ## hook config
+#  plan:
+#    before:
+#      - terrahub build -i {{ name }}
 #  hook:
 #    apply:
-#      after: ./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE
+#      after: if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh ]] then; ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/s3_bucket/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE

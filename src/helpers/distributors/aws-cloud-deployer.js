@@ -23,7 +23,7 @@ class AwsDeployer {
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters, env } = requestData;
 
-    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), THUB_RUN_ID: thubRunId }, env);
+    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), TERRAHUB_RUN_ID: thubRunId }, env);
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
