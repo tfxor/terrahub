@@ -353,11 +353,9 @@ class ConfigLoader {
     }
   }
 
-
-
   /**
    * Consolidate all components path
-   * @private
+   * @returns {array} The array of consolidate all components path.
    */
   _getComponentsPath() {
     const configPaths = this.listConfig();
@@ -527,9 +525,9 @@ class ConfigLoader {
         }
       });
 
-      for (const [key, value] of Object.entries(config.processEnv)) {
-        process.env[key] = undefined;
-      }
+    for (const [key] of Object.entries(config.processEnv)) {
+      process.env[key] = undefined;
+    }
     ['env', 'component'].forEach((key) => delete config[key]);
   }
 
