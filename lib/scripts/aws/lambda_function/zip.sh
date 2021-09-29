@@ -14,15 +14,8 @@ if [[ -z "${_FILE}" ]]; then
   exit 1
 fi
 
-## Source path
-_SRC=${3}
-if [[ -z "${_SRC}" ]]; then
-  echo >&2 '[ERROR] _SRC variable is empty. Aborting...'
-  exit 1
-fi
-
 ## Source files or folders for zip process
-_PATH="${@:4}"
+_PATH="${@:3}"
 if [[ -z "${_PATH}" ]]; then
   echo >&2 '[ERROR] _PATH variable is empty. Aborting...'
   exit 1
@@ -51,7 +44,7 @@ _CWD=$(pwd -P)
 _ARR=( ${_PATH} )
 for i in "${_ARR[@]}"; do
   cd ${i}
-  zip ${_OPTION} ${_SRC}/${_FILE} .
+  zip ${_OPTION} ${_FILE} .
 done
 cd ${_CWD}
 
