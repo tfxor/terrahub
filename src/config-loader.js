@@ -6,6 +6,7 @@ const glob = require('glob');
 const fse = require('fs-extra');
 const Util = require('./helpers/util');
 const Dictionary = require('./helpers/dictionary');
+const HclHelper = require('./helpers/hcl-helper');
 const ListException = require('./exceptions/list-exception');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
@@ -352,6 +353,23 @@ class ConfigLoader {
     }
   }
 
+
+
+  /**
+   * Consolidate all components path
+   * @private
+   */
+  _getComponentsPath() {
+    const configPaths = this.listConfig();
+    const componetsPath = {};
+    configPaths.forEach((configPath) => {
+      const componentPath = path.dirname(this.relativePath(configPath));
+      componetsPath[componentPath] = configPath;
+    });
+
+    return componetsPath;
+  }
+
   /**
    * Validate's components' config fields'
    * @param {Object} config
@@ -454,38 +472,71 @@ class ConfigLoader {
     }
 
     this._validateDynamicData(config);
+    if (!config.hasOwnProperty('env')) {
+      config.env = { variables: {} };
+    }
 
-    if (config.hasOwnProperty('env')) {
-      ['hook', 'build']
-        .filter((key) => !!config[key])
-        .forEach((key) => {
-          if (!config[key].env) {
-            config[key].env = {};
-          }
+    config.processEnv = {
+      TERRAHUB_HOME: this._parameters.cfgPath.replace('/.terrahub.json', ''),
+      TERRAHUB_CLI_HOME: this._parameters.binPath,
+      TERRAHUB_PROJECT_HOME: this._projectConfig.root,
+      TERRAHUB_COMPONENT_HOME: this._getComponentsPath()[this._parameters.args.i]
+    };
+    this._setProcessEnv(config.processEnv);
+    HclHelper.replaceENV(config.processEnv);
+    ['hook', 'build']
+      .filter((key) => !!config[key])
+      .forEach((key) => {
+        if (!config[key].env) {
+          config[key].env = {};
+        }
+
+        if (config[key].env.variables !== undefined) {
+          this._setProcessEnv(config[key].env.variables);
+          HclHelper.replaceENV(config[key].env.variables);
 
           config[key].env.variables = {
             ...config.env.variables,
             ...config[key].env.variables,
           };
-        });
+        }
+      });
 
-      config.processEnv = config.env.variables;
+    this._setProcessEnv(config.env.variables);
+    HclHelper.replaceENV(config.env.variables);
+    config.processEnv = {
+      ...config.processEnv,
+      ...config.env.variables
+    };
 
-      ['hook', 'build']
-        .filter((key) => !!config[key])
-        .forEach((key) => {
-          if (!config[key].env) {
-            config[key].env = {};
-          }
+    ['hook', 'build']
+      .filter((key) => !!config[key])
+      .forEach((key) => {
+        if (!config[key].env) {
+          config[key].env = {};
+        }
+
+        if (config[key].env.variables !== undefined) {
+          this._setProcessEnv(config[key].env.variables);
+          HclHelper.replaceENV(config[key].env.variables);
 
           config.processEnv = {
             ...config.processEnv,
             ...config[key].env.variables,
           };
-        });
-    }
+        }
+      });
 
+      for (const [key, value] of Object.entries(config.processEnv)) {
+        process.env[key] = undefined;
+      }
     ['env', 'component'].forEach((key) => delete config[key]);
+  }
+
+  _setProcessEnv(processEnv) {
+    for (const [key, value] of Object.entries(processEnv)) {
+      process.env[key] = value;
+    }
   }
 
   /**

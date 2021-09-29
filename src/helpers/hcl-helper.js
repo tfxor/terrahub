@@ -19,7 +19,7 @@ class HclHelper {
    * @return {Promise}
    */
   static middleware(config, parameters) {
-    const replacedConfig = HclHelper._replaceENV(config);
+    const replacedConfig = HclHelper.replaceENV(config);
     const transformedConfig = HclHelper._transformConfig(replacedConfig, parameters);
 
     if (!transformedConfig.isTemplate) {
@@ -59,7 +59,7 @@ class HclHelper {
   }
 
 
-  static _replaceENV(config) {
+  static replaceENV(config) {
     const regExTfvars = /\$\{+[a-zA-Z0-9_\-]+\}/gm;
     let templateStringify = JSON.stringify(config);
     const templateStringifyArr = templateStringify.match(regExTfvars);
