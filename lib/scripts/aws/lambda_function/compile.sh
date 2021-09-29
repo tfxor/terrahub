@@ -8,7 +8,9 @@ if [ -z "${TERRAHUB_SRC}" ]; then
 fi
 
 ## Setup environmental variables
-[ -f .terrahub_build.env ] && . .terrahub_build.env
+if [ -f ${TERRAHUB_BUILD_TEMP_VARS} ]; then
+  source ${TERRAHUB_BUILD_TEMP_VARS}
+fi
 
 ## Checking if TERRAHUB_BUILD_OK is true
 if [ "${TERRAHUB_BUILD_OK}" != "true" ]; then

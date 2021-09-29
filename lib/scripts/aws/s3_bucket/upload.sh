@@ -1,24 +1,24 @@
 #!/bin/sh
 
 ## Source path
-TERRAHUB_SRC=${1}
-if [ -z "${TERRAHUB_SRC}" ]; then
-  echo >&2 '[ERROR] TERRAHUB_SRC variable is empty. Aborting...'
+_SRC=${1}
+if [[ -z "${_SRC}" ]]; then
+  echo >&2 '[ERROR] _SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## S3 bucket name
-TERRAHUB_S3_PATH=${2-${TERRAHUB_S3_PATH}}
-if [ -z "${TERRAHUB_S3_PATH}" ]; then
-  echo >&2 '[ERROR] TERRAHUB_S3_PATH variable is empty. Aborting...'
+_S3=${2-${TERRAHUB_BUILD_S3_DEPLOY}}
+if [[ -z "${_S3}" ]]; then
+  echo >&2 '[ERROR] _S3 variable is empty. Aborting...'
   exit 1
 fi
 
 ## AWS options: --region=[region] --profile=[profile]
-TERRAHUB_AWS_OPTIONS="${@:3}"
+_OPTIONS="${@:3}"
 
 ## Setup environmental variables
-if [ -f ${TERRAHUB_BUILD_TEMP_VARS} ]; then
+if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
   source ${TERRAHUB_BUILD_TEMP_VARS}
 fi
 
@@ -29,13 +29,13 @@ if [ "${TERRAHUB_BUILD_OK}" != "true" ]; then
 fi
 
 
-## Sync TERRAHUB_SRC to TERRAHUB_S3_PATH
+## Sync _SRC to _S3
 aws --version > /dev/null 2>&1 || { echo >&2 'awscli is missing. Aborting...'; exit 1; }
-if [[ -d "${TERRAHUB_SRC}" ]]; then
-  aws s3 sync ${TERRAHUB_SRC} ${TERRAHUB_S3_PATH} ${TERRAHUB_AWS_OPTIONS}
-elif [[ -f "${TERRAHUB_SRC}" ]]; then
-  aws s3 cp ${TERRAHUB_SRC} ${TERRAHUB_S3_PATH} ${TERRAHUB_AWS_OPTIONS}
+if [[ -d "${_SRC}" ]]; then
+  aws s3 sync ${_SRC} ${_S3} ${_OPTIONS}
+elif [[ -f "${_SRC}" ]]; then
+  aws s3 cp ${_SRC} ${_S3} ${_OPTIONS}
 else
-  echo >&2 "[ERROR] ${TERRAHUB_SRC} is not valid"
+  echo >&2 "[ERROR] ${_SRC} is not valid"
   exit 1
 fi

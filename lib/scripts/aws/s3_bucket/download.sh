@@ -1,40 +1,40 @@
 #!/bin/sh
 
 ## Source path
-TERRAHUB_SRC=${1}
-if [ -z "${TERRAHUB_SRC}" ]; then
-  echo >&2 '[ERROR] TERRAHUB_SRC variable is empty. Aborting...'
+_SRC=${1}
+if [[ -z "${_SRC}" ]]; then
+  echo >&2 '[ERROR] _SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## S3 bucket name
-TERRAHUB_S3_PATH=${2-${TERRAHUB_S3_PATH}}
-if [ -z "${TERRAHUB_S3_PATH}" ]; then
-  echo >&2 '[ERROR] TERRAHUB_S3_PATH variable is empty. Aborting...'
+_S3=${2-${TERRAHUB_BUILD_S3_DEPLOY}}
+if [[ -z "${_S3}" ]]; then
+  echo >&2 '[ERROR] _S3 variable is empty. Aborting...'
   exit 1
 fi
 
 ## AWS options: --region=[region] --profile=[profile]
-TERRAHUB_AWS_OPTIONS="${@:3}"
+_OPTIONS="${@:3}"
 
 ## Clean environmental variables
-if [ -f ${TERRAHUB_BUILD_TEMP_VARS} ]; then
+if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
   source ${TERRAHUB_BUILD_TEMP_VARS}
 fi
 
-## Checking if TERRAHUB_S3_PATH file exists in S3
+## Checking if _S3 file exists in S3
 aws --version > /dev/null 2>&1 || { echo >&2 'awscli is missing. Aborting...'; exit 1; }
-TERRAHUB_CHECK_TYPE=$(aws s3 ls ${TERRAHUB_S3_PATH} ${TERRAHUB_AWS_OPTIONS} || echo "")
-if [ -z "${TERRAHUB_CHECK_TYPE}" ]; then
-  echo "[INFO] ${TERRAHUB_S3_PATH} does NOT exist ==> First execution."
+_COMPARE=$(aws s3 ls ${_S3} ${_OPTIONS} || echo "")
+if [[ -z "${_COMPARE}" ]]; then
+  echo "[INFO] ${_S3} does NOT exist ==> First execution."
   echo 'export TERRAHUB_BUILD_OK="true"' >> ${TERRAHUB_BUILD_TEMP_VARS}
   exit 0
 fi
 
 ## Downloading from S3
-echo '[INFO] Downloading TERRAHUB_SRC from TERRAHUB_S3_PATH'
-if [[ "${TERRAHUB_CHECK_TYPE}" == *" PRE "* ]] || [[ "${TERRAHUB_S3_PATH}" == */ ]]; then
-  aws s3 sync ${TERRAHUB_S3_PATH} ${TERRAHUB_SRC} ${TERRAHUB_AWS_OPTIONS}
+echo '[INFO] Downloading _SRC from _S3'
+if [[ "${_COMPARE}" == *" PRE "* ]] || [[ "${_S3}" == */ ]]; then
+  aws s3 sync ${_S3} ${_SRC} ${_OPTIONS}
 else
-  aws s3 cp ${TERRAHUB_S3_PATH} ${TERRAHUB_SRC} ${TERRAHUB_AWS_OPTIONS}
+  aws s3 cp ${_S3} ${_SRC} ${_OPTIONS}
 fi

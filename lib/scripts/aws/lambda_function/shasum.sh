@@ -1,28 +1,28 @@
 #!/bin/sh
 
 ## Source path
-TERRAHUB_SRC=${1}
-if [ -z "${TERRAHUB_SRC}" ]; then
-  echo '[ERROR] TERRAHUB_SRC variable is empty. Aborting...'
+_SRC=${1}
+if [[ -z "${_SRC}" ]]; then
+  echo >&2 '[ERROR] _SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## Setup environmental variables
-if [ -f .terrahub_build.env ]; then
-  source ./.terrahub_build.env
+if [[ -f ${TERRAHUB_BUILD_TEMP_VARS} ]]; then
+  source ${TERRAHUB_BUILD_TEMP_VARS}
 fi
 
 ## Checking if TERRAHUB_BUILD_OK is true
-if [ ! "$TERRAHUB_BUILD_OK" = "true" ]; then
-  echo "[INFO] Build was NOT executed ==> SHA256 will NOT be updated."
+if [[ "$TERRAHUB_BUILD_OK" != "true" ]]; then
+  echo '[INFO] Build was NOT executed ==> SHA256 will NOT be updated.'
   exit 0
 fi
 
 ## Checking if SHA256 sums exists
-if [ -z "${TERRAHUB_SHA}" ]; then
-  echo "[ERROR] TERRAHUB_SHA variable is empty. Aborting..."
+if [[ -z "${TERRAHUB_SHA}" ]]; then
+  echo >&2 '[ERROR] TERRAHUB_SHA variable is empty. Aborting...'
   exit 1
 fi
 
-## Write current SHA256 to TERRAHUB_SRC
-echo "${TERRAHUB_SHA}" > ${TERRAHUB_SRC}
+## Write current SHA256 to _SRC
+echo "${TERRAHUB_SHA}" > ${_SRC}
