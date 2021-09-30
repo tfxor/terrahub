@@ -285,12 +285,12 @@ class Distributor {
 
     if (templateStringifyArr !== null) {
       for (const terrahubVariable of templateStringifyArr) {
-        updatedValue = updatedValue.replace(
-          terrahubVariable,
-          listOfValues[
-          terrahubVariable.replace(/[\'\{\}\$]/g, '')
-          ]
-        );
+        if (updatedValue !== undefined) {
+          updatedValue = updatedValue.replace(
+            terrahubVariable,
+            listOfValues[terrahubVariable.replace(/[\'\{\}\$]/g, '')]
+          );
+        }
       }
     }
     return updatedValue;
@@ -312,9 +312,7 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.build.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          if (stdout !== undefined) {
-            config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
-          }
+          config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
     }
 
@@ -324,9 +322,7 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.project.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          if (stdout !== undefined) {
-            config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
-          }
+          config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
       Object.assign(this._env, config.project.env.variables);
     }
@@ -336,9 +332,7 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.processEnv, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          if (stdout !== undefined) {
-            config.processEnv[element[0]] = stdout.toString().replace('\n', '');
-          }
+          config.processEnv[element[0]] = stdout.toString().replace('\n', '');
         });
       Object.assign(this._env, config.processEnv);
     }
