@@ -10,11 +10,6 @@ if [[ -z "${TERRAHUB_BUILD_LOCAL_PATH}" ]]; then
   exit 1
 fi
 
-if [[ -z "${TERRAHUB_BUILD_SOURCE_PATH}" ]]; then
-  echo "[ERROR] TERRAHUB_BUILD_SOURCE_PATH variable is empty. Aborting..."
-  exit 1
-fi
-
 if [[ -z "${TERRAHUB_BUILD_S3_DEPLOY}" ]]; then
   echo "[ERROR] TERRAHUB_BUILD_S3_DEPLOY variable is empty. Aborting..."
   exit 1
