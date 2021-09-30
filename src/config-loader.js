@@ -142,7 +142,7 @@ class ConfigLoader {
   }
 
   _createMissingTerrahubFile(dirPath) {
-    const name = dirPath.split('/').pop();
+    const name = dirPath.split(path.sep).pop();
     const code = Util.toMd5(name + Date.now().toString()).slice(0, 8);
     const format =
       this._terrahubConfig.format === 'yaml'
@@ -358,10 +358,13 @@ class ConfigLoader {
    */
   _getComponentsPath() {
     const configPaths = this.listConfig();
+    
     const componetsPath = {};
     configPaths.forEach((configPath) => {
-      const componentPath = path.dirname(this.relativePath(configPath));
-      componetsPath[componentPath] = configPath;
+      let config = this._getConfig(configPath);
+      if (config.component) {
+        componetsPath[config.component.name] = configPath;
+      }
     });
 
     return componetsPath;
@@ -473,13 +476,22 @@ class ConfigLoader {
       config.env = { variables: {} };
     }
 
-    let TERRAHUB_CLI_HOME = this._parameters.binPath.split('/');
-    const defaultProcessEnv = {
+    let TERRAHUB_CLI_HOME = this._parameters.binPath.split(path.sep);
+    let defaultProcessEnv = {
       TERRAHUB_HOME: this._parameters.cfgPath.replace('/.terrahub.json', ''),
-      TERRAHUB_CLI_HOME: TERRAHUB_CLI_HOME.slice(0, TERRAHUB_CLI_HOME.length - 1).join('/'),
+      TERRAHUB_CLI_HOME: TERRAHUB_CLI_HOME.slice(0, TERRAHUB_CLI_HOME.length - 1).join(path.sep),
       TERRAHUB_PROJECT_HOME: this._projectConfig.root,
       TERRAHUB_COMPONENT_HOME: this._getComponentsPath()[this._parameters.args.i].replace('/.terrahub.yml', '')
     };
+
+    const projectConfig = this._getConfig(path.join(this._projectConfig.root, '.terrahub.yml'));
+
+    if (projectConfig.project.hasOwnProperty('env')) {
+      defaultProcessEnv = {
+        ...defaultProcessEnv,
+        ...projectConfig.project.env.variables
+      };
+    }
 
     ['hook', 'build']
       .filter((key) => !!config[key])
