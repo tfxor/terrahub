@@ -6,6 +6,7 @@ const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
+const { execSync } = require('child_process');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('./aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
@@ -277,6 +278,24 @@ class Distributor {
     return Promise.resolve();
   }
 
+  _replaceENV(listOfValues, value) {
+    const regExTfvars = /\$\{+[a-zA-Z0-9_\-]+\}/gm;
+    let updatedValue = value;
+    const templateStringifyArr = updatedValue.match(regExTfvars);
+
+    if (templateStringifyArr !== null) {
+      for (const terrahubVariable of templateStringifyArr) {
+        if (updatedValue !== undefined) {
+          updatedValue = updatedValue.replace(
+            terrahubVariable,
+            listOfValues[terrahubVariable.replace(/[\'\{\}\$]/g, '')]
+          );
+        }
+      }
+    }
+    return updatedValue;
+  }
+
   /**
    * @param {String} hash
    * @param {Object | boolean} parameters
@@ -287,12 +306,34 @@ class Distributor {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
-    if (config.project.env) {
-      if (config.project.env.variables) {
-        Object.assign(this._env, config.project.env.variables);
-      }
+    if (config.build && config.build.env && config.build.env.variables) {
+      Object.entries(config.build.env.variables)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceENV(config.build.env.variables, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
+        });
+    }
+
+    if (config.project.env && config.project.env.variables) {
+      Object.entries(config.project.env.variables)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceENV(config.project.env.variables, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
+        });
+      Object.assign(this._env, config.project.env.variables);
     }
     if (config.processEnv) {
+      Object.entries(config.processEnv)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceENV(config.processEnv, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.processEnv[element[0]] = stdout.toString().replace('\n', '');
+        });
       Object.assign(this._env, config.processEnv);
     }
 
