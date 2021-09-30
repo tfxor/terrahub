@@ -6,7 +6,6 @@ const glob = require('glob');
 const fse = require('fs-extra');
 const Util = require('./helpers/util');
 const Dictionary = require('./helpers/dictionary');
-const HclHelper = require('./helpers/hcl-helper');
 const ListException = require('./exceptions/list-exception');
 const { toMd5, extend, yamlToJson, jsonToYaml } = require('./helpers/util');
 
@@ -474,14 +473,14 @@ class ConfigLoader {
       config.env = { variables: {} };
     }
 
-    config.processEnv = {
+    let TERRAHUB_CLI_HOME = this._parameters.binPath.split('/');
+    const defaultProcessEnv = {
       TERRAHUB_HOME: this._parameters.cfgPath.replace('/.terrahub.json', ''),
-      TERRAHUB_CLI_HOME: this._parameters.binPath,
+      TERRAHUB_CLI_HOME: TERRAHUB_CLI_HOME.slice(0, TERRAHUB_CLI_HOME.length - 1).join('/'),
       TERRAHUB_PROJECT_HOME: this._projectConfig.root,
-      TERRAHUB_COMPONENT_HOME: this._getComponentsPath()[this._parameters.args.i]
+      TERRAHUB_COMPONENT_HOME: this._getComponentsPath()[this._parameters.args.i].replace('/.terrahub.yml', '')
     };
-    this._setProcessEnv(config.processEnv);
-    HclHelper.replaceENV(config.processEnv);
+
     ['hook', 'build']
       .filter((key) => !!config[key])
       .forEach((key) => {
@@ -490,19 +489,16 @@ class ConfigLoader {
         }
 
         if (config[key].env.variables !== undefined) {
-          this._setProcessEnv(config[key].env.variables);
-          HclHelper.replaceENV(config[key].env.variables);
-
           config[key].env.variables = {
+            ...defaultProcessEnv,
             ...config.env.variables,
             ...config[key].env.variables,
           };
         }
       });
 
-    this._setProcessEnv(config.env.variables);
-    HclHelper.replaceENV(config.env.variables);
     config.processEnv = {
+      ...defaultProcessEnv,
       ...config.processEnv,
       ...config.env.variables
     };
@@ -515,26 +511,15 @@ class ConfigLoader {
         }
 
         if (config[key].env.variables !== undefined) {
-          this._setProcessEnv(config[key].env.variables);
-          HclHelper.replaceENV(config[key].env.variables);
-
           config.processEnv = {
+            ...defaultProcessEnv,
             ...config.processEnv,
             ...config[key].env.variables,
           };
         }
       });
 
-    for (const [key] of Object.entries(config.processEnv)) {
-      process.env[key] = undefined;
-    }
     ['env', 'component'].forEach((key) => delete config[key]);
-  }
-
-  _setProcessEnv(processEnv) {
-    for (const [key, value] of Object.entries(processEnv)) {
-      process.env[key] = value;
-    }
   }
 
   /**

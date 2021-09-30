@@ -1,13 +1,16 @@
+/* eslint-disable no-cond-assign */
+/* eslint-disable array-callback-return */
+
 'use strict';
 
 const fse = require('fs-extra');
 const semver = require('semver');
 const GsHelper = require('./gs-helper');
 const S3Helper = require('./s3-helper');
+const Downloader = require('./downloader');
 const objectDepth = require('object-depth');
 const { exec } = require('child-process-promise');
 const { resolve, join, extname } = require('path');
-const Downloader = require('./downloader');
 const { homePath, extend, homePathLambda } = require('./util');
 
 
