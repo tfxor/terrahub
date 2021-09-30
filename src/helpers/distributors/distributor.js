@@ -288,7 +288,7 @@ class Distributor {
         updatedValue = updatedValue.replace(
           terrahubVariable,
           listOfValues[
-            terrahubVariable.replace(/[\'\{\}\$]/g, '')
+          terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }
@@ -312,7 +312,9 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.build.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
+          if (stdout !== undefined) {
+            config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
+          }
         });
     }
 
@@ -322,7 +324,9 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.project.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
+          if (stdout !== undefined) {
+            config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
+          }
         });
       Object.assign(this._env, config.project.env.variables);
     }
@@ -332,7 +336,9 @@ class Distributor {
         .forEach((element) => {
           element[1] = this._replaceENV(config.processEnv, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
-          config.processEnv[element[0]] = stdout.toString().replace('\n', '');
+          if (stdout !== undefined) {
+            config.processEnv[element[0]] = stdout.toString().replace('\n', '');
+          }
         });
       Object.assign(this._env, config.processEnv);
     }
