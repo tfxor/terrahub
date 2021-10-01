@@ -6,6 +6,7 @@ const WebSocket = require('./websocket');
 const ApiHelper = require('../api-helper');
 const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
+const { execSync } = require('child_process');
 const OutputCommand = require('../../commands/output');
 const AwsDistributor = require('./aws-distributor');
 const { physicalCpuCount, threadsLimitCount } = require('../util');
@@ -277,6 +278,43 @@ class Distributor {
     return Promise.resolve();
   }
 
+  _replaceEnv(listOfValues, value) {
+    const regExTfvars = /\$\{+[a-zA-Z0-9_\-]+\}/gm;
+    let updatedValue = value;
+    const templateStringifyArr = updatedValue.match(regExTfvars);
+
+    if (templateStringifyArr !== null) {
+      for (const terrahubVariable of templateStringifyArr) {
+        if (updatedValue !== undefined) {
+          updatedValue = updatedValue.replace(
+            terrahubVariable,
+            listOfValues[terrahubVariable.replace(/[\'\{\}\$]/g, '')]
+          );
+        }
+      }
+    }
+    return updatedValue;
+  }
+
+  _replaceEnvs(listOfValues, config) {
+    const regExTfvars = /\$\{+[a-zA-Z0-9_\-]+\}/gm;
+    let templateStringify = JSON.stringify(config);
+    const templateStringifyArr = templateStringify.match(regExTfvars);
+
+    if (templateStringifyArr !== null) {
+      for (const terrahubVariable of templateStringifyArr) {
+        templateStringify = templateStringify.replace(
+          terrahubVariable,
+          listOfValues[
+            terrahubVariable.replace(/[\'\{\}\$]/g, '')
+          ]
+        );
+      }
+    }
+    const replacedConfig = JSON.parse(templateStringify);
+    return replacedConfig;
+  }
+
   /**
    * @param {String} hash
    * @param {Object | boolean} parameters
@@ -284,17 +322,66 @@ class Distributor {
    * @return {LocalDistributor|AwsDistributor}
    */
   getDistributor(hash, parameters = false, providerId = false) {
-    const config = this.projectConfig[hash];
+    let config = this.projectConfig[hash];
     const { distributor } = config;
 
-    if (config.project.env) {
-      if (config.project.env.variables) {
-        Object.assign(this._env, config.project.env.variables);
-      }
+    const defaultProcessEnv = {
+      TERRAHUB_COMPONENT_HOME: config.fullPath.replace('/.terrahub.yml', '')
+    };
+
+    if (
+      config.hasOwnProperty('build')
+      && config.build.hasOwnProperty('env')
+      && config.build.env.hasOwnProperty('variables')) {
+      config.build.env.variables = {
+        ...defaultProcessEnv,
+        ...config.build.env.variables
+      };}
+
+    if (config.build && config.build.env && config.build.env.variables) {
+      Object.entries(config.build.env.variables)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceEnv(config.build.env.variables, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
+        });
     }
+    if (config.project.env && config.project.env.variables) {
+      config.project.env.variables = {
+        ...defaultProcessEnv,
+        ...config.project.env.variables
+      };
+    }
+
+    if (config.project.env && config.project.env.variables) {
+      Object.entries(config.project.env.variables)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceEnv(config.project.env.variables, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.project.env.variables[element[0]] = stdout.toString().replace('\n', '');
+        });
+      Object.assign(this._env, config.project.env.variables);
+    }
+
+    config.processEnv = {
+      ...defaultProcessEnv,
+      ...config.processEnv
+    };
+
     if (config.processEnv) {
+      Object.entries(config.processEnv)
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .forEach((element) => {
+          element[1] = this._replaceEnv(config.processEnv, element[1]);
+          const stdout = execSync(`echo "${element[1]}"`);
+          config.processEnv[element[0]] = stdout.toString().replace('\n', '');
+        });
       Object.assign(this._env, config.processEnv);
     }
+
+    config = this._replaceEnvs(config.processEnv, config);
 
     switch (distributor) {
       case 'local':
@@ -481,14 +568,14 @@ class Distributor {
       return Promise.resolve();
     }
 
-    this.ws = new WebSocket(this.parameters.config.api, process.env.THUB_TOKEN).ws;
+    this.ws = new WebSocket(this.parameters.config.api, process.env.TERRAHUB_TOKEN).ws;
 
     this.ws.on('message', (data) => {
       try {
         const parsedData = JSON.parse(data);
 
         if (parsedData.thubRunId !== this.runId) {
-          return ;
+          return;
         }
 
         const defaultMessage = { worker: 'lambda' };

@@ -83,7 +83,7 @@ class Fetch {
       let error;
       switch (result.status) {
         case 403:
-          error = new AuthenticationException('Provided THUB_TOKEN is invalid.');
+          error = new AuthenticationException('Provided TERRAHUB_TOKEN is invalid.');
           break;
         case 404:
           error = new NotFoundException(json);
@@ -93,8 +93,8 @@ class Fetch {
         case 504:
           error = new Error(
             'Error occurred. Please try again. If this problem persists, ' +
-              'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
-              'https://github.com/tfxor/terrahub/issues'
+            'enable extra debugging (DEBUG=debug) to see more details and open an issue at ' +
+            'https://github.com/tfxor/terrahub/issues'
           );
           break;
         default:

@@ -22,7 +22,7 @@ function getActions() {
  * @return {Function[]}
  */
 function getTasks(config, parameters) {
-  const thubRunId = process.env.THUB_RUN_ID;
+  const thubRunId = process.env.TERRAHUB_RUN_ID;
   const terrahub = new Terrahub(config, thubRunId, parameters);
   const actions = getActions();
 
@@ -36,7 +36,7 @@ function getTasks(config, parameters) {
  */
 function run(config, parameters) {
   logger.updateContext({
-    runId: process.env.THUB_RUN_ID,
+    runId: process.env.TERRAHUB_RUN_ID,
     componentName: config.name,
   });
 
@@ -68,7 +68,7 @@ function run(config, parameters) {
       if (parameters.args.s || parameters.args['ignore-missing']) {
         if (error.message.includes('Error: Unable to find remote state')) {
           logger.warn(`[${config.name}] Detected \`Error: Unable to find remote state\`.` +
-          ' Option --ignore-missing is enabled, therefore this error was ignored.');
+            ' Option --ignore-missing is enabled, therefore this error was ignored.');
           process.exit(0);
         }
       }

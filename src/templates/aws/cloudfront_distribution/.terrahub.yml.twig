@@ -143,3 +143,22 @@
         value: aws_cloudfront_distribution.{{ name }}.in_progress_validation_batches
       etag:
         value: aws_cloudfront_distribution.{{ name }}.etag
+
+## hook config
+# hook:
+#  apply:
+#    after:
+#      - terrahub build -i {{ name }}
+
+## build config
+# build:
+#   env:
+#     variables:
+#       TERRAHUB_VAR_S3_BUCKET_NAME: [REPLACE_WITH_YOUR_VALUE]
+#   phases:
+#     build:
+#       commands:
+#         - echo '[BUILD] Running build step'
+#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/cloudfront_distribution/build.sh; fi || { echo >&2 "[ERROR] Failed to run 'build.sh'. Aborting..."; exit 1; }
+#       finally:
+#         - echo '[BUILD] Finished build step'
