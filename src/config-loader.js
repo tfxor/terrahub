@@ -332,7 +332,10 @@ class ConfigLoader {
       this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
 
-      this._config[componentHash] = extend({ root: componentPath }, [
+      this._config[componentHash] = extend({
+        root: componentPath,
+        fullPath: configPath
+      }, [
         this._componentDefaults(),
         this._rootConfig,
         config,
@@ -350,24 +353,6 @@ class ConfigLoader {
         style: ListException.NUMBER,
       });
     }
-  }
-
-  /**
-   * Consolidate all components path
-   * @returns {array} The array of consolidate all components path.
-   */
-  _getComponentsPath() {
-    const configPaths = this.listConfig();
-    
-    const componetsPath = {};
-    configPaths.forEach((configPath) => {
-      let config = this._getConfig(configPath);
-      if (config.component) {
-        componetsPath[config.component.name] = configPath;
-      }
-    });
-
-    return componetsPath;
   }
 
   /**
@@ -450,9 +435,13 @@ class ConfigLoader {
       }
 
       config.mapping.push('.');
-      config.mapping = [
-        ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
-      ];
+      // config.mapping = [
+      //   ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
+      // ];
+
+      // config.mapping = [
+      //   ...new Set(config.mapping.map((it) => (!['/', '$'].includes(it[0])) ? path.join(componentPath, it) : it )),
+      // ];
     }
 
     if (config.hasOwnProperty('distributor')) {
@@ -474,10 +463,6 @@ class ConfigLoader {
     this._validateDynamicData(config);
     if (!config.hasOwnProperty('env')) {
       config.env = { variables: {} };
-    }
-
-    if (!config.hasOwnProperty('componentPaths')) {
-      config.componentPaths = this._getComponentsPath();
     }
 
     let TERRAHUB_CLI_HOME = this._parameters.binPath.split(path.sep);
