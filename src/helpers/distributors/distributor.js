@@ -306,6 +306,15 @@ class Distributor {
     const config = this.projectConfig[hash];
     const { distributor } = config;
 
+    const defaultProcessEnv = {
+      TERRAHUB_COMPONENT_HOME: config.componentPaths[config.name].replace('/.terrahub.yml', '')
+    };
+
+    config.build.env.variables = {
+      ...defaultProcessEnv,
+      ...config.build.env.variables
+    };
+
     if (config.build && config.build.env && config.build.env.variables) {
       Object.entries(config.build.env.variables)
         .filter((element) => element[1] !== '' && typeof element[1] === 'string')
@@ -315,6 +324,11 @@ class Distributor {
           config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
     }
+
+    config.project.env.variables = {
+      ...defaultProcessEnv,
+      ...config.project.env.variables
+    };
 
     if (config.project.env && config.project.env.variables) {
       Object.entries(config.project.env.variables)
@@ -326,6 +340,12 @@ class Distributor {
         });
       Object.assign(this._env, config.project.env.variables);
     }
+
+    config.processEnv = {
+      ...defaultProcessEnv,
+      ...config.processEnv
+    };
+
     if (config.processEnv) {
       Object.entries(config.processEnv)
         .filter((element) => element[1] !== '' && typeof element[1] === 'string')

@@ -476,12 +476,16 @@ class ConfigLoader {
       config.env = { variables: {} };
     }
 
+    if (!config.hasOwnProperty('componentPaths')) {
+      config.componentPaths = this._getComponentsPath();
+    }
+
     let TERRAHUB_CLI_HOME = this._parameters.binPath.split(path.sep);
+
     let defaultProcessEnv = {
       TERRAHUB_HOME: this._parameters.cfgPath.replace('/.terrahub.json', ''),
       TERRAHUB_CLI_HOME: TERRAHUB_CLI_HOME.slice(0, TERRAHUB_CLI_HOME.length - 1).join(path.sep),
       TERRAHUB_PROJECT_HOME: this._projectConfig.root,
-      TERRAHUB_COMPONENT_HOME: this._getComponentsPath()[this._parameters.args.i].replace('/.terrahub.yml', '')
     };
 
     const projectConfig = this._getConfig(path.join(this._projectConfig.root, '.terrahub.yml'));
