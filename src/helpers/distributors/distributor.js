@@ -343,11 +343,12 @@ class Distributor {
           config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
     }
-
-    config.project.env.variables = {
-      ...defaultProcessEnv,
-      ...config.project.env.variables
-    };
+    if (config.project.env && config.project.env.variables) {
+      config.project.env.variables = {
+        ...defaultProcessEnv,
+        ...config.project.env.variables
+      };
+    }
 
     if (config.project.env && config.project.env.variables) {
       Object.entries(config.project.env.variables)
