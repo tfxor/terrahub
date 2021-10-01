@@ -329,10 +329,14 @@ class Distributor {
       TERRAHUB_COMPONENT_HOME: config.fullPath.replace('/.terrahub.yml', '')
     };
 
-    config.build.env.variables = {
-      ...defaultProcessEnv,
-      ...config.build.env.variables
-    };
+    if (
+      config.hasOwnProperty('build')
+      && config.build.hasOwnProperty('env')
+      && config.build.env.hasOwnProperty('variables')) {
+      config.build.env.variables = {
+        ...defaultProcessEnv,
+        ...config.build.env.variables
+      };}
 
     if (config.build && config.build.env && config.build.env.variables) {
       Object.entries(config.build.env.variables)

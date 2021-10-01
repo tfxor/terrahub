@@ -441,7 +441,7 @@ class ConfigLoader {
 
       config.mapping = [
         ...new Set(config.mapping.map((it) => (!['/', '\\', '$']
-          .includes(it[0])) ? path.join(componentPath, it) : it )),
+          .includes(it[0])) ? path.join(componentPath, it) : it)),
       ];
     }
 
@@ -476,7 +476,7 @@ class ConfigLoader {
 
     const projectConfig = this._getConfig(path.join(this._projectConfig.root, '.terrahub.yml'));
 
-    if (projectConfig.project.hasOwnProperty('env')) {
+    if (projectConfig.project.hasOwnProperty('env') && projectConfig.project.env.hasOwnProperty('variables')) {
       defaultProcessEnv = {
         ...defaultProcessEnv,
         ...projectConfig.project.env.variables
