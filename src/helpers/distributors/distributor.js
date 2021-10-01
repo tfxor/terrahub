@@ -377,7 +377,7 @@ class Distributor {
     }
 
     config = this._replaceEnvs(config.processEnv, config);
-    console.log(config);
+
     switch (distributor) {
       case 'local':
         this._localWorkerCounter++;
