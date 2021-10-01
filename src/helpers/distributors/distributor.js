@@ -306,7 +306,7 @@ class Distributor {
         templateStringify = templateStringify.replace(
           terrahubVariable,
           listOfValues[
-          terrahubVariable.replace(/[\'\{\}\$]/g, '')
+            terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }

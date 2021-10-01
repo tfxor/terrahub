@@ -439,9 +439,10 @@ class ConfigLoader {
       //   ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
       // ];
 
-      // config.mapping = [
-      //   ...new Set(config.mapping.map((it) => (!['/', '$'].includes(it[0])) ? path.join(componentPath, it) : it )),
-      // ];
+      config.mapping = [
+        ...new Set(config.mapping.map((it) => (!['/', '\\', '$']
+          .includes(it[0])) ? path.join(componentPath, it) : it )),
+      ];
     }
 
     if (config.hasOwnProperty('distributor')) {
