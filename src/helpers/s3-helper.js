@@ -69,7 +69,7 @@ class S3Helper {
 
       if (credsPath) {
         removeAwsEnvVars();
-        this._s3 = new AWS.S3({ credentials: null});
+        this._s3 = new AWS.S3({ credentials: null });
         setupAWSSharedFile(sourceProfile, credsPath, config, config.distributor, process.env);
       }
 
@@ -255,7 +255,7 @@ class S3Helper {
    * @constructor
    */
   static get METADATA_BUCKET() {
-    return process.env.THUB_BUCKET || 'api.tfxor.com';
+    return process.env.TERRAHUB_BUCKET || 'api.tfxor.com';
   }
 }
 

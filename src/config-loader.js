@@ -148,7 +148,7 @@ class ConfigLoader {
   }
 
   _createMissingTerrahubFile(dirPath) {
-    const name = dirPath.split('/').pop();
+    const name = dirPath.split(path.sep).pop();
     const code = Util.toMd5(name + Date.now().toString()).slice(0, 8);
     const format =
       this._terrahubConfig.format === 'yaml'
@@ -338,7 +338,10 @@ class ConfigLoader {
       this._validateComponentConfig(config);
       this._processComponentConfig(config, componentPath);
 
-      this._config[componentHash] = extend({ root: componentPath }, [
+      this._config[componentHash] = extend({
+        root: componentPath,
+        fullPath: configPath
+      }, [
         this._componentDefaults(),
         this._rootConfig,
         config,
@@ -410,7 +413,7 @@ class ConfigLoader {
           `Component${errors.length > 1 ? '\'s' : ''} '${errors.join(
             `', '`
           )}' from ` +
-            `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`
+          `dynamic terraform_remote_state doesn't exist in dependsOn of the '${config.name}' component.`
         );
       }
     }
@@ -438,8 +441,13 @@ class ConfigLoader {
       }
 
       config.mapping.push('.');
+      // config.mapping = [
+      //   ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
+      // ];
+
       config.mapping = [
-        ...new Set(config.mapping.map((it) => path.join(componentPath, it))),
+        ...new Set(config.mapping.map((it) => (!['/', '\\', '$']
+          .includes(it[0])) ? path.join(componentPath, it) : it)),
       ];
     }
 
@@ -460,23 +468,64 @@ class ConfigLoader {
     }
 
     this._validateDynamicData(config);
+    if (!config.hasOwnProperty('env')) {
+      config.env = { variables: {} };
+    }
 
-    if (config.hasOwnProperty('env')) {
-      ['hook', 'build']
-        .filter((key) => !!config[key])
-        .forEach((key) => {
-          if (!config[key].env) {
-            config[key].env = {};
-          }
+    let TERRAHUB_CLI_HOME = this._parameters.binPath.split(path.sep);
 
+    let defaultProcessEnv = {
+      TERRAHUB_HOME: this._parameters.cfgPath.replace('/.terrahub.json', ''),
+      TERRAHUB_CLI_HOME: TERRAHUB_CLI_HOME.slice(0, TERRAHUB_CLI_HOME.length - 1).join(path.sep),
+      TERRAHUB_PROJECT_HOME: this._projectConfig.root,
+    };
+
+    const projectConfig = this._getConfig(path.join(this._projectConfig.root, '.terrahub.yml'));
+
+    if (projectConfig.project.hasOwnProperty('env') && projectConfig.project.env.hasOwnProperty('variables')) {
+      defaultProcessEnv = {
+        ...defaultProcessEnv,
+        ...projectConfig.project.env.variables
+      };
+    }
+
+    ['hook', 'build']
+      .filter((key) => !!config[key])
+      .forEach((key) => {
+        if (!config[key].env) {
+          config[key].env = {};
+        }
+
+        if (config[key].env.variables !== undefined) {
           config[key].env.variables = {
+            ...defaultProcessEnv,
             ...config.env.variables,
             ...config[key].env.variables,
           };
-        });
+        }
+      });
 
-      config.processEnv = config.env.variables;
-    }
+    config.processEnv = {
+      ...defaultProcessEnv,
+      ...config.processEnv,
+      ...config.env.variables
+    };
+
+    ['hook', 'build']
+      .filter((key) => !!config[key])
+      .forEach((key) => {
+        if (!config[key].env) {
+          config[key].env = {};
+        }
+
+        if (config[key].env.variables !== undefined) {
+          config.processEnv = {
+            ...defaultProcessEnv,
+            ...config.processEnv,
+            ...config[key].env.variables,
+          };
+        }
+      });
 
     ['env', 'component'].forEach((key) => delete config[key]);
   }
