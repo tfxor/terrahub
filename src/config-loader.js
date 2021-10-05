@@ -109,6 +109,12 @@ class ConfigLoader {
         backup: false,
         workspace: 'default',
       },
+      converter: {
+        version: '0.0.1'
+      },
+      component: {
+        version: '0.0.1'
+      }
     };
   }
 

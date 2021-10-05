@@ -44,6 +44,8 @@ class AwsDeployer {
       const cfg = await HclHelper.middleware(config, parameters);
       await Prepare.prepare(cfg, parameters);
       await Prepare.checkTerraformBinary(cfg.terraform.version, cfg.distributor);
+      await Prepare.checkExtraBinary(cfg.converter.version, 'converter', cfg.distributor);
+      await Prepare.checkExtraBinary(cfg.component.version, cfg.distributor);
       await this._runActions(actions, cfg, thubRunId, parameters);
 
       if (cfg.isJit) {

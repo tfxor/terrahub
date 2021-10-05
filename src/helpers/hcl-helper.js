@@ -632,7 +632,7 @@ class HclHelper {
       });
     }
 
-    const { template, distributor } = config;
+    const { template, distributor, converter } = config;
     let mapOfKeysQuote = new Map();
     let indexQuoteKey = 0;
     const regexQuotes = /\".+?\"\s*\=/gm;
@@ -650,8 +650,8 @@ class HclHelper {
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
 
     const componentBinPath = distributor === 'lambda'
-      ? parameters.lambdaBinPath
-      : join(parameters.binPath, arch);
+      ? homePathLambda('converter', `terrahub-converter-${converter.version}`, arch)
+      : homePath('converter', `terrahub-converter-${converter.version}`, arch);
 
     return exec(`"${join(componentBinPath, `converter${extension}`)}" -f -i '${base64data}'`)
       .then(result => {
@@ -701,7 +701,7 @@ class HclHelper {
    * @private
    */
   static _createTerraformFiles(config, parameters) {
-    const { template, cfgEnv, distributor } = config;
+    const { template, cfgEnv, distributor, converter } = config;
     const tmpPath = HclHelper.buildTmpPath(config, parameters);
 
     const promises = Object.keys(template).filter(it => template[it]).map(it => {
@@ -720,7 +720,7 @@ class HclHelper {
 
       return HclHelper.convertJsonToHcl(
         join(tmpPath, name), data, HclHelper.checkTfVersion(config),
-        parameters, distributor
+        parameters, distributor, converter
       );
     });
 
@@ -736,7 +736,7 @@ class HclHelper {
   static _generateVariable(config, parameters) {
     const variable = config.template.variable || {};
     const tmpPath = HclHelper.buildTmpPath(config, parameters);
-    const { distributor } = config;
+    const { distributor, converter } = config;
     const { tfvars } = config.template;
 
     Object.keys(tfvars).filter(elem => !Object.keys(variable).includes(elem)).forEach(it => {
@@ -756,7 +756,7 @@ class HclHelper {
 
     return HclHelper.convertJsonToHcl(
       join(tmpPath, 'variable.tf'), { variable }, HclHelper.checkTfVersion(config),
-      parameters, distributor
+      parameters, distributor, converter
     );
   }
 
@@ -831,15 +831,16 @@ class HclHelper {
    * @param {Boolean} isHCL2
    * @param {Object} parameters
    * @param {String} [distributor]
+   * @param {Object} converter
    * @return {Promise}
    */
-  static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor) {
+  static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor, converter) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const fileType = extname(componentPath).replace('.', '');
     const arch = Downloader.getOsArch();
     const componentBinPath = distributor === 'lambda'
-      ? parameters.lambdaBinPath
-      : join(parameters.binPath, arch);
+      ? homePathLambda('converter', `terrahub-converter-${converter.version}`, arch)
+      : homePath('converter', `terrahub-converter-${converter.version}`, arch);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
     const dataStringify = JSON.stringify(data);
     const buff = Buffer.from(dataStringify);
