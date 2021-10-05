@@ -3,6 +3,7 @@
 const os = require('os');
 const url = require('url');
 const fse = require('fs-extra');
+const { join } = require('path');
 const download = require('download');
 const { homePath, homePathLambda } = require('./util');
 
@@ -16,15 +17,38 @@ class Downloader {
    * @param {String} distributor
    * @returns {Promise}
    */
-  download(version, distributor) {
-    const urlDownload = Downloader._buildSrcUrl(version);
-    const binaryDir = distributor === 'lambda'
+  downloadTerraform(version, distributor) {
+    const urlBuildDownload = Downloader._buildSrcUrl(version);
+    const terraformBinaryDir = distributor === 'lambda'
       ? homePathLambda('terraform', version)
       : homePath('terraform', version);
 
     return fse
-      .ensureDir(binaryDir)
-      .then(() => download(urlDownload, binaryDir, { extract: true }));
+      .ensureDir(terraformBinaryDir)
+      .then(() => download(urlBuildDownload, terraformBinaryDir, { extract: true }));
+  }
+
+  /**
+   * Download file & unzip file
+   * @param {String} version
+   * @param {String} extraBinaryFile
+   * @param {String} distributor
+   * @returns {Promise}
+   */
+  downloadExtraFiles(version, extraBinaryFile, distributor) {
+    const arch = Downloader.getOsArch();
+    const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
+    const extraDownload = Downloader._extraSrcUrl(version);
+    const extraBinaryDir = distributor === 'lambda'
+      ? homePathLambda('converter')
+      : homePath('converter');
+
+    return fse
+      .ensureDir(extraBinaryDir)
+      .then(() => download(extraDownload, extraBinaryDir, { extract: true }))
+      .then(() => fse.chmod(
+        join(extraBinaryDir, `terrahub-converter-${version}`, arch, `${extraBinaryFile}${extension}`), '777')
+      );
   }
 
   /**
@@ -33,9 +57,18 @@ class Downloader {
    */
   static _buildSrcUrl(version) {
     const arch = Downloader.getOsArch();
-
     return url.resolve(
       'https://releases.hashicorp.com/terraform/', `${version}/terraform_${version}_${arch}.zip`
+    );
+  }
+
+  /**
+   * @param {String} version
+   * @returns {String}
+   */
+  static _extraSrcUrl(version) {
+    return url.resolve(
+      'https://github.com/tfxor/terrahub-converter/archive/refs/tags/', `v${version}.zip`
     );
   }
 

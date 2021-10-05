@@ -55,11 +55,15 @@ class Distributor {
 
         const hashes = Object.keys(config);
         const terraformVersions = Array.from(new Set(hashes.map(hash => config[hash].terraform.version)));
+        const converterVersion = Array.from(new Set(hashes.map(hash => config[hash].converter.version)));
+        const componentVersion = Array.from(new Set(hashes.map(hash => config[hash].component.version)));
         const distributors = Array.from(new Set(hashes.map(hash => config[hash].distributor))) || [];
 
         if (distributors.includes('local')) {
           for (const terraformVersion of terraformVersions) {
             await Prepare.checkTerraformBinary(terraformVersion, 'local');
+            await Prepare.checkExtraBinary(converterVersion[0], 'converter', 'local');
+            await Prepare.checkExtraBinary(componentVersion[0], 'component', 'local');
           }
         }
 

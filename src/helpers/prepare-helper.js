@@ -56,6 +56,32 @@ class PrepareHelper {
   }
 
   /**
+   * Ensure binary exists (download otherwise)
+   * @param {String} version
+   * @param {String} extraBinaryFile
+   * @param {String} distributor
+   * @return {Promise}
+   */
+  static checkExtraBinary(version, extraBinaryFile, distributor) {
+    try {
+      const stat = fs.statSync(PrepareHelper.getExtraBinary(version, distributor, extraBinaryFile));
+
+      if (stat !== null && stat.isFile()) {
+        return Promise.resolve();
+      }
+    } catch (error) {
+      switch (error.code) {
+        case 'ENOENT':
+          return (new Downloader()).downloadExtraFiles(version, extraBinaryFile, distributor);
+        case 'ETXTBSY':
+          return Promise.resolve();
+        default:
+          throw error;
+      }
+    }
+  }
+
+  /**
    * @param {String} distributor
    * @param {String} version
    * @return {String}
@@ -64,6 +90,18 @@ class PrepareHelper {
     return distributor === 'lambda'
       ? homePathLambda('terraform', PrepareHelper.getVersion(version), 'terraform')
       : homePath('terraform', PrepareHelper.getVersion(version), 'terraform');
+  }
+
+  /**
+   * @param {String} version
+   * @param {String} distributor
+   * @param {String} extraBinaryFile
+   * @return {String}
+   */
+  static getExtraBinary(version, distributor, extraBinaryFile) {
+    return distributor === 'lambda'
+      ? homePathLambda('converter', `terrahub-converter-${version}`)
+      : homePath('converter', `terrahub-converter-${version}`);
   }
 
   /**
