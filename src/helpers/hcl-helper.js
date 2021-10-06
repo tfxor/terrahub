@@ -72,7 +72,7 @@ class HclHelper {
         templateStringify = templateStringify.replace(
           terrahubVariable,
           process.env[
-            terrahubVariable.replace(/[\'\{\}\$]/g, '')
+          terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }
@@ -646,7 +646,7 @@ class HclHelper {
     }
 
     const base64data = Buffer.from(newRemoteTfvars).toString('base64');
-    const arch = Downloader.getOsArch();
+    const arch = Downloader.getOsArch(distributor, converter.version);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
 
     const componentBinPath = distributor === 'lambda'
@@ -837,7 +837,7 @@ class HclHelper {
   static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor, converter) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const fileType = extname(componentPath).replace('.', '');
-    const arch = Downloader.getOsArch();
+    const arch = Downloader.getOsArch(distributor, converter.version);
     const componentBinPath = distributor === 'lambda'
       ? homePathLambda('converter', `terrahub-converter-${converter.version}`, arch)
       : homePath('converter', `terrahub-converter-${converter.version}`, arch);

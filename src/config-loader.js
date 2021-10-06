@@ -110,10 +110,7 @@ class ConfigLoader {
         workspace: 'default',
       },
       converter: {
-        version: '0.0.1'
-      },
-      component: {
-        version: '0.0.1'
+        version: '0.0.3'
       }
     };
   }
