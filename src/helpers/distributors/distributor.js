@@ -374,10 +374,6 @@ class Distributor {
       ...config.processEnv
     };
 
-    Object.entries(config.processEnv).forEach((element) => {
-      process.env[element[0]] = element[1];
-    });
-
     if (config.processEnv) {
       Object.entries(config.processEnv)
         .filter((element) => element[1] !== '' && typeof element[1] === 'string')
