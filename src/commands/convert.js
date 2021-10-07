@@ -3,9 +3,7 @@
 const fse = require('fs-extra');
 const { join, sep } = require('path');
 const hcltojson = require('hcl-to-json');
-const { exec } = require('child-process-promise');
 const logger = require('../helpers/logger');
-const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
 const { yamlToJson } = require('../helpers/util');
 const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/hcl-helper');

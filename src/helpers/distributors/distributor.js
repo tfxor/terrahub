@@ -60,9 +60,9 @@ class Distributor {
         const distributors = Array.from(new Set(hashes.map(hash => config[hash].distributor))) || [];
 
         if (distributors.includes('local')) {
+          await Prepare.checkExtraBinary(converterVersion[0], 'local');
           for (const terraformVersion of terraformVersions) {
             await Prepare.checkTerraformBinary(terraformVersion, 'local');
-            await Prepare.checkExtraBinary(converterVersion[0], 'local');
           }
         }
 
@@ -308,7 +308,7 @@ class Distributor {
         templateStringify = templateStringify.replace(
           terrahubVariable,
           listOfValues[
-          terrahubVariable.replace(/[\'\{\}\$]/g, '')
+            terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }
@@ -350,6 +350,7 @@ class Distributor {
           config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
     }
+
     if (config.project.env && config.project.env.variables) {
       config.project.env.variables = {
         ...defaultProcessEnv,
@@ -372,6 +373,10 @@ class Distributor {
       ...defaultProcessEnv,
       ...config.processEnv
     };
+
+    Object.entries(config.processEnv).forEach((element) => {
+      process.env[element[0]] = element[1];
+    });
 
     if (config.processEnv) {
       Object.entries(config.processEnv)

@@ -72,7 +72,7 @@ class HclHelper {
         templateStringify = templateStringify.replace(
           terrahubVariable,
           process.env[
-          terrahubVariable.replace(/[\'\{\}\$]/g, '')
+            terrahubVariable.replace(/[\'\{\}\$]/g, '')
           ]
         );
       }
@@ -859,7 +859,23 @@ class HclHelper {
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;
-      if (version && semver.satisfies(version, '<0.12.0')) {
+      if (version && semver.satisfies(version)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Boolean}
+   */
+  static checkTfVersion1(config) {
+    const { terraform } = config;
+    if (terraform) {
+      const { version } = terraform;
+      if (version && semver.satisfies(version, '<1.0.0')) {
         return false;
       }
     }
