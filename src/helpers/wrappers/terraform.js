@@ -6,6 +6,7 @@ const fse = require('fs-extra');
 const logger = require('../logger');
 const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
+const HclHelper = require('../hcl-helper');
 const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
 const {
@@ -193,8 +194,14 @@ class Terraform {
   async init() {
     await this._setupVars();
 
+    let runPath = [];
+
+    if (!HclHelper.checkTfVersion1(this._config.terraform.version)) {
+      runPath = ['.'];
+    }
+
     return this.run(
-      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), ...runPath]
     )
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
@@ -301,7 +308,7 @@ class Terraform {
     if (providerId) {
       const { targets } = this._config;
       if (targets.length) {
-        Object.assign(options, { '-target': `${targets[providerId]}` });
+        Object.assign(options, { '-target': `${targets[providerId]}`, '-lock': false });
       }
     }
 

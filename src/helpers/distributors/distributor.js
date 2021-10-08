@@ -57,14 +57,12 @@ class Distributor {
         const hashes = Object.keys(config);
         const terraformVersions = Array.from(new Set(hashes.map(hash => config[hash].terraform.version)));
         const converterVersion = Array.from(new Set(hashes.map(hash => config[hash].converter.version)));
-        const componentVersion = Array.from(new Set(hashes.map(hash => config[hash].component.version)));
         const distributors = Array.from(new Set(hashes.map(hash => config[hash].distributor))) || [];
 
         if (distributors.includes('local')) {
+          await Prepare.checkExtraBinary(converterVersion[0], 'local');
           for (const terraformVersion of terraformVersions) {
             await Prepare.checkTerraformBinary(terraformVersion, 'local');
-            await Prepare.checkExtraBinary(converterVersion[0], 'converter', 'local');
-            await Prepare.checkExtraBinary(componentVersion[0], 'component', 'local');
           }
         }
 
@@ -340,7 +338,8 @@ class Distributor {
       config.build.env.variables = {
         ...defaultProcessEnv,
         ...config.build.env.variables
-      };}
+      };
+    }
 
     if (config.build && config.build.env && config.build.env.variables) {
       Object.entries(config.build.env.variables)
@@ -351,6 +350,7 @@ class Distributor {
           config.build.env.variables[element[0]] = stdout.toString().replace('\n', '');
         });
     }
+
     if (config.project.env && config.project.env.variables) {
       config.project.env.variables = {
         ...defaultProcessEnv,

@@ -646,7 +646,7 @@ class HclHelper {
     }
 
     const base64data = Buffer.from(newRemoteTfvars).toString('base64');
-    const arch = Downloader.getOsArch();
+    const arch = Downloader.getOsArch(distributor, converter.version);
     const extension = arch.indexOf('windows') > -1 ? '.exe' : '';
 
     const componentBinPath = distributor === 'lambda'
@@ -837,7 +837,7 @@ class HclHelper {
   static convertJsonToHcl(componentPath, data, isHCL2, parameters, distributor, converter) {
     const formatHCL1 = isHCL2 ? '' : '-F no';
     const fileType = extname(componentPath).replace('.', '');
-    const arch = Downloader.getOsArch();
+    const arch = Downloader.getOsArch(distributor, converter.version);
     const componentBinPath = distributor === 'lambda'
       ? homePathLambda('converter', `terrahub-converter-${converter.version}`, arch)
       : homePath('converter', `terrahub-converter-${converter.version}`, arch);
@@ -859,7 +859,23 @@ class HclHelper {
     const { terraform } = config;
     if (terraform) {
       const { version } = terraform;
-      if (version && semver.satisfies(version, '<0.12.0')) {
+      if (version && semver.satisfies(version)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * @param {Object} config
+   * @return {Boolean}
+   */
+  static checkTfVersion1(config) {
+    const { terraform } = config;
+    if (terraform) {
+      const { version } = terraform;
+      if (version && semver.satisfies(version, '<1.0.0')) {
         return false;
       }
     }

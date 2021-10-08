@@ -46,7 +46,7 @@ class PrepareHelper {
     } catch (error) {
       switch (error.code) {
         case 'ENOENT':
-          return (new Downloader()).download(PrepareHelper.getVersion(version), distributor);
+          return (new Downloader()).downloadTerraform(PrepareHelper.getVersion(version), distributor);
         case 'ETXTBSY':
           return Promise.resolve();
         default:
@@ -58,13 +58,12 @@ class PrepareHelper {
   /**
    * Ensure binary exists (download otherwise)
    * @param {String} version
-   * @param {String} extraBinaryFile
    * @param {String} distributor
    * @return {Promise}
    */
-  static checkExtraBinary(version, extraBinaryFile, distributor) {
+  static checkExtraBinary(version, distributor) {
     try {
-      const stat = fs.statSync(PrepareHelper.getExtraBinary(version, distributor, extraBinaryFile));
+      const stat = fs.statSync(PrepareHelper.getExtraBinary(version, distributor, 'converter'));
 
       if (stat !== null && stat.isFile()) {
         return Promise.resolve();
@@ -72,7 +71,7 @@ class PrepareHelper {
     } catch (error) {
       switch (error.code) {
         case 'ENOENT':
-          return (new Downloader()).downloadExtraFiles(version, extraBinaryFile, distributor);
+          return (new Downloader()).downloadExtraFiles(version, distributor);
         case 'ETXTBSY':
           return Promise.resolve();
         default:
@@ -113,7 +112,7 @@ class PrepareHelper {
       if (!semver.valid(src)) {
         throw new Error(`Terraform version ${src} is invalid`);
       }
-  
+
       return src;
     }
 
@@ -121,7 +120,7 @@ class PrepareHelper {
       if (!semver.valid(src.terraform.version)) {
         throw new Error(`Terraform version ${src.terraform.version} is invalid`);
       }
-  
+
       return src.terraform.version;
     }
 
