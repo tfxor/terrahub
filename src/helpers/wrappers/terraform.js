@@ -344,12 +344,24 @@ class Terraform {
           fse.outputFileSync(backupPath, planContent);
         }
 
-        return Promise.resolve({
-          buffer: buffer,
-          skip: skip,
-          metadata: metadata,
-          status: Dictionary.REALTIME.SUCCESS
-        });
+        if (!skip) {
+          return Promise.resolve({
+            buffer: buffer,
+            skip: skip,
+            metadata: metadata,
+            status: Dictionary.REALTIME.SUCCESS
+          });
+        }
+
+        return this.run('refresh', args.concat(this._varFile(), this._var()))
+          .then(() => {
+            return Promise.resolve({
+              buffer: buffer,
+              skip: skip,
+              metadata: metadata,
+              status: Dictionary.REALTIME.SUCCESS
+            });
+          });
       });
   }
 
@@ -535,7 +547,7 @@ class Terraform {
    * @return {Promise}
    */
   refresh() {
-    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false, '-lock': false  };
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false, '-lock': false };
 
     const localBackend = [];
     const { template } = this._config;
