@@ -302,13 +302,13 @@ class Terraform {
    * @return {Promise}
    */
   plan() {
-    const options = { '-out': this._metadata.getPlanPath(), '-input': false };
+    const options = { '-out': this._metadata.getPlanPath(), '-input': false, '-lock': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
     const { providerId } = process.env;
     if (providerId) {
       const { targets } = this._config;
       if (targets.length) {
-        Object.assign(options, { '-target': `${targets[providerId]}`, '-lock': false });
+        Object.assign(options, { '-target': `${targets[providerId]}` });
       }
     }
 
@@ -485,9 +485,26 @@ class Terraform {
   apply() {
     const backupPath = this._metadata.getStateBackupPath();
     fse.ensureFileSync(backupPath);
-    const options = { '-backup': backupPath, '-auto-approve': true, '-input': false };
+
+    const options = {
+      '-backup': backupPath, '-auto-approve': true, '-input': false, '-lock': false
+    };
 
     return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
+      .then(() => this._getStateContent())
+      .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/apply.html
+   * @return {Promise}
+   */
+  applyRefreshOnly() {
+    const options = {
+      '-lock': false
+    };
+
+    return this.run('apply', ['-refresh-only'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent())
       .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -516,7 +533,7 @@ class Terraform {
    * @return {Promise}
    */
   refresh() {
-    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false };
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false, '-lock': false  };
 
     const localBackend = [];
     const { template } = this._config;

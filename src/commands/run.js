@@ -66,7 +66,7 @@ class RunCommand extends DistributedCommand {
    * @private
    */
   _run(config) {
-    const actions = ['init', 'workspaceSelect'];
+    const actions = ['init', 'workspaceSelect', 'refresh'];
 
     if (!this._isApply && !this._isDestroy) {
       if (this._isBuild) {
