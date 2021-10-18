@@ -163,8 +163,10 @@ class Terraform {
    */
   _varFile() {
     const result = [];
+    this._tf.varFile.push(`${this._config.terraform.workspace}.tfvars`);
+    const uSet = new Set(this._tf.varFile);
 
-    this._tf.varFile.forEach(fileName => {
+    uSet.forEach(fileName => {
       const varFile = path.join(this._metadata.getRoot(), fileName);
 
       if (fs.existsSync(varFile)) {

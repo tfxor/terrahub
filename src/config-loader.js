@@ -103,7 +103,7 @@ class ConfigLoader {
     return {
       terraform: {
         var: {},
-        varFile: [],
+        varFile: ['default.tfvars'],
         backend: {},
         version: '0.14.5',
         backup: false,

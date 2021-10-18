@@ -70,7 +70,7 @@ class AbstractTerrahub {
             logger.warn(`Action '${this._action}' for '${this._config.name}' was skipped due to ` +
               `'No changes. Infrastructure is up-to-date.'`);
 
-            return res;
+            return this._runTerraformCommand('refresh').catch(err => console.log(err.message || err));
           });
       } else {
         return this._getTask();
