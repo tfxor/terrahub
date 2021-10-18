@@ -105,7 +105,7 @@ class ConfigLoader {
         var: {},
         varFile: ['default.tfvars'],
         backend: {},
-        version: '0.14.5',
+        version: '1.0.9',
         backup: false,
         workspace: 'default',
       },
