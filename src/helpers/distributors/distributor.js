@@ -343,7 +343,7 @@ class Distributor {
 
     if (config.build && config.build.env && config.build.env.variables) {
       Object.entries(config.build.env.variables)
-        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string' && !this._isJSON(element[1]))
         .forEach((element) => {
           element[1] = this._replaceEnv(config.build.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
@@ -360,7 +360,7 @@ class Distributor {
 
     if (config.project.env && config.project.env.variables) {
       Object.entries(config.project.env.variables)
-        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string' && !this._isJSON(element[1]))
         .forEach((element) => {
           element[1] = this._replaceEnv(config.project.env.variables, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
@@ -376,7 +376,7 @@ class Distributor {
 
     if (config.processEnv) {
       Object.entries(config.processEnv)
-        .filter((element) => element[1] !== '' && typeof element[1] === 'string')
+        .filter((element) => element[1] !== '' && typeof element[1] === 'string' && !this._isJSON(element[1]))
         .forEach((element) => {
           element[1] = this._replaceEnv(config.processEnv, element[1]);
           const stdout = execSync(`echo "${element[1]}"`);
@@ -415,6 +415,18 @@ class Distributor {
       default:
         return LocalDistributor.init(
           this.parameters, config, this._env, (event, message) => this._eventEmitter.emit(event, message));
+    }
+  }
+
+  /**
+   * @param {String} str
+   * @return {boolean}
+   */
+  _isJSON(str) {
+    try {
+      return (JSON.parse(str.replaceAll('=', ':')) && !!str.replaceAll('=', ':'));
+    } catch (e) {
+      return false;
     }
   }
 
