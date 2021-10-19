@@ -33,6 +33,7 @@ function _isHelp(args) {
 
 const cfgPath = homePath('.terrahub.json');
 const templates = path.join(__dirname, 'templates');
+const configs = path.join(__dirname, '..', 'lib', 'configs');
 const args = Args.parse(process.argv.slice(2));
 
 /**
@@ -90,6 +91,9 @@ module.exports = {
     usePhysicalCpu: cfg.usePhysicalCpu,
     threadLimit: cfg.threadLimit,
     defaultFileName: `.terrahub.${cfg.format}`
+  },
+  configs: {
+    path: configs
   },
   templates: {
     path: templates,
