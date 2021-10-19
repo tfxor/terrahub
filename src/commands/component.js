@@ -205,13 +205,25 @@ class ComponentCommand extends ConfigCommand {
 
     const outFile = path.join(directory, this._defaultFileName());
     const specificConfigPath = path.join(templatePath, this._configLoader.getDefaultFileName() + '.twig');
-    let data = '';
+    let templateData = '';
 
     if (fse.existsSync(specificConfigPath)) {
-      data = fse.readFileSync(specificConfigPath);
+      templateData = fse.readFileSync(specificConfigPath);
     }
 
-    await Util.renderTwig(this._srcFile, { name: name, dependsOn: this._dependsOn, data: data }, outFile);
+    const configPath = path.join(
+      this._getConfigPath(), this._configLoader.getDefaultFileName() + '.twig'
+    );
+    let configData = '';
+
+    if (fse.existsSync(configPath)) {
+      configData = fse.readFileSync(configPath);
+    }
+    const data = templateData.toString().concat(configData.toString());
+
+    await Util.renderTwig(
+      this._srcFile, { name: name, dependsOn: this._dependsOn, data: Buffer.from(data) }, outFile
+    );
     await Util.renderTwig(outFile, { name: name, code: code }, outFile);
 
     return 'Done';
@@ -264,6 +276,23 @@ class ComponentCommand extends ConfigCommand {
     }
 
     return templateDir;
+  }
+
+  /**
+   * @returns {String}
+   * @private
+   */
+  _getConfigPath() {
+    const keys = this._template.split('_');
+    const provider = keys.shift();
+    const resourceName = this._template.replace(provider + '_', '');
+    const configDir = path.join(this.parameters.configs.path, provider, resourceName);
+
+    if (!fse.pathExistsSync(configDir)) {
+      throw new Error(`${this._template} is not supported`);
+    }
+
+    return configDir;
   }
 
   /**

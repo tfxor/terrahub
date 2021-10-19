@@ -133,32 +133,3 @@
         value: aws_s3_bucket.{{ name }}.hosted_zone_id
       website_domain:
         value: aws_s3_bucket.{{ name }}.website_domain
-
-## hook config
-# hook:
-#  plan:
-#    before:
-#      - terrahub build -i {{ name }}
-
-## build config
-# build:
-#   env:
-#     variables:
-#       TERRAHUB_VAR_ACCOUNT_ID: $(aws sts get-caller-identity --output=text --query='Account')
-#       TERRAHUB_VAR_S3_BUCKET_NAME: [REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_VAR_S3_BUCKET_MAX_AGE: [REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_COMPILE_FILE: ${TERRAHUB_PROJECT_HOME}/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_LOCAL_PATH: ${TERRAHUB_PROJECT_HOME}/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_SOURCE_PATH: ${TERRAHUB_PROJECT_HOME}/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_S3_DEPLOY: [REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_S3_PATH: s3_bucket/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_INDEX_FILE: index.txt
-#       TERRAHUB_BUILD_DOTENV_FILE: .env
-#       TERRAHUB_BUILD_OK: false
-#   phases:
-#     build:
-#       commands:
-#         - echo '[BUILD] Running build step'
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/s3_bucket/build.sh; fi || { echo >&2 "[ERROR] Failed to run 'build.sh'. Aborting..."; exit 1; }
-#       finally:
-#         - echo '[BUILD] Finished build step'
