@@ -3,9 +3,7 @@
 const fse = require('fs-extra');
 const { join, sep } = require('path');
 const hcltojson = require('hcl-to-json');
-const { exec } = require('child-process-promise');
 const logger = require('../helpers/logger');
-const Downloader = require('../helpers/downloader');
 const DistributedCommand = require('../distributed-command');
 const { yamlToJson } = require('../helpers/util');
 const { buildTmpPath, checkTfVersion, convertJsonToHcl } = require('../helpers/hcl-helper');
@@ -216,7 +214,7 @@ class ConvertCommand extends DistributedCommand {
         const dataBuffer = await fse.readFile(join(scriptPath, file));
         const fileName = file.split('.');
         const key = fileName[0];
-        jsonContent.component.template[key] = {key: hcltojson(dataBuffer.toString())};
+        jsonContent.component.template[key] = { key: hcltojson(dataBuffer.toString()) };
 
         promises.push(Promise.resolve());
         // return fse.outputJson(join(scriptPath, file), jsonContent, { spaces: 2 });
@@ -365,23 +363,6 @@ class ConvertCommand extends DistributedCommand {
     }
   }
 
-  /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  static _saveComponent(config) {
-    const configPath = ConvertCommand._buildComponentPath(config);
-
-    const arch = Downloader.getOsArch();
-    const componentBinPath = join(this.binPath, arch);
-
-    let extension = '';
-    if (arch.indexOf('windows') > -1) extension = '.exe';
-
-    return exec(`"${join(componentBinPath, `component${extension}`)}" ` +
-      `-thub ${buildTmpPath(config, this.parameters)} "${configPath}" ${config.name}`);
-  }
 
   /**
    * @param {Object} config
@@ -403,40 +384,7 @@ class ConvertCommand extends DistributedCommand {
     return true;
   }
 
-  /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  static _saveComponentJson(config) {
-    const configPath = ConvertCommand._buildComponentPath(config);
 
-    const arch = Downloader.getOsArch();
-    const componentBinPath = join(this.binPath, arch);
-
-    let extension = '';
-    if (arch.indexOf('windows') > -1) extension = '.exe';
-
-    return exec(`"${join(componentBinPath, `component${extension}`)}" ` +
-      `-json ${buildTmpPath(config, this.parameters)} "${configPath}" ${config.name}`);
-  }
-
-  /**
-   * @param {Object} config
-   * @return {Promise}
-   * @private
-   */
-  static _revertComponent(config) {
-    const configPath = ConvertCommand._buildComponentPath(config);
-
-    const arch = Downloader.getOsArch();
-    const componentBinPath = join(this.binPath, arch);
-
-    let extension = '';
-    if (arch.indexOf('windows') > -1) extension = '.exe';
-
-    return exec(`"${join(componentBinPath, `generator${extension}`)}" -thub "${configPath}${sep}" "${configPath}${sep}"`);
-  }
 
   /**
    * @return {String[]}

@@ -6,6 +6,7 @@ const fse = require('fs-extra');
 const logger = require('../logger');
 const Metadata = require('../metadata');
 const ApiHelper = require('../api-helper');
+const HclHelper = require('../hcl-helper');
 const Dictionary = require('../dictionary');
 const Prepare = require('../prepare-helper');
 const {
@@ -65,7 +66,8 @@ class Terraform {
     const accounts = Object.keys(this._tf).filter(it => /Account/.test(it));
     const configs = Object.keys(this._tf).filter(it => /backendConfig|cloudConfig/.test(it));
 
-    if (this._distributor === 'local' && (!accounts.length || !process.env.THUB_TOKEN_IS_VALID) && !configs.length) {
+    if (this._distributor === 'local' && (!accounts.length
+      || !process.env.TERRAHUB_TOKEN_IS_VALID) && !configs.length) {
       return Promise.resolve();
     }
     if (this._distributor === 'lambda') { removeAwsEnvVars(); }
@@ -161,8 +163,10 @@ class Terraform {
    */
   _varFile() {
     const result = [];
+    this._tf.varFile.push(`${this._config.terraform.workspace}.tfvars`);
+    const uSet = new Set(this._tf.varFile);
 
-    this._tf.varFile.forEach(fileName => {
+    uSet.forEach(fileName => {
       const varFile = path.join(this._metadata.getRoot(), fileName);
 
       if (fs.existsSync(varFile)) {
@@ -192,8 +196,14 @@ class Terraform {
   async init() {
     await this._setupVars();
 
+    let runPath = [];
+
+    if (!HclHelper.checkTfVersion1(this._config.terraform.version)) {
+      runPath = ['.'];
+    }
+
     return this.run(
-      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), '.']
+      'init', ['-no-color', '-force-copy', this._optsToArgs({ '-input': false }), ...this._backend(), ...runPath]
     )
       .then(() => this._reInitPaths())
       .then(() => ({ status: Dictionary.REALTIME.SUCCESS }));
@@ -294,7 +304,7 @@ class Terraform {
    * @return {Promise}
    */
   plan() {
-    const options = { '-out': this._metadata.getPlanPath(), '-input': false };
+    const options = { '-out': this._metadata.getPlanPath(), '-input': false, '-lock': false };
     const args = process.env.planDestroy === 'true' ? ['-no-color', '-destroy'] : ['-no-color'];
     const { providerId } = process.env;
     if (providerId) {
@@ -334,12 +344,24 @@ class Terraform {
           fse.outputFileSync(backupPath, planContent);
         }
 
-        return Promise.resolve({
-          buffer: buffer,
-          skip: skip,
-          metadata: metadata,
-          status: Dictionary.REALTIME.SUCCESS
-        });
+        if (!skip) {
+          return Promise.resolve({
+            buffer: buffer,
+            skip: skip,
+            metadata: metadata,
+            status: Dictionary.REALTIME.SUCCESS
+          });
+        }
+
+        return this.run('refresh', args.concat(this._varFile(), this._var()))
+          .then(() => {
+            return Promise.resolve({
+              buffer: buffer,
+              skip: skip,
+              metadata: metadata,
+              status: Dictionary.REALTIME.SUCCESS
+            });
+          });
       });
   }
 
@@ -355,7 +377,7 @@ class Terraform {
       ? [] : this._varFile()[0].split('/');
     let existedResouces = [];
 
-    
+
 
     await this.resourceList()
       .then(elements => { existedResouces = elements; })
@@ -393,7 +415,7 @@ class Terraform {
    */
   _stateFile() {
     if (this._distributor === 'lambda') {
-      return {'-state-out': `'${this._stateFilePath()}'`};
+      return { '-state-out': `'${this._stateFilePath()}'` };
     }
 
     return {};
@@ -477,9 +499,26 @@ class Terraform {
   apply() {
     const backupPath = this._metadata.getStateBackupPath();
     fse.ensureFileSync(backupPath);
-    const options = { '-backup': backupPath, '-auto-approve': true, '-input': false };
+
+    const options = {
+      '-backup': backupPath, '-auto-approve': true, '-input': false, '-lock': false
+    };
 
     return this.run('apply', ['-no-color'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
+      .then(() => this._getStateContent())
+      .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
+  }
+
+  /**
+   * https://www.terraform.io/docs/commands/apply.html
+   * @return {Promise}
+   */
+  applyRefreshOnly() {
+    const options = {
+      '-lock': false
+    };
+
+    return this.run('apply', ['-refresh-only'].concat(this._optsToArgs(options), this._metadata.getPlanPath()))
       .then(() => this._getStateContent())
       .then(buffer => ({ buffer: buffer, status: Dictionary.REALTIME.SUCCESS }));
   }
@@ -508,7 +547,7 @@ class Terraform {
    * @return {Promise}
    */
   refresh() {
-    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false };
+    const options = { '-backup': this._metadata.getStateBackupPath(), '-input': false, '-lock': false };
 
     const localBackend = [];
     const { template } = this._config;
@@ -540,7 +579,7 @@ class Terraform {
    * @param {Boolen} isShow=false
    * @return {Promise}
    */
-  async run(cmd, args, isShow=false) {
+  async run(cmd, args, isShow = false) {
     if (this._showLogs) {
       logger.warn(`[${this.getName()}] terraform ${cmd} ${args.join(' ')}`);
     }
@@ -577,7 +616,7 @@ class Terraform {
    * @return {Promise}
    * @private
    */
-  _spawn(command, args, options, isShow=false) {
+  _spawn(command, args, options, isShow = false) {
     return spawner(
       command, args, options,
       err => logger.error(this._out(err)),

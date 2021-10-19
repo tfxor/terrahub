@@ -47,12 +47,11 @@ class Sentinel {
       testPaths.forEach((element) => {
         const cmd = [];
         cmd.push(
-          `input=${
-            '"`' +
-            Prepare.getBinary(this._config.distributor, this._config.terraform.version) +
-            ' show -json ' +
-            this._getPlanPath() +
-            '`"'
+          `input=${'"`' +
+          Prepare.getBinary(this._config.distributor, this._config.terraform.version) +
+          ' show -json ' +
+          this._getPlanPath() +
+          '`"'
           }`
         );
         cmd.push(`-color=${false}`);
@@ -185,7 +184,7 @@ class Sentinel {
    * @private
    */
   _download() {
-    const arch = Downloader.getOsArch();
+    const arch = Downloader.getOsArch('local');
     const fullUrl = url.resolve(
       'https://releases.hashicorp.com/sentinel/',
       `${this._getVersion()}/sentinel_${this._getVersion()}_${arch}.zip`

@@ -89,9 +89,9 @@ class LocalDistributor {
     this.TERRAFORM_ACTIONS = actions;
 
     const worker = cluster.fork({
-      THUB_RUN_ID: runId,
+      TERRAHUB_RUN_ID: runId,
       TERRAFORM_ACTIONS: actions,
-      THUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
+      TERRAHUB_TOKEN_IS_VALID: ApiHelper.tokenIsValid || '',
       ...this._env
     });
 

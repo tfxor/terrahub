@@ -48,18 +48,6 @@
     },
     "nodesecurity": {
       "enabled": true
-    },
-    "structure": {
-      "enabled": true,
-      "exclude_patterns": [
-        "bin/converter/*.go"
-      ]
-    },
-    "fixme": {
-      "enabled": true,
-      "exclude_patterns": [
-        "bin/converter/*.go"
-      ]
     }
   }
 }

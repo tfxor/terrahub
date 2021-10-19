@@ -8,6 +8,7 @@ this command will run `terraform apply` across multiple terrahub components
 
 Options:
   --auto-approve, -y     Auto approve terraform execution
+  --refresh-only, -R     Use Refresh-Only Mode to Sync Terraform State
   --include, -i          List of components to include (comma separated values)
   --exclude, -x          List of components to exclude (comma separated values)
   --include-regex, -I    List of components to include (regex search)

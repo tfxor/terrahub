@@ -23,7 +23,7 @@ class AwsDeployer {
   async deploy(requestData) {
     const { config, thubRunId, actions, parameters, env } = requestData;
 
-    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), THUB_RUN_ID: thubRunId }, env);
+    Object.assign(process.env, { TERRAFORM_ACTIONS: actions.join(','), TERRAHUB_RUN_ID: thubRunId }, env);
 
     ApiHelper.on('loggerWork', () => {
       const promises = ApiHelper.retrieveDataToSend();
@@ -43,6 +43,7 @@ class AwsDeployer {
 
       const cfg = await HclHelper.middleware(config, parameters);
       await Prepare.prepare(cfg, parameters);
+      await Prepare.checkExtraBinary(cfg.converter.version, cfg.distributor);
       await Prepare.checkTerraformBinary(cfg.terraform.version, cfg.distributor);
       await this._runActions(actions, cfg, thubRunId, parameters);
 

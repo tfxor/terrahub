@@ -127,7 +127,7 @@ class AbstractCommand {
   /**
    * Abstract initialize method (optional)
    */
-  initialize() {}
+  initialize() { }
 
   /**
    * Abstract run method
@@ -259,10 +259,10 @@ class AbstractCommand {
    */
   onTokenMissingOrInvalid(token) {
     if (token) {
-      throw new AuthenticationException('Provided THUB_TOKEN is not valid.');
+      throw new AuthenticationException('Provided TERRAHUB_TOKEN is not valid.');
     }
 
-    this.logger.warn('THUB_TOKEN is missing.');
+    this.logger.warn('TERRAHUB_TOKEN is missing.');
     return Promise.resolve();
   }
 
@@ -278,8 +278,8 @@ class AbstractCommand {
         .filter(it => /cloudConfig/.test(it));
       if (accounts.length && !configsCloudConfig.length) {
         this.logger.warn(
-          `Please provide valid THUB_TOKEN, in order to use '${accounts.join('\', \'')}'`
-            + ` in '${fullConfig[hash].name}' component.`
+          `Please provide valid TERRAHUB_TOKEN, in order to use '${accounts.join('\', \'')}'`
+          + ` in '${fullConfig[hash].name}' component.`
         );
       }
     });

@@ -46,7 +46,32 @@ class PrepareHelper {
     } catch (error) {
       switch (error.code) {
         case 'ENOENT':
-          return (new Downloader()).download(PrepareHelper.getVersion(version), distributor);
+          return (new Downloader()).downloadTerraform(PrepareHelper.getVersion(version), distributor);
+        case 'ETXTBSY':
+          return Promise.resolve();
+        default:
+          throw error;
+      }
+    }
+  }
+
+  /**
+   * Ensure binary exists (download otherwise)
+   * @param {String} version
+   * @param {String} distributor
+   * @return {Promise}
+   */
+  static checkExtraBinary(version, distributor) {
+    try {
+      const stat = fs.statSync(PrepareHelper.getExtraBinary(version, distributor, 'converter'));
+
+      if (stat !== null && stat.isFile()) {
+        return Promise.resolve();
+      }
+    } catch (error) {
+      switch (error.code) {
+        case 'ENOENT':
+          return (new Downloader()).downloadExtraFiles(version, distributor);
         case 'ETXTBSY':
           return Promise.resolve();
         default:
@@ -67,6 +92,18 @@ class PrepareHelper {
   }
 
   /**
+   * @param {String} version
+   * @param {String} distributor
+   * @param {String} extraBinaryFile
+   * @return {String}
+   */
+  static getExtraBinary(version, distributor, extraBinaryFile) {
+    return distributor === 'lambda'
+      ? homePathLambda('converter', `terrahub-converter-${version}`)
+      : homePath('converter', `terrahub-converter-${version}`);
+  }
+
+  /**
    * @param {String|Object} src
    * @return {String|null}
    */
@@ -75,7 +112,7 @@ class PrepareHelper {
       if (!semver.valid(src)) {
         throw new Error(`Terraform version ${src} is invalid`);
       }
-  
+
       return src;
     }
 
@@ -83,7 +120,7 @@ class PrepareHelper {
       if (!semver.valid(src.terraform.version)) {
         throw new Error(`Terraform version ${src.terraform.version} is invalid`);
       }
-  
+
       return src.terraform.version;
     }
 
