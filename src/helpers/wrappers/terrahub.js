@@ -18,7 +18,6 @@ class Terrahub extends AbstractTerrahub {
    */
   async on(data, err = null) {
     let error = null;
-
     let realtimePayload = {
       runId: this._runId,
       status: data.status,
@@ -31,12 +30,18 @@ class Terrahub extends AbstractTerrahub {
       providerAccount: 'n/a'
     };
 
-    try {
-      const sts = new STS();
-      const { Account: account} = await sts.getCallerIdentity({}).promise();
-      realtimePayload.providerAccount = account;
-    } catch (error) {
-      logger.error(error);
+    if (
+      (this._project.hasOwnProperty('provider') && this._project.provider === 'aws')
+      || !this._project.hasOwnProperty('provider')
+    )
+    {
+      try {
+        const sts = new STS();
+        const { Account: account} = await sts.getCallerIdentity({}).promise();
+        realtimePayload.providerAccount = account;
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     if (this._action === 'init' && data.status === Dictionary.REALTIME.START && this.parameters.config.token) {

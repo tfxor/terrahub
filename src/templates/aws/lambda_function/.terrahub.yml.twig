@@ -70,23 +70,3 @@
         value: aws_lambda_function.{{ name }}.invoke_arn
       qualified_arn:
         value: aws_lambda_function.{{ name }}.qualified_arn
-
-## build config
-# build:
-#   env:
-#     variables:
-#       TERRAHUB_VAR_ACCOUNT_ID: $(aws sts get-caller-identity --output=text --query='Account')
-#       TERRAHUB_BUILD_COMPILE_FILE: ${TERRAHUB_PROJECT_HOME}/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_LOCAL_PATH: ${TERRAHUB_PROJECT_HOME}/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_INDEX_FILE: nodejs14.x.txt
-#       TERRAHUB_BUILD_LAMBDA_FILE: nodejs14.x.zip
-#       TERRAHUB_BUILD_S3_DEPLOY: [REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_S3_PATH: lambda/[REPLACE_WITH_YOUR_VALUE]
-#       TERRAHUB_BUILD_OK: false
-#   phases:
-#     build:
-#       commands:
-#         - echo '[BUILD] Running build step'
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/aws/lambda_function/build.sh; fi || { echo >&2 "[ERROR] Failed to run 'build.sh'. Aborting..."; exit 1; }
-#       finally:
-#         - echo '[BUILD] Finished build step'

@@ -58,38 +58,3 @@
         value: google_cloudfunctions_function.{{ name }}.project
       https_trigger_url:
         value: google_cloudfunctions_function.{{ name }}.https_trigger_url
-
-# build:
-#   env:
-#     variables:
-#       TERRAHUB_FUNCTION_ZIP: {{ name }}.zip
-#       TERRAHUB_FUNCTION_TXT: {{ name }}.txt
-#       TERRAHUB_COMPONENT: {{ name }}
-#       TERRAHUB_OBJECT: demo_object
-#       TERRAHUB_BUILD_PATH: ..
-#       TERRAHUB_BUILD_OK: 'false'
-#       TERRAHUB_BUCKET_PATH: 'gs://'
-#       TERRAHUB_BUCKET_KEY: deploy/{{ name }}
-#   phases:
-#     pre_build:
-#       commands:
-#         - 'echo "BUILD: Running pre_build step"'
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/download.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/download.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/download.sh; fi $TERRAHUB_FUNCTION_TXT $TERRAHUB_BUCKET_PATH/$TERRAHUB_BUCKET_KEY/$TERRAHUB_FUNCTION_TXT
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/compare.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/compare.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/compare.sh; fi $TERRAHUB_FUNCTION_TXT $TERRAHUB_BUILD_PATH/*.js
-#       finally:
-#         - 'echo "BUILD: pre_build step successful"'
-#     build:
-#       commands:
-#         - 'echo "BUILD: Running build step"'
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/build.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/build.sh; fi $TERRAHUB_COMPONENT $TERRAHUB_OBJECT $TERRAHUB_BUCKET_KEY/
-#       finally:
-#         - 'echo "BUILD: build step successful"'
-#     post_build:
-#       commands:
-#         - 'echo "BUILD: Running post_build step"'
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/shasum.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/shasum.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/shasum.sh; fi $TERRAHUB_FUNCTION_TXT
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/zip.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/zip.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/zip.sh; fi $TERRAHUB_FUNCTION_ZIP $TERRAHUB_BUILD_PATH/*.js
-#         - if [[ -f ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh ]]; then ${TERRAHUB_COMPONENT_HOME}/scripts/upload.sh; else ${TERRAHUB_CLI_HOME}/lib/scripts/gcp/cloudfunctions_function/upload.sh; fi $TERRAHUB_FUNCTION_TXT $TERRAHUB_BUCKET_PATH/$TERRAHUB_BUCKET_KEY/$TERRAHUB_FUNCTION_TXT
-#         - rm -f .terrahub_build.env $TERRAHUB_FUNCTION_TXT
-#       finally:
-#         - 'echo "BUILD: post_build step successful"'
