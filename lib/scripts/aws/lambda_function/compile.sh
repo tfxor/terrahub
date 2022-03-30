@@ -9,7 +9,7 @@ fi
 
 ## Setup environmental variables
 if [ -f ${TERRAHUB_BUILD_TEMP_VARS} ]; then
-  source ${TERRAHUB_BUILD_TEMP_VARS}
+  . ${TERRAHUB_BUILD_TEMP_VARS}
 fi
 
 ## Checking if TERRAHUB_BUILD_OK is true
