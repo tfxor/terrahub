@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## Source path
 _SRC=${1}

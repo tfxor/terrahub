@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## zip option
 _OPTION=${1}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Validate if terrahub build temporary file exists
 if [ -z "${TERRAHUB_BUILD_TEMP_VARS}" ]; then
