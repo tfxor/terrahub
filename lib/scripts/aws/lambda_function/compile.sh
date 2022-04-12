@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## Source path
 TERRAHUB_SRC=${@:1}

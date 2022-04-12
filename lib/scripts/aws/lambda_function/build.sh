@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "${TERRAHUB_BUILD_COMPILE_FILE}" ]; then
   echo "[ERROR] TERRAHUB_BUILD_COMPILE_FILE variable is empty. Aborting..."

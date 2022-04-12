@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "${TERRAHUB_VAR_S3_BUCKET_NAME}" ]; then
   echo "[ERROR] TERRAHUB_VAR_S3_BUCKET_NAME variable is empty. Aborting..."
